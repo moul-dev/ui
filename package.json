@@ -1,0 +1,20 @@
+{
+  "name": "moul-ui-workspace",
+  "private": true,
+  "workspaces": [
+    "ui",
+    "docs"
+  ],
+  "scripts": {
+    "dev:ui": "bun --cwd ui dev",
+    "dev:docs": "bun --cwd docs dev",
+    "build:ui": "bun --cwd ui build",
+    "build:docs": "bun --cwd docs build",
+    "dev": "bun run dev:ui & bun run dev:docs",
+    "lint": "biome check",
+    "format": "biome format --write"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.5.0"
+  }
+}
