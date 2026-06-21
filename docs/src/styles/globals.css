@@ -1,10 +1,12 @@
+@import url("https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap");
 @layer base, utilities, priority1, priority2, priority3, priority4, priority5;
 
 @import 'tailwindcss';
-@import url("https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap");
 
 @theme {
   --font-sans: "Google Sans", "Inter", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
 }
 
 @import '@moul-dev/ui/style';
@@ -20,26 +22,26 @@ body {
   font-family: var(--font-sans);
 }
 
-html > body[data-scroll-locked] {
+html>body[data-scroll-locked] {
   margin-right: 0px !important;
   --removed-body-scroll-bar-size: 0px !important;
 }
 
-/* Liquid Glass Design System */
+/* ─── Liquid Glass Design System ─── */
 .liquid-glass-card {
   --mouse-x: 50%;
   --mouse-y: 50%;
   position: relative;
-  border-radius: 1rem; /* rounded-2xl */
-  padding: 1px; /* border thickness */
-  background: rgba(229, 231, 235, 0.2); /* very subtle default border for light mode */
+  border-radius: 1rem;
+  padding: 1px;
+  background: rgba(229, 231, 235, 0.2);
   overflow: hidden;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.02);
   transition: box-shadow 0.3s ease, background-color 0.3s ease;
 }
 
 .dark .liquid-glass-card {
-  background: rgba(63, 63, 70, 0.2); /* very subtle default border for dark mode */
+  background: rgba(63, 63, 70, 0.2);
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15);
 }
 
@@ -50,13 +52,11 @@ html > body[data-scroll-locked] {
   inset: 0;
   border-radius: inherit;
   padding: 1px;
-  background: radial-gradient(
-    300px circle at var(--mouse-x) var(--mouse-y),
-    rgba(59, 130, 246, 0.45), /* blue spotlight for light mode */
-    transparent 80%
-  );
-  -webkit-mask: 
-    linear-gradient(#fff 0 0) content-box, 
+  background: radial-gradient(300px circle at var(--mouse-x) var(--mouse-y),
+      oklch(0.78 0.16 65 / 0.5),
+      transparent 80%);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
     linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
@@ -67,11 +67,9 @@ html > body[data-scroll-locked] {
 }
 
 .dark .liquid-glass-card::before {
-  background: radial-gradient(
-    300px circle at var(--mouse-x) var(--mouse-y),
-    rgba(139, 92, 246, 0.55), /* violet spotlight for dark mode */
-    transparent 80%
-  );
+  background: radial-gradient(300px circle at var(--mouse-x) var(--mouse-y),
+      oklch(0.82 0.15 65 / 0.6),
+      transparent 80%);
 }
 
 .liquid-glass-card:hover {
@@ -89,7 +87,7 @@ html > body[data-scroll-locked] {
 /* Glass Inner styling */
 .liquid-glass-inner {
   border-radius: calc(1rem - 1px);
-  background: rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.4);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   width: 100%;
@@ -110,30 +108,26 @@ html > body[data-scroll-locked] {
   position: absolute;
   inset: 0;
   border-radius: calc(1rem - 1px);
-  background: radial-gradient(
-    400px circle at var(--mouse-x) var(--mouse-y),
-    rgba(59, 130, 246, 0.03), /* extremely subtle background glow */
-    transparent 80%
-  );
+  background: radial-gradient(400px circle at var(--mouse-x) var(--mouse-y),
+      oklch(0.78 0.16 65 / 0.04),
+      transparent 80%);
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.4s ease;
-  z-index: 2; /* below text/content but above background blur */
+  z-index: 2;
 }
 
 .dark .liquid-glass-glow {
-  background: radial-gradient(
-    400px circle at var(--mouse-x) var(--mouse-y),
-    rgba(139, 92, 246, 0.06), /* slightly stronger background glow in dark mode */
-    transparent 80%
-  );
+  background: radial-gradient(400px circle at var(--mouse-x) var(--mouse-y),
+      oklch(0.82 0.15 65 / 0.07),
+      transparent 80%);
 }
 
 .liquid-glass-card:hover .liquid-glass-glow {
   opacity: 1;
 }
 
-/* Interactive Grid Background */
+/* ─── Interactive Grid Background ─── */
 .interactive-grid-container {
   pointer-events: none;
   --mouse-x: 0px;
@@ -142,49 +136,45 @@ html > body[data-scroll-locked] {
 }
 
 .interactive-grid-base {
-  background-image: 
-    linear-gradient(to right, rgba(128, 128, 128, 0.08) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(128, 128, 128, 0.08) 1px, transparent 1px);
-  background-size: 56px 56px;
+  background-image:
+    linear-gradient(to right, rgba(128, 128, 128, 0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(128, 128, 128, 0.07) 1px, transparent 1px);
+  background-size: 64px 64px;
   mask-image: radial-gradient(ellipse 60% 50% at 50% 0%, black 70%, transparent 100%);
   -webkit-mask-image: radial-gradient(ellipse 60% 50% at 50% 0%, black 70%, transparent 100%);
 }
 
 .dark .interactive-grid-base {
-  background-image: 
-    linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
 }
 
 .interactive-grid-spotlight {
-  background-size: 56px 56px;
+  background-size: 64px 64px;
   opacity: calc(var(--mouse-opacity) * 0.9);
   transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
   pointer-events: none;
   z-index: 1;
-  
-  /* Light mode spotlight: primary color (blue) */
-  background-image: 
-    linear-gradient(to right, rgba(59, 130, 246, 0.35) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(59, 130, 246, 0.35) 1px, transparent 1px);
-    
-  mask-image: radial-gradient(
-    250px circle at var(--mouse-x) var(--mouse-y),
-    black 20%,
-    transparent 100%
-  );
-  -webkit-mask-image: radial-gradient(
-    250px circle at var(--mouse-x) var(--mouse-y),
-    black 20%,
-    transparent 100%
-  );
+
+  /* Light mode spotlight: amber */
+  background-image:
+    linear-gradient(to right, oklch(0.75 0.16 55 / 0.3) 1px, transparent 1px),
+    linear-gradient(to bottom, oklch(0.75 0.16 55 / 0.3) 1px, transparent 1px);
+
+  mask-image: radial-gradient(250px circle at var(--mouse-x) var(--mouse-y),
+      black 20%,
+      transparent 100%);
+  -webkit-mask-image: radial-gradient(250px circle at var(--mouse-x) var(--mouse-y),
+      black 20%,
+      transparent 100%);
 }
 
 .dark .interactive-grid-spotlight {
-  /* Dark mode spotlight: primary / violet */
-  background-image: 
-    linear-gradient(to right, rgba(139, 92, 246, 0.45) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(139, 92, 246, 0.45) 1px, transparent 1px);
+  /* Dark mode spotlight: brighter amber */
+  background-image:
+    linear-gradient(to right, oklch(0.80 0.15 55 / 0.4) 1px, transparent 1px),
+    linear-gradient(to bottom, oklch(0.80 0.15 55 / 0.4) 1px, transparent 1px);
 }
 
 /* Soft glowing radial background that moves with cursor */
@@ -195,21 +185,149 @@ html > body[data-scroll-locked] {
   opacity: calc(var(--mouse-opacity) * 0.75);
   transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
   z-index: 0;
-  
-  background: radial-gradient(
-    300px circle at var(--mouse-x) var(--mouse-y),
-    rgba(59, 130, 246, 0.15),
-    transparent 80%
-  );
-  
+
+  background: radial-gradient(300px circle at var(--mouse-x) var(--mouse-y),
+      oklch(0.78 0.14 55 / 0.12),
+      transparent 80%);
+
   mask-image: radial-gradient(ellipse 60% 50% at 50% 0%, black 70%, transparent 100%);
   -webkit-mask-image: radial-gradient(ellipse 60% 50% at 50% 0%, black 70%, transparent 100%);
 }
 
 .dark .interactive-grid-glow {
-  background: radial-gradient(
-    350px circle at var(--mouse-x) var(--mouse-y),
-    rgba(139, 92, 246, 0.22),
-    transparent 80%
-  );
+  background: radial-gradient(350px circle at var(--mouse-x) var(--mouse-y),
+      oklch(0.82 0.15 55 / 0.18),
+      transparent 80%);
+}
+
+/* ─── Install Command Block ─── */
+.install-block {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  background: oklch(0.96 0.005 260);
+  border: 1px solid oklch(0.90 0.005 260);
+  color: oklch(0.35 0.01 260);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  user-select: all;
+}
+
+.dark .install-block {
+  background: oklch(0.16 0.005 260);
+  border-color: oklch(0.24 0.01 260);
+  color: oklch(0.75 0.01 260);
+}
+
+.install-block:hover {
+  border-color: oklch(0.82 0.005 260);
+}
+
+.dark .install-block:hover {
+  border-color: oklch(0.32 0.01 260);
+}
+
+.install-block .prompt {
+  color: oklch(0.55 0.01 260);
+  user-select: none;
+}
+
+.dark .install-block .prompt {
+  color: oklch(0.50 0.01 260);
+}
+
+.install-block .command-text {
+  color: oklch(0.75 0.16 55);
+  font-weight: 500;
+}
+
+.dark .install-block .command-text {
+  color: oklch(0.82 0.15 55);
+}
+
+.install-block .copy-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem;
+  border-radius: 0.375rem;
+  color: oklch(0.55 0.01 260);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: color 0.15s ease, background-color 0.15s ease;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.install-block .copy-btn:hover {
+  color: oklch(0.35 0.01 260);
+  background: oklch(0.92 0.005 260);
+}
+
+.dark .install-block .copy-btn {
+  color: oklch(0.55 0.01 260);
+}
+
+.dark .install-block .copy-btn:hover {
+  color: oklch(0.80 0.01 260);
+  background: oklch(0.22 0.005 260);
+}
+
+.install-block .copy-btn.copied {
+  color: oklch(0.65 0.18 145);
+}
+
+/* ─── Feature Card Accent Bar ─── */
+.feature-card .liquid-glass-inner::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+      transparent,
+      oklch(0.78 0.14 55 / 0.5),
+      transparent);
+  border-radius: 1px;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.dark .feature-card .liquid-glass-inner::after {
+  background: linear-gradient(90deg,
+      transparent,
+      oklch(0.82 0.15 55 / 0.6),
+      transparent);
+}
+
+/* ─── Tech Stack Strip ─── */
+.tech-stack-strip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: oklch(0.55 0.01 260);
+}
+
+.dark .tech-stack-strip {
+  color: oklch(0.50 0.01 260);
+}
+
+.tech-stack-strip .separator {
+  color: oklch(0.75 0.005 260);
+  user-select: none;
+}
+
+.dark .tech-stack-strip .separator {
+  color: oklch(0.30 0.005 260);
 }

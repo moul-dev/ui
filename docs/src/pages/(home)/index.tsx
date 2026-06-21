@@ -1,7 +1,7 @@
 import { Link } from 'waku'
 import { InteractiveGrid } from '@/components/interactive-grid'
 import { LiquidGlassCard } from '@/components/liquid-glass-card'
-import { Logo } from '@/components/logo'
+import { CopyBlock } from '@/components/copy-block'
 
 export default function Home() {
   return (
@@ -13,80 +13,113 @@ export default function Home() {
       />
 
       <div className="flex-1 flex flex-col justify-center overflow-hidden">
-        {/* Hero Section Container (with grid background) */}
+        {/* Hero Section */}
         <div className="relative isolate px-6 pt-10 lg:px-8 overflow-hidden">
           {/* Grid Background */}
           <InteractiveGrid />
 
-          {/* Decorative Glow */}
+          {/* Decorative Glow — top */}
           <div
             className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80"
             aria-hidden="true"
           >
-            <div className="relative left-[calc(50%-11rem)] aspect-1155/678 w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#3b82f6] to-[#8b5cf6] opacity-15 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem] dark:opacity-20" />
+            <div
+              className="relative left-[calc(50%-11rem)] aspect-1155/678 w-[36.125rem] -translate-x-1/2 rotate-[30deg] sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]"
+              style={{
+                background:
+                  'linear-gradient(to top right, oklch(0.78 0.14 55 / 0.12), oklch(0.70 0.10 40 / 0.08))',
+              }}
+            />
           </div>
 
           {/* Main Hero Content */}
           <div className="mx-auto max-w-4xl py-20 sm:py-28 lg:py-36 text-center">
-            {/* Logo and Announcement Badge */}
+            {/* Version Badge */}
             <div className="flex flex-col items-center gap-5 mb-8">
-              <Logo className="h-16 w-16 text-fd-primary hover:scale-105 hover:rotate-6 transition-transform duration-500 cursor-pointer" />
-              <div className="relative rounded-full px-3 py-1 text-sm leading-6 text-fd-muted-foreground ring-1 ring-fd-border/80 hover:ring-fd-border transition-all duration-300 backdrop-blur-sm bg-fd-card/30">
-                Introducing{' '}
-                <span className="font-semibold text-fd-primary">
-                  Moul UI v0.1.0
+              <div className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm leading-6 text-fd-muted-foreground ring-1 ring-fd-border/60 backdrop-blur-sm bg-fd-card/30 transition-all duration-300 hover:ring-fd-border">
+                <span
+                  className="inline-block h-1.5 w-1.5 rounded-full"
+                  style={{ background: 'oklch(0.75 0.18 55)' }}
+                  aria-hidden="true"
+                />
+                <span className="font-mono text-xs tracking-wide">
+                  v0.1.0
+                </span>
+                <span className="text-fd-muted-foreground/60">—</span>
+                <span>
+                  Now available
                 </span>
               </div>
             </div>
 
             {/* Heading */}
             <h1 className="text-4xl font-extrabold tracking-tight sm:text-6xl max-w-3xl mx-auto leading-[1.1] mb-6">
-              <span className="block text-fd-foreground font-sans">
+              <span className="block text-fd-foreground">
                 Clean by default.
               </span>
-              <span className="block bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 bg-clip-text text-transparent dark:from-blue-400 dark:via-indigo-300 dark:to-purple-400">
+              <span
+                className="block bg-clip-text text-transparent"
+                style={{
+                  backgroundImage:
+                    'linear-gradient(to right, oklch(0.72 0.17 50), oklch(0.78 0.16 65), oklch(0.72 0.14 40))',
+                }}
+              >
                 Adaptable by design.
               </span>
             </h1>
 
-            {/* Tagline / Paragraph */}
-            <p className="text-lg leading-8 text-fd-muted-foreground max-w-2xl mx-auto mb-10">
-              Meet{' '}
-              <code className="px-1.5 py-0.5 rounded bg-fd-secondary border border-fd-border font-mono text-sm text-fd-secondary-foreground font-medium">
-                Moul UI
-              </code>
-              . The UI library forged for{' '}
+            {/* Tagline */}
+            <p className="text-lg leading-8 text-fd-muted-foreground max-w-2xl mx-auto mb-8">
+              A React component library built on{' '}
+              <strong className="font-semibold text-fd-foreground">
+                React Aria
+              </strong>{' '}
+              and{' '}
+              <strong className="font-semibold text-fd-foreground">
+                StyleX
+              </strong>
+              . Accessible, zero-runtime, production-tested at{' '}
               <a
                 href="https://moul.dev"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="underline underline-offset-4 decoration-fd-primary font-semibold text-fd-foreground hover:text-fd-primary transition-colors"
+                className="underline underline-offset-4 font-semibold text-fd-foreground hover:opacity-75 transition-opacity"
+                style={{
+                  textDecorationColor: 'oklch(0.75 0.16 55)',
+                }}
               >
                 moul.dev
               </a>
-              , engineered for your next big idea. Perfect for product engineers
-              who want a modern, consistent baseline that easily bends to fit
-              any platform, brand, or aesthetic.
+              .
             </p>
 
+            {/* Install Command */}
+            <div className="flex justify-center mb-8">
+              <CopyBlock command="bun add @moul-dev/ui" />
+            </div>
+
             {/* Actions */}
-            <div className="flex items-center justify-center gap-x-6">
+            <div className="flex items-center justify-center gap-x-4">
               <Link
                 to="/docs"
                 id="cta-get-started"
-                className="px-6 py-3 rounded-xl bg-fd-primary text-fd-primary-foreground font-semibold text-sm shadow-md hover:bg-fd-primary/95 hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5"
+                className="px-6 py-2.5 rounded-full font-semibold text-sm shadow-md transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
+                style={{
+                  background: 'oklch(0.75 0.18 55)',
+                  color: 'oklch(0.15 0.01 55)',
+                }}
               >
-                Get Started
+                Read the docs
               </Link>
               <a
                 href="https://github.com/moul-dev/ui"
                 target="_blank"
                 rel="noopener noreferrer"
                 id="cta-github"
-                className="flex items-center gap-2 px-6 py-3 rounded-xl border border-fd-border bg-fd-card/50 text-fd-card-foreground font-semibold text-sm shadow-sm backdrop-blur-sm hover:bg-fd-accent hover:text-fd-accent-foreground transition-all duration-200 hover:-translate-y-0.5"
+                className="flex items-center gap-2 px-6 py-2.5 rounded-full border border-fd-border bg-fd-card/50 text-fd-card-foreground font-semibold text-sm shadow-sm backdrop-blur-sm hover:bg-fd-accent hover:text-fd-accent-foreground transition-all duration-200 hover:-translate-y-0.5"
               >
                 <svg
-                  className="h-5 w-5 fill-current"
+                  className="h-4 w-4 fill-current"
                   viewBox="0 0 24 24"
                   aria-hidden="true"
                 >
@@ -102,38 +135,36 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Why Moul UI? Section */}
+        {/* Features Section */}
         <div className="relative isolate px-6 overflow-hidden">
           <div className="mx-auto max-w-5xl w-full pb-20 sm:pb-28">
-            <div className="border-t border-fd-border/40 pt-16 sm:pt-20">
-              <h2 className="text-3xl font-bold tracking-tight text-fd-foreground text-center mb-4 flex items-center justify-center gap-2 flex-wrap">
-                <span>Why</span>
-                <span className="inline-flex items-center gap-2 text-2xl align-middle">
-                  <span>Moul</span>
-                  <span className="px-1.5 py-0.5 rounded bg-fd-muted text-fd-muted-foreground border border-fd-border text-xs font-mono font-semibold tracking-wider leading-none shadow-[0_1.5px_0_0_rgba(0,0,0,0.1)] dark:shadow-[0_1.5px_0_0_rgba(255,255,255,0.1)]">
-                    UI
-                  </span>
-                </span>
-                <span>?</span>
+            <div className="border-t border-fd-border/30 pt-16 sm:pt-20">
+              <p
+                className="text-sm font-mono font-medium tracking-widest uppercase text-center mb-3"
+                style={{ color: 'oklch(0.70 0.14 55)' }}
+              >
+                Why Moul UI
+              </p>
+              <h2 className="text-3xl font-bold tracking-tight text-fd-foreground text-center mb-4">
+                Built different.
               </h2>
-              <p className="text-base text-fd-muted-foreground max-w-3xl mx-auto text-center mb-12 leading-relaxed">
-                Built on a bleeding-edge modern stack,{' '}
-                <code className="px-1.5 py-0.5 rounded bg-fd-secondary border border-fd-border font-mono text-sm text-fd-secondary-foreground font-medium">
-                  Moul UI
-                </code>{' '}
-                gives you the developer experience of a premium component
-                library with the performance and accessibility of a custom-built
-                solution.
+              <p className="text-base text-fd-muted-foreground max-w-2xl mx-auto text-center mb-14 leading-relaxed">
+                The developer experience of a premium component library with the
+                performance and accessibility of a custom-built solution.
               </p>
 
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                {/* Feature 1 */}
-                <LiquidGlassCard>
-                  <div className="flex-shrink-0 h-10 w-10 rounded-lg bg-blue-500/10 dark:bg-blue-400/15 flex items-center justify-center text-blue-500 dark:text-blue-400 font-bold text-lg">
-                    ♿
+              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                {/* Feature 1: Accessible */}
+                <LiquidGlassCard className="feature-card">
+                  <div className="flex-shrink-0 h-10 w-10 rounded-lg flex items-center justify-center" style={{ background: 'oklch(0.75 0.14 55 / 0.1)', color: 'oklch(0.70 0.16 55)' }}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="10" />
+                      <circle cx="12" cy="10" r="3" />
+                      <path d="M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662" />
+                    </svg>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-base text-fd-foreground mb-1">
+                    <h3 className="font-semibold text-base text-fd-foreground mb-1.5">
                       Accessible by default
                     </h3>
                     <p className="text-sm text-fd-muted-foreground leading-relaxed">
@@ -141,71 +172,80 @@ export default function Home() {
                       <strong className="text-fd-foreground font-semibold">
                         React Aria
                       </strong>
-                      , guaranteeing top-tier keyboard navigation, screen reader
-                      support, and robust interaction states right out of the
-                      box.
+                      . Full keyboard navigation, screen reader support, and
+                      robust interaction states out of the box.
                     </p>
                   </div>
                 </LiquidGlassCard>
 
-                {/* Feature 2 */}
-                <LiquidGlassCard>
-                  <div className="flex-shrink-0 h-10 w-10 rounded-lg bg-indigo-500/10 dark:bg-indigo-400/15 flex items-center justify-center text-indigo-500 dark:text-indigo-400 font-bold text-lg">
-                    ⚡
+                {/* Feature 2: Zero-runtime */}
+                <LiquidGlassCard className="feature-card">
+                  <div className="flex-shrink-0 h-10 w-10 rounded-lg flex items-center justify-center" style={{ background: 'oklch(0.75 0.14 55 / 0.1)', color: 'oklch(0.70 0.16 55)' }}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                    </svg>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-base text-fd-foreground mb-1">
+                    <h3 className="font-semibold text-base text-fd-foreground mb-1.5">
                       Zero-runtime styling
                     </h3>
                     <p className="text-sm text-fd-muted-foreground leading-relaxed">
                       Built with{' '}
                       <strong className="text-fd-foreground font-semibold">
                         StyleX
-                      </strong>{' '}
-                      for type-safe, collision-free atomic CSS. You get the
-                      benefits of CSS-in-JS without the performance hit.
+                      </strong>
+                      . Type-safe, collision-free atomic CSS extracted at build
+                      time — no runtime cost.
                     </p>
                   </div>
                 </LiquidGlassCard>
 
-                {/* Feature 3 */}
-                <LiquidGlassCard>
-                  <div className="flex-shrink-0 h-10 w-10 rounded-lg bg-purple-500/10 dark:bg-purple-400/15 flex items-center justify-center text-purple-500 dark:text-purple-400 font-bold text-lg">
-                    🧩
+                {/* Feature 3: Flexible */}
+                <LiquidGlassCard className="feature-card">
+                  <div className="flex-shrink-0 h-10 w-10 rounded-lg flex items-center justify-center" style={{ background: 'oklch(0.75 0.14 55 / 0.1)', color: 'oklch(0.70 0.16 55)' }}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="3" y="3" width="7" height="7" rx="1" />
+                      <rect x="14" y="3" width="7" height="7" rx="1" />
+                      <rect x="3" y="14" width="7" height="7" rx="1" />
+                      <rect x="14" y="14" width="7" height="7" rx="1" />
+                    </svg>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-base text-fd-foreground mb-1">
+                    <h3 className="font-semibold text-base text-fd-foreground mb-1.5">
                       Headless flexibility, styled convenience
                     </h3>
                     <p className="text-sm text-fd-muted-foreground leading-relaxed">
-                      We provide the clean, minimalist styles you need to ship
-                      fast, but every component is designed to be effortlessly
-                      overridden to match your brand.
+                      Ship fast with clean defaults. Every component is designed
+                      to be effortlessly overridden to match your brand.
                     </p>
                   </div>
                 </LiquidGlassCard>
 
-                {/* Feature 4 */}
-                <LiquidGlassCard>
-                  <div className="flex-shrink-0 h-10 w-10 rounded-lg bg-emerald-500/10 dark:bg-emerald-400/15 flex items-center justify-center text-emerald-500 dark:text-emerald-400 font-bold text-lg">
-                    🛡️
+                {/* Feature 4: Production tested */}
+                <LiquidGlassCard className="feature-card">
+                  <div className="flex-shrink-0 h-10 w-10 rounded-lg flex items-center justify-center" style={{ background: 'oklch(0.75 0.14 55 / 0.1)', color: 'oklch(0.70 0.16 55)' }}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                      <polyline points="9 12 11 14 15 10" />
+                    </svg>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-base text-fd-foreground mb-1">
+                    <h3 className="font-semibold text-base text-fd-foreground mb-1.5">
                       Production tested
                     </h3>
                     <p className="text-sm text-fd-muted-foreground leading-relaxed">
-                      Extracted directly from the{' '}
+                      Extracted from the{' '}
                       <a
                         href="https://moul.dev"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="hover:underline text-fd-primary font-medium"
+                        className="hover:underline font-medium"
+                        style={{ color: 'oklch(0.70 0.14 55)' }}
                       >
                         moul.dev
                       </a>{' '}
-                      platform. These aren't just theoretical components; they
-                      are actively used in production.
+                      platform. Battle-tested components used in production
+                      every day.
                     </p>
                   </div>
                 </LiquidGlassCard>
@@ -213,12 +253,18 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Glowing Side Decoration */}
+          {/* Glowing Side Decoration — bottom */}
           <div
             className="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]"
             aria-hidden="true"
           >
-            <div className="relative left-[calc(50%+3rem)] aspect-1155/678 w-[36.125rem] -translate-x-1/2 bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-10 sm:left-[calc(50%+36rem)] sm:w-[72.1875rem] dark:opacity-15" />
+            <div
+              className="relative left-[calc(50%+3rem)] aspect-1155/678 w-[36.125rem] -translate-x-1/2 sm:left-[calc(50%+36rem)] sm:w-[72.1875rem]"
+              style={{
+                background:
+                  'linear-gradient(to top right, oklch(0.78 0.14 55 / 0.08), oklch(0.70 0.12 40 / 0.06))',
+              }}
+            />
           </div>
         </div>
       </div>
