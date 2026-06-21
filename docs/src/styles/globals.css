@@ -1,7 +1,9 @@
-@import "tailwindcss";
-@import "fumadocs-ui/css/neutral.css";
-@import "fumadocs-ui/css/preset.css";
-@import "@moul-dev/ui/style.css";
+@layer base, utilities, priority1, priority2, priority3, priority4, priority5;
+
+@import 'tailwindcss';
+@import '@moul-dev/ui/style';
+@import 'fumadocs-ui/css/neutral.css';
+@import 'fumadocs-ui/css/preset.css';
 
 html {
   scrollbar-gutter: stable;
@@ -10,4 +12,193 @@ html {
 html > body[data-scroll-locked] {
   margin-right: 0px !important;
   --removed-body-scroll-bar-size: 0px !important;
+}
+
+/* Liquid Glass Design System */
+.liquid-glass-card {
+  --mouse-x: 50%;
+  --mouse-y: 50%;
+  position: relative;
+  border-radius: 1rem; /* rounded-2xl */
+  padding: 1px; /* border thickness */
+  background: rgba(229, 231, 235, 0.2); /* very subtle default border for light mode */
+  overflow: hidden;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.02);
+  transition: box-shadow 0.3s ease, background-color 0.3s ease;
+}
+
+.dark .liquid-glass-card {
+  background: rgba(63, 63, 70, 0.2); /* very subtle default border for dark mode */
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15);
+}
+
+/* Moving Spotlight Border mask trick */
+.liquid-glass-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: radial-gradient(
+    300px circle at var(--mouse-x) var(--mouse-y),
+    rgba(59, 130, 246, 0.45), /* blue spotlight for light mode */
+    transparent 80%
+  );
+  -webkit-mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: 1;
+}
+
+.dark .liquid-glass-card::before {
+  background: radial-gradient(
+    300px circle at var(--mouse-x) var(--mouse-y),
+    rgba(139, 92, 246, 0.55), /* violet spotlight for dark mode */
+    transparent 80%
+  );
+}
+
+.liquid-glass-card:hover {
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+}
+
+.dark .liquid-glass-card:hover {
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.liquid-glass-card:hover::before {
+  opacity: 1;
+}
+
+/* Glass Inner styling */
+.liquid-glass-inner {
+  border-radius: calc(1rem - 1px);
+  background: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  width: 100%;
+  height: 100%;
+  position: relative;
+  z-index: 2;
+  transition: background-color 0.3s ease;
+}
+
+.dark .liquid-glass-inner {
+  background: rgba(15, 15, 17, 0.5);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* Subtle inner background glow spotlight on hover */
+.liquid-glass-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: calc(1rem - 1px);
+  background: radial-gradient(
+    400px circle at var(--mouse-x) var(--mouse-y),
+    rgba(59, 130, 246, 0.03), /* extremely subtle background glow */
+    transparent 80%
+  );
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: 2; /* below text/content but above background blur */
+}
+
+.dark .liquid-glass-glow {
+  background: radial-gradient(
+    400px circle at var(--mouse-x) var(--mouse-y),
+    rgba(139, 92, 246, 0.06), /* slightly stronger background glow in dark mode */
+    transparent 80%
+  );
+}
+
+.liquid-glass-card:hover .liquid-glass-glow {
+  opacity: 1;
+}
+
+/* Interactive Grid Background */
+.interactive-grid-container {
+  pointer-events: none;
+  --mouse-x: 0px;
+  --mouse-y: 0px;
+  --mouse-opacity: 0;
+}
+
+.interactive-grid-base {
+  background-image: 
+    linear-gradient(to right, rgba(128, 128, 128, 0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(128, 128, 128, 0.08) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse 60% 50% at 50% 0%, black 70%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 60% 50% at 50% 0%, black 70%, transparent 100%);
+}
+
+.dark .interactive-grid-base {
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+}
+
+.interactive-grid-spotlight {
+  background-size: 56px 56px;
+  opacity: calc(var(--mouse-opacity) * 0.9);
+  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+  z-index: 1;
+  
+  /* Light mode spotlight: primary color (blue) */
+  background-image: 
+    linear-gradient(to right, rgba(59, 130, 246, 0.35) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(59, 130, 246, 0.35) 1px, transparent 1px);
+    
+  mask-image: radial-gradient(
+    250px circle at var(--mouse-x) var(--mouse-y),
+    black 20%,
+    transparent 100%
+  );
+  -webkit-mask-image: radial-gradient(
+    250px circle at var(--mouse-x) var(--mouse-y),
+    black 20%,
+    transparent 100%
+  );
+}
+
+.dark .interactive-grid-spotlight {
+  /* Dark mode spotlight: primary / violet */
+  background-image: 
+    linear-gradient(to right, rgba(139, 92, 246, 0.45) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(139, 92, 246, 0.45) 1px, transparent 1px);
+}
+
+/* Soft glowing radial background that moves with cursor */
+.interactive-grid-glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: calc(var(--mouse-opacity) * 0.75);
+  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 0;
+  
+  background: radial-gradient(
+    300px circle at var(--mouse-x) var(--mouse-y),
+    rgba(59, 130, 246, 0.15),
+    transparent 80%
+  );
+  
+  mask-image: radial-gradient(ellipse 60% 50% at 50% 0%, black 70%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 60% 50% at 50% 0%, black 70%, transparent 100%);
+}
+
+.dark .interactive-grid-glow {
+  background: radial-gradient(
+    350px circle at var(--mouse-x) var(--mouse-y),
+    rgba(139, 92, 246, 0.22),
+    transparent 80%
+  );
 }

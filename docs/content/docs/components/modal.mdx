@@ -1,0 +1,61 @@
+---
+title: Modal
+description: Documentation for the Modal component.
+---
+
+import { Modal } from '@moul-dev/ui';
+
+
+# Modal
+
+## Preview
+
+<ComponentPreview>
+  <ModalDemo />
+</ComponentPreview>
+
+The `Modal` component is built with React Aria and styled using StyleX.
+
+## Import
+
+```tsx
+import { Modal } from '@moul-dev/ui';
+```
+
+## Usage
+
+Here is a basic example of how to use the `Modal` component:
+
+```tsx
+import { Modal } from '@moul-dev/ui';
+
+export default function Example() {
+  return (
+    <Modal>
+      {/* Component content */}
+    </Modal>
+  );
+}
+```
+
+## Sizing and Variants
+
+The `Modal` component supports size variants via the `size` prop:
+
+- `sm`: Max width of `400px` on desktop.
+- `md`: Max width of `500px` on desktop (default).
+- `lg`: Max width of `640px` on desktop.
+
+```tsx
+<Modal size="sm">
+  {/* Small Modal */}
+</Modal>
+```
+
+## Mobile Responsive Layout
+
+On mobile viewports (`<= 640px`), the modal is optimized to behave like a bottom drawer/sheet:
+- Aligned to the bottom of the screen.
+- Extends to `100%` viewport width.
+- Bottom corner radiuses are set to `0` for seamless edge-to-edge styling.
+- Renders with a smooth, subtle fade-in and slide-up animation from the bottom of the viewport.

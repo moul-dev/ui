@@ -10,7 +10,7 @@
     "dev:docs": "bun --cwd docs dev",
     "build:ui": "bun --cwd ui build",
     "build:docs": "bun --cwd docs build",
-    "dev": "bun run dev:ui & bun run dev:docs",
+    "dev": "bun --cwd ui build:watch & bun run dev:ui & bun run dev:docs",
     "lint": "biome check",
     "format": "biome format --write"
   },

@@ -1,0 +1,43 @@
+---
+title: Slider
+description: Documentation for the Slider component.
+---
+
+import { Slider, SliderTrack, SliderThumb } from '@moul-dev/ui';
+
+
+# Slider
+
+## Preview
+
+<ComponentPreview>
+  <Slider label="Volume" defaultValue={50} className="w-64">
+    <SliderTrack>
+      <SliderThumb />
+    </SliderTrack>
+  </Slider>
+</ComponentPreview>
+
+The `Slider` component is built with React Aria and styled using StyleX.
+
+## Import
+
+```tsx
+import { Slider } from '@moul-dev/ui';
+```
+
+## Usage
+
+Here is a basic example of how to use the `Slider` component:
+
+```tsx
+import { Slider } from '@moul-dev/ui';
+
+export default function Example() {
+  return (
+    <Slider>
+      {/* Component content */}
+    </Slider>
+  );
+}
+```

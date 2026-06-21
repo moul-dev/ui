@@ -11,11 +11,19 @@
       "types": "./dist/src/index.d.ts",
       "import": "./dist/moul-ui.js"
     },
-    "./style.css": "./dist/assets/stylex.css"
+    "./style": {
+      "style": "./dist/assets/stylex.css",
+      "default": "./dist/assets/stylex.css"
+    },
+    "./style.css": {
+      "style": "./dist/assets/stylex.css",
+      "default": "./dist/assets/stylex.css"
+    }
   },
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:watch": "vite build --watch",
     "lint": "eslint .",
     "preview": "vite preview"
   },

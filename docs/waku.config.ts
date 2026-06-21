@@ -8,7 +8,20 @@ export default defineConfig({
     resolve: {
       tsconfigPaths: true,
       external: ['@takumi-rs/image-response'],
-      dedupe: ['waku'],
+      dedupe: ['react', 'react-dom', 'waku'],
+    },
+    build: {
+      target: 'esnext',
+    },
+    ssr: {
+      noExternal: [
+        '@moul-dev/ui',
+        'react-aria-components',
+        'react-aria',
+        'react-stately',
+        /@react-aria/,
+        /@react-stately/,
+      ],
     },
 
     plugins: [

@@ -1,0 +1,45 @@
+---
+title: Skeleton
+description: Documentation for the Skeleton component.
+---
+
+import { Skeleton } from '@moul-dev/ui';
+
+
+# Skeleton
+
+## Preview
+
+<ComponentPreview>
+  <div className="flex items-center space-x-4 w-72">
+    <Skeleton className="h-12 w-12 rounded-full" />
+    <div className="space-y-2 flex-1">
+      <Skeleton className="h-4 w-full" />
+      <Skeleton className="h-4 w-5/6" />
+    </div>
+  </div>
+</ComponentPreview>
+
+The `Skeleton` component is built with React Aria and styled using StyleX.
+
+## Import
+
+```tsx
+import { Skeleton } from '@moul-dev/ui';
+```
+
+## Usage
+
+Here is a basic example of how to use the `Skeleton` component:
+
+```tsx
+import { Skeleton } from '@moul-dev/ui';
+
+export default function Example() {
+  return (
+    <Skeleton>
+      {/* Component content */}
+    </Skeleton>
+  );
+}
+```

@@ -1,0 +1,43 @@
+---
+title: Checkbox
+description: Documentation for the Checkbox component.
+---
+
+import { Checkbox } from '@moul-dev/ui';
+
+
+# Checkbox
+
+## Preview
+
+<ComponentPreview>
+  <div className="flex flex-col gap-2">
+    <Checkbox>Unchecked</Checkbox>
+    <Checkbox defaultSelected>Checked</Checkbox>
+    <Checkbox isDisabled>Disabled</Checkbox>
+  </div>
+</ComponentPreview>
+
+The `Checkbox` component is built with React Aria and styled using StyleX.
+
+## Import
+
+```tsx
+import { Checkbox } from '@moul-dev/ui';
+```
+
+## Usage
+
+Here is a basic example of how to use the `Checkbox` component:
+
+```tsx
+import { Checkbox } from '@moul-dev/ui';
+
+export default function Example() {
+  return (
+    <Checkbox>
+      {/* Component content */}
+    </Checkbox>
+  );
+}
+```

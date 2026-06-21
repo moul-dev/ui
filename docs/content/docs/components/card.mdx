@@ -1,0 +1,50 @@
+---
+title: Card
+description: Documentation for the Card component.
+---
+
+import { Card, CardHeader, CardBody, CardFooter, Button } from '@moul-dev/ui';
+
+
+# Card
+
+## Preview
+
+<ComponentPreview>
+  <Card className="w-80">
+    <CardHeader>
+      <h3 className="font-bold text-lg">Card Title</h3>
+    </CardHeader>
+    <CardBody>
+      <p className="text-neutral-500 text-sm">This is the body of the card.</p>
+    </CardBody>
+    <CardFooter className="flex justify-end gap-2">
+      <Button>Cancel</Button>
+      <Button>Save</Button>
+    </CardFooter>
+  </Card>
+</ComponentPreview>
+
+The `Card` component is built with React Aria and styled using StyleX.
+
+## Import
+
+```tsx
+import { Card } from '@moul-dev/ui';
+```
+
+## Usage
+
+Here is a basic example of how to use the `Card` component:
+
+```tsx
+import { Card } from '@moul-dev/ui';
+
+export default function Example() {
+  return (
+    <Card>
+      {/* Component content */}
+    </Card>
+  );
+}
+```

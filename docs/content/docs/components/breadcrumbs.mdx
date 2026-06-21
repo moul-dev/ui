@@ -1,0 +1,43 @@
+---
+title: Breadcrumbs
+description: Documentation for the Breadcrumbs component.
+---
+
+import { Breadcrumbs, BreadcrumbItem } from '@moul-dev/ui';
+
+
+# Breadcrumbs
+
+## Preview
+
+<ComponentPreview>
+  <Breadcrumbs>
+    <BreadcrumbItem>Home</BreadcrumbItem>
+    <BreadcrumbItem>Components</BreadcrumbItem>
+    <BreadcrumbItem isCurrent>Breadcrumbs</BreadcrumbItem>
+  </Breadcrumbs>
+</ComponentPreview>
+
+The `Breadcrumbs` component is built with React Aria and styled using StyleX.
+
+## Import
+
+```tsx
+import { Breadcrumbs } from '@moul-dev/ui';
+```
+
+## Usage
+
+Here is a basic example of how to use the `Breadcrumbs` component:
+
+```tsx
+import { Breadcrumbs } from '@moul-dev/ui';
+
+export default function Example() {
+  return (
+    <Breadcrumbs>
+      {/* Component content */}
+    </Breadcrumbs>
+  );
+}
+```

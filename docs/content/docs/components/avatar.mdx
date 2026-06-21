@@ -1,0 +1,42 @@
+---
+title: Avatar
+description: Documentation for the Avatar component.
+---
+
+import { Avatar } from '@moul-dev/ui';
+
+
+# Avatar
+
+## Preview
+
+<ComponentPreview>
+  <div className="flex gap-4">
+    <Avatar src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&h=100&q=80" alt="Jane Doe" />
+    <Avatar src="invalid-url.jpg" alt="John Doe" />
+  </div>
+</ComponentPreview>
+
+The `Avatar` component is built with React Aria and styled using StyleX.
+
+## Import
+
+```tsx
+import { Avatar } from '@moul-dev/ui';
+```
+
+## Usage
+
+Here is a basic example of how to use the `Avatar` component:
+
+```tsx
+import { Avatar } from '@moul-dev/ui';
+
+export default function Example() {
+  return (
+    <Avatar>
+      {/* Component content */}
+    </Avatar>
+  );
+}
+```

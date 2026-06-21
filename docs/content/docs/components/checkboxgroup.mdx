@@ -1,0 +1,42 @@
+---
+title: CheckboxGroup
+description: Documentation for the CheckboxGroup component.
+---
+
+import { CheckboxGroup, Checkbox } from '@moul-dev/ui';
+
+
+# CheckboxGroup
+
+## Preview
+
+<ComponentPreview>
+  <CheckboxGroup label="Notifications" description="Choose how you want to be notified.">
+    <Checkbox value="email">Email</Checkbox>
+    <Checkbox value="sms">SMS</Checkbox>
+  </CheckboxGroup>
+</ComponentPreview>
+
+The `CheckboxGroup` component is built with React Aria and styled using StyleX.
+
+## Import
+
+```tsx
+import { CheckboxGroup } from '@moul-dev/ui';
+```
+
+## Usage
+
+Here is a basic example of how to use the `CheckboxGroup` component:
+
+```tsx
+import { CheckboxGroup } from '@moul-dev/ui';
+
+export default function Example() {
+  return (
+    <CheckboxGroup>
+      {/* Component content */}
+    </CheckboxGroup>
+  );
+}
+```

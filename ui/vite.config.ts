@@ -16,6 +16,7 @@ export default defineConfig({
     dts({ tsconfigPath: './tsconfig.app.json' }),
   ],
   build: {
+    target: 'esnext',
     lib: {
       entry: resolve(__dirname, 'src/index.ts'),
       name: 'MoulUI',

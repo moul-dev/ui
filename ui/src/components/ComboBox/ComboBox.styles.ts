@@ -1,0 +1,167 @@
+import * as stylex from '@stylexjs/stylex'
+import { tokens } from '../../tokens/tokens.stylex'
+
+export const styles = stylex.create({
+  container: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: tokens.spacing2,
+    width: '100%',
+  },
+  group: {
+    display: 'flex',
+    alignItems: 'stretch',
+    borderRadius: tokens.radiusMd,
+    borderWidth: '1px',
+    borderStyle: 'solid',
+    boxShadow: tokens.shadowSm,
+    overflow: 'hidden',
+    transitionProperty: 'border-color, box-shadow',
+    transitionDuration: '0.15s',
+    transitionTimingFunction: 'ease-in-out',
+  },
+  primary: {
+    backgroundColor: tokens.colorBg,
+    borderColor: tokens.colorBorder,
+  },
+  secondary: {
+    backgroundColor: tokens.colorBgSubtle,
+    borderColor: tokens.colorBorderSubtle,
+  },
+
+  groupHover: {
+    borderColor: tokens.colorNeutral400,
+  },
+  groupFocused: {
+    borderColor: tokens.colorBorderFocus,
+    boxShadow: `0 0 0 1px ${tokens.colorBorderFocus}`,
+  },
+  groupInvalid: {
+    borderColor: tokens.colorError500,
+  },
+  groupFocusedInvalid: {
+    borderColor: tokens.colorError500,
+    boxShadow: `0 0 0 1px ${tokens.colorError500}`,
+  },
+  groupDisabled: {
+    opacity: 0.4,
+    backgroundColor: tokens.colorBgSubtle,
+    cursor: 'not-allowed',
+    ':hover': {
+      borderColor: tokens.colorBorder,
+    },
+  },
+  input: {
+    flexGrow: 1,
+    width: '100%',
+    paddingBlock: tokens.spacing2,
+    paddingInlineStart: tokens.spacing3,
+    paddingInlineEnd: tokens.spacing1,
+    borderStyle: 'none',
+    backgroundColor: 'transparent',
+    color: tokens.colorFg,
+    fontFamily: tokens.fontFamilyBase,
+    fontSize: tokens.fontSizeMd,
+    lineHeight: tokens.lineHeightMd,
+    outline: 'none',
+  },
+  trigger: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderStyle: 'none',
+    backgroundColor: 'transparent',
+    color: tokens.colorFgSubtle,
+    cursor: 'pointer',
+    paddingInline: tokens.spacing3,
+    transitionProperty: 'background-color, color',
+    transitionDuration: '0.1s',
+    transitionTimingFunction: 'ease-in-out',
+    ':hover': {
+      backgroundColor: tokens.colorBgSubtle,
+      color: tokens.colorFg,
+    },
+    ':active': {
+      backgroundColor: tokens.colorBorderSubtle,
+    },
+  },
+  triggerDisabled: {
+    cursor: 'not-allowed',
+    opacity: 0.5,
+    ':hover': {
+      backgroundColor: 'transparent',
+      color: tokens.colorFgSubtle,
+    },
+  },
+  chevron: {
+    width: tokens.spacing3,
+    height: tokens.spacing3,
+    color: 'currentColor',
+  },
+  popover: {
+    borderRadius: tokens.radiusMd,
+    borderWidth: '1px',
+    borderStyle: 'solid',
+    borderColor: tokens.colorBorder,
+    backgroundColor: tokens.colorBgElevated,
+    boxShadow: tokens.shadowMd,
+    zIndex: tokens.zIndexDropdown,
+    minWidth: 'var(--trigger-width)',
+    maxHeight: '300px',
+    overflowY: 'auto',
+  },
+  listbox: {
+    padding: tokens.spacing1,
+    outline: 'none',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '2px',
+  },
+  item: {
+    display: 'flex',
+    alignItems: 'center',
+    paddingBlock: tokens.spacing2,
+    paddingInline: tokens.spacing3,
+    borderRadius: tokens.radiusSm,
+    color: tokens.colorFg,
+    fontSize: tokens.fontSizeMd,
+    lineHeight: tokens.lineHeightMd,
+    cursor: 'pointer',
+    outline: 'none',
+    userSelect: 'none',
+    backgroundColor: 'transparent',
+    transitionProperty: 'background-color, color',
+    transitionDuration: '0.1s',
+    transitionTimingFunction: 'ease-in-out',
+  },
+  itemHovered: {
+    backgroundColor: tokens.colorBgSubtle,
+  },
+  itemFocused: {
+    backgroundColor: tokens.colorBgSubtle,
+  },
+  itemSelected: {
+    backgroundColor: tokens.colorPrimary50,
+    color: tokens.colorPrimary700,
+    fontWeight: tokens.fontWeightMedium,
+  },
+  itemDisabled: {
+    opacity: 0.4,
+    cursor: 'not-allowed',
+  },
+  section: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '2px',
+    paddingBlock: tokens.spacing1,
+  },
+  sectionHeader: {
+    fontSize: tokens.fontSizeXs,
+    fontWeight: tokens.fontWeightBold,
+    color: tokens.colorFgSubtle,
+    paddingBlock: tokens.spacing1,
+    paddingInline: tokens.spacing3,
+    textTransform: 'uppercase',
+    letterSpacing: '0.05em',
+  },
+})

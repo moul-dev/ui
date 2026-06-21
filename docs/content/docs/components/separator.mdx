@@ -1,0 +1,45 @@
+---
+title: Separator
+description: Documentation for the Separator component.
+---
+
+import { Separator } from '@moul-dev/ui';
+
+
+# Separator
+
+## Preview
+
+<ComponentPreview>
+  <div className="flex h-5 items-center space-x-4 text-sm">
+    <div>Blog</div>
+    <Separator orientation="vertical" />
+    <div>Docs</div>
+    <Separator orientation="vertical" />
+    <div>Source</div>
+  </div>
+</ComponentPreview>
+
+The `Separator` component is built with React Aria and styled using StyleX.
+
+## Import
+
+```tsx
+import { Separator } from '@moul-dev/ui';
+```
+
+## Usage
+
+Here is a basic example of how to use the `Separator` component:
+
+```tsx
+import { Separator } from '@moul-dev/ui';
+
+export default function Example() {
+  return (
+    <Separator>
+      {/* Component content */}
+    </Separator>
+  );
+}
+```

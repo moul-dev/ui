@@ -1,0 +1,57 @@
+---
+title: Table
+description: Documentation for the Table component.
+---
+
+import { Table, TableHeader, TableBody, Row, Column, Cell } from '@moul-dev/ui';
+
+
+# Table
+
+## Preview
+
+<ComponentPreview>
+  <Table aria-label="Simple Table" className="border border-neutral-200 dark:border-neutral-800 rounded-lg overflow-hidden w-96">
+    <TableHeader>
+      <Column isRowHeader>Name</Column>
+      <Column>Type</Column>
+      <Column>Status</Column>
+    </TableHeader>
+    <TableBody>
+      <Row>
+        <Cell>Button</Cell>
+        <Cell>Action</Cell>
+        <Cell>Stable</Cell>
+      </Row>
+      <Row>
+        <Cell>Select</Cell>
+        <Cell>Form</Cell>
+        <Cell>Beta</Cell>
+      </Row>
+    </TableBody>
+  </Table>
+</ComponentPreview>
+
+The `Table` component is built with React Aria and styled using StyleX.
+
+## Import
+
+```tsx
+import { Table } from '@moul-dev/ui';
+```
+
+## Usage
+
+Here is a basic example of how to use the `Table` component:
+
+```tsx
+import { Table } from '@moul-dev/ui';
+
+export default function Example() {
+  return (
+    <Table>
+      {/* Component content */}
+    </Table>
+  );
+}
+```

@@ -1,0 +1,45 @@
+---
+title: Badge
+description: Documentation for the Badge component.
+---
+
+import { Badge } from '@moul-dev/ui';
+
+
+# Badge
+
+## Preview
+
+<ComponentPreview>
+  <div className="flex gap-2">
+    <Badge variant="neutral">Neutral</Badge>
+    <Badge variant="primary">Primary</Badge>
+    <Badge variant="success">Success</Badge>
+    <Badge variant="warning">Warning</Badge>
+    <Badge variant="error">Error</Badge>
+  </div>
+</ComponentPreview>
+
+The `Badge` component is built with React Aria and styled using StyleX.
+
+## Import
+
+```tsx
+import { Badge } from '@moul-dev/ui';
+```
+
+## Usage
+
+Here is a basic example of how to use the `Badge` component:
+
+```tsx
+import { Badge } from '@moul-dev/ui';
+
+export default function Example() {
+  return (
+    <Badge>
+      {/* Component content */}
+    </Badge>
+  );
+}
+```

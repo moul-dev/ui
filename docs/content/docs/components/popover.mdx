@@ -1,0 +1,46 @@
+---
+title: Popover
+description: Documentation for the Popover component.
+---
+
+import { Popover, PopoverTrigger, PopoverDialog, Button } from '@moul-dev/ui';
+
+
+# Popover
+
+## Preview
+
+<ComponentPreview>
+  <PopoverTrigger>
+    <Button>Trigger Popover</Button>
+    <Popover>
+      <PopoverDialog>
+        <div className="p-4 text-sm">This is the content inside the popover.</div>
+      </PopoverDialog>
+    </Popover>
+  </PopoverTrigger>
+</ComponentPreview>
+
+The `Popover` component is built with React Aria and styled using StyleX.
+
+## Import
+
+```tsx
+import { Popover } from '@moul-dev/ui';
+```
+
+## Usage
+
+Here is a basic example of how to use the `Popover` component:
+
+```tsx
+import { Popover } from '@moul-dev/ui';
+
+export default function Example() {
+  return (
+    <Popover>
+      {/* Component content */}
+    </Popover>
+  );
+}
+```

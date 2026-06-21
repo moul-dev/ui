@@ -1,0 +1,54 @@
+---
+title: Tabs
+description: Documentation for the Tabs component.
+---
+
+import { Tabs, TabList, Tab, TabPanel } from '@moul-dev/ui';
+
+
+# Tabs
+
+## Preview
+
+<ComponentPreview>
+  <Tabs className="w-80">
+    <TabList aria-label="Settings Tabs">
+      <Tab id="profile">Profile</Tab>
+      <Tab id="notifications">Notifications</Tab>
+      <Tab id="security">Security</Tab>
+    </TabList>
+    <TabPanel id="profile" className="p-4 border border-t-0 border-neutral-200 dark:border-neutral-800 rounded-b-lg">
+      Profile settings form.
+    </TabPanel>
+    <TabPanel id="notifications" className="p-4 border border-t-0 border-neutral-200 dark:border-neutral-800 rounded-b-lg">
+      Notification preferences.
+    </TabPanel>
+    <TabPanel id="security" className="p-4 border border-t-0 border-neutral-200 dark:border-neutral-800 rounded-b-lg">
+      Manage security settings.
+    </TabPanel>
+  </Tabs>
+</ComponentPreview>
+
+The `Tabs` component is built with React Aria and styled using StyleX.
+
+## Import
+
+```tsx
+import { Tabs } from '@moul-dev/ui';
+```
+
+## Usage
+
+Here is a basic example of how to use the `Tabs` component:
+
+```tsx
+import { Tabs } from '@moul-dev/ui';
+
+export default function Example() {
+  return (
+    <Tabs>
+      {/* Component content */}
+    </Tabs>
+  );
+}
+```

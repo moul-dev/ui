@@ -1,0 +1,52 @@
+---
+title: AlertDialog
+description: Documentation for the AlertDialog component.
+---
+
+import { AlertDialog } from '@moul-dev/ui';
+
+
+# AlertDialog
+
+## Preview
+
+<ComponentPreview>
+  <AlertDialogDemo />
+</ComponentPreview>
+
+The `AlertDialog` component is built with React Aria and styled using StyleX.
+
+## Import
+
+```tsx
+import { AlertDialog } from '@moul-dev/ui';
+```
+
+## Usage
+
+Here is a basic example of how to use the `AlertDialog` component:
+
+```tsx
+import {
+  AlertDialog,
+  AlertDialogHeader,
+  AlertDialogBody,
+  AlertDialogFooter,
+  Button
+} from '@moul-dev/ui';
+
+export default function Example() {
+  return (
+    <AlertDialog>
+      <AlertDialogHeader>Deactivate Account</AlertDialogHeader>
+      <AlertDialogBody>
+        Are you sure you want to deactivate your account? This action cannot be undone.
+      </AlertDialogBody>
+      <AlertDialogFooter>
+        <Button variant="outline" onPress={() => {}}>Cancel</Button>
+        <Button variant="danger" onPress={() => {}}>Confirm</Button>
+      </AlertDialogFooter>
+    </AlertDialog>
+  );
+}
+```

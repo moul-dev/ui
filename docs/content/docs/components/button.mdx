@@ -1,0 +1,87 @@
+---
+title: Button
+description: Documentation for the Button component.
+---
+
+import { Button } from '@moul-dev/ui';
+
+
+# Button
+
+## Preview
+
+<ComponentPreview>
+  <div className="flex gap-4 items-center">
+    <Button>Button</Button>
+    <Button isDisabled>Disabled</Button>
+    <Button isPending>Pending</Button>
+  </div>
+</ComponentPreview>
+
+The `Button` component is built with React Aria and styled using StyleX.
+
+## Variants
+
+You can customize the appearance of the button using the `variant` prop:
+
+<ComponentPreview>
+  <div className="flex flex-wrap gap-3 items-center">
+    <Button variant="primary">Primary</Button>
+    <Button variant="secondary">Secondary</Button>
+    <Button variant="tertiary">Tertiary</Button>
+    <Button variant="outline">Outline</Button>
+    <Button variant="ghost">Ghost</Button>
+    <Button variant="danger">Danger</Button>
+    <Button variant="danger-soft">Danger Soft</Button>
+  </div>
+</ComponentPreview>
+
+```tsx
+<Button variant="primary">Primary</Button>
+<Button variant="secondary">Secondary</Button>
+<Button variant="tertiary">Tertiary</Button>
+<Button variant="outline">Outline</Button>
+<Button variant="ghost">Ghost</Button>
+<Button variant="danger">Danger</Button>
+<Button variant="danger-soft">Danger Soft</Button>
+```
+
+## Sizes
+
+You can customize the size of the button using the `size` prop:
+
+<ComponentPreview>
+  <div className="flex gap-4 items-center">
+    <Button size="sm">Small</Button>
+    <Button size="md">Medium (Default)</Button>
+    <Button size="lg">Large</Button>
+  </div>
+</ComponentPreview>
+
+```tsx
+<Button size="sm">Small</Button>
+<Button size="md">Medium (Default)</Button>
+<Button size="lg">Large</Button>
+```
+
+## Import
+
+```tsx
+import { Button } from '@moul-dev/ui';
+```
+
+## Usage
+
+Here is a basic example of how to use the `Button` component:
+
+```tsx
+import { Button } from '@moul-dev/ui';
+
+export default function Example() {
+  return (
+    <Button>
+      {/* Component content */}
+    </Button>
+  );
+}
+```

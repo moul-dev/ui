@@ -1,0 +1,43 @@
+---
+title: ComboBox
+description: Documentation for the ComboBox component.
+---
+
+import { ComboBox, ComboBoxItem } from '@moul-dev/ui';
+
+
+# ComboBox
+
+## Preview
+
+<ComponentPreview>
+  <ComboBox label="Favorite Animal" placeholder="Search...">
+    <ComboBoxItem id="cat">Cat</ComboBoxItem>
+    <ComboBoxItem id="dog">Dog</ComboBoxItem>
+    <ComboBoxItem id="panda">Panda</ComboBoxItem>
+  </ComboBox>
+</ComponentPreview>
+
+The `ComboBox` component is built with React Aria and styled using StyleX.
+
+## Import
+
+```tsx
+import { ComboBox } from '@moul-dev/ui';
+```
+
+## Usage
+
+Here is a basic example of how to use the `ComboBox` component:
+
+```tsx
+import { ComboBox } from '@moul-dev/ui';
+
+export default function Example() {
+  return (
+    <ComboBox>
+      {/* Component content */}
+    </ComboBox>
+  );
+}
+```
