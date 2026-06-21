@@ -1,14 +1,15 @@
 import { Link } from 'waku'
 import { InteractiveGrid } from '@/components/interactive-grid'
 import { LiquidGlassCard } from '@/components/liquid-glass-card'
+import { Logo } from '@/components/logo'
 
 export default function Home() {
   return (
     <>
-      <title>moul.dev/ui — Clean by default. Adaptable by design.</title>
+      <title>Moul UI — Clean by default. Adaptable by design.</title>
       <meta
         name="description"
-        content="Meet moul.dev/ui. The UI library forged for moul.dev, engineered for your next big idea. Perfect for product engineers who want a modern, consistent baseline."
+        content="Meet Moul UI. The UI library forged for moul.dev, engineered for your next big idea. Perfect for product engineers who want a modern, consistent baseline."
       />
 
       <div className="flex-1 flex flex-col justify-center overflow-hidden">
@@ -27,12 +28,13 @@ export default function Home() {
 
           {/* Main Hero Content */}
           <div className="mx-auto max-w-4xl py-20 sm:py-28 lg:py-36 text-center">
-            {/* Announcement Badge */}
-            <div className="mb-8 flex justify-center">
+            {/* Logo and Announcement Badge */}
+            <div className="flex flex-col items-center gap-5 mb-8">
+              <Logo className="h-16 w-16 text-fd-primary hover:scale-105 hover:rotate-6 transition-transform duration-500 cursor-pointer" />
               <div className="relative rounded-full px-3 py-1 text-sm leading-6 text-fd-muted-foreground ring-1 ring-fd-border/80 hover:ring-fd-border transition-all duration-300 backdrop-blur-sm bg-fd-card/30">
                 Introducing{' '}
                 <span className="font-semibold text-fd-primary">
-                  moul.dev/ui v0.1.0
+                  Moul UI v0.1.0
                 </span>
               </div>
             </div>
@@ -51,7 +53,7 @@ export default function Home() {
             <p className="text-lg leading-8 text-fd-muted-foreground max-w-2xl mx-auto mb-10">
               Meet{' '}
               <code className="px-1.5 py-0.5 rounded bg-fd-secondary border border-fd-border font-mono text-sm text-fd-secondary-foreground font-medium">
-                moul.dev/ui
+                Moul UI
               </code>
               . The UI library forged for{' '}
               <a
@@ -100,15 +102,15 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Why @moul.dev/ui? Section */}
+        {/* Why Moul UI? Section */}
         <div className="relative isolate px-6 overflow-hidden">
           <div className="mx-auto max-w-5xl w-full pb-20 sm:pb-28">
             <div className="border-t border-fd-border/40 pt-16 sm:pt-20">
               <h2 className="text-3xl font-bold tracking-tight text-fd-foreground text-center mb-4 flex items-center justify-center gap-2 flex-wrap">
                 <span>Why</span>
                 <span className="inline-flex items-center gap-2 text-2xl align-middle">
-                  <span>moul.dev</span>
-                  <span className="px-2 py-0.5 rounded bg-fd-primary/10 text-fd-primary border border-fd-primary/20 text-xs font-extrabold uppercase tracking-widest leading-none">
+                  <span>Moul</span>
+                  <span className="px-1.5 py-0.5 rounded bg-fd-muted text-fd-muted-foreground border border-fd-border text-xs font-mono font-semibold tracking-wider leading-none shadow-[0_1.5px_0_0_rgba(0,0,0,0.1)] dark:shadow-[0_1.5px_0_0_rgba(255,255,255,0.1)]">
                     UI
                   </span>
                 </span>
@@ -117,7 +119,7 @@ export default function Home() {
               <p className="text-base text-fd-muted-foreground max-w-3xl mx-auto text-center mb-12 leading-relaxed">
                 Built on a bleeding-edge modern stack,{' '}
                 <code className="px-1.5 py-0.5 rounded bg-fd-secondary border border-fd-border font-mono text-sm text-fd-secondary-foreground font-medium">
-                  moul.dev/ui
+                  Moul UI
                 </code>{' '}
                 gives you the developer experience of a premium component
                 library with the performance and accessibility of a custom-built

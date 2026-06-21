@@ -1,12 +1,23 @@
 @layer base, utilities, priority1, priority2, priority3, priority4, priority5;
 
 @import 'tailwindcss';
+@import url("https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap");
+
+@theme {
+  --font-sans: "Google Sans", "Inter", sans-serif;
+}
+
 @import '@moul-dev/ui/style';
 @import 'fumadocs-ui/css/neutral.css';
 @import 'fumadocs-ui/css/preset.css';
 
 html {
   scrollbar-gutter: stable;
+  font-family: var(--font-sans);
+}
+
+body {
+  font-family: var(--font-sans);
 }
 
 html > body[data-scroll-locked] {

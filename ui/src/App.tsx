@@ -12,7 +12,7 @@ const styles = stylex.create({
     minHeight: '100vh',
     background: 'radial-gradient(circle at center, #0f172a 0%, #020617 100%)',
     color: '#f8fafc',
-    fontFamily: "'Outfit', 'Inter', system-ui, -apple-system, sans-serif",
+    fontFamily: "'Google Sans', 'Inter', system-ui, -apple-system, sans-serif",
     padding: '40px 20px',
   },
   header: {
