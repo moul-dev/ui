@@ -1,31 +1,113 @@
 ---
-title: Hello World
-description: Your favourite docs framework.
+title: Get Started
+description: Meet Moul UI. An accessible, zero-runtime React component library built on React Aria and StyleX.
 icon: Rocket
 ---
 
-Hey there! Welcome to the Moul UI documentation website.
+Moul UI is a modular component library designed for product engineers who want a modern, consistent, and highly accessible baseline for React applications.
 
-## Heading
+By merging the robust, accessible foundations of **React Aria Components** with the compile-time type safety and efficiency of **StyleX**, Moul UI delivers beautiful default styles with zero runtime styling overhead.
 
-Hello World!
+---
+
+## Why Moul UI?
 
 <Cards>
-  <Card title="Learn more about Moul UI" href="/docs/button" />
-  <Card title="Learn more about Fumadocs" href="https://fumadocs.dev" />
+  <Card title="Accessible by Default" description="Full keyboard navigation, screen reader support, and robust interaction states powered by React Aria." />
+  <Card title="Zero-Runtime Styling" description="Built on StyleX. Atomic CSS is fully compiled and extracted at build time, resulting in zero Javascript style overhead." />
+  <Card title="Clean & Adaptable" description="A clean baseline of components designed to be easily modified and custom-themed to fit your branding." />
 </Cards>
 
-### CodeBlock
+---
 
-```ts
-console.log('Hello World');
-```
+## Installation
 
-#### Table
+Follow these steps to integrate `@moul-dev/ui` into your React project:
 
-| Head                            | Description                         |
-| ------------------------------- | ----------------------------------- |
-| `hello`                         | Hello World                         |
-| very **important**              | Hey                                 |
-| _Surprisingly_                  | Fumadocs                            |
-| very long text that looks weird | hello world hello world hello world |
+<Steps>
+  <Step>
+    ### Install the Package
+    
+    Add the library and its peer dependencies to your workspace:
+    
+    <Tabs items={['Bun', 'npm', 'pnpm', 'yarn']}>
+      <Tab value="Bun">
+        ```bash
+        bun add @moul-dev/ui
+        ```
+      </Tab>
+      <Tab value="npm">
+        ```bash
+        npm install @moul-dev/ui
+        ```
+      </Tab>
+      <Tab value="pnpm">
+        ```bash
+        pnpm add @moul-dev/ui
+        ```
+      </Tab>
+      <Tab value="yarn">
+        ```bash
+        yarn add @moul-dev/ui
+        ```
+      </Tab>
+    </Tabs>
+  </Step>
+
+  <Step>
+    ### Import the CSS Stylesheet
+    
+    To load the compiled StyleX atomic styles, import the stylesheet at the root of your application (typically in `main.tsx`, `index.tsx`, or your global CSS file):
+    
+    ```ts
+    import '@moul-dev/ui/style.css';
+    ```
+  </Step>
+
+  <Step>
+    ### Wrap your App with ThemeProvider (Optional)
+    
+    Wrap your application tree (or specific sections) with the `ThemeProvider` to control the color scheme or apply token overrides:
+    
+    ```tsx
+    import { ThemeProvider } from '@moul-dev/ui';
+
+    function App({ children }) {
+      return (
+        <ThemeProvider colorScheme="light dark">
+          {children}
+        </ThemeProvider>
+      );
+    }
+    ```
+  </Step>
+
+  <Step>
+    ### Use the Components
+    
+    Now you can import and use any of the Moul UI components:
+    
+    ```tsx
+    import { Button } from '@moul-dev/ui';
+
+    function HomePage() {
+      return (
+        <div style={{ padding: '2rem', display: 'flex', gap: '1rem' }}>
+          <Button variant="primary" onPress={() => console.log('Primary clicked!')}>
+            Primary Button
+          </Button>
+          <Button variant="secondary" onPress={() => console.log('Secondary clicked!')}>
+            Secondary Button
+          </Button>
+        </div>
+      );
+    }
+    ```
+  </Step>
+</Steps>
+
+---
+
+## Next Steps
+
+Explore the components sidebars to see all the available interactive elements, variations, and configuration settings!
