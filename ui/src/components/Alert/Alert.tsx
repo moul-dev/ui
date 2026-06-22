@@ -6,7 +6,7 @@ import { styles } from './Alert.styles'
 
 export type AlertVariant =
   | 'info'
-  | 'info-accent'
+  | 'accent'
   | 'success'
   | 'warning'
   | 'error'
@@ -105,7 +105,7 @@ const LoadingIcon = () => (
 const getVariantIcon = (variant: AlertVariant) => {
   switch (variant) {
     case 'info':
-    case 'info-accent':
+    case 'accent':
       return <InfoIcon />
     case 'success':
       return <SuccessIcon />

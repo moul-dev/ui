@@ -101,17 +101,29 @@ export const styles = stylex.create({
 
   // Color Status Overrides
   info: {},
-  'info-accent': {},
-  success: {},
-  warning: {},
-  error: {},
+  accent: {
+    backgroundColor: 'light-dark(oklch(0.97 0.02 250), oklch(0.19 0.035 250))',
+    borderColor: 'light-dark(oklch(0.88 0.04 250), oklch(0.28 0.06 250))',
+  },
+  success: {
+    backgroundColor: 'light-dark(oklch(0.97 0.02 145), oklch(0.19 0.035 145))',
+    borderColor: 'light-dark(oklch(0.88 0.04 145), oklch(0.28 0.06 145))',
+  },
+  warning: {
+    backgroundColor: 'light-dark(oklch(0.98 0.02 85), oklch(0.19 0.035 85))',
+    borderColor: 'light-dark(oklch(0.90 0.05 85), oklch(0.28 0.06 85))',
+  },
+  error: {
+    backgroundColor: 'light-dark(oklch(0.97 0.02 27), oklch(0.19 0.035 27))',
+    borderColor: 'light-dark(oklch(0.90 0.05 27), oklch(0.28 0.06 27))',
+  },
   loading: {},
 
   // Icon Color Variants
   icon_info: {
     color: tokens.colorFg,
   },
-  'icon_info-accent': {
+  icon_accent: {
     color: tokens.colorPrimary500,
   },
   icon_success: {
@@ -135,7 +147,7 @@ export const styles = stylex.create({
   title_info: {
     color: tokens.colorFg,
   },
-  'title_info-accent': {
+  title_accent: {
     color: tokens.colorPrimary500,
   },
   title_success: {

@@ -40,8 +40,8 @@ You can customize the type of alert using the `variant` prop:
       description="This is a standard information notification."
     />
     <Alert
-      variant="info-accent"
-      title="Accent Info Alert"
+      variant="accent"
+      title="Accent Alert"
       description="This is an accented information notification with a colored icon/title."
     />
     <Alert
@@ -69,7 +69,7 @@ You can customize the type of alert using the `variant` prop:
 
 ```tsx
 <Alert variant="info" title="..." description="..." />
-<Alert variant="info-accent" title="..." description="..." />
+<Alert variant="accent" title="..." description="..." />
 <Alert variant="success" title="..." description="..." />
 <Alert variant="warning" title="..." description="..." />
 <Alert variant="error" title="..." description="..." />
@@ -83,7 +83,7 @@ Alerts can accept an optional inline action element or a close button using `act
 <ComponentPreview>
   <div className="flex flex-col gap-4 w-full max-w-2xl">
     <Alert
-      variant="info-accent"
+      variant="accent"
       title="Update available"
       description="A new version is ready to install."
       action={<Button variant="primary" size="sm">Refresh</Button>}
@@ -94,7 +94,7 @@ Alerts can accept an optional inline action element or a close button using `act
 
 ```tsx
 <Alert
-  variant="info-accent"
+  variant="accent"
   title="Update available"
   description="A new version is ready to install."
   action={<Button variant="primary" size="sm">Refresh</Button>}

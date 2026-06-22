@@ -189,7 +189,7 @@ function App() {
 
             {/* Info with Accent & Action */}
             <Alert
-              variant="info-accent"
+              variant="accent"
               title="Update available"
               description="A new version of the application is available. Please refresh to get the latest features and bug fixes."
               action={
