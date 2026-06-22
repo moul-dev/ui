@@ -10,6 +10,7 @@ import {
   type ToastRegionProps as AriaToastRegionProps,
 } from 'react-aria-components'
 import type { StyleXStyles } from '@stylexjs/stylex'
+import { Alert } from '../Alert'
 import { styles } from './Toast.styles'
 
 // ── Toast Content Type ───────────────────────────────────────────────
@@ -73,7 +74,6 @@ export interface ToastProps
 export const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
   function Toast({ toast, style, className, ...rest }, ref) {
     const variant = toast.content.variant ?? 'info'
-    const isError = variant === 'error'
 
     return (
       <AriaToast
@@ -83,10 +83,6 @@ export const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
         className={(_) => {
           const { className: stylexClass } = stylex.props(
             styles.toast,
-            variant === 'error' && styles.toastError,
-            variant === 'success' && styles.toastSuccess,
-            variant === 'warning' && styles.toastWarning,
-            variant === 'info' && styles.toastInfo,
             style,
           )
           return [stylexClass, className].filter(Boolean).join(' ')
@@ -94,34 +90,17 @@ export const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
         style={(_) => {
           const { style: stylexStyle } = stylex.props(
             styles.toast,
-            variant === 'error' && styles.toastError,
-            variant === 'success' && styles.toastSuccess,
-            variant === 'warning' && styles.toastWarning,
-            variant === 'info' && styles.toastInfo,
             style,
           )
           return stylexStyle ?? {}
         }}
       >
-        <div
-          role={isError ? 'alert' : 'status'}
-          style={{ display: 'contents' }}
-        >
-          <div
-            className={stylex.props(styles.title).className}
-            style={stylex.props(styles.title).style}
-          >
-            {toast.content.title}
-          </div>
-          {toast.content.description && (
-            <div
-              className={stylex.props(styles.description).className}
-              style={stylex.props(styles.description).style}
-            >
-              {toast.content.description}
-            </div>
-          )}
-        </div>
+        <Alert
+          variant={variant}
+          title={toast.content.title}
+          description={toast.content.description}
+          onClose={() => toastQueue.close(toast.key)}
+        />
       </AriaToast>
     )
   },
@@ -156,7 +135,12 @@ export const ToastContainer = React.forwardRef<
         return stylexStyle ?? {}
       }}
     >
-      <AriaToastList>{({ toast }) => <Toast toast={toast} />}</AriaToastList>
+      <AriaToastList
+        className={stylex.props(styles.list).className}
+        style={stylex.props(styles.list).style}
+      >
+        {({ toast }) => <Toast toast={toast} />}
+      </AriaToastList>
     </AriaToastRegion>
   )
 })

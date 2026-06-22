@@ -82,7 +82,7 @@ export const styles = stylex.create({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: '4px',
+    padding: tokens.spacing1,
     borderRadius: tokens.radiusSm,
     transition: 'background-color 0.15s, color 0.15s',
     ':hover': {

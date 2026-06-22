@@ -14,26 +14,75 @@ import { Toast } from '@moul-dev/ui';
   <ToastDemo />
 </ComponentPreview>
 
-The `Toast` component is built with React Aria and styled using StyleX.
+The `Toast` component is built with React Aria and styled using StyleX. Multiple active toasts are stacked vertically with elegant y-spacing.
 
 ## Import
 
+To use toast notifications in your application, you need to import the hooks and the container component:
+
 ```tsx
-import { Toast } from '@moul-dev/ui';
+import { useToast, ToastContainer } from '@moul-dev/ui';
 ```
 
 ## Usage
 
-Here is a basic example of how to use the `Toast` component:
+Place the `ToastContainer` at the root of your application (or near the layout root), and call the `useToast` hook to trigger notifications:
 
 ```tsx
-import { Toast } from '@moul-dev/ui';
+import { useToast, ToastContainer, Button } from '@moul-dev/ui';
 
 export default function Example() {
+  const toast = useToast();
+
   return (
-    <Toast>
-      {/* Component content */}
-    </Toast>
+    <div>
+      <Button onPress={() => toast.show('Hello World!')}>
+        Show Toast
+      </Button>
+      
+      {/* ToastContainer must be rendered to display the active toasts */}
+      <ToastContainer />
+    </div>
   );
 }
 ```
+
+## Options & Variants
+
+The `toast.show` function accepts a title string as the first argument, and an optional options object as the second:
+
+```typescript
+toast.show(title: string, options?: {
+  description?: string;
+  variant?: 'info' | 'success' | 'warning' | 'error';
+  timeout?: number; // duration in ms, default is 5000
+});
+```
+
+### Examples
+
+#### Success Notification
+```typescript
+toast.show('Action Completed', {
+  description: 'Your changes have been saved.',
+  variant: 'success',
+});
+```
+
+#### Error Notification
+```typescript
+toast.show('Request Failed', {
+  description: 'Could not connect to server.',
+  variant: 'error',
+  timeout: 8000,
+});
+```
+
+#### Warning Notification
+```typescript
+toast.show('Unsaved Changes', {
+  description: 'Please review your updates.',
+  variant: 'warning',
+});
+```
+

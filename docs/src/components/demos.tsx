@@ -89,19 +89,52 @@ export function ModalDemo() {
 export function ToastDemo() {
   const toast = useToast()
   return (
-    <>
+    <div className="flex flex-wrap gap-4">
+      <Button
+        variant="outline"
+        onPress={() =>
+          toast.show('Info Notification', {
+            description: 'This is a general informational message.',
+            variant: 'info',
+          })
+        }
+      >
+        Info Toast
+      </Button>
       <Button
         onPress={() =>
-          toast.show('Notification', {
+          toast.show('Success Notification', {
             description: 'Action completed successfully.',
             variant: 'success',
           })
         }
       >
-        Trigger Toast
+        Success Toast
+      </Button>
+      <Button
+        variant="secondary"
+        onPress={() =>
+          toast.show('Warning Notification', {
+            description: 'Please review your input values.',
+            variant: 'warning',
+          })
+        }
+      >
+        Warning Toast
+      </Button>
+      <Button
+        variant="danger"
+        onPress={() =>
+          toast.show('Error Notification', {
+            description: 'Failed to process request. Please try again.',
+            variant: 'error',
+          })
+        }
+      >
+        Error Toast
       </Button>
       <ToastContainer />
-    </>
+    </div>
   )
 }
 

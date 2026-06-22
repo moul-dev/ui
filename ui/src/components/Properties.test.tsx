@@ -975,13 +975,14 @@ describe('Centralized Component Properties Tests', () => {
           const getAttrCarrier = (
             node: HTMLElement | null,
           ): HTMLElement | null => {
-            if (!node) return null
-            if (node.getAttribute(attrKey) === val) return node
+            if (node && node.getAttribute(attrKey) === val) return node
 
-            const children = Array.from(node.querySelectorAll('*'))
-            for (const child of children) {
-              if (child.getAttribute(attrKey) === val) {
-                return child as HTMLElement
+            if (node) {
+              const children = Array.from(node.querySelectorAll('*'))
+              for (const child of children) {
+                if (child.getAttribute(attrKey) === val) {
+                  return child as HTMLElement
+                }
               }
             }
 
