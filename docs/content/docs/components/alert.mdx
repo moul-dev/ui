@@ -1,0 +1,148 @@
+---
+title: Alert
+description: Documentation for the Alert component.
+---
+
+import { Alert, Button } from '@moul-dev/ui';
+
+
+# Alert
+
+## Preview
+
+<ComponentPreview>
+  <div className="flex flex-col gap-4 w-full max-w-2xl">
+    <Alert
+      variant="info"
+      title="New features available"
+      description="Check out our latest updates including dark mode support and improved accessibility features."
+    />
+  </div>
+</ComponentPreview>
+
+The `Alert` component is built with React Aria and styled using StyleX. It supports multiple status variants, inline action buttons, close triggers, and rich custom layout slots.
+
+## Import
+
+```tsx
+import { Alert } from '@moul-dev/ui';
+```
+
+## Variants
+
+You can customize the type of alert using the `variant` prop:
+
+<ComponentPreview>
+  <div className="flex flex-col gap-4 w-full max-w-2xl">
+    <Alert
+      variant="info"
+      title="Info Alert"
+      description="This is a standard information notification."
+    />
+    <Alert
+      variant="info-accent"
+      title="Accent Info Alert"
+      description="This is an accented information notification with a colored icon/title."
+    />
+    <Alert
+      variant="success"
+      title="Success Alert"
+      description="The operation completed successfully."
+    />
+    <Alert
+      variant="warning"
+      title="Warning Alert"
+      description="This action might affect your configuration settings."
+    />
+    <Alert
+      variant="error"
+      title="Error Alert"
+      description="We encountered an issue connecting to the server."
+    />
+    <Alert
+      variant="loading"
+      title="Processing your request"
+      description="Please wait while we perform the action."
+    />
+  </div>
+</ComponentPreview>
+
+```tsx
+<Alert variant="info" title="..." description="..." />
+<Alert variant="info-accent" title="..." description="..." />
+<Alert variant="success" title="..." description="..." />
+<Alert variant="warning" title="..." description="..." />
+<Alert variant="error" title="..." description="..." />
+<Alert variant="loading" title="..." description="..." />
+```
+
+## Actions and Closable
+
+Alerts can accept an optional inline action element or a close button using `action` and `onClose` props:
+
+<ComponentPreview>
+  <div className="flex flex-col gap-4 w-full max-w-2xl">
+    <Alert
+      variant="info-accent"
+      title="Update available"
+      description="A new version is ready to install."
+      action={<Button variant="primary" size="sm">Refresh</Button>}
+    />
+    <AlertDemo />
+  </div>
+</ComponentPreview>
+
+```tsx
+<Alert
+  variant="info-accent"
+  title="Update available"
+  description="A new version is ready to install."
+  action={<Button variant="primary" size="sm">Refresh</Button>}
+/>
+
+<Alert
+  variant="success"
+  title="Profile updated successfully"
+  onClose={() => handleClose()}
+/>
+```
+
+## Rich Content (Children)
+
+You can pass custom children inside the `Alert` component to display nested lists, custom spacing, or elements:
+
+<ComponentPreview>
+  <div className="flex flex-col gap-4 w-full max-w-2xl">
+    <Alert
+      variant="error"
+      title="Unable to connect to server"
+      action={<Button variant="danger" size="sm">Retry</Button>}
+    >
+      <div className="mt-2 text-sm text-slate-500">
+        <p className="mb-2">We're experiencing connection issues. Please try the following:</p>
+        <ul className="list-disc pl-5 space-y-1">
+          <li>Check your internet connection</li>
+          <li>Refresh the page</li>
+          <li>Clear your browser cache</li>
+        </ul>
+      </div>
+    </Alert>
+  </div>
+</ComponentPreview>
+
+```tsx
+<Alert
+  variant="error"
+  title="Unable to connect to server"
+  action={<Button variant="danger" size="sm">Retry</Button>}
+>
+  <div className="mt-2 text-sm text-slate-500">
+    <p className="mb-2">We're experiencing connection issues. Please try the following:</p>
+    <ul className="list-disc pl-5 space-y-1">
+      <li>Check your internet connection</li>
+      <li>Refresh the page</li>
+      <li>Clear your browser cache</li>
+    </ul>
+  </div>
+</Alert>
+```

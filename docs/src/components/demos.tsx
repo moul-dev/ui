@@ -17,6 +17,7 @@ import {
   ToastContainer,
   Form,
   TextField,
+  Alert,
 } from '@moul-dev/ui'
 
 export function AlertDialogDemo() {
@@ -110,5 +111,27 @@ export function FormDemo() {
       <TextField label="Username" placeholder="Enter username" />
       <Button type="submit">Submit</Button>
     </Form>
+  )
+}
+
+export function AlertDemo() {
+  const [isVisible, setIsVisible] = useState(true)
+
+  if (!isVisible) {
+    return (
+      <div className="flex justify-center p-4">
+        <Button variant="outline" onPress={() => setIsVisible(true)}>
+          Reset Alert Demo
+        </Button>
+      </div>
+    )
+  }
+
+  return (
+    <Alert
+      variant="success"
+      title="Profile updated successfully"
+      onClose={() => setIsVisible(false)}
+    />
   )
 }

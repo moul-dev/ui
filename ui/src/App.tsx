@@ -9,6 +9,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
 } from './components/AlertDialog'
+import { Alert } from './components/Alert'
 
 // Define StyleX styles
 const styles = stylex.create({
@@ -79,6 +80,21 @@ const styles = stylex.create({
     fontSize: '1rem',
     color: '#cbd5e1',
     fontWeight: 500,
+  },
+  alertList: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '16px',
+    width: '100%',
+  },
+  bulletList: {
+    margin: 0,
+    paddingLeft: '20px',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '4px',
+    fontSize: '0.875rem',
+    color: '#94a3b8',
   },
 })
 
@@ -157,6 +173,74 @@ function App() {
                 </Modal>
               </ModalOverlay>
             </DialogTrigger>
+          </div>
+        </section>
+
+        {/* Alerts Showcase */}
+        <section {...stylex.props(styles.section)}>
+          <h2 {...stylex.props(styles.sectionTitle)}>Alerts Showcase</h2>
+          <div {...stylex.props(styles.alertList)}>
+            {/* Info Standard */}
+            <Alert
+              variant="info"
+              title="New features available"
+              description="Check out our latest updates including dark mode support and improved accessibility features."
+            />
+
+            {/* Info with Accent & Action */}
+            <Alert
+              variant="info-accent"
+              title="Update available"
+              description="A new version of the application is available. Please refresh to get the latest features and bug fixes."
+              action={
+                <Button variant="primary" size="sm">
+                  Refresh
+                </Button>
+              }
+            />
+
+            {/* Error with Action & Bullet List */}
+            <Alert
+              variant="error"
+              title="Unable to connect to server"
+              action={
+                <Button variant="danger" size="sm">
+                  Retry
+                </Button>
+              }
+            >
+              <div style={{ marginTop: '8px' }}>
+                <p style={{ margin: '0 0 8px 0', fontSize: '0.875rem', color: '#94a3b8' }}>
+                  We're experiencing connection issues. Please try the following:
+                </p>
+                <ul {...stylex.props(styles.bulletList)}>
+                  <li>Check your internet connection</li>
+                  <li>Refresh the page</li>
+                  <li>Clear your browser cache</li>
+                </ul>
+              </div>
+            </Alert>
+
+            {/* Success with Close button */}
+            <Alert
+              variant="success"
+              title="Profile updated successfully"
+              onClose={() => alert('Close clicked')}
+            />
+
+            {/* Loading/Processing State */}
+            <Alert
+              variant="loading"
+              title="Processing your request"
+              description="Please wait while we sync your data. This may take a few moments."
+            />
+
+            {/* Warning State */}
+            <Alert
+              variant="warning"
+              title="Scheduled maintenance"
+              description="Our services will be unavailable on Sunday, March 15th from 2:00 AM to 6:00 AM UTC for scheduled maintenance."
+            />
           </div>
         </section>
       </main>

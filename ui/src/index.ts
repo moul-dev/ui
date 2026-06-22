@@ -156,6 +156,9 @@ export type {
   AlertDialogFooterProps,
 } from './components/AlertDialog/AlertDialog'
 
+export { Alert } from './components/Alert'
+export type { AlertProps, AlertVariant } from './components/Alert/Alert'
+
 export { Tooltip, TooltipTrigger } from './components/Tooltip'
 export type { TooltipProps } from './components/Tooltip/Tooltip'
 
