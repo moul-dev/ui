@@ -36,7 +36,7 @@ export const styles = stylex.create({
     lineHeight: tokens.lineHeightXs,
   },
   md: {
-    paddingBlock: '0.375rem',
+    paddingBlock: tokens.spacing2,
     paddingInline: tokens.spacing3,
     borderRadius: tokens.radiusMd,
     fontSize: tokens.fontSizeSm,
