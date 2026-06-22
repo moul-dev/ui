@@ -108,11 +108,12 @@ export function ToastDemo() {
             variant: 'success',
           })
         }
+        variant="outline"
       >
         Success Toast
       </Button>
       <Button
-        variant="secondary"
+        variant="outline"
         onPress={() =>
           toast.show('Warning Notification', {
             description: 'Please review your input values.',
@@ -123,7 +124,7 @@ export function ToastDemo() {
         Warning Toast
       </Button>
       <Button
-        variant="danger"
+        variant="outline"
         onPress={() =>
           toast.show('Error Notification', {
             description: 'Failed to process request. Please try again.',
