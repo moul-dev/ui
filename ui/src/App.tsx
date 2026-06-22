@@ -1,6 +1,14 @@
 import * as stylex from '@stylexjs/stylex'
 import { useState } from 'react'
+import { DialogTrigger } from 'react-aria-components'
 import { Button } from './components/Button'
+import { Modal, ModalOverlay } from './components/Modal'
+import {
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+} from './components/AlertDialog'
 
 // Define StyleX styles
 const styles = stylex.create({
@@ -117,6 +125,38 @@ function App() {
             <Button variant="secondary" isDisabled>
               Secondary Disabled
             </Button>
+          </div>
+        </section>
+
+        {/* Dialogs Showcase */}
+        <section {...stylex.props(styles.section)}>
+          <h2 {...stylex.props(styles.sectionTitle)}>Overlays & Dialogs</h2>
+          <div {...stylex.props(styles.buttonGroup)}>
+            <DialogTrigger>
+              <Button variant="primary">Delete Account</Button>
+              <ModalOverlay>
+                <Modal>
+                  <AlertDialog>
+                    {({ close }) => (
+                      <>
+                        <AlertDialogHeader>Delete Account</AlertDialogHeader>
+                        <AlertDialogBody>
+                          Are you sure you want to delete your account? This action cannot be undone and all of your data will be permanently removed.
+                        </AlertDialogBody>
+                        <AlertDialogFooter>
+                          <Button variant="secondary" onPress={close}>
+                            Cancel
+                          </Button>
+                          <Button variant="danger" onPress={close}>
+                            Delete
+                          </Button>
+                        </AlertDialogFooter>
+                      </>
+                    )}
+                  </AlertDialog>
+                </Modal>
+              </ModalOverlay>
+            </DialogTrigger>
           </div>
         </section>
       </main>
