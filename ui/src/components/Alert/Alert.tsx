@@ -188,7 +188,7 @@ export const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert
             type="button"
             aria-label="Close alert"
             onClick={onClose}
-            {...stylex.props(styles.closeButton)}
+            {...stylex.props(styles.closeButton, styles[`closeButton_${variant}`])}
           >
             <svg
               viewBox="0 0 24 24"

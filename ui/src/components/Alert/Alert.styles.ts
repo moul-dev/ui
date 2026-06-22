@@ -86,11 +86,55 @@ export const styles = stylex.create({
     borderRadius: tokens.radiusSm,
     transition: 'background-color 0.15s, color 0.15s',
     ':hover': {
-      backgroundColor: tokens.colorNeutral100,
       color: tokens.colorFg,
     },
+  },
+  closeButton_info: {
+    ':hover': {
+      backgroundColor: tokens.colorAlertHoverInfo,
+    },
     ':active': {
-      backgroundColor: tokens.colorNeutral200,
+      backgroundColor: tokens.colorAlertActiveInfo,
+    },
+  },
+  closeButton_loading: {
+    ':hover': {
+      backgroundColor: tokens.colorAlertHoverInfo,
+    },
+    ':active': {
+      backgroundColor: tokens.colorAlertActiveInfo,
+    },
+  },
+  closeButton_accent: {
+    ':hover': {
+      backgroundColor: tokens.colorAlertHoverAccent,
+    },
+    ':active': {
+      backgroundColor: tokens.colorAlertActiveAccent,
+    },
+  },
+  closeButton_success: {
+    ':hover': {
+      backgroundColor: tokens.colorAlertHoverSuccess,
+    },
+    ':active': {
+      backgroundColor: tokens.colorAlertActiveSuccess,
+    },
+  },
+  closeButton_warning: {
+    ':hover': {
+      backgroundColor: tokens.colorAlertHoverWarning,
+    },
+    ':active': {
+      backgroundColor: tokens.colorAlertActiveWarning,
+    },
+  },
+  closeButton_error: {
+    ':hover': {
+      backgroundColor: tokens.colorAlertHoverError,
+    },
+    ':active': {
+      backgroundColor: tokens.colorAlertActiveError,
     },
   },
 
@@ -102,20 +146,20 @@ export const styles = stylex.create({
   // Color Status Overrides
   info: {},
   accent: {
-    backgroundColor: 'light-dark(oklch(0.97 0.02 250), oklch(0.19 0.035 250))',
-    borderColor: 'light-dark(oklch(0.88 0.04 250), oklch(0.28 0.06 250))',
+    backgroundColor: tokens.colorAlertBgAccent,
+    borderColor: tokens.colorAlertBorderAccent,
   },
   success: {
-    backgroundColor: 'light-dark(oklch(0.97 0.02 145), oklch(0.19 0.035 145))',
-    borderColor: 'light-dark(oklch(0.88 0.04 145), oklch(0.28 0.06 145))',
+    backgroundColor: tokens.colorAlertBgSuccess,
+    borderColor: tokens.colorAlertBorderSuccess,
   },
   warning: {
-    backgroundColor: 'light-dark(oklch(0.98 0.02 85), oklch(0.19 0.035 85))',
-    borderColor: 'light-dark(oklch(0.90 0.05 85), oklch(0.28 0.06 85))',
+    backgroundColor: tokens.colorAlertBgWarning,
+    borderColor: tokens.colorAlertBorderWarning,
   },
   error: {
-    backgroundColor: 'light-dark(oklch(0.97 0.02 27), oklch(0.19 0.035 27))',
-    borderColor: 'light-dark(oklch(0.90 0.05 27), oklch(0.28 0.06 27))',
+    backgroundColor: tokens.colorAlertBgError,
+    borderColor: tokens.colorAlertBorderError,
   },
   loading: {},
 
