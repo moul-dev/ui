@@ -12,7 +12,8 @@ export type AlertVariant =
   | 'error'
   | 'loading'
 
-export interface AlertProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'style' | 'title'> {
+export interface AlertProps
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'style' | 'title'> {
   variant?: AlertVariant
   title?: React.ReactNode
   description?: React.ReactNode
@@ -120,93 +121,97 @@ const getVariantIcon = (variant: AlertVariant) => {
 
 // ── Alert Component ──────────────────────────────────────────────────
 
-export const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
-  {
-    variant = 'info',
-    title,
-    description,
-    icon,
-    action,
-    onClose,
-    style,
-    className,
-    children,
-    ...rest
-  },
-  ref
-) {
-  // Determine standard accessibility role based on variant
-  const role = variant === 'error' || variant === 'warning' ? 'alert' : 'status'
-  
-  const iconElement = icon !== undefined ? icon : getVariantIcon(variant)
+export const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
+  function Alert(
+    {
+      variant = 'info',
+      title,
+      description,
+      icon,
+      action,
+      onClose,
+      style,
+      className,
+      children,
+      ...rest
+    },
+    ref,
+  ) {
+    // Determine standard accessibility role based on variant
+    const role =
+      variant === 'error' || variant === 'warning' ? 'alert' : 'status'
 
-  const { className: stylexClass, style: stylexStyle } = stylex.props(
-    styles.container,
-    styles[variant],
-    style
-  )
+    const iconElement = icon !== undefined ? icon : getVariantIcon(variant)
 
-  const combinedClassName = [stylexClass, className].filter(Boolean).join(' ')
+    const { className: stylexClass, style: stylexStyle } = stylex.props(
+      styles.container,
+      styles[variant],
+      style,
+    )
 
-  return (
-    <div
-      {...rest}
-      ref={ref}
-      role={role}
-      className={combinedClassName}
-      style={stylexStyle}
-    >
-      {iconElement && (
-        <div {...stylex.props(styles.iconContainer, styles[`icon_${variant}`])}>
-          <div {...stylex.props(styles.icon)}>{iconElement}</div>
-        </div>
-      )}
-      
-      <div {...stylex.props(styles.content)}>
-        {title && (
-          <div {...stylex.props(styles.title, styles[`title_${variant}`])}>
-            {title}
-          </div>
-        )}
-        {description && (
-          <div {...stylex.props(styles.description)}>
-            {description}
-          </div>
-        )}
-        {children}
-      </div>
+    const combinedClassName = [stylexClass, className].filter(Boolean).join(' ')
 
-      {action && (
-        <div {...stylex.props(styles.actionContainer)}>
-          {action}
-        </div>
-      )}
-
-      {onClose && (
-        <div {...stylex.props(styles.closeButtonContainer)}>
-          <button
-            type="button"
-            aria-label="Close alert"
-            onClick={onClose}
-            {...stylex.props(styles.closeButton, styles[`closeButton_${variant}`])}
+    return (
+      <div
+        {...rest}
+        ref={ref}
+        role={role}
+        className={combinedClassName}
+        style={stylexStyle}
+      >
+        {iconElement && (
+          <div
+            {...stylex.props(styles.iconContainer, styles[`icon_${variant}`])}
           >
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={2}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              {...stylex.props(styles.closeIcon)}
-            >
-              <line x1={18} y1={6} x2={6} y2={18} />
-              <line x1={6} y1={6} x2={18} y2={18} />
-            </svg>
-          </button>
+            <div {...stylex.props(styles.icon)}>{iconElement}</div>
+          </div>
+        )}
+
+        <div {...stylex.props(styles.content)}>
+          {title && (
+            <div {...stylex.props(styles.title, styles[`title_${variant}`])}>
+              {title}
+            </div>
+          )}
+          {description && (
+            <div {...stylex.props(styles.description)}>{description}</div>
+          )}
+          {children}
         </div>
-      )}
-    </div>
-  )
-})
+
+        {action && (
+          <div {...stylex.props(styles.actionContainer)}>{action}</div>
+        )}
+
+        {onClose && (
+          <div {...stylex.props(styles.closeButtonContainer)}>
+            <button
+              type="button"
+              aria-label="Close alert"
+              onClick={onClose}
+              {...stylex.props(
+                styles.closeButton,
+                styles[`closeButton_${variant}`],
+              )}
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                {...stylex.props(styles.closeIcon)}
+              >
+                <line x1={18} y1={6} x2={6} y2={18} />
+                <line x1={6} y1={6} x2={18} y2={18} />
+              </svg>
+            </button>
+          </div>
+        )}
+      </div>
+    )
+  },
+)
 
 Alert.displayName = 'Alert'

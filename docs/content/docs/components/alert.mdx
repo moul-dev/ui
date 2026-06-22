@@ -118,9 +118,9 @@ You can pass custom children inside the `Alert` component to display nested list
       title="Unable to connect to server"
       action={<Button variant="danger" size="sm">Retry</Button>}
     >
-      <div className="mt-2 text-sm text-slate-500">
-        <p className="mb-2">We're experiencing connection issues. Please try the following:</p>
-        <ul className="list-disc pl-5 space-y-1">
+      <div style={{ marginTop: '8px', fontSize: '14px', color: 'var(--colorFgSubtle)' }}>
+        <p style={{ margin: '0 0 8px 0' }}>We're experiencing connection issues. Please try the following:</p>
+        <ul style={{ listStyleType: 'disc', paddingLeft: '20px', margin: '0', display: 'flex', flexDirection: 'column', gap: '4px' }}>
           <li>Check your internet connection</li>
           <li>Refresh the page</li>
           <li>Clear your browser cache</li>
@@ -131,18 +131,46 @@ You can pass custom children inside the `Alert` component to display nested list
 </ComponentPreview>
 
 ```tsx
-<Alert
-  variant="error"
-  title="Unable to connect to server"
-  action={<Button variant="danger" size="sm">Retry</Button>}
->
-  <div className="mt-2 text-sm text-slate-500">
-    <p className="mb-2">We're experiencing connection issues. Please try the following:</p>
-    <ul className="list-disc pl-5 space-y-1">
-      <li>Check your internet connection</li>
-      <li>Refresh the page</li>
-      <li>Clear your browser cache</li>
-    </ul>
-  </div>
-</Alert>
+import * as stylex from '@stylexjs/stylex';
+import { Alert, Button, tokens } from '@moul-dev/ui';
+
+const alertStyles = stylex.create({
+  container: {
+    marginTop: tokens.spacing2,
+    color: tokens.colorFgSubtle,
+  },
+  paragraph: {
+    margin: 0,
+    marginBottom: tokens.spacing1,
+  },
+  list: {
+    listStyleType: 'disc',
+    paddingInlineStart: tokens.spacing2,
+    margin: 0,
+    display: 'flex',
+    flexDirection: 'column',
+  },
+});
+
+export default function Example() {
+  return (
+    <Alert
+      variant="error"
+      title="Unable to connect to server"
+      action={<Button variant="danger" size="sm">Retry</Button>}
+    >
+      <div {...stylex.props(alertStyles.container)}>
+        <p {...stylex.props(alertStyles.paragraph)}>
+          We're experiencing connection issues. Please try the following:
+        </p>
+        <ul {...stylex.props(alertStyles.list)}>
+          <li>Check your internet connection</li>
+          <li>Refresh the page</li>
+          <li>Clear your browser cache</li>
+        </ul>
+      </div>
+    </Alert>
+  );
+}
 ```
+

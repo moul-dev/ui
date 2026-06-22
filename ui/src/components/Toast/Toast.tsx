@@ -81,17 +81,11 @@ export const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
         ref={ref}
         toast={toast}
         className={(_) => {
-          const { className: stylexClass } = stylex.props(
-            styles.toast,
-            style,
-          )
+          const { className: stylexClass } = stylex.props(styles.toast, style)
           return [stylexClass, className].filter(Boolean).join(' ')
         }}
         style={(_) => {
-          const { style: stylexStyle } = stylex.props(
-            styles.toast,
-            style,
-          )
+          const { style: stylexStyle } = stylex.props(styles.toast, style)
           return stylexStyle ?? {}
         }}
       >

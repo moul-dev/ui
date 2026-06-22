@@ -5,7 +5,13 @@ import { Card, Cards } from 'fumadocs-ui/components/card'
 import { Step, Steps } from 'fumadocs-ui/components/steps'
 import { Tab, Tabs } from 'fumadocs-ui/components/tabs'
 import { ComponentPreview } from './component-preview'
-import { AlertDialogDemo, ModalDemo, ToastDemo, FormDemo, AlertDemo } from './demos'
+import {
+  AlertDialogDemo,
+  ModalDemo,
+  ToastDemo,
+  FormDemo,
+  AlertDemo,
+} from './demos'
 
 export function getMDXComponents(components?: MDXComponents) {
   return {

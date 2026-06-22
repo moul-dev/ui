@@ -66,22 +66,33 @@ export const tokens = stylex.defineVars({
   colorAlertBgInfo: 'light-dark(oklch(0.97 0 0), oklch(0.16 0 0))',
   colorAlertBorderInfo: 'light-dark(oklch(0.92 0 0), oklch(0.22 0 0))',
   colorAlertHoverInfo: 'light-dark(oklch(0.92 0.01 250), oklch(0.12 0.01 250))',
-  colorAlertActiveInfo: 'light-dark(oklch(0.88 0.01 250), oklch(0.08 0.01 250))',
+  colorAlertActiveInfo:
+    'light-dark(oklch(0.88 0.01 250), oklch(0.08 0.01 250))',
 
   colorAlertBgAccent: 'light-dark(oklch(0.97 0.02 250), oklch(0.19 0.035 250))',
-  colorAlertBorderAccent: 'light-dark(oklch(0.88 0.04 250), oklch(0.28 0.06 250))',
-  colorAlertHoverAccent: 'light-dark(oklch(0.92 0.04 250), oklch(0.14 0.05 250))',
-  colorAlertActiveAccent: 'light-dark(oklch(0.87 0.06 250), oklch(0.10 0.06 250))',
+  colorAlertBorderAccent:
+    'light-dark(oklch(0.88 0.04 250), oklch(0.28 0.06 250))',
+  colorAlertHoverAccent:
+    'light-dark(oklch(0.92 0.04 250), oklch(0.14 0.05 250))',
+  colorAlertActiveAccent:
+    'light-dark(oklch(0.87 0.06 250), oklch(0.10 0.06 250))',
 
-  colorAlertBgSuccess: 'light-dark(oklch(0.97 0.02 145), oklch(0.19 0.035 145))',
-  colorAlertBorderSuccess: 'light-dark(oklch(0.88 0.04 145), oklch(0.28 0.06 145))',
-  colorAlertHoverSuccess: 'light-dark(oklch(0.92 0.04 145), oklch(0.14 0.05 145))',
-  colorAlertActiveSuccess: 'light-dark(oklch(0.87 0.06 145), oklch(0.10 0.06 145))',
+  colorAlertBgSuccess:
+    'light-dark(oklch(0.97 0.02 145), oklch(0.19 0.035 145))',
+  colorAlertBorderSuccess:
+    'light-dark(oklch(0.88 0.04 145), oklch(0.28 0.06 145))',
+  colorAlertHoverSuccess:
+    'light-dark(oklch(0.92 0.04 145), oklch(0.14 0.05 145))',
+  colorAlertActiveSuccess:
+    'light-dark(oklch(0.87 0.06 145), oklch(0.10 0.06 145))',
 
   colorAlertBgWarning: 'light-dark(oklch(0.98 0.02 85), oklch(0.19 0.035 85))',
-  colorAlertBorderWarning: 'light-dark(oklch(0.90 0.05 85), oklch(0.28 0.06 85))',
-  colorAlertHoverWarning: 'light-dark(oklch(0.93 0.04 85), oklch(0.14 0.05 85))',
-  colorAlertActiveWarning: 'light-dark(oklch(0.88 0.06 85), oklch(0.10 0.06 85))',
+  colorAlertBorderWarning:
+    'light-dark(oklch(0.90 0.05 85), oklch(0.28 0.06 85))',
+  colorAlertHoverWarning:
+    'light-dark(oklch(0.93 0.04 85), oklch(0.14 0.05 85))',
+  colorAlertActiveWarning:
+    'light-dark(oklch(0.88 0.06 85), oklch(0.10 0.06 85))',
 
   colorAlertBgError: 'light-dark(oklch(0.97 0.02 27), oklch(0.19 0.035 27))',
   colorAlertBorderError: 'light-dark(oklch(0.90 0.05 27), oklch(0.28 0.06 27))',

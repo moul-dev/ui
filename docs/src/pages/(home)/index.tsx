@@ -42,13 +42,9 @@ export default function Home() {
                   style={{ background: 'oklch(0.75 0.18 55)' }}
                   aria-hidden="true"
                 />
-                <span className="font-mono text-xs tracking-wide">
-                  v0.1.0
-                </span>
+                <span className="font-mono text-xs tracking-wide">v0.1.0</span>
                 <span className="text-fd-muted-foreground/60">—</span>
-                <span>
-                  Now available
-                </span>
+                <span>Now available</span>
               </div>
             </div>
 
@@ -156,8 +152,23 @@ export default function Home() {
               <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                 {/* Feature 1: Accessible */}
                 <LiquidGlassCard className="feature-card">
-                  <div className="flex-shrink-0 h-10 w-10 rounded-lg flex items-center justify-center" style={{ background: 'oklch(0.75 0.14 55 / 0.1)', color: 'oklch(0.70 0.16 55)' }}>
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <div
+                    className="flex-shrink-0 h-10 w-10 rounded-lg flex items-center justify-center"
+                    style={{
+                      background: 'oklch(0.75 0.14 55 / 0.1)',
+                      color: 'oklch(0.70 0.16 55)',
+                    }}
+                  >
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
                       <circle cx="12" cy="12" r="10" />
                       <circle cx="12" cy="10" r="3" />
                       <path d="M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662" />
@@ -180,8 +191,23 @@ export default function Home() {
 
                 {/* Feature 2: Zero-runtime */}
                 <LiquidGlassCard className="feature-card">
-                  <div className="flex-shrink-0 h-10 w-10 rounded-lg flex items-center justify-center" style={{ background: 'oklch(0.75 0.14 55 / 0.1)', color: 'oklch(0.70 0.16 55)' }}>
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <div
+                    className="flex-shrink-0 h-10 w-10 rounded-lg flex items-center justify-center"
+                    style={{
+                      background: 'oklch(0.75 0.14 55 / 0.1)',
+                      color: 'oklch(0.70 0.16 55)',
+                    }}
+                  >
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
                       <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
                     </svg>
                   </div>
@@ -202,8 +228,23 @@ export default function Home() {
 
                 {/* Feature 3: Flexible */}
                 <LiquidGlassCard className="feature-card">
-                  <div className="flex-shrink-0 h-10 w-10 rounded-lg flex items-center justify-center" style={{ background: 'oklch(0.75 0.14 55 / 0.1)', color: 'oklch(0.70 0.16 55)' }}>
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <div
+                    className="flex-shrink-0 h-10 w-10 rounded-lg flex items-center justify-center"
+                    style={{
+                      background: 'oklch(0.75 0.14 55 / 0.1)',
+                      color: 'oklch(0.70 0.16 55)',
+                    }}
+                  >
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
                       <rect x="3" y="3" width="7" height="7" rx="1" />
                       <rect x="14" y="3" width="7" height="7" rx="1" />
                       <rect x="3" y="14" width="7" height="7" rx="1" />
@@ -223,8 +264,23 @@ export default function Home() {
 
                 {/* Feature 4: Production tested */}
                 <LiquidGlassCard className="feature-card">
-                  <div className="flex-shrink-0 h-10 w-10 rounded-lg flex items-center justify-center" style={{ background: 'oklch(0.75 0.14 55 / 0.1)', color: 'oklch(0.70 0.16 55)' }}>
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <div
+                    className="flex-shrink-0 h-10 w-10 rounded-lg flex items-center justify-center"
+                    style={{
+                      background: 'oklch(0.75 0.14 55 / 0.1)',
+                      color: 'oklch(0.70 0.16 55)',
+                    }}
+                  >
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
                       <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
                       <polyline points="9 12 11 14 15 10" />
                     </svg>

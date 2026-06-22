@@ -157,7 +157,9 @@ function App() {
                       <>
                         <AlertDialogHeader>Delete Account</AlertDialogHeader>
                         <AlertDialogBody>
-                          Are you sure you want to delete your account? This action cannot be undone and all of your data will be permanently removed.
+                          Are you sure you want to delete your account? This
+                          action cannot be undone and all of your data will be
+                          permanently removed.
                         </AlertDialogBody>
                         <AlertDialogFooter>
                           <Button variant="secondary" onPress={close}>
@@ -210,8 +212,15 @@ function App() {
               }
             >
               <div style={{ marginTop: '8px' }}>
-                <p style={{ margin: '0 0 8px 0', fontSize: '0.875rem', color: '#94a3b8' }}>
-                  We're experiencing connection issues. Please try the following:
+                <p
+                  style={{
+                    margin: '0 0 8px 0',
+                    fontSize: '0.875rem',
+                    color: '#94a3b8',
+                  }}
+                >
+                  We're experiencing connection issues. Please try the
+                  following:
                 </p>
                 <ul {...stylex.props(styles.bulletList)}>
                   <li>Check your internet connection</li>
