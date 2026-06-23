@@ -11,6 +11,7 @@ import { styles } from './CheckboxGroup.styles'
 import { Label } from '../Label'
 import { Description } from '../Description'
 import { FieldError } from '../FieldError'
+import { CheckboxGroupContext } from '../Checkbox/context'
 
 export interface CheckboxGroupProps
   extends Omit<AriaCheckboxGroupProps, 'style'> {
@@ -19,19 +20,35 @@ export interface CheckboxGroupProps
   label?: string
   description?: string
   errorMessage?: string | ((v: ValidationResult) => string)
+  variant?: 'primary' | 'secondary' | 'tertiary'
+  orientation?: 'horizontal' | 'vertical'
 }
 
 export const CheckboxGroup = React.forwardRef<
   HTMLDivElement,
   CheckboxGroupProps
 >(function CheckboxGroup(
-  { style, className, label, description, errorMessage, children, ...rest },
+  {
+    style,
+    className,
+    label,
+    description,
+    errorMessage,
+    variant = 'primary',
+    children,
+    ...rest
+  },
   ref,
 ) {
   const { className: stylexClass, style: stylexStyle } = stylex.props(
     styles.base,
     style,
   )
+
+  const { orientation = 'vertical' } = rest
+
+  const contextValue = React.useMemo(() => ({ variant }), [variant])
+
   return (
     <AriaCheckboxGroup
       {...rest}
@@ -40,14 +57,19 @@ export const CheckboxGroup = React.forwardRef<
       style={stylexStyle}
     >
       {(values) => (
-        <>
+        <CheckboxGroupContext.Provider value={contextValue}>
           {label && <Label>{label}</Label>}
-          <div {...stylex.props(styles.group)}>
+          <div
+            {...stylex.props(
+              styles.group,
+              orientation === 'horizontal' && styles.groupHorizontal,
+            )}
+          >
             {typeof children === 'function' ? children(values) : children}
           </div>
           {description && <Description>{description}</Description>}
           <FieldError errorMessage={errorMessage} />
-        </>
+        </CheckboxGroupContext.Provider>
       )}
     </AriaCheckboxGroup>
   )

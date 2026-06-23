@@ -12,4 +12,9 @@ export const styles = stylex.create({
     flexDirection: 'column',
     gap: tokens.spacing2,
   },
+  groupHorizontal: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: tokens.spacing4,
+  },
 })

@@ -36,8 +36,56 @@ import { Checkbox } from '@moul-dev/ui';
 export default function Example() {
   return (
     <Checkbox>
-      {/* Component content */}
+      Checkbox Label
     </Checkbox>
   );
 }
+```
+
+## Variants
+
+The `Checkbox` component supports three visual variants: `primary` (default), `secondary`, and `tertiary`.
+
+<ComponentPreview>
+  <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-2">
+      <span className="text-sm font-medium text-neutral-500">Primary (default)</span>
+      <div className="flex gap-4">
+        <Checkbox variant="primary">Unchecked</Checkbox>
+        <Checkbox variant="primary" defaultSelected>Checked</Checkbox>
+      </div>
+    </div>
+    <div className="flex flex-col gap-2">
+      <span className="text-sm font-medium text-neutral-500">Secondary</span>
+      <div className="flex gap-4">
+        <Checkbox variant="secondary">Unchecked</Checkbox>
+        <Checkbox variant="secondary" defaultSelected>Checked</Checkbox>
+      </div>
+    </div>
+    <div className="flex flex-col gap-2">
+      <span className="text-sm font-medium text-neutral-500">Tertiary</span>
+      <div className="flex gap-4">
+        <Checkbox variant="tertiary">Unchecked</Checkbox>
+        <Checkbox variant="tertiary" defaultSelected>Checked</Checkbox>
+      </div>
+    </div>
+  </div>
+</ComponentPreview>
+
+### Primary Variant
+The primary variant uses the primary accent brand colors, suited for main user actions.
+```tsx
+<Checkbox variant="primary" defaultSelected>Primary</Checkbox>
+```
+
+### Secondary Variant
+The secondary variant uses monochrome neutral styling, providing a clean alternative for lists and tables.
+```tsx
+<Checkbox variant="secondary" defaultSelected>Secondary</Checkbox>
+```
+
+### Tertiary Variant
+The tertiary variant is a hollow outline checkbox style that stays transparent and applies primary colors to the border and checkmark itself.
+```tsx
+<Checkbox variant="tertiary" defaultSelected>Tertiary</Checkbox>
 ```

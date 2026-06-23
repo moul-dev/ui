@@ -8,14 +8,19 @@ import {
 import type { StyleXStyles } from '@stylexjs/stylex'
 import { styles } from './Checkbox.styles'
 import { warnMissingLabel } from '../../utils/warnMissingLabel'
+import { CheckboxGroupContext } from './context'
 
 export interface CheckboxProps extends Omit<AriaCheckboxProps, 'style'> {
   style?: StyleXStyles
   className?: string
+  variant?: 'primary' | 'secondary' | 'tertiary'
 }
 
 export const Checkbox = React.forwardRef<HTMLLabelElement, CheckboxProps>(
-  function Checkbox({ style, className, children, ...rest }, ref) {
+  function Checkbox({ style, className, children, variant, ...rest }, ref) {
+    const groupContext = React.useContext(CheckboxGroupContext)
+    const resolvedVariant = variant ?? groupContext?.variant ?? 'primary'
+
     if (process.env.NODE_ENV !== 'production') {
       warnMissingLabel('Checkbox', {
         label: rest['aria-label'],
@@ -52,9 +57,23 @@ export const Checkbox = React.forwardRef<HTMLLabelElement, CheckboxProps>(
             stylex.props(
               styles.indicator,
               renderProps.isHovered && styles.indicatorHover,
-              renderProps.isSelected && styles.indicatorChecked,
-              renderProps.isIndeterminate && styles.indicatorIndeterminate,
+              (renderProps.isSelected || renderProps.isIndeterminate) && {
+                primary: styles.checkedPrimary,
+                secondary: styles.checkedSecondary,
+                tertiary: styles.checkedTertiary,
+              }[resolvedVariant],
+              renderProps.isHovered &&
+                (renderProps.isSelected || renderProps.isIndeterminate) && {
+                  primary: styles.checkedHoverPrimary,
+                  secondary: styles.checkedHoverSecondary,
+                  tertiary: styles.checkedHoverTertiary,
+                }[resolvedVariant],
               renderProps.isFocusVisible && styles.indicatorFocusVisible,
+              renderProps.isFocusVisible && {
+                primary: styles.focusPrimary,
+                secondary: styles.focusSecondary,
+                tertiary: styles.focusTertiary,
+              }[resolvedVariant],
               renderProps.isInvalid && styles.indicatorInvalid,
             )
 
@@ -65,7 +84,14 @@ export const Checkbox = React.forwardRef<HTMLLabelElement, CheckboxProps>(
                   <svg
                     viewBox="0 0 18 18"
                     aria-hidden="true"
-                    {...stylex.props(styles.icon)}
+                    {...stylex.props(
+                      styles.icon,
+                      {
+                        primary: styles.iconPrimary,
+                        secondary: styles.iconSecondary,
+                        tertiary: styles.iconTertiary,
+                      }[resolvedVariant],
+                    )}
                   >
                     <line
                       x1={3}
@@ -83,7 +109,14 @@ export const Checkbox = React.forwardRef<HTMLLabelElement, CheckboxProps>(
                   <svg
                     viewBox="0 0 18 18"
                     aria-hidden="true"
-                    {...stylex.props(styles.icon)}
+                    {...stylex.props(
+                      styles.icon,
+                      {
+                        primary: styles.iconPrimary,
+                        secondary: styles.iconSecondary,
+                        tertiary: styles.iconTertiary,
+                      }[resolvedVariant],
+                    )}
                   >
                     <polyline
                       points="3 9 7 13 15 5"

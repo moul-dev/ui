@@ -22,7 +22,7 @@ The `CheckboxGroup` component is built with React Aria and styled using StyleX.
 ## Import
 
 ```tsx
-import { CheckboxGroup } from '@moul-dev/ui';
+import { CheckboxGroup, Checkbox } from '@moul-dev/ui';
 ```
 
 ## Usage
@@ -30,13 +30,64 @@ import { CheckboxGroup } from '@moul-dev/ui';
 Here is a basic example of how to use the `CheckboxGroup` component:
 
 ```tsx
-import { CheckboxGroup } from '@moul-dev/ui';
+import { CheckboxGroup, Checkbox } from '@moul-dev/ui';
 
 export default function Example() {
   return (
-    <CheckboxGroup>
-      {/* Component content */}
+    <CheckboxGroup label="Settings" description="Configure your preferences">
+      <Checkbox value="cookies">Accept cookies</Checkbox>
+      <Checkbox value="marketing">Receive marketing</Checkbox>
     </CheckboxGroup>
   );
 }
+```
+
+## Features
+
+### Group Variants
+Setting `variant` on `CheckboxGroup` propagates the variant style (`primary`, `secondary`, or `tertiary`) to all nested `Checkbox` components automatically.
+
+<ComponentPreview>
+  <div className="flex flex-col gap-6">
+    <CheckboxGroup label="Primary Group" variant="primary">
+      <Checkbox value="1" defaultSelected>Checkbox A</Checkbox>
+      <Checkbox value="2">Checkbox B</Checkbox>
+    </CheckboxGroup>
+    
+    <CheckboxGroup label="Secondary Group" variant="secondary">
+      <Checkbox value="1" defaultSelected>Checkbox A</Checkbox>
+      <Checkbox value="2">Checkbox B</Checkbox>
+    </CheckboxGroup>
+
+    <CheckboxGroup label="Tertiary Group" variant="tertiary">
+      <Checkbox value="1" defaultSelected>Checkbox A</Checkbox>
+      <Checkbox value="2">Checkbox B</Checkbox>
+    </CheckboxGroup>
+  </div>
+</ComponentPreview>
+
+```tsx
+// Nested checkboxes inherit the group's secondary variant
+<CheckboxGroup label="Roles" variant="secondary">
+  <Checkbox value="admin">Admin</Checkbox>
+  <Checkbox value="user">User</Checkbox>
+</CheckboxGroup>
+```
+
+### Orientation
+Lays out checkboxes vertically (default) or horizontally using the `orientation` prop.
+
+<ComponentPreview>
+  <CheckboxGroup label="Horizontal Layout" orientation="horizontal" variant="primary">
+    <Checkbox value="vertical">Vertical option</Checkbox>
+    <Checkbox value="horizontal" defaultSelected>Horizontal option</Checkbox>
+    <Checkbox value="grid">Grid option</Checkbox>
+  </CheckboxGroup>
+</ComponentPreview>
+
+```tsx
+<CheckboxGroup label="Horizontal Layout" orientation="horizontal">
+  <Checkbox value="1">Option 1</Checkbox>
+  <Checkbox value="2">Option 2</Checkbox>
+</CheckboxGroup>
 ```

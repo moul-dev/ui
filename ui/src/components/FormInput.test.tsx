@@ -1,6 +1,7 @@
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, fireEvent } from '@testing-library/react'
 import * as React from 'react'
+import '@testing-library/jest-dom'
 import * as fc from 'fast-check'
 import {
   Checkbox,
@@ -42,6 +43,17 @@ describe('Checkbox component', () => {
     const input = container.querySelector('input[name="accept-terms"]')
     expect(input).toBeInTheDocument()
   })
+
+  test('accepts variant props', () => {
+    const { getByRole, rerender } = render(<Checkbox variant="primary">Agree</Checkbox>)
+    expect(getByRole('checkbox')).toBeInTheDocument()
+
+    rerender(<Checkbox variant="secondary">Agree</Checkbox>)
+    expect(getByRole('checkbox')).toBeInTheDocument()
+
+    rerender(<Checkbox variant="tertiary">Agree</Checkbox>)
+    expect(getByRole('checkbox')).toBeInTheDocument()
+  })
 })
 
 describe('CheckboxGroup component', () => {
@@ -54,6 +66,16 @@ describe('CheckboxGroup component', () => {
     )
     expect(getByText('Roles')).toBeInTheDocument()
     expect(getByText('Choose your roles')).toBeInTheDocument()
+  })
+
+  test('accepts orientation and variant props and inherits variant to children', () => {
+    const { getByRole } = render(
+      <CheckboxGroup label="Roles" variant="secondary" orientation="horizontal">
+        <Checkbox value="admin">Admin</Checkbox>
+        <Checkbox value="user">User</Checkbox>
+      </CheckboxGroup>,
+    )
+    expect(getByRole('group')).toBeInTheDocument()
   })
 })
 
