@@ -6,6 +6,6 @@ export const styles = stylex.create({
     color: tokens.colorError500,
     fontSize: tokens.fontSizeSm,
     lineHeight: tokens.lineHeightSm,
-    marginBlockStart: tokens.spacing1,
+    marginBlockStart: 0,
   },
 })

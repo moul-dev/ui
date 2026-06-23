@@ -20,5 +20,11 @@
       "collections/*": ["./.source/*"]
     }
   },
+  "include": [
+    "src",
+    ".source",
+    "source.config.ts",
+    "waku.config.ts"
+  ],
   "exclude": ["node_modules", "dist"]
 }

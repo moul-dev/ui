@@ -3,8 +3,11 @@ title: TextArea
 description: Documentation for the TextArea component.
 ---
 
-import { TextArea } from '@moul-dev/ui';
+import { TextArea, ErrorMessage } from '@moul-dev/ui';
 
+<div style={{ display: 'none' }}>
+  Label, Description, FieldError, ErrorMessage, Helper Text, Validation, Error Message, Input Label
+</div>
 
 # TextArea
 
@@ -14,7 +17,7 @@ import { TextArea } from '@moul-dev/ui';
   <TextArea label="Bio" placeholder="Tell us about yourself..." description="Must be under 200 words." className="w-80" />
 </ComponentPreview>
 
-The `TextArea` component is built with React Aria and styled using StyleX.
+The `TextArea` component is built with React Aria and styled using StyleX. It automatically handles layout composition for label, description, and validation error messages.
 
 ## Import
 
@@ -22,18 +25,89 @@ The `TextArea` component is built with React Aria and styled using StyleX.
 import { TextArea } from '@moul-dev/ui';
 ```
 
+## Features
+
+### Label
+The text area automatically renders an accessible `<Label>` element above the text area input when the `label` prop is provided.
+
+<ComponentPreview>
+  <TextArea label="Bio" placeholder="Tell us about yourself..." className="w-80" />
+</ComponentPreview>
+
+```tsx
+<TextArea label="Bio" placeholder="Tell us about yourself..." />
+```
+
+### Description
+Use the `description` prop to display help text or guidelines below the text area input. This automatically wires up accessibility relationships so assistive technologies can read it.
+
+<ComponentPreview>
+  <TextArea
+    label="Comments"
+    description="Please do not include sensitive personal information."
+    className="w-80"
+  />
+</ComponentPreview>
+
+```tsx
+<TextArea
+  label="Comments"
+  description="Please do not include sensitive personal information."
+/>
+```
+
+### Validation & FieldError
+If the input is invalid, you can provide an error message using the `errorMessage` prop. This renders a `<FieldError>` component automatically when the field validation fails.
+
+<ComponentPreview>
+  <TextArea
+    label="Message"
+    isRequired
+    isInvalid
+    errorMessage="Please enter your message."
+    className="w-80"
+  />
+</ComponentPreview>
+
+```tsx
+<TextArea
+  label="Message"
+  isRequired
+  isInvalid
+  errorMessage="Please enter your message."
+/>
+```
+
+#### Standalone ErrorMessage
+For manual or custom validation outside of the built-in `errorMessage` prop, you can import and render the standalone `<ErrorMessage>` component.
+
+<ComponentPreview>
+  <ErrorMessage>Invalid input description.</ErrorMessage>
+</ComponentPreview>
+
+```tsx
+import { ErrorMessage } from '@moul-dev/ui';
+
+<ErrorMessage>Invalid input description.</ErrorMessage>
+```
+
 ## Usage
 
-Here is a basic example of how to use the `TextArea` component:
+Here is a basic example of a configured `TextArea`:
 
 ```tsx
 import { TextArea } from '@moul-dev/ui';
 
 export default function Example() {
   return (
-    <TextArea>
-      {/* Component content */}
-    </TextArea>
+    <TextArea
+      label="Description"
+      placeholder="Briefly describe your project..."
+      description="Max 500 characters."
+      isRequired
+      errorMessage="A description is required."
+    />
   );
 }
 ```
+

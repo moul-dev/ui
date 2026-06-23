@@ -3,8 +3,11 @@ title: TextField
 description: Documentation for the TextField component.
 ---
 
-import { TextField } from '@moul-dev/ui';
+import { TextField, ErrorMessage } from '@moul-dev/ui';
 
+<div style={{ display: 'none' }}>
+  Label, Description, FieldError, ErrorMessage, Helper Text, Validation, Error Message, Input Label
+</div>
 
 # TextField
 
@@ -14,7 +17,7 @@ import { TextField } from '@moul-dev/ui';
   <TextField label="Email" placeholder="you@example.com" description="We'll never share your email address." className="w-80" />
 </ComponentPreview>
 
-The `TextField` component is built with React Aria and styled using StyleX.
+The `TextField` component is built with React Aria and styled using StyleX. It automatically handles layout composition for label, description, and validation error messages.
 
 ## Import
 
@@ -22,18 +25,93 @@ The `TextField` component is built with React Aria and styled using StyleX.
 import { TextField } from '@moul-dev/ui';
 ```
 
+## Features
+
+### Label
+The text field automatically renders an accessible `<Label>` element above the input when the `label` prop is provided.
+
+<ComponentPreview>
+  <TextField label="Full Name" placeholder="John Doe" className="w-80" />
+</ComponentPreview>
+
+```tsx
+<TextField label="Full Name" placeholder="John Doe" />
+```
+
+### Description
+Use the `description` prop to display help text or guidelines below the input field. This automatically wires up accessibility relationships so assistive technologies can read it.
+
+<ComponentPreview>
+  <TextField
+    label="Password"
+    type="password"
+    description="Must be at least 8 characters long."
+    className="w-80"
+  />
+</ComponentPreview>
+
+```tsx
+<TextField
+  label="Password"
+  type="password"
+  description="Must be at least 8 characters long."
+/>
+```
+
+### Validation & FieldError
+If the input is invalid, you can provide an error message using the `errorMessage` prop. This renders a `<FieldError>` component automatically when the field validation fails.
+
+<ComponentPreview>
+  <TextField
+    label="Email"
+    type="email"
+    isRequired
+    isInvalid
+    errorMessage="Please enter a valid email address."
+    className="w-80"
+  />
+</ComponentPreview>
+
+```tsx
+<TextField
+  label="Email"
+  type="email"
+  isRequired
+  isInvalid
+  errorMessage="Please enter a valid email address."
+/>
+```
+
+#### Standalone ErrorMessage
+For manual or custom validation outside of the built-in `errorMessage` prop, you can import and render the standalone `<ErrorMessage>` component.
+
+<ComponentPreview>
+  <ErrorMessage>Invalid email address format.</ErrorMessage>
+</ComponentPreview>
+
+```tsx
+import { ErrorMessage } from '@moul-dev/ui';
+
+<ErrorMessage>Invalid email address format.</ErrorMessage>
+```
+
 ## Usage
 
-Here is a basic example of how to use the `TextField` component:
+Here is a basic example of a configured `TextField`:
 
 ```tsx
 import { TextField } from '@moul-dev/ui';
 
 export default function Example() {
   return (
-    <TextField>
-      {/* Component content */}
-    </TextField>
+    <TextField
+      label="Username"
+      placeholder="e.g. janesmith"
+      description="Your unique handle on the platform."
+      isRequired
+      errorMessage="Username is required."
+    />
   );
 }
 ```
+

@@ -5,7 +5,7 @@ export const styles = stylex.create({
   base: {
     display: 'flex',
     flexDirection: 'column',
-    gap: tokens.spacing2,
+    gap: tokens.spacing1,
   },
   group: {
     display: 'flex',
