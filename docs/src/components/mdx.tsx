@@ -12,6 +12,7 @@ import {
   FormDemo,
   AlertDemo,
   TagGroupDemo,
+  ComboBoxTagGroupDemo,
 } from './demos'
 
 export function getMDXComponents(components?: MDXComponents) {
@@ -34,6 +35,7 @@ export function getMDXComponents(components?: MDXComponents) {
     FormDemo,
     AlertDemo,
     TagGroupDemo,
+    ComboBoxTagGroupDemo,
     ...components,
   } satisfies MDXComponents
 }

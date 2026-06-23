@@ -20,6 +20,8 @@ import {
   Alert,
   TagGroup,
   Tag,
+  ComboBox,
+  ComboBoxItem,
 } from '@moul-dev/ui'
 
 export function AlertDialogDemo() {
@@ -249,6 +251,84 @@ export function TagGroupDemo() {
           Selected: <span className="text-primary-600 dark:text-primary-400 font-medium">{[...selected].join(', ') || 'None'}</span>
         </div>
       </div>
+    </div>
+  )
+}
+
+export function ComboBoxTagGroupDemo() {
+  const provinces = [
+    { id: 'phnom-penh', name: 'Phnom Penh' },
+    { id: 'siem-reap', name: 'Siem Reap' },
+    { id: 'battambang', name: 'Battambang' },
+    { id: 'sihanoukville', name: 'Sihanoukville' },
+    { id: 'kampot', name: 'Kampot' },
+    { id: 'kandal', name: 'Kandal' },
+    { id: 'kampong-cham', name: 'Kampong Cham' },
+    { id: 'koh-kong', name: 'Koh Kong' },
+    { id: 'kep', name: 'Kep' },
+  ]
+
+  const [selectedKeys, setSelectedKeys] = useState<Set<any>>(new Set())
+  const [inputValue, setInputValue] = useState('')
+
+  const availableProvinces = provinces.filter(
+    (p) => !selectedKeys.has(p.id)
+  )
+
+  const handleSelectionChange = (key: any) => {
+    if (key) {
+      setSelectedKeys((prev) => {
+        const next = new Set(prev)
+        next.add(key)
+        return next
+      })
+      setInputValue('')
+    }
+  }
+
+  const handleRemove = (keys: Set<any>) => {
+    setSelectedKeys((prev) => {
+      const next = new Set(prev)
+      for (const k of keys) {
+        next.delete(k)
+      }
+      return next
+    })
+  }
+
+  return (
+    <div className="w-full max-w-sm flex flex-col gap-4">
+      <ComboBox
+        label="Cambodian Provinces"
+        placeholder="Select a province"
+        inputValue={inputValue}
+        onInputChange={setInputValue}
+        onSelectionChange={handleSelectionChange}
+        selectedKey={null}
+      >
+        {availableProvinces.map((province) => (
+          <ComboBoxItem key={province.id} id={province.id}>
+            {province.name}
+          </ComboBoxItem>
+        ))}
+      </ComboBox>
+
+      {selectedKeys.size > 0 && (
+        <TagGroup
+          label="Selected Provinces"
+          onRemove={handleRemove}
+          variant="primary"
+        >
+          {[...selectedKeys].map((key) => {
+            const province = provinces.find((p) => p.id === key)
+            return (
+              <Tag key={key} id={key}>
+                {province?.name || key}
+              </Tag>
+            )
+          })}
+        </TagGroup>
+      )}
     </div>
   )
 }

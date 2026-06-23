@@ -41,3 +41,94 @@ export default function Example() {
   );
 }
 ```
+
+## Multi-select with TagGroup
+
+You can build a multi-select ComboBox by managing the selection state in a list/set, filtering out the selected items from the dropdown, and rendering them as a `TagGroup` below the ComboBox.
+
+<ComponentPreview>
+  <ComboBoxTagGroupDemo />
+</ComponentPreview>
+
+```tsx
+import { ComboBox, ComboBoxItem, TagGroup, Tag } from '@moul-dev/ui';
+import { useState } from 'react';
+
+export default function Example() {
+  const provinces = [
+    { id: 'phnom-penh', name: 'Phnom Penh' },
+    { id: 'siem-reap', name: 'Siem Reap' },
+    { id: 'battambang', name: 'Battambang' },
+    { id: 'sihanoukville', name: 'Sihanoukville' },
+    { id: 'kampot', name: 'Kampot' },
+    { id: 'kandal', name: 'Kandal' },
+    { id: 'kampong-cham', name: 'Kampong Cham' },
+    { id: 'koh-kong', name: 'Koh Kong' },
+    { id: 'kep', name: 'Kep' },
+  ];
+
+  const [selectedKeys, setSelectedKeys] = useState<Set<any>>(new Set());
+  const [inputValue, setInputValue] = useState('');
+
+  const availableProvinces = provinces.filter(
+    (p) => !selectedKeys.has(p.id)
+  );
+
+  const handleSelectionChange = (key: any) => {
+    if (key) {
+      setSelectedKeys((prev) => {
+        const next = new Set(prev);
+        next.add(key);
+        return next;
+      });
+      setInputValue('');
+    }
+  };
+
+  const handleRemove = (keys: Set<any>) => {
+    setSelectedKeys((prev) => {
+      const next = new Set(prev);
+      for (const k of keys) {
+        next.delete(k);
+      }
+      return next;
+    });
+  };
+
+  return (
+    <div className="w-full max-w-sm flex flex-col gap-4">
+      <ComboBox
+        label="Cambodian Provinces"
+        placeholder="Select a province"
+        inputValue={inputValue}
+        onInputChange={setInputValue}
+        onSelectionChange={handleSelectionChange}
+        selectedKey={null}
+      >
+        {availableProvinces.map((province) => (
+          <ComboBoxItem key={province.id} id={province.id}>
+            {province.name}
+          </ComboBoxItem>
+        ))}
+      </ComboBox>
+
+      {selectedKeys.size > 0 && (
+        <TagGroup
+          label="Selected Provinces"
+          onRemove={handleRemove}
+          variant="primary"
+        >
+          {[...selectedKeys].map((key) => {
+            const province = provinces.find((p) => p.id === key);
+            return (
+              <Tag key={key} id={key}>
+                {province?.name || key}
+              </Tag>
+            );
+          })}
+        </TagGroup>
+      )}
+    </div>
+  );
+}
+```
