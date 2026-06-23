@@ -40,7 +40,6 @@ import {
   Badge,
   Avatar,
   Typography,
-  Surface,
   Card,
   CardHeader,
   CardBody,
@@ -233,10 +232,6 @@ const allComponents = [
   {
     name: 'Typography',
     render: (props: any) => <Typography {...props}>Text</Typography>,
-  },
-  {
-    name: 'Surface',
-    render: (props: any) => <Surface {...props}>Surface</Surface>,
   },
   {
     name: 'Card',

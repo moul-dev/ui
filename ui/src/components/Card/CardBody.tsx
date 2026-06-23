@@ -2,6 +2,7 @@ import * as React from 'react'
 import * as stylex from '@stylexjs/stylex'
 import type { StyleXStyles } from '@stylexjs/stylex'
 import { styles } from './Card.styles'
+import { CardContext } from './Card'
 
 export interface CardBodyProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'style'> {
@@ -11,8 +12,14 @@ export interface CardBodyProps
 
 export const CardBody = React.forwardRef<HTMLDivElement, CardBodyProps>(
   function CardBody({ style, className, children, ...rest }, ref) {
+    const { divided, size = 'md' } = React.useContext(CardContext)
+    const sizeStyleKey = divided
+      ? (`body_${size}_divided` as const)
+      : (`body_${size}` as const)
+
     const { className: stylexClass, style: stylexStyle } = stylex.props(
       styles.body,
+      styles[sizeStyleKey],
       style,
     )
 

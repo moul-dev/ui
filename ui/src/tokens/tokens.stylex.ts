@@ -57,6 +57,8 @@ export const tokens = stylex.defineVars({
   colorBorder: 'light-dark(oklch(0.84 0 0),   oklch(0.28 0 0))',
   colorBorderSubtle: 'light-dark(oklch(0.92 0 0),   oklch(0.22 0 0))',
   colorBorderFocus: 'light-dark(oklch(0.55 0.240 250), oklch(0.66 0.220 250))',
+  colorBgGlass: 'light-dark(oklch(1 0 0 / 0.55), oklch(0.20 0 0 / 0.45))',
+  colorBorderGlass: 'light-dark(oklch(0 0 0 / 0.08), oklch(1 0 0 / 0.10))',
 
   // Shadows use oklch with alpha (oklch L C H / alpha)
   colorShadow: 'light-dark(oklch(0 0 0 / 0.10), oklch(0 0 0 / 0.40))',

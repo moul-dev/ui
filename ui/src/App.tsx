@@ -10,6 +10,7 @@ import {
   AlertDialogHeader,
 } from './components/AlertDialog'
 import { Alert } from './components/Alert'
+import { Card, CardHeader, CardBody, CardFooter } from './components/Card'
 
 // Define StyleX styles
 const styles = stylex.create({
@@ -95,6 +96,28 @@ const styles = stylex.create({
     gap: '4px',
     fontSize: '0.875rem',
     color: '#94a3b8',
+  },
+  cardsGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+    gap: '16px',
+    width: '100%',
+    marginTop: '12px',
+  },
+  cardTitle: {
+    fontSize: '1.125rem',
+    fontWeight: 700,
+    margin: 0,
+  },
+  cardSubtitle: {
+    fontSize: '0.8125rem',
+    opacity: 0.7,
+    margin: 0,
+  },
+  cardText: {
+    fontSize: '0.875rem',
+    lineHeight: '1.5',
+    margin: 0,
   },
 })
 
@@ -250,6 +273,69 @@ function App() {
               title="Scheduled maintenance"
               description="Our services will be unavailable on Sunday, March 15th from 2:00 AM to 6:00 AM UTC for scheduled maintenance."
             />
+          </div>
+        </section>
+
+        {/* Cards Showcase */}
+        <section {...stylex.props(styles.section)}>
+          <h2 {...stylex.props(styles.sectionTitle)}>Cards Showcase</h2>
+          <div {...stylex.props(styles.cardsGrid)}>
+            {/* Glass Card */}
+            <Card variant="glass" size="md">
+              <CardHeader>Glassmorphic Card</CardHeader>
+              <CardBody>
+                Features a gorgeous glassmorphic style. Perfect for modern,
+                premium designs.
+              </CardBody>
+              <CardFooter>
+                <Button variant="secondary" size="sm">
+                  Cancel
+                </Button>
+                <Button variant="primary" size="sm">
+                  Save
+                </Button>
+              </CardFooter>
+            </Card>
+
+            {/* Elevated Card */}
+            <Card variant="default" size="md" divided>
+              <CardHeader>Elevated Card</CardHeader>
+              <CardBody>
+                Uses standard elevation with clean borders dividing header,
+                body, and footer.
+              </CardBody>
+              <CardFooter>
+                <Button variant="secondary" size="sm">
+                  Action
+                </Button>
+              </CardFooter>
+            </Card>
+
+            {/* Outline Card */}
+            <Card variant="outline" size="md">
+              <CardHeader>Outline Card</CardHeader>
+              <CardBody>
+                Features a clean outline style, ideal for dark layouts and grid structures.
+              </CardBody>
+              <CardFooter>
+                <Button variant="secondary" size="sm">
+                  View
+                </Button>
+              </CardFooter>
+            </Card>
+
+            {/* Flat Card */}
+            <Card variant="flat" size="sm">
+              <CardHeader>Flat Card</CardHeader>
+              <CardBody>
+                Flat background without borders or shadows.
+              </CardBody>
+              <CardFooter>
+                <Button variant="secondary" size="sm">
+                  Close
+                </Button>
+              </CardFooter>
+            </Card>
           </div>
         </section>
       </main>

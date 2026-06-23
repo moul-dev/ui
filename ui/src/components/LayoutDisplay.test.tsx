@@ -5,7 +5,6 @@ import {
   Badge,
   Avatar,
   Typography,
-  Surface,
   Card,
   CardHeader,
   CardBody,
@@ -140,26 +139,6 @@ describe('Typography component', () => {
     const element = getByText('Subtitle Caption')
     expect(element.tagName).toBe('H1')
     expect(element.className).toContain('my-typo')
-  })
-})
-
-describe('Surface component', () => {
-  test('renders base and forwards ref', () => {
-    const ref = React.createRef<HTMLDivElement>()
-    const { container } = render(<Surface ref={ref}>Surface content</Surface>)
-    const element = container.firstChild as HTMLDivElement
-    expect(element).toBeInTheDocument()
-    expect(ref.current).toBe(element)
-  })
-
-  test('applies custom class and styles', () => {
-    const { container } = render(
-      <Surface elevation="lg" className="elevated-surf">
-        Content
-      </Surface>,
-    )
-    const element = container.firstChild as HTMLDivElement
-    expect(element.className).toContain('elevated-surf')
   })
 })
 

@@ -1,50 +1,166 @@
 ---
 title: Card
-description: Documentation for the Card component.
+description: A container component to group related content, actions, and information.
 ---
 
 import { Card, CardHeader, CardBody, CardFooter, Button } from '@moul-dev/ui';
 
-
 # Card
 
-## Preview
-
-<ComponentPreview>
-  <Card className="w-80">
-    <CardHeader>
-      <h3 className="font-bold text-lg">Card Title</h3>
-    </CardHeader>
-    <CardBody>
-      <p className="text-neutral-500 text-sm">This is the body of the card.</p>
-    </CardBody>
-    <CardFooter className="flex justify-end gap-2">
-      <Button>Cancel</Button>
-      <Button>Save</Button>
-    </CardFooter>
-  </Card>
-</ComponentPreview>
-
-The `Card` component is built with React Aria and styled using StyleX.
+The `Card` component is a flexible container built with React Aria and styled using StyleX. It supports multiple design variants, sizing presets, and section borders.
 
 ## Import
 
 ```tsx
-import { Card } from '@moul-dev/ui';
+import { Card, CardHeader, CardBody, CardFooter } from '@moul-dev/ui';
 ```
 
-## Usage
+## Preview
 
-Here is a basic example of how to use the `Card` component:
+<ComponentPreview>
+  <Card className="w-80" variant="glass">
+    <CardHeader>Glassmorphic Card</CardHeader>
+    <CardBody>
+      This is a translucent glass-styled card showcasing Moul UI's modern look.
+    </CardBody>
+    <CardFooter className="flex justify-end gap-2">
+      <Button variant="secondary">Cancel</Button>
+      <Button variant="primary">Confirm</Button>
+    </CardFooter>
+  </Card>
+</ComponentPreview>
+
+---
+
+## Variants
+
+Cards support four distinct aesthetic styles to match your design requirements:
+
+### Default (Elevated)
+Standard surface card featuring clean elevated shadows.
+
+<ComponentPreview>
+  <Card className="w-80" variant="default" elevation={1}>
+    <CardHeader>Elevated Card</CardHeader>
+    <CardBody>Standard elevated container with shadow.</CardBody>
+  </Card>
+</ComponentPreview>
 
 ```tsx
-import { Card } from '@moul-dev/ui';
-
-export default function Example() {
-  return (
-    <Card>
-      {/* Component content */}
-    </Card>
-  );
-}
+<Card variant="default" elevation={1}>
+  <CardHeader>Elevated Card</CardHeader>
+  <CardBody>Standard elevated container with shadow.</CardBody>
+</Card>
 ```
+
+### Flat
+Clean card with no shadow and a subtle background fill.
+
+<ComponentPreview>
+  <Card className="w-80" variant="flat">
+    <CardHeader>Flat Card</CardHeader>
+    <CardBody>Flat container with subtle solid background.</CardBody>
+  </Card>
+</ComponentPreview>
+
+```tsx
+<Card variant="flat">
+  <CardHeader>Flat Card</CardHeader>
+  <CardBody>Flat container with subtle solid background.</CardBody>
+</Card>
+```
+
+### Outline
+Minimalist style with clean outer border lines and no shadows.
+
+<ComponentPreview>
+  <Card className="w-80" variant="outline">
+    <CardHeader>Outline Card</CardHeader>
+    <CardBody>Clean container with border lines and transparent background.</CardBody>
+  </Card>
+</ComponentPreview>
+
+```tsx
+<Card variant="outline">
+  <CardHeader>Outline Card</CardHeader>
+  <CardBody>Clean container with border lines and transparent background.</CardBody>
+</Card>
+```
+
+### Glass
+Premium translucent glassmorphic look using backdrop blur and opacity.
+
+<ComponentPreview>
+  <Card className="w-80" variant="glass">
+    <CardHeader>Glass Card</CardHeader>
+    <CardBody>Translucent glass card with elegant backdrop filters.</CardBody>
+  </Card>
+</ComponentPreview>
+
+```tsx
+<Card variant="glass">
+  <CardHeader>Glass Card</CardHeader>
+  <CardBody>Translucent glass card with elegant backdrop filters.</CardBody>
+</Card>
+```
+
+---
+
+## Divided Layout
+
+By default, card headers, bodies, and footers flow continuously without separation lines. Passing the `divided` boolean prop adds subtle separator lines between sections.
+
+<ComponentPreview>
+  <Card className="w-80" divided>
+    <CardHeader>Divided Card</CardHeader>
+    <CardBody>Borders separate the header, body, and footer sections.</CardBody>
+    <CardFooter>
+      <Button size="sm">Action</Button>
+    </CardFooter>
+  </Card>
+</ComponentPreview>
+
+```tsx
+<Card divided>
+  <CardHeader>Divided Card</CardHeader>
+  <CardBody>Borders separate the header, body, and footer sections.</CardBody>
+  <CardFooter><Button size="sm">Action</Button></CardFooter>
+</Card>
+```
+
+---
+
+## Sizes
+
+Choose between different sizing presets to customize block and inline paddings:
+
+### Small (`sm`)
+Compact spacing suitable for dense layouts or list grids.
+```tsx
+<Card size="sm">...</Card>
+```
+
+### Medium (`md`)
+Balanced standard spacing (default).
+```tsx
+<Card size="md">...</Card>
+```
+
+### Large (`lg`)
+Generous breathing spacing ideal for hero sections or details views.
+```tsx
+<Card size="lg">...</Card>
+```
+
+---
+
+## API Reference
+
+### Card Props
+
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `variant` | `'default' \| 'flat' \| 'outline' \| 'glass'` | `'default'` | The visual style variation of the card. |
+| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Padding sizes applied to the card sections. |
+| `divided` | `boolean` | `false` | When true, renders borders between header, body, and footer. |
+| `elevation` | `0 \| 1 \| 2 \| 3 \| 'none' \| 'sm' \| 'md' \| 'lg'` | `1` | Shadow elevation level (applies to `'default'` variant only). |

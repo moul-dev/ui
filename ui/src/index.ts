@@ -112,9 +112,6 @@ export type {
   TypographyVariant,
 } from './components/Typography/Typography'
 
-export { Surface } from './components/Surface'
-export type { SurfaceProps, Elevation } from './components/Surface/Surface'
-
 export { Card, CardHeader, CardBody, CardFooter } from './components/Card'
 export type {
   CardProps,
