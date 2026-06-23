@@ -122,12 +122,14 @@ export const ComboBox = React.forwardRef<HTMLInputElement, ComboBoxProps>(
       errorMessage,
       placeholder,
       children,
+      menuTrigger = 'focus',
       ...rest
     },
     ref,
   ) {
     return (
       <AriaComboBox
+        menuTrigger={menuTrigger}
         {...rest}
         className={(_) => {
           const { className: stylexClass } = stylex.props(styles.container)

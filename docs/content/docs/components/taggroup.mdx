@@ -1,0 +1,140 @@
+---
+title: TagGroup
+description: Documentation for the TagGroup component.
+---
+
+import { TagGroup, Tag } from '@moul-dev/ui';
+
+# TagGroup
+
+A tag group is a focusable list of labels, categories, keywords, filters, or other items, with support for keyboard navigation, selection, and removal.
+
+## Preview
+
+<ComponentPreview>
+  <TagGroupDemo />
+</ComponentPreview>
+
+The `TagGroup` component is built with React Aria and styled using StyleX.
+
+## Import
+
+```tsx
+import { TagGroup, Tag } from '@moul-dev/ui';
+```
+
+## Usage
+
+Here is a basic example of how to use the `TagGroup` component:
+
+```tsx
+import { TagGroup, Tag } from '@moul-dev/ui';
+
+export default function Example() {
+  return (
+    <TagGroup label="Categories">
+      <Tag>News</Tag>
+      <Tag>Travel</Tag>
+      <Tag>Gaming</Tag>
+      <Tag>Shopping</Tag>
+    </TagGroup>
+  );
+}
+```
+
+## Variants
+
+TagGroup and Tag support three variants: `primary`, `secondary` (default), and `tertiary`. You can pass the variant to the `TagGroup` to apply it to all tags, or override it on individual `Tag`s.
+
+```tsx
+<TagGroup label="Primary Tags" variant="primary">
+  <Tag>Analytics</Tag>
+  <Tag>Security</Tag>
+</TagGroup>
+
+<TagGroup label="Secondary Tags" variant="secondary">
+  <Tag>Analytics</Tag>
+  <Tag>Security</Tag>
+</TagGroup>
+
+<TagGroup label="Tertiary Tags" variant="tertiary">
+  <Tag>Analytics</Tag>
+  <Tag>Security</Tag>
+</TagGroup>
+```
+
+## Sizes
+
+TagGroup and Tag support three sizes: `sm`, `md` (default), and `lg`. You can set the size on the `TagGroup` to apply it to all tags, or override it on individual `Tag`s.
+
+```tsx
+<TagGroup label="Small" size="sm">
+  <Tag>Small tag</Tag>
+</TagGroup>
+
+<TagGroup label="Medium" size="md">
+  <Tag>Medium tag</Tag>
+</TagGroup>
+
+<TagGroup label="Large" size="lg">
+  <Tag>Large tag</Tag>
+</TagGroup>
+```
+
+## Selection
+
+Use the `selectionMode` prop to enable single or multiple selection.
+
+```tsx
+import { TagGroup, Tag } from '@moul-dev/ui';
+import { useState } from 'react';
+import type { Selection } from 'react-aria-components';
+
+export default function Example() {
+  const [selected, setSelected] = useState<Selection>(new Set(['news']));
+
+  return (
+    <TagGroup
+      label="Categories"
+      selectionMode="multiple"
+      selectedKeys={selected}
+      onSelectionChange={setSelected}
+    >
+      <Tag id="news">News</Tag>
+      <Tag id="travel">Travel</Tag>
+      <Tag id="gaming">Gaming</Tag>
+    </TagGroup>
+  );
+}
+```
+
+## Removal
+
+Pass an `onRemove` callback to the `TagGroup` component to allow items to be removed. When specified, tags will automatically render close buttons suited to their sizes and variants.
+
+```tsx
+import { TagGroup, Tag } from '@moul-dev/ui';
+import { useState } from 'react';
+
+export default function Example() {
+  const [tags, setTags] = useState([
+    { id: '1', label: 'News' },
+    { id: '2', label: 'Travel' },
+    { id: '3', label: 'Gaming' },
+  ]);
+
+  const handleRemove = (keys) => {
+    setTags((prev) => prev.filter((tag) => !keys.has(tag.id)));
+  };
+
+  return (
+    <TagGroup label="Categories" onRemove={handleRemove}>
+      {tags.map((tag) => (
+        <Tag key={tag.id} id={tag.id}>
+          {tag.label}
+        </Tag>
+      ))}
+    </TagGroup>
+  );
+}
+```

@@ -1,4 +1,4 @@
-import { Button, Alert } from '@moul-dev/ui'
+import { Button, Alert, TagGroup, Tag } from '@moul-dev/ui'
 import defaultMdxComponents from 'fumadocs-ui/mdx'
 import type { MDXComponents } from 'mdx/types'
 import { Card, Cards } from 'fumadocs-ui/components/card'
@@ -11,6 +11,7 @@ import {
   ToastDemo,
   FormDemo,
   AlertDemo,
+  TagGroupDemo,
 } from './demos'
 
 export function getMDXComponents(components?: MDXComponents) {
@@ -18,6 +19,8 @@ export function getMDXComponents(components?: MDXComponents) {
     ...defaultMdxComponents,
     Button,
     Alert,
+    TagGroup,
+    Tag,
     Card,
     Cards,
     Step,
@@ -30,6 +33,7 @@ export function getMDXComponents(components?: MDXComponents) {
     ToastDemo,
     FormDemo,
     AlertDemo,
+    TagGroupDemo,
     ...components,
   } satisfies MDXComponents
 }

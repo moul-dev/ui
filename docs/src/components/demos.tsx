@@ -18,6 +18,8 @@ import {
   Form,
   TextField,
   Alert,
+  TagGroup,
+  Tag,
 } from '@moul-dev/ui'
 
 export function AlertDialogDemo() {
@@ -167,5 +169,86 @@ export function AlertDemo() {
       title="Profile updated successfully"
       onClose={() => setIsVisible(false)}
     />
+  )
+}
+
+export function TagGroupDemo() {
+  const [selected, setSelected] = useState<any>(new Set(['travel']))
+  const [tags, setTags] = useState([
+    { id: 'news', label: 'News' },
+    { id: 'travel', label: 'Travel' },
+    { id: 'gaming', label: 'Gaming' },
+    { id: 'shopping', label: 'Shopping' },
+  ])
+
+  const handleRemove = (keys: Set<any>) => {
+    setTags((prev) => prev.filter((tag) => !keys.has(tag.id)))
+  }
+
+  return (
+    <div className="w-full max-w-xl flex flex-col gap-6 p-2">
+      <div className="flex flex-col gap-4">
+        <h3 className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">Variants (Primary, Secondary, Tertiary)</h3>
+        <div className="flex flex-col gap-3">
+          <TagGroup label="Primary Tags" variant="primary">
+            <Tag id="p1">Analytics</Tag>
+            <Tag id="p2">Security</Tag>
+            <Tag id="p3">Database</Tag>
+          </TagGroup>
+
+          <TagGroup label="Secondary Tags (Default)" variant="secondary">
+            <Tag id="s1">Analytics</Tag>
+            <Tag id="s2">Security</Tag>
+            <Tag id="s3">Database</Tag>
+          </TagGroup>
+
+          <TagGroup label="Tertiary Tags" variant="tertiary">
+            <Tag id="t1">Analytics</Tag>
+            <Tag id="t2">Security</Tag>
+            <Tag id="t3">Database</Tag>
+          </TagGroup>
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-4">
+        <h3 className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">Sizes (Small, Medium, Large)</h3>
+        <div className="flex flex-col gap-3">
+          <TagGroup label="Small size" size="sm" variant="primary" onRemove={() => {}}>
+            <Tag id="sm1">Small Tag</Tag>
+            <Tag id="sm2">Tag 2</Tag>
+          </TagGroup>
+
+          <TagGroup label="Medium size" size="md" variant="secondary" onRemove={() => {}}>
+            <Tag id="md1">Medium Tag</Tag>
+            <Tag id="md2">Tag 2</Tag>
+          </TagGroup>
+
+          <TagGroup label="Large size" size="lg" variant="tertiary" onRemove={() => {}}>
+            <Tag id="lg1">Large Tag</Tag>
+            <Tag id="lg2">Tag 2</Tag>
+          </TagGroup>
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-4 border-t border-neutral-200 dark:border-neutral-800 pt-4">
+        <h3 className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">Interactive & Removable</h3>
+        <TagGroup
+          label="Tags with Action & Removal"
+          selectionMode="multiple"
+          selectedKeys={selected}
+          onSelectionChange={setSelected}
+          onRemove={handleRemove}
+        >
+          {tags.map((tag) => (
+            <Tag key={tag.id} id={tag.id}>
+              {tag.label}
+            </Tag>
+          ))}
+        </TagGroup>
+        <div className="text-xs text-neutral-500 dark:text-neutral-400">
+          Selected: <span className="text-primary-600 dark:text-primary-400 font-medium">{[...selected].join(', ') || 'None'}</span>
+        </div>
+      </div>
+    </div>
   )
 }

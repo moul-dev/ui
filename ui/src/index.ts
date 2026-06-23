@@ -102,6 +102,9 @@ export type {
 export { Badge } from './components/Badge'
 export type { BadgeProps, BadgeVariant } from './components/Badge/Badge'
 
+export { TagGroup, Tag } from './components/TagGroup'
+export type { TagGroupProps, TagProps, TagSize, TagVariant } from './components/TagGroup/TagGroup'
+
 export { Avatar } from './components/Avatar'
 export type { AvatarProps } from './components/Avatar/Avatar'
 

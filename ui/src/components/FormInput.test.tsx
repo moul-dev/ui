@@ -1,5 +1,5 @@
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest'
-import { render, fireEvent } from '@testing-library/react'
+import { render, fireEvent, waitFor } from '@testing-library/react'
 import * as React from 'react'
 import '@testing-library/jest-dom'
 import * as fc from 'fast-check'
@@ -189,6 +189,22 @@ describe('ComboBox component', () => {
 
     const trigger = getByRole('button')
     expect(trigger).toBeInTheDocument()
+  })
+
+  test('defaults to menuTrigger="focus"', async () => {
+    const { getByRole, queryByRole } = render(
+      <ComboBox label="Option">
+        <ComboBoxItem id="1">First</ComboBoxItem>
+        <ComboBoxItem id="2">Second</ComboBoxItem>
+      </ComboBox>,
+    )
+    const input = getByRole('combobox')
+    expect(queryByRole('listbox')).not.toBeInTheDocument()
+
+    input.focus()
+    await waitFor(() => {
+      expect(getByRole('listbox')).toBeInTheDocument()
+    })
   })
 })
 
