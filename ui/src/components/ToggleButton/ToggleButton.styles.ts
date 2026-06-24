@@ -98,7 +98,7 @@ export const styles = stylex.create({
     },
   },
   outline: {
-    backgroundColor: 'transparent',
+    backgroundColor: tokens.colorBg,
     color: tokens.colorFg,
     borderStyle: 'solid',
     borderWidth: '1px',
@@ -126,7 +126,7 @@ export const styles = stylex.create({
     borderStyle: 'none',
     boxShadow: 'none',
     ':hover': {
-      backgroundColor: tokens.colorNeutral50,
+      backgroundColor: tokens.colorNeutral100,
     },
   },
   ghostSelected: {
