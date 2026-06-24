@@ -16,9 +16,6 @@ import {
   Row,
   Column,
   Cell,
-  ListBox,
-  ListBoxItem,
-  ListBoxSection,
 } from '../index'
 
 const testStyles = stylex.create({
@@ -239,33 +236,3 @@ describe('Table Component Suite', () => {
   })
 })
 
-describe('ListBox Component Suite', () => {
-  test('renders listbox with correct roles and selection styling', () => {
-    const listboxRef = React.createRef<HTMLDivElement>()
-    const itemRef = React.createRef<HTMLDivElement>()
-    const sectionRef = React.createRef<HTMLDivElement>()
-
-    render(
-      <ListBox ref={listboxRef} aria-label="Fruits" selectionMode="single">
-        <ListBoxSection ref={sectionRef} title="Berries">
-          <ListBoxItem ref={itemRef} id="straw">
-            Strawberry
-          </ListBoxItem>
-          <ListBoxItem id="blue">Blueberry</ListBoxItem>
-        </ListBoxSection>
-      </ListBox>,
-    )
-
-    expect(listboxRef.current).toBeInTheDocument()
-    expect(itemRef.current).toBeInTheDocument()
-    expect(sectionRef.current).toBeInTheDocument()
-
-    const listbox = screen.getByRole('listbox')
-    expect(listbox).toBeInTheDocument()
-
-    const options = screen.getAllByRole('option')
-    expect(options).toHaveLength(2)
-
-    expect(options[0]).toHaveTextContent('Strawberry')
-  })
-})

@@ -206,9 +206,3 @@ export type {
   CellProps,
 } from './components/Table'
 
-export { ListBox, ListBoxItem, ListBoxSection } from './components/ListBox'
-export type {
-  ListBoxProps,
-  ListBoxItemProps,
-  ListBoxSectionProps,
-} from './components/ListBox'

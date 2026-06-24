@@ -66,8 +66,6 @@ import {
   Row,
   Column,
   Cell,
-  ListBox,
-  ListBoxItem,
   AlertDialog,
 } from '../index'
 
@@ -324,14 +322,6 @@ const allComponents = [
       </Table>
     ),
   },
-  {
-    name: 'ListBox',
-    render: (props: any) => (
-      <ListBox label="List" {...props}>
-        <ListBoxItem>A</ListBoxItem>
-      </ListBox>
-    ),
-  },
 ]
 
 const interactiveComponents = [
@@ -444,15 +434,6 @@ const interactiveComponents = [
       </Tabs>
     ),
     role: 'tablist',
-  },
-  {
-    name: 'ListBox',
-    render: (props: any) => (
-      <ListBox label="List" {...props}>
-        <ListBoxItem>A</ListBoxItem>
-      </ListBox>
-    ),
-    role: 'listbox',
   },
   {
     name: 'Breadcrumbs',

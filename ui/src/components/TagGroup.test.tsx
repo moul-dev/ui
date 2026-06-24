@@ -1,6 +1,5 @@
 import { describe, test, expect, vi } from 'vitest'
-import { render, fireEvent, waitFor } from '@testing-library/react'
-import * as React from 'react'
+import { render, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import { TagGroup, Tag } from '../index'
 
