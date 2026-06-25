@@ -139,6 +139,26 @@ html>body[data-scroll-locked] {
   --mouse-x: 0px;
   --mouse-y: 0px;
   --mouse-opacity: 0;
+  
+  /* Mask out the grid on the bottom/right so it fades out behind the 3D logo */
+  mask-image: linear-gradient(to bottom, black 25%, transparent 55%);
+  -webkit-mask-image: linear-gradient(to bottom, black 25%, transparent 55%);
+}
+
+@media (min-width: 1024px) {
+  .interactive-grid-container {
+    mask-image: linear-gradient(to right, black 40%, transparent 68%);
+    -webkit-mask-image: linear-gradient(to right, black 40%, transparent 68%);
+  }
+}
+
+/* Soft ambient dark shadow behind the 3D logo to enhance contrast and readability */
+.logo-ambient-shadow {
+  background: radial-gradient(circle, rgba(0, 0, 0, 0.40) 0%, rgba(0, 0, 0, 0.15) 30%, transparent 70%);
+}
+
+.light .logo-ambient-shadow {
+  background: radial-gradient(circle, rgba(0, 0, 0, 0.07) 0%, rgba(0, 0, 0, 0.02) 35%, transparent 70%);
 }
 
 .interactive-grid-base {

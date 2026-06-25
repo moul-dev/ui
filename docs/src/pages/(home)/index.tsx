@@ -2,6 +2,7 @@ import { Link } from 'waku'
 import { InteractiveGrid } from '@/components/interactive-grid'
 import { LiquidGlassCard } from '@/components/liquid-glass-card'
 import { CopyBlock } from '@/components/copy-block'
+import { WebGLLogo } from '@/components/webgl-logo'
 
 export default function Home() {
   return (
@@ -32,101 +33,109 @@ export default function Home() {
             />
           </div>
 
-          {/* Main Hero Content */}
-          <div className="mx-auto max-w-4xl py-20 sm:py-28 lg:py-36 text-center">
-            {/* Version Badge */}
-            <div className="flex flex-col items-center gap-5 mb-8">
-              <div className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm leading-6 text-fd-muted-foreground ring-1 ring-fd-border/60 backdrop-blur-sm bg-fd-card/30 transition-all duration-300 hover:ring-fd-border">
+          {/* Main Hero Content: Grid Layout */}
+          <div className="mx-auto max-w-7xl py-20 sm:py-28 lg:py-36 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+            {/* Left Content Column */}
+            <div className="lg:col-span-7 flex flex-col items-center lg:items-start text-center lg:text-left">
+              {/* Version Badge */}
+              <div className="flex flex-col items-center lg:items-start gap-5 mb-8">
+                <div className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm leading-6 text-fd-muted-foreground ring-1 ring-fd-border/60 backdrop-blur-sm bg-fd-card/30 transition-all duration-300 hover:ring-fd-border">
+                  <span
+                    className="inline-block h-1.5 w-1.5 rounded-full"
+                    style={{ background: 'oklch(0.75 calc(0.18 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250))' }}
+                    aria-hidden="true"
+                  />
+                  <span className="font-mono text-xs tracking-wide">v0.1.0</span>
+                  <span className="text-fd-muted-foreground/60">—</span>
+                  <span>Now available</span>
+                </div>
+              </div>
+
+              {/* Heading */}
+              <h1 className="text-4xl font-extrabold tracking-tight sm:text-6xl max-w-3xl mx-auto lg:mx-0 leading-[1.1] mb-6">
+                <span className="block text-fd-foreground">
+                  Clean by default.
+                </span>
                 <span
-                  className="inline-block h-1.5 w-1.5 rounded-full"
-                  style={{ background: 'oklch(0.75 calc(0.18 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250))' }}
-                  aria-hidden="true"
-                />
-                <span className="font-mono text-xs tracking-wide">v0.1.0</span>
-                <span className="text-fd-muted-foreground/60">—</span>
-                <span>Now available</span>
+                  className="block bg-clip-text text-transparent"
+                  style={{
+                    backgroundImage:
+                      'linear-gradient(to right, oklch(0.72 calc(0.17 * var(--brand-chroma-multiplier, 1)) calc(var(--brand-hue, 250) - 5)), oklch(0.78 calc(0.16 * var(--brand-chroma-multiplier, 1)) calc(var(--brand-hue, 250) + 10)), oklch(0.72 calc(0.14 * var(--brand-chroma-multiplier, 1)) calc(var(--brand-hue, 250) - 15)))',
+                  }}
+                >
+                  Adaptable by design.
+                </span>
+              </h1>
+
+              {/* Tagline */}
+              <p className="text-lg leading-8 text-fd-muted-foreground max-w-2xl mx-auto lg:mx-0 mb-8">
+                A React component library built on{' '}
+                <strong className="font-semibold text-fd-foreground">
+                  React Aria
+                </strong>{' '}
+                and{' '}
+                <strong className="font-semibold text-fd-foreground">
+                  StyleX
+                </strong>
+                . Accessible, zero-runtime, production-tested at{' '}
+                <a
+                  href="https://moul.dev"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline underline-offset-4 font-semibold text-fd-foreground hover:opacity-75 transition-opacity"
+                  style={{
+                    textDecorationColor: 'oklch(0.75 calc(0.16 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250))',
+                  }}
+                >
+                  moul.dev
+                </a>
+                .
+              </p>
+
+              {/* Install Command */}
+              <div className="flex justify-center lg:justify-start w-full mb-8">
+                <CopyBlock command="bun add @moul-dev/ui" />
+              </div>
+
+              {/* Actions */}
+              <div className="flex items-center justify-center lg:justify-start gap-x-4">
+                <Link
+                  to="/docs"
+                  id="cta-get-started"
+                  className="px-6 py-2.5 rounded-full font-semibold text-sm shadow-md transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
+                  style={{
+                    background: 'oklch(0.75 calc(0.18 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250))',
+                    color: 'oklch(0.15 calc(0.01 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250))',
+                  }}
+                >
+                  Read the docs
+                </Link>
+                <a
+                  href="https://github.com/moul-dev/ui"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  id="cta-github"
+                  className="flex items-center gap-2 px-6 py-2.5 rounded-full border border-fd-border bg-fd-card/50 text-fd-card-foreground font-semibold text-sm shadow-sm backdrop-blur-sm hover:bg-fd-accent hover:text-fd-accent-foreground transition-all duration-200 hover:-translate-y-0.5"
+                >
+                  <svg
+                    className="h-4 w-4 fill-current"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      clipRule="evenodd"
+                      d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
+                    />
+                  </svg>
+                  GitHub
+                </a>
               </div>
             </div>
 
-            {/* Heading */}
-            <h1 className="text-4xl font-extrabold tracking-tight sm:text-6xl max-w-3xl mx-auto leading-[1.1] mb-6">
-              <span className="block text-fd-foreground">
-                Clean by default.
-              </span>
-              <span
-                className="block bg-clip-text text-transparent"
-                style={{
-                  backgroundImage:
-                    'linear-gradient(to right, oklch(0.72 calc(0.17 * var(--brand-chroma-multiplier, 1)) calc(var(--brand-hue, 250) - 5)), oklch(0.78 calc(0.16 * var(--brand-chroma-multiplier, 1)) calc(var(--brand-hue, 250) + 10)), oklch(0.72 calc(0.14 * var(--brand-chroma-multiplier, 1)) calc(var(--brand-hue, 250) - 15)))',
-                }}
-              >
-                Adaptable by design.
-              </span>
-            </h1>
-
-            {/* Tagline */}
-            <p className="text-lg leading-8 text-fd-muted-foreground max-w-2xl mx-auto mb-8">
-              A React component library built on{' '}
-              <strong className="font-semibold text-fd-foreground">
-                React Aria
-              </strong>{' '}
-              and{' '}
-              <strong className="font-semibold text-fd-foreground">
-                StyleX
-              </strong>
-              . Accessible, zero-runtime, production-tested at{' '}
-              <a
-                href="https://moul.dev"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline underline-offset-4 font-semibold text-fd-foreground hover:opacity-75 transition-opacity"
-                style={{
-                  textDecorationColor: 'oklch(0.75 calc(0.16 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250))',
-                }}
-              >
-                moul.dev
-              </a>
-              .
-            </p>
-
-            {/* Install Command */}
-            <div className="flex justify-center mb-8">
-              <CopyBlock command="bun add @moul-dev/ui" />
-            </div>
-
-            {/* Actions */}
-            <div className="flex items-center justify-center gap-x-4">
-              <Link
-                to="/docs"
-                id="cta-get-started"
-                className="px-6 py-2.5 rounded-full font-semibold text-sm shadow-md transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
-                style={{
-                  background: 'oklch(0.75 calc(0.18 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250))',
-                  color: 'oklch(0.15 calc(0.01 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250))',
-                }}
-              >
-                Read the docs
-              </Link>
-              <a
-                href="https://github.com/moul-dev/ui"
-                target="_blank"
-                rel="noopener noreferrer"
-                id="cta-github"
-                className="flex items-center gap-2 px-6 py-2.5 rounded-full border border-fd-border bg-fd-card/50 text-fd-card-foreground font-semibold text-sm shadow-sm backdrop-blur-sm hover:bg-fd-accent hover:text-fd-accent-foreground transition-all duration-200 hover:-translate-y-0.5"
-              >
-                <svg
-                  className="h-4 w-4 fill-current"
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                >
-                  <path
-                    fillRule="evenodd"
-                    clipRule="evenodd"
-                    d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
-                  />
-                </svg>
-                GitHub
-              </a>
+            {/* Right 3D Logo Column */}
+            <div className="lg:col-span-5 flex justify-center items-center w-full">
+              <WebGLLogo />
             </div>
           </div>
         </div>
