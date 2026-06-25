@@ -10,6 +10,20 @@ export default async function RootElement({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  const hue = localStorage.getItem('moul-theme-hue');
+                  const chroma = localStorage.getItem('moul-theme-chroma');
+                  if (hue) document.documentElement.style.setProperty('--brand-hue', hue);
+                  if (chroma) document.documentElement.style.setProperty('--brand-chroma-multiplier', chroma);
+                } catch (e) {}
+              })();
+            `,
+          }}
+        />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
           rel="preconnect"

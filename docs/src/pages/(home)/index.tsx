@@ -27,7 +27,7 @@ export default function Home() {
               className="relative left-[calc(50%-11rem)] aspect-1155/678 w-[36.125rem] -translate-x-1/2 rotate-[30deg] sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]"
               style={{
                 background:
-                  'linear-gradient(to top right, oklch(0.78 0.14 55 / 0.12), oklch(0.70 0.10 40 / 0.08))',
+                  'linear-gradient(to top right, oklch(0.78 calc(0.14 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250) / 0.12), oklch(0.70 calc(0.10 * var(--brand-chroma-multiplier, 1)) calc(var(--brand-hue, 250) - 15) / 0.08))',
               }}
             />
           </div>
@@ -39,7 +39,7 @@ export default function Home() {
               <div className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm leading-6 text-fd-muted-foreground ring-1 ring-fd-border/60 backdrop-blur-sm bg-fd-card/30 transition-all duration-300 hover:ring-fd-border">
                 <span
                   className="inline-block h-1.5 w-1.5 rounded-full"
-                  style={{ background: 'oklch(0.75 0.18 55)' }}
+                  style={{ background: 'oklch(0.75 calc(0.18 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250))' }}
                   aria-hidden="true"
                 />
                 <span className="font-mono text-xs tracking-wide">v0.1.0</span>
@@ -57,7 +57,7 @@ export default function Home() {
                 className="block bg-clip-text text-transparent"
                 style={{
                   backgroundImage:
-                    'linear-gradient(to right, oklch(0.72 0.17 50), oklch(0.78 0.16 65), oklch(0.72 0.14 40))',
+                    'linear-gradient(to right, oklch(0.72 calc(0.17 * var(--brand-chroma-multiplier, 1)) calc(var(--brand-hue, 250) - 5)), oklch(0.78 calc(0.16 * var(--brand-chroma-multiplier, 1)) calc(var(--brand-hue, 250) + 10)), oklch(0.72 calc(0.14 * var(--brand-chroma-multiplier, 1)) calc(var(--brand-hue, 250) - 15)))',
                 }}
               >
                 Adaptable by design.
@@ -81,7 +81,7 @@ export default function Home() {
                 rel="noopener noreferrer"
                 className="underline underline-offset-4 font-semibold text-fd-foreground hover:opacity-75 transition-opacity"
                 style={{
-                  textDecorationColor: 'oklch(0.75 0.16 55)',
+                  textDecorationColor: 'oklch(0.75 calc(0.16 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250))',
                 }}
               >
                 moul.dev
@@ -101,8 +101,8 @@ export default function Home() {
                 id="cta-get-started"
                 className="px-6 py-2.5 rounded-full font-semibold text-sm shadow-md transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
                 style={{
-                  background: 'oklch(0.75 0.18 55)',
-                  color: 'oklch(0.15 0.01 55)',
+                  background: 'oklch(0.75 calc(0.18 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250))',
+                  color: 'oklch(0.15 calc(0.01 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250))',
                 }}
               >
                 Read the docs
@@ -137,7 +137,7 @@ export default function Home() {
             <div className="border-t border-fd-border/30 pt-16 sm:pt-20">
               <p
                 className="text-sm font-mono font-medium tracking-widest uppercase text-center mb-3"
-                style={{ color: 'oklch(0.70 0.14 55)' }}
+                style={{ color: 'oklch(0.70 calc(0.14 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250))' }}
               >
                 Why Moul UI
               </p>
@@ -155,8 +155,8 @@ export default function Home() {
                   <div
                     className="flex-shrink-0 h-10 w-10 rounded-lg flex items-center justify-center"
                     style={{
-                      background: 'oklch(0.75 0.14 55 / 0.1)',
-                      color: 'oklch(0.70 0.16 55)',
+                      background: 'oklch(0.75 calc(0.14 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250) / 0.1)',
+                      color: 'oklch(0.70 calc(0.16 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250))',
                     }}
                   >
                     <svg
@@ -194,8 +194,8 @@ export default function Home() {
                   <div
                     className="flex-shrink-0 h-10 w-10 rounded-lg flex items-center justify-center"
                     style={{
-                      background: 'oklch(0.75 0.14 55 / 0.1)',
-                      color: 'oklch(0.70 0.16 55)',
+                      background: 'oklch(0.75 calc(0.14 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250) / 0.1)',
+                      color: 'oklch(0.70 calc(0.16 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250))',
                     }}
                   >
                     <svg
@@ -231,8 +231,8 @@ export default function Home() {
                   <div
                     className="flex-shrink-0 h-10 w-10 rounded-lg flex items-center justify-center"
                     style={{
-                      background: 'oklch(0.75 0.14 55 / 0.1)',
-                      color: 'oklch(0.70 0.16 55)',
+                      background: 'oklch(0.75 calc(0.14 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250) / 0.1)',
+                      color: 'oklch(0.70 calc(0.16 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250))',
                     }}
                   >
                     <svg
@@ -267,8 +267,8 @@ export default function Home() {
                   <div
                     className="flex-shrink-0 h-10 w-10 rounded-lg flex items-center justify-center"
                     style={{
-                      background: 'oklch(0.75 0.14 55 / 0.1)',
-                      color: 'oklch(0.70 0.16 55)',
+                      background: 'oklch(0.75 calc(0.14 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250) / 0.1)',
+                      color: 'oklch(0.70 calc(0.16 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250))',
                     }}
                   >
                     <svg
@@ -296,7 +296,7 @@ export default function Home() {
                         target="_blank"
                         rel="noopener noreferrer"
                         className="hover:underline font-medium"
-                        style={{ color: 'oklch(0.70 0.14 55)' }}
+                        style={{ color: 'oklch(0.70 calc(0.14 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250))' }}
                       >
                         moul.dev
                       </a>{' '}
@@ -318,7 +318,7 @@ export default function Home() {
               className="relative left-[calc(50%+3rem)] aspect-1155/678 w-[36.125rem] -translate-x-1/2 sm:left-[calc(50%+36rem)] sm:w-[72.1875rem]"
               style={{
                 background:
-                  'linear-gradient(to top right, oklch(0.78 0.14 55 / 0.08), oklch(0.70 0.12 40 / 0.06))',
+                  'linear-gradient(to top right, oklch(0.78 calc(0.14 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250) / 0.08), oklch(0.70 calc(0.12 * var(--brand-chroma-multiplier, 1)) calc(var(--brand-hue, 250) - 15) / 0.06))',
               }}
             />
           </div>
