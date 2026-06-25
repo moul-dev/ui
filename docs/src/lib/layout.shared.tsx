@@ -23,3 +23,24 @@ export function baseOptions(): BaseLayoutProps {
     githubUrl: `https://github.com/${gitConfig.user}/${gitConfig.repo}`,
   }
 }
+
+export function docsOptions(): BaseLayoutProps {
+  return {
+    nav: {
+      title: <Logo />,
+      children: (
+        <div className="flex justify-end">
+          <ThemeSelector />
+        </div>
+      ),
+    },
+    links: [
+      {
+        text: 'Docs',
+        url: '/docs',
+        active: 'nested-url',
+      },
+    ],
+    githubUrl: `https://github.com/${gitConfig.user}/${gitConfig.repo}`,
+  }
+}
