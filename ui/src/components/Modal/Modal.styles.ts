@@ -6,9 +6,9 @@ const fadeIn = stylex.keyframes({
   to: { opacity: 1 },
 })
 
-const zoomIn = stylex.keyframes({
-  from: { transform: 'scale(0.95)', opacity: 0 },
-  to: { transform: 'scale(1)', opacity: 1 },
+const slideInFromBottomDesktop = stylex.keyframes({
+  from: { transform: 'translateY(12px)', opacity: 0 },
+  to: { transform: 'translateY(0)', opacity: 1 },
 })
 
 const slideInFromBottom = stylex.keyframes({
@@ -29,8 +29,8 @@ export const styles = stylex.create({
     },
     justifyContent: 'center',
     animationName: fadeIn,
-    animationDuration: '0.2s',
-    animationTimingFunction: 'ease-out',
+    animationDuration: '0.3s',
+    animationTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
     '@media (prefers-reduced-motion: reduce)': {
       animationPlayState: 'paused',
       animationDuration: '0s',
@@ -55,11 +55,11 @@ export const styles = stylex.create({
     flexDirection: 'column',
     outline: 'none',
     animationName: {
-      default: zoomIn,
+      default: slideInFromBottomDesktop,
       '@media (max-width: 640px)': slideInFromBottom,
     },
-    animationDuration: '0.2s',
-    animationTimingFunction: 'ease-out',
+    animationDuration: '0.3s',
+    animationTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
     '@media (prefers-reduced-motion: reduce)': {
       animationPlayState: 'paused',
       animationDuration: '0s',
