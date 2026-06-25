@@ -29,7 +29,7 @@ export const styles = stylex.create({
     },
     justifyContent: 'center',
     animationName: fadeIn,
-    animationDuration: '0.3s',
+    animationDuration: '0.4s',
     animationTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
     '@media (prefers-reduced-motion: reduce)': {
       animationPlayState: 'paused',
@@ -58,7 +58,7 @@ export const styles = stylex.create({
       default: slideInFromBottomDesktop,
       '@media (max-width: 640px)': slideInFromBottom,
     },
-    animationDuration: '0.3s',
+    animationDuration: '0.4s',
     animationTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
     '@media (prefers-reduced-motion: reduce)': {
       animationPlayState: 'paused',
