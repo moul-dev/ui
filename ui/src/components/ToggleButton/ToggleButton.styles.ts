@@ -177,4 +177,94 @@ export const styles = stylex.create({
     boxShadow: 'none',
     pointerEvents: 'none',
   },
+  groupItem: {
+    position: 'relative',
+    zIndex: 1,
+  },
+  groupItemActive: {
+    zIndex: 2,
+  },
+  groupItemDisabled: {
+    zIndex: 0,
+  },
+  groupHorizontal: {
+    borderRadius: 0,
+    marginInlineStart: '-1px',
+    ':first-child': {
+      borderTopLeftRadius: tokens.radiusMd,
+      borderBottomLeftRadius: tokens.radiusMd,
+      marginInlineStart: 0,
+    },
+    ':last-child': {
+      borderTopRightRadius: tokens.radiusMd,
+      borderBottomRightRadius: tokens.radiusMd,
+    },
+  },
+  groupVertical: {
+    borderRadius: 0,
+    marginBlockStart: '-1px',
+    ':first-child': {
+      borderTopLeftRadius: tokens.radiusMd,
+      borderTopRightRadius: tokens.radiusMd,
+      marginBlockStart: 0,
+    },
+    ':last-child': {
+      borderBottomLeftRadius: tokens.radiusMd,
+      borderBottomRightRadius: tokens.radiusMd,
+    },
+  },
+  animatedItem: {
+    backgroundColor: 'transparent',
+    borderStyle: 'none',
+    boxShadow: 'none',
+    color: tokens.colorFgSubtle,
+    borderRadius: tokens.radiusSm,
+    transitionProperty: 'color',
+    ':hover': {
+      backgroundColor: 'transparent',
+      color: tokens.colorFg,
+    },
+    ':active': {
+      transform: 'none',
+    },
+  },
+  animatedItemSelected: {
+    color: tokens.colorFg,
+    backgroundColor: 'transparent',
+    ':hover': {
+      backgroundColor: 'transparent',
+      color: tokens.colorFg,
+    },
+  },
+  animatedItemSelectedPrimary: {
+    color: tokens.colorFgOnPrimary,
+    backgroundColor: 'transparent',
+    ':hover': {
+      backgroundColor: 'transparent',
+      color: tokens.colorFgOnPrimary,
+    },
+  },
+  selectionIndicator: {
+    position: 'absolute',
+    inset: 0,
+    zIndex: -1,
+    borderRadius: tokens.radiusSm,
+    transitionProperty: 'translate, width, height',
+    transitionDuration: '0.2s',
+    transitionTimingFunction: 'ease-in-out',
+    pointerEvents: 'none',
+    '@media (prefers-reduced-motion: reduce)': {
+      transitionProperty: 'none',
+    },
+  },
+  selectionIndicatorPrimary: {
+    backgroundColor: tokens.colorPrimary500,
+  },
+  selectionIndicatorSecondary: {
+    backgroundColor: tokens.colorBgElevated,
+    boxShadow: tokens.shadowSm,
+  },
+  selectionIndicatorTertiary: {
+    backgroundColor: tokens.colorNeutral200,
+  },
 })

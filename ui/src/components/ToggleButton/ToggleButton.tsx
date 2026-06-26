@@ -1,13 +1,16 @@
 'use client'
-import * as React from 'react'
+import type { StyleXStyles } from '@stylexjs/stylex'
 import * as stylex from '@stylexjs/stylex'
+import * as React from 'react'
 import {
+  SelectionIndicator as AriaSelectionIndicator,
   ToggleButton as AriaToggleButton,
   type ToggleButtonProps as AriaToggleButtonProps,
+  composeRenderProps,
 } from 'react-aria-components'
-import type { StyleXStyles } from '@stylexjs/stylex'
-import { styles } from './ToggleButton.styles'
 import { warnMissingLabel } from '../../utils/warnMissingLabel'
+import { ToggleButtonGroupContext } from '../ToggleButtonGroup/context'
+import { styles } from './ToggleButton.styles'
 
 export interface ToggleButtonProps
   extends Omit<AriaToggleButtonProps, 'style'> {
@@ -28,7 +31,7 @@ export const ToggleButton = React.forwardRef<
   ToggleButtonProps
 >(function ToggleButton(
   {
-    variant = 'secondary',
+    variant,
     isSelected,
     defaultSelected,
     onChange,
@@ -40,6 +43,9 @@ export const ToggleButton = React.forwardRef<
   },
   ref,
 ) {
+  const groupContext = React.useContext(ToggleButtonGroupContext)
+  const resolvedVariant = variant ?? groupContext?.variant ?? 'secondary'
+
   if (process.env.NODE_ENV !== 'production') {
     warnMissingLabel('ToggleButton', {
       label: rest['aria-label'],
@@ -58,30 +64,106 @@ export const ToggleButton = React.forwardRef<
       isDisabled={isDisabled}
       className={(renderProps) => {
         const selectedStyle =
-          styles[`${variant}Selected` as keyof typeof styles]
+          styles[`${resolvedVariant}Selected` as keyof typeof styles]
         const { className: stylexClass } = stylex.props(
           styles.base,
-          styles[variant],
+          styles[resolvedVariant as keyof typeof styles],
           renderProps.isSelected && selectedStyle,
           renderProps.isDisabled && styles.isDisabled,
+          groupContext?.isInGroup && styles.groupItem,
+          groupContext?.isInGroup &&
+            renderProps.isSelected &&
+            styles.groupItemActive,
+          groupContext?.isInGroup &&
+            renderProps.isFocusVisible &&
+            styles.groupItemActive,
+          groupContext?.isInGroup &&
+            renderProps.isHovered &&
+            styles.groupItemActive,
+          groupContext?.isInGroup &&
+            renderProps.isDisabled &&
+            styles.groupItemDisabled,
+          groupContext?.isInGroup &&
+            (groupContext.animated
+              ? [
+                  styles.animatedItem,
+                  renderProps.isSelected &&
+                    (resolvedVariant === 'primary'
+                      ? styles.animatedItemSelectedPrimary
+                      : styles.animatedItemSelected),
+                ]
+              : groupContext.orientation === 'horizontal'
+                ? styles.groupHorizontal
+                : styles.groupVertical),
           style,
         )
         return [stylexClass, className].filter(Boolean).join(' ')
       }}
       style={(renderProps) => {
         const selectedStyle =
-          styles[`${variant}Selected` as keyof typeof styles]
+          styles[`${resolvedVariant}Selected` as keyof typeof styles]
         const { style: stylexStyle } = stylex.props(
           styles.base,
-          styles[variant],
+          styles[resolvedVariant as keyof typeof styles],
           renderProps.isSelected && selectedStyle,
           renderProps.isDisabled && styles.isDisabled,
+          groupContext?.isInGroup && styles.groupItem,
+          groupContext?.isInGroup &&
+            renderProps.isSelected &&
+            styles.groupItemActive,
+          groupContext?.isInGroup &&
+            renderProps.isFocusVisible &&
+            styles.groupItemActive,
+          groupContext?.isInGroup &&
+            renderProps.isHovered &&
+            styles.groupItemActive,
+          groupContext?.isInGroup &&
+            renderProps.isDisabled &&
+            styles.groupItemDisabled,
+          groupContext?.isInGroup &&
+            (groupContext.animated
+              ? [
+                  styles.animatedItem,
+                  renderProps.isSelected &&
+                    (resolvedVariant === 'primary'
+                      ? styles.animatedItemSelectedPrimary
+                      : styles.animatedItemSelected),
+                ]
+              : groupContext.orientation === 'horizontal'
+                ? styles.groupHorizontal
+                : styles.groupVertical),
           style,
         )
         return stylexStyle
       }}
     >
-      {children}
+      {composeRenderProps(children, (childrenVal) => (
+        <>
+          {childrenVal}
+          {groupContext?.isInGroup && groupContext.animated && (
+            <AriaSelectionIndicator
+              {...(() => {
+                const { className: stylexClass, style: stylexStyle } =
+                  stylex.props(
+                    styles.selectionIndicator,
+                    resolvedVariant === 'primary' &&
+                      styles.selectionIndicatorPrimary,
+                    resolvedVariant === 'secondary' &&
+                      styles.selectionIndicatorSecondary,
+                    resolvedVariant === 'tertiary' &&
+                      styles.selectionIndicatorTertiary,
+                  )
+                return {
+                  className: [stylexClass, 'react-aria-SelectionIndicator']
+                    .filter(Boolean)
+                    .join(' '),
+                  style: stylexStyle,
+                }
+              })()}
+            />
+          )}
+        </>
+      ))}
     </AriaToggleButton>
   )
 })

@@ -5,11 +5,25 @@ export const styles = stylex.create({
   base: {
     display: 'inline-flex',
     flexDirection: 'row',
-    alignItems: 'center',
-    gap: tokens.spacing2,
+    alignItems: 'stretch',
+    boxSizing: 'border-box',
   },
   vertical: {
     flexDirection: 'column',
-    alignItems: 'stretch',
+  },
+  animatedTrack: {
+    backgroundColor: tokens.colorBgSubtle,
+    borderRadius: tokens.radiusMd,
+    padding: '2px',
+    borderWidth: '1px',
+    borderStyle: 'solid',
+    borderColor: tokens.colorBorderSubtle,
+    gap: '2px',
+  },
+  animatedTrackHorizontal: {
+    flexDirection: 'row',
+  },
+  animatedTrackVertical: {
+    flexDirection: 'column',
   },
 })

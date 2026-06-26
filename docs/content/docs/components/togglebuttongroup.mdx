@@ -1,43 +1,189 @@
 ---
 title: ToggleButtonGroup
-description: Documentation for the ToggleButtonGroup component.
+description: A toggle button group allows a user to toggle multiple options, with single or multiple selection.
 ---
 
 import { ToggleButtonGroup, ToggleButton } from '@moul-dev/ui';
+import { Bold, Italic, Underline } from 'lucide-react';
 
 
 # ToggleButtonGroup
 
+A toggle button group represents a set of related buttons that can be toggled on or off, supporting both single and multiple selection.
+
 ## Preview
 
 <ComponentPreview>
-  <ToggleButtonGroup>
-    <ToggleButton id="left">Left</ToggleButton>
-    <ToggleButton id="center">Center</ToggleButton>
-    <ToggleButton id="right">Right</ToggleButton>
-  </ToggleButtonGroup>
-</ComponentPreview>
+  <div className="flex flex-col gap-6 w-full max-w-md">
+    <div className="flex flex-col gap-2">
+      <span className="text-sm font-medium text-muted-foreground">Standard Group</span>
+      <ToggleButtonGroup defaultValue={['center']}>
+        <ToggleButton id="left">Left</ToggleButton>
+        <ToggleButton id="center">Center</ToggleButton>
+        <ToggleButton id="right">Right</ToggleButton>
+      </ToggleButtonGroup>
+    </div>
 
-The `ToggleButtonGroup` component is built with React Aria and styled using StyleX.
+    <div className="flex flex-col gap-2">
+      <span className="text-sm font-medium text-muted-foreground">Icon Toolbar (Multiple Selection)</span>
+      <ToggleButtonGroup selectionMode="multiple" defaultValue={['bold', 'underline']}>
+        <ToggleButton id="bold" aria-label="Bold">
+          <Bold className="w-4 h-4" />
+        </ToggleButton>
+        <ToggleButton id="italic" aria-label="Italic">
+          <Italic className="w-4 h-4" />
+        </ToggleButton>
+        <ToggleButton id="underline" aria-label="Underline">
+          <Underline className="w-4 h-4" />
+        </ToggleButton>
+      </ToggleButtonGroup>
+    </div>
+
+    <div className="flex flex-col gap-2">
+      <span className="text-sm font-medium text-muted-foreground">Animated (Segmented Control)</span>
+      <ToggleButtonGroup animated defaultValue="week">
+        <ToggleButton id="day">Day</ToggleButton>
+        <ToggleButton id="week">Week</ToggleButton>
+        <ToggleButton id="month">Month</ToggleButton>
+        <ToggleButton id="year">Year</ToggleButton>
+      </ToggleButtonGroup>
+    </div>
+  </div>
+</ComponentPreview>
 
 ## Import
 
 ```tsx
-import { ToggleButtonGroup } from '@moul-dev/ui';
+import { ToggleButtonGroup, ToggleButton } from '@moul-dev/ui';
 ```
 
-## Usage
+## Examples
 
-Here is a basic example of how to use the `ToggleButtonGroup` component:
+### Classic adjacent group
+
+By default, the buttons in a `ToggleButtonGroup` touch and share border radiuses, showing a unified toolbar appearance:
 
 ```tsx
-import { ToggleButtonGroup } from '@moul-dev/ui';
+<ToggleButtonGroup defaultValue={['left']}>
+  <ToggleButton id="left">Left</ToggleButton>
+  <ToggleButton id="center">Center</ToggleButton>
+  <ToggleButton id="right">Right</ToggleButton>
+</ToggleButtonGroup>
+```
+
+### Icon Toolbar
+
+You can render icons inside the `<ToggleButton>` components. When rendering icon-only buttons, make sure to add an `aria-label` to each button for accessibility:
+
+```tsx
+import { ToggleButtonGroup, ToggleButton } from '@moul-dev/ui';
+import { Bold, Italic, Underline } from 'lucide-react';
 
 export default function Example() {
   return (
-    <ToggleButtonGroup>
-      {/* Component content */}
+    <ToggleButtonGroup selectionMode="multiple" defaultValue={['bold', 'underline']}>
+      <ToggleButton id="bold" aria-label="Bold">
+        <Bold className="w-4 h-4" />
+      </ToggleButton>
+      <ToggleButton id="italic" aria-label="Italic">
+        <Italic className="w-4 h-4" />
+      </ToggleButton>
+      <ToggleButton id="underline" aria-label="Underline">
+        <Underline className="w-4 h-4" />
+      </ToggleButton>
     </ToggleButtonGroup>
   );
 }
 ```
+
+### Variants
+
+`ToggleButtonGroup` supports `primary`, `secondary` (default), and `tertiary` variants. Setting `variant` on the group automatically sets the default variant for all buttons inside it:
+
+<ComponentPreview>
+  <div className="flex flex-col gap-4 w-full max-w-md">
+    <ToggleButtonGroup variant="primary" defaultValue="b">
+      <ToggleButton id="a">Primary A</ToggleButton>
+      <ToggleButton id="b">Primary B</ToggleButton>
+    </ToggleButtonGroup>
+
+    <ToggleButtonGroup variant="secondary" defaultValue="b">
+      <ToggleButton id="a">Secondary A</ToggleButton>
+      <ToggleButton id="b">Secondary B</ToggleButton>
+    </ToggleButtonGroup>
+
+    <ToggleButtonGroup variant="tertiary" defaultValue="b">
+      <ToggleButton id="a">Tertiary A</ToggleButton>
+      <ToggleButton id="b">Tertiary B</ToggleButton>
+    </ToggleButtonGroup>
+  </div>
+</ComponentPreview>
+
+### Animated Segmented Control
+
+Use the `animated` prop to style the group as a modern segmented control with a sliding selection indicator.
+
+```tsx
+<ToggleButtonGroup animated defaultValue="day">
+  <ToggleButton id="day">Day</ToggleButton>
+  <ToggleButton id="week">Week</ToggleButton>
+  <ToggleButton id="month">Month</ToggleButton>
+</ToggleButtonGroup>
+```
+
+### Animated Variants
+
+Animated groups also style their selection indicator and text colors based on the group's `variant`:
+
+<ComponentPreview>
+  <div className="flex flex-col gap-4 w-full max-w-md">
+    <ToggleButtonGroup animated variant="primary" defaultValue="day">
+      <ToggleButton id="day">Day</ToggleButton>
+      <ToggleButton id="week">Week</ToggleButton>
+      <ToggleButton id="month">Month</ToggleButton>
+    </ToggleButtonGroup>
+
+    <ToggleButtonGroup animated variant="secondary" defaultValue="day">
+      <ToggleButton id="day">Day</ToggleButton>
+      <ToggleButton id="week">Week</ToggleButton>
+      <ToggleButton id="month">Month</ToggleButton>
+    </ToggleButtonGroup>
+
+    <ToggleButtonGroup animated variant="tertiary" defaultValue="day">
+      <ToggleButton id="day">Day</ToggleButton>
+      <ToggleButton id="week">Week</ToggleButton>
+      <ToggleButton id="month">Month</ToggleButton>
+    </ToggleButtonGroup>
+  </div>
+</ComponentPreview>
+
+### Vertical orientation
+
+Use the `orientation` prop to align the group vertically:
+
+<ComponentPreview>
+  <div className="flex gap-8">
+    <ToggleButtonGroup orientation="vertical" defaultValue="b">
+      <ToggleButton id="a">Option A</ToggleButton>
+      <ToggleButton id="b">Option B</ToggleButton>
+      <ToggleButton id="c">Option C</ToggleButton>
+    </ToggleButtonGroup>
+
+    <ToggleButtonGroup animated orientation="vertical" defaultValue="b">
+      <ToggleButton id="a">Option A</ToggleButton>
+      <ToggleButton id="b">Option B</ToggleButton>
+      <ToggleButton id="c">Option C</ToggleButton>
+    </ToggleButtonGroup>
+  </div>
+</ComponentPreview>
+
+## Props
+
+### ToggleButtonGroup Props
+
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `variant` | `'primary' \| 'secondary' \| 'tertiary'` | `'secondary'` | The visual variant applied to the buttons. |
+| `animated` | `boolean` | `false` | When true, renders a track with a sliding selection indicator. |
+| `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | The orientation of the group. |
+| `selectionMode` | `'single' \| 'multiple'` | `'single'` | The selection mode of the group. |
