@@ -3,52 +3,147 @@ title: Tabs
 description: Documentation for the Tabs component.
 ---
 
-import { Tabs, TabList, Tab, TabPanel } from '@moul-dev/ui';
-
+import { Tabs, TabList, Tab, TabPanels, TabPanel } from '@moul-dev/ui';
 
 # Tabs
+
+Tabs organize content into multiple sections and allow users to navigate between them. It is built using React Aria Components and styled compile-time using StyleX, featuring smooth selection sliding indicator animations.
 
 ## Preview
 
 <ComponentPreview>
-  <Tabs className="w-80">
+  <Tabs className="w-80" defaultValue="profile">
     <TabList aria-label="Settings Tabs">
       <Tab id="profile">Profile</Tab>
       <Tab id="notifications">Notifications</Tab>
       <Tab id="security">Security</Tab>
     </TabList>
-    <TabPanel id="profile" className="p-4 border border-t-0 border-neutral-200 dark:border-neutral-800 rounded-b-lg">
-      Profile settings form.
-    </TabPanel>
-    <TabPanel id="notifications" className="p-4 border border-t-0 border-neutral-200 dark:border-neutral-800 rounded-b-lg">
-      Notification preferences.
-    </TabPanel>
-    <TabPanel id="security" className="p-4 border border-t-0 border-neutral-200 dark:border-neutral-800 rounded-b-lg">
-      Manage security settings.
-    </TabPanel>
+    <TabPanels>
+      <TabPanel id="profile">
+        Profile settings and account parameters.
+      </TabPanel>
+      <TabPanel id="notifications">
+        Configure email and push notification preferences.
+      </TabPanel>
+      <TabPanel id="security">
+        Manage password, two-factor authentication, and active sessions.
+      </TabPanel>
+    </TabPanels>
   </Tabs>
 </ComponentPreview>
-
-The `Tabs` component is built with React Aria and styled using StyleX.
 
 ## Import
 
 ```tsx
-import { Tabs } from '@moul-dev/ui';
+import { Tabs, TabList, Tab, TabPanels, TabPanel } from '@moul-dev/ui';
 ```
 
-## Usage
+## Variants
 
-Here is a basic example of how to use the `Tabs` component:
+The `Tabs` component supports three visual variants through the `variant` prop: `primary` (default brand indicator), `secondary` (foreground indicator), and `tertiary` (sliding pill background bubble).
+
+### Primary (Default)
+
+The primary variant uses the brand accent color for the selection indicator underline.
 
 ```tsx
-import { Tabs } from '@moul-dev/ui';
-
-export default function Example() {
-  return (
-    <Tabs>
-      {/* Component content */}
-    </Tabs>
-  );
-}
+<Tabs variant="primary">
+  <TabList aria-label="Primary Tabs">
+    <Tab id="1">Tab 1</Tab>
+    <Tab id="2">Tab 2</Tab>
+  </TabList>
+  <TabPanels>
+    <TabPanel id="1">Content 1</TabPanel>
+    <TabPanel id="2">Content 2</TabPanel>
+  </TabPanels>
+</Tabs>
 ```
+
+### Secondary
+
+The secondary variant uses the default foreground text color for the selection indicator underline.
+
+<ComponentPreview>
+  <Tabs variant="secondary" className="w-80" defaultValue="1">
+    <TabList aria-label="Secondary Tabs">
+      <Tab id="1">Tab 1</Tab>
+      <Tab id="2">Tab 2</Tab>
+    </TabList>
+    <TabPanels>
+      <TabPanel id="1">Secondary variant content 1</TabPanel>
+      <TabPanel id="2">Secondary variant content 2</TabPanel>
+    </TabPanels>
+  </Tabs>
+</ComponentPreview>
+
+### Tertiary (Sliding Pill)
+
+The tertiary variant renders a premium sliding rounded pill background under the selected tab and removes borders from the tab list.
+
+<ComponentPreview>
+  <Tabs variant="tertiary" className="w-80" defaultValue="1">
+    <TabList aria-label="Tertiary Tabs">
+      <Tab id="1">Tab 1</Tab>
+      <Tab id="2">Tab 2</Tab>
+      <Tab id="3">Tab 3</Tab>
+    </TabList>
+    <TabPanels>
+      <TabPanel id="1">Pill style layout content 1</TabPanel>
+      <TabPanel id="2">Pill style layout content 2</TabPanel>
+      <TabPanel id="3">Pill style layout content 3</TabPanel>
+    </TabPanels>
+  </Tabs>
+</ComponentPreview>
+
+## Vertical Orientation
+
+Tabs can be stacked vertically using the `orientation="vertical"` prop. The selection indicator animates along the vertical axis, and the tab panels are laid out inline to the right.
+
+<ComponentPreview>
+  <Tabs orientation="vertical" variant="primary" className="w-full max-w-md" defaultValue="general">
+    <TabList aria-label="Settings categories">
+      <Tab id="general">General</Tab>
+      <Tab id="appearance">Appearance</Tab>
+      <Tab id="security">Security</Tab>
+    </TabList>
+    <TabPanels>
+      <TabPanel id="general">
+        General account settings configuration.
+      </TabPanel>
+      <TabPanel id="appearance">
+        Customize themes, dark mode, font sizes, and layout choices.
+      </TabPanel>
+      <TabPanel id="security">
+        Manage active authentication keys and access logs.
+      </TabPanel>
+    </TabPanels>
+  </Tabs>
+</ComponentPreview>
+
+## API Reference
+
+### Tabs Props
+
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `variant` | `'primary' \| 'secondary' \| 'tertiary'` | `'primary'` | The visual style of the tabs. |
+| `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | The layout axis direction of the tab items. |
+| `selectedKey` | `Key` | — | Controlled selected key. |
+| `defaultSelectedKey` | `Key` | — | Uncontrolled default selected key. |
+| `onSelectionChange` | `(key: Key) => void` | — | Callback fired when selecting tabs. |
+| `isDisabled` | `boolean` | `false` | Whether interaction is disabled. |
+
+### TabList Props
+
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `aria-label` | `string` | — | Accessible name describing the tab list. |
+| `items` | `Iterable<T>` | — | Dynamic item collections definition source. |
+
+### Tab Props
+
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `id` | `Key` | — | The unique key corresponding to this tab panel. |
+| `isDisabled` | `boolean` | `false` | Disables this specific tab. |
+| `href` | `string` | — | Makes the tab render as an anchor link to navigate. |

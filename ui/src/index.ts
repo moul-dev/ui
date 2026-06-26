@@ -175,11 +175,12 @@ export type {
   ToastContent,
 } from './components/Toast/Toast'
 
-export { Tabs, TabList, Tab, TabPanel } from './components/Tabs'
+export { Tabs, TabList, Tab, TabPanels, TabPanel } from './components/Tabs'
 export type {
   TabsProps,
   TabListProps,
   TabProps,
+  TabPanelsProps,
   TabPanelProps,
 } from './components/Tabs'
 

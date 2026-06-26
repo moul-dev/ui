@@ -6,6 +6,7 @@ import {
   Tabs,
   TabList,
   Tab,
+  TabPanels,
   TabPanel,
   Breadcrumbs,
   BreadcrumbItem,
@@ -25,10 +26,11 @@ const testStyles = stylex.create({
 })
 
 describe('Tabs Component Suite', () => {
-  test('renders tabs and panels with correct role and ref forwarding', () => {
+  test('renders tabs and panels with correct role, TabPanels, and ref forwarding', () => {
     const tabsRef = React.createRef<HTMLDivElement>()
     const tabListRef = React.createRef<HTMLDivElement>()
     const tabRef = React.createRef<HTMLDivElement>()
+    const panelsRef = React.createRef<HTMLDivElement>()
     const panelRef = React.createRef<HTMLDivElement>()
 
     render(
@@ -39,16 +41,19 @@ describe('Tabs Component Suite', () => {
           </Tab>
           <Tab id="t2">Tab 2</Tab>
         </TabList>
-        <TabPanel id="t1" ref={panelRef}>
-          Content 1
-        </TabPanel>
-        <TabPanel id="t2">Content 2</TabPanel>
+        <TabPanels ref={panelsRef}>
+          <TabPanel id="t1" ref={panelRef}>
+            Content 1
+          </TabPanel>
+          <TabPanel id="t2">Content 2</TabPanel>
+        </TabPanels>
       </Tabs>,
     )
 
     expect(tabsRef.current).toBeInTheDocument()
     expect(tabListRef.current).toBeInTheDocument()
     expect(tabRef.current).toBeInTheDocument()
+    expect(panelsRef.current).toBeInTheDocument()
     expect(panelRef.current).toBeInTheDocument()
 
     const tabList = screen.getByRole('tablist')
@@ -63,7 +68,7 @@ describe('Tabs Component Suite', () => {
     expect(panel).toHaveTextContent('Content 1')
   })
 
-  test('supports keyboard navigation and focus management', () => {
+  test('supports keyboard navigation and focus management with TabPanels', () => {
     render(
       <Tabs>
         <TabList aria-label="Keyboard Tabs">
@@ -71,9 +76,11 @@ describe('Tabs Component Suite', () => {
           <Tab id="t2">Tab 2</Tab>
           <Tab id="t3">Tab 3</Tab>
         </TabList>
-        <TabPanel id="t1">Content 1</TabPanel>
-        <TabPanel id="t2">Content 2</TabPanel>
-        <TabPanel id="t3">Content 3</TabPanel>
+        <TabPanels>
+          <TabPanel id="t1">Content 1</TabPanel>
+          <TabPanel id="t2">Content 2</TabPanel>
+          <TabPanel id="t3">Content 3</TabPanel>
+        </TabPanels>
       </Tabs>,
     )
 
@@ -89,7 +96,7 @@ describe('Tabs Component Suite', () => {
     expect(screen.getByRole('tabpanel')).toHaveTextContent('Content 2')
   })
 
-  test('applies custom classNames and styles', () => {
+  test('applies custom classNames and styles to TabPanels', () => {
     const { container } = render(
       <Tabs className="custom-tabs" style={testStyles.tabs}>
         <TabList className="custom-tablist">
@@ -97,9 +104,11 @@ describe('Tabs Component Suite', () => {
             Tab 1
           </Tab>
         </TabList>
-        <TabPanel id="t1" className="custom-panel">
-          Content 1
-        </TabPanel>
+        <TabPanels className="custom-panels">
+          <TabPanel id="t1" className="custom-panel">
+            Content 1
+          </TabPanel>
+        </TabPanels>
       </Tabs>,
     )
 
@@ -108,7 +117,30 @@ describe('Tabs Component Suite', () => {
 
     expect(container.querySelector('.custom-tablist')).toBeInTheDocument()
     expect(container.querySelector('.custom-tab')).toBeInTheDocument()
+    expect(container.querySelector('.custom-panels')).toBeInTheDocument()
     expect(container.querySelector('.custom-panel')).toBeInTheDocument()
+  })
+
+  test('supports vertical orientation and variants', () => {
+    const { container } = render(
+      <Tabs orientation="vertical" variant="tertiary">
+        <TabList aria-label="Vertical Tabs">
+          <Tab id="t1">Tab 1</Tab>
+          <Tab id="t2">Tab 2</Tab>
+        </TabList>
+        <TabPanels>
+          <TabPanel id="t1">Content 1</TabPanel>
+          <TabPanel id="t2">Content 2</TabPanel>
+        </TabPanels>
+      </Tabs>,
+    )
+
+    const tablist = screen.getByRole('tablist')
+    expect(tablist).toHaveAttribute('aria-orientation', 'vertical')
+
+    // The selection indicator will be rendered inside Tab
+    const selectionIndicator = container.querySelector('.react-aria-SelectionIndicator')
+    expect(selectionIndicator).toBeInTheDocument()
   })
 })
 
