@@ -149,7 +149,6 @@ export const styles = stylex.create({
     borderStyle: 'none',
     boxShadow: 'none',
     color: tokens.colorFgSubtle,
-    borderRadius: tokens.radiusSm,
     transitionProperty: 'color',
     ':hover': {
       backgroundColor: 'transparent',
@@ -158,6 +157,15 @@ export const styles = stylex.create({
     ':active': {
       transform: 'none',
     },
+  },
+  animatedItemSm: {
+    borderRadius: `calc(${tokens.radiusSm} - 3px)`,
+  },
+  animatedItemMd: {
+    borderRadius: `calc(${tokens.radiusMd} - 3px)`,
+  },
+  animatedItemLg: {
+    borderRadius: `calc(${tokens.radiusMd} - 3px)`,
   },
   animatedItemSelectedPrimary: {
     color: tokens.colorFg,
@@ -179,7 +187,6 @@ export const styles = stylex.create({
     position: 'absolute',
     inset: 0,
     zIndex: -1,
-    borderRadius: tokens.radiusSm,
     transitionProperty: 'translate, width, height',
     transitionDuration: '0.2s',
     transitionTimingFunction: 'ease-in-out',
@@ -187,6 +194,15 @@ export const styles = stylex.create({
     '@media (prefers-reduced-motion: reduce)': {
       transitionProperty: 'none',
     },
+  },
+  selectionIndicatorSm: {
+    borderRadius: `calc(${tokens.radiusSm} - 3px)`,
+  },
+  selectionIndicatorMd: {
+    borderRadius: `calc(${tokens.radiusMd} - 3px)`,
+  },
+  selectionIndicatorLg: {
+    borderRadius: `calc(${tokens.radiusMd} - 3px)`,
   },
   selectionIndicatorPrimary: {
     backgroundColor: tokens.colorBg,

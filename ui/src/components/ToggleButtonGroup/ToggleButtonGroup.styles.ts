@@ -20,6 +20,15 @@ export const styles = stylex.create({
     borderColor: tokens.colorBorderSubtle,
     gap: '2px',
   },
+  trackSm: {
+    borderRadius: tokens.radiusSm,
+  },
+  trackMd: {
+    borderRadius: tokens.radiusMd,
+  },
+  trackLg: {
+    borderRadius: tokens.radiusMd,
+  },
   animatedTrackHorizontal: {
     flexDirection: 'row',
   },

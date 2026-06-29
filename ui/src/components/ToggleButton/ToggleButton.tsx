@@ -89,6 +89,9 @@ export const ToggleButton = React.forwardRef<
             (groupContext.animated
               ? [
                   styles.animatedItem,
+                  styles[
+                    `animatedItem${resolvedSize.charAt(0).toUpperCase()}${resolvedSize.slice(1)}` as keyof typeof styles
+                  ],
                   renderProps.isSelected &&
                     (variant === 'primary'
                       ? styles.animatedItemSelectedPrimary
@@ -131,6 +134,9 @@ export const ToggleButton = React.forwardRef<
             (groupContext.animated
               ? [
                   styles.animatedItem,
+                  styles[
+                    `animatedItem${resolvedSize.charAt(0).toUpperCase()}${resolvedSize.slice(1)}` as keyof typeof styles
+                  ],
                   renderProps.isSelected &&
                     (variant === 'primary'
                       ? styles.animatedItemSelectedPrimary
@@ -153,6 +159,9 @@ export const ToggleButton = React.forwardRef<
                 const { className: stylexClass, style: stylexStyle } =
                   stylex.props(
                     styles.selectionIndicator,
+                    styles[
+                      `selectionIndicator${resolvedSize.charAt(0).toUpperCase()}${resolvedSize.slice(1)}` as keyof typeof styles
+                    ],
                     variant === 'primary'
                       ? styles.selectionIndicatorPrimary
                       : styles.selectionIndicatorSecondary,

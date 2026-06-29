@@ -49,10 +49,15 @@ export const ToggleButtonGroup = React.forwardRef<
         ref={ref}
         orientation={orientation}
         className={(renderProps) => {
+          const resolvedSize = size ?? 'md'
           const { className: stylexClass } = stylex.props(
             styles.base,
             renderProps.orientation === 'vertical' && styles.vertical,
             animated && styles.animatedTrack,
+            animated &&
+              styles[
+                `track${resolvedSize.charAt(0).toUpperCase()}${resolvedSize.slice(1)}` as keyof typeof styles
+              ],
             animated &&
               (renderProps.orientation === 'vertical'
                 ? styles.animatedTrackVertical
@@ -62,10 +67,15 @@ export const ToggleButtonGroup = React.forwardRef<
           return [stylexClass, className].filter(Boolean).join(' ')
         }}
         style={(renderProps) => {
+          const resolvedSize = size ?? 'md'
           const { style: stylexStyle } = stylex.props(
             styles.base,
             renderProps.orientation === 'vertical' && styles.vertical,
             animated && styles.animatedTrack,
+            animated &&
+              styles[
+                `track${resolvedSize.charAt(0).toUpperCase()}${resolvedSize.slice(1)}` as keyof typeof styles
+              ],
             animated &&
               (renderProps.orientation === 'vertical'
                 ? styles.animatedTrackVertical
