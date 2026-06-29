@@ -1,26 +1,26 @@
-import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest'
-import { render, fireEvent, screen, act } from '@testing-library/react'
+import { act, fireEvent, render, screen } from '@testing-library/react'
 import * as fc from 'fast-check'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import {
-  Modal,
-  ModalOverlay,
-  ModalDialog,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
   AlertDialog,
-  AlertDialogHeader,
   AlertDialogBody,
   AlertDialogFooter,
+  AlertDialogHeader,
+  Button,
+  Modal,
+  ModalBody,
+  ModalDialog,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Popover,
+  PopoverDialog,
+  PopoverTrigger,
+  ToastContainer,
   Tooltip,
   TooltipTrigger,
-  Popover,
-  PopoverTrigger,
-  PopoverDialog,
-  ToastContainer,
-  useToast,
   toastQueue,
-  Button,
+  useToast,
 } from '../index'
 
 describe('Modal and AlertDialog Components', () => {

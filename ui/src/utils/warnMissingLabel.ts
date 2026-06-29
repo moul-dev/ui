@@ -1,4 +1,4 @@
-import * as React from 'react'
+import type * as React from 'react'
 
 /**
  * Helper to recursively detect non-empty text content inside React children.

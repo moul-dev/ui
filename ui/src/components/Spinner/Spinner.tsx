@@ -1,9 +1,9 @@
 'use client'
-import * as React from 'react'
-import * as stylex from '@stylexjs/stylex'
 import type { StyleXStyles } from '@stylexjs/stylex'
-import { styles } from './Spinner.styles'
+import * as stylex from '@stylexjs/stylex'
+import * as React from 'react'
 import { warnMissingLabel } from '../../utils/warnMissingLabel'
+import { styles } from './Spinner.styles'
 
 export interface SpinnerProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'style'> {

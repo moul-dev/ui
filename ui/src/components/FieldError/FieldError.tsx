@@ -1,12 +1,12 @@
 'use client'
-import * as React from 'react'
+import type { StyleXStyles } from '@stylexjs/stylex'
 import * as stylex from '@stylexjs/stylex'
+import * as React from 'react'
 import {
   FieldError as AriaFieldError,
   type FieldErrorProps as AriaFieldErrorProps,
   type ValidationResult,
 } from 'react-aria-components'
-import type { StyleXStyles } from '@stylexjs/stylex'
 import { styles } from './FieldError.styles'
 
 export interface FieldErrorProps extends Omit<AriaFieldErrorProps, 'style'> {

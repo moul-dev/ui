@@ -1,15 +1,15 @@
 'use client'
-import * as React from 'react'
-import * as stylex from '@stylexjs/stylex'
-import {
-  Popover as AriaPopover,
-  DialogTrigger as AriaDialogTrigger,
-  Dialog as AriaDialog,
-  OverlayArrow as AriaOverlayArrow,
-  type PopoverProps as AriaPopoverProps,
-  type DialogProps as AriaDialogProps,
-} from 'react-aria-components'
 import type { StyleXStyles } from '@stylexjs/stylex'
+import * as stylex from '@stylexjs/stylex'
+import * as React from 'react'
+import {
+  Dialog as AriaDialog,
+  type DialogProps as AriaDialogProps,
+  DialogTrigger as AriaDialogTrigger,
+  OverlayArrow as AriaOverlayArrow,
+  Popover as AriaPopover,
+  type PopoverProps as AriaPopoverProps,
+} from 'react-aria-components'
 import { styles } from './Popover.styles'
 
 // ── PopoverTrigger Component ─────────────────────────────────────────

@@ -1,7 +1,7 @@
-import { describe, test, expect, vi } from 'vitest'
-import { render, fireEvent } from '@testing-library/react'
+import { fireEvent, render } from '@testing-library/react'
+import { describe, expect, test, vi } from 'vitest'
 import '@testing-library/jest-dom'
-import { TagGroup, Tag } from '../index'
+import { Tag, TagGroup } from '../index'
 
 describe('TagGroup and Tag components', () => {
   test('renders basic list of tags with label and description', () => {
@@ -10,12 +10,12 @@ describe('TagGroup and Tag components', () => {
         <Tag id="news">News</Tag>
         <Tag id="travel">Travel</Tag>
         <Tag id="gaming">Gaming</Tag>
-      </TagGroup>
+      </TagGroup>,
     )
 
     expect(getByText('Categories')).toBeInTheDocument()
     expect(getByText('Choose tags')).toBeInTheDocument()
-    
+
     // RAC TagGroup lists items under a grid or listbox role
     const tags = getAllByRole('row') // RAC Tag renders as a row / gridcell structure
     expect(tags).toHaveLength(3)
@@ -25,7 +25,7 @@ describe('TagGroup and Tag components', () => {
     const { getByText } = render(
       <TagGroup label="Categories" isInvalid errorMessage="This is required">
         <Tag id="news">News</Tag>
-      </TagGroup>
+      </TagGroup>,
     )
 
     expect(getByText('This is required')).toBeInTheDocument()
@@ -41,12 +41,12 @@ describe('TagGroup and Tag components', () => {
       >
         <Tag id="news">News</Tag>
         <Tag id="travel">Travel</Tag>
-      </TagGroup>
+      </TagGroup>,
     )
 
     const tags = getAllByRole('row')
     fireEvent.click(tags[0])
-    
+
     expect(onSelectionChange).toHaveBeenCalledTimes(1)
     const selectedKeys = onSelectionChange.mock.calls[0][0]
     expect(selectedKeys.has('news')).toBe(true)
@@ -58,7 +58,7 @@ describe('TagGroup and Tag components', () => {
       <TagGroup label="Categories" onRemove={onRemove}>
         <Tag id="news">News</Tag>
         <Tag id="travel">Travel</Tag>
-      </TagGroup>
+      </TagGroup>,
     )
 
     // Verify remove button is rendered inside RAC's gridcell/row structure
@@ -67,7 +67,7 @@ describe('TagGroup and Tag components', () => {
 
     fireEvent.click(removeButtons[0])
     expect(onRemove).toHaveBeenCalledTimes(1)
-    
+
     const removedKeys = onRemove.mock.calls[0][0]
     expect(removedKeys.has('news')).toBe(true)
   })
@@ -78,7 +78,7 @@ describe('TagGroup and Tag components', () => {
         <Tag id="landscape" href="https://wikipedia.org" target="_blank">
           Landscape
         </Tag>
-      </TagGroup>
+      </TagGroup>,
     )
 
     const tag = getByRole('row')
@@ -90,7 +90,7 @@ describe('TagGroup and Tag components', () => {
       <TagGroup label="Categories" isDisabled>
         <Tag id="news">News</Tag>
         <Tag id="travel">Travel</Tag>
-      </TagGroup>
+      </TagGroup>,
     )
 
     const tags = getAllByRole('row')
@@ -102,8 +102,10 @@ describe('TagGroup and Tag components', () => {
     const { getAllByRole } = render(
       <TagGroup label="Categories" size="sm" variant="primary">
         <Tag id="news">News</Tag>
-        <Tag id="travel" size="lg" variant="tertiary">Travel</Tag>
-      </TagGroup>
+        <Tag id="travel" size="lg" variant="tertiary">
+          Travel
+        </Tag>
+      </TagGroup>,
     )
 
     const tags = getAllByRole('row')

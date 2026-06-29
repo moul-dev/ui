@@ -1,28 +1,28 @@
 'use client'
 
-import React, { useState } from 'react'
 import {
-  Button,
-  ModalOverlay,
-  Modal,
+  Alert,
   AlertDialog,
-  AlertDialogHeader,
   AlertDialogBody,
   AlertDialogFooter,
-  ModalDialog,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  useToast,
-  ToastContainer,
-  Form,
-  TextField,
-  Alert,
-  TagGroup,
-  Tag,
+  AlertDialogHeader,
+  Button,
   ComboBox,
   ComboBoxItem,
+  Form,
+  Modal,
+  ModalBody,
+  ModalDialog,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Tag,
+  TagGroup,
+  TextField,
+  ToastContainer,
+  useToast,
 } from '@moul-dev/ui'
+import React, { useState } from 'react'
 
 export function AlertDialogDemo() {
   const [isOpen, setIsOpen] = useState(false)
@@ -190,7 +190,9 @@ export function TagGroupDemo() {
   return (
     <div className="w-full max-w-xl flex flex-col gap-6 p-2">
       <div className="flex flex-col gap-4">
-        <h3 className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">Variants (Primary, Secondary, Tertiary)</h3>
+        <h3 className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">
+          Variants (Primary, Secondary, Tertiary)
+        </h3>
         <div className="flex flex-col gap-3">
           <TagGroup label="Primary Tags" variant="primary">
             <Tag id="p1">Analytics</Tag>
@@ -213,19 +215,36 @@ export function TagGroupDemo() {
       </div>
 
       <div className="flex flex-col gap-4">
-        <h3 className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">Sizes (Small, Medium, Large)</h3>
+        <h3 className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">
+          Sizes (Small, Medium, Large)
+        </h3>
         <div className="flex flex-col gap-3">
-          <TagGroup label="Small size" size="sm" variant="primary" onRemove={() => {}}>
+          <TagGroup
+            label="Small size"
+            size="sm"
+            variant="primary"
+            onRemove={() => {}}
+          >
             <Tag id="sm1">Small Tag</Tag>
             <Tag id="sm2">Tag 2</Tag>
           </TagGroup>
 
-          <TagGroup label="Medium size" size="md" variant="secondary" onRemove={() => {}}>
+          <TagGroup
+            label="Medium size"
+            size="md"
+            variant="secondary"
+            onRemove={() => {}}
+          >
             <Tag id="md1">Medium Tag</Tag>
             <Tag id="md2">Tag 2</Tag>
           </TagGroup>
 
-          <TagGroup label="Large size" size="lg" variant="tertiary" onRemove={() => {}}>
+          <TagGroup
+            label="Large size"
+            size="lg"
+            variant="tertiary"
+            onRemove={() => {}}
+          >
             <Tag id="lg1">Large Tag</Tag>
             <Tag id="lg2">Tag 2</Tag>
           </TagGroup>
@@ -233,7 +252,9 @@ export function TagGroupDemo() {
       </div>
 
       <div className="flex flex-col gap-4 border-t border-neutral-200 dark:border-neutral-800 pt-4">
-        <h3 className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">Interactive & Removable</h3>
+        <h3 className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">
+          Interactive & Removable
+        </h3>
         <TagGroup
           label="Tags with Action & Removal"
           selectionMode="multiple"
@@ -248,7 +269,10 @@ export function TagGroupDemo() {
           ))}
         </TagGroup>
         <div className="text-xs text-neutral-500 dark:text-neutral-400">
-          Selected: <span className="text-primary-600 dark:text-primary-400 font-medium">{[...selected].join(', ') || 'None'}</span>
+          Selected:{' '}
+          <span className="text-primary-600 dark:text-primary-400 font-medium">
+            {[...selected].join(', ') || 'None'}
+          </span>
         </div>
       </div>
     </div>
@@ -271,9 +295,7 @@ export function ComboBoxTagGroupDemo() {
   const [selectedKeys, setSelectedKeys] = useState<Set<any>>(new Set())
   const [inputValue, setInputValue] = useState('')
 
-  const availableProvinces = provinces.filter(
-    (p) => !selectedKeys.has(p.id)
-  )
+  const availableProvinces = provinces.filter((p) => !selectedKeys.has(p.id))
 
   const handleSelectionChange = (key: any) => {
     if (key) {

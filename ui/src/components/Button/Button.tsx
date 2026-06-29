@@ -1,13 +1,13 @@
 'use client'
-import * as React from 'react'
+import type { StyleXStyles } from '@stylexjs/stylex'
 import * as stylex from '@stylexjs/stylex'
+import * as React from 'react'
 import {
   Button as AriaButton,
   type ButtonProps as AriaButtonProps,
 } from 'react-aria-components'
-import type { StyleXStyles } from '@stylexjs/stylex'
-import { styles } from './Button.styles'
 import { warnMissingLabel } from '../../utils/warnMissingLabel'
+import { styles } from './Button.styles'
 
 export interface ButtonProps extends Omit<AriaButtonProps, 'style'> {
   style?: StyleXStyles

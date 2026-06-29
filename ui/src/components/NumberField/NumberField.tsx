@@ -1,19 +1,19 @@
 'use client'
-import * as React from 'react'
+import type { StyleXStyles } from '@stylexjs/stylex'
 import * as stylex from '@stylexjs/stylex'
+import * as React from 'react'
 import {
-  NumberField as AriaNumberField,
+  Button as AriaButton,
   Group as AriaGroup,
   Input as AriaInput,
-  Button as AriaButton,
+  NumberField as AriaNumberField,
   type NumberFieldProps as AriaNumberFieldProps,
   type ValidationResult,
 } from 'react-aria-components'
-import type { StyleXStyles } from '@stylexjs/stylex'
-import { styles } from './NumberField.styles'
-import { Label } from '../Label'
 import { Description } from '../Description'
 import { FieldError } from '../FieldError'
+import { Label } from '../Label'
+import { styles } from './NumberField.styles'
 
 export interface NumberFieldProps extends Omit<AriaNumberFieldProps, 'style'> {
   style?: StyleXStyles

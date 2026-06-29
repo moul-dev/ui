@@ -1,7 +1,7 @@
-import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest'
 import * as React from 'react'
-import { warnMissingLabel, hasTextContent } from './warnMissingLabel'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { mergeProps } from './mergeProps'
+import { hasTextContent, warnMissingLabel } from './warnMissingLabel'
 
 describe('hasTextContent helper', () => {
   test('returns false for null, undefined, or empty values', () => {

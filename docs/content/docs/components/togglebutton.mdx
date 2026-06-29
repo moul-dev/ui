@@ -1,17 +1,25 @@
 ---
 title: ToggleButton
-description: Documentation for the ToggleButton component.
+description: A toggle button allows a user to toggle a selection on or off, for example switching between two states or modes.
 ---
 
 import { ToggleButton } from '@moul-dev/ui';
+import { Star } from 'lucide-react';
 
 
 # ToggleButton
 
+A toggle button allows a user to toggle a selection on or off, for example switching between two states or modes.
+
 ## Preview
 
 <ComponentPreview>
-  <ToggleButton>Pin</ToggleButton>
+  <div className="flex gap-4 items-center">
+    <ToggleButton aria-label="Star">
+      <Star className="w-4 h-4" />
+    </ToggleButton>
+    <ToggleButton defaultSelected>Pin</ToggleButton>
+  </div>
 </ComponentPreview>
 
 The `ToggleButton` component is built with React Aria and styled using StyleX.
@@ -22,18 +30,95 @@ The `ToggleButton` component is built with React Aria and styled using StyleX.
 import { ToggleButton } from '@moul-dev/ui';
 ```
 
-## Usage
+## Sizes
 
-Here is a basic example of how to use the `ToggleButton` component:
+You can customize the size of the toggle button using the `size` prop:
+
+<ComponentPreview>
+  <div className="flex gap-4 items-center">
+    <ToggleButton size="sm">Small</ToggleButton>
+    <ToggleButton size="md">Medium (Default)</ToggleButton>
+    <ToggleButton size="lg">Large</ToggleButton>
+  </div>
+</ComponentPreview>
 
 ```tsx
-import { ToggleButton } from '@moul-dev/ui';
+<ToggleButton size="sm">Small</ToggleButton>
+<ToggleButton size="md">Medium (Default)</ToggleButton>
+<ToggleButton size="lg">Large</ToggleButton>
+```
 
-export default function Example() {
+## Selection
+
+Use the `isSelected` or `defaultSelected` prop to set the selection state, and `onChange` to handle selection changes.
+
+```tsx
+import { useState } from 'react';
+import { ToggleButton } from '@moul-dev/ui';
+import { Star } from 'lucide-react';
+
+function Example(props) {
+  let [selected, setSelection] = useState(false);
+
   return (
-    <ToggleButton>
-      {/* Component content */}
-    </ToggleButton>
+    <>
+      <ToggleButton
+        {...props}
+        aria-label="Star"
+        isSelected={selected}
+        onChange={setSelection}>
+        <Star size={18} />
+      </ToggleButton>
+      <p>{selected ? 'Starred' : 'Not starred'}</p>
+    </>
   );
 }
 ```
+
+## Props
+
+### ToggleButton Props
+
+| Name | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | The size of the button. |
+| `aria-controls` | `string \| undefined` | — | Identifies the element (or elements) whose contents or presence are controlled by the current element. |
+| `aria-describedby` | `string \| undefined` | — | Identifies the element (or elements) that describes the object. |
+| `aria-details` | `string \| undefined` | — | Identifies the element (or elements) that provide a detailed, extended description for the object. |
+| `aria-disabled` | `boolean \| "true" \| "false" \| undefined` | — | Indicates whether the element is disabled to users of assistive technology. |
+| `aria-expanded` | `boolean \| "true" \| "false" \| undefined` | — | Indicates whether the element, or another grouping element it controls, is currently expanded or collapsed. |
+| `aria-haspopup` | `boolean \| "true" \| "false" \| "dialog" \| "grid" \| "listbox" \| "menu" \| "tree" \| undefined` | — | Indicates the availability and type of interactive popup element, such as menu or dialog, that can be triggered by an element. |
+| `aria-label` | `string \| undefined` | — | Defines a string value that labels the current element. |
+| `aria-labelledby` | `string \| undefined` | — | Identifies the element (or elements) that labels the current element. |
+| `aria-pressed` | `boolean \| "true" \| "false" \| "mixed" \| undefined` | — | Indicates the current "pressed" state of toggle buttons. |
+| `autoFocus` | `boolean \| undefined` | — | Whether the element should receive focus on render. |
+| `children` | `ChildrenOrFunction<ToggleButtonRenderProps>` | — | The children of the component. A function may be provided to alter the children based on component state. |
+| `className` | `ClassNameOrFunction<ToggleButtonRenderProps> \| undefined` | 'react-aria-ToggleButton' | The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state. |
+| `defaultSelected` | `boolean \| undefined` | — | Whether the element should be selected (uncontrolled). |
+| `dir` | `string \| undefined` | — | Direction of text. |
+| `excludeFromTabOrder` | `boolean \| undefined` | — | Whether to exclude the element from the sequential tab order. If true, the element will not be focusable via the keyboard by tabbing. This should be avoided except in rare scenarios where an alternative means of accessing the element or its functionality via the keyboard is available. |
+| `hidden` | `boolean \| undefined` | — | Whether the element is hidden. |
+| `id` | `Key \| undefined` | — | When used in a ToggleButtonGroup, an identifier for the item in `selectedKeys`. When used standalone, a DOM id. |
+| `inert` | `boolean \| undefined` | — | Whether the element is inert. |
+| `isDisabled` | `boolean \| undefined` | — | Whether the button is disabled. |
+| `isSelected` | `boolean \| undefined` | — | Whether the element should be selected (controlled). |
+| `lang` | `string \| undefined` | — | Language code of the element. |
+| `onBlur` | `((e: React.FocusEvent<Element>) => void) \| undefined` | — | Handler that is called when the element loses focus. |
+| `onChange` | `((isSelected: boolean) => void) \| undefined` | — | Handler that is called when the element's selection state changes. |
+| `onClick` | `((e: React.MouseEvent<FocusableElement>) => void) \| undefined` | — | **Not recommended – use `onPress` instead.** `onClick` is an alias for `onPress` provided for compatibility with other libraries. `onPress` provides additional event details for non-mouse interactions. |
+| `onFocus` | `((e: React.FocusEvent<Element>) => void) \| undefined` | — | Handler that is called when the element receives focus. |
+| `onFocusChange` | `((isFocused: boolean) => void) \| undefined` | — | Handler that is called when the element's focus status changes. |
+| `onHoverChange` | `((isHovering: boolean) => void) \| undefined` | — | Handler that is called when the hover state changes. |
+| `onHoverEnd` | `((e: HoverEvent) => void) \| undefined` | — | Handler that is called when a hover interaction ends. |
+| `onHoverStart` | `((e: HoverEvent) => void) \| undefined` | — | Handler that is called when a hover interaction starts. |
+| `onKeyDown` | `((e: KeyboardEvent) => void) \| undefined` | — | Handler that is called when a key is pressed. |
+| `onKeyUp` | `((e: KeyboardEvent) => void) \| undefined` | — | Handler that is called when a key is released. |
+| `onPress` | `((e: PressEvent) => void) \| undefined` | — | Handler that is called when the press is released over the target. |
+| `onPressChange` | `((isPressed: boolean) => void) \| undefined` | — | Handler that is called when the press state changes. |
+| `onPressEnd` | `((e: PressEvent) => void) \| undefined` | — | Handler that is called when a press interaction ends, either over the target or when the pointer leaves the target. |
+| `onPressStart` | `((e: PressEvent) => void) \| undefined` | — | Handler that is called when a press interaction starts. |
+| `onPressUp` | `((e: PressEvent) => void) \| undefined` | — | Handler that is called when a press is released over the target, regardless of whether it started on the target or not. |
+| `preventFocusOnPress` | `boolean \| undefined` | — | Whether to prevent focus from moving to the button when pressing it. Caution, this can make the button inaccessible and should only be used when alternative keyboard interaction is provided, such as ComboBox's MenuTrigger or a NumberField's increment/decrement control. |
+| `render` | `DOMRenderFunction<"button", ToggleButtonRenderProps> \| undefined` | — | Overrides the default DOM element with a custom render function. This allows rendering existing components with built-in styles and behaviors such as router links, animation libraries, and pre-styled components. |
+| `slot` | `string \| null \| undefined` | — | A slot name for the component. Slots allow the component to receive props from a parent component. An explicit `null` value indicates that the local props completely override all props received from a parent. |
+| `style` | `(((values: ToggleButtonRenderProps & { defaultStyle: React.CSSProperties; }) => React.CSSProperties \| React.CSSProperties \| undefined)) \| undefined` | — | The inline [style](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style) for the element. A function may be provided to compute the style based on component state. |

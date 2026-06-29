@@ -1,19 +1,19 @@
 'use client'
-import * as React from 'react'
+import type { StyleXStyles } from '@stylexjs/stylex'
 import * as stylex from '@stylexjs/stylex'
+import * as React from 'react'
 import {
-  SearchField as AriaSearchField,
+  Button as AriaButton,
   Group as AriaGroup,
   Input as AriaInput,
-  Button as AriaButton,
+  SearchField as AriaSearchField,
   type SearchFieldProps as AriaSearchFieldProps,
   type ValidationResult,
 } from 'react-aria-components'
-import type { StyleXStyles } from '@stylexjs/stylex'
-import { styles } from './SearchField.styles'
-import { Label } from '../Label'
 import { Description } from '../Description'
 import { FieldError } from '../FieldError'
+import { Label } from '../Label'
+import { styles } from './SearchField.styles'
 
 export interface SearchFieldProps extends Omit<AriaSearchFieldProps, 'style'> {
   style?: StyleXStyles

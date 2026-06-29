@@ -1,25 +1,25 @@
-import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest'
-import { render, fireEvent, waitFor } from '@testing-library/react'
+import { fireEvent, render, waitFor } from '@testing-library/react'
 import * as React from 'react'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import '@testing-library/jest-dom'
 import * as fc from 'fast-check'
 import {
   Checkbox,
   CheckboxGroup,
-  RadioGroup,
-  Radio,
-  Switch,
-  TextField,
-  TextArea,
+  ComboBox,
+  ComboBoxItem,
   NumberField,
+  Radio,
+  RadioGroup,
   SearchField,
   Select,
   SelectItem,
-  ComboBox,
-  ComboBoxItem,
   Slider,
-  SliderTrack,
   SliderThumb,
+  SliderTrack,
+  Switch,
+  TextArea,
+  TextField,
 } from '../index'
 
 const getTargetElement = (container: HTMLElement) => {
@@ -45,7 +45,9 @@ describe('Checkbox component', () => {
   })
 
   test('accepts variant props', () => {
-    const { getByRole, rerender } = render(<Checkbox variant="primary">Agree</Checkbox>)
+    const { getByRole, rerender } = render(
+      <Checkbox variant="primary">Agree</Checkbox>,
+    )
     expect(getByRole('checkbox')).toBeInTheDocument()
 
     rerender(<Checkbox variant="secondary">Agree</Checkbox>)

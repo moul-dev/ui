@@ -1,6 +1,6 @@
-import { describe, test, expect } from 'vitest'
-import { glob } from 'glob'
 import fs from 'fs'
+import { glob } from 'glob'
+import { describe, expect, test } from 'vitest'
 
 describe('Property 2: No hardcoded style values in component definitions', () => {
   test('scans all *.styles.ts files to ensure no hardcoded color, spacing, or radius literals are used', () => {

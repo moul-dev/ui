@@ -1,17 +1,17 @@
 'use client'
-import * as React from 'react'
+import type { StyleXStyles } from '@stylexjs/stylex'
 import * as stylex from '@stylexjs/stylex'
+import * as React from 'react'
 import {
   CheckboxGroup as AriaCheckboxGroup,
   type CheckboxGroupProps as AriaCheckboxGroupProps,
   type ValidationResult,
 } from 'react-aria-components'
-import type { StyleXStyles } from '@stylexjs/stylex'
-import { styles } from './CheckboxGroup.styles'
-import { Label } from '../Label'
+import { CheckboxGroupContext } from '../Checkbox/context'
 import { Description } from '../Description'
 import { FieldError } from '../FieldError'
-import { CheckboxGroupContext } from '../Checkbox/context'
+import { Label } from '../Label'
+import { styles } from './CheckboxGroup.styles'
 
 export interface CheckboxGroupProps
   extends Omit<AriaCheckboxGroupProps, 'style'> {

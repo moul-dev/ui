@@ -1,19 +1,19 @@
 'use client'
 
-import * as React from 'react'
 import {
-  Popover,
-  PopoverTrigger,
-  PopoverDialog,
   Button,
-  ModalOverlay,
   Modal,
-  ModalDialog,
-  ModalHeader,
   ModalBody,
+  ModalDialog,
   ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Popover,
+  PopoverDialog,
+  PopoverTrigger,
 } from '@moul-dev/ui'
-import { Palette, Check, Code } from 'lucide-react'
+import { Check, Code, Palette } from 'lucide-react'
+import * as React from 'react'
 
 interface ThemeColor {
   name: string
@@ -24,16 +24,76 @@ interface ThemeColor {
 }
 
 const colors: ThemeColor[] = [
-  { name: 'Amber', hue: 55, chroma: 1, colorClass: 'oklch(0.65 0.16 55)', checkmarkColor: 'text-zinc-950' },
-  { name: 'Indigo', hue: 250, chroma: 1, colorClass: 'oklch(0.60 0.20 250)', checkmarkColor: 'text-white' },
-  { name: 'Violet', hue: 290, chroma: 1, colorClass: 'oklch(0.60 0.20 290)', checkmarkColor: 'text-white' },
-  { name: 'Pink', hue: 340, chroma: 1, colorClass: 'oklch(0.60 0.20 340)', checkmarkColor: 'text-white' },
-  { name: 'Ruby', hue: 25, chroma: 1, colorClass: 'oklch(0.60 0.20 25)', checkmarkColor: 'text-white' },
-  { name: 'Gold', hue: 85, chroma: 1, colorClass: 'oklch(0.65 0.14 85)', checkmarkColor: 'text-zinc-950' },
-  { name: 'Emerald', hue: 145, chroma: 1, colorClass: 'oklch(0.60 0.18 145)', checkmarkColor: 'text-white' },
-  { name: 'Teal', hue: 185, chroma: 1, colorClass: 'oklch(0.60 0.16 185)', checkmarkColor: 'text-white' },
-  { name: 'Sky', hue: 215, chroma: 1, colorClass: 'oklch(0.60 0.18 215)', checkmarkColor: 'text-white' },
-  { name: 'Slate', hue: 250, chroma: 0, colorClass: 'oklch(0.60 0.00 250)', checkmarkColor: 'text-white' },
+  {
+    name: 'Amber',
+    hue: 55,
+    chroma: 1,
+    colorClass: 'oklch(0.65 0.16 55)',
+    checkmarkColor: 'text-zinc-950',
+  },
+  {
+    name: 'Indigo',
+    hue: 250,
+    chroma: 1,
+    colorClass: 'oklch(0.60 0.20 250)',
+    checkmarkColor: 'text-white',
+  },
+  {
+    name: 'Violet',
+    hue: 290,
+    chroma: 1,
+    colorClass: 'oklch(0.60 0.20 290)',
+    checkmarkColor: 'text-white',
+  },
+  {
+    name: 'Pink',
+    hue: 340,
+    chroma: 1,
+    colorClass: 'oklch(0.60 0.20 340)',
+    checkmarkColor: 'text-white',
+  },
+  {
+    name: 'Ruby',
+    hue: 25,
+    chroma: 1,
+    colorClass: 'oklch(0.60 0.20 25)',
+    checkmarkColor: 'text-white',
+  },
+  {
+    name: 'Gold',
+    hue: 85,
+    chroma: 1,
+    colorClass: 'oklch(0.65 0.14 85)',
+    checkmarkColor: 'text-zinc-950',
+  },
+  {
+    name: 'Emerald',
+    hue: 145,
+    chroma: 1,
+    colorClass: 'oklch(0.60 0.18 145)',
+    checkmarkColor: 'text-white',
+  },
+  {
+    name: 'Teal',
+    hue: 185,
+    chroma: 1,
+    colorClass: 'oklch(0.60 0.16 185)',
+    checkmarkColor: 'text-white',
+  },
+  {
+    name: 'Sky',
+    hue: 215,
+    chroma: 1,
+    colorClass: 'oklch(0.60 0.18 215)',
+    checkmarkColor: 'text-white',
+  },
+  {
+    name: 'Slate',
+    hue: 250,
+    chroma: 0,
+    colorClass: 'oklch(0.60 0.00 250)',
+    checkmarkColor: 'text-white',
+  },
 ]
 
 export function ThemeSelector() {
@@ -52,9 +112,7 @@ export function ThemeSelector() {
         const hue = Number.parseInt(storedHue, 10)
         const chroma = Number.parseFloat(storedChroma)
 
-        const matched = colors.find(
-          (c) => c.hue === hue && c.chroma === chroma,
-        )
+        const matched = colors.find((c) => c.hue === hue && c.chroma === chroma)
         if (matched) {
           setActiveColor(matched)
         }
@@ -71,7 +129,10 @@ export function ThemeSelector() {
       localStorage.setItem('moul-theme-chroma', color.chroma.toString())
 
       // Apply style variables to document element
-      document.documentElement.style.setProperty('--brand-hue', color.hue.toString())
+      document.documentElement.style.setProperty(
+        '--brand-hue',
+        color.hue.toString(),
+      )
       document.documentElement.style.setProperty(
         '--brand-chroma-multiplier',
         color.chroma.toString(),
@@ -132,7 +193,9 @@ export function ThemeSelector() {
                       style={{ backgroundColor: color.colorClass }}
                     >
                       {isActive && (
-                        <Check className={`h-4.5 w-4.5 stroke-[2.5] ${color.checkmarkColor}`} />
+                        <Check
+                          className={`h-4.5 w-4.5 stroke-[2.5] ${color.checkmarkColor}`}
+                        />
                       )}
                       <span className="absolute -top-8 scale-0 rounded-md bg-zinc-900 px-1.5 py-0.5 text-[10px] font-medium text-white transition-all group-hover:scale-100 z-20 whitespace-nowrap shadow-md pointer-events-none">
                         {color.name}
@@ -158,18 +221,31 @@ export function ThemeSelector() {
       </PopoverTrigger>
 
       {/* CSS Config Modal */}
-      <ModalOverlay isOpen={isModalOpen} onOpenChange={setIsModalOpen} className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs">
-        <Modal size="md" className="w-full max-w-md bg-white dark:bg-zinc-950 rounded-xl border border-black/8 dark:border-white/10 shadow-2xl overflow-hidden focus:outline-hidden">
+      <ModalOverlay
+        isOpen={isModalOpen}
+        onOpenChange={setIsModalOpen}
+        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs"
+      >
+        <Modal
+          size="md"
+          className="w-full max-w-md bg-white dark:bg-zinc-950 rounded-xl border border-black/8 dark:border-white/10 shadow-2xl overflow-hidden focus:outline-hidden"
+        >
           <ModalDialog className="focus:outline-hidden">
             <ModalHeader className="px-5 py-4 border-b border-zinc-100 dark:border-zinc-800 text-lg font-bold text-zinc-900 dark:text-zinc-100">
               Export CSS Config
             </ModalHeader>
             <ModalBody className="p-5 flex flex-col gap-4 text-sm text-zinc-600 dark:text-zinc-300">
               <p>
-                Paste this configuration into your global stylesheet (e.g. <code className="font-mono bg-zinc-100 dark:bg-zinc-800 px-1 py-0.5 rounded-sm">globals.css</code>) to replicate the active theme in your project:
+                Paste this configuration into your global stylesheet (e.g.{' '}
+                <code className="font-mono bg-zinc-100 dark:bg-zinc-800 px-1 py-0.5 rounded-sm">
+                  globals.css
+                </code>
+                ) to replicate the active theme in your project:
               </p>
               <div className="relative font-mono text-xs bg-zinc-950 text-zinc-200 p-4 rounded-lg border border-zinc-800 shadow-inner group">
-                <pre className="overflow-x-auto whitespace-pre">{cssConfig}</pre>
+                <pre className="overflow-x-auto whitespace-pre">
+                  {cssConfig}
+                </pre>
                 <button
                   onClick={handleCopyConfig}
                   className="absolute top-2.5 right-2.5 p-1.5 rounded-md hover:bg-zinc-800 text-zinc-400 hover:text-white transition-colors cursor-pointer border border-transparent"

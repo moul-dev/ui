@@ -1,11 +1,11 @@
 'use client'
-import * as React from 'react'
+import type { StyleXStyles } from '@stylexjs/stylex'
 import * as stylex from '@stylexjs/stylex'
+import * as React from 'react'
 import {
   Form as AriaForm,
   type FormProps as AriaFormProps,
 } from 'react-aria-components'
-import type { StyleXStyles } from '@stylexjs/stylex'
 import { styles } from './Form.styles'
 
 export interface FormProps extends Omit<AriaFormProps, 'style'> {

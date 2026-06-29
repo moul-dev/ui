@@ -1,9 +1,9 @@
-import { describe, test, expect } from 'vitest'
+import * as stylex from '@stylexjs/stylex'
 import { render } from '@testing-library/react'
 import * as React from 'react'
-import * as stylex from '@stylexjs/stylex'
-import { ThemeProvider } from './ThemeProvider'
+import { describe, expect, test } from 'vitest'
 import { tokens } from '../tokens/tokens.stylex'
+import { ThemeProvider } from './ThemeProvider'
 
 describe('Property 1: Theme token values are reflected in rendered components', () => {
   test('renders ThemeProvider and applies default colorScheme classes', () => {

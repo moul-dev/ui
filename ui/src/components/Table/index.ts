@@ -1,9 +1,9 @@
-export { Table, TableHeader, TableBody, Row, Column, Cell } from './Table'
 export type {
-  TableProps,
-  TableHeaderProps,
-  TableBodyProps,
-  RowProps,
-  ColumnProps,
   CellProps,
+  ColumnProps,
+  RowProps,
+  TableBodyProps,
+  TableHeaderProps,
+  TableProps,
 } from './Table'
+export { Cell, Column, Row, Table, TableBody, TableHeader } from './Table'

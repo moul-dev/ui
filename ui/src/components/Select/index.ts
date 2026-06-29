@@ -1,13 +1,13 @@
+export type {
+  SelectItemProps,
+  SelectPopoverProps,
+  SelectProps,
+  SelectSectionProps,
+} from './Select'
 export {
   Select,
-  SelectValue,
   SelectItem,
-  SelectSection,
   SelectPopover,
-} from './Select'
-export type {
-  SelectProps,
-  SelectItemProps,
-  SelectSectionProps,
-  SelectPopoverProps,
+  SelectSection,
+  SelectValue,
 } from './Select'

@@ -3,7 +3,7 @@ import * as React from 'react'
 export interface ToggleButtonGroupContextValue {
   isInGroup: boolean
   orientation: 'horizontal' | 'vertical'
-  variant: 'primary' | 'secondary' | 'tertiary'
+  size?: 'sm' | 'md' | 'lg'
   animated: boolean
 }
 

@@ -1,14 +1,14 @@
 'use client'
-import * as React from 'react'
-import * as stylex from '@stylexjs/stylex'
-import {
-  ModalOverlay as AriaModalOverlay,
-  Modal as AriaModal,
-  Dialog as AriaDialog,
-  type ModalOverlayProps as AriaModalOverlayProps,
-  type DialogProps as AriaDialogProps,
-} from 'react-aria-components'
 import type { StyleXStyles } from '@stylexjs/stylex'
+import * as stylex from '@stylexjs/stylex'
+import * as React from 'react'
+import {
+  Dialog as AriaDialog,
+  type DialogProps as AriaDialogProps,
+  Modal as AriaModal,
+  ModalOverlay as AriaModalOverlay,
+  type ModalOverlayProps as AriaModalOverlayProps,
+} from 'react-aria-components'
 import { styles } from './Modal.styles'
 
 // ── ModalOverlay Component ───────────────────────────────────────────

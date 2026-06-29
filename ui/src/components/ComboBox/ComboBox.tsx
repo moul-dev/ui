@@ -1,26 +1,26 @@
 'use client'
-import * as React from 'react'
+import type { StyleXStyles } from '@stylexjs/stylex'
 import * as stylex from '@stylexjs/stylex'
+import * as React from 'react'
 import {
-  ComboBox as AriaComboBox,
-  Input as AriaInput,
   Button as AriaButton,
+  ComboBox as AriaComboBox,
+  type ComboBoxProps as AriaComboBoxProps,
   Group as AriaGroup,
-  Popover as AriaPopover,
+  Header as AriaHeader,
+  Input as AriaInput,
   ListBox as AriaListBox,
   ListBoxItem as AriaListBoxItem,
-  Section as AriaSection,
-  Header as AriaHeader,
-  type ComboBoxProps as AriaComboBoxProps,
   type ListBoxItemProps as AriaListBoxItemProps,
+  Popover as AriaPopover,
+  Section as AriaSection,
   type SectionProps as AriaSectionProps,
   type ValidationResult,
 } from 'react-aria-components'
-import type { StyleXStyles } from '@stylexjs/stylex'
-import { styles } from './ComboBox.styles'
-import { Label } from '../Label'
 import { Description } from '../Description'
 import { FieldError } from '../FieldError'
+import { Label } from '../Label'
+import { styles } from './ComboBox.styles'
 
 // ── ComboBoxItem Component ────────────────────────────────────────────
 

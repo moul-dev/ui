@@ -1,15 +1,15 @@
 'use client'
-import * as React from 'react'
+import type { StyleXStyles } from '@stylexjs/stylex'
 import * as stylex from '@stylexjs/stylex'
+import * as React from 'react'
 import {
   UNSTABLE_Toast as AriaToast,
   UNSTABLE_ToastList as AriaToastList,
-  UNSTABLE_ToastRegion as AriaToastRegion,
-  UNSTABLE_ToastQueue as AriaToastQueue,
   type ToastProps as AriaToastProps,
+  UNSTABLE_ToastQueue as AriaToastQueue,
+  UNSTABLE_ToastRegion as AriaToastRegion,
   type ToastRegionProps as AriaToastRegionProps,
 } from 'react-aria-components'
-import type { StyleXStyles } from '@stylexjs/stylex'
 import { Alert } from '../Alert'
 import { styles } from './Toast.styles'
 

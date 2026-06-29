@@ -1,21 +1,21 @@
 'use client'
-import * as React from 'react'
-import * as stylex from '@stylexjs/stylex'
-import {
-  Tabs as AriaTabs,
-  TabList as AriaTabList,
-  Tab as AriaTab,
-  TabPanels as AriaTabPanels,
-  TabPanel as AriaTabPanel,
-  SelectionIndicator as AriaSelectionIndicator,
-  composeRenderProps,
-  type TabsProps as AriaTabsProps,
-  type TabListProps as AriaTabListProps,
-  type TabProps as AriaTabProps,
-  type TabPanelsProps as AriaTabPanelsProps,
-  type TabPanelProps as AriaTabPanelProps,
-} from 'react-aria-components'
 import type { StyleXStyles } from '@stylexjs/stylex'
+import * as stylex from '@stylexjs/stylex'
+import * as React from 'react'
+import {
+  SelectionIndicator as AriaSelectionIndicator,
+  Tab as AriaTab,
+  TabList as AriaTabList,
+  type TabListProps as AriaTabListProps,
+  TabPanel as AriaTabPanel,
+  type TabPanelProps as AriaTabPanelProps,
+  TabPanels as AriaTabPanels,
+  type TabPanelsProps as AriaTabPanelsProps,
+  type TabProps as AriaTabProps,
+  Tabs as AriaTabs,
+  type TabsProps as AriaTabsProps,
+  composeRenderProps,
+} from 'react-aria-components'
 import { styles } from './Tabs.styles'
 
 // ── Tabs Context ─────────────────────────────────────────────────────
@@ -37,7 +37,14 @@ export interface TabsProps extends Omit<AriaTabsProps, 'style'> {
 }
 
 export const Tabs = React.forwardRef<HTMLDivElement, TabsProps>(function Tabs(
-  { variant = 'primary', orientation = 'horizontal', style, className, children, ...rest },
+  {
+    variant = 'primary',
+    orientation = 'horizontal',
+    style,
+    className,
+    children,
+    ...rest
+  },
   ref,
 ) {
   return (
@@ -174,14 +181,23 @@ export const Tab = React.forwardRef<HTMLDivElement, TabProps>(function Tab(
           {childrenVal}
           <AriaSelectionIndicator
             {...(() => {
-              const { className: stylexClass, style: stylexStyle } = stylex.props(
-                styles.selectionIndicator,
-                variant === 'tertiary' && styles.selectionIndicatorTertiary,
-                variant !== 'tertiary' && styles[`selectionIndicator${variant.charAt(0).toUpperCase() + variant.slice(1)}` as keyof typeof styles],
-                variant !== 'tertiary' && (orientation === 'vertical' ? styles.selectionIndicatorVertical : styles.selectionIndicatorHorizontal),
-              )
+              const { className: stylexClass, style: stylexStyle } =
+                stylex.props(
+                  styles.selectionIndicator,
+                  variant === 'tertiary' && styles.selectionIndicatorTertiary,
+                  variant !== 'tertiary' &&
+                    styles[
+                      `selectionIndicator${variant.charAt(0).toUpperCase() + variant.slice(1)}` as keyof typeof styles
+                    ],
+                  variant !== 'tertiary' &&
+                    (orientation === 'vertical'
+                      ? styles.selectionIndicatorVertical
+                      : styles.selectionIndicatorHorizontal),
+                )
               return {
-                className: [stylexClass, 'react-aria-SelectionIndicator'].filter(Boolean).join(' '),
+                className: [stylexClass, 'react-aria-SelectionIndicator']
+                  .filter(Boolean)
+                  .join(' '),
                 style: stylexStyle,
               }
             })()}
@@ -194,7 +210,8 @@ export const Tab = React.forwardRef<HTMLDivElement, TabProps>(function Tab(
 
 // ── TabPanels Component ──────────────────────────────────────────────
 
-export interface TabPanelsProps<T> extends Omit<AriaTabPanelsProps<T>, 'style'> {
+export interface TabPanelsProps<T>
+  extends Omit<AriaTabPanelsProps<T>, 'style'> {
   style?: StyleXStyles
   className?: string
 }
@@ -211,7 +228,9 @@ export const TabPanels = React.forwardRef<HTMLDivElement, TabPanelsProps<any>>(
       <AriaTabPanels
         {...rest}
         ref={ref}
-        className={[stylexClass, 'react-aria-TabPanels', className].filter(Boolean).join(' ')}
+        className={[stylexClass, 'react-aria-TabPanels', className]
+          .filter(Boolean)
+          .join(' ')}
         style={stylexStyle || {}}
       >
         {children}

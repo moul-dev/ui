@@ -1,22 +1,22 @@
-import { describe, test, expect } from 'vitest'
-import { render, fireEvent, screen } from '@testing-library/react'
-import * as React from 'react'
 import * as stylex from '@stylexjs/stylex'
+import { fireEvent, render, screen } from '@testing-library/react'
+import * as React from 'react'
+import { describe, expect, test } from 'vitest'
 import {
-  Tabs,
-  TabList,
-  Tab,
-  TabPanels,
-  TabPanel,
-  Breadcrumbs,
   BreadcrumbItem,
-  Link,
-  Table,
-  TableHeader,
-  TableBody,
-  Row,
-  Column,
+  Breadcrumbs,
   Cell,
+  Column,
+  Link,
+  Row,
+  Tab,
+  TabList,
+  Table,
+  TableBody,
+  TableHeader,
+  TabPanel,
+  TabPanels,
+  Tabs,
 } from '../index'
 
 const testStyles = stylex.create({
@@ -139,7 +139,9 @@ describe('Tabs Component Suite', () => {
     expect(tablist).toHaveAttribute('aria-orientation', 'vertical')
 
     // The selection indicator will be rendered inside Tab
-    const selectionIndicator = container.querySelector('.react-aria-SelectionIndicator')
+    const selectionIndicator = container.querySelector(
+      '.react-aria-SelectionIndicator',
+    )
     expect(selectionIndicator).toBeInTheDocument()
   })
 })
@@ -267,4 +269,3 @@ describe('Table Component Suite', () => {
     expect(firstCell).toBeInTheDocument()
   })
 })
-

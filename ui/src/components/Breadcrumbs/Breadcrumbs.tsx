@@ -1,13 +1,13 @@
 'use client'
-import * as React from 'react'
-import * as stylex from '@stylexjs/stylex'
-import {
-  Breadcrumbs as AriaBreadcrumbs,
-  Breadcrumb as AriaBreadcrumb,
-  type BreadcrumbsProps as AriaBreadcrumbsProps,
-  type BreadcrumbProps as AriaBreadcrumbProps,
-} from 'react-aria-components'
 import type { StyleXStyles } from '@stylexjs/stylex'
+import * as stylex from '@stylexjs/stylex'
+import * as React from 'react'
+import {
+  Breadcrumb as AriaBreadcrumb,
+  type BreadcrumbProps as AriaBreadcrumbProps,
+  Breadcrumbs as AriaBreadcrumbs,
+  type BreadcrumbsProps as AriaBreadcrumbsProps,
+} from 'react-aria-components'
 import { styles } from './Breadcrumbs.styles'
 
 // ── Breadcrumbs Component ───────────────────────────────────────────

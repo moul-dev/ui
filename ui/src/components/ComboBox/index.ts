@@ -1,6 +1,6 @@
-export { ComboBox, ComboBoxItem, ComboBoxSection } from './ComboBox'
 export type {
-  ComboBoxProps,
   ComboBoxItemProps,
+  ComboBoxProps,
   ComboBoxSectionProps,
 } from './ComboBox'
+export { ComboBox, ComboBoxItem, ComboBoxSection } from './ComboBox'

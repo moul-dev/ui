@@ -2,8 +2,8 @@
 import { resolve } from 'node:path'
 import stylex from '@stylexjs/unplugin'
 import react from '@vitejs/plugin-react'
-import { defineConfig } from 'vitest/config'
 import dts from 'vite-plugin-dts'
+import { defineConfig } from 'vitest/config'
 
 // https://vite.dev/config/
 export default defineConfig({

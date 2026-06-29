@@ -7,11 +7,6 @@ export const styles = stylex.create({
     display: 'inline-flex',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingBlock: tokens.spacing2,
-    paddingInline: tokens.spacing4,
-    borderRadius: tokens.radiusMd,
-    fontSize: tokens.fontSizeMd,
-    lineHeight: tokens.lineHeightMd,
     fontWeight: tokens.fontWeightMedium,
     cursor: 'pointer',
     transitionProperty: 'background-color, border-color, color, transform',
@@ -33,6 +28,27 @@ export const styles = stylex.create({
       transitionProperty: 'none',
     },
   },
+  sm: {
+    paddingBlock: tokens.spacing1,
+    paddingInline: tokens.spacing2,
+    borderRadius: tokens.radiusSm,
+    fontSize: tokens.fontSizeXs,
+    lineHeight: tokens.lineHeightXs,
+  },
+  md: {
+    paddingBlock: tokens.spacing2,
+    paddingInline: tokens.spacing3,
+    borderRadius: tokens.radiusMd,
+    fontSize: tokens.fontSizeSm,
+    lineHeight: tokens.lineHeightSm,
+  },
+  lg: {
+    paddingBlock: tokens.spacing2,
+    paddingInline: tokens.spacing4,
+    borderRadius: tokens.radiusMd,
+    fontSize: tokens.fontSizeMd,
+    lineHeight: tokens.lineHeightMd,
+  },
   primary: {
     backgroundColor: tokens.colorNeutral100,
     color: tokens.colorPrimary500,
@@ -51,124 +67,6 @@ export const styles = stylex.create({
     },
     ':active': {
       backgroundColor: tokens.colorPrimary700,
-    },
-  },
-  secondary: {
-    backgroundColor: tokens.colorBgSubtle,
-    color: tokens.colorFg,
-    borderWidth: '1px',
-    borderStyle: 'solid',
-    borderColor: tokens.colorBorder,
-    boxShadow: tokens.shadowSm,
-    ':hover': {
-      backgroundColor: tokens.colorBgElevated,
-      borderColor: tokens.colorBorderFocus,
-    },
-  },
-  secondarySelected: {
-    backgroundColor: tokens.colorPrimary500,
-    color: tokens.colorFgOnPrimary,
-    borderWidth: '1px',
-    borderStyle: 'solid',
-    borderColor: tokens.colorPrimary500,
-    ':hover': {
-      backgroundColor: tokens.colorPrimary600,
-      borderColor: tokens.colorPrimary600,
-    },
-    ':active': {
-      backgroundColor: tokens.colorPrimary700,
-      borderColor: tokens.colorPrimary700,
-    },
-  },
-  tertiary: {
-    backgroundColor: tokens.colorNeutral100,
-    color: tokens.colorFg,
-    borderStyle: 'none',
-    boxShadow: tokens.shadowSm,
-    ':hover': {
-      backgroundColor: tokens.colorNeutral200,
-    },
-  },
-  tertiarySelected: {
-    backgroundColor: tokens.colorNeutral700,
-    color: tokens.colorBg,
-    borderStyle: 'none',
-    ':hover': {
-      backgroundColor: tokens.colorNeutral800,
-    },
-  },
-  outline: {
-    backgroundColor: tokens.colorBg,
-    color: tokens.colorFg,
-    borderStyle: 'solid',
-    borderWidth: '1px',
-    borderColor: tokens.colorBorder,
-    boxShadow: 'none',
-    ':hover': {
-      backgroundColor: tokens.colorNeutral50,
-      borderColor: tokens.colorNeutral400,
-    },
-  },
-  outlineSelected: {
-    backgroundColor: tokens.colorFg,
-    color: tokens.colorBg,
-    borderStyle: 'solid',
-    borderWidth: '1px',
-    borderColor: tokens.colorFg,
-    ':hover': {
-      backgroundColor: tokens.colorNeutral800,
-      borderColor: tokens.colorNeutral800,
-    },
-  },
-  ghost: {
-    backgroundColor: 'transparent',
-    color: tokens.colorFg,
-    borderStyle: 'none',
-    boxShadow: 'none',
-    ':hover': {
-      backgroundColor: tokens.colorNeutral100,
-    },
-  },
-  ghostSelected: {
-    backgroundColor: tokens.colorNeutral100,
-    color: tokens.colorFg,
-    borderStyle: 'none',
-    ':hover': {
-      backgroundColor: tokens.colorNeutral200,
-    },
-  },
-  danger: {
-    backgroundColor: tokens.colorNeutral100,
-    color: tokens.colorError500,
-    borderStyle: 'none',
-    boxShadow: tokens.shadowSm,
-    ':hover': {
-      backgroundColor: tokens.colorNeutral200,
-    },
-  },
-  dangerSelected: {
-    backgroundColor: tokens.colorError500,
-    color: tokens.colorFgOnPrimary,
-    borderStyle: 'none',
-    ':hover': {
-      backgroundColor: tokens.colorError600,
-    },
-  },
-  'danger-soft': {
-    backgroundColor: tokens.colorError300,
-    color: tokens.colorError700,
-    borderStyle: 'none',
-    boxShadow: tokens.shadowSm,
-    ':hover': {
-      backgroundColor: tokens.colorError400,
-    },
-  },
-  'danger-softSelected': {
-    backgroundColor: tokens.colorError500,
-    color: tokens.colorFgOnPrimary,
-    borderStyle: 'none',
-    ':hover': {
-      backgroundColor: tokens.colorError600,
     },
   },
   isDisabled: {
@@ -228,14 +126,6 @@ export const styles = stylex.create({
       transform: 'none',
     },
   },
-  animatedItemSelected: {
-    color: tokens.colorFg,
-    backgroundColor: 'transparent',
-    ':hover': {
-      backgroundColor: 'transparent',
-      color: tokens.colorFg,
-    },
-  },
   animatedItemSelectedPrimary: {
     color: tokens.colorFgOnPrimary,
     backgroundColor: 'transparent',
@@ -259,12 +149,5 @@ export const styles = stylex.create({
   },
   selectionIndicatorPrimary: {
     backgroundColor: tokens.colorPrimary500,
-  },
-  selectionIndicatorSecondary: {
-    backgroundColor: tokens.colorBgElevated,
-    boxShadow: tokens.shadowSm,
-  },
-  selectionIndicatorTertiary: {
-    backgroundColor: tokens.colorNeutral200,
   },
 })

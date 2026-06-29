@@ -1,17 +1,17 @@
 'use client'
-import * as React from 'react'
+import type { StyleXStyles } from '@stylexjs/stylex'
 import * as stylex from '@stylexjs/stylex'
+import * as React from 'react'
 import {
-  TextField as AriaTextField,
   Input as AriaInput,
+  TextField as AriaTextField,
   type TextFieldProps as AriaTextFieldProps,
   type ValidationResult,
 } from 'react-aria-components'
-import type { StyleXStyles } from '@stylexjs/stylex'
-import { styles } from './TextField.styles'
-import { Label } from '../Label'
 import { Description } from '../Description'
 import { FieldError } from '../FieldError'
+import { Label } from '../Label'
+import { styles } from './TextField.styles'
 
 export interface TextFieldProps extends Omit<AriaTextFieldProps, 'style'> {
   style?: StyleXStyles

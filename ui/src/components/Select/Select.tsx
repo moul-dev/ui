@@ -1,26 +1,26 @@
 'use client'
-import * as React from 'react'
+import type { StyleXStyles } from '@stylexjs/stylex'
 import * as stylex from '@stylexjs/stylex'
+import * as React from 'react'
 import {
-  Select as AriaSelect,
-  SelectValue as AriaSelectValue,
-  Popover as AriaPopover,
+  Button as AriaButton,
+  Header as AriaHeader,
   ListBox as AriaListBox,
   ListBoxItem as AriaListBoxItem,
-  Section as AriaSection,
-  Header as AriaHeader,
-  Button as AriaButton,
-  type SelectProps as AriaSelectProps,
   type ListBoxItemProps as AriaListBoxItemProps,
-  type SectionProps as AriaSectionProps,
+  Popover as AriaPopover,
   type PopoverProps as AriaPopoverProps,
+  Section as AriaSection,
+  type SectionProps as AriaSectionProps,
+  Select as AriaSelect,
+  type SelectProps as AriaSelectProps,
+  SelectValue as AriaSelectValue,
   type ValidationResult,
 } from 'react-aria-components'
-import type { StyleXStyles } from '@stylexjs/stylex'
-import { styles } from './Select.styles'
-import { Label } from '../Label'
 import { Description } from '../Description'
 import { FieldError } from '../FieldError'
+import { Label } from '../Label'
+import { styles } from './Select.styles'
 
 // ── SelectValue Component ─────────────────────────────────────────────
 

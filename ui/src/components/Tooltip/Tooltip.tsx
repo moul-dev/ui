@@ -1,12 +1,12 @@
 'use client'
-import * as React from 'react'
+import type { StyleXStyles } from '@stylexjs/stylex'
 import * as stylex from '@stylexjs/stylex'
+import * as React from 'react'
 import {
   Tooltip as AriaTooltip,
-  TooltipTrigger as AriaTooltipTrigger,
   type TooltipProps as AriaTooltipProps,
+  TooltipTrigger as AriaTooltipTrigger,
 } from 'react-aria-components'
-import type { StyleXStyles } from '@stylexjs/stylex'
 import { styles } from './Tooltip.styles'
 
 // ── TooltipTrigger Component ─────────────────────────────────────────

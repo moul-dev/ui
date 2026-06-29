@@ -1,15 +1,15 @@
-import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest'
-import { render, fireEvent } from '@testing-library/react'
+import { fireEvent, render } from '@testing-library/react'
 import * as React from 'react'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import {
-  Badge,
   Avatar,
-  Typography,
+  Badge,
   Card,
-  CardHeader,
   CardBody,
   CardFooter,
+  CardHeader,
   Kbd,
+  Typography,
 } from '../index'
 
 describe('Badge component', () => {

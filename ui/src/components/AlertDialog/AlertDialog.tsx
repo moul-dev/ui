@@ -1,11 +1,11 @@
 'use client'
-import * as React from 'react'
+import type { StyleXStyles } from '@stylexjs/stylex'
 import * as stylex from '@stylexjs/stylex'
+import * as React from 'react'
 import {
   Dialog as AriaDialog,
   type DialogProps as AriaDialogProps,
 } from 'react-aria-components'
-import type { StyleXStyles } from '@stylexjs/stylex'
 import { styles } from './AlertDialog.styles'
 
 // ── AlertDialog Component ────────────────────────────────────────────

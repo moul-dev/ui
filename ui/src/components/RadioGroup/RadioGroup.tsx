@@ -1,19 +1,19 @@
 'use client'
-import * as React from 'react'
+import type { StyleXStyles } from '@stylexjs/stylex'
 import * as stylex from '@stylexjs/stylex'
+import * as React from 'react'
 import {
-  RadioGroup as AriaRadioGroup,
   Radio as AriaRadio,
+  RadioGroup as AriaRadioGroup,
   type RadioGroupProps as AriaRadioGroupProps,
   type RadioProps as AriaRadioProps,
   type ValidationResult,
 } from 'react-aria-components'
-import type { StyleXStyles } from '@stylexjs/stylex'
-import { styles } from './RadioGroup.styles'
-import { Label } from '../Label'
+import { warnMissingLabel } from '../../utils/warnMissingLabel'
 import { Description } from '../Description'
 import { FieldError } from '../FieldError'
-import { warnMissingLabel } from '../../utils/warnMissingLabel'
+import { Label } from '../Label'
+import { styles } from './RadioGroup.styles'
 
 // ── Radio Component ───────────────────────────────────────────────────
 

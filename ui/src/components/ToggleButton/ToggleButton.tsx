@@ -16,14 +16,7 @@ export interface ToggleButtonProps
   extends Omit<AriaToggleButtonProps, 'style'> {
   style?: StyleXStyles
   className?: string
-  variant?:
-    | 'primary'
-    | 'secondary'
-    | 'tertiary'
-    | 'outline'
-    | 'ghost'
-    | 'danger'
-    | 'danger-soft'
+  size?: 'sm' | 'md' | 'lg'
 }
 
 export const ToggleButton = React.forwardRef<
@@ -31,7 +24,7 @@ export const ToggleButton = React.forwardRef<
   ToggleButtonProps
 >(function ToggleButton(
   {
-    variant,
+    size,
     isSelected,
     defaultSelected,
     onChange,
@@ -44,7 +37,7 @@ export const ToggleButton = React.forwardRef<
   ref,
 ) {
   const groupContext = React.useContext(ToggleButtonGroupContext)
-  const resolvedVariant = variant ?? groupContext?.variant ?? 'secondary'
+  const resolvedSize = size ?? groupContext?.size ?? 'md'
 
   if (process.env.NODE_ENV !== 'production') {
     warnMissingLabel('ToggleButton', {
@@ -63,11 +56,11 @@ export const ToggleButton = React.forwardRef<
       onChange={onChange}
       isDisabled={isDisabled}
       className={(renderProps) => {
-        const selectedStyle =
-          styles[`${resolvedVariant}Selected` as keyof typeof styles]
+        const selectedStyle = styles.primarySelected
         const { className: stylexClass } = stylex.props(
           styles.base,
-          styles[resolvedVariant as keyof typeof styles],
+          styles[resolvedSize as keyof typeof styles],
+          styles.primary,
           renderProps.isSelected && selectedStyle,
           renderProps.isDisabled && styles.isDisabled,
           groupContext?.isInGroup && styles.groupItem,
@@ -87,10 +80,7 @@ export const ToggleButton = React.forwardRef<
             (groupContext.animated
               ? [
                   styles.animatedItem,
-                  renderProps.isSelected &&
-                    (resolvedVariant === 'primary'
-                      ? styles.animatedItemSelectedPrimary
-                      : styles.animatedItemSelected),
+                  renderProps.isSelected && styles.animatedItemSelectedPrimary,
                 ]
               : groupContext.orientation === 'horizontal'
                 ? styles.groupHorizontal
@@ -100,11 +90,11 @@ export const ToggleButton = React.forwardRef<
         return [stylexClass, className].filter(Boolean).join(' ')
       }}
       style={(renderProps) => {
-        const selectedStyle =
-          styles[`${resolvedVariant}Selected` as keyof typeof styles]
+        const selectedStyle = styles.primarySelected
         const { style: stylexStyle } = stylex.props(
           styles.base,
-          styles[resolvedVariant as keyof typeof styles],
+          styles[resolvedSize as keyof typeof styles],
+          styles.primary,
           renderProps.isSelected && selectedStyle,
           renderProps.isDisabled && styles.isDisabled,
           groupContext?.isInGroup && styles.groupItem,
@@ -124,10 +114,7 @@ export const ToggleButton = React.forwardRef<
             (groupContext.animated
               ? [
                   styles.animatedItem,
-                  renderProps.isSelected &&
-                    (resolvedVariant === 'primary'
-                      ? styles.animatedItemSelectedPrimary
-                      : styles.animatedItemSelected),
+                  renderProps.isSelected && styles.animatedItemSelectedPrimary,
                 ]
               : groupContext.orientation === 'horizontal'
                 ? styles.groupHorizontal
@@ -146,12 +133,7 @@ export const ToggleButton = React.forwardRef<
                 const { className: stylexClass, style: stylexStyle } =
                   stylex.props(
                     styles.selectionIndicator,
-                    resolvedVariant === 'primary' &&
-                      styles.selectionIndicatorPrimary,
-                    resolvedVariant === 'secondary' &&
-                      styles.selectionIndicatorSecondary,
-                    resolvedVariant === 'tertiary' &&
-                      styles.selectionIndicatorTertiary,
+                    styles.selectionIndicatorPrimary,
                   )
                 return {
                   className: [stylexClass, 'react-aria-SelectionIndicator']

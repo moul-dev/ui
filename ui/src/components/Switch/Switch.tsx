@@ -1,13 +1,13 @@
 'use client'
-import * as React from 'react'
+import type { StyleXStyles } from '@stylexjs/stylex'
 import * as stylex from '@stylexjs/stylex'
+import * as React from 'react'
 import {
   Switch as AriaSwitch,
   type SwitchProps as AriaSwitchProps,
 } from 'react-aria-components'
-import type { StyleXStyles } from '@stylexjs/stylex'
-import { styles } from './Switch.styles'
 import { warnMissingLabel } from '../../utils/warnMissingLabel'
+import { styles } from './Switch.styles'
 
 export interface SwitchProps extends Omit<AriaSwitchProps, 'style'> {
   style?: StyleXStyles

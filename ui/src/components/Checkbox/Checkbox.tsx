@@ -1,13 +1,13 @@
 'use client'
-import * as React from 'react'
+import type { StyleXStyles } from '@stylexjs/stylex'
 import * as stylex from '@stylexjs/stylex'
+import * as React from 'react'
 import {
   Checkbox as AriaCheckbox,
   type CheckboxProps as AriaCheckboxProps,
 } from 'react-aria-components'
-import type { StyleXStyles } from '@stylexjs/stylex'
-import { styles } from './Checkbox.styles'
 import { warnMissingLabel } from '../../utils/warnMissingLabel'
+import { styles } from './Checkbox.styles'
 import { CheckboxGroupContext } from './context'
 
 export interface CheckboxProps extends Omit<AriaCheckboxProps, 'style'> {
@@ -57,23 +57,26 @@ export const Checkbox = React.forwardRef<HTMLLabelElement, CheckboxProps>(
             stylex.props(
               styles.indicator,
               renderProps.isHovered && styles.indicatorHover,
-              (renderProps.isSelected || renderProps.isIndeterminate) && {
-                primary: styles.checkedPrimary,
-                secondary: styles.checkedSecondary,
-                tertiary: styles.checkedTertiary,
-              }[resolvedVariant],
+              (renderProps.isSelected || renderProps.isIndeterminate) &&
+                {
+                  primary: styles.checkedPrimary,
+                  secondary: styles.checkedSecondary,
+                  tertiary: styles.checkedTertiary,
+                }[resolvedVariant],
               renderProps.isHovered &&
-                (renderProps.isSelected || renderProps.isIndeterminate) && {
+                (renderProps.isSelected || renderProps.isIndeterminate) &&
+                {
                   primary: styles.checkedHoverPrimary,
                   secondary: styles.checkedHoverSecondary,
                   tertiary: styles.checkedHoverTertiary,
                 }[resolvedVariant],
               renderProps.isFocusVisible && styles.indicatorFocusVisible,
-              renderProps.isFocusVisible && {
-                primary: styles.focusPrimary,
-                secondary: styles.focusSecondary,
-                tertiary: styles.focusTertiary,
-              }[resolvedVariant],
+              renderProps.isFocusVisible &&
+                {
+                  primary: styles.focusPrimary,
+                  secondary: styles.focusSecondary,
+                  tertiary: styles.focusTertiary,
+                }[resolvedVariant],
               renderProps.isInvalid && styles.indicatorInvalid,
             )
 

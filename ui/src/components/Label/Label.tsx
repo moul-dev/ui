@@ -1,11 +1,11 @@
 'use client'
-import * as React from 'react'
+import type { StyleXStyles } from '@stylexjs/stylex'
 import * as stylex from '@stylexjs/stylex'
+import * as React from 'react'
 import {
   Label as AriaLabel,
   type LabelProps as AriaLabelProps,
 } from 'react-aria-components'
-import type { StyleXStyles } from '@stylexjs/stylex'
 import { styles } from './Label.styles'
 
 export interface LabelProps extends Omit<AriaLabelProps, 'style'> {

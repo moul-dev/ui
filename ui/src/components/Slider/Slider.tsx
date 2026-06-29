@@ -1,19 +1,19 @@
 'use client'
-import * as React from 'react'
+import type { StyleXStyles } from '@stylexjs/stylex'
 import * as stylex from '@stylexjs/stylex'
+import * as React from 'react'
 import {
   Slider as AriaSlider,
-  SliderTrack as AriaSliderTrack,
-  SliderThumb as AriaSliderThumb,
   SliderOutput as AriaSliderOutput,
-  useLocale,
   type SliderProps as AriaSliderProps,
-  type SliderTrackProps as AriaSliderTrackProps,
+  SliderThumb as AriaSliderThumb,
   type SliderThumbProps as AriaSliderThumbProps,
+  SliderTrack as AriaSliderTrack,
+  type SliderTrackProps as AriaSliderTrackProps,
+  useLocale,
 } from 'react-aria-components'
-import type { StyleXStyles } from '@stylexjs/stylex'
-import { styles } from './Slider.styles'
 import { Label } from '../Label'
+import { styles } from './Slider.styles'
 
 // ── SliderThumb Component ─────────────────────────────────────────────
 

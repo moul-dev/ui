@@ -1,2 +1,8 @@
-export { Tabs, TabList, Tab, TabPanels, TabPanel } from './Tabs'
-export type { TabsProps, TabListProps, TabProps, TabPanelsProps, TabPanelProps } from './Tabs'
+export type {
+  TabListProps,
+  TabPanelProps,
+  TabPanelsProps,
+  TabProps,
+  TabsProps,
+} from './Tabs'
+export { Tab, TabList, TabPanel, TabPanels, Tabs } from './Tabs'

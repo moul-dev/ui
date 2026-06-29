@@ -1,16 +1,16 @@
 import * as stylex from '@stylexjs/stylex'
 import { useState } from 'react'
 import { DialogTrigger } from 'react-aria-components'
-import { Button } from './components/Button'
-import { Modal, ModalOverlay } from './components/Modal'
+import { Alert } from './components/Alert'
 import {
   AlertDialog,
   AlertDialogBody,
   AlertDialogFooter,
   AlertDialogHeader,
 } from './components/AlertDialog'
-import { Alert } from './components/Alert'
-import { Card, CardHeader, CardBody, CardFooter } from './components/Card'
+import { Button } from './components/Button'
+import { Card, CardBody, CardFooter, CardHeader } from './components/Card'
+import { Modal, ModalOverlay } from './components/Modal'
 
 // Define StyleX styles
 const styles = stylex.create({
@@ -315,7 +315,8 @@ function App() {
             <Card variant="outline" size="md">
               <CardHeader>Outline Card</CardHeader>
               <CardBody>
-                Features a clean outline style, ideal for dark layouts and grid structures.
+                Features a clean outline style, ideal for dark layouts and grid
+                structures.
               </CardBody>
               <CardFooter>
                 <Button variant="secondary" size="sm">
@@ -327,9 +328,7 @@ function App() {
             {/* Flat Card */}
             <Card variant="flat" size="sm">
               <CardHeader>Flat Card</CardHeader>
-              <CardBody>
-                Flat background without borders or shadows.
-              </CardBody>
+              <CardBody>Flat background without borders or shadows.</CardBody>
               <CardFooter>
                 <Button variant="secondary" size="sm">
                   Close

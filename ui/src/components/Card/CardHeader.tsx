@@ -1,8 +1,8 @@
-import * as React from 'react'
-import * as stylex from '@stylexjs/stylex'
 import type { StyleXStyles } from '@stylexjs/stylex'
-import { styles } from './Card.styles'
+import * as stylex from '@stylexjs/stylex'
+import * as React from 'react'
 import { CardContext } from './Card'
+import { styles } from './Card.styles'
 
 export interface CardHeaderProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'style'> {

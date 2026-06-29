@@ -1,7 +1,7 @@
-import { describe, test, expect } from 'vitest'
 import { render } from '@testing-library/react'
+import { describe, expect, test } from 'vitest'
 import '@testing-library/jest-dom'
-import { Card, CardHeader, CardBody, CardFooter } from './index'
+import { Card, CardBody, CardFooter, CardHeader } from './index'
 
 describe('Card component enhancements', () => {
   test('renders default, flat, outline, and glass variants successfully', () => {

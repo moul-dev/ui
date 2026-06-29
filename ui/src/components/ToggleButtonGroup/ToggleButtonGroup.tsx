@@ -13,7 +13,7 @@ export interface ToggleButtonGroupProps
   extends Omit<AriaToggleButtonGroupProps, 'style'> {
   style?: StyleXStyles
   className?: string
-  variant?: 'primary' | 'secondary' | 'tertiary'
+  size?: 'sm' | 'md' | 'lg'
   animated?: boolean
 }
 
@@ -25,7 +25,7 @@ export const ToggleButtonGroup = React.forwardRef<
     style,
     className,
     orientation = 'horizontal',
-    variant = 'secondary',
+    size,
     animated = false,
     children,
     ...rest
@@ -36,10 +36,10 @@ export const ToggleButtonGroup = React.forwardRef<
     () => ({
       isInGroup: true,
       orientation,
-      variant,
+      size,
       animated,
     }),
-    [orientation, variant, animated],
+    [orientation, size, animated],
   )
 
   return (

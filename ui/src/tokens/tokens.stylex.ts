@@ -15,16 +15,26 @@ export const tokens = stylex.defineVars({
   colorNeutral900: 'light-dark(oklch(0.14 0 0),   oklch(0.96 0 0))',
 
   // Primary — dynamic hue & chroma
-  colorPrimary50: 'light-dark(oklch(0.96 calc(0.025 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)), oklch(0.22 calc(0.050 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)))',
-  colorPrimary100: 'light-dark(oklch(0.92 calc(0.050 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)), oklch(0.28 calc(0.080 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)))',
-  colorPrimary200: 'light-dark(oklch(0.85 calc(0.090 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)), oklch(0.36 calc(0.120 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)))',
-  colorPrimary300: 'light-dark(oklch(0.77 calc(0.140 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)), oklch(0.45 calc(0.160 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)))',
-  colorPrimary400: 'light-dark(oklch(0.66 calc(0.190 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)), oklch(0.56 calc(0.200 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)))',
-  colorPrimary500: 'light-dark(oklch(0.55 calc(0.240 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)), oklch(0.66 calc(0.220 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)))',
-  colorPrimary600: 'light-dark(oklch(0.46 calc(0.220 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)), oklch(0.75 calc(0.190 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)))',
-  colorPrimary700: 'light-dark(oklch(0.38 calc(0.190 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)), oklch(0.83 calc(0.150 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)))',
-  colorPrimary800: 'light-dark(oklch(0.30 calc(0.150 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)), oklch(0.90 calc(0.090 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)))',
-  colorPrimary900: 'light-dark(oklch(0.22 calc(0.110 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)), oklch(0.95 calc(0.040 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)))',
+  colorPrimary50:
+    'light-dark(oklch(0.96 calc(0.025 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)), oklch(0.22 calc(0.050 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)))',
+  colorPrimary100:
+    'light-dark(oklch(0.92 calc(0.050 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)), oklch(0.28 calc(0.080 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)))',
+  colorPrimary200:
+    'light-dark(oklch(0.85 calc(0.090 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)), oklch(0.36 calc(0.120 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)))',
+  colorPrimary300:
+    'light-dark(oklch(0.77 calc(0.140 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)), oklch(0.45 calc(0.160 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)))',
+  colorPrimary400:
+    'light-dark(oklch(0.66 calc(0.190 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)), oklch(0.56 calc(0.200 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)))',
+  colorPrimary500:
+    'light-dark(oklch(0.55 calc(0.240 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)), oklch(0.66 calc(0.220 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)))',
+  colorPrimary600:
+    'light-dark(oklch(0.46 calc(0.220 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)), oklch(0.75 calc(0.190 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)))',
+  colorPrimary700:
+    'light-dark(oklch(0.38 calc(0.190 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)), oklch(0.83 calc(0.150 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)))',
+  colorPrimary800:
+    'light-dark(oklch(0.30 calc(0.150 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)), oklch(0.90 calc(0.090 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)))',
+  colorPrimary900:
+    'light-dark(oklch(0.22 calc(0.110 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)), oklch(0.95 calc(0.040 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)))',
 
   // Error — red hue (H ≈ 27)
   colorError300: 'light-dark(oklch(0.80 0.120 27), oklch(0.45 0.150 27))',
@@ -56,7 +66,8 @@ export const tokens = stylex.defineVars({
   colorFgOnPrimary: 'light-dark(oklch(1 0 0),      oklch(0.10 0 0))',
   colorBorder: 'light-dark(oklch(0.84 0 0),   oklch(0.28 0 0))',
   colorBorderSubtle: 'light-dark(oklch(0.92 0 0),   oklch(0.22 0 0))',
-  colorBorderFocus: 'light-dark(oklch(0.55 calc(0.240 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)), oklch(0.66 calc(0.220 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)))',
+  colorBorderFocus:
+    'light-dark(oklch(0.55 calc(0.240 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)), oklch(0.66 calc(0.220 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)))',
   colorBgGlass: 'light-dark(oklch(1 0 0 / 0.55), oklch(0.20 0 0 / 0.45))',
   colorBorderGlass: 'light-dark(oklch(0 0 0 / 0.08), oklch(1 0 0 / 0.10))',
 
@@ -67,11 +78,13 @@ export const tokens = stylex.defineVars({
   // Alert/Status status variants
   colorAlertBgInfo: 'light-dark(oklch(0.97 0 0), oklch(0.16 0 0))',
   colorAlertBorderInfo: 'light-dark(oklch(0.92 0 0), oklch(0.22 0 0))',
-  colorAlertHoverInfo: 'light-dark(oklch(0.92 calc(0.01 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)), oklch(0.12 calc(0.01 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)))',
+  colorAlertHoverInfo:
+    'light-dark(oklch(0.92 calc(0.01 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)), oklch(0.12 calc(0.01 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)))',
   colorAlertActiveInfo:
     'light-dark(oklch(0.88 calc(0.01 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)), oklch(0.08 calc(0.01 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)))',
 
-  colorAlertBgAccent: 'light-dark(oklch(0.97 calc(0.02 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)), oklch(0.19 calc(0.035 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)))',
+  colorAlertBgAccent:
+    'light-dark(oklch(0.97 calc(0.02 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)), oklch(0.19 calc(0.035 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)))',
   colorAlertBorderAccent:
     'light-dark(oklch(0.88 calc(0.04 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)), oklch(0.28 calc(0.06 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)))',
   colorAlertHoverAccent:

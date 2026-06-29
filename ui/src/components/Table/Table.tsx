@@ -1,21 +1,21 @@
 'use client'
-import * as React from 'react'
-import * as stylex from '@stylexjs/stylex'
-import {
-  Table as AriaTable,
-  TableHeader as AriaTableHeader,
-  TableBody as AriaTableBody,
-  Row as AriaRow,
-  Column as AriaColumn,
-  Cell as AriaCell,
-  type TableProps as AriaTableProps,
-  type TableHeaderProps as AriaTableHeaderProps,
-  type TableBodyProps as AriaTableBodyProps,
-  type RowProps as AriaRowProps,
-  type ColumnProps as AriaColumnProps,
-  type CellProps as AriaCellProps,
-} from 'react-aria-components'
 import type { StyleXStyles } from '@stylexjs/stylex'
+import * as stylex from '@stylexjs/stylex'
+import * as React from 'react'
+import {
+  Cell as AriaCell,
+  type CellProps as AriaCellProps,
+  Column as AriaColumn,
+  type ColumnProps as AriaColumnProps,
+  Row as AriaRow,
+  type RowProps as AriaRowProps,
+  Table as AriaTable,
+  TableBody as AriaTableBody,
+  type TableBodyProps as AriaTableBodyProps,
+  TableHeader as AriaTableHeader,
+  type TableHeaderProps as AriaTableHeaderProps,
+  type TableProps as AriaTableProps,
+} from 'react-aria-components'
 import { styles } from './Table.styles'
 
 // ── Table Component ───────────────────────────────────────────────────

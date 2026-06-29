@@ -1,7 +1,7 @@
 import { Link } from 'waku'
+import { CopyBlock } from '@/components/copy-block'
 import { InteractiveGrid } from '@/components/interactive-grid'
 import { LiquidGlassCard } from '@/components/liquid-glass-card'
-import { CopyBlock } from '@/components/copy-block'
 import { WebGLLogo } from '@/components/webgl-logo'
 
 export default function Home() {
@@ -42,10 +42,15 @@ export default function Home() {
                 <div className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm leading-6 text-fd-muted-foreground ring-1 ring-fd-border/60 backdrop-blur-sm bg-fd-card/30 transition-all duration-300 hover:ring-fd-border">
                   <span
                     className="inline-block h-1.5 w-1.5 rounded-full"
-                    style={{ background: 'oklch(0.75 calc(0.18 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250))' }}
+                    style={{
+                      background:
+                        'oklch(0.75 calc(0.18 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250))',
+                    }}
                     aria-hidden="true"
                   />
-                  <span className="font-mono text-xs tracking-wide">v0.1.0</span>
+                  <span className="font-mono text-xs tracking-wide">
+                    v0.1.0
+                  </span>
                   <span className="text-fd-muted-foreground/60">—</span>
                   <span>Now available</span>
                 </div>
@@ -84,7 +89,8 @@ export default function Home() {
                   rel="noopener noreferrer"
                   className="underline underline-offset-4 font-semibold text-fd-foreground hover:opacity-75 transition-opacity"
                   style={{
-                    textDecorationColor: 'oklch(0.75 calc(0.16 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250))',
+                    textDecorationColor:
+                      'oklch(0.75 calc(0.16 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250))',
                   }}
                 >
                   moul.dev
@@ -104,8 +110,10 @@ export default function Home() {
                   id="cta-get-started"
                   className="px-6 py-2.5 rounded-full font-semibold text-sm shadow-md transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
                   style={{
-                    background: 'oklch(0.75 calc(0.18 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250))',
-                    color: 'oklch(0.15 calc(0.01 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250))',
+                    background:
+                      'oklch(0.75 calc(0.18 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250))',
+                    color:
+                      'oklch(0.15 calc(0.01 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250))',
                   }}
                 >
                   Read the docs
@@ -146,7 +154,10 @@ export default function Home() {
             <div className="border-t border-fd-border/30 pt-16 sm:pt-20">
               <p
                 className="text-sm font-mono font-medium tracking-widest uppercase text-center mb-3"
-                style={{ color: 'oklch(0.70 calc(0.14 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250))' }}
+                style={{
+                  color:
+                    'oklch(0.70 calc(0.14 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250))',
+                }}
               >
                 Why Moul UI
               </p>
@@ -164,8 +175,10 @@ export default function Home() {
                   <div
                     className="flex-shrink-0 h-10 w-10 rounded-lg flex items-center justify-center"
                     style={{
-                      background: 'oklch(0.75 calc(0.14 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250) / 0.1)',
-                      color: 'oklch(0.70 calc(0.16 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250))',
+                      background:
+                        'oklch(0.75 calc(0.14 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250) / 0.1)',
+                      color:
+                        'oklch(0.70 calc(0.16 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250))',
                     }}
                   >
                     <svg
@@ -203,8 +216,10 @@ export default function Home() {
                   <div
                     className="flex-shrink-0 h-10 w-10 rounded-lg flex items-center justify-center"
                     style={{
-                      background: 'oklch(0.75 calc(0.14 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250) / 0.1)',
-                      color: 'oklch(0.70 calc(0.16 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250))',
+                      background:
+                        'oklch(0.75 calc(0.14 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250) / 0.1)',
+                      color:
+                        'oklch(0.70 calc(0.16 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250))',
                     }}
                   >
                     <svg
@@ -240,8 +255,10 @@ export default function Home() {
                   <div
                     className="flex-shrink-0 h-10 w-10 rounded-lg flex items-center justify-center"
                     style={{
-                      background: 'oklch(0.75 calc(0.14 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250) / 0.1)',
-                      color: 'oklch(0.70 calc(0.16 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250))',
+                      background:
+                        'oklch(0.75 calc(0.14 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250) / 0.1)',
+                      color:
+                        'oklch(0.70 calc(0.16 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250))',
                     }}
                   >
                     <svg
@@ -276,8 +293,10 @@ export default function Home() {
                   <div
                     className="flex-shrink-0 h-10 w-10 rounded-lg flex items-center justify-center"
                     style={{
-                      background: 'oklch(0.75 calc(0.14 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250) / 0.1)',
-                      color: 'oklch(0.70 calc(0.16 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250))',
+                      background:
+                        'oklch(0.75 calc(0.14 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250) / 0.1)',
+                      color:
+                        'oklch(0.70 calc(0.16 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250))',
                     }}
                   >
                     <svg
@@ -305,7 +324,10 @@ export default function Home() {
                         target="_blank"
                         rel="noopener noreferrer"
                         className="hover:underline font-medium"
-                        style={{ color: 'oklch(0.70 calc(0.14 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250))' }}
+                        style={{
+                          color:
+                            'oklch(0.70 calc(0.14 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250))',
+                        }}
                       >
                         moul.dev
                       </a>{' '}

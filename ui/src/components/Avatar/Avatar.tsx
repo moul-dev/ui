@@ -1,10 +1,10 @@
 'use client'
 
-import * as React from 'react'
-import * as stylex from '@stylexjs/stylex'
 import type { StyleXStyles } from '@stylexjs/stylex'
-import { styles } from './Avatar.styles'
+import * as stylex from '@stylexjs/stylex'
+import * as React from 'react'
 import { warnMissingLabel } from '../../utils/warnMissingLabel'
+import { styles } from './Avatar.styles'
 
 export interface AvatarProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'style'> {

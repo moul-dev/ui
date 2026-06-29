@@ -4,4 +4,5 @@ export interface CheckboxGroupContextValue {
   variant?: 'primary' | 'secondary' | 'tertiary'
 }
 
-export const CheckboxGroupContext = React.createContext<CheckboxGroupContextValue | null>(null)
+export const CheckboxGroupContext =
+  React.createContext<CheckboxGroupContextValue | null>(null)

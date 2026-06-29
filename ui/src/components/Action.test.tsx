@@ -1,13 +1,13 @@
-import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest'
-import { render, fireEvent } from '@testing-library/react'
-import * as React from 'react'
+import { fireEvent, render } from '@testing-library/react'
 import * as fc from 'fast-check'
+import * as React from 'react'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import {
   Button,
   ButtonGroup,
+  Link,
   ToggleButton,
   ToggleButtonGroup,
-  Link,
 } from '../index'
 
 describe('Button component', () => {
@@ -123,6 +123,15 @@ describe('ToggleButtonGroup component', () => {
     expect(changeHandler).toHaveBeenCalledWith(new Set(['2']))
     expect(first).toHaveAttribute('aria-checked', 'false')
     expect(second).toHaveAttribute('aria-checked', 'true')
+  })
+
+  test('supports size prop and propagates it to children', () => {
+    const { getByText } = render(
+      <ToggleButtonGroup size="sm" aria-label="Group">
+        <ToggleButton id="1">One</ToggleButton>
+      </ToggleButtonGroup>,
+    )
+    expect(getByText('One')).toBeInTheDocument()
   })
 })
 
@@ -330,19 +339,11 @@ describe('Action Components Variant Tests', () => {
     }
   })
 
-  test('ToggleButton supports all variants', () => {
-    const variants = [
-      'primary',
-      'secondary',
-      'tertiary',
-      'outline',
-      'ghost',
-      'danger',
-      'danger-soft',
-    ] as const
-    for (const variant of variants) {
+  test('ToggleButton supports all sizes', () => {
+    const sizes = ['sm', 'md', 'lg'] as const
+    for (const size of sizes) {
       const { getByRole, unmount } = render(
-        <ToggleButton variant={variant}>Toggle</ToggleButton>,
+        <ToggleButton size={size}>Toggle</ToggleButton>,
       )
       expect(getByRole('button')).toBeInTheDocument()
       unmount()

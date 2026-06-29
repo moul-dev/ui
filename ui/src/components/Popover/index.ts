@@ -1,7 +1,7 @@
 export {
   Popover,
-  PopoverTrigger,
   PopoverDialog,
-  type PopoverProps,
   type PopoverDialogProps,
+  type PopoverProps,
+  PopoverTrigger,
 } from './Popover'

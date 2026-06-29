@@ -1,18 +1,18 @@
-import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render } from '@testing-library/react'
-import * as React from 'react'
 import * as fs from 'fs'
 import * as path from 'path'
+import * as React from 'react'
 import { TextField } from 'react-aria-components'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import {
-  Label,
   Description,
-  FieldError,
   ErrorMessage,
+  FieldError,
   Form,
+  Label,
   Separator,
-  Spinner,
   Skeleton,
+  Spinner,
 } from '../index'
 
 describe('Label component', () => {

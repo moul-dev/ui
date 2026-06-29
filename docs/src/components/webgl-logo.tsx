@@ -7,22 +7,34 @@ type Mat4 = number[]
 type Mat3 = number[]
 
 function createIdentity(): Mat4 {
-  return [
-    1, 0, 0, 0,
-    0, 1, 0, 0,
-    0, 0, 1, 0,
-    0, 0, 0, 1
-  ]
+  return [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
 }
 
-function perspective(fovRad: number, aspect: number, near: number, far: number): Mat4 {
+function perspective(
+  fovRad: number,
+  aspect: number,
+  near: number,
+  far: number,
+): Mat4 {
   const f = 1.0 / Math.tan(fovRad / 2)
   const nf = 1 / (near - far)
   return [
-    f / aspect, 0, 0, 0,
-    0, f, 0, 0,
-    0, 0, (far + near) * nf, -1,
-    0, 0, (2 * far * near) * nf, 0
+    f / aspect,
+    0,
+    0,
+    0,
+    0,
+    f,
+    0,
+    0,
+    0,
+    0,
+    (far + near) * nf,
+    -1,
+    0,
+    0,
+    2 * far * near * nf,
+    0,
   ]
 }
 
@@ -30,20 +42,26 @@ function rotateX(m: Mat4, rad: number): Mat4 {
   const dst = [...m]
   const c = Math.cos(rad)
   const s = Math.sin(rad)
-  
-  const m1 = m[4]!, m2 = m[5]!, m3 = m[6]!, m4 = m[7]!
-  const m5 = m[8]!, m6 = m[9]!, m7 = m[10]!, m8 = m[11]!
-  
+
+  const m1 = m[4]!,
+    m2 = m[5]!,
+    m3 = m[6]!,
+    m4 = m[7]!
+  const m5 = m[8]!,
+    m6 = m[9]!,
+    m7 = m[10]!,
+    m8 = m[11]!
+
   dst[4] = m1 * c + m5 * s
   dst[5] = m2 * c + m6 * s
   dst[6] = m3 * c + m7 * s
   dst[7] = m4 * c + m8 * s
-  
+
   dst[8] = m5 * c - m1 * s
   dst[9] = m6 * c - m2 * s
   dst[10] = m7 * c - m3 * s
   dst[11] = m8 * c - m4 * s
-  
+
   return dst
 }
 
@@ -51,20 +69,26 @@ function rotateY(m: Mat4, rad: number): Mat4 {
   const dst = [...m]
   const c = Math.cos(rad)
   const s = Math.sin(rad)
-  
-  const m0 = m[0]!, m1 = m[1]!, m2 = m[2]!, m3 = m[3]!
-  const m8 = m[8]!, m9 = m[9]!, m10 = m[10]!, m11 = m[11]!
-  
+
+  const m0 = m[0]!,
+    m1 = m[1]!,
+    m2 = m[2]!,
+    m3 = m[3]!
+  const m8 = m[8]!,
+    m9 = m[9]!,
+    m10 = m[10]!,
+    m11 = m[11]!
+
   dst[0] = m0 * c - m8 * s
   dst[1] = m1 * c - m9 * s
   dst[2] = m2 * c - m10 * s
   dst[3] = m3 * c - m11 * s
-  
+
   dst[8] = m0 * s + m8 * c
   dst[9] = m1 * s + m9 * c
   dst[10] = m2 * s + m10 * c
   dst[11] = m3 * s + m11 * c
-  
+
   return dst
 }
 
@@ -83,42 +107,43 @@ function multiply(a: Mat4, b: Mat4): Mat4 {
 }
 
 function getNormalMatrix(m: Mat4): Mat3 {
-  return [
-    m[0]!, m[1]!, m[2]!,
-    m[4]!, m[5]!, m[6]!,
-    m[8]!, m[9]!, m[10]!
-  ]
+  return [m[0]!, m[1]!, m[2]!, m[4]!, m[5]!, m[6]!, m[8]!, m[9]!, m[10]!]
 }
 
 // --- OKLCH to sRGB Conversion (For Theme Matching) ---
-function oklchToRgb(l: number, c: number, hDeg: number): [number, number, number] {
+function oklchToRgb(
+  l: number,
+  c: number,
+  hDeg: number,
+): [number, number, number] {
   const h = (hDeg * Math.PI) / 180
-  
+
   // OKLCH -> OKLAB
   const a = c * Math.cos(h)
   const b = c * Math.sin(h)
-  
+
   // OKLAB -> LMS
   const l_ = l + 0.3963377774 * a + 0.2158017502 * b
   const m_ = l - 0.1055613458 * a - 0.0638541728 * b
-  const s_ = l - 0.0894841775 * a - 1.2914855480 * b
-  
+  const s_ = l - 0.0894841775 * a - 1.291485548 * b
+
   const l3 = l_ * l_ * l_
   const m3 = m_ * m_ * m_
   const s3 = s_ * s_ * s_
-  
+
   // LMS -> Linear RGB
   const rL = +4.0767416621 * l3 - 3.3077115913 * m3 + 0.2309699292 * s3
   const gL = -1.2684380046 * l3 + 2.6097574011 * m3 - 0.3413190065 * s3
-  const bL = -0.0041960863 * l3 - 0.7034186147 * m3 + 1.7076146140 * s3
-  
+  const bL = -0.0041960863 * l3 - 0.7034186147 * m3 + 1.707614614 * s3
+
   // Linear RGB -> sRGB (Gamma correction)
-  const f = (x: number) => (x <= 0.0031308 ? 12.92 * x : 1.055 * Math.pow(x, 1.0 / 2.4) - 0.055)
-  
+  const f = (x: number) =>
+    x <= 0.0031308 ? 12.92 * x : 1.055 * x ** (1.0 / 2.4) - 0.055
+
   return [
     Math.max(0, Math.min(1, f(rL))),
     Math.max(0, Math.min(1, f(gL))),
-    Math.max(0, Math.min(1, f(bL)))
+    Math.max(0, Math.min(1, f(bL))),
   ]
 }
 
@@ -219,7 +244,12 @@ void main() {
 
 // --- Geometry Generation Helper ---
 // Creates a 3D extruded prism wedge from a 2D CCW triangle
-function createExtrudedTriangle(A: [number, number], B: [number, number], C: [number, number], depth: number) {
+function createExtrudedTriangle(
+  A: [number, number],
+  B: [number, number],
+  C: [number, number],
+  depth: number,
+) {
   const vertices: number[] = []
   const normals: number[] = []
 
@@ -279,23 +309,25 @@ export function WebGLLogo() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
-  
+
   // State for dragging/rotation tracking
   const isDragging = useRef(false)
   const previousMousePosition = useRef({ x: 0, y: 0 })
   const rotationAngles = useRef({ x: -0.15, y: -0.2 }) // Initial orientation
   const rotationVelocity = useRef({ x: 0, y: 0 })
-  
+
   useEffect(() => {
     const canvas = canvasRef.current
     const container = containerRef.current
     if (!canvas || !container) return
-    
+
     // Set up WebGL2 Context
     const gl = canvas.getContext('webgl2', { antialias: true, alpha: true })
     if (!gl) {
       console.warn('WebGL2 not supported')
-      setErrorMsg('WebGL2 context creation failed. Your browser or device may not support WebGL2.')
+      setErrorMsg(
+        'WebGL2 context creation failed. Your browser or device may not support WebGL2.',
+      )
       return
     }
 
@@ -306,7 +338,11 @@ export function WebGLLogo() {
     gl.depthFunc(gl.LEQUAL)
 
     // --- Compile shaders ---
-    const createShader = (gl: WebGL2RenderingContext, type: number, source: string) => {
+    const createShader = (
+      gl: WebGL2RenderingContext,
+      type: number,
+      source: string,
+    ) => {
       const shader = gl.createShader(type)
       if (!shader) return null
       gl.shaderSource(shader, source)
@@ -342,34 +378,34 @@ export function WebGLLogo() {
     // Polygon points (reordered CCW):
     // 0. Top-Left: CCW (A, B, C)
     const pTopLeft = createExtrudedTriangle(
-      [-0.04, 0.975],   // A: (11.6, 2.25)
-      [-0.85, 0.075],   // B: (3.5, 11.25)
-      [-0.26, -0.150],  // C: (9.4, 13.5)
-      0.16
+      [-0.04, 0.975], // A: (11.6, 2.25)
+      [-0.85, 0.075], // B: (3.5, 11.25)
+      [-0.26, -0.15], // C: (9.4, 13.5)
+      0.16,
     )
 
     // 1. Top-Right: CCW (A, C, B) -> reordered
     const pTopRight = createExtrudedTriangle(
-      [0.04, 0.975],    // A: (12.2, 2.25)
-      [-0.20, -0.150],  // C: (10.0, 13.5)
-      [0.83, 0.075],    // B: (20.3, 11.25)
-      0.16
+      [0.04, 0.975], // A: (12.2, 2.25)
+      [-0.2, -0.15], // C: (10.0, 13.5)
+      [0.83, 0.075], // B: (20.3, 11.25)
+      0.16,
     )
 
     // 2. Bottom-Left: CCW (A, C, B) -> reordered
     const pBottomLeft = createExtrudedTriangle(
-      [-0.04, -0.985],  // A: (11.6, 21.85)
-      [-0.26, -0.220],  // C: (9.4, 14.2)
-      [-0.85, 0.005],   // B: (3.5, 11.95)
-      0.16
+      [-0.04, -0.985], // A: (11.6, 21.85)
+      [-0.26, -0.22], // C: (9.4, 14.2)
+      [-0.85, 0.005], // B: (3.5, 11.95)
+      0.16,
     )
 
     // 3. Bottom-Right: CCW (A, B, C)
     const pBottomRight = createExtrudedTriangle(
-      [0.04, -0.985],   // A: (12.2, 21.85)
-      [0.83, 0.005],    // B: (20.3, 11.95)
-      [-0.20, -0.220],  // C: (10.0, 14.2)
-      0.16
+      [0.04, -0.985], // A: (12.2, 21.85)
+      [0.83, 0.005], // B: (20.3, 11.95)
+      [-0.2, -0.22], // C: (10.0, 14.2)
+      0.16,
     )
 
     // Combine all arrays
@@ -411,7 +447,10 @@ export function WebGLLogo() {
 
     // Get Uniform Locations
     const uModelMatrixLoc = gl.getUniformLocation(program, 'u_modelMatrix')
-    const uViewProjectionMatrixLoc = gl.getUniformLocation(program, 'u_viewProjectionMatrix')
+    const uViewProjectionMatrixLoc = gl.getUniformLocation(
+      program,
+      'u_viewProjectionMatrix',
+    )
     const uNormalMatrixLoc = gl.getUniformLocation(program, 'u_normalMatrix')
     const uBrandColorLoc = gl.getUniformLocation(program, 'u_brandColor')
     const uViewPosLoc = gl.getUniformLocation(program, 'u_viewPos')
@@ -434,27 +473,27 @@ export function WebGLLogo() {
     // Render loop state
     let animationId: number
     const startTime = performance.now()
-    
+
     // Camera settings
     const eye: [number, number, number] = [0.0, 0.0, 3.2] // Camera position
-    
+
     const render = (timeMs: number) => {
       const elapsedSeconds = (timeMs - startTime) / 1000
-      
+
       // Clear canvas with transparent background
       gl.clearColor(0, 0, 0, 0)
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
-      
+
       // Calculate dynamic aspect ratio
       const aspect = canvas.width / canvas.height
       const projMatrix = perspective((40 * Math.PI) / 180, aspect, 0.1, 100)
-      
+
       // View Matrix (camera looking down -Z axis)
       const viewMatrix = createIdentity()
       viewMatrix[12] = -eye[0]
       viewMatrix[13] = -eye[1]
       viewMatrix[14] = -eye[2] // Simple translate for camera view
-      
+
       // ViewProjectionMatrix
       const viewProjMatrix = multiply(projMatrix, viewMatrix)
 
@@ -471,17 +510,19 @@ export function WebGLLogo() {
         rotationAngles.current.y += rotationVelocity.current.y
         rotationVelocity.current.x *= 0.94
         rotationVelocity.current.y *= 0.94
-        
+
         // Return gently to baseline ambient spin on X, and slow auto-spin on Y
         rotationAngles.current.y += 0.003
-        rotationAngles.current.x += (Math.sin(elapsedSeconds * 0.4) * 0.1 - rotationAngles.current.x) * 0.02
+        rotationAngles.current.x +=
+          (Math.sin(elapsedSeconds * 0.4) * 0.1 - rotationAngles.current.x) *
+          0.02
       }
 
       // Build model matrix (rotate the logo)
       let modelMatrix = createIdentity()
       modelMatrix = rotateX(modelMatrix, rotationAngles.current.x)
       modelMatrix = rotateY(modelMatrix, rotationAngles.current.y)
-      
+
       // Normal matrix (transforms normals based on model rotations)
       const normalMatrix = getNormalMatrix(modelMatrix)
 
@@ -489,23 +530,33 @@ export function WebGLLogo() {
       // Read the current Waku theme colors from CSS variables
       const computedStyles = getComputedStyle(document.documentElement)
       const rawHue = computedStyles.getPropertyValue('--brand-hue').trim()
-      const rawChroma = computedStyles.getPropertyValue('--brand-chroma-multiplier').trim()
-      
+      const rawChroma = computedStyles
+        .getPropertyValue('--brand-chroma-multiplier')
+        .trim()
+
       let hue = rawHue ? parseFloat(rawHue) : 250
       if (isNaN(hue)) hue = 250
       let chromaMult = rawChroma ? parseFloat(rawChroma) : 1.0
       if (isNaN(chromaMult)) chromaMult = 1.0
-      
+
       // Get RGB coordinates in 0..1 scale
-      const rgb = oklchToRgb(0.70, 0.18 * chromaMult, hue)
+      const rgb = oklchToRgb(0.7, 0.18 * chromaMult, hue)
 
       // Use the WebGL Program
       gl.useProgram(program)
 
       // Pass Uniforms
       gl.uniformMatrix4fv(uModelMatrixLoc, false, new Float32Array(modelMatrix))
-      gl.uniformMatrix4fv(uViewProjectionMatrixLoc, false, new Float32Array(viewProjMatrix))
-      gl.uniformMatrix3fv(uNormalMatrixLoc, false, new Float32Array(normalMatrix))
+      gl.uniformMatrix4fv(
+        uViewProjectionMatrixLoc,
+        false,
+        new Float32Array(viewProjMatrix),
+      )
+      gl.uniformMatrix3fv(
+        uNormalMatrixLoc,
+        false,
+        new Float32Array(normalMatrix),
+      )
       gl.uniform3fv(uBrandColorLoc, new Float32Array(rgb))
       gl.uniform3fv(uViewPosLoc, new Float32Array(eye))
       gl.uniform1f(uTimeLoc, elapsedSeconds)
@@ -542,11 +593,11 @@ export function WebGLLogo() {
     if (!isDragging.current) return
     const deltaX = clientX - previousMousePosition.current.x
     const deltaY = clientY - previousMousePosition.current.y
-    
+
     // Scale movement to rotation velocity
     rotationVelocity.current.y = deltaX * 0.007
     rotationVelocity.current.x = deltaY * 0.007
-    
+
     previousMousePosition.current = { x: clientX, y: clientY }
   }
 
@@ -583,7 +634,8 @@ export function WebGLLogo() {
           ref={canvasRef}
           className="w-full h-full block touch-none"
           style={{
-            filter: 'drop-shadow(0 0 35px oklch(0.70 0.18 var(--brand-hue, 250) / 0.2))'
+            filter:
+              'drop-shadow(0 0 35px oklch(0.70 0.18 var(--brand-hue, 250) / 0.2))',
           }}
         />
       )}

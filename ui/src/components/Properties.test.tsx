@@ -1,72 +1,72 @@
-import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest'
+import * as stylex from '@stylexjs/stylex'
 import { render } from '@testing-library/react'
-import * as React from 'react'
 import * as fc from 'fast-check'
 import * as fs from 'fs'
 import { glob } from 'glob'
-import * as stylex from '@stylexjs/stylex'
+import * as React from 'react'
 import { TextField as AriaTextField } from 'react-aria-components'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 
 import {
-  Label,
-  Description,
-  FieldError,
-  ErrorMessage,
-  Form,
-  Separator,
-  Spinner,
-  Skeleton,
+  AlertDialog,
+  Avatar,
+  Badge,
+  BreadcrumbItem,
+  Breadcrumbs,
   Button,
   ButtonGroup,
-  ToggleButton,
-  ToggleButtonGroup,
-  Link,
+  Card,
+  CardBody,
+  CardFooter,
+  CardHeader,
+  Cell,
   Checkbox,
   CheckboxGroup,
-  RadioGroup,
-  Radio,
-  Switch,
-  TextField,
-  TextArea,
+  Column,
+  ComboBox,
+  ComboBoxItem,
+  Description,
+  ErrorMessage,
+  FieldError,
+  Form,
+  Kbd,
+  Label,
+  Link,
+  Modal,
+  ModalDialog,
+  ModalOverlay,
   NumberField,
+  Popover,
+  PopoverDialog,
+  PopoverTrigger,
+  Radio,
+  RadioGroup,
+  Row,
   SearchField,
   Select,
   SelectItem,
-  ComboBox,
-  ComboBoxItem,
+  Separator,
+  Skeleton,
   Slider,
-  SliderTrack,
   SliderThumb,
-  Badge,
-  Avatar,
-  Typography,
-  Card,
-  CardHeader,
-  CardBody,
-  CardFooter,
-  Kbd,
-  ModalOverlay,
-  Modal,
-  ModalDialog,
+  SliderTrack,
+  Spinner,
+  Switch,
+  Tab,
+  TabList,
+  Table,
+  TableBody,
+  TableHeader,
+  TabPanel,
+  Tabs,
+  TextArea,
+  TextField,
+  Toast,
+  ToggleButton,
+  ToggleButtonGroup,
   Tooltip,
   TooltipTrigger,
-  Popover,
-  PopoverTrigger,
-  PopoverDialog,
-  Toast,
-  Tabs,
-  TabList,
-  Tab,
-  TabPanel,
-  Breadcrumbs,
-  BreadcrumbItem,
-  Table,
-  TableHeader,
-  TableBody,
-  Row,
-  Column,
-  Cell,
-  AlertDialog,
+  Typography,
 } from '../index'
 
 const getTargetElement = (container: HTMLElement, className?: string) => {
@@ -1160,9 +1160,9 @@ describe('Centralized Component Properties Tests', () => {
         const originalDocument = globalThis.document
 
         try {
-          // @ts-ignore
+          // @ts-expect-error
           delete globalThis.window
-          // @ts-ignore
+          // @ts-expect-error
           delete globalThis.document
 
           const html = renderToString(comp.render({}))
