@@ -11,6 +11,8 @@ import {
 import { Button } from './components/Button'
 import { Card, CardBody, CardFooter, CardHeader } from './components/Card'
 import { Modal, ModalOverlay } from './components/Modal'
+import { ToggleButton } from './components/ToggleButton'
+import { ToggleButtonGroup } from './components/ToggleButtonGroup'
 
 // Define StyleX styles
 const styles = stylex.create({
@@ -151,6 +153,39 @@ function App() {
           <div {...stylex.props(styles.buttonGroup)}>
             <Button variant="primary">Primary Accent</Button>
             <Button variant="secondary">Secondary Glass</Button>
+          </div>
+        </section>
+
+        {/* Toggle Button Showcase */}
+        <section {...stylex.props(styles.section)}>
+          <h2 {...stylex.props(styles.sectionTitle)}>Toggle Buttons</h2>
+          <div {...stylex.props(styles.buttonGroup)}>
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <span>Standalone (Primary):</span>
+              <ToggleButton variant="primary">Toggle</ToggleButton>
+              <ToggleButton variant="primary" defaultSelected>Selected</ToggleButton>
+            </div>
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <span>Standalone (Secondary):</span>
+              <ToggleButton variant="secondary">Toggle</ToggleButton>
+              <ToggleButton variant="secondary" defaultSelected>Selected</ToggleButton>
+            </div>
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <span>Group (Animated):</span>
+              <ToggleButtonGroup animated defaultSelectedKeys={['week']}>
+                <ToggleButton id="day">Day</ToggleButton>
+                <ToggleButton id="week">Week</ToggleButton>
+                <ToggleButton id="month">Month</ToggleButton>
+              </ToggleButtonGroup>
+            </div>
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <span>Group Secondary (Animated):</span>
+              <ToggleButtonGroup animated defaultSelectedKeys={['bold']}>
+                <ToggleButton id="bold" variant="secondary">Bold</ToggleButton>
+                <ToggleButton id="italic" variant="secondary">Italic</ToggleButton>
+                <ToggleButton id="underline" variant="secondary">Underline</ToggleButton>
+              </ToggleButtonGroup>
+            </div>
           </div>
         </section>
 

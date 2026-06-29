@@ -50,23 +50,56 @@ export const styles = stylex.create({
     lineHeight: tokens.lineHeightMd,
   },
   primary: {
-    backgroundColor: tokens.colorNeutral100,
-    color: tokens.colorPrimary500,
-    borderStyle: 'none',
-    boxShadow: tokens.shadowSm,
+    backgroundColor: tokens.colorBg,
+    color: tokens.colorFg,
+    borderStyle: 'solid',
+    borderWidth: '1px',
+    borderColor: tokens.colorBorder,
+    boxShadow: 'none',
     ':hover': {
-      backgroundColor: tokens.colorNeutral200,
+      backgroundColor: tokens.colorNeutral50,
+      borderColor: tokens.colorNeutral400,
+    },
+    ':active': {
+      backgroundColor: tokens.colorNeutral100,
     },
   },
   primarySelected: {
-    backgroundColor: tokens.colorPrimary500,
-    color: tokens.colorFgOnPrimary,
-    borderStyle: 'none',
+    backgroundColor: tokens.colorFg,
+    color: tokens.colorBg,
+    borderStyle: 'solid',
+    borderWidth: '1px',
+    borderColor: tokens.colorFg,
     ':hover': {
-      backgroundColor: tokens.colorPrimary600,
+      backgroundColor: tokens.colorNeutral800,
+      borderColor: tokens.colorNeutral800,
     },
     ':active': {
-      backgroundColor: tokens.colorPrimary700,
+      backgroundColor: tokens.colorNeutral700,
+      borderColor: tokens.colorNeutral700,
+    },
+  },
+  secondary: {
+    backgroundColor: 'transparent',
+    color: tokens.colorFg,
+    borderStyle: 'none',
+    boxShadow: 'none',
+    ':hover': {
+      backgroundColor: tokens.colorNeutral100,
+    },
+    ':active': {
+      backgroundColor: tokens.colorNeutral200,
+    },
+  },
+  secondarySelected: {
+    backgroundColor: tokens.colorNeutral200,
+    color: tokens.colorFg,
+    borderStyle: 'none',
+    ':hover': {
+      backgroundColor: tokens.colorNeutral300,
+    },
+    ':active': {
+      backgroundColor: tokens.colorNeutral400,
     },
   },
   isDisabled: {
@@ -127,11 +160,19 @@ export const styles = stylex.create({
     },
   },
   animatedItemSelectedPrimary: {
-    color: tokens.colorFgOnPrimary,
+    color: tokens.colorFg,
     backgroundColor: 'transparent',
     ':hover': {
       backgroundColor: 'transparent',
-      color: tokens.colorFgOnPrimary,
+      color: tokens.colorFg,
+    },
+  },
+  animatedItemSelectedSecondary: {
+    color: tokens.colorFg,
+    backgroundColor: 'transparent',
+    ':hover': {
+      backgroundColor: 'transparent',
+      color: tokens.colorFg,
     },
   },
   selectionIndicator: {
@@ -148,6 +189,22 @@ export const styles = stylex.create({
     },
   },
   selectionIndicatorPrimary: {
-    backgroundColor: tokens.colorPrimary500,
+    backgroundColor: tokens.colorBg,
+    boxShadow: tokens.shadowSm,
+  },
+  selectionIndicatorSecondary: {
+    backgroundColor: tokens.colorNeutral200,
+  },
+  squareSm: {
+    paddingInline: tokens.spacing1,
+    aspectRatio: '1/1',
+  },
+  squareMd: {
+    paddingInline: tokens.spacing2,
+    aspectRatio: '1/1',
+  },
+  squareLg: {
+    paddingInline: tokens.spacing2,
+    aspectRatio: '1/1',
   },
 })

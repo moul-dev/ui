@@ -15,8 +15,8 @@ A toggle button allows a user to toggle a selection on or off, for example switc
 
 <ComponentPreview>
   <div className="flex gap-4 items-center">
-    <ToggleButton aria-label="Star">
-      <Star className="w-4 h-4" />
+    <ToggleButton aria-label="Star" isSquare>
+      <Star className="w-5 h-5" />
     </ToggleButton>
     <ToggleButton defaultSelected>Pin</ToggleButton>
   </div>
@@ -28,6 +28,22 @@ The `ToggleButton` component is built with React Aria and styled using StyleX.
 
 ```tsx
 import { ToggleButton } from '@moul-dev/ui';
+```
+
+## Variants
+
+You can customize the styling variant of the toggle button using the `variant` prop:
+
+<ComponentPreview>
+  <div className="flex gap-4 items-center">
+    <ToggleButton variant="primary">Primary</ToggleButton>
+    <ToggleButton variant="secondary">Secondary</ToggleButton>
+  </div>
+</ComponentPreview>
+
+```tsx
+<ToggleButton variant="primary">Primary</ToggleButton>
+<ToggleButton variant="secondary">Secondary</ToggleButton>
 ```
 
 ## Sizes
@@ -105,6 +121,16 @@ function Example(props) {
       type: "'sm' | 'md' | 'lg'",
       default: "'md'",
       description: 'The size of the button.',
+    },
+    variant: {
+      type: "'primary' | 'secondary'",
+      default: "'primary'",
+      description: 'The variant style of the button.',
+    },
+    isSquare: {
+      type: 'boolean',
+      default: 'false',
+      description: 'Whether the button should be a square, matching height and width with even padding.',
     },
   }}
 />
