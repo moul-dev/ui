@@ -116,14 +116,14 @@ export default function Home() {
                       'oklch(0.15 calc(0.01 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250))',
                   }}
                 >
-                  Read the docs
+                  Docs
                 </Link>
                 <a
                   href="https://github.com/moul-dev/ui"
                   target="_blank"
                   rel="noopener noreferrer"
                   id="cta-github"
-                  className="flex items-center gap-2 px-6 py-2.5 rounded-full border border-fd-border bg-fd-card/50 text-fd-card-foreground font-semibold text-sm shadow-sm backdrop-blur-sm hover:bg-fd-accent hover:text-fd-accent-foreground transition-all duration-200 hover:-translate-y-0.5"
+                  className="flex items-center gap-2 px-6 py-2.5 rounded-full border border-fd-border bg-fd-card/50 text-fd-card-foreground font-semibold text-sm shadow-sm backdrop-blur-sm hover:bg-fd-accent hover:text-fd-accent-foreground transition-all duration-200"
                 >
                   <svg
                     className="h-4 w-4 fill-current"
