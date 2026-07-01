@@ -1,4 +1,4 @@
-import { Alert, Button, Tag, TagGroup } from '@moul-dev/ui'
+import { Alert, Button, Tag, TagGroup, InputOTP, InputOTPGroup, InputOTPSlot, InputOTPSeparator } from '@moul-dev/ui'
 import { Accordion, Accordions } from 'fumadocs-ui/components/accordion'
 import { Card, Cards } from 'fumadocs-ui/components/card'
 import { Step, Steps } from 'fumadocs-ui/components/steps'
@@ -16,6 +16,7 @@ import {
   ModalDemo,
   TagGroupDemo,
   ToastDemo,
+  InputOTPDemo,
 } from './demos'
 
 export function getMDXComponents(components?: MDXComponents) {
@@ -43,6 +44,11 @@ export function getMDXComponents(components?: MDXComponents) {
     AlertDemo,
     TagGroupDemo,
     ComboBoxTagGroupDemo,
+    InputOTP,
+    InputOTPGroup,
+    InputOTPSlot,
+    InputOTPSeparator,
+    InputOTPDemo,
     ...components,
   } satisfies MDXComponents
 }

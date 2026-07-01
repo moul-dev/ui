@@ -10,6 +10,11 @@ import {
   ComboBox,
   ComboBoxItem,
   Form,
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+  InputOTPSeparator,
+  REGEXP_ONLY_DIGITS,
   Modal,
   ModalBody,
   ModalDialog,
@@ -354,3 +359,86 @@ export function ComboBoxTagGroupDemo() {
     </div>
   )
 }
+
+export function InputOTPDemo() {
+  const [value1, setValue1] = useState('')
+  const [value2, setValue2] = useState('')
+  const [value3, setValue3] = useState('')
+
+  return (
+    <div className="flex flex-col gap-8 w-full max-w-sm p-2">
+      <div className="flex flex-col gap-2">
+        <h4 className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">
+          Default (6 Digits with Separator)
+        </h4>
+        <InputOTP
+          maxLength={6}
+          value={value1}
+          onChange={setValue1}
+          pattern={REGEXP_ONLY_DIGITS}
+        >
+          <InputOTPGroup>
+            <InputOTPSlot index={0} />
+            <InputOTPSlot index={1} />
+            <InputOTPSlot index={2} />
+          </InputOTPGroup>
+          <InputOTPSeparator />
+          <InputOTPGroup>
+            <InputOTPSlot index={3} />
+            <InputOTPSlot index={4} />
+            <InputOTPSlot index={5} />
+          </InputOTPGroup>
+        </InputOTP>
+        <p className="text-xs text-neutral-500">Value: {value1}</p>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <h4 className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">
+          With Form Labels & Description
+        </h4>
+        <InputOTP
+          maxLength={4}
+          value={value2}
+          onChange={setValue2}
+          pattern={REGEXP_ONLY_DIGITS}
+          label="Verification Code"
+          description="Enter the 4-digit code sent to your phone."
+        >
+          <InputOTPGroup>
+            <InputOTPSlot index={0} />
+            <InputOTPSlot index={1} />
+            <InputOTPSlot index={2} />
+            <InputOTPSlot index={3} />
+          </InputOTPGroup>
+        </InputOTP>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <h4 className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">
+          Invalid State with Error Message
+        </h4>
+        <InputOTP
+          maxLength={4}
+          value={value3}
+          onChange={setValue3}
+          pattern={REGEXP_ONLY_DIGITS}
+          label="One-Time Password"
+          isInvalid={value3.length > 0 && value3 !== '1234'}
+          errorMessage={
+            value3.length > 0 && value3 !== '1234'
+              ? 'Invalid code. Try entering 1234.'
+              : undefined
+          }
+        >
+          <InputOTPGroup>
+            <InputOTPSlot index={0} />
+            <InputOTPSlot index={1} />
+            <InputOTPSlot index={2} />
+            <InputOTPSlot index={3} />
+          </InputOTPGroup>
+        </InputOTP>
+      </div>
+    </div>
+  )
+}
+

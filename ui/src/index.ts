@@ -53,6 +53,20 @@ export { FieldError } from './components/FieldError'
 export type { FieldErrorProps } from './components/FieldError/FieldError'
 export { Form } from './components/Form'
 export type { FormProps } from './components/Form/Form'
+export {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+  InputOTPSeparator,
+  REGEXP_ONLY_DIGITS,
+  REGEXP_ONLY_DIGITS_AND_CHARS,
+} from './components/InputOTP'
+export type {
+  InputOTPProps,
+  InputOTPGroupProps,
+  InputOTPSlotProps,
+  InputOTPSeparatorProps,
+} from './components/InputOTP/InputOTP'
 export { Kbd } from './components/Kbd'
 export type { KbdProps } from './components/Kbd/Kbd'
 export { Label } from './components/Label'

@@ -17,7 +17,11 @@ import {
   Tooltip,
   TooltipTrigger,
   ToastContainer,
-  useToast
+  useToast,
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+  InputOTPSeparator,
 } from '@moul-dev/ui'
 
 // Custom Syntax Highlighting for JSX
@@ -454,6 +458,55 @@ const REGISTRY: Record<string, ComponentConfig> = {
       },
     ],
   },
+  InputOTP: {
+    name: 'InputOTP',
+    defaultProps: {
+      maxLength: 6,
+      label: 'One-Time Password',
+      description: 'Please enter the 6-digit code sent to your phone.',
+      errorMessage: 'The code is invalid.',
+      isInvalid: false,
+      disabled: false,
+    },
+    props: [
+      {
+        name: 'maxLength',
+        type: 'number',
+        label: 'Max Length',
+        defaultValue: 6,
+      },
+      {
+        name: 'label',
+        type: 'text',
+        label: 'Label',
+        defaultValue: 'One-Time Password',
+      },
+      {
+        name: 'description',
+        type: 'text',
+        label: 'Description Helper',
+        defaultValue: 'Please enter the 6-digit code sent to your phone.',
+      },
+      {
+        name: 'errorMessage',
+        type: 'text',
+        label: 'Error Message',
+        defaultValue: 'The code is invalid.',
+      },
+      {
+        name: 'isInvalid',
+        type: 'boolean',
+        label: 'Invalid State',
+        defaultValue: false,
+      },
+      {
+        name: 'disabled',
+        type: 'boolean',
+        label: 'Disabled',
+        defaultValue: false,
+      },
+    ],
+  },
 }
 
 // Custom Toast Preview wrapper
@@ -530,6 +583,47 @@ function TagGroupPreviewWrapper({ label, variant, size, selectionMode }: { label
   )
 }
 
+// Custom InputOTP Preview wrapper
+function InputOTPPreviewWrapper({ maxLength, label, description, errorMessage, isInvalid, disabled }: { maxLength: number; label?: string; description?: string; errorMessage?: string; isInvalid?: boolean; disabled?: boolean }) {
+  const [value, setValue] = useState('')
+  const isSix = maxLength === 6
+
+  return (
+    <InputOTP
+      maxLength={maxLength}
+      value={value}
+      onChange={setValue}
+      label={label}
+      description={description}
+      errorMessage={errorMessage}
+      isInvalid={isInvalid}
+      disabled={disabled}
+    >
+      {isSix ? (
+        <>
+          <InputOTPGroup>
+            <InputOTPSlot index={0} />
+            <InputOTPSlot index={1} />
+            <InputOTPSlot index={2} />
+          </InputOTPGroup>
+          <InputOTPSeparator />
+          <InputOTPGroup>
+            <InputOTPSlot index={3} />
+            <InputOTPSlot index={4} />
+            <InputOTPSlot index={5} />
+          </InputOTPGroup>
+        </>
+      ) : (
+        <InputOTPGroup>
+          {Array.from({ length: maxLength || 4 }).map((_, i) => (
+            <InputOTPSlot key={i} index={i} />
+          ))}
+        </InputOTPGroup>
+      )}
+    </InputOTP>
+  )
+}
+
 export function ComponentPlayground({ component }: { component: string }) {
   const config = REGISTRY[component]
   if (!config) {
@@ -555,6 +649,52 @@ export function ComponentPlayground({ component }: { component: string }) {
   // Generate JSX Code string
   const generateCode = (): string => {
     switch (component) {
+      case 'InputOTP': {
+        const { maxLength, label, description, errorMessage, isInvalid, disabled } = activeProps
+        let propsStr = ''
+        if (maxLength !== 6) propsStr += ` maxLength={${maxLength}}`
+        if (label) propsStr += ` label="${label}"`
+        if (description) propsStr += ` description="${description}"`
+        if (errorMessage) propsStr += ` errorMessage="${errorMessage}"`
+        if (isInvalid) propsStr += ` isInvalid`
+        if (disabled) propsStr += ` disabled`
+        
+        const isSix = maxLength === 6
+        const slotJSX = isSix ? `      <InputOTPGroup>
+        <InputOTPSlot index={0} />
+        <InputOTPSlot index={1} />
+        <InputOTPSlot index={2} />
+      </InputOTPGroup>
+      <InputOTPSeparator />
+      <InputOTPGroup>
+        <InputOTPSlot index={3} />
+        <InputOTPSlot index={4} />
+        <InputOTPSlot index={5} />
+      </InputOTPGroup>` : `      <InputOTPGroup>
+${Array.from({ length: maxLength || 4 }).map((_, i) => `        <InputOTPSlot index={${i}} />`).join('\n')}
+      </InputOTPGroup>`
+
+        return `import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+  InputOTPSeparator,
+} from '@moul-dev/ui';
+import { useState } from 'react';
+
+export default function Example() {
+  const [value, setValue] = useState('');
+
+  return (
+    <InputOTP
+      value={value}
+      onChange={setValue}${propsStr}
+    >
+${slotJSX}
+    </InputOTP>
+  );
+}`
+      }
       case 'Button': {
         const { variant, size, isDisabled, isPending, children } = activeProps
         let propsStr = ''
@@ -883,6 +1023,17 @@ export default function Example() {
               <Tooltip placement={activeProps.placement}>{activeProps.children}</Tooltip>
             </TooltipTrigger>
           </div>
+        )
+      case 'InputOTP':
+        return (
+          <InputOTPPreviewWrapper
+            maxLength={activeProps.maxLength}
+            label={activeProps.label}
+            description={activeProps.description}
+            errorMessage={activeProps.errorMessage}
+            isInvalid={activeProps.isInvalid}
+            disabled={activeProps.disabled}
+          />
         )
       default:
         return <div>No Preview Available</div>
