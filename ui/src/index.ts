@@ -56,16 +56,16 @@ export type { FormProps } from './components/Form/Form'
 export {
   InputOTP,
   InputOTPGroup,
-  InputOTPSlot,
   InputOTPSeparator,
+  InputOTPSlot,
   REGEXP_ONLY_DIGITS,
   REGEXP_ONLY_DIGITS_AND_CHARS,
 } from './components/InputOTP'
 export type {
-  InputOTPProps,
   InputOTPGroupProps,
-  InputOTPSlotProps,
+  InputOTPProps,
   InputOTPSeparatorProps,
+  InputOTPSlotProps,
 } from './components/InputOTP/InputOTP'
 export { Kbd } from './components/Kbd'
 export type { KbdProps } from './components/Kbd/Kbd'

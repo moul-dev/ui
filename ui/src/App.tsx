@@ -163,12 +163,16 @@ function App() {
             <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
               <span>Standalone (Primary):</span>
               <ToggleButton variant="primary">Toggle</ToggleButton>
-              <ToggleButton variant="primary" defaultSelected>Selected</ToggleButton>
+              <ToggleButton variant="primary" defaultSelected>
+                Selected
+              </ToggleButton>
             </div>
             <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
               <span>Standalone (Secondary):</span>
               <ToggleButton variant="secondary">Toggle</ToggleButton>
-              <ToggleButton variant="secondary" defaultSelected>Selected</ToggleButton>
+              <ToggleButton variant="secondary" defaultSelected>
+                Selected
+              </ToggleButton>
             </div>
             <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
               <span>Group (Animated):</span>
@@ -181,9 +185,15 @@ function App() {
             <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
               <span>Group Secondary (Animated):</span>
               <ToggleButtonGroup animated defaultSelectedKeys={['bold']}>
-                <ToggleButton id="bold" variant="secondary">Bold</ToggleButton>
-                <ToggleButton id="italic" variant="secondary">Italic</ToggleButton>
-                <ToggleButton id="underline" variant="secondary">Underline</ToggleButton>
+                <ToggleButton id="bold" variant="secondary">
+                  Bold
+                </ToggleButton>
+                <ToggleButton id="italic" variant="secondary">
+                  Italic
+                </ToggleButton>
+                <ToggleButton id="underline" variant="secondary">
+                  Underline
+                </ToggleButton>
               </ToggleButtonGroup>
             </div>
           </div>

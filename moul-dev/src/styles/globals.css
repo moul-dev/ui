@@ -1,0 +1,359 @@
+@import url("https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap");
+@layer base, utilities, priority1, priority2, priority3, priority4, priority5;
+
+@import 'tailwindcss';
+
+@theme {
+  --color-fd-primary: oklch(0.60 calc(0.18 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 198));
+  --font-sans: "Google Sans", "Inter", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
+:root {
+  --brand-hue: 198; /* Cyan theme matching the dodecahedron */
+  --brand-chroma-multiplier: 1;
+}
+
+@import '@moul-dev/ui/style';
+@import 'fumadocs-ui/css/neutral.css';
+@import 'fumadocs-ui/css/preset.css';
+
+html {
+  scrollbar-gutter: stable;
+  font-family: var(--font-sans);
+}
+
+body {
+  font-family: var(--font-sans);
+}
+
+html>body[data-scroll-locked] {
+  margin-right: 0px !important;
+  --removed-body-scroll-bar-size: 0px !important;
+}
+
+/* ─── Liquid Glass Design System ─── */
+.liquid-glass-card {
+  --mouse-x: 50%;
+  --mouse-y: 50%;
+  position: relative;
+  border-radius: 1rem;
+  padding: 1px;
+  background: rgba(229, 231, 235, 0.2);
+  overflow: hidden;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.02);
+  transition: box-shadow 0.3s ease, background-color 0.3s ease;
+}
+
+.dark .liquid-glass-card {
+  background: rgba(63, 63, 70, 0.2);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15);
+}
+
+/* Moving Spotlight Border mask trick */
+.liquid-glass-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: radial-gradient(300px circle at var(--mouse-x) var(--mouse-y),
+      oklch(0.78 calc(0.16 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 198) / 0.5),
+      transparent 80%);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: 1;
+}
+
+.dark .liquid-glass-card::before {
+  background: radial-gradient(300px circle at var(--mouse-x) var(--mouse-y),
+      oklch(0.82 calc(0.15 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 198) / 0.6),
+      transparent 80%);
+}
+
+.liquid-glass-card:hover {
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+}
+
+.dark .liquid-glass-card:hover {
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.liquid-glass-card:hover::before {
+  opacity: 1;
+}
+
+/* Glass Inner styling */
+.liquid-glass-inner {
+  border-radius: calc(1rem - 1px);
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  width: 100%;
+  height: 100%;
+  position: relative;
+  z-index: 2;
+  transition: background-color 0.3s ease;
+}
+
+.dark .liquid-glass-inner {
+  background: rgba(15, 15, 17, 0.5);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* Subtle inner background glow spotlight on hover */
+.liquid-glass-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: calc(1rem - 1px);
+  background: radial-gradient(400px circle at var(--mouse-x) var(--mouse-y),
+      oklch(0.78 calc(0.14 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 198) / 0.04),
+      transparent 80%);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: 2;
+}
+
+.dark .liquid-glass-glow {
+  background: radial-gradient(400px circle at var(--mouse-x) var(--mouse-y),
+      oklch(0.82 0.15 calc(var(--brand-hue, 198) + 10) / 0.07),
+      transparent 80%);
+}
+
+.liquid-glass-card:hover .liquid-glass-glow {
+  opacity: 1;
+}
+
+/* ─── Interactive Grid Background ─── */
+.interactive-grid-container {
+  pointer-events: none;
+  --mouse-x: 0px;
+  --mouse-y: 0px;
+  --mouse-opacity: 0;
+  
+  /* Mask out the grid on the bottom/right so it fades out behind the 3D logo */
+  mask-image: linear-gradient(to bottom, black 25%, transparent 55%);
+  -webkit-mask-image: linear-gradient(to bottom, black 25%, transparent 55%);
+}
+
+@media (min-width: 1024px) {
+  .interactive-grid-container {
+    mask-image: linear-gradient(to right, black 40%, transparent 68%);
+    -webkit-mask-image: linear-gradient(to right, black 40%, transparent 68%);
+  }
+}
+
+/* Soft ambient dark shadow behind the 3D logo to enhance contrast and readability */
+.logo-ambient-shadow {
+  background: radial-gradient(circle, rgba(0, 0, 0, 0.40) 0%, rgba(0, 0, 0, 0.15) 30%, transparent 70%);
+}
+
+.light .logo-ambient-shadow {
+  background: radial-gradient(circle, rgba(0, 0, 0, 0.07) 0%, rgba(0, 0, 0, 0.02) 35%, transparent 70%);
+}
+
+.interactive-grid-base {
+  background-image:
+    linear-gradient(to right, rgba(128, 128, 128, 0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(128, 128, 128, 0.07) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse 60% 50% at 50% 0%, black 70%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 60% 50% at 50% 0%, black 70%, transparent 100%);
+}
+
+.dark .interactive-grid-base {
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+}
+
+.interactive-grid-spotlight {
+  background-size: 64px 64px;
+  opacity: calc(var(--mouse-opacity) * 0.9);
+  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+  z-index: 1;
+
+  /* Light mode spotlight: cyan */
+  background-image:
+    linear-gradient(to right, oklch(0.75 calc(0.16 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 198) / 0.3) 1px, transparent 1px),
+    linear-gradient(to bottom, oklch(0.75 calc(0.16 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 198) / 0.3) 1px, transparent 1px);
+
+  mask-image: radial-gradient(250px circle at var(--mouse-x) var(--mouse-y),
+      black 20%,
+      transparent 100%);
+  -webkit-mask-image: radial-gradient(250px circle at var(--mouse-x) var(--mouse-y),
+      black 20%,
+      transparent 100%);
+}
+
+.dark .interactive-grid-spotlight {
+  /* Dark mode spotlight: brighter cyan */
+  background-image:
+    linear-gradient(to right, oklch(0.80 calc(0.15 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 198) / 0.4) 1px, transparent 1px),
+    linear-gradient(to bottom, oklch(0.80 calc(0.15 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 198) / 0.4) 1px, transparent 1px);
+}
+
+/* Soft glowing radial background that moves with cursor */
+.interactive-grid-glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: calc(var(--mouse-opacity) * 0.75);
+  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 0;
+
+  background: radial-gradient(300px circle at var(--mouse-x) var(--mouse-y),
+      oklch(0.78 calc(0.14 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 198) / 0.12),
+      transparent 80%);
+
+  mask-image: radial-gradient(ellipse 60% 50% at 50% 0%, black 70%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 60% 50% at 50% 0%, black 70%, transparent 100%);
+}
+
+.dark .interactive-grid-glow {
+  background: radial-gradient(350px circle at var(--mouse-x) var(--mouse-y),
+      oklch(0.82 calc(0.15 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 198) / 0.18),
+      transparent 80%);
+}
+
+/* ─── Install Command Block ─── */
+.install-block {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  background: oklch(0.96 0.005 260);
+  border: 1px solid oklch(0.90 0.005 260);
+  color: oklch(0.35 0.01 260);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  user-select: all;
+}
+
+.dark .install-block {
+  background: oklch(0.16 0.005 260);
+  border-color: oklch(0.24 0.01 260);
+  color: oklch(0.75 0.01 260);
+}
+
+.install-block:hover {
+  border-color: oklch(0.82 0.005 260);
+}
+
+.dark .install-block:hover {
+  border-color: oklch(0.32 0.01 260);
+}
+
+.install-block .prompt {
+  color: oklch(0.55 0.01 260);
+  user-select: none;
+}
+
+.dark .install-block .prompt {
+  color: oklch(0.50 0.01 260);
+}
+
+.install-block .command-text {
+  color: oklch(0.75 calc(0.16 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 198));
+  font-weight: 500;
+}
+
+.dark .install-block .command-text {
+  color: oklch(0.82 calc(0.15 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 198));
+}
+
+.install-block .copy-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem;
+  border-radius: 0.375rem;
+  color: oklch(0.55 0.01 260);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: color 0.15s ease, background-color 0.15s ease;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.install-block .copy-btn:hover {
+  color: oklch(0.35 0.01 260);
+  background: oklch(0.92 0.005 260);
+}
+
+.dark .install-block .copy-btn {
+  color: oklch(0.55 0.01 260);
+}
+
+.dark .install-block .copy-btn:hover {
+  color: oklch(0.80 0.01 260);
+  background: oklch(0.22 0.005 260);
+}
+
+.install-block .copy-btn.copied {
+  color: oklch(0.65 0.18 145);
+}
+
+/* ─── Feature Card Accent Bar ─── */
+.feature-card .liquid-glass-inner::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+      transparent,
+      oklch(0.78 calc(0.14 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 198) / 0.5),
+      transparent);
+  border-radius: 1px;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.dark .feature-card .liquid-glass-inner::after {
+  background: linear-gradient(90deg,
+      transparent,
+      oklch(0.82 calc(0.15 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 198) / 0.6),
+      transparent);
+}
+
+/* ─── Tech Stack Strip ─── */
+.tech-stack-strip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: oklch(0.55 0.01 260);
+}
+
+.dark .tech-stack-strip {
+  color: oklch(0.50 0.01 260);
+}
+
+.tech-stack-strip .separator {
+  color: oklch(0.75 0.005 260);
+  user-select: none;
+}
+
+.dark .tech-stack-strip .separator {
+  color: oklch(0.30 0.005 260);
+}

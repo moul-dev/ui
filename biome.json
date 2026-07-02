@@ -12,7 +12,8 @@
       "!node_modules",
       "!.source",
       "!**/*.svg",
-      "!docs/src/styles/globals.css"
+      "!docs/src/styles/globals.css",
+      "!moul-dev/src/styles/globals.css"
     ]
   },
   "formatter": {

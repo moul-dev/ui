@@ -61,7 +61,9 @@ export const ToggleButton = React.forwardRef<
       isDisabled={isDisabled}
       className={(renderProps) => {
         const selectedStyle =
-          variant === 'primary' ? styles.primarySelected : styles.secondarySelected
+          variant === 'primary'
+            ? styles.primarySelected
+            : styles.secondarySelected
         const { className: stylexClass } = stylex.props(
           styles.base,
           styles[resolvedSize as keyof typeof styles],
@@ -106,7 +108,9 @@ export const ToggleButton = React.forwardRef<
       }}
       style={(renderProps) => {
         const selectedStyle =
-          variant === 'primary' ? styles.primarySelected : styles.secondarySelected
+          variant === 'primary'
+            ? styles.primarySelected
+            : styles.secondarySelected
         const { style: stylexStyle } = stylex.props(
           styles.base,
           styles[resolvedSize as keyof typeof styles],

@@ -3,14 +3,17 @@
   "private": true,
   "workspaces": [
     "ui",
-    "docs"
+    "docs",
+    "moul-dev"
   ],
   "scripts": {
     "dev:ui": "bun --cwd ui dev",
     "dev:docs": "bun --cwd docs dev",
+    "dev:moul-dev": "bun --cwd moul-dev dev",
     "build:ui": "bun --cwd ui build",
     "build:docs": "bun --cwd docs build",
-    "dev": "bun --cwd ui build:watch & bun run dev:ui & bun run dev:docs",
+    "build:moul-dev": "bun --cwd moul-dev build",
+    "dev": "bun --cwd ui build:watch & bun run dev:ui & bun run dev:docs & bun run dev:moul-dev",
     "lint": "biome check",
     "format": "biome format --write"
   },

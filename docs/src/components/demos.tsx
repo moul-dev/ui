@@ -12,15 +12,15 @@ import {
   Form,
   InputOTP,
   InputOTPGroup,
-  InputOTPSlot,
   InputOTPSeparator,
-  REGEXP_ONLY_DIGITS,
+  InputOTPSlot,
   Modal,
   ModalBody,
   ModalDialog,
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  REGEXP_ONLY_DIGITS,
   Tag,
   TagGroup,
   TextField,
@@ -441,4 +441,3 @@ export function InputOTPDemo() {
     </div>
   )
 }
-

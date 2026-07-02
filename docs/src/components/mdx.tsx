@@ -1,4 +1,13 @@
-import { Alert, Button, Tag, TagGroup, InputOTP, InputOTPGroup, InputOTPSlot, InputOTPSeparator } from '@moul-dev/ui'
+import {
+  Alert,
+  Button,
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSeparator,
+  InputOTPSlot,
+  Tag,
+  TagGroup,
+} from '@moul-dev/ui'
 import { Accordion, Accordions } from 'fumadocs-ui/components/accordion'
 import { Card, Cards } from 'fumadocs-ui/components/card'
 import { Step, Steps } from 'fumadocs-ui/components/steps'
@@ -6,17 +15,17 @@ import { Tab, Tabs } from 'fumadocs-ui/components/tabs'
 import { TypeTable } from 'fumadocs-ui/components/type-table'
 import defaultMdxComponents from 'fumadocs-ui/mdx'
 import type { MDXComponents } from 'mdx/types'
-import { ComponentPreview } from './component-preview'
 import { ComponentPlayground } from './component-playground'
+import { ComponentPreview } from './component-preview'
 import {
   AlertDemo,
   AlertDialogDemo,
   ComboBoxTagGroupDemo,
   FormDemo,
+  InputOTPDemo,
   ModalDemo,
   TagGroupDemo,
   ToastDemo,
-  InputOTPDemo,
 } from './demos'
 
 export function getMDXComponents(components?: MDXComponents) {

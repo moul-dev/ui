@@ -1,28 +1,28 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
 import {
-  Button,
-  ToggleButton,
-  ToggleButtonGroup,
-  Switch,
-  Select,
-  SelectItem,
-  TextField,
-  Slider,
-  Badge,
   Alert,
-  TagGroup,
-  Tag,
-  Tooltip,
-  TooltipTrigger,
-  ToastContainer,
-  useToast,
+  Badge,
+  Button,
   InputOTP,
   InputOTPGroup,
-  InputOTPSlot,
   InputOTPSeparator,
+  InputOTPSlot,
+  Select,
+  SelectItem,
+  Slider,
+  Switch,
+  Tag,
+  TagGroup,
+  TextField,
+  ToastContainer,
+  ToggleButton,
+  ToggleButtonGroup,
+  Tooltip,
+  TooltipTrigger,
+  useToast,
 } from '@moul-dev/ui'
+import React, { useEffect, useState } from 'react'
 
 // Custom Syntax Highlighting for JSX
 function highlightJSX(code: string): string {
@@ -33,27 +33,45 @@ function highlightJSX(code: string): string {
     .replace(/>/g, '&gt;')
 
   // Apply highlighting using non-colliding placeholder tags
-  let highlighted = escaped
+  const highlighted = escaped
     // 1. Highlight component tag names (&lt;Button, &lt;/Button, etc.)
     .replace(/(&lt;\/?[A-Z][a-zA-Z0-9]*)/g, '___TAG_START___$1___TAG_END___')
     // 2. Highlight closing tag brackets (&gt; or /&gt;) of component tags
-    .replace(/(\/&gt;|___TAG_END___.*?)(&gt;)/g, '$1___TAG_START___$2___TAG_END___')
+    .replace(
+      /(\/&gt;|___TAG_END___.*?)(&gt;)/g,
+      '$1___TAG_START___$2___TAG_END___',
+    )
     // 3. Highlight string literals (double/single quotes, escaped/unescaped)
-    .replace(/(&quot;.*?&quot;|&#x27;.*?&#x27;|&#39;.*?&#39;|'.*?'|".*?")/g, '___STR_START___$1___STR_END___')
+    .replace(
+      /(&quot;.*?&quot;|&#x27;.*?&#x27;|&#39;.*?&#39;|'.*?'|".*?")/g,
+      '___STR_START___$1___STR_END___',
+    )
     // 4. Highlight prop keys (words followed directly by = sign)
-    .replace(/(\b[a-zA-Z0-9_-]+)(?=\=)/g, '___PROP_START___$1___PROP_END___')
+    .replace(/(\b[a-zA-Z0-9_-]+)(?==)/g, '___PROP_START___$1___PROP_END___')
     // 5. Highlight braced expressions ({...})
     .replace(/({.*?})/g, '___EXPR_START___$1___EXPR_END___')
 
   // Finally, replace placeholders with actual styled HTML spans
   return highlighted
-    .replace(/___TAG_START___/g, '<span class="text-indigo-500 dark:text-indigo-400">')
+    .replace(
+      /___TAG_START___/g,
+      '<span class="text-indigo-500 dark:text-indigo-400">',
+    )
     .replace(/___TAG_END___/g, '</span>')
-    .replace(/___STR_START___/g, '<span class="text-emerald-600 dark:text-emerald-400">')
+    .replace(
+      /___STR_START___/g,
+      '<span class="text-emerald-600 dark:text-emerald-400">',
+    )
     .replace(/___STR_END___/g, '</span>')
-    .replace(/___PROP_START___/g, '<span class="text-amber-500 dark:text-amber-300">')
+    .replace(
+      /___PROP_START___/g,
+      '<span class="text-amber-500 dark:text-amber-300">',
+    )
     .replace(/___PROP_END___/g, '</span>')
-    .replace(/___EXPR_START___/g, '<span class="text-blue-500 dark:text-blue-400">')
+    .replace(
+      /___EXPR_START___/g,
+      '<span class="text-blue-500 dark:text-blue-400">',
+    )
     .replace(/___EXPR_END___/g, '</span>')
 }
 
@@ -89,7 +107,15 @@ const REGISTRY: Record<string, ComponentConfig> = {
         name: 'variant',
         type: 'select',
         label: 'Variant',
-        options: ['primary', 'secondary', 'tertiary', 'outline', 'ghost', 'danger', 'danger-soft'],
+        options: [
+          'primary',
+          'secondary',
+          'tertiary',
+          'outline',
+          'ghost',
+          'danger',
+          'danger-soft',
+        ],
         defaultValue: 'primary',
       },
       {
@@ -367,7 +393,8 @@ const REGISTRY: Record<string, ComponentConfig> = {
     defaultProps: {
       variant: 'info',
       title: 'Maintenance Alert',
-      description: 'The API server will undergo scheduled updates tonight at 12:00 AM UTC.',
+      description:
+        'The API server will undergo scheduled updates tonight at 12:00 AM UTC.',
       hasCloseButton: true,
     },
     props: [
@@ -388,7 +415,8 @@ const REGISTRY: Record<string, ComponentConfig> = {
         name: 'description',
         type: 'text',
         label: 'Alert Description',
-        defaultValue: 'The API server will undergo scheduled updates tonight at 12:00 AM UTC.',
+        defaultValue:
+          'The API server will undergo scheduled updates tonight at 12:00 AM UTC.',
       },
       {
         name: 'hasCloseButton',
@@ -510,7 +538,15 @@ const REGISTRY: Record<string, ComponentConfig> = {
 }
 
 // Custom Toast Preview wrapper
-function ToastPreviewWrapper({ title, description, variant }: { title: string; description: string; variant: string }) {
+function ToastPreviewWrapper({
+  title,
+  description,
+  variant,
+}: {
+  title: string
+  description: string
+  variant: string
+}) {
   const toast = useToast()
   return (
     <div className="flex flex-col items-center gap-4">
@@ -530,7 +566,17 @@ function ToastPreviewWrapper({ title, description, variant }: { title: string; d
 }
 
 // Custom Alert Preview wrapper that handles resets
-function AlertPreviewWrapper({ variant, title, description, hasCloseButton }: { variant: string; title: string; description: string; hasCloseButton: boolean }) {
+function AlertPreviewWrapper({
+  variant,
+  title,
+  description,
+  hasCloseButton,
+}: {
+  variant: string
+  title: string
+  description: string
+  hasCloseButton: boolean
+}) {
   const [isOpen, setIsOpen] = useState(true)
 
   // Auto reset when props change
@@ -558,7 +604,17 @@ function AlertPreviewWrapper({ variant, title, description, hasCloseButton }: { 
 }
 
 // Custom TagGroup Preview wrapper
-function TagGroupPreviewWrapper({ label, variant, size, selectionMode }: { label: string; variant: string; size: string; selectionMode: string }) {
+function TagGroupPreviewWrapper({
+  label,
+  variant,
+  size,
+  selectionMode,
+}: {
+  label: string
+  variant: string
+  size: string
+  selectionMode: string
+}) {
   const [selected, setSelected] = useState<any>(new Set(['coding']))
   return (
     <div className="flex flex-col gap-3 w-full max-w-[320px]">
@@ -576,7 +632,10 @@ function TagGroupPreviewWrapper({ label, variant, size, selectionMode }: { label
       </TagGroup>
       {selectionMode !== 'none' && (
         <div className="text-xs text-neutral-500 dark:text-neutral-400">
-          Selected: <span className="font-semibold text-neutral-800 dark:text-neutral-200">{[...selected].join(', ') || 'None'}</span>
+          Selected:{' '}
+          <span className="font-semibold text-neutral-800 dark:text-neutral-200">
+            {[...selected].join(', ') || 'None'}
+          </span>
         </div>
       )}
     </div>
@@ -584,7 +643,21 @@ function TagGroupPreviewWrapper({ label, variant, size, selectionMode }: { label
 }
 
 // Custom InputOTP Preview wrapper
-function InputOTPPreviewWrapper({ maxLength, label, description, errorMessage, isInvalid, disabled }: { maxLength: number; label?: string; description?: string; errorMessage?: string; isInvalid?: boolean; disabled?: boolean }) {
+function InputOTPPreviewWrapper({
+  maxLength,
+  label,
+  description,
+  errorMessage,
+  isInvalid,
+  disabled,
+}: {
+  maxLength: number
+  label?: string
+  description?: string
+  errorMessage?: string
+  isInvalid?: boolean
+  disabled?: boolean
+}) {
   const [value, setValue] = useState('')
   const isSix = maxLength === 6
 
@@ -635,7 +708,9 @@ export function ComponentPlayground({ component }: { component: string }) {
   }
 
   // Initialize state with default properties
-  const [activeProps, setActiveProps] = useState<Record<string, any>>(config.defaultProps)
+  const [activeProps, setActiveProps] = useState<Record<string, any>>(
+    config.defaultProps,
+  )
   const [copied, setCopied] = useState(false)
 
   // Track prop changes
@@ -650,7 +725,14 @@ export function ComponentPlayground({ component }: { component: string }) {
   const generateCode = (): string => {
     switch (component) {
       case 'InputOTP': {
-        const { maxLength, label, description, errorMessage, isInvalid, disabled } = activeProps
+        const {
+          maxLength,
+          label,
+          description,
+          errorMessage,
+          isInvalid,
+          disabled,
+        } = activeProps
         let propsStr = ''
         if (maxLength !== 6) propsStr += ` maxLength={${maxLength}}`
         if (label) propsStr += ` label="${label}"`
@@ -658,9 +740,10 @@ export function ComponentPlayground({ component }: { component: string }) {
         if (errorMessage) propsStr += ` errorMessage="${errorMessage}"`
         if (isInvalid) propsStr += ` isInvalid`
         if (disabled) propsStr += ` disabled`
-        
+
         const isSix = maxLength === 6
-        const slotJSX = isSix ? `      <InputOTPGroup>
+        const slotJSX = isSix
+          ? `      <InputOTPGroup>
         <InputOTPSlot index={0} />
         <InputOTPSlot index={1} />
         <InputOTPSlot index={2} />
@@ -670,8 +753,11 @@ export function ComponentPlayground({ component }: { component: string }) {
         <InputOTPSlot index={3} />
         <InputOTPSlot index={4} />
         <InputOTPSlot index={5} />
-      </InputOTPGroup>` : `      <InputOTPGroup>
-${Array.from({ length: maxLength || 4 }).map((_, i) => `        <InputOTPSlot index={${i}} />`).join('\n')}
+      </InputOTPGroup>`
+          : `      <InputOTPGroup>
+${Array.from({ length: maxLength || 4 })
+  .map((_, i) => `        <InputOTPSlot index={${i}} />`)
+  .join('\n')}
       </InputOTPGroup>`
 
         return `import {
@@ -713,7 +799,15 @@ export default function Example() {
 }`
       }
       case 'TextField': {
-        const { label, placeholder, description, errorMessage, isDisabled, isReadOnly, isRequired } = activeProps
+        const {
+          label,
+          placeholder,
+          description,
+          errorMessage,
+          isDisabled,
+          isReadOnly,
+          isRequired,
+        } = activeProps
         let propsStr = ''
         if (label) propsStr += ` label="${label}"`
         if (placeholder) propsStr += ` placeholder="${placeholder}"`
@@ -805,13 +899,15 @@ export default function Example() {
 }`
       }
       case 'Slider': {
-        const { label, isDisabled, minValue, maxValue, step, defaultValue } = activeProps
+        const { label, isDisabled, minValue, maxValue, step, defaultValue } =
+          activeProps
         let propsStr = ''
         if (label) propsStr += ` label="${label}"`
         if (minValue !== 0) propsStr += ` minValue={${minValue}}`
         if (maxValue !== 100) propsStr += ` maxValue={${maxValue}}`
         if (step !== 1) propsStr += ` step={${step}}`
-        if (defaultValue !== undefined) propsStr += ` defaultValue={${defaultValue}}`
+        if (defaultValue !== undefined)
+          propsStr += ` defaultValue={${defaultValue}}`
         if (isDisabled) propsStr += ` isDisabled`
         return `import { Slider } from '@moul-dev/ui';
 import { useState } from 'react';
@@ -867,7 +963,7 @@ export default function Example() {
       }
       case 'Alert': {
         const { variant, title, description, hasCloseButton } = activeProps
-        let propsStr = ` variant="${variant}" title="${title}"`
+        const propsStr = ` variant="${variant}" title="${title}"`
         return `import { Alert } from '@moul-dev/ui';
 import { useState } from 'react';
 
@@ -889,8 +985,9 @@ export default function Example() {
         if (label) propsStr += ` label="${label}"`
         if (variant !== 'secondary') propsStr += ` variant="${variant}"`
         if (size !== 'md') propsStr += ` size="${size}"`
-        if (selectionMode !== 'none') propsStr += ` selectionMode="${selectionMode}"`
-        
+        if (selectionMode !== 'none')
+          propsStr += ` selectionMode="${selectionMode}"`
+
         if (selectionMode === 'none') {
           return `import { TagGroup, Tag } from '@moul-dev/ui';
 
@@ -984,7 +1081,9 @@ export default function Example() {
           </Select>
         )
       case 'ToggleButton':
-        return <ToggleButton {...activeProps}>{activeProps.children}</ToggleButton>
+        return (
+          <ToggleButton {...activeProps}>{activeProps.children}</ToggleButton>
+        )
       case 'Slider':
         return <Slider {...activeProps} />
       case 'Badge':
@@ -1020,7 +1119,9 @@ export default function Example() {
           <div className="py-6">
             <TooltipTrigger>
               <Button variant="outline">Hover me</Button>
-              <Tooltip placement={activeProps.placement}>{activeProps.children}</Tooltip>
+              <Tooltip placement={activeProps.placement}>
+                {activeProps.children}
+              </Tooltip>
             </TooltipTrigger>
           </div>
         )
@@ -1046,9 +1147,13 @@ export default function Example() {
       <div className="px-6 py-4 border-b border-neutral-100 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/30 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="w-2.5 h-2.5 rounded-full bg-indigo-500 animate-pulse" />
-          <span className="font-semibold text-sm text-neutral-800 dark:text-neutral-200">{config.name} Playground</span>
+          <span className="font-semibold text-sm text-neutral-800 dark:text-neutral-200">
+            {config.name} Playground
+          </span>
         </div>
-        <span className="text-xs text-neutral-400 dark:text-neutral-500 font-mono">interactive</span>
+        <span className="text-xs text-neutral-400 dark:text-neutral-500 font-mono">
+          interactive
+        </span>
       </div>
 
       {/* Main Grid */}
@@ -1062,8 +1167,10 @@ export default function Example() {
 
         {/* Controls Panel (Right Column) */}
         <div className="p-6 flex flex-col gap-6 bg-neutral-50/30 dark:bg-neutral-900/20 overflow-y-auto max-h-[450px]">
-          <h4 className="text-xs font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">Properties</h4>
-          
+          <h4 className="text-xs font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">
+            Properties
+          </h4>
+
           <div className="flex flex-col gap-5">
             {config.props.map((prop) => {
               const value = activeProps[prop.name]
@@ -1076,7 +1183,9 @@ export default function Example() {
                       label={prop.label}
                       placeholder={`Choose ${prop.name}`}
                       selectedKey={value}
-                      onSelectionChange={(val) => handlePropChange(prop.name, val)}
+                      onSelectionChange={(val) =>
+                        handlePropChange(prop.name, val)
+                      }
                     >
                       {prop.options?.map((opt) => (
                         <SelectItem key={opt} id={opt}>
@@ -1102,7 +1211,9 @@ export default function Example() {
                       label={prop.label}
                       type="number"
                       value={String(value)}
-                      onChange={(val) => handlePropChange(prop.name, Number(val))}
+                      onChange={(val) =>
+                        handlePropChange(prop.name, Number(val))
+                      }
                     />
                   )}
 
@@ -1111,7 +1222,9 @@ export default function Example() {
                     <div className="flex items-center pt-2">
                       <Switch
                         isSelected={value}
-                        onChange={(checked) => handlePropChange(prop.name, checked)}
+                        onChange={(checked) =>
+                          handlePropChange(prop.name, checked)
+                        }
                       >
                         {prop.label}
                       </Switch>
@@ -1127,7 +1240,9 @@ export default function Example() {
       {/* Code Snippet Footer */}
       <div className="border-t border-neutral-200 dark:border-neutral-800 bg-neutral-950 text-neutral-50 p-4 font-mono text-sm relative group">
         <div className="flex justify-between items-center pb-2 border-b border-neutral-800 mb-2">
-          <span className="text-xs text-neutral-500 font-semibold tracking-wider uppercase">Live Code Snippet</span>
+          <span className="text-xs text-neutral-500 font-semibold tracking-wider uppercase">
+            Live Code Snippet
+          </span>
           <button
             type="button"
             onClick={handleCopyCode}
@@ -1135,14 +1250,32 @@ export default function Example() {
           >
             {copied ? (
               <>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
                   <polyline points="20 6 9 17 4 12" />
                 </svg>
                 <span>Copied!</span>
               </>
             ) : (
               <>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
                   <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
                   <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
                 </svg>

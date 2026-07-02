@@ -1,13 +1,13 @@
+export { REGEXP_ONLY_DIGITS, REGEXP_ONLY_DIGITS_AND_CHARS } from 'input-otp'
 export type {
-  InputOTPProps,
   InputOTPGroupProps,
-  InputOTPSlotProps,
+  InputOTPProps,
   InputOTPSeparatorProps,
+  InputOTPSlotProps,
 } from './InputOTP'
 export {
   InputOTP,
   InputOTPGroup,
-  InputOTPSlot,
   InputOTPSeparator,
+  InputOTPSlot,
 } from './InputOTP'
-export { REGEXP_ONLY_DIGITS, REGEXP_ONLY_DIGITS_AND_CHARS } from 'input-otp'
