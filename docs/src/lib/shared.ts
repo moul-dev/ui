@@ -1,5 +1,6 @@
 export const appName = 'Moul UI'
 export const docsRoute = '/docs'
+export const changelogRoute = '/changelog'
 export const docsImageRoute = '/og/docs'
 export const docsContentRoute = '/llms.mdx/docs'
 

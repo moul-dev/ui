@@ -15,6 +15,11 @@ export function baseOptions(): BaseLayoutProps {
         active: 'nested-url',
       },
       {
+        text: 'Changelog',
+        url: '/changelog',
+        active: 'nested-url',
+      },
+      {
         type: 'custom',
         secondary: true,
         children: <ThemeSelector />,
@@ -38,6 +43,11 @@ export function docsOptions(): BaseLayoutProps {
       {
         text: 'Docs',
         url: '/docs',
+        active: 'nested-url',
+      },
+      {
+        text: 'Changelog',
+        url: '/changelog',
         active: 'nested-url',
       },
     ],
