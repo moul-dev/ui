@@ -34,17 +34,13 @@ export const styles = stylex.create({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    width: '3rem', // 48px
-    height: '3rem', // 48px
     fontFamily: tokens.fontFamilyBase,
-    fontSize: tokens.fontSizeLg,
     fontWeight: tokens.fontWeightMedium,
     color: tokens.colorFg,
     backgroundColor: tokens.colorBg,
     borderColor: tokens.colorBorder,
     borderWidth: '1px',
     borderStyle: 'solid',
-    borderRadius: tokens.radiusMd,
     boxShadow: tokens.shadowSm,
     transitionProperty: 'border-color, box-shadow',
     transitionDuration: '0.15s',
@@ -54,6 +50,25 @@ export const styles = stylex.create({
     ':hover': {
       borderColor: tokens.colorNeutral400,
     },
+  },
+
+  sm: {
+    width: `calc(${tokens.spacing1} * 2 + ${tokens.lineHeightXs})`,
+    height: `calc(${tokens.spacing1} * 2 + ${tokens.lineHeightXs})`,
+    fontSize: tokens.fontSizeXs,
+    borderRadius: tokens.radiusSm,
+  },
+  md: {
+    width: `calc(${tokens.spacing2} * 2 + ${tokens.lineHeightSm})`,
+    height: `calc(${tokens.spacing2} * 2 + ${tokens.lineHeightSm})`,
+    fontSize: tokens.fontSizeSm,
+    borderRadius: tokens.radiusMd,
+  },
+  lg: {
+    width: `calc(${tokens.spacing2} * 2 + ${tokens.lineHeightMd})`,
+    height: `calc(${tokens.spacing2} * 2 + ${tokens.lineHeightMd})`,
+    fontSize: tokens.fontSizeMd,
+    borderRadius: tokens.radiusMd,
   },
 
   slotActive: {
@@ -84,8 +99,7 @@ export const styles = stylex.create({
     position: 'absolute',
     top: 0,
     bottom: 0,
-    left: 0,
-    right: 0,
+    insetInline: 0,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -94,7 +108,7 @@ export const styles = stylex.create({
 
   caret: {
     width: '2px',
-    height: '1.25rem', // 20px
+    height: '40%',
     backgroundColor: tokens.colorFg,
     animationName: caretBlink,
     animationDuration: '1s',

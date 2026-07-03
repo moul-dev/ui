@@ -8,6 +8,9 @@ import {
   CheckboxGroup,
   ComboBox,
   ComboBoxItem,
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
   NumberField,
   Radio,
   RadioGroup,
@@ -128,6 +131,19 @@ describe('TextField component', () => {
     rerender(<TextField label="Name" value="Bob" onChange={changeHandler} />)
     expect(input).toHaveValue('Bob')
   })
+
+  test('accepts size props', () => {
+    const { getByRole, rerender } = render(
+      <TextField label="Name" size="sm" />,
+    )
+    expect(getByRole('textbox')).toBeInTheDocument()
+
+    rerender(<TextField label="Name" size="md" />)
+    expect(getByRole('textbox')).toBeInTheDocument()
+
+    rerender(<TextField label="Name" size="lg" />)
+    expect(getByRole('textbox')).toBeInTheDocument()
+  })
 })
 
 describe('TextArea component', () => {
@@ -164,6 +180,46 @@ describe('SearchField component', () => {
   })
 })
 
+describe('InputOTP component', () => {
+  beforeEach(() => {
+    global.ResizeObserver = vi.fn().mockImplementation(() => ({
+      observe: vi.fn(),
+      unobserve: vi.fn(),
+      disconnect: vi.fn(),
+    }))
+  })
+
+  test('renders slots and accepts size props', () => {
+    const { container, rerender } = render(
+      <InputOTP maxLength={4} size="sm">
+        <InputOTPGroup>
+          <InputOTPSlot index={0} />
+          <InputOTPSlot index={1} />
+        </InputOTPGroup>
+      </InputOTP>
+    )
+    expect(container.querySelectorAll('input')).toHaveLength(1)
+
+    rerender(
+      <InputOTP maxLength={4} size="md">
+        <InputOTPGroup>
+          <InputOTPSlot index={0} />
+        </InputOTPGroup>
+      </InputOTP>
+    )
+    expect(container.querySelectorAll('input')).toHaveLength(1)
+
+    rerender(
+      <InputOTP maxLength={4} size="lg">
+        <InputOTPGroup>
+          <InputOTPSlot index={0} />
+        </InputOTPGroup>
+      </InputOTP>
+    )
+    expect(container.querySelectorAll('input')).toHaveLength(1)
+  })
+})
+
 describe('Select component', () => {
   test('renders trigger button and dropdown list', () => {
     const { getByRole } = render(
@@ -175,6 +231,29 @@ describe('Select component', () => {
     const trigger = getByRole('button')
     expect(trigger).toBeInTheDocument()
     expect(trigger.textContent).toContain('Select one')
+  })
+
+  test('accepts size props', () => {
+    const { getByRole, rerender } = render(
+      <Select label="Option" size="sm">
+        <SelectItem id="1">First</SelectItem>
+      </Select>,
+    )
+    expect(getByRole('button')).toBeInTheDocument()
+
+    rerender(
+      <Select label="Option" size="md">
+        <SelectItem id="1">First</SelectItem>
+      </Select>,
+    )
+    expect(getByRole('button')).toBeInTheDocument()
+
+    rerender(
+      <Select label="Option" size="lg">
+        <SelectItem id="1">First</SelectItem>
+      </Select>,
+    )
+    expect(getByRole('button')).toBeInTheDocument()
   })
 })
 

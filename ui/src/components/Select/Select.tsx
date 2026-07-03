@@ -137,6 +137,7 @@ export interface SelectProps extends Omit<AriaSelectProps<any>, 'style'> {
   description?: string
   errorMessage?: string | ((v: ValidationResult) => string)
   placeholder?: string
+  size?: 'sm' | 'md' | 'lg'
 }
 
 export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
@@ -149,6 +150,7 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
       errorMessage,
       placeholder,
       children,
+      size = 'md',
       ...rest
     },
     ref,
@@ -173,6 +175,7 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
               className={(renderProps) => {
                 const { className: stylexClass } = stylex.props(
                   styles.trigger,
+                  styles[size],
                   isInvalid && styles.triggerInvalid,
                   renderProps.isDisabled && styles.triggerDisabled,
                   style,
@@ -182,6 +185,7 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
               style={(renderProps) => {
                 const { style: stylexStyle } = stylex.props(
                   styles.trigger,
+                  styles[size],
                   isInvalid && styles.triggerInvalid,
                   renderProps.isDisabled && styles.triggerDisabled,
                   style,

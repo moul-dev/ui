@@ -13,20 +13,23 @@ import { styles } from './InputOTP.styles'
 interface InputOTPContextValue {
   isInvalid?: boolean
   isDisabled?: boolean
+  size?: 'sm' | 'md' | 'lg'
 }
 
 const InputOTPContextInstance = React.createContext<InputOTPContextValue>({
   isInvalid: false,
   isDisabled: false,
+  size: 'md',
 })
 
 export interface InputOTPProps
-  extends Omit<React.ComponentPropsWithoutRef<typeof OTPInput>, 'render'> {
+  extends Omit<React.ComponentPropsWithoutRef<typeof OTPInput>, 'render' | 'size'> {
   label?: string
   description?: string
   errorMessage?: string
   isInvalid?: boolean
   containerStyle?: StyleXStyles
+  size?: 'sm' | 'md' | 'lg'
 }
 
 export const InputOTP = React.forwardRef<HTMLInputElement, InputOTPProps>(
@@ -39,13 +42,14 @@ export const InputOTP = React.forwardRef<HTMLInputElement, InputOTPProps>(
       isInvalid,
       containerStyle,
       disabled,
+      size = 'md',
       ...props
     },
     ref,
   ) => {
     return (
       <InputOTPContextInstance.Provider
-        value={{ isInvalid, isDisabled: disabled }}
+        value={{ isInvalid, isDisabled: disabled, size }}
       >
         <div {...stylex.props(styles.container, containerStyle)}>
           {label && <Label>{label}</Label>}
@@ -94,7 +98,7 @@ export interface InputOTPSlotProps
 export const InputOTPSlot = React.forwardRef<HTMLDivElement, InputOTPSlotProps>(
   ({ index, style, ...props }, ref) => {
     const inputOTPContext = React.useContext(OTPInputContext)
-    const { isInvalid, isDisabled } = React.useContext(InputOTPContextInstance)
+    const { isInvalid, isDisabled, size = 'md' } = React.useContext(InputOTPContextInstance)
 
     if (!inputOTPContext) {
       throw new Error('InputOTPSlot must be used within InputOTP')
@@ -112,6 +116,7 @@ export const InputOTPSlot = React.forwardRef<HTMLDivElement, InputOTPSlotProps>(
         ref={ref}
         {...stylex.props(
           styles.slot,
+          styles[size],
           isActive && styles.slotActive,
           isInvalid && styles.slotInvalid,
           isDisabled && styles.slotDisabled,

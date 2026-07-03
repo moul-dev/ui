@@ -22,12 +22,14 @@ export interface TextFieldProps extends Omit<AriaTextFieldProps, 'style'> {
   placeholder?: string
   type?: string
   variant?: 'primary' | 'secondary'
+  size?: 'sm' | 'md' | 'lg'
 }
 
 export const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
   function TextField(
     {
       variant = 'primary',
+      size = 'md',
       style,
       className,
       label,
@@ -60,6 +62,7 @@ export const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
             const { className: stylexClass } = stylex.props(
               styles.input,
               styles[variant],
+              styles[size],
               renderProps.isInvalid && styles.inputInvalid,
               renderProps.isDisabled && styles.inputDisabled,
               style,
@@ -70,6 +73,7 @@ export const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
             const { style: stylexStyle } = stylex.props(
               styles.input,
               styles[variant],
+              styles[size],
               renderProps.isInvalid && styles.inputInvalid,
               renderProps.isDisabled && styles.inputDisabled,
               style,

@@ -155,8 +155,16 @@ const REGISTRY: Record<string, ComponentConfig> = {
       isDisabled: false,
       isReadOnly: false,
       isRequired: false,
+      size: 'md',
     },
     props: [
+      {
+        name: 'size',
+        type: 'select',
+        label: 'Size',
+        options: ['sm', 'md', 'lg'],
+        defaultValue: 'md',
+      },
       {
         name: 'label',
         type: 'text',
@@ -228,8 +236,16 @@ const REGISTRY: Record<string, ComponentConfig> = {
       label: 'Choose Role',
       placeholder: 'Select a profile...',
       isDisabled: false,
+      size: 'md',
     },
     props: [
+      {
+        name: 'size',
+        type: 'select',
+        label: 'Size',
+        options: ['sm', 'md', 'lg'],
+        defaultValue: 'md',
+      },
       {
         name: 'label',
         type: 'text',
@@ -495,8 +511,16 @@ const REGISTRY: Record<string, ComponentConfig> = {
       errorMessage: 'The code is invalid.',
       isInvalid: false,
       disabled: false,
+      size: 'md',
     },
     props: [
+      {
+        name: 'size',
+        type: 'select',
+        label: 'Size',
+        options: ['sm', 'md', 'lg'],
+        defaultValue: 'md',
+      },
       {
         name: 'maxLength',
         type: 'number',
@@ -650,6 +674,7 @@ function InputOTPPreviewWrapper({
   errorMessage,
   isInvalid,
   disabled,
+  size,
 }: {
   maxLength: number
   label?: string
@@ -657,6 +682,7 @@ function InputOTPPreviewWrapper({
   errorMessage?: string
   isInvalid?: boolean
   disabled?: boolean
+  size?: 'sm' | 'md' | 'lg'
 }) {
   const [value, setValue] = useState('')
   const isSix = maxLength === 6
@@ -671,6 +697,7 @@ function InputOTPPreviewWrapper({
       errorMessage={errorMessage}
       isInvalid={isInvalid}
       disabled={disabled}
+      size={size}
     >
       {isSix ? (
         <>
@@ -732,6 +759,7 @@ export function ComponentPlayground({ component }: { component: string }) {
           errorMessage,
           isInvalid,
           disabled,
+          size,
         } = activeProps
         let propsStr = ''
         if (maxLength !== 6) propsStr += ` maxLength={${maxLength}}`
@@ -740,6 +768,7 @@ export function ComponentPlayground({ component }: { component: string }) {
         if (errorMessage) propsStr += ` errorMessage="${errorMessage}"`
         if (isInvalid) propsStr += ` isInvalid`
         if (disabled) propsStr += ` disabled`
+        if (size && size !== 'md') propsStr += ` size="${size}"`
 
         const isSix = maxLength === 6
         const slotJSX = isSix
@@ -807,6 +836,7 @@ export default function Example() {
           isDisabled,
           isReadOnly,
           isRequired,
+          size,
         } = activeProps
         let propsStr = ''
         if (label) propsStr += ` label="${label}"`
@@ -816,6 +846,7 @@ export default function Example() {
         if (isDisabled) propsStr += ` isDisabled`
         if (isReadOnly) propsStr += ` isReadOnly`
         if (isRequired) propsStr += ` isRequired`
+        if (size && size !== 'md') propsStr += ` size="${size}"`
         return `import { TextField } from '@moul-dev/ui';
 import { useState } from 'react';
 
@@ -851,11 +882,12 @@ export default function Example() {
 }`
       }
       case 'Select': {
-        const { label, placeholder, isDisabled } = activeProps
+        const { label, placeholder, isDisabled, size } = activeProps
         let propsStr = ''
         if (label) propsStr += ` label="${label}"`
         if (placeholder) propsStr += ` placeholder="${placeholder}"`
         if (isDisabled) propsStr += ` isDisabled`
+        if (size && size !== 'md') propsStr += ` size="${size}"`
         return `import { Select, SelectItem } from '@moul-dev/ui';
 import { useState } from 'react';
 import type { Key } from 'react-aria-components';
@@ -1134,6 +1166,7 @@ export default function Example() {
             errorMessage={activeProps.errorMessage}
             isInvalid={activeProps.isInvalid}
             disabled={activeProps.disabled}
+            size={activeProps.size}
           />
         )
       default:
@@ -1145,14 +1178,8 @@ export default function Example() {
     <div className="not-prose border border-neutral-200 dark:border-neutral-800 rounded-2xl overflow-hidden bg-white dark:bg-neutral-950/70 shadow-sm flex flex-col my-8">
       {/* Top Banner */}
       <div className="px-6 py-4 border-b border-neutral-100 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/30 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span className="w-2.5 h-2.5 rounded-full bg-indigo-500 animate-pulse" />
-          <span className="font-semibold text-sm text-neutral-800 dark:text-neutral-200">
-            {config.name} Playground
-          </span>
-        </div>
         <span className="text-xs text-neutral-400 dark:text-neutral-500 font-mono">
-          interactive
+          Interactive
         </span>
       </div>
 
