@@ -91,3 +91,71 @@ Lays out checkboxes vertically (default) or horizontally using the `orientation`
   <Checkbox value="2">Option 2</Checkbox>
 </CheckboxGroup>
 ```
+
+## Props
+
+### CheckboxGroup Props
+
+<TypeTable
+  type={{
+    'variant': {
+      type: "'primary' | 'secondary' | 'tertiary'",
+      default: "'primary'",
+      description: "The visual style variant applied to checkboxes inside the group.",
+    },
+    'orientation': {
+      type: "'horizontal' | 'vertical'",
+      default: "'vertical'",
+      description: "The orientation of the checkboxes within the group.",
+    },
+    'value': {
+      type: "string[]",
+      description: "The values of the selected checkboxes (controlled).",
+    },
+    'defaultValue': {
+      type: "string[]",
+      description: "The values of the initially selected checkboxes (uncontrolled).",
+    },
+    'isDisabled': {
+      type: "boolean",
+      default: "false",
+      description: "Whether all checkboxes within the group are disabled.",
+    },
+    'isInvalid': {
+      type: "boolean",
+      description: "Whether the input value is invalid.",
+    },
+  }}
+/>
+
+<Accordions>
+  <Accordion title="Value">
+    <TypeTable
+          type={{
+            'onChange': {
+              type: "(value: string[]) => void",
+              description: "Handler called when the selection changes.",
+            },
+          }}
+        />
+  </Accordion>
+  <Accordion title="Styling">
+    <TypeTable
+          type={{
+            'className': {
+              type: "ClassNameOrFunction<CheckboxGroupRenderProps>",
+              default: "'react-aria-CheckboxGroup'",
+              description: "The CSS className for the group.",
+            },
+          }}
+        />
+  </Accordion>
+</Accordions>
+
+Default className: `react-aria-CheckboxGroup`
+
+| Render Prop | CSS Selector |
+| :--- | :--- |
+| `isDisabled` <br/> Whether the group is disabled. | `[data-disabled]` |
+| `isInvalid` <br/> Whether the group value is invalid. | `[data-invalid]` |
+

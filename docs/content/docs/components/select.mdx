@@ -35,3 +35,68 @@ export default function Example() {
   );
 }
 ```
+
+## Props
+
+### Select Props
+
+<TypeTable
+  type={{
+    'size': {
+      type: "'sm' | 'md' | 'lg'",
+      default: "'md'",
+      description: "The size height variant of the selection trigger.",
+    },
+    'selectedKey': {
+      type: "Key",
+      description: "The currently selected key (controlled).",
+    },
+    'defaultSelectedKey': {
+      type: "Key",
+      description: "The default selected key (uncontrolled).",
+    },
+    'isDisabled': {
+      type: "boolean",
+      default: "false",
+      description: "Whether selection is disabled.",
+    },
+    'placeholder': {
+      type: "string",
+      description: "Placeholder text displayed when no key is selected.",
+    },
+  }}
+/>
+
+<Accordions>
+  <Accordion title="Value">
+    <TypeTable
+          type={{
+            'onSelectionChange': {
+              type: "(key: Key) => void",
+              description: "Handler called when selection changes.",
+            },
+          }}
+        />
+  </Accordion>
+  <Accordion title="Styling">
+    <TypeTable
+          type={{
+            'className': {
+              type: "ClassNameOrFunction<SelectRenderProps>",
+              default: "'react-aria-Select'",
+              description: "The CSS className.",
+            },
+          }}
+        />
+  </Accordion>
+</Accordions>
+
+Default className: `react-aria-Select`
+
+| Render Prop | CSS Selector |
+| :--- | :--- |
+| `isOpen` <br/> Whether the select popover is open. | `[data-open]` |
+| `isFocused` <br/> Whether the select is focused. | `[data-focused]` |
+| `isFocusVisible` <br/> Whether the select is keyboard focused. | `[data-focus-visible]` |
+| `isDisabled` <br/> Whether the select is disabled. | `[data-disabled]` |
+

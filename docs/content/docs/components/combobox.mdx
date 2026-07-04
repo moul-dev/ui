@@ -132,3 +132,71 @@ export default function Example() {
   );
 }
 ```
+
+## Props
+
+### ComboBox Props
+
+<TypeTable
+  type={{
+    'selectedKey': {
+      type: "Key",
+      description: "The selected key (controlled).",
+    },
+    'defaultSelectedKey': {
+      type: "Key",
+      description: "The default selected key (uncontrolled).",
+    },
+    'inputValue': {
+      type: "string",
+      description: "The input field value (controlled).",
+    },
+    'defaultInputValue': {
+      type: "string",
+      description: "The default input field value (uncontrolled).",
+    },
+    'isDisabled': {
+      type: "boolean",
+      default: "false",
+      description: "Whether the combobox is disabled.",
+    },
+  }}
+/>
+
+<Accordions>
+  <Accordion title="Value">
+    <TypeTable
+          type={{
+            'onSelectionChange': {
+              type: "(key: Key) => void",
+              description: "Handler called when selection changes.",
+            },
+            'onInputChange': {
+              type: "(value: string) => void",
+              description: "Handler called when input value changes.",
+            },
+          }}
+        />
+  </Accordion>
+  <Accordion title="Styling">
+    <TypeTable
+          type={{
+            'className': {
+              type: "ClassNameOrFunction<ComboBoxRenderProps>",
+              default: "'react-aria-ComboBox'",
+              description: "The CSS className.",
+            },
+          }}
+        />
+  </Accordion>
+</Accordions>
+
+Default className: `react-aria-ComboBox`
+
+| Render Prop | CSS Selector |
+| :--- | :--- |
+| `isOpen` <br/> Whether the combobox list popover is open. | `[data-open]` |
+| `isFocused` <br/> Whether the combobox is focused. | `[data-focused]` |
+| `isFocusVisible` <br/> Whether the combobox is keyboard focused. | `[data-focus-visible]` |
+| `isDisabled` <br/> Whether the combobox is disabled. | `[data-disabled]` |
+

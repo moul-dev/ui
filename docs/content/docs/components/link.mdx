@@ -37,3 +37,66 @@ export default function Example() {
   );
 }
 ```
+
+## Props
+
+### Link Props
+
+<TypeTable
+  type={{
+    'variant': {
+      type: "'primary' | 'secondary' | 'tertiary' | 'outline' | 'ghost' | 'danger' | 'danger-soft'",
+      default: "'primary'",
+      description: "The visual style variant of the link.",
+    },
+    'isDisabled': {
+      type: "boolean",
+      default: "false",
+      description: "Whether the link is disabled.",
+    },
+    'href': {
+      type: "string",
+      description: "The URL that the hyperlink points to.",
+    },
+    'target': {
+      type: "string",
+      description: "Where to display the linked URL.",
+    },
+  }}
+/>
+
+<Accordions>
+  <Accordion title="Events">
+    <TypeTable
+          type={{
+            'onPress': {
+              type: "(e: PressEvent) => void",
+              description: "Handler called when the link is pressed.",
+            },
+          }}
+        />
+  </Accordion>
+  <Accordion title="Styling">
+    <TypeTable
+          type={{
+            'className': {
+              type: "ClassNameOrFunction<LinkRenderProps>",
+              default: "'react-aria-Link'",
+              description: "The CSS className for the element.",
+            },
+          }}
+        />
+  </Accordion>
+</Accordions>
+
+Default className: `react-aria-Link`
+
+| Render Prop | CSS Selector |
+| :--- | :--- |
+| `isCurrent` <br/> Whether the link is the current item. | `[data-current]` |
+| `isHovered` <br/> Whether the link is hovered. | `[data-hovered]` |
+| `isPressed` <br/> Whether the link is pressed. | `[data-pressed]` |
+| `isFocused` <br/> Whether the link is focused. | `[data-focused]` |
+| `isFocusVisible` <br/> Whether the link is keyboard focused. | `[data-focus-visible]` |
+| `isDisabled` <br/> Whether the link is disabled. | `[data-disabled]` |
+

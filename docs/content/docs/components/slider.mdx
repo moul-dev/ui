@@ -35,3 +35,81 @@ export default function Example() {
   );
 }
 ```
+
+## Props
+
+### Slider Props
+
+<TypeTable
+  type={{
+    'value': {
+      type: "number | number[]",
+      description: "The current value (controlled).",
+    },
+    'defaultValue': {
+      type: "number | number[]",
+      description: "The default value (uncontrolled).",
+    },
+    'minValue': {
+      type: "number",
+      default: "0",
+      description: "The minimum allowed value.",
+    },
+    'maxValue': {
+      type: "number",
+      default: "100",
+      description: "The maximum allowed value.",
+    },
+    'step': {
+      type: "number",
+      default: "1",
+      description: "The granularity of step values.",
+    },
+    'isDisabled': {
+      type: "boolean",
+      default: "false",
+      description: "Whether interaction is disabled.",
+    },
+    'orientation': {
+      type: "'horizontal' | 'vertical'",
+      default: "'horizontal'",
+      description: "The layout orientation of the slider track.",
+    },
+  }}
+/>
+
+<Accordions>
+  <Accordion title="Value">
+    <TypeTable
+          type={{
+            'onChange': {
+              type: "(value: number | number[]) => void",
+              description: "Handler called when value changes.",
+            },
+            'onChangeEnd': {
+              type: "(value: number | number[]) => void",
+              description: "Handler called when interaction ends.",
+            },
+          }}
+        />
+  </Accordion>
+  <Accordion title="Styling">
+    <TypeTable
+          type={{
+            'className': {
+              type: "ClassNameOrFunction<SliderRenderProps>",
+              default: "'react-aria-Slider'",
+              description: "The CSS className.",
+            },
+          }}
+        />
+  </Accordion>
+</Accordions>
+
+Default className: `react-aria-Slider`
+
+| Render Prop | CSS Selector |
+| :--- | :--- |
+| `isDisabled` <br/> Whether the slider is disabled. | `[data-disabled]` |
+| `orientation` <br/> The orientation of the slider. | `[data-orientation]` |
+

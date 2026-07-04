@@ -37,3 +37,47 @@ export default function Example() {
   );
 }
 ```
+
+## Props
+
+### Form Props
+
+<TypeTable
+  type={{
+    'validationBehavior': {
+      type: "'native' | 'aria'",
+      default: "'native'",
+      description: "Validation behavior settings.",
+    },
+  }}
+/>
+
+<Accordions>
+  <Accordion title="Events">
+    <TypeTable
+          type={{
+            'onSubmit': {
+              type: "(e: FormEvent) => void",
+              description: "Fires when submitting the form successfully.",
+            },
+            'onReset': {
+              type: "(e: FormEvent) => void",
+              description: "Fires when resetting form values.",
+            },
+          }}
+        />
+  </Accordion>
+  <Accordion title="Styling">
+    <TypeTable
+          type={{
+            'className': {
+              type: "string",
+              description: "The CSS className.",
+            },
+          }}
+        />
+  </Accordion>
+</Accordions>
+
+Default className: `react-aria-Form`
+

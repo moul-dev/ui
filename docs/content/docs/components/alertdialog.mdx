@@ -50,3 +50,33 @@ export default function Example() {
   );
 }
 ```
+
+## Props
+
+### AlertDialog Props
+
+<TypeTable
+  type={{
+    'role': {
+      type: "'dialog' | 'alertdialog'",
+      default: "'alertdialog'",
+      description: "The accessibility role matching the content dialog behavior.",
+    },
+  }}
+/>
+
+<Accordions>
+  <Accordion title="Styling">
+    <TypeTable
+          type={{
+            'className': {
+              type: "string",
+              description: "The CSS className.",
+            },
+          }}
+        />
+  </Accordion>
+</Accordions>
+
+Default className: `react-aria-Dialog`
+

@@ -111,3 +111,68 @@ export default function Example() {
 }
 ```
 
+## Props
+
+### TextArea Props
+
+<TypeTable
+  type={{
+    'variant': {
+      type: "'primary' | 'secondary'",
+      default: "'primary'",
+      description: "The visual style variant of the textarea.",
+    },
+    'rows': {
+      type: "number",
+      default: "3",
+      description: "The number of visible text lines.",
+    },
+    'value': {
+      type: "string",
+      description: "The current value of the textarea (controlled).",
+    },
+    'defaultValue': {
+      type: "string",
+      description: "The default value of the textarea (uncontrolled).",
+    },
+    'placeholder': {
+      type: "string",
+      description: "Temporary placeholder text.",
+    },
+    'isDisabled': {
+      type: "boolean",
+      default: "false",
+      description: "Whether the textarea is disabled.",
+    },
+    'isReadOnly': {
+      type: "boolean",
+      description: "Whether the textarea is read-only.",
+    },
+  }}
+/>
+
+<Accordions>
+  <Accordion title="Value">
+    <TypeTable
+          type={{
+            'onChange': {
+              type: "(value: string) => void",
+              description: "Handler called when the value changes.",
+            },
+          }}
+        />
+  </Accordion>
+  <Accordion title="Styling">
+    <TypeTable
+          type={{
+            'className': {
+              type: "string",
+              description: "The CSS className for the container.",
+            },
+          }}
+        />
+  </Accordion>
+</Accordions>
+
+Default className: `react-aria-TextField`
+

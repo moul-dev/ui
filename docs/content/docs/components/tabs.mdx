@@ -120,30 +120,66 @@ Tabs can be stacked vertically using the `orientation="vertical"` prop. The sele
   </Tabs>
 </ComponentPreview>
 
-## API Reference
+## Props
 
 ### Tabs Props
 
-| Prop | Type | Default | Description |
-| :--- | :--- | :--- | :--- |
-| `variant` | `'primary' \| 'secondary' \| 'tertiary'` | `'primary'` | The visual style of the tabs. |
-| `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | The layout axis direction of the tab items. |
-| `selectedKey` | `Key` | — | Controlled selected key. |
-| `defaultSelectedKey` | `Key` | — | Uncontrolled default selected key. |
-| `onSelectionChange` | `(key: Key) => void` | — | Callback fired when selecting tabs. |
-| `isDisabled` | `boolean` | `false` | Whether interaction is disabled. |
+<TypeTable
+  type={{
+    'variant': {
+      type: "'primary' | 'secondary' | 'tertiary'",
+      default: "'primary'",
+      description: "The visual style design of the active tab indicator.",
+    },
+    'orientation': {
+      type: "'horizontal' | 'vertical'",
+      default: "'horizontal'",
+      description: "The layout axis direction of the tabs.",
+    },
+    'selectedKey': {
+      type: "Key",
+      description: "The selected tab key (controlled).",
+    },
+    'defaultSelectedKey': {
+      type: "Key",
+      description: "The default selected tab key (uncontrolled).",
+    },
+    'isDisabled': {
+      type: "boolean",
+      default: "false",
+      description: "Whether all tabs are disabled.",
+    },
+  }}
+/>
 
-### TabList Props
+<Accordions>
+  <Accordion title="Value">
+    <TypeTable
+          type={{
+            'onSelectionChange': {
+              type: "(key: Key) => void",
+              description: "Handler called when active tab selection changes.",
+            },
+          }}
+        />
+  </Accordion>
+  <Accordion title="Styling">
+    <TypeTable
+          type={{
+            'className': {
+              type: "ClassNameOrFunction<TabsRenderProps>",
+              default: "'react-aria-Tabs'",
+              description: "The CSS className.",
+            },
+          }}
+        />
+  </Accordion>
+</Accordions>
 
-| Prop | Type | Default | Description |
-| :--- | :--- | :--- | :--- |
-| `aria-label` | `string` | — | Accessible name describing the tab list. |
-| `items` | `Iterable<T>` | — | Dynamic item collections definition source. |
+Default className: `react-aria-Tabs`
 
-### Tab Props
+| Render Prop | CSS Selector |
+| :--- | :--- |
+| `orientation` <br/> The layout orientation. | `[data-orientation]` |
+| `isDisabled` <br/> Whether the component is disabled. | `[data-disabled]` |
 
-| Prop | Type | Default | Description |
-| :--- | :--- | :--- | :--- |
-| `id` | `Key` | — | The unique key corresponding to this tab panel. |
-| `isDisabled` | `boolean` | `false` | Disables this specific tab. |
-| `href` | `string` | — | Makes the tab render as an anchor link to navigate. |

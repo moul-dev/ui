@@ -35,3 +35,57 @@ export default function Example() {
   );
 }
 ```
+
+## Props
+
+### Tooltip Props
+
+<TypeTable
+  type={{
+    'placement': {
+      type: "string",
+      default: "'top'",
+      description: "The placement of the tooltip relative to its trigger.",
+    },
+    'isOpen': {
+      type: "boolean",
+      description: "Whether the tooltip is open (controlled).",
+    },
+    'defaultOpen': {
+      type: "boolean",
+      description: "Whether the tooltip is initially open (uncontrolled).",
+    },
+  }}
+/>
+
+<Accordions>
+  <Accordion title="Value">
+    <TypeTable
+          type={{
+            'onOpenChange': {
+              type: "(isOpen: boolean) => void",
+              description: "Handler called when open state changes.",
+            },
+          }}
+        />
+  </Accordion>
+  <Accordion title="Styling">
+    <TypeTable
+          type={{
+            'className': {
+              type: "ClassNameOrFunction<TooltipRenderProps>",
+              default: "'react-aria-Tooltip'",
+              description: "The CSS className.",
+            },
+          }}
+        />
+  </Accordion>
+</Accordions>
+
+Default className: `react-aria-Tooltip`
+
+| Render Prop | CSS Selector |
+| :--- | :--- |
+| `isOpen` <br/> Whether the tooltip is currently open. | `[data-open]` |
+| `placement` <br/> The placement of the tooltip. | `[data-placement]` |
+

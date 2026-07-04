@@ -44,3 +44,62 @@ export default function Example() {
   );
 }
 ```
+
+## Props
+
+### Popover Props
+
+<TypeTable
+  type={{
+    'showArrow': {
+      type: "boolean",
+      default: "true",
+      description: "Whether to render a dynamic pointer arrow triangle extending to the trigger.",
+    },
+    'placement': {
+      type: "string",
+      default: "'bottom'",
+      description: "The placement axis of the popover relative to the trigger.",
+    },
+    'isOpen': {
+      type: "boolean",
+      description: "Whether the popover is currently open (controlled).",
+    },
+    'defaultOpen': {
+      type: "boolean",
+      description: "Whether the popover is initially open (uncontrolled).",
+    },
+  }}
+/>
+
+<Accordions>
+  <Accordion title="Value">
+    <TypeTable
+          type={{
+            'onOpenChange': {
+              type: "(isOpen: boolean) => void",
+              description: "Handler called when open state changes.",
+            },
+          }}
+        />
+  </Accordion>
+  <Accordion title="Styling">
+    <TypeTable
+          type={{
+            'className': {
+              type: "ClassNameOrFunction<PopoverRenderProps>",
+              default: "'react-aria-Popover'",
+              description: "The CSS className.",
+            },
+          }}
+        />
+  </Accordion>
+</Accordions>
+
+Default className: `react-aria-Popover`
+
+| Render Prop | CSS Selector |
+| :--- | :--- |
+| `isOpen` <br/> Whether the popover is open. | `[data-open]` |
+| `placement` <br/> The current placement. | `[data-placement]` |
+

@@ -37,3 +37,75 @@ export default function Example() {
   );
 }
 ```
+
+## Props
+
+### NumberField Props
+
+<TypeTable
+  type={{
+    'variant': {
+      type: "'primary' | 'secondary'",
+      default: "'primary'",
+      description: "The visual style variant of the number field.",
+    },
+    'value': {
+      type: "number",
+      description: "The current value (controlled).",
+    },
+    'defaultValue': {
+      type: "number",
+      description: "The default value (uncontrolled).",
+    },
+    'minValue': {
+      type: "number",
+      description: "The minimum allowed value.",
+    },
+    'maxValue': {
+      type: "number",
+      description: "The maximum allowed value.",
+    },
+    'step': {
+      type: "number",
+      default: "1",
+      description: "The amount to increment or decrement the value on interaction.",
+    },
+    'isDisabled': {
+      type: "boolean",
+      default: "false",
+      description: "Whether the field is disabled.",
+    },
+  }}
+/>
+
+<Accordions>
+  <Accordion title="Value">
+    <TypeTable
+          type={{
+            'onChange': {
+              type: "(value: number) => void",
+              description: "Handler called when the value changes.",
+            },
+          }}
+        />
+  </Accordion>
+  <Accordion title="Styling">
+    <TypeTable
+          type={{
+            'className': {
+              type: "ClassNameOrFunction<NumberFieldRenderProps>",
+              default: "'react-aria-NumberField'",
+              description: "The CSS className for the element.",
+            },
+          }}
+        />
+  </Accordion>
+</Accordions>
+
+Default className: `react-aria-NumberField`
+
+| Render Prop | CSS Selector |
+| :--- | :--- |
+| `isDisabled` <br/> Whether the number field is disabled. | `[data-disabled]` |
+| `isInvalid` <br/> Whether the value is invalid. | `[data-invalid]` |
+

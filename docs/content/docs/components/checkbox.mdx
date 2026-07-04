@@ -89,3 +89,71 @@ The tertiary variant is a hollow outline checkbox style that stays transparent a
 ```tsx
 <Checkbox variant="tertiary" defaultSelected>Tertiary</Checkbox>
 ```
+
+## Props
+
+### Checkbox Props
+
+<TypeTable
+  type={{
+    'variant': {
+      type: "'primary' | 'secondary' | 'tertiary'",
+      default: "'primary'",
+      description: "The visual style variant of the checkbox.",
+    },
+    'isSelected': {
+      type: "boolean",
+      description: "Whether the checkbox is checked (controlled).",
+    },
+    'defaultSelected': {
+      type: "boolean",
+      description: "Whether the checkbox is checked by default (uncontrolled).",
+    },
+    'isIndeterminate': {
+      type: "boolean",
+      description: "Whether the checkbox is indeterminate.",
+    },
+    'isDisabled': {
+      type: "boolean",
+      default: "false",
+      description: "Whether the checkbox is disabled.",
+    },
+  }}
+/>
+
+<Accordions>
+  <Accordion title="Value">
+    <TypeTable
+          type={{
+            'onChange': {
+              type: "(isSelected: boolean) => void",
+              description: "Handler called when the checked state changes.",
+            },
+          }}
+        />
+  </Accordion>
+  <Accordion title="Styling">
+    <TypeTable
+          type={{
+            'className': {
+              type: "ClassNameOrFunction<CheckboxRenderProps>",
+              default: "'react-aria-Checkbox'",
+              description: "The CSS className for the element.",
+            },
+          }}
+        />
+  </Accordion>
+</Accordions>
+
+Default className: `react-aria-Checkbox`
+
+| Render Prop | CSS Selector |
+| :--- | :--- |
+| `isSelected` <br/> Whether the checkbox is selected. | `[data-selected]` |
+| `isIndeterminate` <br/> Whether the checkbox is indeterminate. | `[data-indeterminate]` |
+| `isHovered` <br/> Whether the checkbox is hovered. | `[data-hovered]` |
+| `isPressed` <br/> Whether the checkbox is pressed. | `[data-pressed]` |
+| `isFocused` <br/> Whether the checkbox is focused. | `[data-focused]` |
+| `isFocusVisible` <br/> Whether the checkbox is keyboard focused. | `[data-focus-visible]` |
+| `isDisabled` <br/> Whether the checkbox is disabled. | `[data-disabled]` |
+

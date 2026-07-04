@@ -35,3 +35,66 @@ export default function Example() {
   );
 }
 ```
+
+## Props
+
+### Switch Props
+
+<TypeTable
+  type={{
+    'isSelected': {
+      type: "boolean",
+      description: "Whether the switch is selected (controlled).",
+    },
+    'defaultSelected': {
+      type: "boolean",
+      description: "Whether the switch is selected by default (uncontrolled).",
+    },
+    'isDisabled': {
+      type: "boolean",
+      default: "false",
+      description: "Whether the switch is disabled.",
+    },
+    'isReadOnly': {
+      type: "boolean",
+      description: "Whether the switch is read-only.",
+    },
+  }}
+/>
+
+<Accordions>
+  <Accordion title="Value">
+    <TypeTable
+          type={{
+            'onChange': {
+              type: "(isSelected: boolean) => void",
+              description: "Handler called when the selection state changes.",
+            },
+          }}
+        />
+  </Accordion>
+  <Accordion title="Styling">
+    <TypeTable
+          type={{
+            'className': {
+              type: "ClassNameOrFunction<SwitchRenderProps>",
+              default: "'react-aria-Switch'",
+              description: "The CSS className for the element.",
+            },
+          }}
+        />
+  </Accordion>
+</Accordions>
+
+Default className: `react-aria-Switch`
+
+| Render Prop | CSS Selector |
+| :--- | :--- |
+| `isSelected` <br/> Whether the switch is checked. | `[data-selected]` |
+| `isHovered` <br/> Whether the switch is hovered. | `[data-hovered]` |
+| `isPressed` <br/> Whether the switch is pressed. | `[data-pressed]` |
+| `isFocused` <br/> Whether the switch is focused. | `[data-focused]` |
+| `isFocusVisible` <br/> Whether the switch is keyboard focused. | `[data-focus-visible]` |
+| `isDisabled` <br/> Whether the switch is disabled. | `[data-disabled]` |
+| `isReadOnly` <br/> Whether the switch is read-only. | `[data-readonly]` |
+

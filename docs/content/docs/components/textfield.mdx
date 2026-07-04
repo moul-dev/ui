@@ -113,3 +113,78 @@ export default function Example() {
 }
 ```
 
+## Props
+
+### TextField Props
+
+<TypeTable
+  type={{
+    'variant': {
+      type: "'primary' | 'secondary'",
+      default: "'primary'",
+      description: "The visual style variant of the input field.",
+    },
+    'size': {
+      type: "'sm' | 'md' | 'lg'",
+      default: "'md'",
+      description: "The vertical height size of the input field.",
+    },
+    'value': {
+      type: "string",
+      description: "The current value of the input (controlled).",
+    },
+    'defaultValue': {
+      type: "string",
+      description: "The default value of the input (uncontrolled).",
+    },
+    'placeholder': {
+      type: "string",
+      description: "Temporary placeholder text displayed when the input is empty.",
+    },
+    'isDisabled': {
+      type: "boolean",
+      default: "false",
+      description: "Whether the text field is disabled.",
+    },
+    'isReadOnly': {
+      type: "boolean",
+      description: "Whether the text field is read-only.",
+    },
+    'isInvalid': {
+      type: "boolean",
+      description: "Whether the input value is invalid.",
+    },
+  }}
+/>
+
+<Accordions>
+  <Accordion title="Value">
+    <TypeTable
+          type={{
+            'onChange': {
+              type: "(value: string) => void",
+              description: "Handler called when the input value changes.",
+            },
+          }}
+        />
+  </Accordion>
+  <Accordion title="Styling">
+    <TypeTable
+          type={{
+            'className': {
+              type: "ClassNameOrFunction<TextFieldRenderProps>",
+              default: "'react-aria-TextField'",
+              description: "The CSS className for the element.",
+            },
+          }}
+        />
+  </Accordion>
+</Accordions>
+
+Default className: `react-aria-TextField`
+
+| Render Prop | CSS Selector |
+| :--- | :--- |
+| `isDisabled` <br/> Whether the text field is disabled. | `[data-disabled]` |
+| `isInvalid` <br/> Whether the input is invalid. | `[data-invalid]` |
+

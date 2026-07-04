@@ -79,3 +79,126 @@ export default function Example() {
   );
 }
 ```
+
+## Props
+
+### Button Props
+
+<TypeTable
+  type={{
+    'variant': {
+      type: "'primary' | 'secondary' | 'tertiary' | 'outline' | 'ghost' | 'danger' | 'danger-soft'",
+      default: "'primary'",
+      description: "The visual style variant of the button.",
+    },
+    'size': {
+      type: "'sm' | 'md' | 'lg'",
+      default: "'md'",
+      description: "The size of the button.",
+    },
+    'isDisabled': {
+      type: "boolean",
+      default: "false",
+      description: "Whether the button is disabled.",
+    },
+    'isPending': {
+      type: "boolean",
+      default: "false",
+      description: "Whether the button is in a pending state, showing a progress spinner and disabling interactions.",
+    },
+    'href': {
+      type: "string",
+      description: "A URL to link to. Renders the button as an anchor link.",
+    },
+    'target': {
+      type: "string",
+      description: "The target attribute for the link (e.g. '_blank'). Only used when href is set.",
+    },
+    'rel': {
+      type: "string",
+      description: "The rel attribute for the link. Only used when href is set.",
+    },
+  }}
+/>
+
+<Accordions>
+  <Accordion title="Events">
+    <TypeTable
+          type={{
+            'onPress': {
+              type: "(e: PressEvent) => void",
+              description: "Handler that is called when the press is released over the target.",
+            },
+            'onPressStart': {
+              type: "(e: PressEvent) => void",
+              description: "Handler that is called when a press interaction starts.",
+            },
+            'onPressEnd': {
+              type: "(e: PressEvent) => void",
+              description: "Handler that is called when a press interaction ends.",
+            },
+            'onPressChange': {
+              type: "(isPressed: boolean) => void",
+              description: "Handler that is called when the press state changes.",
+            },
+            'onPressUp': {
+              type: "(e: PressEvent) => void",
+              description: "Handler that is called when a press is released over the target, regardless of where it started.",
+            },
+            'onHoverStart': {
+              type: "(e: HoverEvent) => void",
+              description: "Handler that is called when a hover interaction starts.",
+            },
+            'onHoverEnd': {
+              type: "(e: HoverEvent) => void",
+              description: "Handler that is called when a hover interaction ends.",
+            },
+          }}
+        />
+  </Accordion>
+  <Accordion title="Styling">
+    <TypeTable
+          type={{
+            'className': {
+              type: "ClassNameOrFunction<ButtonRenderProps>",
+              default: "'react-aria-Button'",
+              description: "The CSS className for the element.",
+            },
+            'style': {
+              type: "CSSProperties | ((values: ButtonRenderProps) => CSSProperties)",
+              description: "The inline style for the element.",
+            },
+          }}
+        />
+  </Accordion>
+  <Accordion title="Accessibility">
+    <TypeTable
+          type={{
+            'aria-label': {
+              type: "string",
+              description: "Defines a string value that labels the element.",
+            },
+            'aria-labelledby': {
+              type: "string",
+              description: "Identifies the element(s) that label the current element.",
+            },
+            'aria-describedby': {
+              type: "string",
+              description: "Identifies the element(s) that describe the object.",
+            },
+          }}
+        />
+  </Accordion>
+</Accordions>
+
+Default className: `react-aria-Button`
+
+| Render Prop | CSS Selector |
+| :--- | :--- |
+| `isHovered` <br/> Whether the button is currently hovered. | `[data-hovered]` |
+| `isPressed` <br/> Whether the button is currently pressed. | `[data-pressed]` |
+| `isFocused` <br/> Whether the button is focused. | `[data-focused]` |
+| `isFocusVisible` <br/> Whether the button is keyboard focused. | `[data-focus-visible]` |
+| `isDisabled` <br/> Whether the button is disabled. | `[data-disabled]` |
+| `isPending` <br/> Whether the button is in a pending state. | `[data-pending]` |
+

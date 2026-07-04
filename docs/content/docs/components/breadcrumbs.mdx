@@ -41,3 +41,33 @@ export default function Example() {
   );
 }
 ```
+
+## Props
+
+### Breadcrumbs Props
+
+<TypeTable
+  type={{
+    'isDisabled': {
+      type: "boolean",
+      default: "false",
+      description: "Whether navigation within the breadcrumbs is disabled.",
+    },
+  }}
+/>
+
+<Accordions>
+  <Accordion title="Styling">
+    <TypeTable
+          type={{
+            'className': {
+              type: "string",
+              description: "The CSS className.",
+            },
+          }}
+        />
+  </Accordion>
+</Accordions>
+
+Default className: `react-aria-Breadcrumbs`
+

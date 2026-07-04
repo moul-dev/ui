@@ -59,3 +59,58 @@ On mobile viewports (`<= 640px`), the modal is optimized to behave like a bottom
 - Extends to `100%` viewport width.
 - Bottom corner radiuses are set to `0` for seamless edge-to-edge styling.
 - Renders with a smooth, subtle fade-in and slide-up animation from the bottom of the viewport.
+
+## Props
+
+### Modal Props
+
+<TypeTable
+  type={{
+    'isOpen': {
+      type: "boolean",
+      description: "Whether the modal overlay wrapper is open (controlled).",
+    },
+    'defaultOpen': {
+      type: "boolean",
+      description: "Whether the modal is initially open (uncontrolled).",
+    },
+    'isDismissable': {
+      type: "boolean",
+      default: "false",
+      description: "Whether clicking outside or pressing Escape closes the modal overlay.",
+    },
+  }}
+/>
+
+<Accordions>
+  <Accordion title="Value">
+    <TypeTable
+          type={{
+            'onOpenChange': {
+              type: "(isOpen: boolean) => void",
+              description: "Handler called when open state changes.",
+            },
+          }}
+        />
+  </Accordion>
+  <Accordion title="Styling">
+    <TypeTable
+          type={{
+            'className': {
+              type: "ClassNameOrFunction<ModalRenderProps>",
+              default: "'react-aria-Modal'",
+              description: "The CSS className.",
+            },
+          }}
+        />
+  </Accordion>
+</Accordions>
+
+Default className: `react-aria-Modal`
+
+| Render Prop | CSS Selector |
+| :--- | :--- |
+| `isOpen` <br/> Whether the modal is open. | `[data-open]` |
+| `isEntering` <br/> Whether the entrance transition is animating. | `[data-entering]` |
+| `isExiting` <br/> Whether the exit transition is animating. | `[data-exiting]` |
+

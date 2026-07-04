@@ -55,3 +55,43 @@ export default function Example() {
   );
 }
 ```
+
+## Props
+
+### Table Props
+
+<TypeTable
+  type={{
+    'selectionMode': {
+      type: "'none' | 'single' | 'multiple'",
+      default: "'none'",
+      description: "The selection mode permitted.",
+    },
+  }}
+/>
+
+<Accordions>
+  <Accordion title="Value">
+    <TypeTable
+          type={{
+            'onSelectionChange': {
+              type: "(keys: 'all' | Set<Key>) => void",
+              description: "Fires when row selection changes.",
+            },
+          }}
+        />
+  </Accordion>
+  <Accordion title="Styling">
+    <TypeTable
+          type={{
+            'className': {
+              type: "string",
+              description: "The CSS className.",
+            },
+          }}
+        />
+  </Accordion>
+</Accordions>
+
+Default className: `react-aria-Table`
+

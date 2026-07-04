@@ -132,8 +132,59 @@ Use the `orientation` prop to align the group vertically:
 
 ### ToggleButtonGroup Props
 
-| Prop | Type | Default | Description |
-| :--- | :--- | :--- | :--- |
-| `animated` | `boolean` | `false` | When true, renders a track with a sliding selection indicator. |
-| `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | The orientation of the group. |
-| `selectionMode` | `'single' \| 'multiple'` | `'single'` | The selection mode of the group. |
+<TypeTable
+  type={{
+    'size': {
+      type: "'sm' | 'md' | 'lg'",
+      default: "'md'",
+      description: "The size variant height applied to toggle buttons inside the group.",
+    },
+    'animated': {
+      type: "boolean",
+      default: "false",
+      description: "Enables smooth slide and size selection indicators overlay track animations.",
+    },
+    'orientation': {
+      type: "'horizontal' | 'vertical'",
+      default: "'horizontal'",
+      description: "The layout alignment axis orientation.",
+    },
+    'selectionMode': {
+      type: "'single' | 'multiple'",
+      default: "'single'",
+      description: "The selection behavior constraint.",
+    },
+  }}
+/>
+
+<Accordions>
+  <Accordion title="Value">
+    <TypeTable
+          type={{
+            'onSelectionChange': {
+              type: "(keys: 'all' | Set<Key>) => void",
+              description: "Handler called when selection changes.",
+            },
+          }}
+        />
+  </Accordion>
+  <Accordion title="Styling">
+    <TypeTable
+          type={{
+            'className': {
+              type: "ClassNameOrFunction<ToggleButtonGroupRenderProps>",
+              default: "'react-aria-ToggleButtonGroup'",
+              description: "The CSS className.",
+            },
+          }}
+        />
+  </Accordion>
+</Accordions>
+
+Default className: `react-aria-ToggleButtonGroup`
+
+| Render Prop | CSS Selector |
+| :--- | :--- |
+| `orientation` <br/> The orientation of the group. | `[data-orientation]` |
+| `isDisabled` <br/> Whether the group is disabled. | `[data-disabled]` |
+

@@ -136,3 +136,70 @@ export default function Example() {
   );
 }
 ```
+
+## Props
+
+### TagGroup Props
+
+<TypeTable
+  type={{
+    'size': {
+      type: "'sm' | 'md'",
+      default: "'md'",
+      description: "The size of child tags.",
+    },
+    'variant': {
+      type: "'primary' | 'secondary' | 'quiet'",
+      default: "'secondary'",
+      description: "The visual style variant of child tags.",
+    },
+    'selectionMode': {
+      type: "'none' | 'single' | 'multiple'",
+      default: "'none'",
+      description: "The selection mode allowed.",
+    },
+    'selectedKeys': {
+      type: "'all' | Iterable<Key>",
+      description: "The selected tag keys (controlled).",
+    },
+    'defaultSelectedKeys': {
+      type: "'all' | Iterable<Key>",
+      description: "The initially selected tag keys (uncontrolled).",
+    },
+    'isDisabled': {
+      type: "boolean",
+      default: "false",
+      description: "Whether selection is disabled.",
+    },
+  }}
+/>
+
+<Accordions>
+  <Accordion title="Value">
+    <TypeTable
+          type={{
+            'onSelectionChange': {
+              type: "(keys: 'all' | Set<Key>) => void",
+              description: "Handler called when selection changes.",
+            },
+            'onRemove': {
+              type: "(keys: Set<Key>) => void",
+              description: "Handler called when a tag is dismissed.",
+            },
+          }}
+        />
+  </Accordion>
+  <Accordion title="Styling">
+    <TypeTable
+          type={{
+            'className': {
+              type: "string",
+              description: "The CSS className.",
+            },
+          }}
+        />
+  </Accordion>
+</Accordions>
+
+Default className: `react-aria-TagGroup`
+

@@ -84,3 +84,31 @@ toast.show('Unsaved Changes', {
 });
 ```
 
+## Props
+
+### Toast Props
+
+<TypeTable
+  type={{
+    'toast': {
+      type: "ToastState",
+      description: "The active single toast queue item reference.",
+    },
+  }}
+/>
+
+<Accordions>
+  <Accordion title="Styling">
+    <TypeTable
+          type={{
+            'className': {
+              type: "string",
+              description: "The CSS className.",
+            },
+          }}
+        />
+  </Accordion>
+</Accordions>
+
+Default className: `react-aria-Toast`
+
