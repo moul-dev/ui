@@ -23,7 +23,10 @@ const InputOTPContextInstance = React.createContext<InputOTPContextValue>({
 })
 
 export interface InputOTPProps
-  extends Omit<React.ComponentPropsWithoutRef<typeof OTPInput>, 'render' | 'size'> {
+  extends Omit<
+    React.ComponentPropsWithoutRef<typeof OTPInput>,
+    'render' | 'size'
+  > {
   label?: string
   description?: string
   errorMessage?: string
@@ -98,7 +101,11 @@ export interface InputOTPSlotProps
 export const InputOTPSlot = React.forwardRef<HTMLDivElement, InputOTPSlotProps>(
   ({ index, style, ...props }, ref) => {
     const inputOTPContext = React.useContext(OTPInputContext)
-    const { isInvalid, isDisabled, size = 'md' } = React.useContext(InputOTPContextInstance)
+    const {
+      isInvalid,
+      isDisabled,
+      size = 'md',
+    } = React.useContext(InputOTPContextInstance)
 
     if (!inputOTPContext) {
       throw new Error('InputOTPSlot must be used within InputOTP')

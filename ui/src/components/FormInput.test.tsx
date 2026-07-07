@@ -133,9 +133,7 @@ describe('TextField component', () => {
   })
 
   test('accepts size props', () => {
-    const { getByRole, rerender } = render(
-      <TextField label="Name" size="sm" />,
-    )
+    const { getByRole, rerender } = render(<TextField label="Name" size="sm" />)
     expect(getByRole('textbox')).toBeInTheDocument()
 
     rerender(<TextField label="Name" size="md" />)
@@ -196,7 +194,7 @@ describe('InputOTP component', () => {
           <InputOTPSlot index={0} />
           <InputOTPSlot index={1} />
         </InputOTPGroup>
-      </InputOTP>
+      </InputOTP>,
     )
     expect(container.querySelectorAll('input')).toHaveLength(1)
 
@@ -205,7 +203,7 @@ describe('InputOTP component', () => {
         <InputOTPGroup>
           <InputOTPSlot index={0} />
         </InputOTPGroup>
-      </InputOTP>
+      </InputOTP>,
     )
     expect(container.querySelectorAll('input')).toHaveLength(1)
 
@@ -214,7 +212,7 @@ describe('InputOTP component', () => {
         <InputOTPGroup>
           <InputOTPSlot index={0} />
         </InputOTPGroup>
-      </InputOTP>
+      </InputOTP>,
     )
     expect(container.querySelectorAll('input')).toHaveLength(1)
   })

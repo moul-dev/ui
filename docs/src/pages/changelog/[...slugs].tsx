@@ -3,9 +3,7 @@ import { unstable_notFound } from 'waku/router/server'
 import { getMDXComponents } from '@/components/mdx'
 import { changelogSource } from '@/lib/source'
 
-export default function Page({
-  slugs,
-}: PageProps<'/changelog/[...slugs]'>) {
+export default function Page({ slugs }: PageProps<'/changelog/[...slugs]'>) {
   const page = changelogSource.getPage(slugs)
   if (!page) unstable_notFound()
 
@@ -45,11 +43,7 @@ export default function Page({
       {author && (
         <div className="flex items-center gap-3 border-b pb-6 mb-8">
           {avatar && (
-            <img
-              src={avatar}
-              alt={author}
-              className="size-8 rounded-full"
-            />
+            <img src={avatar} alt={author} className="size-8 rounded-full" />
           )}
           <span className="text-sm font-medium">{author}</span>
         </div>
