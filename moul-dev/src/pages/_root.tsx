@@ -9,7 +9,9 @@ export default async function RootElement({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head></head>
+      <head>
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+      </head>
       <body data-version="1.0" className="flex flex-col min-h-screen">
         <Provider>{children}</Provider>
       </body>
