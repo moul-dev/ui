@@ -6,6 +6,7 @@ export function baseOptions(): BaseLayoutProps {
   return {
     nav: {
       title: <Logo />,
+      transparentMode: 'top',
     },
     githubUrl: `https://github.com/${gitConfig.user}/${gitConfig.repo}`,
   }
