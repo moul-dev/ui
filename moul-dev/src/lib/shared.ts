@@ -1,4 +1,4 @@
-export const appName = 'moul.dev'
+export const appName = 'Moul'
 export const docsRoute = '/docs'
 export const docsImageRoute = '/og/docs'
 export const docsContentRoute = '/llms.mdx/docs'

@@ -19,6 +19,10 @@
 @import 'fumadocs-ui/css/neutral.css';
 @import 'fumadocs-ui/css/preset.css';
 
+.dark {
+  --color-fd-background: #000000;
+}
+
 html {
   scrollbar-gutter: stable;
   font-family: var(--font-sans);

@@ -19,7 +19,7 @@ export function Logo({
       style={{ width: '100%', height: '100%' }}
       aria-hidden="true"
     >
-      <title>moul.dev Dodecahedron Logo</title>
+      <title>moul.dev</title>
       {/* Mathematically generated squeezed 2D dodecahedron projection (6 pieces, 10 outer edges, perspective squeeze towards right) */}
       {/* Center Pentagon */}
       <polygon points="80.29,50.00 65.06,73.08 35.53,66.00 35.53,34.00 65.06,26.92" />
@@ -51,7 +51,7 @@ export function Logo({
     >
       <span className="h-6 w-6 flex-shrink-0 text-fd-primary">{icon}</span>
       <span className="font-sans text-[15px] font-bold tracking-tight">
-        moul.dev
+        Moul
       </span>
     </span>
   )

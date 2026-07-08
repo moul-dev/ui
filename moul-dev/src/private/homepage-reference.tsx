@@ -7,7 +7,7 @@ import { LiquidGlassCard } from '@/components/liquid-glass-card'
 export default function Home() {
   return (
     <>
-      <title>moul.dev — Bring Your Own Compute. Simplified.</title>
+      <title>Moul — Bring Your Own Compute. Simplified.</title>
       <meta
         name="description"
         content="Unify your servers, clouds, and local machines into a single secure compute grid. Self-hosted, lightweight, and developer-friendly."
