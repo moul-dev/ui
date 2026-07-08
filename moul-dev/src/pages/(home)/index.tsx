@@ -5,10 +5,21 @@ export default function Home() {
   return (
     <>
       <title>Moul — Bring Your Own Compute. Simplified.</title>
+      <meta name="description" content="Focus On Code, Not Servers" />
+      <meta property="og:type" content="website" />
       <meta
-        name="description"
-        content="Focus On Code, Not Servers"
+        property="og:title"
+        content="Moul — Bring Your Own Compute. Simplified."
       />
+      <meta property="og:description" content="Focus On Code, Not Servers" />
+      <meta property="og:image" content="https://moul.dev/og/facebook.png" />
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta
+        name="twitter:title"
+        content="Moul — Bring Your Own Compute. Simplified."
+      />
+      <meta name="twitter:description" content="Focus On Code, Not Servers" />
+      <meta name="twitter:image" content="https://moul.dev/og/x.png" />
 
       {/* Hero Section */}
       <div className="relative isolate px-6 pt-10 lg:px-8 overflow-hidden">
