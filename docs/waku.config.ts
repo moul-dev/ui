@@ -29,7 +29,7 @@ export default defineConfig({
       mdx(),
       {
         name: 'shim-import-meta-url',
-        transform(code, id, options) {
+        transform(code: any, id: any, options: any) {
           const isSSR = options?.ssr || (this.environment && this.environment.name !== 'client');
           if (isSSR && code.includes('import.meta.url')) {
             return {
@@ -39,6 +39,6 @@ export default defineConfig({
           }
         },
       },
-    ],
+    ] as any,
   },
 })
