@@ -8,6 +8,13 @@ export function baseOptions(): BaseLayoutProps {
       title: <Logo />,
       transparentMode: 'top',
     },
+    links: [
+      {
+        text: 'Devlog',
+        url: '/devlog',
+        active: 'nested-url',
+      },
+    ],
     githubUrl: `https://github.com/${gitConfig.user}/${gitConfig.repo}`,
   }
 }

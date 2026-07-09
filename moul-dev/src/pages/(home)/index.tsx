@@ -76,6 +76,21 @@ export default function Home() {
                 Simplified.
               </span>
             </h1>
+
+            {/* CTA Buttons */}
+            <div className="mt-10 flex flex-wrap items-center justify-center lg:justify-start gap-4">
+              <a
+                href="/devlog"
+                className="rounded-xl px-5 py-3 text-sm font-semibold shadow-sm transition-all duration-200 hover:opacity-90"
+                style={{
+                  background:
+                    'oklch(0.60 calc(0.18 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 198))',
+                  color: 'white',
+                }}
+              >
+                Developer Log
+              </a>
+            </div>
           </div>
 
           {/* Right 3D Dodecahedron Column */}

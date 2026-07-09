@@ -30,12 +30,14 @@ export default defineConfig({
       {
         name: 'shim-import-meta-url',
         transform(code: any, id: any, options: any) {
-          const isSSR = options?.ssr || (this.environment && this.environment.name !== 'client');
+          const isSSR =
+            options?.ssr ||
+            (this.environment && this.environment.name !== 'client')
           if (isSSR && code.includes('import.meta.url')) {
             return {
               code: code.replaceAll('import.meta.url', '"file:///index.js"'),
               map: null,
-            };
+            }
           }
         },
       },
