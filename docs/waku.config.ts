@@ -40,6 +40,18 @@ export default defineConfig({
         }
         return false
       }),
+      {
+        name: 'shim-import-meta-url',
+        transform(code, id, options) {
+          const isSSR = options?.ssr || (this.environment && this.environment.name !== 'client');
+          if (isSSR && code.includes('import.meta.url')) {
+            return {
+              code: code.replaceAll('import.meta.url', '"file:///index.js"'),
+              map: null,
+            };
+          }
+        },
+      },
     ],
   },
 })
