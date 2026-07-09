@@ -24,6 +24,25 @@ export function getPageImage(slugs: string[]) {
   }
 }
 
+export function getDevlogPageImage(
+  title: string,
+  description?: string,
+  target?: 'x' | 'facebook',
+) {
+  const formattedTitle = title.replace(/\bMoul\b/g, '{Moul|00CEE1}')
+  const url = new URL('https://og.moul.dev/devlog')
+  url.searchParams.set('title', formattedTitle)
+  if (description) {
+    url.searchParams.set('subtitle', description)
+  }
+  if (target) {
+    url.searchParams.set('target', target)
+  }
+  return {
+    url: url.toString(),
+  }
+}
+
 export function getPageMarkdownUrl(page: (typeof source)['$inferPage']) {
   const segments = [...page.slugs, 'content.md']
 

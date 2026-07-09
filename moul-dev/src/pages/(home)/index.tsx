@@ -41,7 +41,7 @@ export default function Home() {
         </div>
 
         {/* Main Hero Content: Grid Layout */}
-        <div className="mx-auto max-w-7xl py-20 sm:py-28 lg:py-36 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+        <div className="mx-auto max-w-7xl py-20 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
           {/* Left Content Column */}
           <div className="lg:col-span-7 flex flex-col items-center lg:items-start text-center lg:text-left">
             {/* Version Badge */}
@@ -76,21 +76,6 @@ export default function Home() {
                 Simplified.
               </span>
             </h1>
-
-            {/* CTA Buttons */}
-            <div className="mt-10 flex flex-wrap items-center justify-center lg:justify-start gap-4">
-              <a
-                href="/devlog"
-                className="rounded-xl px-5 py-3 text-sm font-semibold shadow-sm transition-all duration-200 hover:opacity-90"
-                style={{
-                  background:
-                    'oklch(0.60 calc(0.18 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 198))',
-                  color: 'white',
-                }}
-              >
-                Developer Log
-              </a>
-            </div>
           </div>
 
           {/* Right 3D Dodecahedron Column */}

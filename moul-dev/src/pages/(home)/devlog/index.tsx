@@ -16,6 +16,20 @@ export default function DevlogIndex() {
         name="description"
         content="Latest updates and developer logs from the Moul team."
       />
+      <meta property="og:type" content="website" />
+      <meta property="og:title" content="Devlog — Moul Developer Log" />
+      <meta
+        property="og:description"
+        content="Latest updates and developer logs from the Moul team."
+      />
+      <meta property="og:image" content="https://moul.dev/og/facebook.png" />
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content="Devlog — Moul Developer Log" />
+      <meta
+        name="twitter:description"
+        content="Latest updates and developer logs from the Moul team."
+      />
+      <meta name="twitter:image" content="https://moul.dev/og/x.png" />
 
       <main className="mx-auto w-full max-w-6xl px-6 py-20 lg:py-32">
         <div className="text-center max-w-3xl mx-auto mb-16">

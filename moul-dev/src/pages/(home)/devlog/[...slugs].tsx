@@ -1,7 +1,7 @@
 import type { PageProps } from 'waku/router'
 import { unstable_notFound } from 'waku/router/server'
 import { getMDXComponents } from '@/components/mdx'
-import { devlogSource } from '@/lib/source'
+import { devlogSource, getDevlogPageImage } from '@/lib/source'
 import { getAuthor } from '@/lib/authors'
 
 export default function Page({ slugs }: PageProps<'/devlog/[...slugs]'>) {
@@ -16,6 +16,15 @@ export default function Page({ slugs }: PageProps<'/devlog/[...slugs]'>) {
     <>
       <title>{`${page.data.title} — Moul Devlog`}</title>
       <meta name="description" content={page.data.description} />
+      <meta property="og:type" content="article" />
+      <meta property="og:title" content={`${page.data.title} — Moul Devlog`} />
+      <meta property="og:description" content={page.data.description} />
+      <meta property="og:image" content={getDevlogPageImage(page.data.title, page.data.description, 'facebook').url} />
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content={`${page.data.title} — Moul Devlog`} />
+      <meta name="twitter:description" content={page.data.description} />
+      <meta name="twitter:image" content={getDevlogPageImage(page.data.title, page.data.description, 'x').url} />
+
 
       <main className="mx-auto w-full max-w-3xl px-6 py-20 lg:py-32">
         <div className="mb-8">
