@@ -27,19 +27,6 @@ export default defineConfig({
     plugins: [
       tailwindcss(),
       mdx(),
-      perEnvironmentPlugin('esm-external-require-client', (env) => {
-        if (env.name === 'client') {
-          return esmExternalRequirePlugin({
-            external: [
-              'react',
-              'react-dom',
-              'react/jsx-runtime',
-              'react/jsx-dev-runtime',
-            ],
-          })
-        }
-        return false
-      }),
       {
         name: 'shim-import-meta-url',
         transform(code, id, options) {
