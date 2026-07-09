@@ -62,7 +62,7 @@ export default function Home() {
             </div>
 
             {/* Heading */}
-            <h1 className="text-4xl font-extrabold tracking-tight sm:text-6xl max-w-3xl mx-auto lg:mx-0 leading-[1.1]">
+            <h1 className="text-3xl font-extrabold tracking-tight sm:text-6xl max-w-3xl mx-auto lg:mx-0 leading-[1.1]">
               <span className="block text-fd-foreground">
                 Bring Your Own Compute.
               </span>
