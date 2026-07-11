@@ -7,6 +7,8 @@ import {
   ViewOptionsPopover,
 } from 'fumadocs-ui/layouts/docs/page'
 import { createRelativeLink } from 'fumadocs-ui/mdx'
+import { buttonVariants } from 'fumadocs-ui/components/ui/button'
+import { ExternalLink } from 'lucide-react'
 import type { PageProps } from 'waku/router'
 import { unstable_notFound } from 'waku/router/server'
 import { getMDXComponents } from '@/components/mdx'
@@ -19,6 +21,13 @@ export default function Page({ slugs }: PageProps<'/docs/[...slugs]'>) {
 
   const MDX = page.data.body
   const markdownUrl = getPageMarkdownUrl(page).url
+  const reactAria = (page.data as { reactAria?: string }).reactAria
+  const reactAriaLink = reactAria
+    ? reactAria.startsWith('http')
+      ? reactAria
+      : `https://react-spectrum.adobe.com/react-aria/${reactAria}.html`
+    : null
+
   return (
     <DocsPage toc={page.data.toc}>
       <meta property="og:image" content={getPageImage(slugs).url} />
@@ -32,6 +41,20 @@ export default function Page({ slugs }: PageProps<'/docs/[...slugs]'>) {
           markdownUrl={markdownUrl}
           githubUrl={`https://github.com/${gitConfig.user}/${gitConfig.repo}/blob/${gitConfig.branch}/content/docs/${page.path}`}
         />
+        {reactAriaLink && (
+          <a
+            href={reactAriaLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`${buttonVariants({
+              color: 'secondary',
+              size: 'sm',
+            })} gap-2 [&_svg]:size-3.5 [&_svg]:text-fd-muted-foreground`}
+          >
+            <ExternalLink />
+            React Aria
+          </a>
+        )}
       </div>
       <DocsBody>
         <MDX

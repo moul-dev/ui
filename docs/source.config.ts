@@ -12,7 +12,9 @@ import { z } from 'zod'
 export const docs = defineDocs({
   dir: 'content/docs',
   docs: {
-    schema: pageSchema,
+    schema: pageSchema.extend({
+      reactAria: z.string().optional(),
+    }),
     postprocess: {
       includeProcessedMarkdown: true,
     },
