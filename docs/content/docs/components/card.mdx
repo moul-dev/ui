@@ -17,24 +17,13 @@ import { Card, CardHeader, CardBody, CardFooter } from '@moul-dev/ui';
 
 ## Preview
 
-<ComponentPreview>
-  <Card className="w-80" variant="glass">
-    <CardHeader>Glassmorphic Card</CardHeader>
-    <CardBody>
-      This is a translucent glass-styled card showcasing Moul UI's modern look.
-    </CardBody>
-    <CardFooter className="flex justify-end gap-2">
-      <Button variant="secondary">Cancel</Button>
-      <Button variant="primary">Confirm</Button>
-    </CardFooter>
-  </Card>
-</ComponentPreview>
+<ComponentPlayground component="Card" />
 
 ---
 
 ## Variants
 
-Cards support four distinct aesthetic styles to match your design requirements:
+Cards support three distinct aesthetic styles to match your design requirements:
 
 ### Default (Elevated)
 Standard surface card featuring clean elevated shadows.
@@ -67,23 +56,6 @@ Clean card with no shadow and a subtle background fill.
 <Card variant="flat">
   <CardHeader>Flat Card</CardHeader>
   <CardBody>Flat container with subtle solid background.</CardBody>
-</Card>
-```
-
-### Outline
-Minimalist style with clean outer border lines and no shadows.
-
-<ComponentPreview>
-  <Card className="w-80" variant="outline">
-    <CardHeader>Outline Card</CardHeader>
-    <CardBody>Clean container with border lines and transparent background.</CardBody>
-  </Card>
-</ComponentPreview>
-
-```tsx
-<Card variant="outline">
-  <CardHeader>Outline Card</CardHeader>
-  <CardBody>Clean container with border lines and transparent background.</CardBody>
 </Card>
 ```
 
@@ -160,7 +132,7 @@ Generous breathing spacing ideal for hero sections or details views.
 
 | Prop | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
-| `variant` | `'default' \| 'flat' \| 'outline' \| 'glass'` | `'default'` | The visual style variation of the card. |
+| `variant` | `'default' \| 'flat' \| 'glass'` | `'default'` | The visual style variation of the card. |
 | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Padding sizes applied to the card sections. |
 | `divided` | `boolean` | `false` | When true, renders borders between header, body, and footer. |
 | `elevation` | `0 \| 1 \| 2 \| 3 \| 'none' \| 'sm' \| 'md' \| 'lg'` | `1` | Shadow elevation level (applies to `'default'` variant only). |

@@ -41,11 +41,7 @@ export const styles = stylex.create({
     borderColor: 'transparent',
     boxShadow: 'none',
   },
-  outline: {
-    backgroundColor: 'transparent',
-    borderColor: tokens.colorBorderSubtle,
-    boxShadow: 'none',
-  },
+
   glass: {
     backgroundColor: tokens.colorBgGlass,
     borderColor: tokens.colorBorderGlass,

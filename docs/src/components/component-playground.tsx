@@ -4,6 +4,10 @@ import {
   Alert,
   Badge,
   Button,
+  Card,
+  CardBody,
+  CardFooter,
+  CardHeader,
   InputOTP,
   InputOTPGroup,
   InputOTPSeparator,
@@ -559,6 +563,58 @@ const REGISTRY: Record<string, ComponentConfig> = {
       },
     ],
   },
+  Card: {
+    name: 'Card',
+    defaultProps: {
+      variant: 'default',
+      size: 'md',
+      elevation: 1,
+      divided: false,
+      title: 'Card Title',
+      description: 'This is the card body description content.',
+    },
+    props: [
+      {
+        name: 'variant',
+        type: 'select',
+        label: 'Variant',
+        options: ['default', 'flat', 'glass'],
+        defaultValue: 'default',
+      },
+      {
+        name: 'size',
+        type: 'select',
+        label: 'Size',
+        options: ['sm', 'md', 'lg'],
+        defaultValue: 'md',
+      },
+      {
+        name: 'elevation',
+        type: 'select',
+        label: 'Elevation',
+        options: ['0', '1', '2', '3'],
+        defaultValue: '1',
+      },
+      {
+        name: 'divided',
+        type: 'boolean',
+        label: 'Divided Section Borders',
+        defaultValue: false,
+      },
+      {
+        name: 'title',
+        type: 'text',
+        label: 'Card Title',
+        defaultValue: 'Card Title',
+      },
+      {
+        name: 'description',
+        type: 'text',
+        label: 'Card Body Text',
+        defaultValue: 'This is the card body description content.',
+      },
+    ],
+  },
 }
 
 // Custom Toast Preview wrapper
@@ -785,8 +841,8 @@ export function ComponentPlayground({ component }: { component: string }) {
       </InputOTPGroup>`
           : `      <InputOTPGroup>
 ${Array.from({ length: maxLength || 4 })
-  .map((_, i) => `        <InputOTPSlot index={${i}} />`)
-  .join('\n')}
+            .map((_, i) => `        <InputOTPSlot index={${i}} />`)
+            .join('\n')}
       </InputOTPGroup>`
 
         return `import {
@@ -1070,6 +1126,34 @@ export default function Example() {
   );
 }`
       }
+      case 'Card': {
+        const { variant, size, elevation, divided, title, description } = activeProps
+        let propsStr = ''
+        if (variant !== 'default') propsStr += ` variant="${variant}"`
+        if (size !== 'md') propsStr += ` size="${size}"`
+        if (divided) propsStr += ` divided`
+        if (variant === 'default' && elevation !== 1 && elevation !== '1') {
+          const numericElevation = isNaN(Number(elevation)) ? elevation : Number(elevation)
+          const formatEl = typeof numericElevation === 'number' ? `{${numericElevation}}` : `"${numericElevation}"`
+          propsStr += ` elevation=${formatEl}`
+        }
+        return `import { Card, CardHeader, CardBody, CardFooter, Button } from '@moul-dev/ui';
+
+export default function Example() {
+  return (
+    <Card${propsStr} className="w-80">
+      <CardHeader>${title}</CardHeader>
+      <CardBody>
+        ${description}
+      </CardBody>
+      <CardFooter className="flex justify-end gap-2">
+        <Button variant="secondary">Cancel</Button>
+        <Button variant="primary">Confirm</Button>
+      </CardFooter>
+    </Card>
+  );
+}`
+      }
       default:
         return `<${component} />`
     }
@@ -1169,6 +1253,30 @@ export default function Example() {
             size={activeProps.size}
           />
         )
+      case 'Card': {
+        const { variant, size, elevation, divided, title, description } = activeProps
+        const numericElevation = isNaN(Number(elevation)) ? elevation : Number(elevation)
+        return (
+          <Card
+            variant={variant}
+            size={size}
+            elevation={numericElevation as any}
+            divided={divided}
+            className="w-full max-w-[320px]"
+          >
+            <CardHeader>{title}</CardHeader>
+            <CardBody>{description}</CardBody>
+            <CardFooter className="flex justify-end gap-2">
+              <Button variant="secondary">
+                Cancel
+              </Button>
+              <Button variant="primary">
+                Confirm
+              </Button>
+            </CardFooter>
+          </Card>
+        )
+      }
       default:
         return <div>No Preview Available</div>
     }

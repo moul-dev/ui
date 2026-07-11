@@ -4,15 +4,12 @@ import '@testing-library/jest-dom'
 import { Card, CardBody, CardFooter, CardHeader } from './index'
 
 describe('Card component enhancements', () => {
-  test('renders default, flat, outline, and glass variants successfully', () => {
+  test('renders default, flat, and glass variants successfully', () => {
     const { container: defaultContainer } = render(
       <Card variant="default">Default Card</Card>,
     )
     const { container: flatContainer } = render(
       <Card variant="flat">Flat Card</Card>,
-    )
-    const { container: outlineContainer } = render(
-      <Card variant="outline">Outline Card</Card>,
     )
     const { container: glassContainer } = render(
       <Card variant="glass">Glass Card</Card>,
@@ -20,7 +17,6 @@ describe('Card component enhancements', () => {
 
     expect(defaultContainer.firstChild).toBeInTheDocument()
     expect(flatContainer.firstChild).toBeInTheDocument()
-    expect(outlineContainer.firstChild).toBeInTheDocument()
     expect(glassContainer.firstChild).toBeInTheDocument()
   })
 

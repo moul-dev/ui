@@ -4,7 +4,7 @@ import * as React from 'react'
 import { styles } from './Card.styles'
 
 export type Elevation = 0 | 1 | 2 | 3 | 'none' | 'sm' | 'md' | 'lg'
-export type CardVariant = 'default' | 'flat' | 'outline' | 'glass'
+export type CardVariant = 'default' | 'flat' | 'glass'
 export type CardSize = 'sm' | 'md' | 'lg'
 
 export interface CardContextValue {

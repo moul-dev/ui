@@ -356,19 +356,7 @@ function App() {
               </CardFooter>
             </Card>
 
-            {/* Outline Card */}
-            <Card variant="outline" size="md">
-              <CardHeader>Outline Card</CardHeader>
-              <CardBody>
-                Features a clean outline style, ideal for dark layouts and grid
-                structures.
-              </CardBody>
-              <CardFooter>
-                <Button variant="secondary" size="sm">
-                  View
-                </Button>
-              </CardFooter>
-            </Card>
+
 
             {/* Flat Card */}
             <Card variant="flat" size="sm">
