@@ -13,6 +13,7 @@ import { Card, CardBody, CardFooter, CardHeader } from './components/Card'
 import { Modal, ModalOverlay } from './components/Modal'
 import { ToggleButton } from './components/ToggleButton'
 import { ToggleButtonGroup } from './components/ToggleButtonGroup'
+import { Typography } from './components/Typography'
 
 // Define StyleX styles
 const styles = stylex.create({
@@ -368,6 +369,38 @@ function App() {
                 </Button>
               </CardFooter>
             </Card>
+          </div>
+        </section>
+
+        {/* Typography Showcase */}
+        <section {...stylex.props(styles.section)}>
+          <h2 {...stylex.props(styles.sectionTitle)}>Typography Showcase</h2>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <span style={{ fontSize: '0.8125rem', color: '#94a3b8', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                Standard Typography Tags (as prop)
+              </span>
+              <Typography as="h1">Heading 1 (h1)</Typography>
+              <Typography as="h2">Heading 2 (h2)</Typography>
+              <Typography as="h3">Heading 3 (h3)</Typography>
+              <Typography as="h4">Heading 4 (h4)</Typography>
+              <Typography as="h5">Heading 5 (h5)</Typography>
+              <Typography as="h6">Heading 6 (h6)</Typography>
+              <Typography as="p">Paragraph (p) - Standard body text.</Typography>
+              <Typography as="span">Span (span) - Inline text wrapper.</Typography>
+              <Typography as="label">Label (label) - Form label style.</Typography>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', borderTop: '1px solid rgba(255, 255, 255, 0.08)', paddingTop: '16px' }}>
+              <span style={{ fontSize: '0.8125rem', color: '#94a3b8', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                Semantic Exports
+              </span>
+              <Typography.Heading as="h1">Heading 1 (Typography.Heading as="h1")</Typography.Heading>
+              <Typography.Heading as="h3">Heading 3 (Typography.Heading as="h3")</Typography.Heading>
+              <Typography.Paragraph>Paragraph (Typography.Paragraph) - Standard body text.</Typography.Paragraph>
+              <Typography.Span>Span (Typography.Span) - Inline text element.</Typography.Span>
+              <Typography.Label>Label (Typography.Label) - Form label element.</Typography.Label>
+            </div>
           </div>
         </section>
       </main>

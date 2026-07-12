@@ -1,6 +1,15 @@
 export type {
   TypographyProps,
   TypographyTag,
-  TypographyVariant,
+  HeadingProps,
+  ParagraphProps,
+  SpanProps,
+  TypographyLabelProps,
 } from './Typography'
-export { Typography } from './Typography'
+export {
+  Typography,
+  TypographyHeading,
+  TypographyParagraph,
+  TypographySpan,
+  TypographyLabel,
+} from './Typography'

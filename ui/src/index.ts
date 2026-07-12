@@ -177,11 +177,20 @@ export { ToggleButtonGroup } from './components/ToggleButtonGroup'
 export type { ToggleButtonGroupProps } from './components/ToggleButtonGroup/ToggleButtonGroup'
 export { Tooltip, TooltipTrigger } from './components/Tooltip'
 export type { TooltipProps } from './components/Tooltip/Tooltip'
-export { Typography } from './components/Typography'
+export {
+  Typography,
+  TypographyHeading,
+  TypographyParagraph,
+  TypographySpan,
+  TypographyLabel,
+} from './components/Typography'
 export type {
   TypographyProps,
   TypographyTag,
-  TypographyVariant,
+  HeadingProps,
+  ParagraphProps,
+  SpanProps,
+  TypographyLabelProps,
 } from './components/Typography/Typography'
 export type { ThemeProviderProps } from './theme/ThemeProvider'
 export { ThemeProvider } from './theme/ThemeProvider'

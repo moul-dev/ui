@@ -120,11 +120,17 @@ export const tokens = stylex.defineVars({
   fontSizeMd: '1rem', // 16px
   fontSizeLg: '1.125rem', // 18px
   fontSizeXl: '1.25rem', // 20px
+  fontSizeXxl: '1.5rem', // 24px
+  fontSize3xl: '1.875rem', // 30px
+  fontSize4xl: '2.25rem', // 36px
   lineHeightXs: '1rem',
   lineHeightSm: '1.25rem',
   lineHeightMd: '1.5rem',
   lineHeightLg: '1.75rem',
   lineHeightXl: '1.75rem',
+  lineHeightXxl: '2rem',
+  lineHeight3xl: '2.25rem',
+  lineHeight4xl: '2.5rem',
   fontWeightNormal: '400',
   fontWeightMedium: '500',
   fontWeightSemibold: '600',

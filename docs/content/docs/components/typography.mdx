@@ -3,21 +3,77 @@ title: Typography
 description: Documentation for the Typography component.
 ---
 
-import { Typography } from '@moul-dev/ui';
+import { Typography, TypographyHeading, TypographyParagraph, TypographySpan, TypographyLabel } from '@moul-dev/ui';
 
 
 # Typography
 
 ## Preview
 
+<ComponentPlayground component="Typography" />
+
+The `Typography` component is built with React Aria and styled using StyleX. It provides semantic subcomponents for cleaner, more readable markup.
+
+## Semantic Components
+
+Instead of specifying the `as` prop manually, you can use semantic subcomponents exported directly from `Typography`:
+
 <ComponentPreview>
-  <div className="flex flex-col gap-2">
-    <Typography as="h2">Heading 2</Typography>
-    <Typography as="p">This is body text rendered using the Typography component.</Typography>
+  <div className="flex flex-col gap-4 w-full">
+    <TypographyHeading as="h1">Heading 1 (Typography.Heading as="h1")</TypographyHeading>
+    <TypographyHeading as="h3">Heading 3 (Typography.Heading as="h3")</TypographyHeading>
+    <TypographyParagraph>Paragraph (Typography.Paragraph) - Standard body text.</TypographyParagraph>
+    <TypographySpan>Span (Typography.Span) - Inline text element.</TypographySpan>
+    <TypographyLabel>Label (Typography.Label) - Form label element.</TypographyLabel>
   </div>
 </ComponentPreview>
 
-The `Typography` component is built with React Aria and styled using StyleX.
+```tsx
+import { Typography } from '@moul-dev/ui';
+
+export default function Example() {
+  return (
+    <>
+      <Typography.Heading as="h1">Heading 1</Typography.Heading>
+      <Typography.Heading as="h3">Heading 3</Typography.Heading>
+      <Typography.Paragraph>This is a paragraph.</Typography.Paragraph>
+      <Typography.Span>This is a span.</Typography.Span>
+      <Typography.Label>This is a label.</Typography.Label>
+    </>
+  );
+}
+```
+
+## HTML Tags
+
+You can specify the HTML tag to render using the `as` prop on the base `Typography` component.
+
+<ComponentPreview>
+  <div className="flex flex-col gap-4 w-full">
+    <Typography as="h1">Heading 1 (h1)</Typography>
+    <Typography as="h2">Heading 2 (h2)</Typography>
+    <Typography as="h3">Heading 3 (h3)</Typography>
+    <Typography as="h4">Heading 4 (h4)</Typography>
+    <Typography as="h5">Heading 5 (h5)</Typography>
+    <Typography as="h6">Heading 6 (h6)</Typography>
+    <Typography as="p">Paragraph (p) - Standard body text.</Typography>
+    <Typography as="span">Span (span) - Inline text wrapper.</Typography>
+    <Typography as="label">Label (label) - Form label style.</Typography>
+  </div>
+</ComponentPreview>
+
+```tsx
+<Typography as="h1">Heading 1 (h1)</Typography>
+<Typography as="h2">Heading 2 (h2)</Typography>
+<Typography as="h3">Heading 3 (h3)</Typography>
+<Typography as="h4">Heading 4 (h4)</Typography>
+<Typography as="h5">Heading 5 (h5)</Typography>
+<Typography as="h6">Heading 6 (h6)</Typography>
+<Typography as="p">Paragraph (p)</Typography>
+<Typography as="span">Span (span)</Typography>
+<Typography as="label">Label (label)</Typography>
+```
+
 
 ## Import
 
@@ -27,16 +83,38 @@ import { Typography } from '@moul-dev/ui';
 
 ## Usage
 
-Here is a basic example of how to use the `Typography` component:
+Here is a basic example of how to use the `Typography` semantic subcomponents:
 
 ```tsx
 import { Typography } from '@moul-dev/ui';
 
 export default function Example() {
   return (
-    <Typography>
-      {/* Component content */}
-    </Typography>
+    <Typography.Paragraph>
+      Quick brown fox jumps over the lazy dog.
+    </Typography.Paragraph>
   );
 }
 ```
+
+## Props
+
+### Typography Props
+
+<TypeTable
+  type={{
+    'as': {
+      type: "'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'span' | 'label'",
+      default: "'span'",
+      description: "The HTML tag to render the typography element as.",
+    },
+    'className': {
+      type: "string",
+      description: "Additional CSS class names to apply to the element.",
+    },
+    'style': {
+      type: "StyleXStyles",
+      description: "StyleX style object to apply custom compile-time CSS.",
+    },
+  }}
+/>

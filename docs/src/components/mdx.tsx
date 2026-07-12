@@ -7,6 +7,11 @@ import {
   InputOTPSlot,
   Tag,
   TagGroup,
+  Typography,
+  TypographyHeading,
+  TypographyParagraph,
+  TypographySpan,
+  TypographyLabel,
 } from '@moul-dev/ui'
 import { Accordion, Accordions } from 'fumadocs-ui/components/accordion'
 import { Card, Cards } from 'fumadocs-ui/components/card'
@@ -35,6 +40,11 @@ export function getMDXComponents(components?: MDXComponents) {
     Alert,
     TagGroup,
     Tag,
+    Typography,
+    'Typography.Heading': TypographyHeading,
+    'Typography.Paragraph': TypographyParagraph,
+    'Typography.Span': TypographySpan,
+    'Typography.Label': TypographyLabel,
     Card,
     Cards,
     Step,

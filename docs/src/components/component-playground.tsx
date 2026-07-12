@@ -24,6 +24,7 @@ import {
   ToggleButtonGroup,
   Tooltip,
   TooltipTrigger,
+  Typography,
   useToast,
 } from '@moul-dev/ui'
 import React, { useEffect, useState } from 'react'
@@ -376,6 +377,28 @@ const REGISTRY: Record<string, ComponentConfig> = {
         type: 'text',
         label: 'Badge Text',
         defaultValue: 'Active Status',
+      },
+    ],
+  },
+  Typography: {
+    name: 'Typography',
+    defaultProps: {
+      as: 'span',
+      children: 'The quick brown fox jumps over the lazy dog.',
+    },
+    props: [
+      {
+        name: 'as',
+        type: 'select',
+        label: 'As (HTML Tag)',
+        options: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'span', 'label'],
+        defaultValue: 'span',
+      },
+      {
+        name: 'children',
+        type: 'text',
+        label: 'Typography Text',
+        defaultValue: 'The quick brown fox jumps over the lazy dog.',
       },
     ],
   },
@@ -866,6 +889,37 @@ ${slotJSX}
   );
 }`
       }
+      case 'Typography': {
+        const { as, children } = activeProps
+        let tag = ''
+        let propsStr = ''
+
+        if (['h1', 'h2', 'h3', 'h4', 'h5', 'h6'].includes(as)) {
+          tag = 'Typography.Heading'
+          if (as !== 'h2') {
+            propsStr += ` as="${as}"`
+          }
+        } else if (as === 'p') {
+          tag = 'Typography.Paragraph'
+        } else if (as === 'span') {
+          tag = 'Typography.Span'
+        } else if (as === 'label') {
+          tag = 'Typography.Label'
+        } else {
+          tag = 'Typography'
+          propsStr += ` as="${as}"`
+        }
+
+        return `import { Typography } from '@moul-dev/ui';
+
+export default function Example() {
+  return (
+    <${tag}${propsStr}>
+      ${children}
+    </${tag}>
+  );
+}`
+      }
       case 'Button': {
         const { variant, size, isDisabled, isPending, children } = activeProps
         let propsStr = ''
@@ -1184,6 +1238,8 @@ export default function Example() {
     switch (component) {
       case 'Button':
         return <Button {...activeProps}>{activeProps.children}</Button>
+      case 'Typography':
+        return <Typography {...activeProps}>{activeProps.children}</Typography>
       case 'TextField':
         return <TextField {...activeProps} />
       case 'Switch':

@@ -13,48 +13,67 @@ export type TypographyTag =
   | 'p'
   | 'span'
   | 'label'
-export type TypographyVariant =
-  | 'h1'
-  | 'h2'
-  | 'h3'
-  | 'h4'
-  | 'h5'
-  | 'h6'
-  | 'body'
-  | 'caption'
-  | 'label'
-
-const defaultVariantMap: Record<TypographyTag, TypographyVariant> = {
-  h1: 'h1',
-  h2: 'h2',
-  h3: 'h3',
-  h4: 'h4',
-  h5: 'h5',
-  h6: 'h6',
-  p: 'body',
-  span: 'body',
-  label: 'label',
-}
-
 export interface TypographyProps
   extends Omit<React.HTMLAttributes<HTMLElement>, 'style'> {
   as?: TypographyTag
-  variant?: TypographyVariant
   style?: StyleXStyles
   className?: string
 }
 
+export interface HeadingProps extends Omit<TypographyProps, 'as'> {
+  as?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
+}
+
+const Heading = React.forwardRef<HTMLHeadingElement, HeadingProps>(
+  function Heading({ as = 'h2', ...props }, ref) {
+    return <Typography as={as} ref={ref} {...props} />
+  },
+)
+
+export type ParagraphProps = Omit<TypographyProps, 'as'>
+
+const Paragraph = React.forwardRef<HTMLParagraphElement, ParagraphProps>(
+  function Paragraph(props, ref) {
+    return <Typography as="p" ref={ref} {...props} />
+  },
+)
+
+export type SpanProps = Omit<TypographyProps, 'as'>
+
+const Span = React.forwardRef<HTMLSpanElement, SpanProps>(
+  function Span(props, ref) {
+    return <Typography as="span" ref={ref} {...props} />
+  },
+)
+
+export type TypographyLabelProps = Omit<TypographyProps, 'as'>
+
+const Label = React.forwardRef<HTMLLabelElement, TypographyLabelProps>(
+  function Label(props, ref) {
+    return <Typography as="label" ref={ref} {...props} />
+  },
+)
+
+export interface TypographyComponent
+  extends React.ForwardRefExoticComponent<
+    TypographyProps & React.RefAttributes<HTMLElement>
+  > {
+  Heading: typeof Heading
+  Paragraph: typeof Paragraph
+  Span: typeof Span
+  Label: typeof Label
+}
+
 export const Typography = React.forwardRef<HTMLElement, TypographyProps>(
   function Typography(
-    { as = 'span', variant, style, className, children, ...rest },
+    { as = 'span', style, className, children, ...rest },
     ref,
   ) {
     const Component = as
-    const resolvedVariant = variant || defaultVariantMap[as]
 
     const { className: stylexClass, style: stylexStyle } = stylex.props(
       styles.base,
-      styles[resolvedVariant],
+      styles[as],
       style,
     )
 
@@ -69,4 +88,16 @@ export const Typography = React.forwardRef<HTMLElement, TypographyProps>(
       </Component>
     )
   },
-)
+) as TypographyComponent
+
+Typography.Heading = Heading
+Typography.Paragraph = Paragraph
+Typography.Span = Span
+Typography.Label = Label
+
+export {
+  Heading as TypographyHeading,
+  Paragraph as TypographyParagraph,
+  Span as TypographySpan,
+  Label as TypographyLabel,
+}

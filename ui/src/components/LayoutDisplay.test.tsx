@@ -130,15 +130,47 @@ describe('Typography component', () => {
     })
   })
 
-  test('accepts variant prop and custom style overrides', () => {
+  test('accepts custom style and className overrides', () => {
     const { getByText } = render(
-      <Typography as="h1" variant="caption" className="my-typo">
+      <Typography as="h1" className="my-typo">
         Subtitle Caption
       </Typography>,
     )
     const element = getByText('Subtitle Caption')
     expect(element.tagName).toBe('H1')
     expect(element.className).toContain('my-typo')
+  })
+
+  test('renders semantic subcomponents correctly', () => {
+    const headingRef = React.createRef<HTMLHeadingElement>()
+    const paragraphRef = React.createRef<HTMLParagraphElement>()
+    const spanRef = React.createRef<HTMLSpanElement>()
+    const labelRef = React.createRef<HTMLLabelElement>()
+
+    const { getByText } = render(
+      <>
+        <Typography.Heading as="h3" ref={headingRef}>Heading Level 3</Typography.Heading>
+        <Typography.Paragraph ref={paragraphRef}>Paragraph text</Typography.Paragraph>
+        <Typography.Span ref={spanRef}>Span text</Typography.Span>
+        <Typography.Label ref={labelRef}>Label text</Typography.Label>
+      </>
+    )
+
+    const headingEl = getByText('Heading Level 3')
+    expect(headingEl.tagName).toBe('H3')
+    expect(headingRef.current).toBe(headingEl)
+
+    const paragraphEl = getByText('Paragraph text')
+    expect(paragraphEl.tagName).toBe('P')
+    expect(paragraphRef.current).toBe(paragraphEl)
+
+    const spanEl = getByText('Span text')
+    expect(spanEl.tagName).toBe('SPAN')
+    expect(spanRef.current).toBe(spanEl)
+
+    const labelEl = getByText('Label text')
+    expect(labelEl.tagName).toBe('LABEL')
+    expect(labelRef.current).toBe(labelEl)
   })
 })
 

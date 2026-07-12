@@ -8,45 +8,44 @@ export const styles = stylex.create({
     margin: 0,
   },
   h1: {
-    fontSize: tokens.fontSizeXl,
-    lineHeight: tokens.lineHeightXl,
+    fontSize: tokens.fontSize4xl,
+    lineHeight: tokens.lineHeight4xl,
     fontWeight: tokens.fontWeightBold,
   },
   h2: {
-    fontSize: tokens.fontSizeLg,
-    lineHeight: tokens.lineHeightLg,
+    fontSize: tokens.fontSize3xl,
+    lineHeight: tokens.lineHeight3xl,
     fontWeight: tokens.fontWeightSemibold,
   },
   h3: {
-    fontSize: tokens.fontSizeMd,
-    lineHeight: tokens.lineHeightMd,
+    fontSize: tokens.fontSizeXxl,
+    lineHeight: tokens.lineHeightXxl,
     fontWeight: tokens.fontWeightSemibold,
   },
   h4: {
-    fontSize: tokens.fontSizeSm,
-    lineHeight: tokens.lineHeightSm,
+    fontSize: tokens.fontSizeXl,
+    lineHeight: tokens.lineHeightXl,
     fontWeight: tokens.fontWeightSemibold,
   },
   h5: {
-    fontSize: tokens.fontSizeSm,
-    lineHeight: tokens.lineHeightSm,
+    fontSize: tokens.fontSizeLg,
+    lineHeight: tokens.lineHeightLg,
     fontWeight: tokens.fontWeightMedium,
   },
   h6: {
-    fontSize: tokens.fontSizeXs,
-    lineHeight: tokens.lineHeightXs,
+    fontSize: tokens.fontSizeMd,
+    lineHeight: tokens.lineHeightMd,
     fontWeight: tokens.fontWeightMedium,
   },
-  body: {
+  p: {
     fontSize: tokens.fontSizeMd,
     lineHeight: tokens.lineHeightMd,
     fontWeight: tokens.fontWeightNormal,
   },
-  caption: {
-    fontSize: tokens.fontSizeXs,
-    lineHeight: tokens.lineHeightXs,
+  span: {
+    fontSize: tokens.fontSizeMd,
+    lineHeight: tokens.lineHeightMd,
     fontWeight: tokens.fontWeightNormal,
-    color: tokens.colorFgSubtle,
   },
   label: {
     fontSize: tokens.fontSizeSm,
