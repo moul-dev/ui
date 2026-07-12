@@ -12,7 +12,7 @@ export const styles = stylex.create({
     color: tokens.colorFg,
     paddingBlock: tokens.spacing1,
     paddingInline: tokens.spacing2,
-    borderRadius: tokens.radiusSm,
+    borderRadius: tokens.radiusMd,
     borderWidth: '1px',
     borderStyle: 'solid',
     borderColor: tokens.colorBorder,

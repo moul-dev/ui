@@ -19,6 +19,16 @@ export interface TooltipProps
   extends Omit<AriaTooltipProps, 'style' | 'className'> {
   style?: StyleXStyles
   className?: string
+  /**
+   * The distance between the tooltip and the trigger button.
+   * @default 8
+   */
+  offset?: number
+  /**
+   * The offset along the cross axis.
+   * @default 0
+   */
+  crossOffset?: number
 }
 
 export const Tooltip = React.forwardRef<HTMLDivElement, TooltipProps>(

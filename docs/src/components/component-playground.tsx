@@ -512,6 +512,7 @@ const REGISTRY: Record<string, ComponentConfig> = {
     defaultProps: {
       placement: 'top',
       children: 'This is helper information!',
+      offset: 8,
     },
     props: [
       {
@@ -520,6 +521,12 @@ const REGISTRY: Record<string, ComponentConfig> = {
         label: 'Tooltip Placement',
         options: ['top', 'bottom', 'left', 'right'],
         defaultValue: 'top',
+      },
+      {
+        name: 'offset',
+        type: 'number',
+        label: 'Offset',
+        defaultValue: 8,
       },
       {
         name: 'children',
@@ -1164,9 +1171,10 @@ export default function Example() {
 }`
       }
       case 'Tooltip': {
-        const { placement, children } = activeProps
+        const { placement, children, offset } = activeProps
         let propsStr = ''
         if (placement !== 'top') propsStr += ` placement="${placement}"`
+        if (offset !== undefined && offset !== 8) propsStr += ` offset={${offset}}`
         return `import { Button, Tooltip, TooltipTrigger } from '@moul-dev/ui';
 
 export default function Example() {
@@ -1291,7 +1299,7 @@ export default function Example() {
           <div className="py-6">
             <TooltipTrigger>
               <Button variant="outline">Hover me</Button>
-              <Tooltip placement={activeProps.placement}>
+              <Tooltip placement={activeProps.placement} offset={activeProps.offset}>
                 {activeProps.children}
               </Tooltip>
             </TooltipTrigger>

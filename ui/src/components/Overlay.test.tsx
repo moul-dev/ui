@@ -111,6 +111,18 @@ describe('Tooltip Component', () => {
     expect(tooltip).toBeInTheDocument()
     expect(tooltip).toHaveTextContent('Tooltip content')
   })
+
+  test('supports offset and crossOffset props', () => {
+    const { getByRole } = render(
+      <TooltipTrigger isOpen={true}>
+        <Button>Hover or focus me</Button>
+        <Tooltip offset={15} crossOffset={5}>Tooltip with offset</Tooltip>
+      </TooltipTrigger>,
+    )
+
+    const tooltip = getByRole('tooltip')
+    expect(tooltip).toBeInTheDocument()
+  })
 })
 
 describe('Popover Component', () => {

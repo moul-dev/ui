@@ -48,6 +48,16 @@ export default function Example() {
       default: "'top'",
       description: "The placement of the tooltip relative to its trigger.",
     },
+    'offset': {
+      type: "number",
+      default: "8",
+      description: "The distance between the tooltip and the trigger button.",
+    },
+    'crossOffset': {
+      type: "number",
+      default: "0",
+      description: "The offset along the cross axis.",
+    },
     'isOpen': {
       type: "boolean",
       description: "Whether the tooltip is open (controlled).",
