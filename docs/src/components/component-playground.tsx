@@ -15,6 +15,8 @@ import {
   Select,
   SelectItem,
   Slider,
+  SliderThumb,
+  SliderTrack,
   Switch,
   Tag,
   TagGroup,
@@ -1058,7 +1060,7 @@ export default function Example() {
         if (defaultValue !== undefined)
           propsStr += ` defaultValue={${defaultValue}}`
         if (isDisabled) propsStr += ` isDisabled`
-        return `import { Slider } from '@moul-dev/ui';
+        return `import { Slider, SliderTrack, SliderThumb } from '@moul-dev/ui';
 import { useState } from 'react';
 
 export default function Example() {
@@ -1068,7 +1070,11 @@ export default function Example() {
     <Slider
       value={value}
       onChange={setValue}${propsStr}
-    />
+    >
+      <SliderTrack>
+        <SliderThumb />
+      </SliderTrack>
+    </Slider>
   );
 }`
       }
@@ -1265,7 +1271,13 @@ export default function Example() {
           <ToggleButton {...activeProps}>{activeProps.children}</ToggleButton>
         )
       case 'Slider':
-        return <Slider {...activeProps} />
+        return (
+          <Slider {...activeProps}>
+            <SliderTrack>
+              <SliderThumb />
+            </SliderTrack>
+          </Slider>
+        )
       case 'Badge':
         return <Badge {...activeProps}>{activeProps.children}</Badge>
       case 'Toast':
