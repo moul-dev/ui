@@ -81,7 +81,6 @@ export const styles = stylex.create({
     marginInlineStart: tokens.spacing2,
   },
   popover: {
-    borderRadius: tokens.radiusMd,
     borderWidth: '1px',
     borderStyle: 'solid',
     borderColor: tokens.colorBorder,
@@ -91,6 +90,15 @@ export const styles = stylex.create({
     minWidth: 'var(--trigger-width)',
     maxHeight: '300px',
     overflowY: 'auto',
+  },
+  popoverSm: {
+    borderRadius: tokens.radiusSm,
+  },
+  popoverMd: {
+    borderRadius: tokens.radiusMd,
+  },
+  popoverLg: {
+    borderRadius: tokens.radiusMd,
   },
   listbox: {
     padding: tokens.spacing1,
@@ -102,12 +110,6 @@ export const styles = stylex.create({
   item: {
     display: 'flex',
     alignItems: 'center',
-    paddingBlock: tokens.spacing2,
-    paddingInline: tokens.spacing3,
-    borderRadius: tokens.radiusSm,
-    color: tokens.colorFg,
-    fontSize: tokens.fontSizeMd,
-    lineHeight: tokens.lineHeightMd,
     cursor: 'pointer',
     outline: 'none',
     userSelect: 'none',
@@ -115,6 +117,28 @@ export const styles = stylex.create({
     transitionProperty: 'background-color, color',
     transitionDuration: '0.1s',
     transitionTimingFunction: 'ease-in-out',
+    color: tokens.colorFg,
+  },
+  itemSm: {
+    paddingBlock: tokens.spacing1,
+    paddingInline: tokens.spacing2,
+    borderRadius: `calc(${tokens.radiusSm} - ${tokens.spacing1})`,
+    fontSize: tokens.fontSizeXs,
+    lineHeight: tokens.lineHeightXs,
+  },
+  itemMd: {
+    paddingBlock: '6px',
+    paddingInline: tokens.spacing3,
+    borderRadius: `calc(${tokens.radiusMd} - ${tokens.spacing1})`,
+    fontSize: tokens.fontSizeSm,
+    lineHeight: tokens.lineHeightSm,
+  },
+  itemLg: {
+    paddingBlock: tokens.spacing2,
+    paddingInline: tokens.spacing4,
+    borderRadius: `calc(${tokens.radiusMd} - ${tokens.spacing1})`,
+    fontSize: tokens.fontSizeMd,
+    lineHeight: tokens.lineHeightMd,
   },
   itemHovered: {
     backgroundColor: tokens.colorBgSubtle,

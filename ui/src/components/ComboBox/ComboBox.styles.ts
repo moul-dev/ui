@@ -122,7 +122,7 @@ export const styles = stylex.create({
     alignItems: 'center',
     paddingBlock: tokens.spacing2,
     paddingInline: tokens.spacing3,
-    borderRadius: tokens.radiusSm,
+    borderRadius: `calc(${tokens.radiusMd} - ${tokens.spacing1})`,
     color: tokens.colorFg,
     fontSize: tokens.fontSizeMd,
     lineHeight: tokens.lineHeightMd,

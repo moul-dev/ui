@@ -22,6 +22,12 @@ import { FieldError } from '../FieldError'
 import { Label } from '../Label'
 import { styles } from './Select.styles'
 
+// ── SelectContext ─────────────────────────────────────────────────────
+
+const SelectContext = React.createContext<{ size: 'sm' | 'md' | 'lg' }>({
+  size: 'md',
+})
+
 // ── SelectValue Component ─────────────────────────────────────────────
 
 export const SelectValue = AriaSelectValue
@@ -35,16 +41,25 @@ export interface SelectPopoverProps extends Omit<AriaPopoverProps, 'style'> {
 
 export const SelectPopover = React.forwardRef<HTMLElement, SelectPopoverProps>(
   function SelectPopover({ style, className, children, ...rest }, ref) {
+    const { size } = React.useContext(SelectContext)
     return (
       <AriaPopover
         {...rest}
         ref={ref}
         className={(_) => {
-          const { className: stylexClass } = stylex.props(styles.popover, style)
+          const { className: stylexClass } = stylex.props(
+            styles.popover,
+            styles[`popover${size.charAt(0).toUpperCase() + size.slice(1)}` as 'popoverSm' | 'popoverMd' | 'popoverLg'],
+            style,
+          )
           return [stylexClass, className].filter(Boolean).join(' ')
         }}
         style={(_) => {
-          const { style: stylexStyle } = stylex.props(styles.popover, style)
+          const { style: stylexStyle } = stylex.props(
+            styles.popover,
+            styles[`popover${size.charAt(0).toUpperCase() + size.slice(1)}` as 'popoverSm' | 'popoverMd' | 'popoverLg'],
+            style,
+          )
           return stylexStyle
         }}
       >
@@ -63,6 +78,10 @@ export interface SelectItemProps extends Omit<AriaListBoxItemProps, 'style'> {
 
 export const SelectItem = React.forwardRef<HTMLDivElement, SelectItemProps>(
   function SelectItem({ style, className, children, ...rest }, ref) {
+    const { size } = React.useContext(SelectContext)
+    const sizeSuffix = size.charAt(0).toUpperCase() + size.slice(1)
+    const sizeStyle = styles[`item${sizeSuffix}` as 'itemSm' | 'itemMd' | 'itemLg']
+
     return (
       <AriaListBoxItem
         {...rest}
@@ -70,6 +89,7 @@ export const SelectItem = React.forwardRef<HTMLDivElement, SelectItemProps>(
         className={(renderProps) => {
           const { className: stylexClass } = stylex.props(
             styles.item,
+            sizeStyle,
             renderProps.isHovered && styles.itemHovered,
             renderProps.isFocused && styles.itemFocused,
             renderProps.isSelected && styles.itemSelected,
@@ -81,6 +101,7 @@ export const SelectItem = React.forwardRef<HTMLDivElement, SelectItemProps>(
         style={(renderProps) => {
           const { style: stylexStyle } = stylex.props(
             styles.item,
+            sizeStyle,
             renderProps.isHovered && styles.itemHovered,
             renderProps.isFocused && styles.itemFocused,
             renderProps.isSelected && styles.itemSelected,
@@ -156,76 +177,78 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
     ref,
   ) {
     return (
-      <AriaSelect
-        {...rest}
-        className={(_) => {
-          const { className: stylexClass } = stylex.props(styles.container)
-          return [stylexClass, className].filter(Boolean).join(' ')
-        }}
-        style={(_) => {
-          const { style: stylexStyle } = stylex.props(styles.container)
-          return stylexStyle
-        }}
-      >
-        {({ isInvalid }) => (
-          <>
-            {label && <Label>{label}</Label>}
-            <AriaButton
-              ref={ref}
-              className={(renderProps) => {
-                const { className: stylexClass } = stylex.props(
-                  styles.trigger,
-                  styles[size],
-                  isInvalid && styles.triggerInvalid,
-                  renderProps.isDisabled && styles.triggerDisabled,
-                  style,
-                )
-                return stylexClass || ''
-              }}
-              style={(renderProps) => {
-                const { style: stylexStyle } = stylex.props(
-                  styles.trigger,
-                  styles[size],
-                  isInvalid && styles.triggerInvalid,
-                  renderProps.isDisabled && styles.triggerDisabled,
-                  style,
-                )
-                return stylexStyle || {}
-              }}
-            >
-              <SelectValue>
-                {({ selectedText, isPlaceholder }) =>
-                  isPlaceholder
-                    ? (placeholder ?? 'Select an item')
-                    : selectedText
-                }
-              </SelectValue>
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={2}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                {...stylex.props(styles.chevron)}
-                aria-hidden="true"
+      <SelectContext.Provider value={{ size }}>
+        <AriaSelect
+          {...rest}
+          className={(_) => {
+            const { className: stylexClass } = stylex.props(styles.container)
+            return [stylexClass, className].filter(Boolean).join(' ')
+          }}
+          style={(_) => {
+            const { style: stylexStyle } = stylex.props(styles.container)
+            return stylexStyle
+          }}
+        >
+          {({ isInvalid }) => (
+            <>
+              {label && <Label>{label}</Label>}
+              <AriaButton
+                ref={ref}
+                className={(renderProps) => {
+                  const { className: stylexClass } = stylex.props(
+                    styles.trigger,
+                    styles[size],
+                    isInvalid && styles.triggerInvalid,
+                    renderProps.isDisabled && styles.triggerDisabled,
+                    style,
+                  )
+                  return stylexClass || ''
+                }}
+                style={(renderProps) => {
+                  const { style: stylexStyle } = stylex.props(
+                    styles.trigger,
+                    styles[size],
+                    isInvalid && styles.triggerInvalid,
+                    renderProps.isDisabled && styles.triggerDisabled,
+                    style,
+                  )
+                  return stylexStyle || {}
+                }}
               >
-                <path d="m6 9 6 6 6-6" />
-              </svg>
-            </AriaButton>
-            {description && <Description>{description}</Description>}
-            <FieldError errorMessage={errorMessage} />
-            <SelectPopover>
-              <AriaListBox
-                className={() => stylex.props(styles.listbox).className || ''}
-                style={() => stylex.props(styles.listbox).style || {}}
-              >
-                {children}
-              </AriaListBox>
-            </SelectPopover>
-          </>
-        )}
-      </AriaSelect>
+                <SelectValue>
+                  {({ selectedText, isPlaceholder }) =>
+                    isPlaceholder
+                      ? (placeholder ?? 'Select an item')
+                      : selectedText
+                  }
+                </SelectValue>
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  {...stylex.props(styles.chevron)}
+                  aria-hidden="true"
+                >
+                  <path d="m6 9 6 6 6-6" />
+                </svg>
+              </AriaButton>
+              {description && <Description>{description}</Description>}
+              <FieldError errorMessage={errorMessage} />
+              <SelectPopover>
+                <AriaListBox
+                  className={() => stylex.props(styles.listbox).className || ''}
+                  style={() => stylex.props(styles.listbox).style || {}}
+                >
+                  {children}
+                </AriaListBox>
+              </SelectPopover>
+            </>
+          )}
+        </AriaSelect>
+      </SelectContext.Provider>
     )
   },
 )
