@@ -1,2 +1,2 @@
-export { ChartTooltip } from './ChartTooltip'
 export type { CustomTooltipProps } from './ChartTooltip'
+export { ChartTooltip } from './ChartTooltip'

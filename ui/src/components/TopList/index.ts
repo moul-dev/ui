@@ -1,2 +1,2 @@
+export type { TopListItem, TopListProps } from './TopList'
 export { TopList } from './TopList'
-export type { TopListProps, TopListItem } from './TopList'

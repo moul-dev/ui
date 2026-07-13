@@ -6,35 +6,36 @@ import {
   AlertDialogBody,
   AlertDialogFooter,
   AlertDialogHeader,
+  AreaChart,
+  BarChart,
   Button,
+  ChartContainer,
   ComboBox,
   ComboBoxItem,
+  DoughnutChart,
   Form,
   InputOTP,
   InputOTPGroup,
   InputOTPSeparator,
   InputOTPSlot,
+  LineChart,
   Modal,
   ModalBody,
   ModalDialog,
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  PercentageBar,
+  PercentageCircle,
   REGEXP_ONLY_DIGITS,
+  Stat,
   Tag,
   TagGroup,
   TextField,
   ToastContainer,
-  useToast,
-  ChartContainer,
-  LineChart,
-  BarChart,
-  DoughnutChart,
   TopList,
-  Stat,
-  PercentageBar,
-  PercentageCircle,
   tokens,
+  useToast,
 } from '@moul-dev/ui'
 import React, { useState } from 'react'
 
@@ -237,7 +238,7 @@ export function TagGroupDemo() {
             label="Small size"
             size="sm"
             variant="primary"
-            onRemove={() => {}}
+            onRemove={() => { }}
           >
             <Tag id="sm1">Small Tag</Tag>
             <Tag id="sm2">Tag 2</Tag>
@@ -247,7 +248,7 @@ export function TagGroupDemo() {
             label="Medium size"
             size="md"
             variant="secondary"
-            onRemove={() => {}}
+            onRemove={() => { }}
           >
             <Tag id="md1">Medium Tag</Tag>
             <Tag id="md2">Tag 2</Tag>
@@ -257,7 +258,7 @@ export function TagGroupDemo() {
             label="Large size"
             size="lg"
             variant="tertiary"
-            onRemove={() => {}}
+            onRemove={() => { }}
           >
             <Tag id="lg1">Large Tag</Tag>
             <Tag id="lg2">Tag 2</Tag>
@@ -462,19 +463,110 @@ const kFormatter = (val: number) => {
 
 // Mock Data
 const timeseriesData = [
-  { time: '12:00', 'United States': 120, 'Netherlands': 80, 'Singapore': 40, 'Canada': 50, 'Ireland': 10 },
-  { time: '14:00', 'United States': 150, 'Netherlands': 110, 'Singapore': 60, 'Canada': 70, 'Ireland': 15 },
-  { time: '16:00', 'United States': 880, 'Netherlands': 130, 'Singapore': 90, 'Canada': 80, 'Ireland': 310 },
-  { time: '18:00', 'United States': 220, 'Netherlands': 320, 'Singapore': 80, 'Canada': 90, 'Ireland': 40 },
-  { time: '20:00', 'United States': 180, 'Netherlands': 520, 'Singapore': 70, 'Canada': 85, 'Ireland': 25 },
-  { time: '22:00', 'United States': 310, 'Netherlands': 120, 'Singapore': 50, 'Canada': 60, 'Ireland': 20 },
-  { time: '13', 'United States': 140, 'Netherlands': 550, 'Singapore': 60, 'Canada': 75, 'Ireland': 15 },
-  { time: '02:00', 'United States': 120, 'Netherlands': 110, 'Singapore': 40, 'Canada': 50, 'Ireland': 12 },
-  { time: '04:00', 'United States': 160, 'Netherlands': 130, 'Singapore': 90, 'Canada': 60, 'Ireland': 350 },
-  { time: '06:00', 'United States': 140, 'Netherlands': 180, 'Singapore': 80, 'Canada': 55, 'Ireland': 20 },
-  { time: '08:00', 'United States': 920, 'Netherlands': 1750, 'Singapore': 110, 'Canada': 380, 'Ireland': 15 },
-  { time: '10:00', 'United States': 620, 'Netherlands': 150, 'Singapore': 1250, 'Canada': 120, 'Ireland': 25 },
-  { time: '12:00', 'United States': 140, 'Netherlands': 120, 'Singapore': 80, 'Canada': 90, 'Ireland': 10 },
+  {
+    time: '12:00',
+    'United States': 120,
+    Netherlands: 80,
+    Singapore: 40,
+    Canada: 50,
+    Ireland: 10,
+  },
+  {
+    time: '14:00',
+    'United States': 150,
+    Netherlands: 110,
+    Singapore: 60,
+    Canada: 70,
+    Ireland: 15,
+  },
+  {
+    time: '16:00',
+    'United States': 880,
+    Netherlands: 130,
+    Singapore: 90,
+    Canada: 80,
+    Ireland: 310,
+  },
+  {
+    time: '18:00',
+    'United States': 220,
+    Netherlands: 320,
+    Singapore: 80,
+    Canada: 90,
+    Ireland: 40,
+  },
+  {
+    time: '20:00',
+    'United States': 180,
+    Netherlands: 520,
+    Singapore: 70,
+    Canada: 85,
+    Ireland: 25,
+  },
+  {
+    time: '22:00',
+    'United States': 310,
+    Netherlands: 120,
+    Singapore: 50,
+    Canada: 60,
+    Ireland: 20,
+  },
+  {
+    time: '13',
+    'United States': 140,
+    Netherlands: 550,
+    Singapore: 60,
+    Canada: 75,
+    Ireland: 15,
+  },
+  {
+    time: '02:00',
+    'United States': 120,
+    Netherlands: 110,
+    Singapore: 40,
+    Canada: 50,
+    Ireland: 12,
+  },
+  {
+    time: '04:00',
+    'United States': 160,
+    Netherlands: 130,
+    Singapore: 90,
+    Canada: 60,
+    Ireland: 350,
+  },
+  {
+    time: '06:00',
+    'United States': 140,
+    Netherlands: 180,
+    Singapore: 80,
+    Canada: 55,
+    Ireland: 20,
+  },
+  {
+    time: '08:00',
+    'United States': 920,
+    Netherlands: 1750,
+    Singapore: 110,
+    Canada: 380,
+    Ireland: 15,
+  },
+  {
+    time: '10:00',
+    'United States': 620,
+    Netherlands: 150,
+    Singapore: 1250,
+    Canada: 120,
+    Ireland: 25,
+  },
+  {
+    time: '12:00',
+    'United States': 140,
+    Netherlands: 120,
+    Singapore: 80,
+    Canada: 90,
+    Ireland: 10,
+  },
 ]
 
 const categoricalData = [
@@ -527,7 +619,13 @@ export function LineChartDemo() {
         <LineChart
           data={timeseriesData}
           indexKey="time"
-          categories={['United States', 'Netherlands', 'Singapore', 'Canada', 'Ireland']}
+          categories={[
+            'United States',
+            'Netherlands',
+            'Singapore',
+            'Canada',
+            'Ireland',
+          ]}
           valueFormatter={kFormatter}
           height={320}
         />
@@ -548,7 +646,10 @@ export function BarChartDemo() {
 
   return (
     <div className="w-full max-w-3xl flex flex-col gap-8 p-4">
-      <ChartContainer title="Vertical Bar Chart (Categorical)" legend={legendItems}>
+      <ChartContainer
+        title="Vertical Bar Chart (Categorical)"
+        legend={legendItems}
+      >
         <BarChart
           data={categoricalData}
           indexKey="name"
@@ -559,7 +660,10 @@ export function BarChartDemo() {
         />
       </ChartContainer>
 
-      <ChartContainer title="Horizontal Bar Chart (Categorical)" legend={legendItems}>
+      <ChartContainer
+        title="Horizontal Bar Chart (Categorical)"
+        legend={legendItems}
+      >
         <BarChart
           data={categoricalData}
           indexKey="name"
@@ -671,16 +775,221 @@ export function PercentageDemo() {
     <div className="w-full max-w-3xl flex flex-col gap-6 p-4">
       <div className="flex flex-wrap gap-8 items-center justify-center p-6 border rounded-lg dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/50">
         <PercentageCircle value={75} label="Server CPU" size={90} />
-        <PercentageCircle value={45} label="Memory Usage" size={90} color={tokens.colorChart2} />
-        <PercentageCircle value={12} label="Disk IO" size={90} color={tokens.colorChart3} />
+        <PercentageCircle
+          value={45}
+          label="Memory Usage"
+          size={90}
+          color={tokens.colorChart2}
+        />
+        <PercentageCircle
+          value={12}
+          label="Disk IO"
+          size={90}
+          color={tokens.colorChart3}
+        />
       </div>
 
       <div className="flex flex-col gap-4 p-6 border rounded-lg dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/50">
         <PercentageBar value={85} label="Task Completion" size="md" />
-        <PercentageBar value={52} label="Network Bandwidth" size="sm" color={tokens.colorChart5} />
-        <PercentageBar value={95} label="Database Sync" size="lg" color={tokens.colorChart7} />
+        <PercentageBar
+          value={52}
+          label="Network Bandwidth"
+          size="sm"
+          color={tokens.colorChart5}
+        />
+        <PercentageBar
+          value={95}
+          label="Database Sync"
+          size="lg"
+          color={tokens.colorChart7}
+        />
       </div>
     </div>
   )
 }
 
+export function StatusChartDemo() {
+  const statusData = [
+    { time: '1', value: 100 },
+    { time: '2', value: 100 },
+    { time: '3', value: 100 },
+    { time: '4', value: 100 },
+    { time: '5', value: 100 },
+    { time: '6', value: 100 },
+    { time: '7', value: 100 },
+    { time: '8', value: 100 },
+    { time: '9', value: 100 },
+    { time: '10', value: 100 },
+    { time: '11', value: 100 },
+    { time: '12', value: 100 },
+    { time: '13', value: 5 }, // sharp dip
+    { time: '14', value: 100 },
+    { time: '15', value: 100 },
+    { time: '16', value: 100 },
+    { time: '17', value: 100 },
+    { time: '18', value: 100 },
+    { time: '19', value: 100 },
+    { time: '20', value: 100 },
+    { time: '21', value: 100 },
+    { time: '22', value: 100 },
+    { time: '23', value: 100 },
+    { time: '24', value: 100 },
+  ]
+
+  return (
+    <div className="w-full max-w-sm">
+      <ChartContainer
+        title="All requests"
+        edgeToEdge
+      >
+        <div className="px-6 pt-4 pb-2">
+          <div className="text-3xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-50 font-sans">
+            100.00%
+          </div>
+        </div>
+        <AreaChart
+          data={statusData}
+          indexKey="time"
+          categories={['value']}
+          gridLines={false}
+          showXAxis={false}
+          showYAxis={false}
+          height={120}
+        />
+      </ChartContainer>
+    </div>
+  )
+}
+
+export function SpikyAreaChartDemo() {
+  const spikyData = [
+    { time: '1', value: 100 },
+    { time: '2', value: 120 },
+    { time: '3', value: 80 },
+    { time: '4', value: 210 },
+    { time: '5', value: 90 },
+    { time: '6', value: 70 },
+    { time: '7', value: 110 },
+    { time: '8', value: 320 },
+    { time: '9', value: 80 },
+    { time: '10', value: 90 },
+    { time: '11', value: 150 },
+    { time: '12', value: 120 },
+    { time: '13', value: 140 },
+    { time: '14', value: 130 },
+    { time: '15', value: 160 },
+    { time: '16', value: 100 },
+    { time: '17', value: 1200 }, // giant spike!
+    { time: '18', value: 110 },
+    { time: '19', value: 350 },
+    { time: '20', value: 280 },
+    { time: '21', value: 300 },
+    { time: '22', value: 180 },
+    { time: '23', value: 500 }, // medium spike
+    { time: '24', value: 80 },
+    { time: '25', value: 120 },
+    { time: '26', value: 180 },
+    { time: '27', value: 110 },
+    { time: '28', value: 130 },
+    { time: '29', value: 220 },
+    { time: '30', value: 100 },
+    { time: '31', value: 400 }, // smaller spike
+    { time: '32', value: 110 },
+    { time: '33', value: 90 },
+  ]
+
+  return (
+    <div className="w-full max-w-sm">
+      <ChartContainer
+        title="All requests"
+        edgeToEdge
+      >
+        <div className="px-6 pt-4 pb-2">
+          <div className="flex items-baseline gap-2">
+            <span className="text-3xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-50 font-sans">
+              15.19k
+            </span>
+            <span className="flex items-center gap-0.5 text-xs font-semibold text-neutral-500 dark:text-neutral-400">
+              <span className="text-emerald-500 font-bold text-sm">↑</span>{' '}
+              138.8%
+            </span>
+          </div>
+        </div>
+        <AreaChart
+          data={spikyData}
+          indexKey="time"
+          categories={['value']}
+          gridLines={false}
+          showXAxis={false}
+          showYAxis={false}
+          height={120}
+        />
+      </ChartContainer>
+    </div>
+  )
+}
+
+const GlobeIcon = () => (
+  <svg
+    className="w-3.5 h-3.5"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <circle cx="12" cy="12" r="10" />
+    <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
+    <path d="M2 12h20" />
+  </svg>
+)
+
+const ChevronDownIcon = () => (
+  <svg
+    className="w-3 h-3 text-neutral-500 dark:text-neutral-400"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="m6 9 6 6 6-6" />
+  </svg>
+)
+
+const BookmarkIcon = () => (
+  <svg
+    className="w-3.5 h-3.5"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z" />
+  </svg>
+)
+
+function ChartActionPill() {
+  return (
+    <div className="flex items-center gap-1.5 px-2.5 py-1 bg-neutral-100 hover:bg-neutral-200/80 dark:bg-neutral-800/80 dark:hover:bg-neutral-800 border border-neutral-200 dark:border-neutral-700/65 rounded-full shadow-sm">
+      <button
+        type="button"
+        className="flex items-center gap-1 text-neutral-600 hover:text-neutral-800 dark:text-neutral-300 dark:hover:text-white transition-colors cursor-pointer bg-transparent border-0 outline-none"
+      >
+        <GlobeIcon />
+        <ChevronDownIcon />
+      </button>
+      <div className="w-[1px] h-3 bg-neutral-300 dark:bg-neutral-700/60" />
+      <button
+        type="button"
+        className="flex items-center justify-center text-neutral-600 hover:text-neutral-800 dark:text-neutral-300 dark:hover:text-white transition-colors cursor-pointer bg-transparent border-0 outline-none"
+      >
+        <BookmarkIcon />
+      </button>
+    </div>
+  )
+}

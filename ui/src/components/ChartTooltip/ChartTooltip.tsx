@@ -1,6 +1,6 @@
 'use client'
 import * as stylex from '@stylexjs/stylex'
-import * as React from 'react'
+import type * as React from 'react'
 import { styles } from './ChartTooltip.styles'
 
 export interface CustomTooltipProps {
@@ -36,7 +36,9 @@ export const ChartTooltip: React.FC<CustomTooltipProps> = ({
                   {...stylex.props(styles.dot)}
                   style={{
                     backgroundColor:
-                      entry.color || entry.payload?.fill || 'var(--colorPrimary500)',
+                      entry.color ||
+                      entry.payload?.fill ||
+                      'var(--colorPrimary500)',
                   }}
                 />
                 <span {...stylex.props(styles.name)}>{entry.name}</span>

@@ -1,3 +1,4 @@
+import { buttonVariants } from 'fumadocs-ui/components/ui/button'
 import {
   DocsBody,
   DocsDescription,
@@ -7,7 +8,6 @@ import {
   ViewOptionsPopover,
 } from 'fumadocs-ui/layouts/docs/page'
 import { createRelativeLink } from 'fumadocs-ui/mdx'
-import { buttonVariants } from 'fumadocs-ui/components/ui/button'
 import { ExternalLink } from 'lucide-react'
 import type { PageProps } from 'waku/router'
 import { unstable_notFound } from 'waku/router/server'

@@ -1,15 +1,15 @@
 export type {
-  TypographyProps,
-  TypographyTag,
   HeadingProps,
   ParagraphProps,
   SpanProps,
   TypographyLabelProps,
+  TypographyProps,
+  TypographyTag,
 } from './Typography'
 export {
   Typography,
   TypographyHeading,
+  TypographyLabel,
   TypographyParagraph,
   TypographySpan,
-  TypographyLabel,
 } from './Typography'

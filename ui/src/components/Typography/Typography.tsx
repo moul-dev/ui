@@ -97,7 +97,7 @@ Typography.Label = Label
 
 export {
   Heading as TypographyHeading,
+  Label as TypographyLabel,
   Paragraph as TypographyParagraph,
   Span as TypographySpan,
-  Label as TypographyLabel,
 }

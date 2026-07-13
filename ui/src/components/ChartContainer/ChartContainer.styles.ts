@@ -18,6 +18,10 @@ export const styles = stylex.create({
     color: tokens.colorFg,
     overflow: 'hidden',
   },
+  cardEdgeToEdge: {
+    padding: 0,
+    gap: 0,
+  },
   header: {
     display: 'flex',
     justifyContent: 'space-between',
@@ -27,6 +31,15 @@ export const styles = stylex.create({
     borderBottomStyle: 'solid',
     borderBottomColor: 'transparent',
     paddingBottom: tokens.spacing2,
+  },
+  headerEdgeToEdge: {
+    paddingTop: tokens.spacing5,
+    paddingBottom: tokens.spacing4,
+    paddingLeft: tokens.spacing6,
+    paddingRight: tokens.spacing6,
+  },
+  headerDivider: {
+    borderBottomColor: tokens.colorBorderSubtle,
   },
   title: {
     fontSize: tokens.fontSizeLg,
@@ -87,6 +100,10 @@ export const styles = stylex.create({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  bodyEdgeToEdge: {
+    minHeight: 'auto',
+    display: 'block',
   },
   loadingContainer: {
     position: 'absolute',

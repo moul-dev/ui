@@ -1,4 +1,11 @@
 {
   "title": "Charts",
-  "pages": ["linechart", "barchart", "doughnutchart", "toplist", "stat", "percentage"]
+  "pages": [
+    "linechart",
+    "barchart",
+    "doughnutchart",
+    "toplist",
+    "stat",
+    "percentage"
+  ]
 }

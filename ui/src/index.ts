@@ -15,10 +15,14 @@ export type {
   AlertDialogHeaderProps,
   AlertDialogProps,
 } from './components/AlertDialog/AlertDialog'
+export type { AreaChartProps } from './components/AreaChart'
+export { AreaChart } from './components/AreaChart'
 export { Avatar } from './components/Avatar'
 export type { AvatarProps } from './components/Avatar/Avatar'
 export { Badge } from './components/Badge'
 export type { BadgeProps, BadgeVariant } from './components/Badge/Badge'
+export type { BarChartProps } from './components/BarChart'
+export { BarChart } from './components/BarChart'
 export type {
   BreadcrumbItemProps,
   BreadcrumbsProps,
@@ -35,6 +39,12 @@ export type {
   CardProps,
 } from './components/Card'
 export { Card, CardBody, CardFooter, CardHeader } from './components/Card'
+export type {
+  ChartContainerProps,
+  LegendItem,
+} from './components/ChartContainer'
+// Charts and Analytics Components
+export { ChartContainer } from './components/ChartContainer'
 export { Checkbox } from './components/Checkbox'
 export type { CheckboxProps } from './components/Checkbox/Checkbox'
 export { CheckboxGroup } from './components/CheckboxGroup'
@@ -47,6 +57,8 @@ export type {
 } from './components/ComboBox/ComboBox'
 export { Description } from './components/Description'
 export type { DescriptionProps } from './components/Description/Description'
+export type { DoughnutChartProps } from './components/DoughnutChart'
+export { DoughnutChart } from './components/DoughnutChart'
 export { ErrorMessage } from './components/ErrorMessage'
 export type { ErrorMessageProps } from './components/ErrorMessage/ErrorMessage'
 export { FieldError } from './components/FieldError'
@@ -71,6 +83,8 @@ export { Kbd } from './components/Kbd'
 export type { KbdProps } from './components/Kbd/Kbd'
 export { Label } from './components/Label'
 export type { LabelProps } from './components/Label/Label'
+export type { LineChartProps } from './components/LineChart'
+export { LineChart } from './components/LineChart'
 export { Link } from './components/Link'
 export type { LinkProps } from './components/Link/Link'
 export {
@@ -91,6 +105,11 @@ export type {
 } from './components/Modal/Modal'
 export { NumberField } from './components/NumberField'
 export type { NumberFieldProps } from './components/NumberField/NumberField'
+export type {
+  PercentageBarProps,
+  PercentageCircleProps,
+} from './components/Percentage'
+export { PercentageBar, PercentageCircle } from './components/Percentage'
 export { Popover, PopoverDialog, PopoverTrigger } from './components/Popover'
 export type {
   PopoverDialogProps,
@@ -128,6 +147,8 @@ export type {
 } from './components/Slider/Slider'
 export { Spinner } from './components/Spinner'
 export type { SpinnerProps } from './components/Spinner/Spinner'
+export type { StatProps } from './components/Stat'
+export { Stat } from './components/Stat'
 export { Switch } from './components/Switch'
 export type { SwitchProps } from './components/Switch/Switch'
 export type {
@@ -177,37 +198,23 @@ export { ToggleButtonGroup } from './components/ToggleButtonGroup'
 export type { ToggleButtonGroupProps } from './components/ToggleButtonGroup/ToggleButtonGroup'
 export { Tooltip, TooltipTrigger } from './components/Tooltip'
 export type { TooltipProps } from './components/Tooltip/Tooltip'
+export type { TopListItem, TopListProps } from './components/TopList'
+export { TopList } from './components/TopList'
 export {
   Typography,
   TypographyHeading,
+  TypographyLabel,
   TypographyParagraph,
   TypographySpan,
-  TypographyLabel,
 } from './components/Typography'
 export type {
-  TypographyProps,
-  TypographyTag,
   HeadingProps,
   ParagraphProps,
   SpanProps,
   TypographyLabelProps,
+  TypographyProps,
+  TypographyTag,
 } from './components/Typography/Typography'
-
-// Charts and Analytics Components
-export { ChartContainer } from './components/ChartContainer'
-export type { ChartContainerProps, LegendItem } from './components/ChartContainer'
-export { LineChart } from './components/LineChart'
-export type { LineChartProps } from './components/LineChart'
-export { BarChart } from './components/BarChart'
-export type { BarChartProps } from './components/BarChart'
-export { DoughnutChart } from './components/DoughnutChart'
-export type { DoughnutChartProps } from './components/DoughnutChart'
-export { TopList } from './components/TopList'
-export type { TopListProps, TopListItem } from './components/TopList'
-export { Stat } from './components/Stat'
-export type { StatProps } from './components/Stat'
-export { PercentageBar, PercentageCircle } from './components/Percentage'
-export type { PercentageBarProps, PercentageCircleProps } from './components/Percentage'
 
 export type { ThemeProviderProps } from './theme/ThemeProvider'
 export { ThemeProvider } from './theme/ThemeProvider'

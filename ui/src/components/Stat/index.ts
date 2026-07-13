@@ -1,2 +1,2 @@
-export { Stat } from './Stat'
 export type { StatProps } from './Stat'
+export { Stat } from './Stat'

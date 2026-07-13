@@ -2,9 +2,9 @@
 import type { StyleXStyles } from '@stylexjs/stylex'
 import * as stylex from '@stylexjs/stylex'
 import * as React from 'react'
-import { styles } from './TopList.styles'
-import { CHART_COLORS } from '../ChartCommon'
 import { tokens } from '../../tokens/tokens.stylex'
+import { CHART_COLORS } from '../ChartCommon'
+import { styles } from './TopList.styles'
 
 export interface TopListItem {
   label: string
@@ -12,7 +12,8 @@ export interface TopListItem {
   color?: string
 }
 
-export interface TopListProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'style'> {
+export interface TopListProps
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'style'> {
   data: TopListItem[]
   maxValue?: number
   colors?: string[]

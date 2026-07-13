@@ -3,7 +3,7 @@ title: LineChart
 description: Documentation for the LineChart (TimeSeries) component.
 ---
 
-import { LineChart, ChartContainer } from '@moul-dev/ui';
+import { LineChart, AreaChart, ChartContainer } from '@moul-dev/ui';
 
 # LineChart
 
@@ -13,10 +13,19 @@ A premium, interactive line chart designed for time-series and trend data, built
 
 <LineChartDemo />
 
+## Edge-to-Edge Area Charts
+
+Create compact sparklines or real-time metric cards by combining `AreaChart` with an `edgeToEdge` styled `ChartContainer`. Hiding the axes and grid lines allows the chart to align perfectly with the container's borders.
+
+<div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
+  <StatusChartDemo />
+  <SpikyAreaChartDemo />
+</div>
+
 ## Import
 
 ```tsx
-import { LineChart, ChartContainer } from '@moul-dev/ui';
+import { LineChart, AreaChart, ChartContainer } from '@moul-dev/ui';
 ```
 
 ## Usage

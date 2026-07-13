@@ -4,7 +4,8 @@ import * as stylex from '@stylexjs/stylex'
 import * as React from 'react'
 import { styles } from './Stat.styles'
 
-export interface StatProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'style'> {
+export interface StatProps
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'style'> {
   label: React.ReactNode
   value: React.ReactNode
   trend?: string | number
@@ -43,47 +44,54 @@ const ArrowDown = () => (
   </svg>
 )
 
-export const Stat = React.forwardRef<HTMLDivElement, StatProps>(
-  function Stat(
-    { label, value, trend, trendDirection = 'neutral', trendLabel, className, style, ...rest },
-    ref,
-  ) {
-    const { className: stylexClass, style: stylexStyle } = stylex.props(
-      styles.container,
-      style,
-    )
-
-    const badgeStyles = stylex.props(
-      styles.trendBadge,
-      trendDirection === 'up' && styles.trendUp,
-      trendDirection === 'down' && styles.trendDown,
-      trendDirection === 'neutral' && styles.trendNeutral,
-    )
-
-    return (
-      <div
-        {...rest}
-        ref={ref}
-        className={[stylexClass, className].filter(Boolean).join(' ')}
-        style={stylexStyle}
-      >
-        <span {...stylex.props(styles.label)}>{label}</span>
-        <span {...stylex.props(styles.value)}>{value}</span>
-        {(trend !== undefined || trendLabel !== undefined) && (
-          <div {...stylex.props(styles.footer)}>
-            {trend !== undefined && (
-              <span {...badgeStyles}>
-                {trendDirection === 'up' && <ArrowUp />}
-                {trendDirection === 'down' && <ArrowDown />}
-                {trend}
-              </span>
-            )}
-            {trendLabel && (
-              <span {...stylex.props(styles.trendText)}>{trendLabel}</span>
-            )}
-          </div>
-        )}
-      </div>
-    )
+export const Stat = React.forwardRef<HTMLDivElement, StatProps>(function Stat(
+  {
+    label,
+    value,
+    trend,
+    trendDirection = 'neutral',
+    trendLabel,
+    className,
+    style,
+    ...rest
   },
-)
+  ref,
+) {
+  const { className: stylexClass, style: stylexStyle } = stylex.props(
+    styles.container,
+    style,
+  )
+
+  const badgeStyles = stylex.props(
+    styles.trendBadge,
+    trendDirection === 'up' && styles.trendUp,
+    trendDirection === 'down' && styles.trendDown,
+    trendDirection === 'neutral' && styles.trendNeutral,
+  )
+
+  return (
+    <div
+      {...rest}
+      ref={ref}
+      className={[stylexClass, className].filter(Boolean).join(' ')}
+      style={stylexStyle}
+    >
+      <span {...stylex.props(styles.label)}>{label}</span>
+      <span {...stylex.props(styles.value)}>{value}</span>
+      {(trend !== undefined || trendLabel !== undefined) && (
+        <div {...stylex.props(styles.footer)}>
+          {trend !== undefined && (
+            <span {...badgeStyles}>
+              {trendDirection === 'up' && <ArrowUp />}
+              {trendDirection === 'down' && <ArrowDown />}
+              {trend}
+            </span>
+          )}
+          {trendLabel && (
+            <span {...stylex.props(styles.trendText)}>{trendLabel}</span>
+          )}
+        </div>
+      )}
+    </div>
+  )
+})

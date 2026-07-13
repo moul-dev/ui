@@ -170,12 +170,11 @@ export const tokens = stylex.defineVars({
 
   // ── Chart Colors (8 steps for light/dark responsive graphs) ───────
   colorChart1: 'light-dark(oklch(0.60 0.18 250), oklch(0.65 0.16 250))', // Blue
-  colorChart2: 'light-dark(oklch(0.75 0.15 75),  oklch(0.75 0.14 75))',  // Yellow / Gold
-  colorChart3: 'light-dark(oklch(0.65 0.18 5),   oklch(0.68 0.16 5))',   // Rose / Pink
+  colorChart2: 'light-dark(oklch(0.75 0.15 75),  oklch(0.75 0.14 75))', // Yellow / Gold
+  colorChart3: 'light-dark(oklch(0.65 0.18 5),   oklch(0.68 0.16 5))', // Rose / Pink
   colorChart4: 'light-dark(oklch(0.62 0.20 300), oklch(0.65 0.18 300))', // Purple / Violet
   colorChart5: 'light-dark(oklch(0.68 0.16 195), oklch(0.70 0.14 195))', // Teal / Cyan
-  colorChart6: 'light-dark(oklch(0.58 0.16 45),  oklch(0.62 0.15 45))',  // Orange / Rust
+  colorChart6: 'light-dark(oklch(0.58 0.16 45),  oklch(0.62 0.15 45))', // Orange / Rust
   colorChart7: 'light-dark(oklch(0.64 0.17 145), oklch(0.68 0.15 145))', // Green
-  colorChart8: 'light-dark(oklch(0.60 0 0),      oklch(0.65 0 0))',      // Gray / Neutral
+  colorChart8: 'light-dark(oklch(0.60 0 0),      oklch(0.65 0 0))', // Gray / Neutral
 })
-

@@ -3,9 +3,9 @@ import type { StyleXStyles } from '@stylexjs/stylex'
 import * as stylex from '@stylexjs/stylex'
 import * as React from 'react'
 import {
+  Area,
   CartesianGrid,
-  Line,
-  LineChart as RechartsLineChart,
+  AreaChart as RechartsAreaChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -13,9 +13,9 @@ import {
 } from 'recharts'
 import { CHART_COLORS } from '../ChartCommon'
 import { ChartTooltip } from '../ChartTooltip'
-import { styles } from './LineChart.styles'
+import { styles } from './AreaChart.styles'
 
-export interface LineChartProps
+export interface AreaChartProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'style'> {
   data: any[]
   indexKey: string
@@ -27,10 +27,11 @@ export interface LineChartProps
   style?: StyleXStyles
   showXAxis?: boolean
   showYAxis?: boolean
+  margin?: { top: number; right: number; bottom: number; left: number }
 }
 
-export const LineChart = React.forwardRef<HTMLDivElement, LineChartProps>(
-  function LineChart(
+export const AreaChart = React.forwardRef<HTMLDivElement, AreaChartProps>(
+  function AreaChart(
     {
       data,
       indexKey,
@@ -41,6 +42,7 @@ export const LineChart = React.forwardRef<HTMLDivElement, LineChartProps>(
       gridLines = true,
       showXAxis = true,
       showYAxis = true,
+      margin,
       className,
       style,
       ...rest
@@ -58,6 +60,16 @@ export const LineChart = React.forwardRef<HTMLDivElement, LineChartProps>(
       fontFamily: 'var(--fontFamilyBase)',
     }
 
+    const uniqueId = React.useId().replace(/:/g, '')
+
+    // If axes are shown, use standard margins. If not, use zero margins to go edge-to-edge.
+    const defaultMargin =
+      showXAxis || showYAxis
+        ? { top: 10, right: 10, left: -20, bottom: 5 }
+        : { top: 0, right: 0, left: 0, bottom: 0 }
+
+    const finalMargin = margin ?? defaultMargin
+
     return (
       <div
         {...rest}
@@ -66,10 +78,27 @@ export const LineChart = React.forwardRef<HTMLDivElement, LineChartProps>(
         style={{ ...stylexStyle, height }}
       >
         <ResponsiveContainer width="100%" height="100%">
-          <RechartsLineChart
-            data={data}
-            margin={{ top: 10, right: 10, left: -20, bottom: 5 }}
-          >
+          <RechartsAreaChart data={data} margin={finalMargin}>
+            <defs>
+              {categories.map((category, idx) => {
+                const color = colors[idx % colors.length]
+                const gradId = `area-grad-${uniqueId}-${category.replace(/\s+/g, '-')}`
+                return (
+                  <linearGradient
+                    key={category}
+                    id={gradId}
+                    x1="0"
+                    y1="0"
+                    x2="0"
+                    y2="1"
+                  >
+                    <stop offset="0%" stopColor={color} stopOpacity={0.25} />
+                    <stop offset="100%" stopColor={color} stopOpacity={0.0} />
+                  </linearGradient>
+                )
+              })}
+            </defs>
+
             {gridLines && (
               <CartesianGrid
                 strokeDasharray="3 3"
@@ -101,13 +130,15 @@ export const LineChart = React.forwardRef<HTMLDivElement, LineChartProps>(
             />
             {categories.map((category, idx) => {
               const color = colors[idx % colors.length]
+              const gradId = `area-grad-${uniqueId}-${category.replace(/\s+/g, '-')}`
               return (
-                <Line
+                <Area
                   key={category}
                   type="monotone"
                   dataKey={category}
                   stroke={color}
                   strokeWidth={2}
+                  fill={`url(#${gradId})`}
                   dot={false}
                   activeDot={{
                     r: 5,
@@ -118,7 +149,7 @@ export const LineChart = React.forwardRef<HTMLDivElement, LineChartProps>(
                 />
               )
             })}
-          </RechartsLineChart>
+          </RechartsAreaChart>
         </ResponsiveContainer>
       </div>
     )

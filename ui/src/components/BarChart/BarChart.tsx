@@ -3,20 +3,21 @@ import type { StyleXStyles } from '@stylexjs/stylex'
 import * as stylex from '@stylexjs/stylex'
 import * as React from 'react'
 import {
-  ResponsiveContainer,
-  BarChart as RechartsBarChart,
   Bar,
+  CartesianGrid,
   Cell,
+  BarChart as RechartsBarChart,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
 } from 'recharts'
-import { styles } from './BarChart.styles'
 import { CHART_COLORS } from '../ChartCommon'
 import { ChartTooltip } from '../ChartTooltip'
+import { styles } from './BarChart.styles'
 
-export interface BarChartProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'style'> {
+export interface BarChartProps
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'style'> {
   data: any[]
   indexKey: string
   categories: string[]
@@ -128,9 +129,7 @@ export const BarChart = React.forwardRef<HTMLDivElement, BarChartProps>(
             )}
 
             <Tooltip
-              content={
-                <ChartTooltip valueFormatter={valueFormatter} />
-              }
+              content={<ChartTooltip valueFormatter={valueFormatter} />}
               cursor={{ fill: 'var(--colorNeutral100)', opacity: 0.5 }}
             />
 
