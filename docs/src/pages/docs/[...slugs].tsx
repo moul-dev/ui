@@ -25,7 +25,7 @@ export default function Page({ slugs }: PageProps<'/docs/[...slugs]'>) {
   const reactAriaLink = reactAria
     ? reactAria.startsWith('http')
       ? reactAria
-      : `https://react-spectrum.adobe.com/react-aria/${reactAria}.html`
+      : `https://react-aria.adobe.com/${reactAria}`
     : null
 
   return (
