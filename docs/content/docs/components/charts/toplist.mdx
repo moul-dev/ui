@@ -1,0 +1,51 @@
+---
+title: TopList
+description: Documentation for the TopList component.
+---
+
+import { TopList, ChartContainer } from '@moul-dev/ui';
+
+# TopList
+
+A ranked list visualization that maps rows with custom mini horizontal progress bars representing the values relative to the maximum list value.
+
+## Preview
+
+<TopListDemo />
+
+## Import
+
+```tsx
+import { TopList } from '@moul-dev/ui';
+```
+
+## Usage
+
+```tsx
+import { TopList, ChartContainer } from '@moul-dev/ui';
+
+export default function Example() {
+  const data = [
+    { label: 'United States', value: 7530 },
+    { label: 'Netherlands', value: 4670 },
+    { label: 'Singapore', value: 1400 },
+  ];
+
+  return (
+    <ChartContainer title="Top list">
+      <TopList data={data} />
+    </ChartContainer>
+  );
+}
+```
+
+## Props
+
+### TopList Props
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `data` | `TopListItem[]` | — | Array of `{ label: string, value: number, color?: string }`. |
+| `maxValue` | `number` | — | Override maximum scale value. Defaults to maximum value in dataset. |
+| `barColor` | `string` | `tokens.colorChart1` | Default color for all progress bars. |
+| `multiColor` | `boolean` | `false` | Enable index-based color mapping for progress bars. |
+| `valueFormatter` | `(value: number) => string` | — | Custom formatter for values. |

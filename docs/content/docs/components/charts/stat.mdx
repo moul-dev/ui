@@ -1,0 +1,58 @@
+---
+title: Stat
+description: Documentation for the Stat component.
+---
+
+import { Stat } from '@moul-dev/ui';
+
+# Stat
+
+A KPI metric card component displaying a large value, label, and trend indicators with status coloring.
+
+## Preview
+
+<StatDemo />
+
+## Import
+
+```tsx
+import { Stat } from '@moul-dev/ui';
+```
+
+## Usage
+
+```tsx
+import { Stat } from '@moul-dev/ui';
+
+export default function Example() {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <Stat
+        label="Total Requests"
+        value="15,820"
+        trend="+12.3%"
+        trendDirection="up"
+        trendLabel="vs last month"
+      />
+      <Stat
+        label="Errors"
+        value="84"
+        trend="-8.4%"
+        trendDirection="down"
+        trendLabel="vs yesterday"
+      />
+    </div>
+  );
+}
+```
+
+## Props
+
+### Stat Props
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `label` | `ReactNode` | — | Label or title for the stat card. |
+| `value` | `ReactNode` | — | Main value text. |
+| `trend` | `string \| number` | — | Trend percentage or text. |
+| `trendDirection` | `'up' \| 'down' \| 'neutral'` | `'neutral'` | Arrow direction and badge styling. |
+| `trendLabel` | `ReactNode` | — | Additional description text for footer. |

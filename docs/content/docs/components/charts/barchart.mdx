@@ -1,0 +1,65 @@
+---
+title: BarChart
+description: Documentation for the BarChart component.
+---
+
+import { BarChart, ChartContainer } from '@moul-dev/ui';
+
+# BarChart
+
+A highly configurable bar chart supporting vertical layouts, horizontal layouts, stacking, and custom category-based coloring.
+
+## Preview
+
+<BarChartDemo />
+
+## Import
+
+```tsx
+import { BarChart, ChartContainer } from '@moul-dev/ui';
+```
+
+## Usage
+
+### Categorical Bar Chart
+Color each bar individually based on its row index (useful for single series):
+
+```tsx
+import { BarChart, ChartContainer } from '@moul-dev/ui';
+
+export default function Example() {
+  const data = [
+    { country: 'United States', Requests: 7530 },
+    { country: 'Netherlands', Requests: 4670 },
+    { country: 'Singapore', Requests: 1400 },
+  ];
+
+  return (
+    <ChartContainer title="All requests">
+      <BarChart
+        data={data}
+        indexKey="country"
+        categories={['Requests']}
+        categorical
+        height={300}
+      />
+    </ChartContainer>
+  );
+}
+```
+
+## Props
+
+### BarChart Props
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `data` | `any[]` | — | Array of data objects. |
+| `indexKey` | `string` | — | Key representing the categories. |
+| `categories` | `string[]` | — | Series dataKeys. |
+| `colors` | `string[]` | `CHART_COLORS` | Color palette for bars. |
+| `layout` | `'horizontal' \| 'vertical'` | `'horizontal'` | Orientation layout. |
+| `stacked` | `boolean` | `false` | Enable stacked bars. |
+| `categorical` | `boolean` | `false` | Color each bar individually based on index. |
+| `valueFormatter` | `(value: any) => string` | — | Custom formatter for values. |
+| `height` | `number \| string` | `300` | Height of the chart. |
+| `gridLines` | `boolean` | `true` | Show horizontal/vertical grid lines. |

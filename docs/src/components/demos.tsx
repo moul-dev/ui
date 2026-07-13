@@ -26,6 +26,15 @@ import {
   TextField,
   ToastContainer,
   useToast,
+  ChartContainer,
+  LineChart,
+  BarChart,
+  DoughnutChart,
+  TopList,
+  Stat,
+  PercentageBar,
+  PercentageCircle,
+  tokens,
 } from '@moul-dev/ui'
 import React, { useState } from 'react'
 
@@ -441,3 +450,237 @@ export function InputOTPDemo() {
     </div>
   )
 }
+
+// ── Chart & Analytics Demos ───────────────────────────────────────────
+
+const kFormatter = (val: number) => {
+  if (val >= 1000) {
+    return `${(val / 1000).toFixed(2).replace(/\.?0+$/, '')}k`
+  }
+  return val.toString()
+}
+
+// Mock Data
+const timeseriesData = [
+  { time: '12:00', 'United States': 120, 'Netherlands': 80, 'Singapore': 40, 'Canada': 50, 'Ireland': 10 },
+  { time: '14:00', 'United States': 150, 'Netherlands': 110, 'Singapore': 60, 'Canada': 70, 'Ireland': 15 },
+  { time: '16:00', 'United States': 880, 'Netherlands': 130, 'Singapore': 90, 'Canada': 80, 'Ireland': 310 },
+  { time: '18:00', 'United States': 220, 'Netherlands': 320, 'Singapore': 80, 'Canada': 90, 'Ireland': 40 },
+  { time: '20:00', 'United States': 180, 'Netherlands': 520, 'Singapore': 70, 'Canada': 85, 'Ireland': 25 },
+  { time: '22:00', 'United States': 310, 'Netherlands': 120, 'Singapore': 50, 'Canada': 60, 'Ireland': 20 },
+  { time: '13', 'United States': 140, 'Netherlands': 550, 'Singapore': 60, 'Canada': 75, 'Ireland': 15 },
+  { time: '02:00', 'United States': 120, 'Netherlands': 110, 'Singapore': 40, 'Canada': 50, 'Ireland': 12 },
+  { time: '04:00', 'United States': 160, 'Netherlands': 130, 'Singapore': 90, 'Canada': 60, 'Ireland': 350 },
+  { time: '06:00', 'United States': 140, 'Netherlands': 180, 'Singapore': 80, 'Canada': 55, 'Ireland': 20 },
+  { time: '08:00', 'United States': 920, 'Netherlands': 1750, 'Singapore': 110, 'Canada': 380, 'Ireland': 15 },
+  { time: '10:00', 'United States': 620, 'Netherlands': 150, 'Singapore': 1250, 'Canada': 120, 'Ireland': 25 },
+  { time: '12:00', 'United States': 140, 'Netherlands': 120, 'Singapore': 80, 'Canada': 90, 'Ireland': 10 },
+]
+
+const categoricalData = [
+  { name: 'United States', Requests: 7530 },
+  { name: 'Netherlands', Requests: 4670 },
+  { name: 'Singapore', Requests: 1400 },
+  { name: 'Canada', Requests: 1370 },
+  { name: 'Ireland', Requests: 271 },
+  { name: 'India', Requests: 270 },
+]
+
+const doughnutData = [
+  { name: 'United States', value: 7530 },
+  { name: 'Netherlands', value: 4670 },
+  { name: 'Singapore', value: 1400 },
+  { name: 'Canada', value: 1370 },
+  { name: 'Ireland', value: 271 },
+  { name: 'India', value: 270 },
+  { name: 'Brazil', value: 154 },
+  { name: 'Germany', value: 95 },
+  { name: 'United Kingdom', value: 88 },
+  { name: 'France', value: 64 },
+]
+
+export function LineChartDemo() {
+  const legendItems = [
+    { name: 'United States', value: '7.53k', color: tokens.colorChart1 },
+    { name: 'Netherlands', value: '4.67k', color: tokens.colorChart2 },
+    { name: 'Singapore', value: '1.4k', color: tokens.colorChart3 },
+    { name: 'Canada', value: '1.37k', color: tokens.colorChart4 },
+    { name: 'Ireland', value: '271', color: tokens.colorChart5 },
+  ]
+
+  return (
+    <div className="w-full max-w-3xl p-4">
+      <ChartContainer
+        title="All requests"
+        legend={legendItems}
+        actions={
+          <div className="flex gap-2">
+            <button className="px-3 py-1 text-xs border rounded-md dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300">
+              Globe
+            </button>
+            <button className="px-3 py-1 text-xs border rounded-md dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300">
+              Bookmark
+            </button>
+          </div>
+        }
+      >
+        <LineChart
+          data={timeseriesData}
+          indexKey="time"
+          categories={['United States', 'Netherlands', 'Singapore', 'Canada', 'Ireland']}
+          valueFormatter={kFormatter}
+          height={320}
+        />
+      </ChartContainer>
+    </div>
+  )
+}
+
+export function BarChartDemo() {
+  const legendItems = [
+    { name: 'United States', value: '7.53k', color: tokens.colorChart1 },
+    { name: 'Netherlands', value: '4.67k', color: tokens.colorChart2 },
+    { name: 'Singapore', value: '1.4k', color: tokens.colorChart3 },
+    { name: 'Canada', value: '1.37k', color: tokens.colorChart4 },
+    { name: 'Ireland', value: '271', color: tokens.colorChart5 },
+    { name: 'India', value: '270', color: tokens.colorChart6 },
+  ]
+
+  return (
+    <div className="w-full max-w-3xl flex flex-col gap-8 p-4">
+      <ChartContainer title="Vertical Bar Chart (Categorical)" legend={legendItems}>
+        <BarChart
+          data={categoricalData}
+          indexKey="name"
+          categories={['Requests']}
+          categorical
+          valueFormatter={kFormatter}
+          height={300}
+        />
+      </ChartContainer>
+
+      <ChartContainer title="Horizontal Bar Chart (Categorical)" legend={legendItems}>
+        <BarChart
+          data={categoricalData}
+          indexKey="name"
+          categories={['Requests']}
+          layout="vertical"
+          categorical
+          valueFormatter={kFormatter}
+          height={300}
+        />
+      </ChartContainer>
+
+      <ChartContainer title="Stacked Bar Chart">
+        <BarChart
+          data={[
+            { month: 'Jan', hits: 4000, misses: 2400 },
+            { month: 'Feb', hits: 3000, misses: 1398 },
+            { month: 'Mar', hits: 2000, misses: 9800 },
+            { month: 'Apr', hits: 2780, misses: 3908 },
+          ]}
+          indexKey="month"
+          categories={['hits', 'misses']}
+          stacked
+          height={300}
+        />
+      </ChartContainer>
+    </div>
+  )
+}
+
+export function DoughnutChartDemo() {
+  const legendItems = doughnutData.map((d, i) => ({
+    name: d.name,
+    value: kFormatter(d.value),
+    color: (tokens as any)[`colorChart${(i % 8) + 1}`],
+  }))
+
+  return (
+    <div className="w-full max-w-md p-4">
+      <ChartContainer title="All requests" legend={legendItems} legendLimit={7}>
+        <DoughnutChart
+          data={doughnutData}
+          nameKey="name"
+          valueKey="value"
+          valueFormatter={kFormatter}
+          height={260}
+        />
+      </ChartContainer>
+    </div>
+  )
+}
+
+export function TopListDemo() {
+  const topListData = [
+    { label: 'United States', value: 7530 },
+    { label: 'Netherlands', value: 4670 },
+    { label: 'Singapore', value: 1400 },
+    { label: 'Canada', value: 1370 },
+    { label: 'Ireland', value: 271 },
+    { label: 'India', value: 270 },
+    { label: 'Brazil', value: 154 },
+  ]
+
+  return (
+    <div className="w-full max-w-md p-4">
+      <ChartContainer
+        title="Top list"
+        actions={
+          <button className="px-3 py-1 text-xs border rounded-md dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300">
+            View All
+          </button>
+        }
+      >
+        <TopList data={topListData} valueFormatter={kFormatter} />
+      </ChartContainer>
+    </div>
+  )
+}
+
+export function StatDemo() {
+  return (
+    <div className="w-full max-w-3xl grid grid-cols-1 md:grid-cols-3 gap-4 p-4">
+      <Stat
+        label="Total Requests"
+        value="15.8k"
+        trend="+12.3%"
+        trendDirection="up"
+        trendLabel="vs last month"
+      />
+      <Stat
+        label="Error Rate"
+        value="0.45%"
+        trend="-4.2%"
+        trendDirection="down"
+        trendLabel="vs yesterday"
+      />
+      <Stat
+        label="Cache Hits"
+        value="89.2%"
+        trend="Flat"
+        trendDirection="neutral"
+        trendLabel="vs last week"
+      />
+    </div>
+  )
+}
+
+export function PercentageDemo() {
+  return (
+    <div className="w-full max-w-3xl flex flex-col gap-6 p-4">
+      <div className="flex flex-wrap gap-8 items-center justify-center p-6 border rounded-lg dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/50">
+        <PercentageCircle value={75} label="Server CPU" size={90} />
+        <PercentageCircle value={45} label="Memory Usage" size={90} color={tokens.colorChart2} />
+        <PercentageCircle value={12} label="Disk IO" size={90} color={tokens.colorChart3} />
+      </div>
+
+      <div className="flex flex-col gap-4 p-6 border rounded-lg dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/50">
+        <PercentageBar value={85} label="Task Completion" size="md" />
+        <PercentageBar value={52} label="Network Bandwidth" size="sm" color={tokens.colorChart5} />
+        <PercentageBar value={95} label="Database Sync" size="lg" color={tokens.colorChart7} />
+      </div>
+    </div>
+  )
+}
+

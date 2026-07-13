@@ -12,6 +12,14 @@ import {
   TypographyParagraph,
   TypographySpan,
   TypographyLabel,
+  ChartContainer,
+  LineChart,
+  BarChart,
+  DoughnutChart,
+  TopList,
+  Stat,
+  PercentageBar,
+  PercentageCircle,
 } from '@moul-dev/ui'
 import { Accordion, Accordions } from 'fumadocs-ui/components/accordion'
 import { Card, Cards } from 'fumadocs-ui/components/card'
@@ -31,6 +39,12 @@ import {
   ModalDemo,
   TagGroupDemo,
   ToastDemo,
+  LineChartDemo,
+  BarChartDemo,
+  DoughnutChartDemo,
+  TopListDemo,
+  StatDemo,
+  PercentageDemo,
 } from './demos'
 
 export function getMDXComponents(components?: MDXComponents) {
@@ -68,6 +82,20 @@ export function getMDXComponents(components?: MDXComponents) {
     InputOTPSlot,
     InputOTPSeparator,
     InputOTPDemo,
+    ChartContainer,
+    LineChart,
+    BarChart,
+    DoughnutChart,
+    TopList,
+    Stat,
+    PercentageBar,
+    PercentageCircle,
+    LineChartDemo,
+    BarChartDemo,
+    DoughnutChartDemo,
+    TopListDemo,
+    StatDemo,
+    PercentageDemo,
     ...components,
   } satisfies MDXComponents
 }

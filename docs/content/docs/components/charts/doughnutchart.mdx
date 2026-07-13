@@ -1,0 +1,60 @@
+---
+title: DoughnutChart
+description: Documentation for the DoughnutChart component.
+---
+
+import { DoughnutChart, ChartContainer } from '@moul-dev/ui';
+
+# DoughnutChart
+
+A beautiful doughnut (pie) chart featuring rounded sectors, animations, and active segment highlight interactions.
+
+## Preview
+
+<DoughnutChartDemo />
+
+## Import
+
+```tsx
+import { DoughnutChart, ChartContainer } from '@moul-dev/ui';
+```
+
+## Usage
+
+```tsx
+import { DoughnutChart, ChartContainer } from '@moul-dev/ui';
+
+export default function Example() {
+  const data = [
+    { country: 'United States', value: 7530 },
+    { country: 'Netherlands', value: 4670 },
+    { country: 'Singapore', value: 1400 },
+  ];
+
+  return (
+    <ChartContainer title="Request distribution">
+      <DoughnutChart
+        data={data}
+        nameKey="country"
+        valueKey="value"
+        height={260}
+      />
+    </ChartContainer>
+  );
+}
+```
+
+## Props
+
+### DoughnutChart Props
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `data` | `any[]` | — | Array of category data. |
+| `nameKey` | `string` | — | Key representing slice labels. |
+| `valueKey` | `string` | — | Key representing slice quantities. |
+| `colors` | `string[]` | `CHART_COLORS` | Array of colors for slices. |
+| `innerRadius` | `number \| string` | `'65%'` | Inner circle diameter cut-out. |
+| `outerRadius` | `number \| string` | `'85%'` | Outer circle diameter. |
+| `paddingAngle` | `number` | `3` | Angle gaps between slices. |
+| `valueFormatter` | `(value: any) => string` | — | Tooltip values formatter. |
+| `height` | `number \| string` | `300` | Render height. |

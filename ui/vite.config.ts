@@ -37,6 +37,9 @@ export default defineConfig({
         'react/jsx-dev-runtime',
         'react-aria-components',
         '@stylexjs/stylex',
+        'recharts',
+        'react-aria',
+        'input-otp',
       ],
       output: {
         banner: "'use client';",

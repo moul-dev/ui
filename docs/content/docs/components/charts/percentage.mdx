@@ -1,0 +1,73 @@
+---
+title: Percentage
+description: Documentation for the PercentageBar and PercentageCircle components.
+---
+
+import { PercentageBar, PercentageCircle } from '@moul-dev/ui';
+
+# Percentage
+
+Progress indicators that render percentage values in horizontal bars or SVG circular progress rings.
+
+## Preview
+
+<PercentageDemo />
+
+## Import
+
+```tsx
+import { PercentageBar, PercentageCircle } from '@moul-dev/ui';
+```
+
+## Usage
+
+### Horizontal Percentage Bar
+```tsx
+import { PercentageBar } from '@moul-dev/ui';
+
+export default function Example() {
+  return (
+    <PercentageBar
+      value={85}
+      label="Task Completion"
+      size="md"
+    />
+  );
+}
+```
+
+### Circular Progress Ring
+```tsx
+import { PercentageCircle } from '@moul-dev/ui';
+
+export default function Example() {
+  return (
+    <PercentageCircle
+      value={75}
+      label="Server CPU"
+      size={80}
+    />
+  );
+}
+```
+
+## Props
+
+### PercentageBar Props
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `value` | `number` | — | Progress percentage (0 - 100). |
+| `label` | `ReactNode` | — | Text label shown above the bar. |
+| `showValueText` | `boolean` | `true` | Show percentage text on the right. |
+| `color` | `string` | `tokens.colorChart1` | Color of the progress filled bar. |
+| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Height thickness. |
+
+### PercentageCircle Props
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `value` | `number` | — | Progress percentage (0 - 100). |
+| `label` | `ReactNode` | — | Label shown underneath the circle. |
+| `showValueText` | `boolean` | `true` | Display progress percentage inside the ring. |
+| `color` | `string` | `tokens.colorChart1` | Color of the filled ring segment. |
+| `size` | `number` | `80` | Diameter size in pixels. |
+| `strokeWidth` | `number` | `8` | Border stroke thickness of the circle. |

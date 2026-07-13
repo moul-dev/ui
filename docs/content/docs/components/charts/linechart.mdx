@@ -1,0 +1,62 @@
+---
+title: LineChart
+description: Documentation for the LineChart (TimeSeries) component.
+---
+
+import { LineChart, ChartContainer } from '@moul-dev/ui';
+
+# LineChart
+
+A premium, interactive line chart designed for time-series and trend data, built on top of Recharts and styled with StyleX design tokens.
+
+## Preview
+
+<LineChartDemo />
+
+## Import
+
+```tsx
+import { LineChart, ChartContainer } from '@moul-dev/ui';
+```
+
+## Usage
+
+Here is a basic example of how to render a timeseries chart inside a `ChartContainer`:
+
+```tsx
+import { LineChart, ChartContainer } from '@moul-dev/ui';
+
+export default function Example() {
+  const data = [
+    { date: '08:00', Requests: 120, Users: 80 },
+    { date: '12:00', Requests: 450, Users: 320 },
+    { date: '16:00', Requests: 890, Users: 520 },
+  ];
+
+  return (
+    <ChartContainer title="Request Trends" legend={[{ name: 'Requests' }, { name: 'Users' }]}>
+      <LineChart
+        data={data}
+        indexKey="date"
+        categories={['Requests', 'Users']}
+        height={300}
+      />
+    </ChartContainer>
+  );
+}
+```
+
+## Props
+
+### LineChart Props
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `data` | `any[]` | — | Array of data objects to plot. |
+| `indexKey` | `string` | — | The object key to plot on the X-axis. |
+| `categories` | `string[]` | — | Keys corresponding to series lines. |
+| `colors` | `string[]` | `CHART_COLORS` | Array of hex/style variables to color the lines. |
+| `height` | `number \| string` | `300` | Height of the chart container. |
+| `gridLines` | `boolean` | `true` | Whether to display background grid lines. |
+| `showXAxis` | `boolean` | `true` | Show/hide X-Axis ticks. |
+| `showYAxis` | `boolean` | `true` | Show/hide Y-Axis ticks. |
+| `valueFormatter` | `(value: any) => string` | — | Function to format the Y-Axis and Tooltip values. |
