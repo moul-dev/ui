@@ -49,7 +49,12 @@ export const SelectPopover = React.forwardRef<HTMLElement, SelectPopoverProps>(
         className={(_) => {
           const { className: stylexClass } = stylex.props(
             styles.popover,
-            styles[`popover${size.charAt(0).toUpperCase() + size.slice(1)}` as 'popoverSm' | 'popoverMd' | 'popoverLg'],
+            styles[
+              `popover${size.charAt(0).toUpperCase() + size.slice(1)}` as
+                | 'popoverSm'
+                | 'popoverMd'
+                | 'popoverLg'
+            ],
             style,
           )
           return [stylexClass, className].filter(Boolean).join(' ')
@@ -57,7 +62,12 @@ export const SelectPopover = React.forwardRef<HTMLElement, SelectPopoverProps>(
         style={(_) => {
           const { style: stylexStyle } = stylex.props(
             styles.popover,
-            styles[`popover${size.charAt(0).toUpperCase() + size.slice(1)}` as 'popoverSm' | 'popoverMd' | 'popoverLg'],
+            styles[
+              `popover${size.charAt(0).toUpperCase() + size.slice(1)}` as
+                | 'popoverSm'
+                | 'popoverMd'
+                | 'popoverLg'
+            ],
             style,
           )
           return stylexStyle
@@ -80,7 +90,8 @@ export const SelectItem = React.forwardRef<HTMLDivElement, SelectItemProps>(
   function SelectItem({ style, className, children, ...rest }, ref) {
     const { size } = React.useContext(SelectContext)
     const sizeSuffix = size.charAt(0).toUpperCase() + size.slice(1)
-    const sizeStyle = styles[`item${sizeSuffix}` as 'itemSm' | 'itemMd' | 'itemLg']
+    const sizeStyle =
+      styles[`item${sizeSuffix}` as 'itemSm' | 'itemMd' | 'itemLg']
 
     return (
       <AriaListBoxItem

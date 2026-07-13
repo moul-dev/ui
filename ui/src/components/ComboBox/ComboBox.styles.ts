@@ -11,7 +11,6 @@ export const styles = stylex.create({
   group: {
     display: 'flex',
     alignItems: 'stretch',
-    borderRadius: tokens.radiusMd,
     borderWidth: '1px',
     borderStyle: 'solid',
     boxShadow: tokens.shadowSm,
@@ -19,6 +18,18 @@ export const styles = stylex.create({
     transitionProperty: 'border-color, box-shadow',
     transitionDuration: '0.15s',
     transitionTimingFunction: 'ease-in-out',
+  },
+  groupSm: {
+    height: `calc(${tokens.spacing1} * 2 + ${tokens.lineHeightXs})`,
+    borderRadius: tokens.radiusSm,
+  },
+  groupMd: {
+    height: `calc(${tokens.spacing2} * 2 + ${tokens.lineHeightSm})`,
+    borderRadius: tokens.radiusMd,
+  },
+  groupLg: {
+    height: `calc(${tokens.spacing2} * 2 + ${tokens.lineHeightMd})`,
+    borderRadius: tokens.radiusMd,
   },
   primary: {
     backgroundColor: tokens.colorBg,
@@ -54,16 +65,32 @@ export const styles = stylex.create({
   input: {
     flexGrow: 1,
     width: '100%',
-    paddingBlock: tokens.spacing2,
-    paddingInlineStart: tokens.spacing3,
-    paddingInlineEnd: tokens.spacing1,
     borderStyle: 'none',
     backgroundColor: 'transparent',
     color: tokens.colorFg,
     fontFamily: tokens.fontFamilyBase,
+    outline: 'none',
+  },
+  inputSm: {
+    paddingBlock: 0,
+    paddingInlineStart: tokens.spacing2,
+    paddingInlineEnd: tokens.spacing1,
+    fontSize: tokens.fontSizeXs,
+    lineHeight: tokens.lineHeightXs,
+  },
+  inputMd: {
+    paddingBlock: 0,
+    paddingInlineStart: tokens.spacing3,
+    paddingInlineEnd: tokens.spacing1,
+    fontSize: tokens.fontSizeSm,
+    lineHeight: tokens.lineHeightSm,
+  },
+  inputLg: {
+    paddingBlock: 0,
+    paddingInlineStart: tokens.spacing4,
+    paddingInlineEnd: tokens.spacing1,
     fontSize: tokens.fontSizeMd,
     lineHeight: tokens.lineHeightMd,
-    outline: 'none',
   },
   trigger: {
     display: 'flex',
@@ -73,7 +100,6 @@ export const styles = stylex.create({
     backgroundColor: 'transparent',
     color: tokens.colorFgSubtle,
     cursor: 'pointer',
-    paddingInline: tokens.spacing3,
     transitionProperty: 'background-color, color',
     transitionDuration: '0.1s',
     transitionTimingFunction: 'ease-in-out',
@@ -84,6 +110,15 @@ export const styles = stylex.create({
     ':active': {
       backgroundColor: tokens.colorBorderSubtle,
     },
+  },
+  triggerSm: {
+    paddingInline: tokens.spacing2,
+  },
+  triggerMd: {
+    paddingInline: tokens.spacing3,
+  },
+  triggerLg: {
+    paddingInline: tokens.spacing4,
   },
   triggerDisabled: {
     cursor: 'not-allowed',
@@ -99,7 +134,6 @@ export const styles = stylex.create({
     color: 'currentColor',
   },
   popover: {
-    borderRadius: tokens.radiusMd,
     borderWidth: '1px',
     borderStyle: 'solid',
     borderColor: tokens.colorBorder,
@@ -109,6 +143,15 @@ export const styles = stylex.create({
     minWidth: 'var(--trigger-width)',
     maxHeight: '300px',
     overflowY: 'auto',
+  },
+  popoverSm: {
+    borderRadius: tokens.radiusSm,
+  },
+  popoverMd: {
+    borderRadius: tokens.radiusMd,
+  },
+  popoverLg: {
+    borderRadius: tokens.radiusMd,
   },
   listbox: {
     padding: tokens.spacing1,
@@ -120,12 +163,7 @@ export const styles = stylex.create({
   item: {
     display: 'flex',
     alignItems: 'center',
-    paddingBlock: tokens.spacing2,
-    paddingInline: tokens.spacing3,
-    borderRadius: `calc(${tokens.radiusMd} - ${tokens.spacing1})`,
     color: tokens.colorFg,
-    fontSize: tokens.fontSizeMd,
-    lineHeight: tokens.lineHeightMd,
     cursor: 'pointer',
     outline: 'none',
     userSelect: 'none',
@@ -133,6 +171,27 @@ export const styles = stylex.create({
     transitionProperty: 'background-color, color',
     transitionDuration: '0.1s',
     transitionTimingFunction: 'ease-in-out',
+  },
+  itemSm: {
+    paddingBlock: tokens.spacing1,
+    paddingInline: tokens.spacing2,
+    borderRadius: `calc(${tokens.radiusSm} - ${tokens.spacing1})`,
+    fontSize: tokens.fontSizeXs,
+    lineHeight: tokens.lineHeightXs,
+  },
+  itemMd: {
+    paddingBlock: '6px',
+    paddingInline: tokens.spacing3,
+    borderRadius: `calc(${tokens.radiusMd} - ${tokens.spacing1})`,
+    fontSize: tokens.fontSizeSm,
+    lineHeight: tokens.lineHeightSm,
+  },
+  itemLg: {
+    paddingBlock: tokens.spacing2,
+    paddingInline: tokens.spacing4,
+    borderRadius: `calc(${tokens.radiusMd} - ${tokens.spacing1})`,
+    fontSize: tokens.fontSizeMd,
+    lineHeight: tokens.lineHeightMd,
   },
   itemHovered: {
     backgroundColor: tokens.colorBgSubtle,

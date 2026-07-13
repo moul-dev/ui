@@ -873,8 +873,8 @@ export function ComponentPlayground({ component }: { component: string }) {
       </InputOTPGroup>`
           : `      <InputOTPGroup>
 ${Array.from({ length: maxLength || 4 })
-            .map((_, i) => `        <InputOTPSlot index={${i}} />`)
-            .join('\n')}
+  .map((_, i) => `        <InputOTPSlot index={${i}} />`)
+  .join('\n')}
       </InputOTPGroup>`
 
         return `import {
@@ -1180,7 +1180,8 @@ export default function Example() {
         const { placement, children, offset } = activeProps
         let propsStr = ''
         if (placement !== 'top') propsStr += ` placement="${placement}"`
-        if (offset !== undefined && offset !== 8) propsStr += ` offset={${offset}}`
+        if (offset !== undefined && offset !== 8)
+          propsStr += ` offset={${offset}}`
         return `import { Button, Tooltip, TooltipTrigger } from '@moul-dev/ui';
 
 export default function Example() {
@@ -1195,14 +1196,20 @@ export default function Example() {
 }`
       }
       case 'Card': {
-        const { variant, size, elevation, divided, title, description } = activeProps
+        const { variant, size, elevation, divided, title, description } =
+          activeProps
         let propsStr = ''
         if (variant !== 'default') propsStr += ` variant="${variant}"`
         if (size !== 'md') propsStr += ` size="${size}"`
         if (divided) propsStr += ` divided`
         if (variant === 'default' && elevation !== 1 && elevation !== '1') {
-          const numericElevation = isNaN(Number(elevation)) ? elevation : Number(elevation)
-          const formatEl = typeof numericElevation === 'number' ? `{${numericElevation}}` : `"${numericElevation}"`
+          const numericElevation = isNaN(Number(elevation))
+            ? elevation
+            : Number(elevation)
+          const formatEl =
+            typeof numericElevation === 'number'
+              ? `{${numericElevation}}`
+              : `"${numericElevation}"`
           propsStr += ` elevation=${formatEl}`
         }
         return `import { Card, CardHeader, CardBody, CardFooter, Button } from '@moul-dev/ui';
@@ -1311,7 +1318,10 @@ export default function Example() {
           <div className="py-6">
             <TooltipTrigger>
               <Button variant="outline">Hover me</Button>
-              <Tooltip placement={activeProps.placement} offset={activeProps.offset}>
+              <Tooltip
+                placement={activeProps.placement}
+                offset={activeProps.offset}
+              >
                 {activeProps.children}
               </Tooltip>
             </TooltipTrigger>
@@ -1330,8 +1340,11 @@ export default function Example() {
           />
         )
       case 'Card': {
-        const { variant, size, elevation, divided, title, description } = activeProps
-        const numericElevation = isNaN(Number(elevation)) ? elevation : Number(elevation)
+        const { variant, size, elevation, divided, title, description } =
+          activeProps
+        const numericElevation = isNaN(Number(elevation))
+          ? elevation
+          : Number(elevation)
         return (
           <Card
             variant={variant}
@@ -1343,12 +1356,8 @@ export default function Example() {
             <CardHeader>{title}</CardHeader>
             <CardBody>{description}</CardBody>
             <CardFooter className="flex justify-end gap-2">
-              <Button variant="secondary">
-                Cancel
-              </Button>
-              <Button variant="primary">
-                Confirm
-              </Button>
+              <Button variant="secondary">Cancel</Button>
+              <Button variant="primary">Confirm</Button>
             </CardFooter>
           </Card>
         )

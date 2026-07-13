@@ -149,11 +149,15 @@ describe('Typography component', () => {
 
     const { getByText } = render(
       <>
-        <Typography.Heading as="h3" ref={headingRef}>Heading Level 3</Typography.Heading>
-        <Typography.Paragraph ref={paragraphRef}>Paragraph text</Typography.Paragraph>
+        <Typography.Heading as="h3" ref={headingRef}>
+          Heading Level 3
+        </Typography.Heading>
+        <Typography.Paragraph ref={paragraphRef}>
+          Paragraph text
+        </Typography.Paragraph>
         <Typography.Span ref={spanRef}>Span text</Typography.Span>
         <Typography.Label ref={labelRef}>Label text</Typography.Label>
-      </>
+      </>,
     )
 
     const headingEl = getByText('Heading Level 3')

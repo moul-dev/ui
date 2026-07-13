@@ -116,7 +116,9 @@ describe('Tooltip Component', () => {
     const { getByRole } = render(
       <TooltipTrigger isOpen={true}>
         <Button>Hover or focus me</Button>
-        <Tooltip offset={15} crossOffset={5}>Tooltip with offset</Tooltip>
+        <Tooltip offset={15} crossOffset={5}>
+          Tooltip with offset
+        </Tooltip>
       </TooltipTrigger>,
     )
 
