@@ -238,7 +238,7 @@ export function TagGroupDemo() {
             label="Small size"
             size="sm"
             variant="primary"
-            onRemove={() => { }}
+            onRemove={() => {}}
           >
             <Tag id="sm1">Small Tag</Tag>
             <Tag id="sm2">Tag 2</Tag>
@@ -248,7 +248,7 @@ export function TagGroupDemo() {
             label="Medium size"
             size="md"
             variant="secondary"
-            onRemove={() => { }}
+            onRemove={() => {}}
           >
             <Tag id="md1">Medium Tag</Tag>
             <Tag id="md2">Tag 2</Tag>
@@ -258,7 +258,7 @@ export function TagGroupDemo() {
             label="Large size"
             size="lg"
             variant="tertiary"
-            onRemove={() => { }}
+            onRemove={() => {}}
           >
             <Tag id="lg1">Large Tag</Tag>
             <Tag id="lg2">Tag 2</Tag>
@@ -607,12 +607,12 @@ export function LineChartDemo() {
         legend={legendItems}
         actions={
           <div className="flex gap-2">
-            <button className="px-3 py-1 text-xs border rounded-md dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300">
+            <Button variant="outline" size="sm">
               Globe
-            </button>
-            <button className="px-3 py-1 text-xs border rounded-md dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300">
+            </Button>
+            <Button variant="outline" size="sm">
               Bookmark
-            </button>
+            </Button>
           </div>
         }
       >
@@ -731,9 +731,9 @@ export function TopListDemo() {
       <ChartContainer
         title="Top list"
         actions={
-          <button className="px-3 py-1 text-xs border rounded-md dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300">
+          <Button variant="outline" size="sm">
             View All
-          </button>
+          </Button>
         }
       >
         <TopList data={topListData} valueFormatter={kFormatter} />
@@ -838,10 +838,7 @@ export function StatusChartDemo() {
 
   return (
     <div className="w-full max-w-sm">
-      <ChartContainer
-        title="All requests"
-        edgeToEdge
-      >
+      <ChartContainer title="All requests" edgeToEdge>
         <div className="px-6 pt-4 pb-2">
           <div className="text-3xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-50 font-sans">
             100.00%
@@ -900,10 +897,7 @@ export function SpikyAreaChartDemo() {
 
   return (
     <div className="w-full max-w-sm">
-      <ChartContainer
-        title="All requests"
-        edgeToEdge
-      >
+      <ChartContainer title="All requests" edgeToEdge>
         <div className="px-6 pt-4 pb-2">
           <div className="flex items-baseline gap-2">
             <span className="text-3xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-50 font-sans">
@@ -976,20 +970,22 @@ const BookmarkIcon = () => (
 function ChartActionPill() {
   return (
     <div className="flex items-center gap-1.5 px-2.5 py-1 bg-neutral-100 hover:bg-neutral-200/80 dark:bg-neutral-800/80 dark:hover:bg-neutral-800 border border-neutral-200 dark:border-neutral-700/65 rounded-full shadow-sm">
-      <button
-        type="button"
-        className="flex items-center gap-1 text-neutral-600 hover:text-neutral-800 dark:text-neutral-300 dark:hover:text-white transition-colors cursor-pointer bg-transparent border-0 outline-none"
+      <Button
+        variant="ghost"
+        size="sm"
+        className="flex items-center gap-1 text-neutral-600 hover:text-neutral-800 dark:text-neutral-300 dark:hover:text-white transition-colors cursor-pointer bg-transparent border-0 outline-none !h-auto !p-0"
       >
         <GlobeIcon />
         <ChevronDownIcon />
-      </button>
+      </Button>
       <div className="w-[1px] h-3 bg-neutral-300 dark:bg-neutral-700/60" />
-      <button
-        type="button"
-        className="flex items-center justify-center text-neutral-600 hover:text-neutral-800 dark:text-neutral-300 dark:hover:text-white transition-colors cursor-pointer bg-transparent border-0 outline-none"
+      <Button
+        variant="ghost"
+        size="sm"
+        className="flex items-center justify-center text-neutral-600 hover:text-neutral-800 dark:text-neutral-300 dark:hover:text-white transition-colors cursor-pointer bg-transparent border-0 outline-none !h-auto !p-0"
       >
         <BookmarkIcon />
-      </button>
+      </Button>
     </div>
   )
 }
