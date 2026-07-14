@@ -43,9 +43,9 @@ export const styles = stylex.create({
     alignItems: 'center',
     gap: '4px',
     fontWeight: tokens.fontWeightSemibold,
-    paddingBlock: '2px',
+    paddingBlock: '0px',
     paddingInline: '6px',
-    borderRadius: tokens.radiusSm,
+    borderRadius: tokens.radiusMd,
   },
   trendUp: {
     backgroundColor: tokens.colorSuccess300,
