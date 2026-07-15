@@ -1,0 +1,110 @@
+---
+title: Sidebar
+description: A premium collapsible navigation sidebar component styled with StyleX and built with React Aria.
+---
+
+# Sidebar
+
+The `Sidebar` is a premium vertical navigation component designed in the style of Apple Music and Podcasts. It features collapsible groups, custom item selections, active/hover styles, glassmorphic layout options, profile/branding sections, and a responsive toggle to collapse to an icon-only view.
+
+## Import
+
+```tsx
+import {
+  Sidebar,
+  SidebarHeader,
+  SidebarGroup,
+  SidebarItem,
+  SidebarFooter,
+  SidebarDivider,
+} from '@moul-dev/ui';
+```
+
+## Preview
+
+<ComponentPreview>
+  <SidebarDemo />
+</ComponentPreview>
+
+---
+
+## Layout Structure
+
+The Sidebar is built as a set of compound components for complete flexibility:
+
+```tsx
+<Sidebar selectedKey={activeKey} onSelectionChange={setActiveKey}>
+  <SidebarHeader>
+    {/* Branding, search bar or logo */}
+  </SidebarHeader>
+
+  <SidebarGroup title="Group Name">
+    <SidebarItem id="home" icon={<HomeIcon />}>Home</SidebarItem>
+    <SidebarItem id="settings" icon={<SettingsIcon />}>Settings</SidebarItem>
+  </SidebarGroup>
+
+  <SidebarDivider />
+
+  <SidebarFooter>
+    {/* Account profile, user email, logout */}
+  </SidebarFooter>
+</Sidebar>
+```
+
+---
+
+## Features
+
+### Collapsible Groups
+Wrapping navigation links in `SidebarGroup` automatically supports group collapsibility. When `collapsible` is enabled, clicking the group title toggles item visibility with a smooth grid-based transition.
+
+### Icon-Only Collapse Mode
+Setting the `isCollapsed` prop shrinks the sidebar to a slim icon-only strip. When collapsed:
+- Text labels in `SidebarItem` are hidden.
+- Hovering over a collapsed item displays a premium `Tooltip` showing the item's label.
+- Group headers and sub-content are collapsed/hidden.
+
+### Styling Variants
+Supports both `solid` (flat background) and `glass` (glassmorphic translucent backdrop filter) modes out of the box using the `variant` prop.
+
+---
+
+## API Reference
+
+### Sidebar Props
+
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `isCollapsed` | `boolean` | `false` | Controlled state for whether the sidebar is collapsed to icon-only. |
+| `defaultCollapsed` | `boolean` | `false` | Uncontrolled default state for the collapse layout. |
+| `onCollapseChange` | `(collapsed: boolean) => void` | — | Callback triggered when the collapse state changes. |
+| `selectedKey` | `string` | — | The active/selected item ID (controlled). |
+| `defaultSelectedKey`| `string` | — | The initial active item ID (uncontrolled). |
+| `onSelectionChange` | `(key: string) => void` | — | Callback triggered when a new item is selected. |
+| `variant` | `'solid' \| 'glass'` | `'solid'` | Aesthetic variant of the sidebar background. |
+| `showCollapseToggle`| `boolean` | `true` | Renders a built-in floating chevron toggle at the bottom edge. |
+
+### SidebarGroup Props
+
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `title` | `string` | — | The label text displayed at the top of the group. |
+| `collapsible` | `boolean` | `true` | Whether the group can be expanded/collapsed. |
+| `defaultExpanded` | `boolean` | `true` | The initial expansion state of the group. |
+| `isExpanded` | `boolean` | — | Controlled expansion state. |
+| `onExpandedChange` | `(expanded: boolean) => void` | — | Callback triggered when group expansion state toggles. |
+
+### SidebarItem Props
+
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `id` | `string` | — | Unique key representing the item (used for selection modeling). |
+| `href` | `string` | — | Render as a link using React Aria's Link capabilities. |
+| `icon` | `ReactNode` | — | The SVG or custom react component rendered on the left of the label. |
+| `isSelected` | `boolean` | — | Manual override to mark the item as selected. |
+
+### SidebarFooter Props
+
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `showBorder` | `boolean` | `true` | Whether to display a divider border above the footer content. |

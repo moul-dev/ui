@@ -14,19 +14,275 @@ import { Modal, ModalOverlay } from './components/Modal'
 import { ToggleButton } from './components/ToggleButton'
 import { ToggleButtonGroup } from './components/ToggleButtonGroup'
 import { Typography } from './components/Typography'
+import {
+  Sidebar,
+  SidebarDivider,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarHeader,
+  SidebarItem,
+} from './components/Sidebar'
 
-// Define StyleX styles
+// ── Icons ────────────────────────────────────────────────────────────
+
+const HomeIcon = () => (
+  <svg
+    viewBox="0 0 24 24"
+    width="18"
+    height="18"
+    stroke="currentColor"
+    strokeWidth="2"
+    fill="none"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+    <polyline points="9 22 9 12 15 12 15 22" />
+  </svg>
+)
+
+const RadioIcon = () => (
+  <svg
+    viewBox="0 0 24 24"
+    width="18"
+    height="18"
+    stroke="currentColor"
+    strokeWidth="2"
+    fill="none"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <circle cx="12" cy="12" r="2" />
+    <path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14" />
+  </svg>
+)
+
+const ArtistIcon = () => (
+  <svg
+    viewBox="0 0 24 24"
+    width="18"
+    height="18"
+    stroke="currentColor"
+    strokeWidth="2"
+    fill="none"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+    <circle cx="12" cy="7" r="4" />
+  </svg>
+)
+
+const AlbumIcon = () => (
+  <svg
+    viewBox="0 0 24 24"
+    width="18"
+    height="18"
+    stroke="currentColor"
+    strokeWidth="2"
+    fill="none"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+    <circle cx="12" cy="12" r="3" />
+  </svg>
+)
+
+const SongIcon = () => (
+  <svg
+    viewBox="0 0 24 24"
+    width="18"
+    height="18"
+    stroke="currentColor"
+    strokeWidth="2"
+    fill="none"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M9 18V5l12-2v13" />
+    <circle cx="6" cy="18" r="3" />
+    <circle cx="18" cy="16" r="3" />
+  </svg>
+)
+
+const StoreIcon = () => (
+  <svg
+    viewBox="0 0 24 24"
+    width="18"
+    height="18"
+    stroke="currentColor"
+    strokeWidth="2"
+    fill="none"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+    <line x1="3" y1="6" x2="21" y2="6" />
+    <path d="M16 10a4 4 0 0 1-8 0" />
+  </svg>
+)
+
+const DeviceIcon = () => (
+  <svg
+    viewBox="0 0 24 24"
+    width="18"
+    height="18"
+    stroke="currentColor"
+    strokeWidth="2"
+    fill="none"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
+    <line x1="12" y1="18" x2="12.01" y2="18" />
+  </svg>
+)
+
+const PlaylistIcon = () => (
+  <svg
+    viewBox="0 0 24 24"
+    width="18"
+    height="18"
+    stroke="currentColor"
+    strokeWidth="2"
+    fill="none"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <line x1="8" y1="6" x2="21" y2="6" />
+    <line x1="8" y1="12" x2="21" y2="12" />
+    <line x1="8" y1="18" x2="21" y2="18" />
+    <line x1="3" y1="6" x2="3.01" y2="6" />
+    <line x1="3" y1="12" x2="3.01" y2="12" />
+    <line x1="3" y1="18" x2="3.01" y2="18" />
+  </svg>
+)
+
+const SettingsIcon = () => (
+  <svg
+    viewBox="0 0 24 24"
+    width="18"
+    height="18"
+    stroke="currentColor"
+    strokeWidth="2"
+    fill="none"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <circle cx="12" cy="12" r="3" />
+    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+  </svg>
+)
+
+// ── StyleX Styles ───────────────────────────────────────────────────
+
 const styles = stylex.create({
-  container: {
+  layout: {
+    display: 'flex',
+    height: '100vh',
+    maxHeight: '100vh',
+    backgroundColor: '#020617',
+    color: '#f8fafc',
+    fontFamily: "'Google Sans', 'Inter', system-ui, -apple-system, sans-serif",
+    boxSizing: 'border-box',
+    overflow: 'hidden',
+  },
+  sidebarWrapper: {
+    paddingTop: '20px',
+    paddingBottom: '20px',
+    paddingLeft: '20px',
+    paddingRight: '12px',
+    height: '100%',
+    boxSizing: 'border-box',
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  mainContent: {
+    flex: 1,
+    paddingTop: '20px',
+    paddingBottom: '20px',
+    paddingRight: '20px',
+    paddingLeft: '12px',
+    overflowY: 'auto',
+    height: '100%',
+    backgroundColor: 'transparent',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
+    justifyContent: 'flex-start',
+    boxSizing: 'border-box',
+  },
+  logo: {
+    width: '32px',
+    height: '32px',
+    borderRadius: '8px',
+    background: 'linear-gradient(135deg, #a855f7 0%, #6366f1 100%)',
+    display: 'flex',
+    alignItems: 'center',
     justifyContent: 'center',
-    minHeight: '100vh',
-    background: 'radial-gradient(circle at center, #0f172a 0%, #020617 100%)',
+    fontWeight: 'bold',
+    fontSize: '16px',
+    color: '#fff',
+    flexShrink: 0,
+  },
+  logoText: {
+    fontSize: '18px',
+    fontWeight: 800,
+    background: 'linear-gradient(135deg, #a855f7 0%, #6366f1 100%)',
+    WebkitBackgroundClip: 'text',
+    WebkitTextFillColor: 'transparent',
+  },
+  avatar: {
+    width: '32px',
+    height: '32px',
+    borderRadius: '50%',
+    backgroundColor: '#a855f7',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: '14px',
+    flexShrink: 0,
+  },
+  profileInfo: {
+    display: 'flex',
+    flexDirection: 'column',
+    fontSize: '0.8125rem',
+    overflow: 'hidden',
+  },
+  profileName: {
+    fontWeight: 600,
     color: '#f8fafc',
-    fontFamily: "'Google Sans', 'Inter', system-ui, -apple-system, sans-serif",
-    padding: '40px 20px',
+  },
+  profileEmail: {
+    color: '#94a3b8',
+    fontSize: '0.75rem',
+  },
+  controlsCard: {
+    background: 'rgba(30, 41, 59, 0.4)',
+    border: '1px solid rgba(255, 255, 255, 0.05)',
+    borderRadius: '24px',
+    padding: '24px',
+    backdropFilter: 'blur(16px)',
+    WebkitBackdropFilter: 'blur(16px)',
+    maxWidth: '600px',
+    width: '100%',
+    marginBottom: '24px',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '16px',
+  },
+  controlsTitle: {
+    margin: 0,
+    fontSize: '1rem',
+  },
+  controlsRow: {
+    display: 'flex',
+    gap: '16px',
+    alignItems: 'center',
+    flexWrap: 'wrap',
   },
   header: {
     textAlign: 'center',
@@ -64,6 +320,7 @@ const styles = stylex.create({
     display: 'flex',
     flexDirection: 'column',
     gap: '16px',
+    width: '100%',
   },
   sectionTitle: {
     fontSize: '1.1rem',
@@ -107,344 +364,451 @@ const styles = stylex.create({
     width: '100%',
     marginTop: '12px',
   },
-  cardTitle: {
-    fontSize: '1.125rem',
-    fontWeight: 700,
-    margin: 0,
-  },
-  cardSubtitle: {
-    fontSize: '0.8125rem',
-    opacity: 0.7,
-    margin: 0,
-  },
-  cardText: {
-    fontSize: '0.875rem',
-    lineHeight: '1.5',
-    margin: 0,
-  },
 })
+
+// ── App Component ────────────────────────────────────────────────────
 
 function App() {
   const [count, setCount] = useState(0)
 
+  // Sidebar interactive states
+  const [activeTab, setActiveTab] = useState('home')
+  const [isCollapsed, setIsCollapsed] = useState(false)
+  const [sidebarVariant, setSidebarVariant] = useState<'solid' | 'glass'>('glass')
+  const [showToggle, setShowToggle] = useState(true)
+
   return (
-    <div {...stylex.props(styles.container)}>
-      <header {...stylex.props(styles.header)}>
-        <h1 {...stylex.props(styles.title)}>Moul UI</h1>
-        <p {...stylex.props(styles.subtitle)}>
-          Vite + React-TS + React Aria + StyleX Components Sandbox
-        </p>
-      </header>
+    <div {...stylex.props(styles.layout)}>
+      {/* Premium Apple Music/Podcast style Sidebar Demo */}
+      <div {...stylex.props(styles.sidebarWrapper)}>
+        <Sidebar
+          isCollapsed={isCollapsed}
+          onCollapseChange={setIsCollapsed}
+          selectedKey={activeTab}
+          onSelectionChange={setActiveTab}
+          variant={sidebarVariant}
+          showCollapseToggle={showToggle}
+        >
+          <SidebarHeader>
+            <div {...stylex.props(styles.logo)}>M</div>
+            <span {...stylex.props(styles.logoText)}>Moul UI</span>
+          </SidebarHeader>
 
-      <main {...stylex.props(styles.card)}>
-        {/* Interactive Button */}
-        <section {...stylex.props(styles.section)}>
-          <h2 {...stylex.props(styles.sectionTitle)}>Stateful Showcase</h2>
-          <div {...stylex.props(styles.buttonGroup)}>
-            <Button onPress={() => setCount((c) => c + 1)}>Click Me</Button>
-            <span {...stylex.props(styles.counterText)}>
-              Count is: <strong>{count}</strong>
-            </span>
-          </div>
-        </section>
+          <SidebarGroup title="Discover" collapsible={false}>
+            <SidebarItem id="home" icon={<HomeIcon />}>
+              Home
+            </SidebarItem>
+            <SidebarItem id="radio" icon={<RadioIcon />}>
+              Radio
+            </SidebarItem>
+          </SidebarGroup>
 
-        {/* Button Variants */}
-        <section {...stylex.props(styles.section)}>
-          <h2 {...stylex.props(styles.sectionTitle)}>Variants</h2>
-          <div {...stylex.props(styles.buttonGroup)}>
-            <Button variant="primary">Primary Accent</Button>
-            <Button variant="secondary">Secondary Glass</Button>
-          </div>
-        </section>
+          <SidebarGroup title="Library" collapsible={true} defaultExpanded={true}>
+            <SidebarItem id="recent" icon={<ArtistIcon />}>
+              Recently Added
+            </SidebarItem>
+            <SidebarItem id="artists" icon={<ArtistIcon />}>
+              Artists
+            </SidebarItem>
+            <SidebarItem id="albums" icon={<AlbumIcon />}>
+              Albums
+            </SidebarItem>
+            <SidebarItem id="songs" icon={<SongIcon />}>
+              Songs
+            </SidebarItem>
+          </SidebarGroup>
 
-        {/* Toggle Button Showcase */}
-        <section {...stylex.props(styles.section)}>
-          <h2 {...stylex.props(styles.sectionTitle)}>Toggle Buttons</h2>
-          <div {...stylex.props(styles.buttonGroup)}>
-            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-              <span>Standalone (Primary):</span>
-              <ToggleButton variant="primary">Toggle</ToggleButton>
-              <ToggleButton variant="primary" defaultSelected>
-                Selected
-              </ToggleButton>
-            </div>
-            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-              <span>Standalone (Secondary):</span>
-              <ToggleButton variant="secondary">Toggle</ToggleButton>
-              <ToggleButton variant="secondary" defaultSelected>
-                Selected
-              </ToggleButton>
-            </div>
-            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-              <span>Group (Animated):</span>
-              <ToggleButtonGroup animated defaultSelectedKeys={['week']}>
-                <ToggleButton id="day">Day</ToggleButton>
-                <ToggleButton id="week">Week</ToggleButton>
-                <ToggleButton id="month">Month</ToggleButton>
-              </ToggleButtonGroup>
-            </div>
-            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-              <span>Group Secondary (Animated):</span>
-              <ToggleButtonGroup animated defaultSelectedKeys={['bold']}>
-                <ToggleButton id="bold" variant="secondary">
-                  Bold
-                </ToggleButton>
-                <ToggleButton id="italic" variant="secondary">
-                  Italic
-                </ToggleButton>
-                <ToggleButton id="underline" variant="secondary">
-                  Underline
-                </ToggleButton>
-              </ToggleButtonGroup>
-            </div>
-          </div>
-        </section>
+          <SidebarGroup title="Store" collapsible={true} defaultExpanded={false}>
+            <SidebarItem id="store" icon={<StoreIcon />}>
+              iTunes Store
+            </SidebarItem>
+          </SidebarGroup>
 
-        {/* Disabled States */}
-        <section {...stylex.props(styles.section)}>
-          <h2 {...stylex.props(styles.sectionTitle)}>Disabled State</h2>
-          <div {...stylex.props(styles.buttonGroup)}>
-            <Button variant="primary" isDisabled>
-              Primary Disabled
+          <SidebarGroup title="Devices" collapsible={true} defaultExpanded={true}>
+            <SidebarItem id="device" icon={<DeviceIcon />}>
+              Phearak S.'s iPhone
+            </SidebarItem>
+          </SidebarGroup>
+
+          <SidebarGroup title="Playlists" collapsible={false}>
+            <SidebarItem id="all-playlists" icon={<PlaylistIcon />}>
+              All Playlists
+            </SidebarItem>
+          </SidebarGroup>
+
+          <SidebarGroup title="Settings" collapsible={false}>
+            <SidebarItem id="settings" icon={<SettingsIcon />}>
+              Settings
+            </SidebarItem>
+          </SidebarGroup>
+
+          <SidebarDivider />
+
+          <SidebarFooter showBorder={false}>
+            <div {...stylex.props(styles.avatar)}>P</div>
+            <div {...stylex.props(styles.profileInfo)}>
+              <span {...stylex.props(styles.profileName)}>Phearak S.</span>
+              <span {...stylex.props(styles.profileEmail)}>phearak@moul.dev</span>
+            </div>
+          </SidebarFooter>
+        </Sidebar>
+      </div>
+
+      {/* Main Sandbox Showcase */}
+      <main {...stylex.props(styles.mainContent)}>
+        <header {...stylex.props(styles.header)}>
+          <h1 {...stylex.props(styles.title)}>Moul UI</h1>
+          <p {...stylex.props(styles.subtitle)}>
+            Vite + React-TS + React Aria + StyleX Components Sandbox
+          </p>
+        </header>
+
+        {/* Sidebar Controls Card */}
+        <section {...stylex.props(styles.controlsCard)}>
+          <Typography.Heading as="h3" style={styles.controlsTitle}>
+            Sidebar Interactive Controller
+          </Typography.Heading>
+          <div {...stylex.props(styles.controlsRow)}>
+            <Button
+              variant="secondary"
+              size="sm"
+              onPress={() => setIsCollapsed(!isCollapsed)}
+            >
+              Toggle Collapse ({isCollapsed ? 'Collapsed' : 'Expanded'})
             </Button>
-            <Button variant="secondary" isDisabled>
-              Secondary Disabled
-            </Button>
-          </div>
-        </section>
-
-        {/* Dialogs Showcase */}
-        <section {...stylex.props(styles.section)}>
-          <h2 {...stylex.props(styles.sectionTitle)}>Overlays & Dialogs</h2>
-          <div {...stylex.props(styles.buttonGroup)}>
-            <DialogTrigger>
-              <Button variant="primary">Delete Account</Button>
-              <ModalOverlay>
-                <Modal>
-                  <AlertDialog>
-                    {({ close }) => (
-                      <>
-                        <AlertDialogHeader>Delete Account</AlertDialogHeader>
-                        <AlertDialogBody>
-                          Are you sure you want to delete your account? This
-                          action cannot be undone and all of your data will be
-                          permanently removed.
-                        </AlertDialogBody>
-                        <AlertDialogFooter>
-                          <Button variant="secondary" onPress={close}>
-                            Cancel
-                          </Button>
-                          <Button variant="danger" onPress={close}>
-                            Delete
-                          </Button>
-                        </AlertDialogFooter>
-                      </>
-                    )}
-                  </AlertDialog>
-                </Modal>
-              </ModalOverlay>
-            </DialogTrigger>
-          </div>
-        </section>
-
-        {/* Alerts Showcase */}
-        <section {...stylex.props(styles.section)}>
-          <h2 {...stylex.props(styles.sectionTitle)}>Alerts Showcase</h2>
-          <div {...stylex.props(styles.alertList)}>
-            {/* Info Standard */}
-            <Alert
-              variant="info"
-              title="New features available"
-              description="Check out our latest updates including dark mode support and improved accessibility features."
-            />
-
-            {/* Info with Accent & Action */}
-            <Alert
-              variant="accent"
-              title="Update available"
-              description="A new version of the application is available. Please refresh to get the latest features and bug fixes."
-              action={
-                <Button variant="primary" size="sm">
-                  Refresh
-                </Button>
-              }
-            />
-
-            {/* Error with Action & Bullet List */}
-            <Alert
-              variant="error"
-              title="Unable to connect to server"
-              action={
-                <Button variant="danger" size="sm">
-                  Retry
-                </Button>
+            <Button
+              variant="secondary"
+              size="sm"
+              onPress={() =>
+                setSidebarVariant(sidebarVariant === 'glass' ? 'solid' : 'glass')
               }
             >
-              <div style={{ marginTop: '8px' }}>
-                <p
+              Toggle Style: {sidebarVariant.toUpperCase()}
+            </Button>
+            <Button
+              variant="secondary"
+              size="sm"
+              onPress={() => setShowToggle(!showToggle)}
+            >
+              Floating Toggle Button: {showToggle ? 'Show' : 'Hide'}
+            </Button>
+          </div>
+          <span style={{ fontSize: '0.85rem', color: '#94a3b8' }}>
+            Current Active Key: <strong>{activeTab}</strong>
+          </span>
+        </section>
+
+        {/* The rest of the showcases */}
+        <div {...stylex.props(styles.card)}>
+          {/* Interactive Button */}
+          <section {...stylex.props(styles.section)}>
+            <h2 {...stylex.props(styles.sectionTitle)}>Stateful Showcase</h2>
+            <div {...stylex.props(styles.buttonGroup)}>
+              <Button onPress={() => setCount((c) => c + 1)}>Click Me</Button>
+              <span {...stylex.props(styles.counterText)}>
+                Count is: <strong>{count}</strong>
+              </span>
+            </div>
+          </section>
+
+          {/* Button Variants */}
+          <section {...stylex.props(styles.section)}>
+            <h2 {...stylex.props(styles.sectionTitle)}>Variants</h2>
+            <div {...stylex.props(styles.buttonGroup)}>
+              <Button variant="primary">Primary Accent</Button>
+              <Button variant="secondary">Secondary Glass</Button>
+            </div>
+          </section>
+
+          {/* Toggle Button Showcase */}
+          <section {...stylex.props(styles.section)}>
+            <h2 {...stylex.props(styles.sectionTitle)}>Toggle Buttons</h2>
+            <div {...stylex.props(styles.buttonGroup)}>
+              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                <span>Standalone (Primary):</span>
+                <ToggleButton variant="primary">Toggle</ToggleButton>
+                <ToggleButton variant="primary" defaultSelected>
+                  Selected
+                </ToggleButton>
+              </div>
+              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                <span>Standalone (Secondary):</span>
+                <ToggleButton variant="secondary">Toggle</ToggleButton>
+                <ToggleButton variant="secondary" defaultSelected>
+                  Selected
+                </ToggleButton>
+              </div>
+              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                <span>Group (Animated):</span>
+                <ToggleButtonGroup animated defaultSelectedKeys={['week']}>
+                  <ToggleButton id="day">Day</ToggleButton>
+                  <ToggleButton id="week">Week</ToggleButton>
+                  <ToggleButton id="month">Month</ToggleButton>
+                </ToggleButtonGroup>
+              </div>
+              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                <span>Group Secondary (Animated):</span>
+                <ToggleButtonGroup animated defaultSelectedKeys={['bold']}>
+                  <ToggleButton id="bold" variant="secondary">
+                    Bold
+                  </ToggleButton>
+                  <ToggleButton id="italic" variant="secondary">
+                    Italic
+                  </ToggleButton>
+                  <ToggleButton id="underline" variant="secondary">
+                    Underline
+                  </ToggleButton>
+                </ToggleButtonGroup>
+              </div>
+            </div>
+          </section>
+
+          {/* Disabled States */}
+          <section {...stylex.props(styles.section)}>
+            <h2 {...stylex.props(styles.sectionTitle)}>Disabled State</h2>
+            <div {...stylex.props(styles.buttonGroup)}>
+              <Button variant="primary" isDisabled>
+                Primary Disabled
+              </Button>
+              <Button variant="secondary" isDisabled>
+                Secondary Disabled
+              </Button>
+            </div>
+          </section>
+
+          {/* Dialogs Showcase */}
+          <section {...stylex.props(styles.section)}>
+            <h2 {...stylex.props(styles.sectionTitle)}>Overlays & Dialogs</h2>
+            <div {...stylex.props(styles.buttonGroup)}>
+              <DialogTrigger>
+                <Button variant="primary">Delete Account</Button>
+                <ModalOverlay>
+                  <Modal>
+                    <AlertDialog>
+                      {({ close }) => (
+                        <>
+                          <AlertDialogHeader>Delete Account</AlertDialogHeader>
+                          <AlertDialogBody>
+                            Are you sure you want to delete your account? This
+                            action cannot be undone and all of your data will be
+                            permanently removed.
+                          </AlertDialogBody>
+                          <AlertDialogFooter>
+                            <Button variant="secondary" onPress={close}>
+                              Cancel
+                            </Button>
+                            <Button variant="danger" onPress={close}>
+                              Delete
+                            </Button>
+                          </AlertDialogFooter>
+                        </>
+                      )}
+                    </AlertDialog>
+                  </Modal>
+                </ModalOverlay>
+              </DialogTrigger>
+            </div>
+          </section>
+
+          {/* Alerts Showcase */}
+          <section {...stylex.props(styles.section)}>
+            <h2 {...stylex.props(styles.sectionTitle)}>Alerts Showcase</h2>
+            <div {...stylex.props(styles.alertList)}>
+              {/* Info Standard */}
+              <Alert
+                variant="info"
+                title="New features available"
+                description="Check out our latest updates including dark mode support and improved accessibility features."
+              />
+
+              {/* Info with Accent & Action */}
+              <Alert
+                variant="accent"
+                title="Update available"
+                description="A new version of the application is available. Please refresh to get the latest features and bug fixes."
+                action={
+                  <Button variant="primary" size="sm">
+                    Refresh
+                  </Button>
+                }
+              />
+
+              {/* Error with Action & Bullet List */}
+              <Alert
+                variant="error"
+                title="Unable to connect to server"
+                action={
+                  <Button variant="danger" size="sm">
+                    Retry
+                  </Button>
+                }
+              >
+                <div style={{ marginTop: '8px' }}>
+                  <p
+                    style={{
+                      margin: '0 0 8px 0',
+                      fontSize: '0.875rem',
+                      color: '#94a3b8',
+                    }}
+                  >
+                    We're experiencing connection issues. Please try the
+                    following:
+                  </p>
+                  <ul {...stylex.props(styles.bulletList)}>
+                    <li>Check your internet connection</li>
+                    <li>Refresh the page</li>
+                    <li>Clear your browser cache</li>
+                  </ul>
+                </div>
+              </Alert>
+
+              {/* Success with Close button */}
+              <Alert
+                variant="success"
+                title="Profile updated successfully"
+                onClose={() => alert('Close clicked')}
+              />
+
+              {/* Loading/Processing State */}
+              <Alert
+                variant="loading"
+                title="Processing your request"
+                description="Please wait while we sync your data. This may take a few moments."
+              />
+
+              {/* Warning State */}
+              <Alert
+                variant="warning"
+                title="Scheduled maintenance"
+                description="Our services will be unavailable on Sunday, March 15th from 2:00 AM to 6:00 AM UTC for scheduled maintenance."
+              />
+            </div>
+          </section>
+
+          {/* Cards Showcase */}
+          <section {...stylex.props(styles.section)}>
+            <h2 {...stylex.props(styles.sectionTitle)}>Cards Showcase</h2>
+            <div {...stylex.props(styles.cardsGrid)}>
+              {/* Glass Card */}
+              <Card variant="glass" size="md">
+                <CardHeader>Glassmorphic Card</CardHeader>
+                <CardBody>
+                  Features a gorgeous glassmorphic style. Perfect for modern,
+                  premium designs.
+                </CardBody>
+                <CardFooter>
+                  <Button variant="secondary" size="sm">
+                    Cancel
+                  </Button>
+                  <Button variant="primary" size="sm">
+                    Save
+                  </Button>
+                </CardFooter>
+              </Card>
+
+              {/* Elevated Card */}
+              <Card variant="default" size="md" divided>
+                <CardHeader>Elevated Card</CardHeader>
+                <CardBody>
+                  Uses standard elevation with clean borders dividing header,
+                  body, and footer.
+                </CardBody>
+                <CardFooter>
+                  <Button variant="secondary" size="sm">
+                    Action
+                  </Button>
+                </CardFooter>
+              </Card>
+
+              {/* Flat Card */}
+              <Card variant="flat" size="sm">
+                <CardHeader>Flat Card</CardHeader>
+                <CardBody>Flat background without borders or shadows.</CardBody>
+                <CardFooter>
+                  <Button variant="secondary" size="sm">
+                    Close
+                  </Button>
+                </CardFooter>
+              </Card>
+            </div>
+          </section>
+
+          {/* Typography Showcase */}
+          <section {...stylex.props(styles.section)}>
+            <h2 {...stylex.props(styles.sectionTitle)}>Typography Showcase</h2>
+            <div
+              style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}
+            >
+              <div
+                style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}
+              >
+                <span
                   style={{
-                    margin: '0 0 8px 0',
-                    fontSize: '0.875rem',
+                    fontSize: '0.8125rem',
                     color: '#94a3b8',
+                    fontWeight: 600,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
                   }}
                 >
-                  We're experiencing connection issues. Please try the
-                  following:
-                </p>
-                <ul {...stylex.props(styles.bulletList)}>
-                  <li>Check your internet connection</li>
-                  <li>Refresh the page</li>
-                  <li>Clear your browser cache</li>
-                </ul>
+                  Standard Typography Tags (as prop)
+                </span>
+                <Typography as="h1">Heading 1 (h1)</Typography>
+                <Typography as="h2">Heading 2 (h2)</Typography>
+                <Typography as="h3">Heading 3 (h3)</Typography>
+                <Typography as="h4">Heading 4 (h4)</Typography>
+                <Typography as="h5">Heading 5 (h5)</Typography>
+                <Typography as="h6">Heading 6 (h6)</Typography>
+                <Typography as="p">
+                  Paragraph (p) - Standard body text.
+                </Typography>
+                <Typography as="span">
+                  Span (span) - Inline text wrapper.
+                </Typography>
+                <Typography as="label">
+                  Label (label) - Form label style.
+                </Typography>
               </div>
-            </Alert>
 
-            {/* Success with Close button */}
-            <Alert
-              variant="success"
-              title="Profile updated successfully"
-              onClose={() => alert('Close clicked')}
-            />
-
-            {/* Loading/Processing State */}
-            <Alert
-              variant="loading"
-              title="Processing your request"
-              description="Please wait while we sync your data. This may take a few moments."
-            />
-
-            {/* Warning State */}
-            <Alert
-              variant="warning"
-              title="Scheduled maintenance"
-              description="Our services will be unavailable on Sunday, March 15th from 2:00 AM to 6:00 AM UTC for scheduled maintenance."
-            />
-          </div>
-        </section>
-
-        {/* Cards Showcase */}
-        <section {...stylex.props(styles.section)}>
-          <h2 {...stylex.props(styles.sectionTitle)}>Cards Showcase</h2>
-          <div {...stylex.props(styles.cardsGrid)}>
-            {/* Glass Card */}
-            <Card variant="glass" size="md">
-              <CardHeader>Glassmorphic Card</CardHeader>
-              <CardBody>
-                Features a gorgeous glassmorphic style. Perfect for modern,
-                premium designs.
-              </CardBody>
-              <CardFooter>
-                <Button variant="secondary" size="sm">
-                  Cancel
-                </Button>
-                <Button variant="primary" size="sm">
-                  Save
-                </Button>
-              </CardFooter>
-            </Card>
-
-            {/* Elevated Card */}
-            <Card variant="default" size="md" divided>
-              <CardHeader>Elevated Card</CardHeader>
-              <CardBody>
-                Uses standard elevation with clean borders dividing header,
-                body, and footer.
-              </CardBody>
-              <CardFooter>
-                <Button variant="secondary" size="sm">
-                  Action
-                </Button>
-              </CardFooter>
-            </Card>
-
-            {/* Flat Card */}
-            <Card variant="flat" size="sm">
-              <CardHeader>Flat Card</CardHeader>
-              <CardBody>Flat background without borders or shadows.</CardBody>
-              <CardFooter>
-                <Button variant="secondary" size="sm">
-                  Close
-                </Button>
-              </CardFooter>
-            </Card>
-          </div>
-        </section>
-
-        {/* Typography Showcase */}
-        <section {...stylex.props(styles.section)}>
-          <h2 {...stylex.props(styles.sectionTitle)}>Typography Showcase</h2>
-          <div
-            style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}
-          >
-            <div
-              style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}
-            >
-              <span
+              <div
                 style={{
-                  fontSize: '0.8125rem',
-                  color: '#94a3b8',
-                  fontWeight: 600,
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.05em',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '12px',
+                  borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+                  paddingTop: '16px',
                 }}
               >
-                Standard Typography Tags (as prop)
-              </span>
-              <Typography as="h1">Heading 1 (h1)</Typography>
-              <Typography as="h2">Heading 2 (h2)</Typography>
-              <Typography as="h3">Heading 3 (h3)</Typography>
-              <Typography as="h4">Heading 4 (h4)</Typography>
-              <Typography as="h5">Heading 5 (h5)</Typography>
-              <Typography as="h6">Heading 6 (h6)</Typography>
-              <Typography as="p">
-                Paragraph (p) - Standard body text.
-              </Typography>
-              <Typography as="span">
-                Span (span) - Inline text wrapper.
-              </Typography>
-              <Typography as="label">
-                Label (label) - Form label style.
-              </Typography>
+                <span
+                  style={{
+                    fontSize: '0.8125rem',
+                    color: '#94a3b8',
+                    fontWeight: 600,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                  }}
+                >
+                  Semantic Exports
+                </span>
+                <Typography.Heading as="h1">
+                  Heading 1 (Typography.Heading as="h1")
+                </Typography.Heading>
+                <Typography.Heading as="h3">
+                  Heading 3 (Typography.Heading as="h3")
+                </Typography.Heading>
+                <Typography.Paragraph>
+                  Paragraph (Typography.Paragraph) - Standard body text.
+                </Typography.Paragraph>
+                <Typography.Span>
+                  Span (Typography.Span) - Inline text element.
+                </Typography.Span>
+                <Typography.Label>
+                  Label (Typography.Label) - Form label element.
+                </Typography.Label>
+              </div>
             </div>
-
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '12px',
-                borderTop: '1px solid rgba(255, 255, 255, 0.08)',
-                paddingTop: '16px',
-              }}
-            >
-              <span
-                style={{
-                  fontSize: '0.8125rem',
-                  color: '#94a3b8',
-                  fontWeight: 600,
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.05em',
-                }}
-              >
-                Semantic Exports
-              </span>
-              <Typography.Heading as="h1">
-                Heading 1 (Typography.Heading as="h1")
-              </Typography.Heading>
-              <Typography.Heading as="h3">
-                Heading 3 (Typography.Heading as="h3")
-              </Typography.Heading>
-              <Typography.Paragraph>
-                Paragraph (Typography.Paragraph) - Standard body text.
-              </Typography.Paragraph>
-              <Typography.Span>
-                Span (Typography.Span) - Inline text element.
-              </Typography.Span>
-              <Typography.Label>
-                Label (Typography.Label) - Form label element.
-              </Typography.Label>
-            </div>
-          </div>
-        </section>
+          </section>
+        </div>
       </main>
     </div>
   )

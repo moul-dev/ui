@@ -28,6 +28,12 @@ import {
   TooltipTrigger,
   Typography,
   useToast,
+  Sidebar,
+  SidebarDivider,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarHeader,
+  SidebarItem,
 } from '@moul-dev/ui'
 import React, { useEffect, useState } from 'react'
 
@@ -647,6 +653,117 @@ const REGISTRY: Record<string, ComponentConfig> = {
       },
     ],
   },
+  Sidebar: {
+    name: 'Sidebar',
+    defaultProps: {
+      variant: 'solid',
+      isCollapsed: false,
+      showCollapseToggle: true,
+    },
+    props: [
+      {
+        name: 'variant',
+        type: 'select',
+        label: 'Variant',
+        options: ['solid', 'glass'],
+        defaultValue: 'solid',
+      },
+      {
+        name: 'isCollapsed',
+        type: 'boolean',
+        label: 'Collapsed',
+        defaultValue: false,
+      },
+      {
+        name: 'showCollapseToggle',
+        type: 'boolean',
+        label: 'Show Toggle Button',
+        defaultValue: true,
+      },
+    ],
+  },
+}
+
+function SidebarPreviewWrapper({
+  variant,
+  isCollapsed,
+  showCollapseToggle,
+}: {
+  variant: 'solid' | 'glass'
+  isCollapsed: boolean
+  showCollapseToggle: boolean
+}) {
+  const [activeTab, setActiveTab] = useState('home')
+
+  // Simple inline SVGs for the demo
+  const HomeIcon = () => (
+    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+      <polyline points="9 22 9 12 15 12 15 22" />
+    </svg>
+  )
+
+  const SearchIcon = () => (
+    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="11" cy="11" r="8" />
+      <line x1="21" y1="21" x2="16.65" y2="16.65" />
+    </svg>
+  )
+
+  const LibraryIcon = () => (
+    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+      <circle cx="12" cy="12" r="3" />
+    </svg>
+  )
+
+  return (
+    <div className="flex p-3 gap-3 border border-neutral-200 dark:border-neutral-800 rounded-2xl h-[300px] w-full max-w-[480px] bg-neutral-950 text-neutral-100 shadow-xl box-sizing">
+      <div className="h-full flex-shrink-0" style={{ '--sidebar-width': '150px', '--sidebar-collapsed-width': '64px' } as React.CSSProperties}>
+        <Sidebar
+          isCollapsed={isCollapsed}
+          selectedKey={activeTab}
+          onSelectionChange={setActiveTab}
+          variant={variant}
+          showCollapseToggle={showCollapseToggle}
+        >
+          <SidebarHeader>
+            <div className="w-5 h-5 rounded bg-gradient-to-tr from-purple-500 to-indigo-500 flex items-center justify-center font-bold text-[10px] text-white">M</div>
+            <span className="font-extrabold text-[11px] text-neutral-100 font-sans">Moul UI</span>
+          </SidebarHeader>
+
+          <SidebarGroup title="Menu" collapsible={false}>
+            <SidebarItem id="home" icon={<HomeIcon />}>
+              Home
+            </SidebarItem>
+            <SidebarItem id="search" icon={<SearchIcon />}>
+              Search
+            </SidebarItem>
+          </SidebarGroup>
+
+          <SidebarGroup title="Library" collapsible={true}>
+            <SidebarItem id="playlists" icon={<LibraryIcon />}>
+              Playlists
+            </SidebarItem>
+          </SidebarGroup>
+
+          <SidebarDivider />
+
+          <SidebarFooter showBorder={false}>
+            <div className="w-5 h-5 rounded-full bg-purple-500 flex items-center justify-center text-white font-bold text-[10px]">U</div>
+            <span className="text-[9px] text-neutral-200 font-semibold truncate max-w-[85px]">User Account</span>
+          </SidebarFooter>
+        </Sidebar>
+      </div>
+
+      <div className="flex-1 pt-0 pb-0 pr-1.5 pl-0 flex flex-col gap-2 overflow-y-auto bg-transparent">
+        <h5 className="text-xs font-bold truncate">Section: {activeTab.toUpperCase()}</h5>
+        <div className="flex-1 border border-dashed border-neutral-700 rounded-lg flex items-center justify-center text-[10px] text-neutral-400 bg-neutral-950/20 p-2 text-center">
+          Workspace View
+        </div>
+      </div>
+    </div>
+  )
 }
 
 // Custom Toast Preview wrapper
@@ -873,8 +990,8 @@ export function ComponentPlayground({ component }: { component: string }) {
       </InputOTPGroup>`
           : `      <InputOTPGroup>
 ${Array.from({ length: maxLength || 4 })
-  .map((_, i) => `        <InputOTPSlot index={${i}} />`)
-  .join('\n')}
+            .map((_, i) => `        <InputOTPSlot index={${i}} />`)
+            .join('\n')}
       </InputOTPGroup>`
 
         return `import {
@@ -1229,6 +1346,50 @@ export default function Example() {
   );
 }`
       }
+      case 'Sidebar': {
+        const { variant, isCollapsed, showCollapseToggle } = activeProps
+        let propsStr = ''
+        if (variant !== 'solid') propsStr += ` variant="${variant}"`
+        if (isCollapsed) propsStr += ` isCollapsed`
+        if (!showCollapseToggle) propsStr += ` showCollapseToggle={false}`
+
+        return `import {
+  Sidebar,
+  SidebarHeader,
+  SidebarGroup,
+  SidebarItem,
+  SidebarFooter,
+  SidebarDivider,
+} from '@moul-dev/ui';
+import { HomeIcon, SearchIcon, LibraryIcon } from './icons';
+
+export default function Example() {
+  return (
+    <Sidebar${propsStr}>
+      <SidebarHeader>
+        <div className="logo">M</div>
+        <span>Moul UI</span>
+      </SidebarHeader>
+
+      <SidebarGroup title="Menu" collapsible={false}>
+        <SidebarItem id="home" icon={<HomeIcon />}>Home</SidebarItem>
+        <SidebarItem id="search" icon={<SearchIcon />}>Search</SidebarItem>
+      </SidebarGroup>
+
+      <SidebarGroup title="Library" collapsible={true}>
+        <SidebarItem id="playlists" icon={<LibraryIcon />}>Playlists</SidebarItem>
+      </SidebarGroup>
+
+      <SidebarDivider />
+
+      <SidebarFooter>
+        <Avatar />
+        <span>User Account</span>
+      </SidebarFooter>
+    </Sidebar>
+  );
+}`
+      }
       default:
         return `<${component} />`
     }
@@ -1360,6 +1521,16 @@ export default function Example() {
               <Button variant="primary">Confirm</Button>
             </CardFooter>
           </Card>
+        )
+      }
+      case 'Sidebar': {
+        const { variant, isCollapsed, showCollapseToggle } = activeProps
+        return (
+          <SidebarPreviewWrapper
+            variant={variant}
+            isCollapsed={isCollapsed}
+            showCollapseToggle={showCollapseToggle}
+          />
         )
       }
       default:

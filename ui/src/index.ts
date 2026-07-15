@@ -219,3 +219,20 @@ export type {
 export type { ThemeProviderProps } from './theme/ThemeProvider'
 export { ThemeProvider } from './theme/ThemeProvider'
 export { tokens } from './tokens/tokens.stylex'
+
+export {
+  Sidebar,
+  SidebarHeader,
+  SidebarGroup,
+  SidebarItem,
+  SidebarFooter,
+  SidebarDivider,
+} from './components/Sidebar'
+export type {
+  SidebarProps,
+  SidebarHeaderProps,
+  SidebarGroupProps,
+  SidebarItemProps,
+  SidebarFooterProps,
+  SidebarDividerProps,
+} from './components/Sidebar'

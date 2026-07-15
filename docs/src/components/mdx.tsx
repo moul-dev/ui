@@ -20,6 +20,12 @@ import {
   TypographyLabel,
   TypographyParagraph,
   TypographySpan,
+  Sidebar,
+  SidebarHeader,
+  SidebarGroup,
+  SidebarItem,
+  SidebarFooter,
+  SidebarDivider,
 } from '@moul-dev/ui'
 import { Accordion, Accordions } from 'fumadocs-ui/components/accordion'
 import { Card, Cards } from 'fumadocs-ui/components/card'
@@ -47,6 +53,7 @@ import {
   TagGroupDemo,
   ToastDemo,
   TopListDemo,
+  SidebarDemo,
 } from './demos'
 
 export function getMDXComponents(components?: MDXComponents) {
@@ -100,6 +107,13 @@ export function getMDXComponents(components?: MDXComponents) {
     PercentageDemo,
     StatusChartDemo,
     SpikyAreaChartDemo,
+    Sidebar,
+    SidebarHeader,
+    SidebarGroup,
+    SidebarItem,
+    SidebarFooter,
+    SidebarDivider,
+    SidebarDemo,
     ...components,
   } satisfies MDXComponents
 }

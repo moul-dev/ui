@@ -34,6 +34,12 @@ import {
   TextField,
   ToastContainer,
   TopList,
+  Sidebar,
+  SidebarDivider,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarHeader,
+  SidebarItem,
   tokens,
   useToast,
 } from '@moul-dev/ui'
@@ -238,7 +244,7 @@ export function TagGroupDemo() {
             label="Small size"
             size="sm"
             variant="primary"
-            onRemove={() => {}}
+            onRemove={() => { }}
           >
             <Tag id="sm1">Small Tag</Tag>
             <Tag id="sm2">Tag 2</Tag>
@@ -248,7 +254,7 @@ export function TagGroupDemo() {
             label="Medium size"
             size="md"
             variant="secondary"
-            onRemove={() => {}}
+            onRemove={() => { }}
           >
             <Tag id="md1">Medium Tag</Tag>
             <Tag id="md2">Tag 2</Tag>
@@ -258,7 +264,7 @@ export function TagGroupDemo() {
             label="Large size"
             size="lg"
             variant="tertiary"
-            onRemove={() => {}}
+            onRemove={() => { }}
           >
             <Tag id="lg1">Large Tag</Tag>
             <Tag id="lg2">Tag 2</Tag>
@@ -989,3 +995,99 @@ function ChartActionPill() {
     </div>
   )
 }
+
+export function SidebarDemo() {
+  const [activeTab, setActiveTab] = useState('home')
+  const [isCollapsed, setIsCollapsed] = useState(false)
+
+  // Simple inline SVGs for the demo
+  const HomeIcon = () => (
+    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+      <polyline points="9 22 9 12 15 12 15 22" />
+    </svg>
+  )
+
+  const SearchIcon = () => (
+    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="11" cy="11" r="8" />
+      <line x1="21" y1="21" x2="16.65" y2="16.65" />
+    </svg>
+  )
+
+  const LibraryIcon = () => (
+    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+      <circle cx="12" cy="12" r="3" />
+    </svg>
+  )
+
+  const SettingsIcon = () => (
+    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="3" />
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+    </svg>
+  )
+
+  return (
+    <div className="flex p-4 gap-4 border border-neutral-200 dark:border-neutral-800 rounded-2xl h-[450px] w-full bg-neutral-950 text-neutral-100 shadow-xl">
+      <div className="h-full flex-shrink-0" style={{ '--sidebar-width': '200px', '--sidebar-collapsed-width': '64px' } as React.CSSProperties}>
+        <Sidebar
+          isCollapsed={isCollapsed}
+          onCollapseChange={setIsCollapsed}
+          selectedKey={activeTab}
+          onSelectionChange={setActiveTab}
+          variant="solid"
+        >
+          <SidebarHeader>
+            <div className="w-6 h-6 rounded bg-gradient-to-tr from-purple-500 to-indigo-500 flex items-center justify-center font-bold text-xs text-white">M</div>
+            <span className="font-extrabold text-sm text-neutral-100">Moul UI</span>
+          </SidebarHeader>
+
+          <SidebarGroup title="Menu" collapsible={false}>
+            <SidebarItem id="home" icon={<HomeIcon />}>
+              Home
+            </SidebarItem>
+            <SidebarItem id="search" icon={<SearchIcon />}>
+              Search
+            </SidebarItem>
+          </SidebarGroup>
+
+          <SidebarGroup title="Library" collapsible={true}>
+            <SidebarItem id="playlists" icon={<LibraryIcon />}>
+              Playlists
+            </SidebarItem>
+            <SidebarItem id="settings" icon={<SettingsIcon />}>
+              Settings
+            </SidebarItem>
+          </SidebarGroup>
+
+          <SidebarDivider />
+
+          <SidebarFooter showBorder={false}>
+            <div className="w-6 h-6 rounded-full bg-purple-500 flex items-center justify-center text-white font-bold text-xs">U</div>
+            <div className="flex flex-col text-[10px] overflow-hidden leading-tight">
+              <span className="font-semibold text-neutral-200">User Account</span>
+              <span className="text-neutral-400">user@moul.dev</span>
+            </div>
+          </SidebarFooter>
+        </Sidebar>
+      </div>
+
+      <div className="flex-1 pt-0 pb-0 pr-2 pl-0 flex flex-col gap-4 overflow-y-auto bg-transparent">
+        <div className="flex justify-between items-center">
+          <h3 className="text-lg font-bold">Active Section: {activeTab.toUpperCase()}</h3>
+          <Button variant="secondary" size="sm" onPress={() => setIsCollapsed(!isCollapsed)}>
+            Toggle Sidebar
+          </Button>
+        </div>
+        <div className="flex-1 border border-dashed border-neutral-800 rounded-lg flex items-center justify-center text-sm text-neutral-400 bg-neutral-900/20 p-4 text-center">
+          This is the application workspace.
+          <br />
+          Try interacting with the sidebar collapse and selection states.
+        </div>
+      </div>
+    </div>
+  )
+}
+
