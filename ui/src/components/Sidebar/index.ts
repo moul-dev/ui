@@ -5,6 +5,8 @@ export {
   SidebarItem,
   SidebarFooter,
   SidebarDivider,
+  SidebarAside,
+  SidebarMain,
 } from './Sidebar'
 export type {
   SidebarProps,
@@ -13,4 +15,6 @@ export type {
   SidebarItemProps,
   SidebarFooterProps,
   SidebarDividerProps,
+  SidebarAsideProps,
+  SidebarMainProps,
 } from './Sidebar'

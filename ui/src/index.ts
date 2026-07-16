@@ -227,6 +227,8 @@ export {
   SidebarItem,
   SidebarFooter,
   SidebarDivider,
+  SidebarAside,
+  SidebarMain,
 } from './components/Sidebar'
 export type {
   SidebarProps,
@@ -235,4 +237,6 @@ export type {
   SidebarItemProps,
   SidebarFooterProps,
   SidebarDividerProps,
+  SidebarAsideProps,
+  SidebarMainProps,
 } from './components/Sidebar'

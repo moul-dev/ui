@@ -12,6 +12,8 @@ The `Sidebar` is a premium vertical navigation component designed in the style o
 ```tsx
 import {
   Sidebar,
+  SidebarAside,
+  SidebarMain,
   SidebarHeader,
   SidebarGroup,
   SidebarItem,
@@ -21,6 +23,8 @@ import {
 ```
 
 ## Preview
+
+<FullPagePreviewLink href="/preview/sidebar" />
 
 <ComponentPreview>
   <SidebarDemo />
@@ -34,20 +38,26 @@ The Sidebar is built as a set of compound components for complete flexibility:
 
 ```tsx
 <Sidebar selectedKey={activeKey} onSelectionChange={setActiveKey}>
-  <SidebarHeader>
-    {/* Branding, search bar or logo */}
-  </SidebarHeader>
+  <SidebarAside>
+    <SidebarHeader>
+      {/* Branding, search bar or logo */}
+    </SidebarHeader>
 
-  <SidebarGroup title="Group Name">
-    <SidebarItem id="home" icon={<HomeIcon />}>Home</SidebarItem>
-    <SidebarItem id="settings" icon={<SettingsIcon />}>Settings</SidebarItem>
-  </SidebarGroup>
+    <SidebarGroup title="Group Name">
+      <SidebarItem id="home" icon={<HomeIcon />}>Home</SidebarItem>
+      <SidebarItem id="settings" icon={<SettingsIcon />}>Settings</SidebarItem>
+    </SidebarGroup>
 
-  <SidebarDivider />
+    <SidebarDivider />
 
-  <SidebarFooter>
-    {/* Account profile, user email, logout */}
-  </SidebarFooter>
+    <SidebarFooter>
+      {/* Account profile, user email, logout */}
+    </SidebarFooter>
+  </SidebarAside>
+
+  <SidebarMain>
+    {/* Main dashboard or route content */}
+  </SidebarMain>
 </Sidebar>
 ```
 
@@ -82,7 +92,16 @@ Supports both `solid` (flat background) and `glass` (glassmorphic translucent ba
 | `defaultSelectedKey`| `string` | — | The initial active item ID (uncontrolled). |
 | `onSelectionChange` | `(key: string) => void` | — | Callback triggered when a new item is selected. |
 | `variant` | `'solid' \| 'glass'` | `'solid'` | Aesthetic variant of the sidebar background. |
+
+### SidebarAside Props
+
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
 | `showCollapseToggle`| `boolean` | `true` | Renders a built-in floating chevron toggle at the bottom edge. |
+
+### SidebarMain Props
+
+Accepts standard JSX children and compile-time StyleX layout overrides via the `style` prop.
 
 ### SidebarGroup Props
 

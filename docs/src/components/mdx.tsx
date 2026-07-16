@@ -55,6 +55,31 @@ import {
   TopListDemo,
   SidebarDemo,
 } from './demos'
+import { ExternalLink } from 'lucide-react'
+
+export function FullPagePreviewLink({ href }: { href: string }) {
+  return (
+    <div className="my-4 not-prose flex items-center justify-between p-4 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/30">
+      <div className="flex flex-col gap-0.5">
+        <span className="text-sm font-semibold text-neutral-950 dark:text-neutral-50">
+          Full Page Preview
+        </span>
+        <span className="text-xs text-neutral-500 dark:text-neutral-400">
+          Experience this component in a full browser viewport.
+        </span>
+      </div>
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white shadow-xs hover:shadow-md transition-all duration-200"
+      >
+        <span>Open Preview</span>
+        <ExternalLink className="size-3.5" />
+      </a>
+    </div>
+  )
+}
 
 export function getMDXComponents(components?: MDXComponents) {
   return {
@@ -79,6 +104,7 @@ export function getMDXComponents(components?: MDXComponents) {
     Accordions,
     ComponentPreview,
     ComponentPlayground,
+    FullPagePreviewLink,
     AlertDialogDemo,
     ModalDemo,
     ToastDemo,

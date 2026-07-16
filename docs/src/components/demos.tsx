@@ -40,6 +40,8 @@ import {
   SidebarGroup,
   SidebarHeader,
   SidebarItem,
+  SidebarAside,
+  SidebarMain,
   tokens,
   useToast,
 } from '@moul-dev/ui'
@@ -1030,51 +1032,57 @@ export function SidebarDemo() {
   )
 
   return (
-    <div className="flex p-4 gap-4 border border-neutral-200 dark:border-neutral-800 rounded-2xl h-[450px] w-full bg-neutral-950 text-neutral-100 shadow-xl">
-      <div className="h-full flex-shrink-0" style={{ '--sidebar-width': '200px', '--sidebar-collapsed-width': '64px' } as React.CSSProperties}>
-        <Sidebar
-          isCollapsed={isCollapsed}
-          onCollapseChange={setIsCollapsed}
-          selectedKey={activeTab}
-          onSelectionChange={setActiveTab}
-          variant="solid"
-        >
-          <SidebarHeader>
-            <div className="w-6 h-6 rounded bg-gradient-to-tr from-purple-500 to-indigo-500 flex items-center justify-center font-bold text-xs text-white">M</div>
-            <span className="font-extrabold text-sm text-neutral-100">Moul UI</span>
-          </SidebarHeader>
+    <Sidebar
+      isCollapsed={isCollapsed}
+      onCollapseChange={setIsCollapsed}
+      selectedKey={activeTab}
+      onSelectionChange={setActiveTab}
+      variant="solid"
+      className="flex gap-4 border border-neutral-200 dark:border-neutral-800 rounded-2xl w-full bg-neutral-950 text-neutral-100 shadow-xl"
+      style={{ height: '450px', width: '100%' }}
+    >
+      <SidebarAside
+        showCollapseToggle={false}
+        style={{
+          '--sidebar-width': '200px',
+          '--sidebar-collapsed-width': '64px',
+        } as React.CSSProperties}
+      >
+        <SidebarHeader>
+          <div className="w-6 h-6 rounded bg-gradient-to-tr from-purple-500 to-indigo-500 flex items-center justify-center font-bold text-xs text-white">M</div>
+          <span className="font-extrabold text-sm text-neutral-100">Moul UI</span>
+        </SidebarHeader>
 
-          <SidebarGroup title="Menu" collapsible={false}>
-            <SidebarItem id="home" icon={<HomeIcon />}>
-              Home
-            </SidebarItem>
-            <SidebarItem id="search" icon={<SearchIcon />}>
-              Search
-            </SidebarItem>
-          </SidebarGroup>
+        <SidebarGroup title="Menu" collapsible={false}>
+          <SidebarItem id="home" icon={<HomeIcon />}>
+            Home
+          </SidebarItem>
+          <SidebarItem id="search" icon={<SearchIcon />}>
+            Search
+          </SidebarItem>
+        </SidebarGroup>
 
-          <SidebarGroup title="Library" collapsible={true}>
-            <SidebarItem id="playlists" icon={<LibraryIcon />}>
-              Playlists
-            </SidebarItem>
-            <SidebarItem id="settings" icon={<SettingsIcon />}>
-              Settings
-            </SidebarItem>
-          </SidebarGroup>
+        <SidebarGroup title="Library" collapsible={true}>
+          <SidebarItem id="playlists" icon={<LibraryIcon />}>
+            Playlists
+          </SidebarItem>
+          <SidebarItem id="settings" icon={<SettingsIcon />}>
+            Settings
+          </SidebarItem>
+        </SidebarGroup>
 
-          <SidebarDivider />
+        <SidebarDivider />
 
-          <SidebarFooter showBorder={false}>
-            <div className="w-6 h-6 rounded-full bg-purple-500 flex items-center justify-center text-white font-bold text-xs">U</div>
-            <div className="flex flex-col text-[10px] overflow-hidden leading-tight">
-              <span className="font-semibold text-neutral-200">User Account</span>
-              <span className="text-neutral-400">user@moul.dev</span>
-            </div>
-          </SidebarFooter>
-        </Sidebar>
-      </div>
+        <SidebarFooter showBorder={false}>
+          <div className="w-6 h-6 rounded-full bg-purple-500 flex items-center justify-center text-white font-bold text-xs">U</div>
+          <div className="flex flex-col text-[10px] overflow-hidden leading-tight">
+            <span className="font-semibold text-neutral-200">User Account</span>
+            <span className="text-neutral-400">user@moul.dev</span>
+          </div>
+        </SidebarFooter>
+      </SidebarAside>
 
-      <div className="flex-1 pt-0 pb-0 pr-2 pl-0 flex flex-col gap-4 overflow-y-auto bg-transparent">
+      <SidebarMain className="flex-1 pt-0 pb-0 pr-2 pl-0 flex flex-col gap-4 overflow-y-auto bg-transparent">
         <div className="flex justify-between items-center">
           <h3 className="text-lg font-bold">Active Section: {activeTab.toUpperCase()}</h3>
           <Button variant="secondary" size="sm" onPress={() => setIsCollapsed(!isCollapsed)}>
@@ -1086,8 +1094,8 @@ export function SidebarDemo() {
           <br />
           Try interacting with the sidebar collapse and selection states.
         </div>
-      </div>
-    </div>
+      </SidebarMain>
+    </Sidebar>
   )
 }
 

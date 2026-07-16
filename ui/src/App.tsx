@@ -21,6 +21,8 @@ import {
   SidebarGroup,
   SidebarHeader,
   SidebarItem,
+  SidebarAside,
+  SidebarMain,
 } from './components/Sidebar'
 
 // ── Icons ────────────────────────────────────────────────────────────
@@ -178,31 +180,11 @@ const SettingsIcon = () => (
 // ── StyleX Styles ───────────────────────────────────────────────────
 
 const styles = stylex.create({
-  layout: {
-    display: 'flex',
-    height: '100vh',
-    maxHeight: '100vh',
-    backgroundColor: '#020617',
-    color: '#f8fafc',
-    fontFamily: "'Google Sans', 'Inter', system-ui, -apple-system, sans-serif",
-    boxSizing: 'border-box',
-    overflow: 'hidden',
-  },
-  sidebarWrapper: {
-    paddingTop: '20px',
-    paddingBottom: '20px',
-    paddingLeft: '20px',
-    paddingRight: '12px',
-    height: '100%',
-    boxSizing: 'border-box',
-    display: 'flex',
-    flexDirection: 'column',
-  },
   mainContent: {
     flex: 1,
-    paddingTop: '20px',
-    paddingBottom: '20px',
-    paddingRight: '20px',
+    paddingTop: '12px',
+    paddingBottom: '12px',
+    paddingRight: '12px',
     paddingLeft: '12px',
     overflowY: 'auto',
     height: '100%',
@@ -378,84 +360,81 @@ function App() {
   const [showToggle, setShowToggle] = useState(true)
 
   return (
-    <div {...stylex.props(styles.layout)}>
+    <Sidebar
+      isCollapsed={isCollapsed}
+      onCollapseChange={setIsCollapsed}
+      selectedKey={activeTab}
+      onSelectionChange={setActiveTab}
+      variant={sidebarVariant}
+    >
       {/* Premium Apple Music/Podcast style Sidebar Demo */}
-      <div {...stylex.props(styles.sidebarWrapper)}>
-        <Sidebar
-          isCollapsed={isCollapsed}
-          onCollapseChange={setIsCollapsed}
-          selectedKey={activeTab}
-          onSelectionChange={setActiveTab}
-          variant={sidebarVariant}
-          showCollapseToggle={showToggle}
-        >
-          <SidebarHeader>
-            <div {...stylex.props(styles.logo)}>M</div>
-            <span {...stylex.props(styles.logoText)}>Moul UI</span>
-          </SidebarHeader>
+      <SidebarAside showCollapseToggle={showToggle}>
+        <SidebarHeader>
+          <div {...stylex.props(styles.logo)}>M</div>
+          <span {...stylex.props(styles.logoText)}>Moul UI</span>
+        </SidebarHeader>
 
-          <SidebarGroup title="Discover" collapsible={false}>
-            <SidebarItem id="home" icon={<HomeIcon />}>
-              Home
-            </SidebarItem>
-            <SidebarItem id="radio" icon={<RadioIcon />}>
-              Radio
-            </SidebarItem>
-          </SidebarGroup>
+        <SidebarGroup title="Discover" collapsible={false}>
+          <SidebarItem id="home" icon={<HomeIcon />}>
+            Home
+          </SidebarItem>
+          <SidebarItem id="radio" icon={<RadioIcon />}>
+            Radio
+          </SidebarItem>
+        </SidebarGroup>
 
-          <SidebarGroup title="Library" collapsible={true} defaultExpanded={true}>
-            <SidebarItem id="recent" icon={<ArtistIcon />}>
-              Recently Added
-            </SidebarItem>
-            <SidebarItem id="artists" icon={<ArtistIcon />}>
-              Artists
-            </SidebarItem>
-            <SidebarItem id="albums" icon={<AlbumIcon />}>
-              Albums
-            </SidebarItem>
-            <SidebarItem id="songs" icon={<SongIcon />}>
-              Songs
-            </SidebarItem>
-          </SidebarGroup>
+        <SidebarGroup title="Library" collapsible={true} defaultExpanded={true}>
+          <SidebarItem id="recent" icon={<ArtistIcon />}>
+            Recently Added
+          </SidebarItem>
+          <SidebarItem id="artists" icon={<ArtistIcon />}>
+            Artists
+          </SidebarItem>
+          <SidebarItem id="albums" icon={<AlbumIcon />}>
+            Albums
+          </SidebarItem>
+          <SidebarItem id="songs" icon={<SongIcon />}>
+            Songs
+          </SidebarItem>
+        </SidebarGroup>
 
-          <SidebarGroup title="Store" collapsible={true} defaultExpanded={false}>
-            <SidebarItem id="store" icon={<StoreIcon />}>
-              iTunes Store
-            </SidebarItem>
-          </SidebarGroup>
+        <SidebarGroup title="Store" collapsible={true} defaultExpanded={false}>
+          <SidebarItem id="store" icon={<StoreIcon />}>
+            iTunes Store
+          </SidebarItem>
+        </SidebarGroup>
 
-          <SidebarGroup title="Devices" collapsible={true} defaultExpanded={true}>
-            <SidebarItem id="device" icon={<DeviceIcon />}>
-              Phearak S.'s iPhone
-            </SidebarItem>
-          </SidebarGroup>
+        <SidebarGroup title="Devices" collapsible={true} defaultExpanded={true}>
+          <SidebarItem id="device" icon={<DeviceIcon />}>
+            Phearak S.'s iPhone
+          </SidebarItem>
+        </SidebarGroup>
 
-          <SidebarGroup title="Playlists" collapsible={false}>
-            <SidebarItem id="all-playlists" icon={<PlaylistIcon />}>
-              All Playlists
-            </SidebarItem>
-          </SidebarGroup>
+        <SidebarGroup title="Playlists" collapsible={false}>
+          <SidebarItem id="all-playlists" icon={<PlaylistIcon />}>
+            All Playlists
+          </SidebarItem>
+        </SidebarGroup>
 
-          <SidebarGroup title="Settings" collapsible={false}>
-            <SidebarItem id="settings" icon={<SettingsIcon />}>
-              Settings
-            </SidebarItem>
-          </SidebarGroup>
+        <SidebarGroup title="Settings" collapsible={false}>
+          <SidebarItem id="settings" icon={<SettingsIcon />}>
+            Settings
+          </SidebarItem>
+        </SidebarGroup>
 
-          <SidebarDivider />
+        <SidebarDivider />
 
-          <SidebarFooter showBorder={false}>
-            <div {...stylex.props(styles.avatar)}>P</div>
-            <div {...stylex.props(styles.profileInfo)}>
-              <span {...stylex.props(styles.profileName)}>Phearak S.</span>
-              <span {...stylex.props(styles.profileEmail)}>phearak@moul.dev</span>
-            </div>
-          </SidebarFooter>
-        </Sidebar>
-      </div>
+        <SidebarFooter showBorder={false}>
+          <div {...stylex.props(styles.avatar)}>P</div>
+          <div {...stylex.props(styles.profileInfo)}>
+            <span {...stylex.props(styles.profileName)}>Phearak S.</span>
+            <span {...stylex.props(styles.profileEmail)}>phearak@moul.dev</span>
+          </div>
+        </SidebarFooter>
+      </SidebarAside>
 
       {/* Main Sandbox Showcase */}
-      <main {...stylex.props(styles.mainContent)}>
+      <SidebarMain style={styles.mainContent}>
         <header {...stylex.props(styles.header)}>
           <h1 {...stylex.props(styles.title)}>Moul UI</h1>
           <p {...stylex.props(styles.subtitle)}>
@@ -809,8 +788,8 @@ function App() {
             </div>
           </section>
         </div>
-      </main>
-    </div>
+      </SidebarMain>
+    </Sidebar>
   )
 }
 

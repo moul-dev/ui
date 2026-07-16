@@ -7,7 +7,11 @@ export const styles = stylex.create({
   sidebar: {
     display: 'flex',
     flexDirection: 'column',
-    height: '100%',
+    height: `calc(100% - ${tokens.spacing3} * 2)`,
+    marginBlock: tokens.spacing3,
+    marginLeft: tokens.spacing3,
+    marginRight: '0px',
+    flexShrink: 0,
     transitionProperty: 'width, background-color, border-color, box-shadow',
     transitionDuration: '0.25s',
     transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
@@ -20,7 +24,7 @@ export const styles = stylex.create({
     borderWidth: '1px',
     borderStyle: 'solid',
   },
-  
+
   // Width variants
   expanded: {
     width: 'var(--sidebar-width, 260px)',
@@ -47,7 +51,7 @@ export const styles = stylex.create({
     alignItems: 'center',
     paddingBlock: tokens.spacing4,
     paddingInline: tokens.spacing4,
-    minHeight: '70px',
+    minHeight: '64px',
     boxSizing: 'border-box',
     gap: tokens.spacing3,
   },
@@ -84,7 +88,7 @@ export const styles = stylex.create({
     boxSizing: 'border-box',
     marginTop: 'auto',
     gap: tokens.spacing3,
-    minHeight: '70px',
+    minHeight: '64px',
   },
   footerBorder: {
     borderBlockStartColor: tokens.colorBorderSubtle,
@@ -122,7 +126,7 @@ export const styles = stylex.create({
     paddingInline: tokens.spacing2,
     alignItems: 'center',
   },
-  
+
   // Group Header / Title
   groupHeader: {
     display: 'flex',
@@ -137,7 +141,7 @@ export const styles = stylex.create({
     letterSpacing: '0.05em',
     userSelect: 'none',
     boxSizing: 'border-box',
-    height: '28px',
+    height: tokens.spacing7,
   },
   groupHeaderCollapsible: {
     cursor: 'pointer',
@@ -156,11 +160,11 @@ export const styles = stylex.create({
   groupHeaderCollapsed: {
     display: 'none',
   },
-  
+
   // Collapse indicator (chevron icon)
   groupChevron: {
-    width: '12px',
-    height: '12px',
+    width: tokens.spacing3,
+    height: tokens.spacing3,
     fill: 'currentColor',
     transitionProperty: 'transform',
     transitionDuration: '0.2s',
@@ -213,7 +217,7 @@ export const styles = stylex.create({
     userSelect: 'none',
     outline: 'none',
     boxSizing: 'border-box',
-    height: '38px',
+    height: '36px',
     transitionProperty: 'background-color, color, transform',
     transitionDuration: '0.15s',
     transitionTimingFunction: 'ease-in-out',
@@ -228,7 +232,7 @@ export const styles = stylex.create({
       outlineOffset: '2px',
     },
   },
-  
+
   // Hover & Active/Selected states
   itemHover: {
     ':hover': {
@@ -248,8 +252,8 @@ export const styles = stylex.create({
   itemCollapsed: {
     justifyContent: 'center',
     paddingInline: 0,
-    width: '38px',
-    height: '38px',
+    width: '36px',
+    height: '36px',
     alignSelf: 'center',
   },
 
@@ -259,8 +263,8 @@ export const styles = stylex.create({
     alignItems: 'center',
     justifyContent: 'center',
     flexShrink: 0,
-    width: '18px',
-    height: '18px',
+    width: tokens.spacing4,
+    height: tokens.spacing4,
     transitionProperty: 'transform',
     transitionDuration: '0.2s',
   },
@@ -300,8 +304,8 @@ export const styles = stylex.create({
     position: 'absolute',
     bottom: tokens.spacing4,
     right: tokens.spacing4,
-    width: '32px',
-    height: '32px',
+    width: tokens.spacing8,
+    height: tokens.spacing8,
     borderRadius: tokens.radiusFull,
     backgroundColor: tokens.colorBgElevated,
     borderStyle: 'solid',
@@ -336,5 +340,27 @@ export const styles = stylex.create({
     right: 'auto',
     alignSelf: 'center',
     marginBlock: tokens.spacing2,
+  },
+  layout: {
+    display: 'flex',
+    height: '100vh',
+    maxHeight: '100vh',
+    width: '100vw',
+    backgroundColor: tokens.colorBg,
+    color: tokens.colorFg,
+    fontFamily: tokens.fontFamilyBase,
+    boxSizing: 'border-box',
+    overflow: 'hidden',
+    gap: tokens.spacing3,
+  },
+  mainContent: {
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100%',
+    overflowY: 'auto',
+    boxSizing: 'border-box',
+    backgroundColor: 'transparent',
+    paddingTop: tokens.spacing3
   },
 })

@@ -16,6 +16,7 @@ interface SidebarContextValue {
   selectedKey?: string
   onSelectionChange?: (key: string) => void
   variant: 'solid' | 'glass'
+  onCollapseToggle: () => void
 }
 
 const SidebarContext = React.createContext<SidebarContextValue | undefined>(
@@ -88,10 +89,9 @@ export interface SidebarProps {
   defaultSelectedKey?: string
   onSelectionChange?: (key: string) => void
   variant?: 'solid' | 'glass'
-  style?: StyleXStyles
+  style?: React.CSSProperties
   className?: string
   children?: React.ReactNode
-  showCollapseToggle?: boolean
 }
 
 export const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
@@ -107,7 +107,6 @@ export const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
       style,
       className,
       children,
-      showCollapseToggle = true,
     },
     ref,
   ) {
@@ -146,6 +145,7 @@ export const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
         selectedKey,
         onSelectionChange: handleSelection,
         variant,
+        onCollapseToggle: handleCollapseToggle,
       }),
       [isCollapsed, selectedKey, onSelectionChange, variant],
     )
@@ -155,39 +155,17 @@ export const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
         <div
           ref={ref}
           className={[
-            stylex.props(
-              styles.sidebar,
-              styles[variant],
-              isCollapsed ? styles.collapsed : styles.expanded,
-              style,
-            ).className,
+            stylex.props(styles.layout).className,
             className,
           ]
             .filter(Boolean)
             .join(' ')}
-          style={
-            stylex.props(
-              styles.sidebar,
-              styles[variant],
-              isCollapsed ? styles.collapsed : styles.expanded,
-              style,
-            ).style
-          }
+          style={{
+            ...stylex.props(styles.layout).style,
+            ...style,
+          }}
         >
           {children}
-          {showCollapseToggle && (
-            <button
-              type="button"
-              aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-              {...stylex.props(
-                styles.toggleButton,
-                isCollapsed && styles.toggleButtonCollapsed,
-              )}
-              onClick={handleCollapseToggle}
-            >
-              {isCollapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-            </button>
-          )}
         </div>
       </SidebarContext.Provider>
     )
@@ -513,5 +491,95 @@ export const SidebarDivider = React.forwardRef<
         .filter(Boolean)
         .join(' ')}
     />
+  )
+})
+
+// ── SidebarLayout Component ──────────────────────────────────────────
+
+// ── SidebarAside Component ───────────────────────────────────────────
+
+export interface SidebarAsideProps {
+  style?: React.CSSProperties
+  className?: string
+  children?: React.ReactNode
+  showCollapseToggle?: boolean
+}
+
+export const SidebarAside = React.forwardRef<
+  HTMLDivElement,
+  SidebarAsideProps
+>(function SidebarAside(
+  { style, className, children, showCollapseToggle = true },
+  ref,
+) {
+  const { isCollapsed, variant, onCollapseToggle } = useSidebar()
+
+  return (
+    <div
+      ref={ref}
+      className={[
+        stylex.props(
+          styles.sidebar,
+          styles[variant],
+          isCollapsed ? styles.collapsed : styles.expanded,
+        ).className,
+        className,
+      ]
+        .filter(Boolean)
+        .join(' ')}
+      style={{
+        ...stylex.props(
+          styles.sidebar,
+          styles[variant],
+          isCollapsed ? styles.collapsed : styles.expanded,
+        ).style,
+        ...style,
+      }}
+    >
+      {children}
+      {showCollapseToggle && (
+        <button
+          type="button"
+          aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          {...stylex.props(
+            styles.toggleButton,
+            isCollapsed && styles.toggleButtonCollapsed,
+          )}
+          onClick={onCollapseToggle}
+        >
+          {isCollapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+        </button>
+      )}
+    </div>
+  )
+})
+
+// ── SidebarMain Component ────────────────────────────────────────────
+
+export interface SidebarMainProps {
+  style?: StyleXStyles
+  className?: string
+  children?: React.ReactNode
+}
+
+export const SidebarMain = React.forwardRef<
+  HTMLDivElement,
+  SidebarMainProps
+>(function SidebarMain({ style, className, children }, ref) {
+  return (
+    <div
+      ref={ref}
+      className={[
+        stylex.props(styles.mainContent, style).className,
+        className,
+      ]
+        .filter(Boolean)
+        .join(' ')}
+      style={{
+        ...stylex.props(styles.mainContent, style).style,
+      }}
+    >
+      {children}
+    </div>
   )
 })
