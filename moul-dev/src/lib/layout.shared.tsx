@@ -15,6 +15,6 @@ export function baseOptions(): BaseLayoutProps {
         active: 'nested-url',
       },
     ],
-    githubUrl: `https://github.com/${gitConfig.user}`,
+    githubUrl: `https://github.com/${gitConfig.user}/${gitConfig.repo}`,
   }
 }
