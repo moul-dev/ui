@@ -250,9 +250,9 @@ export function SidebarPreview() {
                 />
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
                 <div
-                  className="lg:col-span-8 p-6 rounded-2xl border shadow-xs flex flex-col"
+                  className="lg:col-span-8 p-6 rounded-2xl border shadow-xs flex flex-col justify-between"
                   style={{
                     backgroundColor: tokens.colorBgElevated,
                     borderColor: tokens.colorBorderSubtle,
@@ -262,7 +262,7 @@ export function SidebarPreview() {
                   <h3 className="text-sm font-semibold mb-4" style={{ color: tokens.colorFgSubtle }}>
                     Traffic Performance
                   </h3>
-                  <div className="flex-1 min-h-[300px]">
+                  <div className="flex-1 min-h-[300px] flex items-center">
                     <LineChart
                       data={timeseriesData}
                       indexKey="time"
@@ -274,7 +274,7 @@ export function SidebarPreview() {
                 </div>
 
                 <div
-                  className="lg:col-span-4 p-6 rounded-2xl border shadow-xs flex flex-col"
+                  className="lg:col-span-4 p-6 rounded-2xl border shadow-xs flex flex-col justify-between"
                   style={{
                     backgroundColor: tokens.colorBgElevated,
                     borderColor: tokens.colorBorderSubtle,
@@ -284,7 +284,7 @@ export function SidebarPreview() {
                   <h3 className="text-sm font-semibold mb-4" style={{ color: tokens.colorFgSubtle }}>
                     Top API Endpoints
                   </h3>
-                  <div className="flex-1 flex items-center">
+                  <div className="flex-1 flex flex-col justify-center py-2">
                     <TopList data={recentActivity} valueFormatter={kFormatter} />
                   </div>
                 </div>

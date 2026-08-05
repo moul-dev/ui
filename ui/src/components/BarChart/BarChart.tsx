@@ -12,6 +12,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
+import { tokens } from '../../tokens/tokens.stylex'
 import { CHART_COLORS } from '../ChartCommon'
 import { ChartTooltip } from '../ChartTooltip'
 import { styles } from './BarChart.styles'
@@ -58,9 +59,9 @@ export const BarChart = React.forwardRef<HTMLDivElement, BarChartProps>(
     const isVertical = layout === 'vertical'
 
     const axisTickStyle = {
-      fill: 'var(--colorFgSubtle)',
+      fill: tokens.colorFgSubtle,
       fontSize: 11,
-      fontFamily: 'var(--fontFamilyBase)',
+      fontFamily: tokens.fontFamilyBase,
     }
 
     return (
@@ -84,7 +85,7 @@ export const BarChart = React.forwardRef<HTMLDivElement, BarChartProps>(
             {gridLines && (
               <CartesianGrid
                 strokeDasharray="3 3"
-                stroke="var(--colorBorderSubtle)"
+                stroke={tokens.colorBorderSubtle}
                 vertical={isVertical}
                 horizontal={!isVertical}
               />
@@ -95,7 +96,7 @@ export const BarChart = React.forwardRef<HTMLDivElement, BarChartProps>(
                 <XAxis
                   type="number"
                   tick={axisTickStyle}
-                  axisLine={{ stroke: 'var(--colorBorderSubtle)' }}
+                  axisLine={{ stroke: tokens.colorBorderSubtle }}
                   tickLine={false}
                   tickFormatter={valueFormatter}
                 />
@@ -103,7 +104,7 @@ export const BarChart = React.forwardRef<HTMLDivElement, BarChartProps>(
                   dataKey={indexKey}
                   type="category"
                   tick={axisTickStyle}
-                  axisLine={{ stroke: 'var(--colorBorderSubtle)' }}
+                  axisLine={{ stroke: tokens.colorBorderSubtle }}
                   tickLine={false}
                   dx={-5}
                   width={90}
@@ -114,7 +115,7 @@ export const BarChart = React.forwardRef<HTMLDivElement, BarChartProps>(
                 <XAxis
                   dataKey={indexKey}
                   tick={axisTickStyle}
-                  axisLine={{ stroke: 'var(--colorBorderSubtle)' }}
+                  axisLine={{ stroke: tokens.colorBorderSubtle }}
                   tickLine={false}
                   dy={5}
                 />
@@ -130,7 +131,7 @@ export const BarChart = React.forwardRef<HTMLDivElement, BarChartProps>(
 
             <Tooltip
               content={<ChartTooltip valueFormatter={valueFormatter} />}
-              cursor={{ fill: 'var(--colorNeutral100)', opacity: 0.5 }}
+              cursor={{ fill: tokens.colorNeutral100, opacity: 0.5 }}
             />
 
             {categories.map((category, idx) => {

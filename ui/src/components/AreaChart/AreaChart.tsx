@@ -11,6 +11,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
+import { tokens } from '../../tokens/tokens.stylex'
 import { CHART_COLORS } from '../ChartCommon'
 import { ChartTooltip } from '../ChartTooltip'
 import { styles } from './AreaChart.styles'
@@ -55,9 +56,9 @@ export const AreaChart = React.forwardRef<HTMLDivElement, AreaChartProps>(
     )
 
     const axisTickStyle = {
-      fill: 'var(--colorFgSubtle)',
+      fill: tokens.colorFgSubtle,
       fontSize: 11,
-      fontFamily: 'var(--fontFamilyBase)',
+      fontFamily: tokens.fontFamilyBase,
     }
 
     const uniqueId = React.useId().replace(/:/g, '')
@@ -102,7 +103,7 @@ export const AreaChart = React.forwardRef<HTMLDivElement, AreaChartProps>(
             {gridLines && (
               <CartesianGrid
                 strokeDasharray="3 3"
-                stroke="var(--colorBorderSubtle)"
+                stroke={tokens.colorBorderSubtle}
                 vertical={false}
               />
             )}
@@ -110,7 +111,7 @@ export const AreaChart = React.forwardRef<HTMLDivElement, AreaChartProps>(
               <XAxis
                 dataKey={indexKey}
                 tick={axisTickStyle}
-                axisLine={{ stroke: 'var(--colorBorderSubtle)' }}
+                axisLine={{ stroke: tokens.colorBorderSubtle }}
                 tickLine={false}
                 dy={10}
               />
@@ -126,7 +127,7 @@ export const AreaChart = React.forwardRef<HTMLDivElement, AreaChartProps>(
             )}
             <Tooltip
               content={<ChartTooltip valueFormatter={valueFormatter} />}
-              cursor={{ stroke: 'var(--colorBorderSubtle)' }}
+              cursor={{ stroke: tokens.colorBorderSubtle }}
             />
             {categories.map((category, idx) => {
               const color = colors[idx % colors.length]
@@ -142,7 +143,7 @@ export const AreaChart = React.forwardRef<HTMLDivElement, AreaChartProps>(
                   dot={false}
                   activeDot={{
                     r: 5,
-                    stroke: 'var(--colorBg)',
+                    stroke: tokens.colorBg,
                     strokeWidth: 2,
                   }}
                   connectNulls

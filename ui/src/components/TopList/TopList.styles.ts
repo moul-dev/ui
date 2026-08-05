@@ -6,7 +6,7 @@ export const styles = stylex.create({
     width: '100%',
     display: 'flex',
     flexDirection: 'column',
-    gap: tokens.spacing3,
+    gap: tokens.spacing4,
     fontFamily: tokens.fontFamilyBase,
     color: tokens.colorFg,
   },
@@ -26,7 +26,7 @@ export const styles = stylex.create({
   },
   track: {
     height: '6px',
-    backgroundColor: tokens.colorNeutral100,
+    backgroundColor: tokens.colorNeutral200,
     borderRadius: tokens.radiusFull,
     width: '100%',
     overflow: 'hidden',

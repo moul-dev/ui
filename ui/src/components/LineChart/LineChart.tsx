@@ -11,6 +11,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
+import { tokens } from '../../tokens/tokens.stylex'
 import { CHART_COLORS } from '../ChartCommon'
 import { ChartTooltip } from '../ChartTooltip'
 import { styles } from './LineChart.styles'
@@ -53,9 +54,9 @@ export const LineChart = React.forwardRef<HTMLDivElement, LineChartProps>(
     )
 
     const axisTickStyle = {
-      fill: 'var(--colorFgSubtle)',
+      fill: tokens.colorFgSubtle,
       fontSize: 11,
-      fontFamily: 'var(--fontFamilyBase)',
+      fontFamily: tokens.fontFamilyBase,
     }
 
     return (
@@ -73,7 +74,7 @@ export const LineChart = React.forwardRef<HTMLDivElement, LineChartProps>(
             {gridLines && (
               <CartesianGrid
                 strokeDasharray="3 3"
-                stroke="var(--colorBorderSubtle)"
+                stroke={tokens.colorBorderSubtle}
                 vertical={false}
               />
             )}
@@ -81,7 +82,7 @@ export const LineChart = React.forwardRef<HTMLDivElement, LineChartProps>(
               <XAxis
                 dataKey={indexKey}
                 tick={axisTickStyle}
-                axisLine={{ stroke: 'var(--colorBorderSubtle)' }}
+                axisLine={{ stroke: tokens.colorBorderSubtle }}
                 tickLine={false}
                 dy={10}
               />
@@ -97,7 +98,7 @@ export const LineChart = React.forwardRef<HTMLDivElement, LineChartProps>(
             )}
             <Tooltip
               content={<ChartTooltip valueFormatter={valueFormatter} />}
-              cursor={{ stroke: 'var(--colorBorderSubtle)' }}
+              cursor={{ stroke: tokens.colorBorderSubtle }}
             />
             {categories.map((category, idx) => {
               const color = colors[idx % colors.length]
@@ -111,7 +112,7 @@ export const LineChart = React.forwardRef<HTMLDivElement, LineChartProps>(
                   dot={false}
                   activeDot={{
                     r: 5,
-                    stroke: 'var(--colorBg)',
+                    stroke: tokens.colorBg,
                     strokeWidth: 2,
                   }}
                   connectNulls
