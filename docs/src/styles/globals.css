@@ -11,17 +11,20 @@
 }
 
 :root {
+  color-scheme: light;
   --brand-hue: 55;
   --brand-chroma-multiplier: 1;
+}
+
+html.dark,
+.dark {
+  color-scheme: dark;
+  --color-fd-background: #000000;
 }
 
 @import '@moul-dev/ui/style';
 @import 'fumadocs-ui/css/neutral.css';
 @import 'fumadocs-ui/css/preset.css';
-
-.dark {
-  --color-fd-background: #000000;
-}
 
 html {
   scrollbar-gutter: stable;

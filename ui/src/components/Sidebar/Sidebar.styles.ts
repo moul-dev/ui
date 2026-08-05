@@ -70,10 +70,7 @@ export const styles = stylex.create({
     transitionDuration: '0.2s',
   },
   headerContentCollapsed: {
-    opacity: 0,
-    transform: 'scale(0.9)',
-    pointerEvents: 'none',
-    width: 0,
+    justifyContent: 'center',
   },
 
   // ── Sidebar Footer ──────────────────────────────────────────────────
@@ -108,10 +105,7 @@ export const styles = stylex.create({
     transitionDuration: '0.2s',
   },
   footerContentCollapsed: {
-    opacity: 0,
-    transform: 'scale(0.9)',
-    pointerEvents: 'none',
-    width: 0,
+    justifyContent: 'center',
   },
 
   // ── Sidebar Group ───────────────────────────────────────────────────

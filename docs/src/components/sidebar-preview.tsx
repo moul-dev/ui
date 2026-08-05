@@ -9,7 +9,6 @@ import {
   SidebarItem,
   SidebarAside,
   SidebarMain,
-  Button,
   Stat,
   PercentageCircle,
   PercentageBar,
@@ -27,6 +26,7 @@ import {
   tokens,
 } from '@moul-dev/ui'
 import React, { useState } from 'react'
+import { Logo } from '@/components/logo'
 import { ThemeSelector } from '@/components/theme-selector'
 
 // ── Icons ────────────────────────────────────────────────────────────
@@ -113,13 +113,6 @@ export function SidebarPreview() {
   const [allowNotifications, setAllowNotifications] = useState(true)
   const [maintenanceMode, setMaintenanceMode] = useState(false)
 
-  // Legend items configuration
-  const legendItems = [
-    { name: 'United States', value: '8.43k', color: tokens.colorChart1 },
-    { name: 'Europe', value: '4.12k', color: tokens.colorChart2 },
-    { name: 'Asia', value: '2.84k', color: tokens.colorChart3 },
-  ]
-
   const deviceLegend = deviceData.map((d, i) => ({
     name: d.name,
     value: `${d.value}%`,
@@ -145,13 +138,15 @@ export function SidebarPreview() {
         } as React.CSSProperties}
       >
         <SidebarHeader>
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-purple-500 to-indigo-500 flex items-center justify-center font-bold text-sm text-white shadow-md">
-            M
-          </div>
+          <Logo iconOnly className="h-7 w-7 text-fd-primary flex-shrink-0" />
           {!isCollapsed && (
-            <div className="flex flex-col">
-              <span className="font-extrabold text-sm text-neutral-900 dark:text-neutral-50 leading-tight">Moul UI</span>
-              <span className="text-[10px] text-neutral-400 font-medium font-mono">v0.1.0</span>
+            <div className="flex flex-col overflow-hidden">
+              <span className="font-extrabold text-sm leading-tight whitespace-nowrap" style={{ color: tokens.colorFg }}>
+                Moul UI
+              </span>
+              <span className="text-[10px] font-medium font-mono" style={{ color: tokens.colorFgSubtle }}>
+                v0.1.0
+              </span>
             </div>
           )}
         </SidebarHeader>
@@ -179,13 +174,13 @@ export function SidebarPreview() {
         <SidebarDivider />
 
         <SidebarFooter showBorder={false}>
-          <div className="w-6 h-6 rounded-full bg-indigo-500 flex items-center justify-center text-white font-bold text-xs">
-            U
+          <div className="w-7 h-7 rounded-full bg-fd-primary text-fd-primary-foreground flex items-center justify-center font-bold text-xs flex-shrink-0 shadow-xs">
+            A
           </div>
           {!isCollapsed && (
             <div className="flex flex-col text-[10px] overflow-hidden leading-tight">
-              <span className="font-semibold text-neutral-800 dark:text-neutral-200">Alex Carter</span>
-              <span className="text-neutral-400 truncate max-w-[120px]">alex@moul.dev</span>
+              <span className="font-semibold" style={{ color: tokens.colorFg }}>Phearak S. Tha</span>
+              <span className="truncate max-w-[120px]" style={{ color: tokens.colorFgSubtle }}>rak@moul.dev</span>
             </div>
           )}
         </SidebarFooter>
@@ -195,7 +190,13 @@ export function SidebarPreview() {
       <SidebarMain>
 
         {/* Header */}
-        <header className="h-20 border-b flex items-center justify-between px-8 z-10 flex-shrink-0">
+        <header
+          className="h-20 border-b flex items-center justify-between px-8 z-10 flex-shrink-0"
+          style={{
+            borderColor: tokens.colorBorderSubtle,
+            color: tokens.colorFg,
+          }}
+        >
           <div className="flex items-center gap-3">
             <h2 className="text-lg font-bold capitalize tracking-tight">
               {activeTab === 'system' ? 'System Status' : activeTab}
@@ -207,7 +208,12 @@ export function SidebarPreview() {
 
             <a
               href="/docs/blocks/sidebar"
-              className="inline-flex items-center justify-center gap-1.5 font-medium cursor-pointer border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 text-neutral-900 dark:text-neutral-50 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors h-7 px-2 text-xs rounded-md"
+              className="inline-flex items-center justify-center gap-1.5 font-medium cursor-pointer border transition-colors h-8 px-3 text-xs rounded-lg shadow-xs hover:opacity-90"
+              style={{
+                backgroundColor: tokens.colorBgElevated,
+                borderColor: tokens.colorBorderSubtle,
+                color: tokens.colorFg,
+              }}
             >
               <DocsIcon />
               <span>Docs</span>
@@ -245,8 +251,17 @@ export function SidebarPreview() {
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                <div className="lg:col-span-8 p-6 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl shadow-sm flex flex-col">
-                  <h3 className="text-sm font-semibold text-neutral-500 dark:text-neutral-400 mb-4">Traffic Performance</h3>
+                <div
+                  className="lg:col-span-8 p-6 rounded-2xl border shadow-xs flex flex-col"
+                  style={{
+                    backgroundColor: tokens.colorBgElevated,
+                    borderColor: tokens.colorBorderSubtle,
+                    color: tokens.colorFg,
+                  }}
+                >
+                  <h3 className="text-sm font-semibold mb-4" style={{ color: tokens.colorFgSubtle }}>
+                    Traffic Performance
+                  </h3>
                   <div className="flex-1 min-h-[300px]">
                     <LineChart
                       data={timeseriesData}
@@ -258,8 +273,17 @@ export function SidebarPreview() {
                   </div>
                 </div>
 
-                <div className="lg:col-span-4 p-6 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl shadow-sm flex flex-col">
-                  <h3 className="text-sm font-semibold text-neutral-500 dark:text-neutral-400 mb-4">Top API Endpoints</h3>
+                <div
+                  className="lg:col-span-4 p-6 rounded-2xl border shadow-xs flex flex-col"
+                  style={{
+                    backgroundColor: tokens.colorBgElevated,
+                    borderColor: tokens.colorBorderSubtle,
+                    color: tokens.colorFg,
+                  }}
+                >
+                  <h3 className="text-sm font-semibold mb-4" style={{ color: tokens.colorFgSubtle }}>
+                    Top API Endpoints
+                  </h3>
                   <div className="flex-1 flex items-center">
                     <TopList data={recentActivity} valueFormatter={kFormatter} />
                   </div>
@@ -272,8 +296,17 @@ export function SidebarPreview() {
             <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
 
-                <div className="lg:col-span-8 p-6 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl shadow-sm">
-                  <h3 className="text-sm font-semibold text-neutral-500 dark:text-neutral-400 mb-4">Requests by Location</h3>
+                <div
+                  className="lg:col-span-8 p-6 rounded-2xl border shadow-xs"
+                  style={{
+                    backgroundColor: tokens.colorBgElevated,
+                    borderColor: tokens.colorBorderSubtle,
+                    color: tokens.colorFg,
+                  }}
+                >
+                  <h3 className="text-sm font-semibold mb-4" style={{ color: tokens.colorFgSubtle }}>
+                    Requests by Location
+                  </h3>
                   <div className="min-h-[320px]">
                     <BarChart
                       data={countryData}
@@ -286,9 +319,18 @@ export function SidebarPreview() {
                   </div>
                 </div>
 
-                <div className="lg:col-span-4 p-6 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl shadow-sm flex flex-col justify-between">
+                <div
+                  className="lg:col-span-4 p-6 rounded-2xl border shadow-xs flex flex-col justify-between"
+                  style={{
+                    backgroundColor: tokens.colorBgElevated,
+                    borderColor: tokens.colorBorderSubtle,
+                    color: tokens.colorFg,
+                  }}
+                >
                   <div>
-                    <h3 className="text-sm font-semibold text-neutral-500 dark:text-neutral-400 mb-4">Device Split</h3>
+                    <h3 className="text-sm font-semibold mb-4" style={{ color: tokens.colorFgSubtle }}>
+                      Device Split
+                    </h3>
                     <div className="flex justify-center py-4">
                       <DoughnutChart
                         data={deviceData}
@@ -300,11 +342,18 @@ export function SidebarPreview() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-2 border-t border-neutral-100 dark:border-neutral-800 pt-4">
+                  <div
+                    className="grid grid-cols-3 gap-2 border-t pt-4"
+                    style={{ borderColor: tokens.colorBorderSubtle }}
+                  >
                     {deviceLegend.map((item) => (
                       <div key={item.name} className="flex flex-col items-center text-center">
-                        <span className="text-[10px] text-neutral-400 font-medium uppercase">{item.name}</span>
-                        <span className="text-sm font-bold mt-0.5" style={{ color: item.color }}>{item.value}</span>
+                        <span className="text-[10px] font-medium uppercase" style={{ color: tokens.colorFgSubtle }}>
+                          {item.name}
+                        </span>
+                        <span className="text-sm font-bold mt-0.5" style={{ color: item.color }}>
+                          {item.value}
+                        </span>
                       </div>
                     ))}
                   </div>
@@ -317,33 +366,75 @@ export function SidebarPreview() {
           {activeTab === 'system' && (
             <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="p-6 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl shadow-sm flex items-center justify-between">
+                <div
+                  className="p-6 rounded-2xl border shadow-xs flex items-center justify-between"
+                  style={{
+                    backgroundColor: tokens.colorBgElevated,
+                    borderColor: tokens.colorBorderSubtle,
+                    color: tokens.colorFg,
+                  }}
+                >
                   <PercentageCircle value={68} label="CPU Load" size={90} />
                   <div className="text-right">
-                    <span className="text-xs text-neutral-400 uppercase font-bold">Status</span>
-                    <p className="text-sm font-bold text-emerald-500 mt-1">Normal Operation</p>
+                    <span className="text-xs uppercase font-bold" style={{ color: tokens.colorFgSubtle }}>
+                      Status
+                    </span>
+                    <p className="text-sm font-bold text-emerald-500 dark:text-emerald-400 mt-1">
+                      Normal Operation
+                    </p>
                   </div>
                 </div>
 
-                <div className="p-6 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl shadow-sm flex items-center justify-between">
+                <div
+                  className="p-6 rounded-2xl border shadow-xs flex items-center justify-between"
+                  style={{
+                    backgroundColor: tokens.colorBgElevated,
+                    borderColor: tokens.colorBorderSubtle,
+                    color: tokens.colorFg,
+                  }}
+                >
                   <PercentageCircle value={84} label="Memory Usage" size={90} color={tokens.colorChart2} />
                   <div className="text-right">
-                    <span className="text-xs text-neutral-400 uppercase font-bold">Status</span>
-                    <p className="text-sm font-bold text-amber-500 mt-1">High Allocation</p>
+                    <span className="text-xs uppercase font-bold" style={{ color: tokens.colorFgSubtle }}>
+                      Status
+                    </span>
+                    <p className="text-sm font-bold text-amber-500 dark:text-amber-400 mt-1">
+                      High Allocation
+                    </p>
                   </div>
                 </div>
 
-                <div className="p-6 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl shadow-sm flex items-center justify-between">
+                <div
+                  className="p-6 rounded-2xl border shadow-xs flex items-center justify-between"
+                  style={{
+                    backgroundColor: tokens.colorBgElevated,
+                    borderColor: tokens.colorBorderSubtle,
+                    color: tokens.colorFg,
+                  }}
+                >
                   <PercentageCircle value={12} label="Disk IO" size={90} color={tokens.colorChart3} />
                   <div className="text-right">
-                    <span className="text-xs text-neutral-400 uppercase font-bold">Status</span>
-                    <p className="text-sm font-bold text-emerald-500 mt-1">Optimal</p>
+                    <span className="text-xs uppercase font-bold" style={{ color: tokens.colorFgSubtle }}>
+                      Status
+                    </span>
+                    <p className="text-sm font-bold text-emerald-500 dark:text-emerald-400 mt-1">
+                      Optimal
+                    </p>
                   </div>
                 </div>
               </div>
 
-              <div className="p-6 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl shadow-sm space-y-6">
-                <h3 className="text-sm font-semibold text-neutral-500 dark:text-neutral-400">Background Tasks Queue</h3>
+              <div
+                className="p-6 rounded-2xl border shadow-xs space-y-6"
+                style={{
+                  backgroundColor: tokens.colorBgElevated,
+                  borderColor: tokens.colorBorderSubtle,
+                  color: tokens.colorFg,
+                }}
+              >
+                <h3 className="text-sm font-semibold" style={{ color: tokens.colorFgSubtle }}>
+                  Background Tasks Queue
+                </h3>
                 <div className="space-y-4">
                   <PercentageBar value={95} label="Log Compilation Pipeline" size="md" color={tokens.colorChart7} />
                   <PercentageBar value={42} label="Elasticsearch Index Optimization" size="md" color={tokens.colorChart5} />
@@ -354,10 +445,19 @@ export function SidebarPreview() {
           )}
 
           {activeTab === 'settings' && (
-            <div className="max-w-xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-8 shadow-sm space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
+            <div
+              className="max-w-xl rounded-2xl border p-8 shadow-xs space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-300"
+              style={{
+                backgroundColor: tokens.colorBgElevated,
+                borderColor: tokens.colorBorderSubtle,
+                color: tokens.colorFg,
+              }}
+            >
               <div className="space-y-1">
                 <h3 className="text-lg font-bold tracking-tight">Console Configuration</h3>
-                <p className="text-sm text-neutral-400">Manage global simulation settings and components preview options.</p>
+                <p className="text-sm" style={{ color: tokens.colorFgSubtle }}>
+                  Manage global simulation settings and components preview options.
+                </p>
               </div>
 
               <div className="space-y-6">
@@ -384,9 +484,14 @@ export function SidebarPreview() {
                   </Switch>
                 </div>
 
-                <div className="space-y-3 pt-4 border-t border-neutral-100 dark:border-neutral-800">
+                <div
+                  className="space-y-3 pt-4 border-t"
+                  style={{ borderColor: tokens.colorBorderSubtle }}
+                >
                   <h4 className="text-sm font-semibold">Confirm Administrative Code</h4>
-                  <p className="text-xs text-neutral-400">A test verification input OTP for security authorization checks.</p>
+                  <p className="text-xs" style={{ color: tokens.colorFgSubtle }}>
+                    A test verification input OTP for security authorization checks.
+                  </p>
 
                   <div className="pt-2">
                     <InputOTP
@@ -417,15 +522,23 @@ export function SidebarPreview() {
       </SidebarMain>
 
       {/* ── Subtitle Floating Navigation Overlay ── */}
-      <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3 bg-neutral-900/90 dark:bg-white/95 text-white dark:text-neutral-950 px-4 py-2.5 rounded-full shadow-2xl border border-white/10 dark:border-black/5 backdrop-blur-md select-none scale-100 hover:scale-102 transition-transform duration-200">
+      <div
+        className="fixed bottom-6 right-6 z-50 flex items-center gap-3 px-4 py-2.5 rounded-full shadow-2xl border backdrop-blur-md select-none scale-100 hover:scale-105 transition-all duration-200"
+        style={{
+          backgroundColor: tokens.colorBgElevated,
+          borderColor: tokens.colorBorder,
+          color: tokens.colorFg,
+        }}
+      >
         <div className="flex items-center gap-2">
           <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
           <span className="text-xs font-semibold tracking-wide">Live Demo View</span>
         </div>
-        <div className="h-4 w-[1px] bg-white/20 dark:bg-black/15" />
+        <div className="h-4 w-[1px]" style={{ backgroundColor: tokens.colorBorderSubtle }} />
         <a
           href="/docs/blocks/sidebar"
           className="text-xs font-bold hover:underline transition-all cursor-pointer flex items-center gap-1 focus:outline-none"
+          style={{ color: tokens.colorFg }}
         >
           <span>Exit Preview</span>
           <svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
@@ -438,3 +551,4 @@ export function SidebarPreview() {
     </Sidebar>
   )
 }
+
