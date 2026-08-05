@@ -34,6 +34,7 @@ import { Tab, Tabs } from 'fumadocs-ui/components/tabs'
 import { TypeTable } from 'fumadocs-ui/components/type-table'
 import defaultMdxComponents from 'fumadocs-ui/mdx'
 import type { MDXComponents } from 'mdx/types'
+import { BlockPreview } from './block-preview'
 import { ComponentPlayground } from './component-playground'
 import { ComponentPreview } from './component-preview'
 import {
@@ -104,6 +105,7 @@ export function getMDXComponents(components?: MDXComponents) {
     Accordions,
     ComponentPreview,
     ComponentPlayground,
+    BlockPreview,
     FullPagePreviewLink,
     AlertDialogDemo,
     ModalDemo,

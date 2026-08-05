@@ -206,7 +206,7 @@ export function SidebarPreview() {
             <ThemeSelector />
 
             <a
-              href="/docs/components/sidebar"
+              href="/docs/blocks/sidebar"
               className="inline-flex items-center justify-center gap-1.5 font-medium cursor-pointer border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 text-neutral-900 dark:text-neutral-50 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors h-7 px-2 text-xs rounded-md"
             >
               <DocsIcon />
@@ -424,7 +424,7 @@ export function SidebarPreview() {
         </div>
         <div className="h-4 w-[1px] bg-white/20 dark:bg-black/15" />
         <a
-          href="/docs/components/sidebar"
+          href="/docs/blocks/sidebar"
           className="text-xs font-bold hover:underline transition-all cursor-pointer flex items-center gap-1 focus:outline-none"
         >
           <span>Exit Preview</span>
