@@ -145,7 +145,7 @@ export function SidebarPreview() {
                 Moul UI
               </span>
               <span className="text-[10px] font-medium font-mono" style={{ color: tokens.colorFgSubtle }}>
-                v0.1.0
+                v2026.8
               </span>
             </div>
           )}

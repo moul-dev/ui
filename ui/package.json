@@ -1,7 +1,7 @@
 {
   "name": "@moul-dev/ui",
   "private": true,
-  "version": "0.0.0",
+  "version": "2026.8.0",
   "type": "module",
   "main": "./dist/moul-ui.js",
   "module": "./dist/moul-ui.js",
