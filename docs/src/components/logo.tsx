@@ -49,6 +49,9 @@ export function Logo({
     >
       <span className="h-8 w-8 flex-shrink-0 text-fd-primary">{icon}</span>
       Moul UI
+      <span className="ml-1 rounded-md bg-fd-primary/10 border border-fd-primary/25 px-1.5 py-0.5 text-[10px] font-mono font-medium tracking-wide text-fd-primary uppercase">
+        Beta
+      </span>
     </span>
   )
 }

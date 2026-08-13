@@ -89,6 +89,7 @@ export interface SidebarProps {
   defaultSelectedKey?: string
   onSelectionChange?: (key: string) => void
   variant?: 'solid' | 'glass'
+  showCollapseToggle?: boolean
   style?: React.CSSProperties
   className?: string
   children?: React.ReactNode

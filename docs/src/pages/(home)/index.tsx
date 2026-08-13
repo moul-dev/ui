@@ -48,7 +48,7 @@ export default function Home() {
                     }}
                     aria-hidden="true"
                   />
-                  <span className="font-mono text-xs tracking-wide">
+                  <span className="font-mono text-xs tracking-wide font-medium text-fd-foreground">
                     v2026.8
                   </span>
                   <span className="text-fd-muted-foreground/60">—</span>

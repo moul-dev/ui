@@ -31,14 +31,32 @@ import { ThemeSelector } from '@/components/theme-selector'
 
 // ── Icons ────────────────────────────────────────────────────────────
 const HomeIcon = () => (
-  <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    viewBox="0 0 24 24"
+    width="16"
+    height="16"
+    stroke="currentColor"
+    strokeWidth="2"
+    fill="none"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
     <polyline points="9 22 9 12 15 12 15 22" />
   </svg>
 )
 
 const AnalyticsIcon = () => (
-  <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    viewBox="0 0 24 24"
+    width="16"
+    height="16"
+    stroke="currentColor"
+    strokeWidth="2"
+    fill="none"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     <line x1="18" y1="20" x2="18" y2="10" />
     <line x1="12" y1="20" x2="12" y2="4" />
     <line x1="6" y1="20" x2="6" y2="14" />
@@ -46,7 +64,16 @@ const AnalyticsIcon = () => (
 )
 
 const SystemIcon = () => (
-  <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    viewBox="0 0 24 24"
+    width="16"
+    height="16"
+    stroke="currentColor"
+    strokeWidth="2"
+    fill="none"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     <rect x="2" y="2" width="20" height="8" rx="2" ry="2" />
     <rect x="2" y="14" width="20" height="8" rx="2" ry="2" />
     <line x1="6" y1="6" x2="6.01" y2="6" />
@@ -55,14 +82,32 @@ const SystemIcon = () => (
 )
 
 const SettingsIcon = () => (
-  <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    viewBox="0 0 24 24"
+    width="16"
+    height="16"
+    stroke="currentColor"
+    strokeWidth="2"
+    fill="none"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     <circle cx="12" cy="12" r="3" />
     <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
   </svg>
 )
 
 const DocsIcon = () => (
-  <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    viewBox="0 0 24 24"
+    width="16"
+    height="16"
+    stroke="currentColor"
+    strokeWidth="2"
+    fill="none"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
     <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5v-15z" />
   </svg>
@@ -128,23 +173,30 @@ export function SidebarPreview() {
       variant="solid"
       className="transition-colors duration-300"
     >
-
       {/* ── Sidebar Layout Left ── */}
       <SidebarAside
         showCollapseToggle={true}
-        style={{
-          '--sidebar-width': '240px',
-          '--sidebar-collapsed-width': '68px',
-        } as React.CSSProperties}
+        style={
+          {
+            '--sidebar-width': '240px',
+            '--sidebar-collapsed-width': '68px',
+          } as React.CSSProperties
+        }
       >
         <SidebarHeader>
           <Logo iconOnly className="h-7 w-7 text-fd-primary flex-shrink-0" />
           {!isCollapsed && (
             <div className="flex flex-col overflow-hidden">
-              <span className="font-extrabold text-sm leading-tight whitespace-nowrap" style={{ color: tokens.colorFg }}>
+              <span
+                className="font-extrabold text-sm leading-tight whitespace-nowrap"
+                style={{ color: tokens.colorFg }}
+              >
                 Moul UI
               </span>
-              <span className="text-[10px] font-medium font-mono" style={{ color: tokens.colorFgSubtle }}>
+              <span
+                className="text-[10px] font-medium font-mono"
+                style={{ color: tokens.colorFgSubtle }}
+              >
                 v2026.8
               </span>
             </div>
@@ -179,8 +231,15 @@ export function SidebarPreview() {
           </div>
           {!isCollapsed && (
             <div className="flex flex-col text-[10px] overflow-hidden leading-tight">
-              <span className="font-semibold" style={{ color: tokens.colorFg }}>Phearak S. Tha</span>
-              <span className="truncate max-w-[120px]" style={{ color: tokens.colorFgSubtle }}>rak@moul.dev</span>
+              <span className="font-semibold" style={{ color: tokens.colorFg }}>
+                Phearak S. Tha
+              </span>
+              <span
+                className="truncate max-w-[120px]"
+                style={{ color: tokens.colorFgSubtle }}
+              >
+                rak@moul.dev
+              </span>
             </div>
           )}
         </SidebarFooter>
@@ -188,7 +247,6 @@ export function SidebarPreview() {
 
       {/* ── Main Workspace Area Right ── */}
       <SidebarMain>
-
         {/* Header */}
         <header
           className="h-20 border-b flex items-center justify-between px-8 z-10 flex-shrink-0"
@@ -223,7 +281,6 @@ export function SidebarPreview() {
 
         {/* Dynamic Content Body */}
         <main className="flex-1 overflow-y-auto p-8 max-w-7xl w-full mx-auto space-y-8">
-
           {activeTab === 'dashboard' && (
             <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -259,7 +316,10 @@ export function SidebarPreview() {
                     color: tokens.colorFg,
                   }}
                 >
-                  <h3 className="text-sm font-semibold mb-4" style={{ color: tokens.colorFgSubtle }}>
+                  <h3
+                    className="text-sm font-semibold mb-4"
+                    style={{ color: tokens.colorFgSubtle }}
+                  >
                     Traffic Performance
                   </h3>
                   <div className="flex-1 min-h-[300px] flex items-center">
@@ -281,11 +341,17 @@ export function SidebarPreview() {
                     color: tokens.colorFg,
                   }}
                 >
-                  <h3 className="text-sm font-semibold mb-4" style={{ color: tokens.colorFgSubtle }}>
+                  <h3
+                    className="text-sm font-semibold mb-4"
+                    style={{ color: tokens.colorFgSubtle }}
+                  >
                     Top API Endpoints
                   </h3>
                   <div className="flex-1 flex flex-col justify-center py-2">
-                    <TopList data={recentActivity} valueFormatter={kFormatter} />
+                    <TopList
+                      data={recentActivity}
+                      valueFormatter={kFormatter}
+                    />
                   </div>
                 </div>
               </div>
@@ -295,7 +361,6 @@ export function SidebarPreview() {
           {activeTab === 'analytics' && (
             <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-
                 <div
                   className="lg:col-span-8 p-6 rounded-2xl border shadow-xs"
                   style={{
@@ -304,7 +369,10 @@ export function SidebarPreview() {
                     color: tokens.colorFg,
                   }}
                 >
-                  <h3 className="text-sm font-semibold mb-4" style={{ color: tokens.colorFgSubtle }}>
+                  <h3
+                    className="text-sm font-semibold mb-4"
+                    style={{ color: tokens.colorFgSubtle }}
+                  >
                     Requests by Location
                   </h3>
                   <div className="min-h-[320px]">
@@ -328,7 +396,10 @@ export function SidebarPreview() {
                   }}
                 >
                   <div>
-                    <h3 className="text-sm font-semibold mb-4" style={{ color: tokens.colorFgSubtle }}>
+                    <h3
+                      className="text-sm font-semibold mb-4"
+                      style={{ color: tokens.colorFgSubtle }}
+                    >
                       Device Split
                     </h3>
                     <div className="flex justify-center py-4">
@@ -347,18 +418,26 @@ export function SidebarPreview() {
                     style={{ borderColor: tokens.colorBorderSubtle }}
                   >
                     {deviceLegend.map((item) => (
-                      <div key={item.name} className="flex flex-col items-center text-center">
-                        <span className="text-[10px] font-medium uppercase" style={{ color: tokens.colorFgSubtle }}>
+                      <div
+                        key={item.name}
+                        className="flex flex-col items-center text-center"
+                      >
+                        <span
+                          className="text-[10px] font-medium uppercase"
+                          style={{ color: tokens.colorFgSubtle }}
+                        >
                           {item.name}
                         </span>
-                        <span className="text-sm font-bold mt-0.5" style={{ color: item.color }}>
+                        <span
+                          className="text-sm font-bold mt-0.5"
+                          style={{ color: item.color }}
+                        >
                           {item.value}
                         </span>
                       </div>
                     ))}
                   </div>
                 </div>
-
               </div>
             </div>
           )}
@@ -376,7 +455,10 @@ export function SidebarPreview() {
                 >
                   <PercentageCircle value={68} label="CPU Load" size={90} />
                   <div className="text-right">
-                    <span className="text-xs uppercase font-bold" style={{ color: tokens.colorFgSubtle }}>
+                    <span
+                      className="text-xs uppercase font-bold"
+                      style={{ color: tokens.colorFgSubtle }}
+                    >
                       Status
                     </span>
                     <p className="text-sm font-bold text-emerald-500 dark:text-emerald-400 mt-1">
@@ -393,9 +475,17 @@ export function SidebarPreview() {
                     color: tokens.colorFg,
                   }}
                 >
-                  <PercentageCircle value={84} label="Memory Usage" size={90} color={tokens.colorChart2} />
+                  <PercentageCircle
+                    value={84}
+                    label="Memory Usage"
+                    size={90}
+                    color={tokens.colorChart2}
+                  />
                   <div className="text-right">
-                    <span className="text-xs uppercase font-bold" style={{ color: tokens.colorFgSubtle }}>
+                    <span
+                      className="text-xs uppercase font-bold"
+                      style={{ color: tokens.colorFgSubtle }}
+                    >
                       Status
                     </span>
                     <p className="text-sm font-bold text-amber-500 dark:text-amber-400 mt-1">
@@ -412,9 +502,17 @@ export function SidebarPreview() {
                     color: tokens.colorFg,
                   }}
                 >
-                  <PercentageCircle value={12} label="Disk IO" size={90} color={tokens.colorChart3} />
+                  <PercentageCircle
+                    value={12}
+                    label="Disk IO"
+                    size={90}
+                    color={tokens.colorChart3}
+                  />
                   <div className="text-right">
-                    <span className="text-xs uppercase font-bold" style={{ color: tokens.colorFgSubtle }}>
+                    <span
+                      className="text-xs uppercase font-bold"
+                      style={{ color: tokens.colorFgSubtle }}
+                    >
                       Status
                     </span>
                     <p className="text-sm font-bold text-emerald-500 dark:text-emerald-400 mt-1">
@@ -432,13 +530,31 @@ export function SidebarPreview() {
                   color: tokens.colorFg,
                 }}
               >
-                <h3 className="text-sm font-semibold" style={{ color: tokens.colorFgSubtle }}>
+                <h3
+                  className="text-sm font-semibold"
+                  style={{ color: tokens.colorFgSubtle }}
+                >
                   Background Tasks Queue
                 </h3>
                 <div className="space-y-4">
-                  <PercentageBar value={95} label="Log Compilation Pipeline" size="md" color={tokens.colorChart7} />
-                  <PercentageBar value={42} label="Elasticsearch Index Optimization" size="md" color={tokens.colorChart5} />
-                  <PercentageBar value={15} label="S3 Archival Sync" size="md" color={tokens.colorChart6} />
+                  <PercentageBar
+                    value={95}
+                    label="Log Compilation Pipeline"
+                    size="md"
+                    color={tokens.colorChart7}
+                  />
+                  <PercentageBar
+                    value={42}
+                    label="Elasticsearch Index Optimization"
+                    size="md"
+                    color={tokens.colorChart5}
+                  />
+                  <PercentageBar
+                    value={15}
+                    label="S3 Archival Sync"
+                    size="md"
+                    color={tokens.colorChart6}
+                  />
                 </div>
               </div>
             </div>
@@ -454,9 +570,12 @@ export function SidebarPreview() {
               }}
             >
               <div className="space-y-1">
-                <h3 className="text-lg font-bold tracking-tight">Console Configuration</h3>
+                <h3 className="text-lg font-bold tracking-tight">
+                  Console Configuration
+                </h3>
                 <p className="text-sm" style={{ color: tokens.colorFgSubtle }}>
-                  Manage global simulation settings and components preview options.
+                  Manage global simulation settings and components preview
+                  options.
                 </p>
               </div>
 
@@ -488,9 +607,15 @@ export function SidebarPreview() {
                   className="space-y-3 pt-4 border-t"
                   style={{ borderColor: tokens.colorBorderSubtle }}
                 >
-                  <h4 className="text-sm font-semibold">Confirm Administrative Code</h4>
-                  <p className="text-xs" style={{ color: tokens.colorFgSubtle }}>
-                    A test verification input OTP for security authorization checks.
+                  <h4 className="text-sm font-semibold">
+                    Confirm Administrative Code
+                  </h4>
+                  <p
+                    className="text-xs"
+                    style={{ color: tokens.colorFgSubtle }}
+                  >
+                    A test verification input OTP for security authorization
+                    checks.
                   </p>
 
                   <div className="pt-2">
@@ -517,7 +642,6 @@ export function SidebarPreview() {
               </div>
             </div>
           )}
-
         </main>
       </SidebarMain>
 
@@ -532,23 +656,35 @@ export function SidebarPreview() {
       >
         <div className="flex items-center gap-2">
           <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-          <span className="text-xs font-semibold tracking-wide">Live Demo View</span>
+          <span className="text-xs font-semibold tracking-wide">
+            Live Demo View
+          </span>
         </div>
-        <div className="h-4 w-[1px]" style={{ backgroundColor: tokens.colorBorderSubtle }} />
+        <div
+          className="h-4 w-[1px]"
+          style={{ backgroundColor: tokens.colorBorderSubtle }}
+        />
         <a
           href="/docs/blocks/sidebar"
           className="text-xs font-bold hover:underline transition-all cursor-pointer flex items-center gap-1 focus:outline-none"
           style={{ color: tokens.colorFg }}
         >
           <span>Exit Preview</span>
-          <svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
+          <svg
+            viewBox="0 0 24 24"
+            width="12"
+            height="12"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            fill="none"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
             <line x1="18" y1="6" x2="6" y2="18" />
             <line x1="6" y1="6" x2="18" y2="18" />
           </svg>
         </a>
       </div>
-
     </Sidebar>
   )
 }
-
