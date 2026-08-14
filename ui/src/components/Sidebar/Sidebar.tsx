@@ -115,9 +115,8 @@ export const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
     const isCollapsed =
       controlledCollapsed !== undefined ? controlledCollapsed : localCollapsed
 
-    const [localSelectedKey, setLocalSelectedKey] = React.useState(
-      defaultSelectedKey,
-    )
+    const [localSelectedKey, setLocalSelectedKey] =
+      React.useState(defaultSelectedKey)
     const selectedKey =
       controlledSelectedKey !== undefined
         ? controlledSelectedKey
@@ -155,10 +154,7 @@ export const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
       <SidebarContext.Provider value={contextValue}>
         <div
           ref={ref}
-          className={[
-            stylex.props(styles.layout).className,
-            className,
-          ]
+          className={[stylex.props(styles.layout).className, className]
             .filter(Boolean)
             .join(' ')}
           style={{
@@ -266,15 +262,21 @@ export const SidebarGroup = React.forwardRef<HTMLDivElement, SidebarGroupProps>(
       <div
         ref={ref}
         className={[
-          stylex.props(styles.group, isCollapsed && styles.groupCollapsed, style)
-            .className,
+          stylex.props(
+            styles.group,
+            isCollapsed && styles.groupCollapsed,
+            style,
+          ).className,
           className,
         ]
           .filter(Boolean)
           .join(' ')}
         style={
-          stylex.props(styles.group, isCollapsed && styles.groupCollapsed, style)
-            .style
+          stylex.props(
+            styles.group,
+            isCollapsed && styles.groupCollapsed,
+            style,
+          ).style
         }
       >
         {title && !isCollapsed && (
@@ -338,7 +340,16 @@ export const SidebarItem = React.forwardRef<
   HTMLAnchorElement,
   SidebarItemProps
 >(function SidebarItem(
-  { id, href, icon, isSelected: controlledSelected, style, className, children, ...rest },
+  {
+    id,
+    href,
+    icon,
+    isSelected: controlledSelected,
+    style,
+    className,
+    children,
+    ...rest
+  },
   ref,
 ) {
   const { isCollapsed, selectedKey, onSelectionChange } = useSidebar()
@@ -383,13 +394,19 @@ export const SidebarItem = React.forwardRef<
     >
       {icon && (
         <span
-          {...stylex.props(styles.itemIcon, isSelected && styles.itemIconSelected)}
+          {...stylex.props(
+            styles.itemIcon,
+            isSelected && styles.itemIconSelected,
+          )}
         >
           {icon}
         </span>
       )}
       <span
-        {...stylex.props(styles.itemLabel, isCollapsed && styles.itemLabelCollapsed)}
+        {...stylex.props(
+          styles.itemLabel,
+          isCollapsed && styles.itemLabelCollapsed,
+        )}
       >
         {children}
       </span>
@@ -422,7 +439,10 @@ export interface SidebarFooterProps {
 export const SidebarFooter = React.forwardRef<
   HTMLDivElement,
   SidebarFooterProps
->(function SidebarFooter({ showBorder = true, style, className, children }, ref) {
+>(function SidebarFooter(
+  { showBorder = true, style, className, children },
+  ref,
+) {
   const { isCollapsed } = useSidebar()
 
   return (
@@ -506,54 +526,53 @@ export interface SidebarAsideProps {
   showCollapseToggle?: boolean
 }
 
-export const SidebarAside = React.forwardRef<
-  HTMLDivElement,
-  SidebarAsideProps
->(function SidebarAside(
-  { style, className, children, showCollapseToggle = true },
-  ref,
-) {
-  const { isCollapsed, variant, onCollapseToggle } = useSidebar()
+export const SidebarAside = React.forwardRef<HTMLDivElement, SidebarAsideProps>(
+  function SidebarAside(
+    { style, className, children, showCollapseToggle = true },
+    ref,
+  ) {
+    const { isCollapsed, variant, onCollapseToggle } = useSidebar()
 
-  return (
-    <div
-      ref={ref}
-      className={[
-        stylex.props(
-          styles.sidebar,
-          styles[variant],
-          isCollapsed ? styles.collapsed : styles.expanded,
-        ).className,
-        className,
-      ]
-        .filter(Boolean)
-        .join(' ')}
-      style={{
-        ...stylex.props(
-          styles.sidebar,
-          styles[variant],
-          isCollapsed ? styles.collapsed : styles.expanded,
-        ).style,
-        ...style,
-      }}
-    >
-      {children}
-      {showCollapseToggle && (
-        <button
-          type="button"
-          aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-          {...stylex.props(
-            styles.toggleButton,
-            isCollapsed && styles.toggleButtonCollapsed,
-          )}
-          onClick={onCollapseToggle}
-        >
-          {isCollapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-        </button>
-      )}
-    </div>
-  )
-})
+    return (
+      <div
+        ref={ref}
+        className={[
+          stylex.props(
+            styles.sidebar,
+            styles[variant],
+            isCollapsed ? styles.collapsed : styles.expanded,
+          ).className,
+          className,
+        ]
+          .filter(Boolean)
+          .join(' ')}
+        style={{
+          ...stylex.props(
+            styles.sidebar,
+            styles[variant],
+            isCollapsed ? styles.collapsed : styles.expanded,
+          ).style,
+          ...style,
+        }}
+      >
+        {children}
+        {showCollapseToggle && (
+          <button
+            type="button"
+            aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            {...stylex.props(
+              styles.toggleButton,
+              isCollapsed && styles.toggleButtonCollapsed,
+            )}
+            onClick={onCollapseToggle}
+          >
+            {isCollapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+          </button>
+        )}
+      </div>
+    )
+  },
+)
 
 // ── SidebarMain Component ────────────────────────────────────────────
 
@@ -563,24 +582,23 @@ export interface SidebarMainProps {
   children?: React.ReactNode
 }
 
-export const SidebarMain = React.forwardRef<
-  HTMLDivElement,
-  SidebarMainProps
->(function SidebarMain({ style, className, children }, ref) {
-  return (
-    <div
-      ref={ref}
-      className={[
-        stylex.props(styles.mainContent, style).className,
-        className,
-      ]
-        .filter(Boolean)
-        .join(' ')}
-      style={{
-        ...stylex.props(styles.mainContent, style).style,
-      }}
-    >
-      {children}
-    </div>
-  )
-})
+export const SidebarMain = React.forwardRef<HTMLDivElement, SidebarMainProps>(
+  function SidebarMain({ style, className, children }, ref) {
+    return (
+      <div
+        ref={ref}
+        className={[
+          stylex.props(styles.mainContent, style).className,
+          className,
+        ]
+          .filter(Boolean)
+          .join(' ')}
+        style={{
+          ...stylex.props(styles.mainContent, style).style,
+        }}
+      >
+        {children}
+      </div>
+    )
+  },
+)

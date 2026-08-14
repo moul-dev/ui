@@ -1,8 +1,8 @@
 'use client'
 
-import React, { useState } from 'react'
 import { Badge, Button } from '@moul-dev/ui'
 import { ExternalLink, Layout, RefreshCw } from 'lucide-react'
+import React, { useState } from 'react'
 
 interface BlockPreviewProps {
   previewUrl: string

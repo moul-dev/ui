@@ -1,0 +1,111 @@
+---
+title: AreaChart
+description: Documentation for the AreaChart component.
+---
+
+import { AreaChart, ChartContainer } from '@moul-dev/ui';
+
+# AreaChart
+
+A modern, responsive area chart built with gradient fills and smooth curves on top of Recharts, styled with StyleX design tokens.
+
+## Preview
+
+<div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
+  <StatusChartDemo />
+  <SpikyAreaChartDemo />
+</div>
+
+## Import
+
+```tsx
+import { AreaChart, ChartContainer } from '@moul-dev/ui';
+```
+
+## Usage
+
+Here is a standard example of rendering an `AreaChart` inside a `ChartContainer`:
+
+```tsx
+import { AreaChart, ChartContainer } from '@moul-dev/ui';
+
+export default function Example() {
+  const data = [
+    { date: 'Jan', Sales: 4000, Revenue: 2400 },
+    { date: 'Feb', Sales: 3000, Revenue: 1398 },
+    { date: 'Mar', Sales: 2000, Revenue: 9800 },
+    { date: 'Apr', Sales: 2780, Revenue: 3908 },
+    { date: 'May', Sales: 1890, Revenue: 4800 },
+    { date: 'Jun', Sales: 2390, Revenue: 3800 },
+  ];
+
+  return (
+    <ChartContainer
+      title="Monthly Sales Performance"
+      description="Comparing sales and revenue over time"
+      legend={[{ name: 'Sales' }, { name: 'Revenue' }]}
+    >
+      <AreaChart
+        data={data}
+        indexKey="date"
+        categories={['Sales', 'Revenue']}
+        height={300}
+        valueFormatter={(val) => `$${val.toLocaleString()}`}
+      />
+    </ChartContainer>
+  );
+}
+```
+
+## Edge-to-Edge Sparkline Variant
+
+By setting `edgeToEdge` on `ChartContainer` and hiding axes (`showXAxis={false}`, `showYAxis={false}`), you can create compact sparkline cards:
+
+```tsx
+import { AreaChart, ChartContainer } from '@moul-dev/ui';
+
+export default function SparklineExample() {
+  const sparkData = [
+    { time: '01:00', load: 35 },
+    { time: '02:00', load: 42 },
+    { time: '03:00', load: 78 },
+    { time: '04:00', load: 55 },
+    { time: '05:00', load: 60 },
+  ];
+
+  return (
+    <ChartContainer
+      title="Server Load"
+      description="Avg 54% over 24h"
+      edgeToEdge
+    >
+      <AreaChart
+        data={sparkData}
+        indexKey="time"
+        categories={['load']}
+        height={140}
+        showXAxis={false}
+        showYAxis={false}
+        gridLines={false}
+      />
+    </ChartContainer>
+  );
+}
+```
+
+## Props
+
+### AreaChart Props
+
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `data` | `any[]` | — | Array of data points to plot. |
+| `indexKey` | `string` | — | Object key to map onto the X-axis. |
+| `categories` | `string[]` | — | Series keys to render as stacked/overlapping gradient areas. |
+| `colors` | `string[]` | `CHART_COLORS` | Array of color strings or CSS variable references. |
+| `height` | `number \| string` | `300` | Height of the chart container in pixels or CSS units. |
+| `gridLines` | `boolean` | `true` | Whether to render background horizontal grid lines. |
+| `showXAxis` | `boolean` | `true` | Show or hide X-Axis labels. |
+| `showYAxis` | `boolean` | `true` | Show or hide Y-Axis labels. |
+| `valueFormatter` | `(value: any) => string` | — | Formatter function for Y-axis ticks and tooltip values. |
+| `margin` | `object` | `{ top: 10, right: 10, left: -20, bottom: 5 }` | Chart margin offsets. |

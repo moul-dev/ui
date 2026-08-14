@@ -1,5 +1,6 @@
 import {
   Alert,
+  AreaChart,
   BarChart,
   Button,
   ChartContainer,
@@ -11,6 +12,12 @@ import {
   LineChart,
   PercentageBar,
   PercentageCircle,
+  Sidebar,
+  SidebarDivider,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarHeader,
+  SidebarItem,
   Stat,
   Tag,
   TagGroup,
@@ -20,12 +27,6 @@ import {
   TypographyLabel,
   TypographyParagraph,
   TypographySpan,
-  Sidebar,
-  SidebarHeader,
-  SidebarGroup,
-  SidebarItem,
-  SidebarFooter,
-  SidebarDivider,
 } from '@moul-dev/ui'
 import { Accordion, Accordions } from 'fumadocs-ui/components/accordion'
 import { Card, Cards } from 'fumadocs-ui/components/card'
@@ -33,6 +34,7 @@ import { Step, Steps } from 'fumadocs-ui/components/steps'
 import { Tab, Tabs } from 'fumadocs-ui/components/tabs'
 import { TypeTable } from 'fumadocs-ui/components/type-table'
 import defaultMdxComponents from 'fumadocs-ui/mdx'
+import { ExternalLink } from 'lucide-react'
 import type { MDXComponents } from 'mdx/types'
 import { BlockPreview } from './block-preview'
 import { ComponentPlayground } from './component-playground'
@@ -48,15 +50,14 @@ import {
   LineChartDemo,
   ModalDemo,
   PercentageDemo,
+  SidebarDemo,
   SpikyAreaChartDemo,
   StatDemo,
   StatusChartDemo,
   TagGroupDemo,
   ToastDemo,
   TopListDemo,
-  SidebarDemo,
 } from './demos'
-import { ExternalLink } from 'lucide-react'
 
 export function FullPagePreviewLink({ href }: { href: string }) {
   return (
@@ -120,6 +121,7 @@ export function getMDXComponents(components?: MDXComponents) {
     InputOTPSeparator,
     InputOTPDemo,
     ChartContainer,
+    AreaChart,
     LineChart,
     BarChart,
     DoughnutChart,

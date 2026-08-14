@@ -127,7 +127,7 @@ export const styles = stylex.create({
     lineHeight: tokens.lineHeightXs,
   },
   itemMd: {
-    paddingBlock: '6px',
+    paddingBlock: tokens.spacing2,
     paddingInline: tokens.spacing3,
     borderRadius: `calc(${tokens.radiusMd} - ${tokens.spacing1})`,
     fontSize: tokens.fontSizeSm,

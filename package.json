@@ -6,10 +6,14 @@
     "docs"
   ],
   "scripts": {
-    "dev:ui": "bun --cwd ui dev",
-    "dev:docs": "bun --cwd docs dev",
+    "build": "bun run build:ui && bun run build:docs",
     "build:ui": "bun --cwd ui build",
     "build:docs": "bun --cwd docs build",
+    "test": "bun --cwd ui test",
+    "test:ui": "bun --cwd ui test",
+    "types:check": "bun --cwd ui tsc -b && bun --cwd docs types:check",
+    "dev:ui": "bun --cwd ui dev",
+    "dev:docs": "bun --cwd docs dev",
     "dev": "bun --cwd ui build:watch & bun run dev:ui & bun run dev:docs",
     "lint": "biome check",
     "format": "biome format --write"

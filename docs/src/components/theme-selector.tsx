@@ -185,6 +185,7 @@ export function ThemeSelector() {
                     color.chroma === activeColor.chroma
                   return (
                     <button
+                      type="button"
                       key={color.name}
                       onClick={() => handleSelectColor(color)}
                       title={color.name}
@@ -206,6 +207,7 @@ export function ThemeSelector() {
               </div>
 
               <button
+                type="button"
                 onClick={() => {
                   setIsModalOpen(true)
                   setIsOpen(false)
@@ -247,6 +249,7 @@ export function ThemeSelector() {
                   {cssConfig}
                 </pre>
                 <button
+                  type="button"
                   onClick={handleCopyConfig}
                   className="absolute top-2.5 right-2.5 p-1.5 rounded-md hover:bg-zinc-800 text-zinc-400 hover:text-white transition-colors cursor-pointer border border-transparent"
                   title="Copy to clipboard"

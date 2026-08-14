@@ -28,24 +28,25 @@ import {
   PercentageBar,
   PercentageCircle,
   REGEXP_ONLY_DIGITS,
+  Sidebar,
+  SidebarAside,
+  SidebarDivider,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarHeader,
+  SidebarItem,
+  SidebarMain,
   Stat,
   Tag,
   TagGroup,
   TextField,
   ToastContainer,
   TopList,
-  Sidebar,
-  SidebarDivider,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarHeader,
-  SidebarItem,
-  SidebarAside,
-  SidebarMain,
   tokens,
   useToast,
 } from '@moul-dev/ui'
-import React, { useState } from 'react'
+import type React from 'react'
+import { useState } from 'react'
 
 export function AlertDialogDemo() {
   const [isOpen, setIsOpen] = useState(false)

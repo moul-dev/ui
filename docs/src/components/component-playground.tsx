@@ -14,6 +14,12 @@ import {
   InputOTPSlot,
   Select,
   SelectItem,
+  Sidebar,
+  SidebarDivider,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarHeader,
+  SidebarItem,
   Slider,
   SliderThumb,
   SliderTrack,
@@ -28,14 +34,9 @@ import {
   TooltipTrigger,
   Typography,
   useToast,
-  Sidebar,
-  SidebarDivider,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarHeader,
-  SidebarItem,
 } from '@moul-dev/ui'
-import React, { useEffect, useState } from 'react'
+import type React from 'react'
+import { useEffect, useState } from 'react'
 
 // Custom Syntax Highlighting for JSX
 function highlightJSX(code: string): string {
@@ -976,6 +977,13 @@ function InputOTPPreviewWrapper({
 
 export function ComponentPlayground({ component }: { component: string }) {
   const config = REGISTRY[component]
+
+  // Initialize state with default properties unconditionally
+  const [activeProps, setActiveProps] = useState<Record<string, any>>(
+    () => config?.defaultProps ?? {},
+  )
+  const [copied, setCopied] = useState(false)
+
   if (!config) {
     return (
       <div className="p-4 text-red-500 border border-red-200 rounded">
@@ -983,12 +991,6 @@ export function ComponentPlayground({ component }: { component: string }) {
       </div>
     )
   }
-
-  // Initialize state with default properties
-  const [activeProps, setActiveProps] = useState<Record<string, any>>(
-    config.defaultProps,
-  )
-  const [copied, setCopied] = useState(false)
 
   // Track prop changes
   const handlePropChange = (name: string, value: any) => {

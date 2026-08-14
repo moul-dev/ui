@@ -25,8 +25,8 @@ export const styles = stylex.create({
     borderBottomWidth: '1px',
     borderBottomStyle: 'solid',
     borderBottomColor: tokens.colorBorderSubtle,
-    paddingBottom: tokens.spacing1,
-    marginBottom: tokens.spacing1,
+    paddingBlockEnd: tokens.spacing1,
+    marginBlockEnd: tokens.spacing1,
   },
   list: {
     display: 'flex',
@@ -50,7 +50,7 @@ export const styles = stylex.create({
   dot: {
     width: '8px',
     height: '8px',
-    borderRadius: '50%',
+    borderRadius: tokens.radiusFull,
     display: 'inline-block',
   },
   name: {

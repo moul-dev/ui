@@ -40,6 +40,6 @@ export const styles = stylex.create({
     fontSize: tokens.fontSizeSm,
     fontWeight: tokens.fontWeightSemibold,
     color: tokens.colorFg,
-    textAlign: 'right',
+    textAlign: 'end',
   },
 })

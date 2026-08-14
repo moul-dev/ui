@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 // --- Matrix Mathematics Helpers (Lightweight 3D operations) ---
 type Mat4 = number[]
@@ -535,14 +535,15 @@ export function WebGLLogo() {
         .trim()
 
       let hue = rawHue ? parseFloat(rawHue) : 250
-      if (isNaN(hue)) hue = 250
+      if (Number.isNaN(hue)) hue = 250
       let chromaMult = rawChroma ? parseFloat(rawChroma) : 1.0
-      if (isNaN(chromaMult)) chromaMult = 1.0
+      if (Number.isNaN(chromaMult)) chromaMult = 1.0
 
       // Get RGB coordinates in 0..1 scale
       const rgb = oklchToRgb(0.7, 0.18 * chromaMult, hue)
 
       // Use the WebGL Program
+      // biome-ignore lint/correctness/useHookAtTopLevel: WebGLRenderingContext native method
       gl.useProgram(program)
 
       // Pass Uniforms

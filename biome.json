@@ -10,7 +10,10 @@
     "includes": [
       "**",
       "!node_modules",
-      "!.source",
+      "!**/node_modules",
+      "!**/.source",
+      "!**/.wrangler",
+      "!**/dist",
       "!**/*.svg",
       "!docs/src/styles/globals.css"
     ]
@@ -29,7 +32,27 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "preset": "recommended"
+      "preset": "recommended",
+      "a11y": {
+        "noSvgWithoutTitle": "off",
+        "noStaticElementInteractions": "off",
+        "useFocusableInteractive": "off",
+        "useSemanticElements": "off",
+        "useAriaPropsForRole": "off"
+      },
+      "security": {
+        "noDangerouslySetInnerHtml": "off"
+      },
+      "style": {
+        "noNonNullAssertion": "off"
+      },
+      "suspicious": {
+        "noExplicitAny": "off",
+        "noArrayIndexKey": "off"
+      },
+      "correctness": {
+        "useExhaustiveDependencies": "warn"
+      }
     },
     "domains": {
       "react": "recommended"

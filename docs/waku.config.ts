@@ -1,6 +1,6 @@
 import tailwindcss from '@tailwindcss/vite'
 import mdx from 'fumadocs-mdx/vite'
-import { esmExternalRequirePlugin, perEnvironmentPlugin } from 'vite'
+import type { Plugin } from 'vite'
 import { defineConfig } from 'waku/config'
 
 export default defineConfig({
@@ -29,10 +29,11 @@ export default defineConfig({
       mdx(),
       {
         name: 'shim-import-meta-url',
-        transform(code: any, id: any, options: any) {
+        transform(code: string, _id: string, options?: { ssr?: boolean }) {
           const isSSR =
             options?.ssr ||
-            (this.environment && this.environment.name !== 'client')
+            (this as unknown as { environment?: { name?: string } }).environment
+              ?.name !== 'client'
           if (isSSR && code.includes('import.meta.url')) {
             return {
               code: code.replaceAll('import.meta.url', '"file:///index.js"'),

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useCallback, useState } from 'react'
+import { useCallback, useState } from 'react'
 
 interface CopyBlockProps {
   command: string

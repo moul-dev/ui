@@ -1,31 +1,32 @@
 'use client'
 
 import {
+  BarChart,
+  DoughnutChart,
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSeparator,
+  InputOTPSlot,
+  LineChart,
+  PercentageBar,
+  PercentageCircle,
+  REGEXP_ONLY_DIGITS,
   Sidebar,
+  SidebarAside,
   SidebarDivider,
   SidebarFooter,
   SidebarGroup,
   SidebarHeader,
   SidebarItem,
-  SidebarAside,
   SidebarMain,
   Stat,
-  PercentageCircle,
-  PercentageBar,
-  LineChart,
-  BarChart,
-  DoughnutChart,
-  TopList,
-  TextField,
   Switch,
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSeparator,
-  InputOTPSlot,
-  REGEXP_ONLY_DIGITS,
+  TextField,
+  TopList,
   tokens,
 } from '@moul-dev/ui'
-import React, { useState } from 'react'
+import type React from 'react'
+import { useState } from 'react'
 import { Logo } from '@/components/logo'
 import { ThemeSelector } from '@/components/theme-selector'
 

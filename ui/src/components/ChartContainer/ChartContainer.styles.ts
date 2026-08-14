@@ -30,13 +30,12 @@ export const styles = stylex.create({
     borderBottomWidth: '1px',
     borderBottomStyle: 'solid',
     borderBottomColor: 'transparent',
-    paddingBottom: tokens.spacing2,
+    paddingBlockEnd: tokens.spacing2,
   },
   headerEdgeToEdge: {
-    paddingTop: tokens.spacing5,
-    paddingBottom: tokens.spacing4,
-    paddingLeft: tokens.spacing6,
-    paddingRight: tokens.spacing6,
+    paddingBlockStart: tokens.spacing5,
+    paddingBlockEnd: tokens.spacing4,
+    paddingInline: tokens.spacing6,
   },
   headerDivider: {
     borderBottomColor: tokens.colorBorderSubtle,
@@ -51,7 +50,7 @@ export const styles = stylex.create({
   description: {
     fontSize: tokens.fontSizeXs,
     color: tokens.colorFgSubtle,
-    marginTop: tokens.spacing1,
+    marginBlockStart: tokens.spacing1,
   },
   actions: {
     display: 'flex',
@@ -75,7 +74,7 @@ export const styles = stylex.create({
   legendDot: {
     width: '10px',
     height: '10px',
-    borderRadius: '50%',
+    borderRadius: tokens.radiusFull,
     display: 'inline-block',
     flexShrink: 0,
   },
@@ -85,7 +84,7 @@ export const styles = stylex.create({
   legendValue: {
     fontWeight: tokens.fontWeightSemibold,
     color: tokens.colorFg,
-    marginLeft: tokens.spacing1,
+    marginInlineStart: tokens.spacing1,
   },
   legendMore: {
     fontWeight: tokens.fontWeightSemibold,
@@ -111,7 +110,7 @@ export const styles = stylex.create({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+    backgroundColor: tokens.colorBgGlass,
     zIndex: 10,
   },
   emptyContainer: {

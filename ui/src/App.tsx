@@ -11,19 +11,19 @@ import {
 import { Button } from './components/Button'
 import { Card, CardBody, CardFooter, CardHeader } from './components/Card'
 import { Modal, ModalOverlay } from './components/Modal'
-import { ToggleButton } from './components/ToggleButton'
-import { ToggleButtonGroup } from './components/ToggleButtonGroup'
-import { Typography } from './components/Typography'
 import {
   Sidebar,
+  SidebarAside,
   SidebarDivider,
   SidebarFooter,
   SidebarGroup,
   SidebarHeader,
   SidebarItem,
-  SidebarAside,
   SidebarMain,
 } from './components/Sidebar'
+import { ToggleButton } from './components/ToggleButton'
+import { ToggleButtonGroup } from './components/ToggleButtonGroup'
+import { Typography } from './components/Typography'
 
 // ── Icons ────────────────────────────────────────────────────────────
 
@@ -356,7 +356,9 @@ function App() {
   // Sidebar interactive states
   const [activeTab, setActiveTab] = useState('home')
   const [isCollapsed, setIsCollapsed] = useState(false)
-  const [sidebarVariant, setSidebarVariant] = useState<'solid' | 'glass'>('glass')
+  const [sidebarVariant, setSidebarVariant] = useState<'solid' | 'glass'>(
+    'glass',
+  )
   const [showToggle, setShowToggle] = useState(true)
 
   return (
@@ -459,7 +461,9 @@ function App() {
               variant="secondary"
               size="sm"
               onPress={() =>
-                setSidebarVariant(sidebarVariant === 'glass' ? 'solid' : 'glass')
+                setSidebarVariant(
+                  sidebarVariant === 'glass' ? 'solid' : 'glass',
+                )
               }
             >
               Toggle Style: {sidebarVariant.toUpperCase()}
@@ -503,21 +507,27 @@ function App() {
           <section {...stylex.props(styles.section)}>
             <h2 {...stylex.props(styles.sectionTitle)}>Toggle Buttons</h2>
             <div {...stylex.props(styles.buttonGroup)}>
-              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <div
+                style={{ display: 'flex', gap: '8px', alignItems: 'center' }}
+              >
                 <span>Standalone (Primary):</span>
                 <ToggleButton variant="primary">Toggle</ToggleButton>
                 <ToggleButton variant="primary" defaultSelected>
                   Selected
                 </ToggleButton>
               </div>
-              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <div
+                style={{ display: 'flex', gap: '8px', alignItems: 'center' }}
+              >
                 <span>Standalone (Secondary):</span>
                 <ToggleButton variant="secondary">Toggle</ToggleButton>
                 <ToggleButton variant="secondary" defaultSelected>
                   Selected
                 </ToggleButton>
               </div>
-              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <div
+                style={{ display: 'flex', gap: '8px', alignItems: 'center' }}
+              >
                 <span>Group (Animated):</span>
                 <ToggleButtonGroup animated defaultSelectedKeys={['week']}>
                   <ToggleButton id="day">Day</ToggleButton>
@@ -525,7 +535,9 @@ function App() {
                   <ToggleButton id="month">Month</ToggleButton>
                 </ToggleButtonGroup>
               </div>
-              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <div
+                style={{ display: 'flex', gap: '8px', alignItems: 'center' }}
+              >
                 <span>Group Secondary (Animated):</span>
                 <ToggleButtonGroup animated defaultSelectedKeys={['bold']}>
                   <ToggleButton id="bold" variant="secondary">
@@ -719,7 +731,11 @@ function App() {
               style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}
             >
               <div
-                style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '12px',
+                }}
               >
                 <span
                   style={{

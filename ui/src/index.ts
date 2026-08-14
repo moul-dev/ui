@@ -137,6 +137,26 @@ export type {
 } from './components/Select/Select'
 export { Separator } from './components/Separator'
 export type { SeparatorProps } from './components/Separator/Separator'
+export type {
+  SidebarAsideProps,
+  SidebarDividerProps,
+  SidebarFooterProps,
+  SidebarGroupProps,
+  SidebarHeaderProps,
+  SidebarItemProps,
+  SidebarMainProps,
+  SidebarProps,
+} from './components/Sidebar'
+export {
+  Sidebar,
+  SidebarAside,
+  SidebarDivider,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarHeader,
+  SidebarItem,
+  SidebarMain,
+} from './components/Sidebar'
 export { Skeleton } from './components/Skeleton'
 export type { SkeletonProps } from './components/Skeleton/Skeleton'
 export { Slider, SliderThumb, SliderTrack } from './components/Slider'
@@ -215,28 +235,6 @@ export type {
   TypographyProps,
   TypographyTag,
 } from './components/Typography/Typography'
-
 export type { ThemeProviderProps } from './theme/ThemeProvider'
 export { ThemeProvider } from './theme/ThemeProvider'
 export { tokens } from './tokens/tokens.stylex'
-
-export {
-  Sidebar,
-  SidebarHeader,
-  SidebarGroup,
-  SidebarItem,
-  SidebarFooter,
-  SidebarDivider,
-  SidebarAside,
-  SidebarMain,
-} from './components/Sidebar'
-export type {
-  SidebarProps,
-  SidebarHeaderProps,
-  SidebarGroupProps,
-  SidebarItemProps,
-  SidebarFooterProps,
-  SidebarDividerProps,
-  SidebarAsideProps,
-  SidebarMainProps,
-} from './components/Sidebar'

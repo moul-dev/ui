@@ -9,8 +9,8 @@ export const styles = stylex.create({
     flexDirection: 'column',
     height: `calc(100% - ${tokens.spacing3} * 2)`,
     marginBlock: tokens.spacing3,
-    marginLeft: tokens.spacing3,
-    marginRight: '0px',
+    marginInlineStart: tokens.spacing3,
+    marginInlineEnd: 0,
     flexShrink: 0,
     transitionProperty: 'width, background-color, border-color, box-shadow',
     transitionDuration: '0.25s',
@@ -296,8 +296,8 @@ export const styles = stylex.create({
   // ── Toggle Button ───────────────────────────────────────────────────
   toggleButton: {
     position: 'absolute',
-    bottom: tokens.spacing4,
-    right: tokens.spacing4,
+    insetBlockEnd: tokens.spacing4,
+    insetInlineEnd: tokens.spacing4,
     width: tokens.spacing8,
     height: tokens.spacing8,
     borderRadius: tokens.radiusFull,
@@ -330,8 +330,8 @@ export const styles = stylex.create({
   },
   toggleButtonCollapsed: {
     position: 'relative',
-    bottom: 'auto',
-    right: 'auto',
+    insetBlockEnd: 'auto',
+    insetInlineEnd: 'auto',
     alignSelf: 'center',
     marginBlock: tokens.spacing2,
   },
@@ -355,6 +355,6 @@ export const styles = stylex.create({
     overflowY: 'auto',
     boxSizing: 'border-box',
     backgroundColor: 'transparent',
-    paddingTop: tokens.spacing3
+    paddingBlockStart: tokens.spacing3,
   },
 })
