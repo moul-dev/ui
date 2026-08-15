@@ -40,7 +40,7 @@ export default async function RootElement({
           rel="stylesheet"
         />
       </head>
-      <body data-version="2026.8" className="flex flex-col min-h-screen">
+      <body data-version="2026.08.15" className="flex flex-col min-h-screen">
         <Provider>{children}</Provider>
       </body>
     </html>
