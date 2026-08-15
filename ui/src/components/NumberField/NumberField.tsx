@@ -23,12 +23,14 @@ export interface NumberFieldProps extends Omit<AriaNumberFieldProps, 'style'> {
   errorMessage?: string | ((v: ValidationResult) => string)
   placeholder?: string
   variant?: 'primary' | 'secondary'
+  size?: 'sm' | 'md' | 'lg'
 }
 
 export const NumberField = React.forwardRef<HTMLInputElement, NumberFieldProps>(
   function NumberField(
     {
       variant = 'primary',
+      size = 'md',
       style,
       className,
       label,
@@ -39,6 +41,12 @@ export const NumberField = React.forwardRef<HTMLInputElement, NumberFieldProps>(
     },
     ref,
   ) {
+    const sizeSuffix = size === 'sm' ? 'Sm' : size === 'lg' ? 'Lg' : 'Md'
+    const groupSizeStyle = styles[`group${sizeSuffix}` as keyof typeof styles]
+    const inputSizeStyle = styles[`input${sizeSuffix}` as keyof typeof styles]
+    const stepperContainerSizeStyle =
+      styles[`stepperContainer${sizeSuffix}` as keyof typeof styles]
+
     return (
       <AriaNumberField
         {...rest}
@@ -56,6 +64,7 @@ export const NumberField = React.forwardRef<HTMLInputElement, NumberFieldProps>(
           className={(renderProps) => {
             const { className: stylexClass } = stylex.props(
               styles.group,
+              groupSizeStyle,
               styles[variant],
               renderProps.isHovered && styles.groupHover,
               renderProps.isFocusWithin && styles.groupFocused,
@@ -71,6 +80,7 @@ export const NumberField = React.forwardRef<HTMLInputElement, NumberFieldProps>(
           style={(renderProps) => {
             const { style: stylexStyle } = stylex.props(
               styles.group,
+              groupSizeStyle,
               styles[variant],
               renderProps.isHovered && styles.groupHover,
               renderProps.isFocusWithin && styles.groupFocused,
@@ -87,12 +97,15 @@ export const NumberField = React.forwardRef<HTMLInputElement, NumberFieldProps>(
           <AriaInput
             ref={ref}
             placeholder={placeholder}
-            className={() => stylex.props(styles.input).className || ''}
-            style={() => stylex.props(styles.input).style || {}}
+            className={() =>
+              stylex.props(styles.input, inputSizeStyle).className || ''
+            }
+            style={() => stylex.props(styles.input, inputSizeStyle).style || {}}
           />
           <div
             {...stylex.props(
               styles.stepperContainer,
+              stepperContainerSizeStyle,
               variant === 'primary' && styles.stepperContainerPrimary,
               variant === 'secondary' && styles.stepperContainerSecondary,
             )}

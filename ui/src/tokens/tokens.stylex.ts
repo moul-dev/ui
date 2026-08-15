@@ -138,20 +138,20 @@ export const tokens = stylex.defineVars({
   fontFamilyBase: "'Google Sans', 'Inter', system-ui, sans-serif",
 
   // ── Spacing (8 steps, 4px base) ───────────────────────────────────
-  spacing1: '0.25rem', // 4px
-  spacing2: '0.5rem', // 8px
-  spacing3: '0.75rem', // 12px
-  spacing4: '1rem', // 16px
-  spacing5: '1.25rem', // 20px
-  spacing6: '1.5rem', // 24px
-  spacing7: '1.75rem', // 28px
-  spacing8: '2rem', // 32px
+  spacing1: 'calc(0.25rem * var(--brand-density-factor, 1))', // 4px * density
+  spacing2: 'calc(0.5rem * var(--brand-density-factor, 1))', // 8px * density
+  spacing3: 'calc(0.75rem * var(--brand-density-factor, 1))', // 12px * density
+  spacing4: 'calc(1rem * var(--brand-density-factor, 1))', // 16px * density
+  spacing5: 'calc(1.25rem * var(--brand-density-factor, 1))', // 20px * density
+  spacing6: 'calc(1.5rem * var(--brand-density-factor, 1))', // 24px * density
+  spacing7: 'calc(1.75rem * var(--brand-density-factor, 1))', // 28px * density
+  spacing8: 'calc(2rem * var(--brand-density-factor, 1))', // 32px * density
 
   // ── Border radius ─────────────────────────────────────────────────
   radiusNone: '0',
-  radiusSm: '0.375rem',
-  radiusMd: '0.75rem',
-  radiusLg: '1.25rem',
+  radiusSm: 'calc(0.375rem * var(--brand-radius-factor, 1))',
+  radiusMd: 'calc(0.75rem * var(--brand-radius-factor, 1))',
+  radiusLg: 'calc(1.25rem * var(--brand-radius-factor, 1))',
   radiusFull: '9999px',
 
   // ── Shadows — use colorShadow token for the shadow color ──────────

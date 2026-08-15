@@ -46,7 +46,7 @@ export interface ModalProps
   extends Omit<AriaModalOverlayProps, 'style' | 'className'> {
   style?: StyleXStyles
   className?: string
-  size?: 'sm' | 'md' | 'lg'
+  size?: 'sm' | 'md' | 'lg' | 'fullscreen'
 }
 
 export const Modal = React.forwardRef<HTMLDivElement, ModalProps>(

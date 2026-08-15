@@ -11,14 +11,26 @@ export const styles = stylex.create({
   group: {
     display: 'flex',
     alignItems: 'stretch',
-    borderRadius: tokens.radiusMd,
     borderWidth: '1px',
     borderStyle: 'solid',
     boxShadow: tokens.shadowSm,
     overflow: 'hidden',
+    boxSizing: 'border-box',
     transitionProperty: 'border-color, box-shadow',
     transitionDuration: '0.15s',
     transitionTimingFunction: 'ease-in-out',
+  },
+  groupSm: {
+    height: `calc(${tokens.spacing1} * 2 + ${tokens.lineHeightXs})`,
+    borderRadius: tokens.radiusSm,
+  },
+  groupMd: {
+    height: `calc(${tokens.spacing2} * 2 + ${tokens.lineHeightSm})`,
+    borderRadius: tokens.radiusMd,
+  },
+  groupLg: {
+    height: `calc(${tokens.spacing2} * 2 + ${tokens.lineHeightMd})`,
+    borderRadius: tokens.radiusMd,
   },
   primary: {
     backgroundColor: tokens.colorBg,
@@ -53,24 +65,49 @@ export const styles = stylex.create({
   input: {
     flexGrow: 1,
     width: '100%',
-    paddingBlock: tokens.spacing2,
-    paddingInlineStart: tokens.spacing3,
-    paddingInlineEnd: tokens.spacing1,
+    height: '100%',
     borderStyle: 'none',
     backgroundColor: 'transparent',
     color: tokens.colorFg,
     fontFamily: tokens.fontFamilyBase,
+    outline: 'none',
+  },
+  inputSm: {
+    paddingBlock: 0,
+    paddingInlineStart: tokens.spacing2,
+    paddingInlineEnd: tokens.spacing1,
+    fontSize: tokens.fontSizeXs,
+    lineHeight: tokens.lineHeightXs,
+  },
+  inputMd: {
+    paddingBlock: 0,
+    paddingInlineStart: tokens.spacing3,
+    paddingInlineEnd: tokens.spacing1,
+    fontSize: tokens.fontSizeSm,
+    lineHeight: tokens.lineHeightSm,
+  },
+  inputLg: {
+    paddingBlock: 0,
+    paddingInlineStart: tokens.spacing4,
+    paddingInlineEnd: tokens.spacing1,
     fontSize: tokens.fontSizeMd,
     lineHeight: tokens.lineHeightMd,
-    outline: 'none',
   },
   stepperContainer: {
     display: 'flex',
     flexDirection: 'column',
     borderInlineStartWidth: '1px',
     borderInlineStartStyle: 'solid',
-    width: tokens.spacing6,
     flexShrink: 0,
+  },
+  stepperContainerSm: {
+    width: tokens.spacing5,
+  },
+  stepperContainerMd: {
+    width: tokens.spacing6,
+  },
+  stepperContainerLg: {
+    width: tokens.spacing7,
   },
   stepperContainerPrimary: {
     borderInlineStartColor: tokens.colorBorder,

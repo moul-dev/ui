@@ -23,12 +23,14 @@ export interface SearchFieldProps extends Omit<AriaSearchFieldProps, 'style'> {
   errorMessage?: string | ((v: ValidationResult) => string)
   placeholder?: string
   variant?: 'primary' | 'secondary'
+  size?: 'sm' | 'md' | 'lg'
 }
 
 export const SearchField = React.forwardRef<HTMLInputElement, SearchFieldProps>(
   function SearchField(
     {
       variant = 'primary',
+      size = 'md',
       style,
       className,
       label,
@@ -39,6 +41,13 @@ export const SearchField = React.forwardRef<HTMLInputElement, SearchFieldProps>(
     },
     ref,
   ) {
+    const sizeSuffix = size === 'sm' ? 'Sm' : size === 'lg' ? 'Lg' : 'Md'
+    const groupSizeStyle = styles[`group${sizeSuffix}` as keyof typeof styles]
+    const inputSizeStyle = styles[`input${sizeSuffix}` as keyof typeof styles]
+    const iconSizeStyle = styles[`icon${sizeSuffix}` as keyof typeof styles]
+    const clearButtonSizeStyle =
+      styles[`clearButton${sizeSuffix}` as keyof typeof styles]
+
     return (
       <AriaSearchField
         {...rest}
@@ -58,6 +67,7 @@ export const SearchField = React.forwardRef<HTMLInputElement, SearchFieldProps>(
               className={(groupProps) => {
                 const { className: stylexClass } = stylex.props(
                   styles.group,
+                  groupSizeStyle,
                   styles[variant],
                   groupProps.isHovered && styles.groupHover,
                   groupProps.isFocusWithin && styles.groupFocused,
@@ -73,6 +83,7 @@ export const SearchField = React.forwardRef<HTMLInputElement, SearchFieldProps>(
               style={(groupProps) => {
                 const { style: stylexStyle } = stylex.props(
                   styles.group,
+                  groupSizeStyle,
                   styles[variant],
                   groupProps.isHovered && styles.groupHover,
                   groupProps.isFocusWithin && styles.groupFocused,
@@ -94,7 +105,7 @@ export const SearchField = React.forwardRef<HTMLInputElement, SearchFieldProps>(
                 strokeWidth={2}
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                {...stylex.props(styles.icon)}
+                {...stylex.props(styles.icon, iconSizeStyle)}
                 aria-hidden="true"
               >
                 <circle cx={11} cy={11} r={8} />
@@ -103,8 +114,12 @@ export const SearchField = React.forwardRef<HTMLInputElement, SearchFieldProps>(
               <AriaInput
                 ref={ref}
                 placeholder={placeholder}
-                className={() => stylex.props(styles.input).className || ''}
-                style={() => stylex.props(styles.input).style || {}}
+                className={() =>
+                  stylex.props(styles.input, inputSizeStyle).className || ''
+                }
+                style={() =>
+                  stylex.props(styles.input, inputSizeStyle).style || {}
+                }
               />
               {/* Clear button */}
               <AriaButton
@@ -112,6 +127,7 @@ export const SearchField = React.forwardRef<HTMLInputElement, SearchFieldProps>(
                   const isHidden = state.value === ''
                   const { className: stylexClass } = stylex.props(
                     styles.clearButton,
+                    clearButtonSizeStyle,
                     isHidden && styles.clearButtonHidden,
                   )
                   return stylexClass || ''
@@ -120,6 +136,7 @@ export const SearchField = React.forwardRef<HTMLInputElement, SearchFieldProps>(
                   const isHidden = state.value === ''
                   const { style: stylexStyle } = stylex.props(
                     styles.clearButton,
+                    clearButtonSizeStyle,
                     isHidden && styles.clearButtonHidden,
                   )
                   return stylexStyle || {}

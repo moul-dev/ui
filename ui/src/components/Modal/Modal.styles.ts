@@ -83,6 +83,13 @@ export const styles = stylex.create({
       '@media (max-width: 640px)': '100%',
     },
   },
+  fullscreen: {
+    maxWidth: '100vw',
+    width: '100vw',
+    height: '100vh',
+    maxHeight: '100vh',
+    borderRadius: tokens.radiusNone,
+  },
   dialog: {
     outline: 'none',
     display: 'flex',
