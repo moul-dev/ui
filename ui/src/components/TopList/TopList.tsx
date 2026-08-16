@@ -26,7 +26,7 @@ export interface TopListProps
 export const TopList = React.forwardRef<HTMLDivElement, TopListProps>(
   function TopList(
     {
-      data,
+      data = [],
       maxValue,
       colors = CHART_COLORS,
       barColor = tokens.colorChart1,

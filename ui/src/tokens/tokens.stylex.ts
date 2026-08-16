@@ -115,22 +115,22 @@ export const tokens = stylex.defineVars({
   colorAlertActiveError: 'light-dark(oklch(0.87 0.06 27), oklch(0.10 0.06 27))',
 
   // ── Typography ────────────────────────────────────────────────────
-  fontSizeXs: '0.75rem', // 12px
-  fontSizeSm: '0.875rem', // 14px
-  fontSizeMd: '1rem', // 16px
-  fontSizeLg: '1.125rem', // 18px
-  fontSizeXl: '1.25rem', // 20px
-  fontSizeXxl: '1.5rem', // 24px
-  fontSize3xl: '1.875rem', // 30px
-  fontSize4xl: '2.25rem', // 36px
-  lineHeightXs: '1rem',
-  lineHeightSm: '1.25rem',
-  lineHeightMd: '1.5rem',
-  lineHeightLg: '1.75rem',
-  lineHeightXl: '1.75rem',
-  lineHeightXxl: '2rem',
-  lineHeight3xl: '2.25rem',
-  lineHeight4xl: '2.5rem',
+  fontSizeXs: 'calc(0.75rem * var(--brand-font-scale, 1))', // 12px
+  fontSizeSm: 'calc(0.875rem * var(--brand-font-scale, 1))', // 14px
+  fontSizeMd: 'calc(1rem * var(--brand-font-scale, 1))', // 16px
+  fontSizeLg: 'calc(1.125rem * var(--brand-font-scale, 1))', // 18px
+  fontSizeXl: 'calc(1.25rem * var(--brand-font-scale, 1))', // 20px
+  fontSizeXxl: 'calc(1.5rem * var(--brand-font-scale, 1))', // 24px
+  fontSize3xl: 'calc(1.875rem * var(--brand-font-scale, 1))', // 30px
+  fontSize4xl: 'calc(2.25rem * var(--brand-font-scale, 1))', // 36px
+  lineHeightXs: 'calc(1rem * var(--brand-font-scale, 1))',
+  lineHeightSm: 'calc(1.25rem * var(--brand-font-scale, 1))',
+  lineHeightMd: 'calc(1.5rem * var(--brand-font-scale, 1))',
+  lineHeightLg: 'calc(1.75rem * var(--brand-font-scale, 1))',
+  lineHeightXl: 'calc(1.75rem * var(--brand-font-scale, 1))',
+  lineHeightXxl: 'calc(2rem * var(--brand-font-scale, 1))',
+  lineHeight3xl: 'calc(2.25rem * var(--brand-font-scale, 1))',
+  lineHeight4xl: 'calc(2.5rem * var(--brand-font-scale, 1))',
   fontWeightNormal: '400',
   fontWeightMedium: '500',
   fontWeightSemibold: '600',

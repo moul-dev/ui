@@ -15,6 +15,11 @@ export function baseOptions(): BaseLayoutProps {
         active: 'nested-url',
       },
       {
+        text: 'Theme',
+        url: '/theme',
+        active: 'url',
+      },
+      {
         text: 'Changelog',
         url: '/changelog',
         active: 'nested-url',
@@ -44,6 +49,11 @@ export function docsOptions(): BaseLayoutProps {
         text: 'Docs',
         url: '/docs',
         active: 'nested-url',
+      },
+      {
+        text: 'Theme',
+        url: '/theme',
+        active: 'url',
       },
       {
         text: 'Changelog',
