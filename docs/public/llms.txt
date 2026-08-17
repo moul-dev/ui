@@ -1,0 +1,110 @@
+# Moul UI
+
+> Moul UI (`@moul-dev/ui`) is an accessible, zero-runtime React component library combining React Aria Components for robust headless interactions and StyleX for compile-time CSS extraction.
+
+Moul UI provides a comprehensive set of accessible, composable UI components, analytics charts, and application blocks designed for high-performance React web applications.
+
+## Quick Start
+
+### 1. Installation
+```bash
+bun add @moul-dev/ui
+# or
+npm install @moul-dev/ui
+```
+
+### 2. Stylesheet
+```tsx
+import '@moul-dev/ui/style.css';
+```
+
+### 3. Theme Setup
+```tsx
+import { ThemeProvider } from '@moul-dev/ui';
+
+function Root({ children }: { children: React.ReactNode }) {
+  return <ThemeProvider colorScheme="light dark">{children}</ThemeProvider>;
+}
+```
+
+---
+
+## Core Rules for LLMs & AI Coding Agents
+
+- **Imports**: All UI primitives and icons are imported directly from `@moul-dev/ui`.
+- **Button Activation**: Always use `onPress` instead of `onClick` on `<Button>`, `<Link>`, and trigger elements.
+- **Form State**: Use standard React Aria properties (`value`, `onChange`, `isInvalid`, `isDisabled`, `isRequired`, `placeholder`, `description`, `errorMessage`).
+- **Selection State**: Single-item components (`Checkbox`, `Switch`, `ToggleButton`) use `isSelected` / `onChange`. Multi-item / collection components (`Select`, `ComboBox`, `Tabs`, `Table`, `TagGroup`, `Sidebar`) use `selectedKey` / `selectedKeys` and `onSelectionChange`.
+- **Modals & Overlays**: Use `isOpen` and `onOpenChange` on `<ModalOverlay>` / `<Popover>` / `<AlertDialog>`.
+- **Zero Runtime Styling**: Styles are extracted at compile-time via StyleX. Theme custom properties (`--brand-hue`, `--brand-chroma-multiplier`, `--brand-density-factor`, `--brand-radius-factor`) provide dynamic branding with zero runtime cost.
+
+---
+
+## Component Index
+
+### Actions & Buttons
+- [Button](/docs/components/button): Interactive button with 7 variants (`primary`, `secondary`, `tertiary`, `outline`, `ghost`, `danger`, `danger-soft`), sizes (`sm`, `md`, `lg`), and `isPending` state.
+- [ButtonGroup](/docs/components/buttongroup): Groups multiple buttons with attached or spaced layouts.
+- [ToggleButton](/docs/components/togglebutton): Two-state toggle button supporting controlled or uncontrolled selection.
+- [ToggleButtonGroup](/docs/components/togglebuttongroup): Single or multi-select toggle button group.
+- [Link](/docs/components/link): Accessible anchor navigation with primary, secondary, and subtle variants.
+- [Kbd](/docs/components/kbd): Visual keyboard shortcut badges.
+
+### Form & Inputs
+- [TextField](/docs/components/textfield): Accessible text input with label, description, error message, and validation.
+- [TextArea](/docs/components/textarea): Multiline text input with auto-resize and validation states.
+- [NumberField](/docs/components/numberfield): Accessible numeric input with step buttons, min/max bounds, and formatting.
+- [SearchField](/docs/components/searchfield): Search input with clear button and submit handler.
+- [Select](/docs/components/select): Select dropdown with `SelectItem`, `SelectSection`, `SelectPopover`, and `SelectValue`.
+- [ComboBox](/docs/components/combobox): Searchable autocomplete input with `ComboBoxItem` and `ComboBoxSection`.
+- [Checkbox](/docs/components/checkbox): Accessible checkbox supporting checked, indeterminate, and disabled states.
+- [CheckboxGroup](/docs/components/checkboxgroup): Group of checkboxes with orientation and validation.
+- [RadioGroup](/docs/components/radiogroup): Radio selection group with horizontal/vertical layouts.
+- [Switch](/docs/components/switch): Toggle switch for boolean settings.
+- [InputOTP](/docs/components/inputotp): Segmented one-time password input with `InputOTPGroup`, `InputOTPSlot`, and `InputOTPSeparator`.
+- [Form](/docs/components/form): Form wrapper integrating with React Aria validation and server actions.
+
+### Overlays & Dialogs
+- [Modal](/docs/components/modal): Accessible dialog overlays with `ModalOverlay`, `ModalDialog`, `ModalHeader`, `ModalBody`, and `ModalFooter`.
+- [AlertDialog](/docs/components/alertdialog): Confirmation and destructive alert dialogs.
+- [Popover](/docs/components/popover): Positioned popover overlays anchored to trigger elements.
+- [Tooltip](/docs/components/tooltip): Informative tooltips triggered on hover or focus.
+
+### Feedback & Status
+- [Alert](/docs/components/alert): Inline banner alert messages with `info`, `success`, `warning`, `error`, and `neutral` variants.
+- [Badge](/docs/components/badge): Status badge indicators in multiple color variants and sizes.
+- [Spinner](/docs/components/spinner): Accessible loading spinners.
+- [Skeleton](/docs/components/skeleton): Loading placeholder skeletons for text, cards, and avatars.
+- [Toast](/docs/components/toast): Global toast notification system with `toastQueue` and `ToastContainer`.
+
+### Navigation & Layout
+- [Breadcrumbs](/docs/components/breadcrumbs): Hierarchical navigation breadcrumb trails.
+- [Tabs](/docs/components/tabs): Accessible tabbed navigation with `TabList`, `Tab`, `TabPanels`, and `TabPanel`.
+- [Table](/docs/components/table): Interactive data tables with column sorting, row selection, and keyboard navigation.
+- [Card](/docs/components/card): Container surfaces with `CardHeader`, `CardBody`, and `CardFooter`.
+- [Separator](/docs/components/separator): Visual dividing rules in horizontal or vertical orientation.
+- [TagGroup](/docs/components/taggroup): Interactive tag badges with selection and removal callbacks.
+- [Avatar](/docs/components/avatar): User avatar images, fallbacks, and presence status indicators.
+- [Typography](/docs/components/typography): Structured typography elements (`TypographyHeading`, `TypographyParagraph`, `TypographyLabel`, `TypographySpan`).
+
+### Blocks
+- [Sidebar](/docs/blocks/sidebar): Collapsible application navigation sidebar featuring group toggles, icon-only collapse, and glassmorphic styling.
+
+### Charts & Analytics
+- [AreaChart](/docs/components/charts/areachart): Smooth area charts for trends and cumulative metrics.
+- [BarChart](/docs/components/charts/barchart): Vertical and horizontal bar charts with grouping and stacking.
+- [LineChart](/docs/components/charts/linechart): Time-series line charts with multiple categories.
+- [DoughnutChart](/docs/components/charts/doughnutchart): Donut and pie charts for distributions.
+- [Stat](/docs/components/charts/stat): KPI metric card with positive/negative trend indicators.
+- [TopList](/docs/components/charts/toplist): Ranked leaderboard and top-performing item lists.
+- [Percentage](/docs/components/charts/percentage): Circular progress and linear percentage bars.
+- [ChartContainer](/docs/components/charts/chartcontainer): Common wrapper for chart headers, descriptions, and action slots.
+
+---
+
+## Agent & LLM Resources
+
+- **Full Single-File Documentation**: `/llms-full.txt` (Complete documentation and all component source recipes in a single file)
+- **AI Agent Rules & Recipes**: `/AGENTS.md` (Detailed rulebook, TypeScript definitions, and anti-patterns for AI assistants)
+- **Interactive Documentation**: `/docs` (Full interactive documentation and component playground)
+- **Theme Studio**: `/theme` (Visual theme generator for customizing OKLCH tokens and brand variables)

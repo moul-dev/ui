@@ -1,0 +1,247 @@
+---
+title: LLMs & AI Agents
+description: Context files, rules, and best practices for using Moul UI with Cursor, Claude, Windsurf, Copilot, and AI coding assistants.
+icon: Bot
+---
+
+import { ExternalLink, Sparkles, Bot, FileCode, CheckCircle2 } from 'lucide-react'
+
+Moul UI provides dedicated machine-readable context files optimized for LLMs and AI coding assistants such as **Cursor**, **Windsurf**, **Claude Projects**, **GitHub Copilot**, **ChatGPT**, and **Antigravity**.
+
+By providing your AI assistant with the curated context files below, the model will accurately generate accessible React Aria interactions, correctly import compound components, and adhere to zero-runtime StyleX design tokens without inventing hallucinated APIs.
+
+---
+
+## Machine-Readable Context Files
+
+We host three standardized AI context files at the root of the documentation site:
+
+<Cards>
+  <Card
+    title="llms.txt"
+    href="/llms.txt"
+    external
+    description="Concise documentation index, package quickstart, and component URLs following the llmstxt.org specification."
+  />
+  <Card
+    title="llms-full.txt"
+    href="/llms-full.txt"
+    external
+    description="Complete documentation, API signatures, prop definitions, and code examples for all 38+ components in a single file."
+  />
+  <Card
+    title="AGENTS.md"
+    href="/AGENTS.md"
+    external
+    description="System rules, code generation recipes, React Aria event conventions, and anti-patterns specifically formatted for coding agents."
+  />
+</Cards>
+
+---
+
+## Tool Integration Guides
+
+Choose your AI coding assistant below for quick setup instructions:
+
+<Tabs items={['Cursor', 'Windsurf', 'Claude Projects', 'Copilot / VS Code', 'ChatGPT / Custom GPTs']}>
+  <Tab value="Cursor">
+    ### Setting Up Cursor
+    
+    Cursor supports Project Rules via `.cursor/rules` or `.cursorrules`.
+
+    <Steps>
+      <Step>
+        #### Create a Rule File
+        
+        Create `.cursor/rules/moul-ui.mdc` in your workspace:
+
+        ```markdown title=".cursor/rules/moul-ui.mdc"
+        ---
+        description: Guidelines for building React components with @moul-dev/ui
+        globs: "**/*.{ts,tsx}"
+        alwaysApply: true
+        ---
+
+        When writing or editing React components:
+        - Use @moul-dev/ui for all UI components, dialogs, forms, and charts.
+        - Ensure `@moul-dev/ui/style.css` is imported at the application root.
+        - Use `onPress` instead of `onClick` on `<Button>`, `<Link>`, and interactive triggers.
+        - Use React Aria collection selection props (`selectedKey`, `onSelectionChange`).
+        - For complete recipes and prop tables, refer to: https://moul.dev/AGENTS.md
+        ```
+      </Step>
+
+      <Step>
+        #### Add Documentation Docs URL
+        
+        In Cursor Settings &rarr; **Features** &rarr; **Docs**, add:
+        - **URL**: `https://moul.dev/llms.txt` or your deployed docs URL
+        - **Prefix**: `@moul-ui`
+      </Step>
+    </Steps>
+  </Tab>
+
+  <Tab value="Windsurf">
+    ### Setting Up Windsurf
+    
+    Add instructions to your `.windsurfrules` file:
+
+    ```markdown title=".windsurfrules"
+    # Moul UI Guidelines
+    - Component Library: @moul-dev/ui
+    - Global Styles: import '@moul-dev/ui/style.css'
+    - Buttons & Triggers: Use `onPress={(e) => ...}` (React Aria) instead of `onClick`.
+    - Modals & Overlays: Use `<ModalOverlay isOpen={...} onOpenChange={...}>` with `<Modal>`, `<ModalDialog>`, `<ModalHeader>`, `<ModalBody>`, `<ModalFooter>`.
+    - Reference: Fetch https://moul.dev/AGENTS.md for complete component API specifications.
+    ```
+  </Tab>
+
+  <Tab value="Claude Projects">
+    ### Setting Up Claude Projects & Artifacts
+
+    <Steps>
+      <Step>
+        #### Download Context File
+        
+        Download [`llms-full.txt`](/llms-full.txt) or [`AGENTS.md`](/AGENTS.md).
+      </Step>
+
+      <Step>
+        #### Add to Project Knowledge
+        
+        1. Open your project in [claude.ai](https://claude.ai).
+        2. Navigate to **Project Knowledge**.
+        3. Upload `llms-full.txt` or `AGENTS.md`.
+      </Step>
+
+      <Step>
+        #### Set Custom Instructions
+        
+        Add this snippet to Project Custom Instructions:
+        
+        ```text
+        When writing frontend code, build UI interfaces using @moul-dev/ui according to the component recipes in AGENTS.md. Always use onPress for buttons and ensure accessible labels on icon triggers.
+        ```
+      </Step>
+    </Steps>
+  </Tab>
+
+  <Tab value="Copilot / VS Code">
+    ### Setting Up GitHub Copilot
+
+    Create a workspace instructions file at `.github/copilot-instructions.md`:
+
+    ```markdown title=".github/copilot-instructions.md"
+    # Frontend Component Standards
+    - Always use @moul-dev/ui components for buttons, forms, tables, modals, and charts.
+    - Global CSS: Ensure `@moul-dev/ui/style.css` is imported in `main.tsx`.
+    - Event Handlers: Use `onPress` instead of `onClick` on Buttons.
+    - Dialogs: Use compound subcomponents (`ModalOverlay`, `ModalDialog`, `ModalHeader`, `ModalBody`, `ModalFooter`).
+    - Details: Refer to https://moul.dev/AGENTS.md.
+    ```
+  </Tab>
+
+  <Tab value="ChatGPT / Custom GPTs">
+    ### Setting Up ChatGPT & Custom GPTs
+
+    In your Custom GPT configuration:
+    1. Upload [`AGENTS.md`](/AGENTS.md) and [`llms-full.txt`](/llms-full.txt) under **Knowledge Files**.
+    2. Add the following to **Instructions**:
+
+    ```text
+    You are an expert React engineer specialized in building accessible, high-performance web applications using @moul-dev/ui and StyleX. Follow the conventions in AGENTS.md for all component imports and props.
+    ```
+  </Tab>
+</Tabs>
+
+---
+
+## Golden Rules for AI Generation
+
+When prompting an AI to generate interfaces with Moul UI, instruct the model to follow these core rules:
+
+<Accordions>
+  <Accordion title="1. Event Handlers: onPress vs onClick">
+    Moul UI buttons and action triggers are built on React Aria and use `onPress`:
+    
+    ```tsx
+    // ✅ Correct
+    <Button variant="primary" onPress={() => handleSave()}>Save Changes</Button>
+
+    // ❌ Incorrect
+    <Button variant="primary" onClick={() => handleSave()}>Save Changes</Button>
+    ```
+  </Accordion>
+
+  <Accordion title="2. Compound Component Architecture">
+    Complex components like `Modal`, `AlertDialog`, `Card`, `Tabs`, `Table`, `Select`, and `Sidebar` use declarative compound subcomponents:
+    
+    ```tsx
+    // ✅ Correct Modal structure
+    <ModalOverlay isOpen={isOpen} onOpenChange={setIsOpen}>
+      <Modal size="md">
+        <ModalDialog>
+          <ModalHeader><h3>Title</h3></ModalHeader>
+          <ModalBody><p>Body text</p></ModalBody>
+          <ModalFooter><Button onPress={() => setIsOpen(false)}>Done</Button></ModalFooter>
+        </ModalDialog>
+      </Modal>
+    </ModalOverlay>
+    ```
+  </Accordion>
+
+  <Accordion title="3. Accessible Labelling">
+    All icon-only buttons **must** include an `aria-label`:
+    
+    ```tsx
+    // ✅ Accessible
+    <Button variant="ghost" aria-label="Delete project" onPress={handleDelete}>
+      <TrashIcon />
+    </Button>
+    ```
+  </Accordion>
+
+  <Accordion title="4. Design Tokens & Theming">
+    Custom branding is configured with CSS custom properties or `<ThemeProvider>`:
+    
+    ```css
+    :root {
+      --brand-hue: 250;               /* Primary hue */
+      --brand-chroma-multiplier: 1.0; /* Saturation */
+      --brand-radius-factor: 1.0;     /* Corner roundness */
+      --brand-density-factor: 1.0;    /* Spacing & density */
+    }
+    ```
+  </Accordion>
+</Accordions>
+
+---
+
+## Example Prompts for AI Assistants
+
+Here are prompt templates you can copy and paste into your AI assistant:
+
+<Steps>
+  <Step>
+    #### Dashboard & Analytics View Prompt
+    
+    ```text
+    Create a responsive analytics dashboard using @moul-dev/ui.
+    - Include Stat cards showing Revenue, Active Users, and Conversion Rate.
+    - Add an AreaChart for monthly financial trends and a BarChart for traffic sources.
+    - Include a recent transactions Table with selection and status Badges.
+    - Follow @moul-dev/ui component imports and onPress handlers.
+    ```
+  </Step>
+
+  <Step>
+    #### Settings & Modal Form Prompt
+    
+    ```text
+    Build a user settings page with @moul-dev/ui.
+    - Include TextFields for Name and Email, a Select for Role, and a Switch for Two-Factor Authentication.
+    - Add an "Invite Colleague" Button that opens a Modal with an email form and confirmation actions.
+    - Dispatch a success notification using toastQueue.add() when changes are saved.
+    ```
+  </Step>
+</Steps>

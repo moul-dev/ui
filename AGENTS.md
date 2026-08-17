@@ -61,3 +61,21 @@ Run these commands from the root directory:
 - **Fumadocs**: Custom MDX compilation engine and layouts for rich developer docs.
 - **Styling**: Loads Tailwind CSS along with Fumadocs styling, and imports the compiled UI library CSS with `@import '@moul-dev/ui/style.css'` in `docs/src/styles/globals.css`.
 - **Global Components**: The UI `Button` is imported from the `@moul-dev/ui` workspace package and registered inside `docs/src/components/mdx.tsx` to be used directly in `.mdx` files as `<Button>`.
+
+## AI Coding Agent Guidelines for `@moul-dev/ui`
+
+When generating or editing React code using `@moul-dev/ui` components:
+
+1. **Imports**: Always import from `@moul-dev/ui` (e.g. `import { Button, TextField, Modal, Card, AreaChart } from '@moul-dev/ui'`).
+2. **Event Handlers**: Use React Aria's `onPress` instead of `onClick` on `<Button>`, `<Link>`, and interactive triggers.
+3. **Selection & Collections**: Use `selectedKey` / `defaultSelectedKey` or `selectedKeys` and `onSelectionChange` for collection components (`Select`, `ComboBox`, `Tabs`, `Table`, `TagGroup`, `Sidebar`).
+4. **Dialogs & Overlays**: Use `isOpen` and `onOpenChange` on `<ModalOverlay>` / `<Popover>` / `<AlertDialog>`.
+5. **Accessibility**: Always provide an `aria-label` when rendering icon-only buttons.
+6. **Compound Structure**: Follow compound component patterns (e.g., `<Modal><ModalOverlay><ModalDialog><ModalHeader>...`).
+
+### Machine-Readable Context Files
+- **Public Agent Rules & Recipes**: `docs/public/AGENTS.md` (served at `/AGENTS.md`)
+- **LLM Index Specification**: `docs/public/llms.txt` (served at `/llms.txt`)
+- **Full LLM Single-File Reference**: `docs/public/llms-full.txt` (served at `/llms-full.txt`)
+- **Docs Guide**: `docs/content/docs/llms.mdx` (served at `/docs/llms`)
+

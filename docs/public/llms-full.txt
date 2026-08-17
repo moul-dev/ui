@@ -1,0 +1,693 @@
+# Moul UI (`@moul-dev/ui`) — Complete Documentation & Component API Reference
+
+> Moul UI is an accessible, zero-runtime React component library built with React Aria Components and StyleX.
+
+---
+
+## Table of Contents
+
+1. [Overview & Quick Start](#overview--quick-start)
+2. [AI Agent Rules & Conventions](#ai-agent-rules--conventions)
+3. [Buttons & Actions](#buttons--actions)
+   - [Button](#button)
+   - [ButtonGroup](#buttongroup)
+   - [ToggleButton & ToggleButtonGroup](#togglebutton--togglebuttongroup)
+   - [Link](#link)
+   - [Kbd](#kbd)
+4. [Form & Inputs](#form--inputs)
+   - [TextField & TextArea](#textfield--textarea)
+   - [NumberField & SearchField](#numberfield--searchfield)
+   - [Select](#select)
+   - [ComboBox](#combobox)
+   - [Checkbox & CheckboxGroup](#checkbox--checkboxgroup)
+   - [RadioGroup & Radio](#radiogroup--radio)
+   - [Switch](#switch)
+   - [InputOTP](#inputotp)
+   - [Form & Field Validation](#form--field-validation)
+5. [Overlays & Dialogs](#overlays--dialogs)
+   - [Modal](#modal)
+   - [AlertDialog](#alertdialog)
+   - [Popover](#popover)
+   - [Tooltip](#tooltip)
+6. [Feedback & Status](#feedback--status)
+   - [Alert](#alert)
+   - [Badge](#badge)
+   - [Spinner & Skeleton](#spinner--skeleton)
+   - [Toast Notification System](#toast-notification-system)
+7. [Navigation & Layout](#navigation--layout)
+   - [Card](#card)
+   - [Tabs](#tabs)
+   - [Table](#table)
+   - [Breadcrumbs](#breadcrumbs)
+   - [Separator](#separator)
+   - [TagGroup & Tag](#taggroup--tag)
+   - [Avatar](#avatar)
+   - [Typography](#typography)
+8. [Application Blocks](#application-blocks)
+   - [Sidebar](#sidebar)
+9. [Analytics & Charts](#analytics--charts)
+   - [ChartContainer](#chartcontainer)
+   - [AreaChart](#areachart)
+   - [BarChart](#barchart)
+   - [LineChart](#linechart)
+   - [DoughnutChart](#doughnutchart)
+   - [Stat](#stat)
+   - [TopList](#toplist)
+   - [PercentageBar & PercentageCircle](#percentagebar--percentagecircle)
+10. [Theming & StyleX Design Tokens](#theming--stylex-design-tokens)
+
+---
+
+## 1. Overview & Quick Start
+
+### Installation
+```bash
+bun add @moul-dev/ui
+# or
+npm install @moul-dev/ui
+```
+
+### Setup Stylesheet & ThemeProvider
+```tsx
+import '@moul-dev/ui/style.css';
+import { ThemeProvider } from '@moul-dev/ui';
+
+export function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <ThemeProvider colorScheme="light dark">
+      {children}
+    </ThemeProvider>
+  );
+}
+```
+
+---
+
+## 2. AI Agent Rules & Conventions
+
+1. **Imports**: Always import components directly from `@moul-dev/ui`.
+2. **Events**: Use `onPress` instead of `onClick` on `<Button>`, `<Link>`, and interactive triggers.
+3. **Selection**:
+   - Single item: `isSelected`, `defaultSelected`, `onChange`.
+   - Collections: `selectedKey`, `defaultSelectedKey`, `selectedKeys`, `onSelectionChange`.
+4. **Dialogs & Overlays**: Controlled with `isOpen`, `defaultOpen`, `onOpenChange`.
+5. **Accessibility**: Always provide an `aria-label` when rendering icon-only buttons.
+6. **Compound Components**: Use subcomponents for compound structures (e.g. `<Modal>`, `<ModalOverlay>`, `<ModalDialog>`, `<ModalHeader>`, `<ModalBody>`, `<ModalFooter>`).
+
+---
+
+## 3. Buttons & Actions
+
+### Button
+Interactive button supporting multiple semantic variants, sizes, and pending states.
+
+```tsx
+import { Button } from '@moul-dev/ui';
+
+// Usage:
+<Button variant="primary" size="md" onPress={() => console.log('Clicked')}>
+  Save Changes
+</Button>
+
+<Button variant="outline" size="sm" isDisabled>
+  Disabled
+</Button>
+
+<Button variant="danger" isPending>
+  Deleting...
+</Button>
+```
+
+**Props**:
+- `variant?: 'primary' | 'secondary' | 'tertiary' | 'outline' | 'ghost' | 'danger' | 'danger-soft'` (default: `'primary'`)
+- `size?: 'sm' | 'md' | 'lg'` (default: `'md'`)
+- `isPending?: boolean`
+- `isDisabled?: boolean`
+- `onPress?: (e: PressEvent) => void`
+- `aria-label?: string`
+
+---
+
+### ButtonGroup
+Groups multiple buttons in horizontal or vertical orientation, with optional attached borders.
+
+```tsx
+import { Button, ButtonGroup } from '@moul-dev/ui';
+
+<ButtonGroup orientation="horizontal" isAttached>
+  <Button variant="outline">Day</Button>
+  <Button variant="outline">Week</Button>
+  <Button variant="outline">Month</Button>
+</ButtonGroup>
+```
+
+---
+
+### ToggleButton & ToggleButtonGroup
+Allows toggling one or multiple binary choices.
+
+```tsx
+import { ToggleButton, ToggleButtonGroup } from '@moul-dev/ui';
+
+<ToggleButton isSelected={isPinned} onChange={setIsPinned} variant="outline">
+  📌 Pin
+</ToggleButton>
+
+<ToggleButtonGroup
+  selectionMode="multiple"
+  selectedKeys={selectedStyles}
+  onSelectionChange={setSelectedStyles}
+>
+  <ToggleButton id="bold">Bold</ToggleButton>
+  <ToggleButton id="italic">Italic</ToggleButton>
+  <ToggleButton id="underline">Underline</ToggleButton>
+</ToggleButtonGroup>
+```
+
+---
+
+### Link
+Accessible anchor link component.
+
+```tsx
+import { Link } from '@moul-dev/ui';
+
+<Link href="/dashboard" variant="primary" underline="hover">
+  Go to Dashboard &rarr;
+</Link>
+```
+
+---
+
+### Kbd
+Keyboard key visual indicator badge.
+
+```tsx
+import { Kbd } from '@moul-dev/ui';
+
+<p>Press <Kbd>Ctrl</Kbd> + <Kbd>S</Kbd> to save your work.</p>
+```
+
+---
+
+## 4. Form & Inputs
+
+### TextField & TextArea
+Text inputs with built-in accessibility, labels, helper text, and validation.
+
+```tsx
+import { TextField, TextArea } from '@moul-dev/ui';
+
+<TextField
+  label="Full Name"
+  placeholder="Jordan Smith"
+  description="Enter your legal first and last name."
+  isRequired
+  value={name}
+  onChange={setName}
+/>
+
+<TextArea
+  label="Bio"
+  placeholder="Write a short bio..."
+  rows={4}
+  maxLength={500}
+/>
+```
+
+---
+
+### NumberField & SearchField
+```tsx
+import { NumberField, SearchField } from '@moul-dev/ui';
+
+<NumberField
+  label="Seats"
+  minValue={1}
+  maxValue={50}
+  defaultValue={5}
+  step={1}
+/>
+
+<SearchField
+  label="Search Team"
+  placeholder="Filter by name or email..."
+  onSubmit={(q) => console.log('Search:', q)}
+/>
+```
+
+---
+
+### Select
+Accessible dropdown select list.
+
+```tsx
+import { Select, SelectItem, SelectSection, SelectPopover, SelectValue } from '@moul-dev/ui';
+
+<Select
+  label="Role"
+  placeholder="Select role..."
+  selectedKey={role}
+  onSelectionChange={(key) => setRole(key as string)}
+>
+  <SelectItem id="admin" textValue="Administrator">Administrator</SelectItem>
+  <SelectItem id="member" textValue="Team Member">Team Member</SelectItem>
+  <SelectItem id="viewer" textValue="Viewer">Viewer</SelectItem>
+</Select>
+```
+
+---
+
+### ComboBox
+Searchable autocomplete combobox.
+
+```tsx
+import { ComboBox, ComboBoxItem } from '@moul-dev/ui';
+
+<ComboBox
+  label="Country"
+  placeholder="Type to filter..."
+  onSelectionChange={(key) => setCountry(key as string)}
+>
+  <ComboBoxItem id="us">United States</ComboBoxItem>
+  <ComboBoxItem id="ca">Canada</ComboBoxItem>
+  <ComboBoxItem id="uk">United Kingdom</ComboBoxItem>
+  <ComboBoxItem id="de">Germany</ComboBoxItem>
+</ComboBox>
+```
+
+---
+
+### Checkbox & CheckboxGroup
+```tsx
+import { Checkbox, CheckboxGroup } from '@moul-dev/ui';
+
+<Checkbox isSelected={agree} onChange={setAgree}>
+  I accept the license agreement
+</Checkbox>
+
+<CheckboxGroup
+  label="Permissions"
+  value={permissions}
+  onChange={setPermissions}
+>
+  <Checkbox value="read">Read</Checkbox>
+  <Checkbox value="write">Write</Checkbox>
+  <Checkbox value="admin">Admin</Checkbox>
+</CheckboxGroup>
+```
+
+---
+
+### RadioGroup & Radio
+```tsx
+import { RadioGroup, Radio } from '@moul-dev/ui';
+
+<RadioGroup label="Billing Cycle" defaultValue="monthly" orientation="horizontal">
+  <Radio value="monthly">Monthly ($12/mo)</Radio>
+  <Radio value="annual">Annual ($100/yr)</Radio>
+</RadioGroup>
+```
+
+---
+
+### Switch
+```tsx
+import { Switch } from '@moul-dev/ui';
+
+<Switch isSelected={isDarkMode} onChange={setIsDarkMode}>
+  Dark Mode
+</Switch>
+```
+
+---
+
+### InputOTP
+Segmented One-Time Password / 2FA code input.
+
+```tsx
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+  InputOTPSeparator,
+  REGEXP_ONLY_DIGITS
+} from '@moul-dev/ui';
+
+<InputOTP maxLength={6} pattern={REGEXP_ONLY_DIGITS} value={code} onChange={setCode}>
+  <InputOTPGroup>
+    <InputOTPSlot index={0} />
+    <InputOTPSlot index={1} />
+    <InputOTPSlot index={2} />
+  </InputOTPGroup>
+  <InputOTPSeparator />
+  <InputOTPGroup>
+    <InputOTPSlot index={3} />
+    <InputOTPSlot index={4} />
+    <InputOTPSlot index={5} />
+  </InputOTPGroup>
+</InputOTP>
+```
+
+---
+
+## 5. Overlays & Dialogs
+
+### Modal
+Accessible dialog overlay.
+
+```tsx
+import {
+  Modal,
+  ModalOverlay,
+  ModalDialog,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Button
+} from '@moul-dev/ui';
+
+<ModalOverlay isOpen={isOpen} onOpenChange={setIsOpen} isDismissable>
+  <Modal size="md">
+    <ModalDialog>
+      <ModalHeader>
+        <h3 className="font-semibold text-lg">Invite Team Member</h3>
+      </ModalHeader>
+      <ModalBody>
+        <p className="text-sm text-neutral-600 dark:text-neutral-400">
+          Enter the email address of the person you would like to invite.
+        </p>
+      </ModalBody>
+      <ModalFooter>
+        <Button variant="outline" onPress={() => setIsOpen(false)}>Cancel</Button>
+        <Button variant="primary" onPress={() => setIsOpen(false)}>Send Invitation</Button>
+      </ModalFooter>
+    </ModalDialog>
+  </Modal>
+</ModalOverlay>
+```
+
+---
+
+### AlertDialog
+Pre-composed confirmation and destructive dialogs.
+
+```tsx
+import { AlertDialog } from '@moul-dev/ui';
+
+<AlertDialog
+  isOpen={showDelete}
+  onOpenChange={setShowDelete}
+  variant="destructive"
+  title="Delete Database?"
+  actionLabel="Delete Permanently"
+  cancelLabel="Cancel"
+  onAction={handleDelete}
+>
+  This action is permanent and cannot be undone. All database snapshots will be deleted.
+</AlertDialog>
+```
+
+---
+
+### Popover & Tooltip
+```tsx
+import { Popover, PopoverTrigger, PopoverDialog, Tooltip, TooltipTrigger, Button } from '@moul-dev/ui';
+
+// Tooltip
+<TooltipTrigger delay={150}>
+  <Button variant="ghost" aria-label="Copy">📋</Button>
+  <Tooltip>Copy to clipboard</Tooltip>
+</TooltipTrigger>
+
+// Popover
+<PopoverTrigger>
+  <Button variant="outline">Options</Button>
+  <Popover placement="bottom start">
+    <PopoverDialog>
+      <div className="p-3">Popover content</div>
+    </PopoverDialog>
+  </Popover>
+</PopoverTrigger>
+```
+
+---
+
+## 6. Feedback & Status
+
+### Alert
+Inline notification banners with 5 semantic variants.
+
+```tsx
+import { Alert } from '@moul-dev/ui';
+
+<Alert variant="info" title="System Maintenance">
+  Scheduled maintenance will occur on Sunday at 02:00 UTC.
+</Alert>
+
+<Alert variant="error" title="Payment Failed">
+  Your credit card could not be charged. Please update your payment method.
+</Alert>
+```
+
+---
+
+### Badge & Avatar
+```tsx
+import { Badge, Avatar } from '@moul-dev/ui';
+
+<Badge variant="success">Active</Badge>
+<Badge variant="danger" size="sm">Suspended</Badge>
+
+<Avatar
+  src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150"
+  alt="Jordan Lee"
+  initials="JL"
+  size="md"
+  status="online"
+/>
+```
+
+---
+
+### Toast System
+```tsx
+import { ToastContainer, toastQueue, Button } from '@moul-dev/ui';
+
+// 1. Place ToastContainer once at root:
+<ToastContainer />
+
+// 2. Dispatch toasts anywhere:
+toastQueue.add({
+  title: 'Profile Updated',
+  description: 'Your profile changes were saved successfully.',
+  variant: 'success',
+  timeout: 4000,
+});
+```
+
+---
+
+## 7. Navigation & Layout
+
+### Card
+```tsx
+import { Card, CardHeader, CardBody, CardFooter, Button } from '@moul-dev/ui';
+
+<Card variant="outlined">
+  <CardHeader>
+    <h3 className="font-semibold text-base">Server Cluster</h3>
+  </CardHeader>
+  <CardBody>
+    <p className="text-sm text-neutral-600 dark:text-neutral-400">
+      Running 4 pods with 99.99% uptime.
+    </p>
+  </CardBody>
+  <CardFooter>
+    <Button variant="outline" size="sm">View Metrics</Button>
+  </CardFooter>
+</Card>
+```
+
+---
+
+### Tabs
+```tsx
+import { Tabs, TabList, Tab, TabPanels, TabPanel } from '@moul-dev/ui';
+
+<Tabs defaultSelectedKey="tab1">
+  <TabList aria-label="Settings navigation">
+    <Tab id="tab1">General</Tab>
+    <Tab id="tab2">Security</Tab>
+    <Tab id="tab3">Billing</Tab>
+  </TabList>
+  <TabPanels>
+    <TabPanel id="tab1">General settings content</TabPanel>
+    <TabPanel id="tab2">Security settings content</TabPanel>
+    <TabPanel id="tab3">Billing settings content</TabPanel>
+  </TabPanels>
+</Tabs>
+```
+
+---
+
+### Table
+```tsx
+import { Table, TableHeader, Column, TableBody, Row, Cell } from '@moul-dev/ui';
+
+<Table aria-label="Orders table" selectionMode="single">
+  <TableHeader>
+    <Column isRowHeader>Order ID</Column>
+    <Column>Customer</Column>
+    <Column>Total</Column>
+    <Column>Status</Column>
+  </TableHeader>
+  <TableBody>
+    <Row id="ord-1">
+      <Cell>#10492</Cell>
+      <Cell>Alex Rivera</Cell>
+      <Cell>$340.00</Cell>
+      <Cell>Shipped</Cell>
+    </Row>
+  </TableBody>
+</Table>
+```
+
+---
+
+### TagGroup
+```tsx
+import { TagGroup, Tag } from '@moul-dev/ui';
+
+<TagGroup label="Skills" selectionMode="multiple">
+  <Tag id="react">React</Tag>
+  <Tag id="ts">TypeScript</Tag>
+  <Tag id="stylex">StyleX</Tag>
+</TagGroup>
+```
+
+---
+
+## 8. Application Blocks
+
+### Sidebar
+Full collapsible sidebar navigation block with icons, groups, collapse toggle, and glassmorphic styling.
+
+```tsx
+import {
+  Sidebar,
+  SidebarAside,
+  SidebarMain,
+  SidebarHeader,
+  SidebarGroup,
+  SidebarItem,
+  SidebarDivider,
+  SidebarFooter
+} from '@moul-dev/ui';
+
+<Sidebar selectedKey={activeRoute} onSelectionChange={setActiveRoute}>
+  <SidebarAside>
+    <SidebarHeader>
+      <h2 className="font-bold text-lg">App Console</h2>
+    </SidebarHeader>
+    <SidebarGroup title="Overview">
+      <SidebarItem id="home">Dashboard</SidebarItem>
+      <SidebarItem id="analytics">Analytics</SidebarItem>
+    </SidebarGroup>
+    <SidebarDivider />
+    <SidebarFooter>
+      <span>v2026.08.15</span>
+    </SidebarFooter>
+  </SidebarAside>
+  <SidebarMain>
+    <main className="p-6">Page Content</main>
+  </SidebarMain>
+</Sidebar>
+```
+
+---
+
+## 9. Analytics & Charts
+
+### AreaChart & LineChart
+```tsx
+import { ChartContainer, AreaChart } from '@moul-dev/ui';
+
+const data = [
+  { month: 'Jan', revenue: 4000, cost: 2400 },
+  { month: 'Feb', revenue: 6000, cost: 3200 },
+  { month: 'Mar', revenue: 8500, cost: 4100 },
+];
+
+<ChartContainer title="Revenue Growth" description="Monthly financial comparison">
+  <AreaChart
+    data={data}
+    index="month"
+    categories={['revenue', 'cost']}
+    valueFormatter={(v) => `$${v}`}
+    height={260}
+  />
+</ChartContainer>
+```
+
+### BarChart & DoughnutChart
+```tsx
+import { BarChart, DoughnutChart } from '@moul-dev/ui';
+
+<BarChart
+  data={data}
+  index="month"
+  categories={['revenue']}
+  valueFormatter={(v) => `$${v}`}
+/>
+
+<DoughnutChart
+  data={[
+    { name: 'Direct', value: 45 },
+    { name: 'Referral', value: 30 },
+    { name: 'Organic', value: 25 },
+  ]}
+  index="name"
+  category="value"
+  variant="donut"
+  valueFormatter={(v) => `${v}%`}
+/>
+```
+
+### Stat, TopList, Percentage
+```tsx
+import { Stat, TopList, PercentageBar, PercentageCircle } from '@moul-dev/ui';
+
+<Stat
+  label="Conversion Rate"
+  value="3.42%"
+  change="+0.8%"
+  changeType="positive"
+  description="vs last 30 days"
+/>
+
+<TopList
+  items={[
+    { name: 'United States', value: '45,200', change: '+12%' },
+    { name: 'Germany', value: '18,400', change: '+8%' },
+  ]}
+/>
+
+<PercentageBar value={68} max={100} label="CPU Utilization" />
+<PercentageCircle value={94} max={100} label="System Health" />
+```
+
+---
+
+## 10. Theming & StyleX Design Tokens
+
+### CSS Custom Properties
+```css
+:root {
+  --brand-hue: 250;                 /* 0 - 360 */
+  --brand-chroma-multiplier: 1.0;   /* 0.0 - 2.0 */
+  --brand-density-factor: 1.0;      /* 0.8 (compact) to 1.25 (spacious) */
+  --brand-radius-factor: 1.0;       /* 0 (sharp) to 2.0 (round) */
+  --brand-font-scale: 1.0;          /* 0.9 to 1.1 */
+}
+```
