@@ -1056,7 +1056,7 @@ export function ThemeStudio() {
                   Scheduled database index rebuilding tomorrow at 02:00 UTC.
                 </Alert>
                 <Alert variant="accent" title="New Release Available">
-                  Moul UI v2026.08.15 is now ready for deployment.
+                  Moul UI v2026.08.17 is now ready for deployment.
                 </Alert>
                 <Alert variant="success" title="Backup Completed">
                   All cloud storage snapshots were successfully archived.

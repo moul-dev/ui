@@ -1,0 +1,55 @@
+---
+title: v2026.08.17 — Theme Studio, AI Agent Context & Component Enhancements
+description: Introducing the interactive Theme Studio, standardized machine-readable context files for AI coding agents, refined Stat & Switch primitives, and multi-package-manager installation blocks.
+date: 2026-08-17
+author: Phearak S. Tha
+avatar: https://github.com/thasophearak.png
+---
+
+This release introduces major workflow enhancements to Moul UI, highlighted by the all-new **Theme Studio**, machine-readable context endpoints for **AI coding assistants**, enhanced **Stat** and **Switch** components, and improved installation ergonomics.
+
+---
+
+## 🎨 Interactive Theme Studio
+
+We have launched the **Theme Studio** at `/theme`, a real-time playground for customizing, verifying, and exporting color themes built on the perceptual OKLCH color space.
+
+- **OKLCH Palette Tuning:** Adjust primary hue, chroma multiplier, surface lightness, and border contrast in real time.
+- **Preset Palettes:** Instant access to curated presets including *Modern Violet*, *Oceanic Cyan*, *Emerald Forest*, *Rose Amber*, and *Slate Minimal*.
+- **Live Component Testing:** Inspect real-time preview cards, stat displays, interactive tables, charts, buttons, form controls, and contextual alerts.
+- **One-Click Export:** Generate production-ready CSS custom properties, JSON token definitions, and StyleX overrides directly for your project.
+
+---
+
+## 🤖 Standardized AI Context & Agent Guidelines
+
+To provide first-class support for modern AI-assisted engineering workflows (Cursor, Windsurf, Claude Projects, Copilot, ChatGPT, and Antigravity), we introduced dedicated machine-readable endpoints:
+
+- **`/AGENTS.md`**: Monorepo architectural guidelines, React Aria event conventions (`onPress` over `onClick`), compound component recipes, and anti-patterns.
+- **`/llms.txt`**: Concise documentation index and package quickstart adhering to the standard `llmstxt.org` specification.
+- **`/llms-full.txt`**: Consolidated single-file reference containing complete API signatures and code snippets for all components.
+- **`/docs/llms`**: Interactive setup guide featuring copy-paste rules and configuration steps for popular AI coding tools.
+
+---
+
+## 🧩 Component Upgrades
+
+### Stat Component
+The `Stat` component has been upgraded with a modular, compound-friendly structure:
+- **Variants:** Added support for `default`, `flat`, `glass`, and `elevated` visual surfaces.
+- **Slot Composition:** Added slots for `icon`, `description`, structured headers, and custom `children`.
+- **Trend Indicators:** Upgraded trend badges with refined pill radius, directional glyphs, and contextual color tokens (`trendUp`, `trendDown`, `trendNeutral`).
+
+### Switch Component
+- **Kinematics & Alignment:** Refined track padding and thumb translation with logical property alignment.
+- **Focus Rings:** Accessible keyboard focus indicators adhering to WCAG 2.2 contrast requirements.
+
+### Typography Scaling
+- Replaced static rem font sizes with responsive `--brand-font-scale` multiplier tokens in `tokens.stylex.ts`, enabling fluid typography scaling across entire dashboards.
+
+---
+
+## 📦 Developer Experience & Installation
+
+- **Multi-Package-Manager Tabs:** Updated documentation code blocks with instant tab switching between **Bun**, **pnpm**, **npm**, **yarn**, and **ni**.
+- **Visual Polish:** Added terminal glass styling, illuminated active tabs, and responsive layout refinements across documentation pages.

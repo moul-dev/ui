@@ -49,7 +49,7 @@ export default function Home() {
                     aria-hidden="true"
                   />
                   <span className="font-mono text-xs tracking-wide font-medium text-fd-foreground">
-                    v2026.08.15
+                    v2026.08.17
                   </span>
                   <span className="text-fd-muted-foreground/60">—</span>
                   <span>Now available</span>
