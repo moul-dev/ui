@@ -384,8 +384,8 @@ export function ThemeStudio() {
       <ToastContainer />
 
       {/* Hero Header */}
-      <div className="relative border-b border-fd-border/50 bg-fd-card/20 backdrop-blur-md pt-10 pb-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div className="relative border-b border-fd-border/50 bg-fd-card/20 backdrop-blur-md pt-10 pb-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="flex flex-col gap-2">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-fd-primary/10 text-fd-primary w-fit border border-fd-primary/20">
               <Sparkles className="h-3.5 w-3.5" />
@@ -551,100 +551,100 @@ export function ThemeStudio() {
 
           {/* Collapsible Fine-Tuning Sliders */}
           {showAdvancedSliders && (
-            <div className="mt-3 pt-3 border-t border-fd-border/50 grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="flex flex-col gap-1">
-                <div className="flex justify-between text-xs font-medium">
-                  <span className="text-fd-muted-foreground">
-                    Spacing Factor
-                  </span>
-                  <span className="font-mono font-bold text-fd-foreground">
-                    {themeState.densityFactor.toFixed(2)}x
-                  </span>
-                </div>
-                <input
-                  type="range"
-                  min="0.7"
-                  max="1.4"
-                  step="0.05"
+            <div className="mt-3 pt-3 border-t border-fd-border/50 grid grid-cols-1 sm:grid-cols-3 gap-6">
+              <div>
+                <Slider
+                  aria-label="Spacing Factor"
+                  label="Spacing Factor"
+                  minValue={0.7}
+                  maxValue={1.4}
+                  step={0.05}
                   value={themeState.densityFactor}
-                  onChange={(e) => {
-                    const val = Number.parseFloat(e.target.value)
+                  onChange={(val) => {
+                    const nextVal = typeof val === 'number' ? val : val[0]
                     updateTheme({
-                      densityFactor: val,
+                      densityFactor: nextVal,
                       density: {
                         id: 'custom',
                         name: 'Custom',
-                        densityFactor: val,
+                        densityFactor: nextVal,
                         fontScale: themeState.fontScale,
                         description: 'Custom spacing',
                       },
                     })
                   }}
-                  className="w-full accent-fd-primary cursor-pointer"
-                />
+                  getValueLabel={(val) => {
+                    const v = (Array.isArray(val) ? val[0] : val) ?? 0
+                    return `${v.toFixed(2)}x`
+                  }}
+                >
+                  <SliderTrack>
+                    <SliderThumb />
+                  </SliderTrack>
+                </Slider>
               </div>
 
-              <div className="flex flex-col gap-1">
-                <div className="flex justify-between text-xs font-medium">
-                  <span className="text-fd-muted-foreground">
-                    Typography Scale
-                  </span>
-                  <span className="font-mono font-bold text-fd-foreground">
-                    {themeState.fontScale.toFixed(2)}x
-                  </span>
-                </div>
-                <input
-                  type="range"
-                  min="0.85"
-                  max="1.2"
-                  step="0.02"
+              <div>
+                <Slider
+                  aria-label="Typography Scale"
+                  label="Typography Scale"
+                  minValue={0.85}
+                  maxValue={1.2}
+                  step={0.02}
                   value={themeState.fontScale}
-                  onChange={(e) => {
-                    const val = Number.parseFloat(e.target.value)
+                  onChange={(val) => {
+                    const nextVal = typeof val === 'number' ? val : val[0]
                     updateTheme({
-                      fontScale: val,
+                      fontScale: nextVal,
                       density: {
                         id: 'custom',
                         name: 'Custom',
                         densityFactor: themeState.densityFactor,
-                        fontScale: val,
+                        fontScale: nextVal,
                         description: 'Custom font scale',
                       },
                     })
                   }}
-                  className="w-full accent-fd-primary cursor-pointer"
-                />
+                  getValueLabel={(val) => {
+                    const v = (Array.isArray(val) ? val[0] : val) ?? 0
+                    return `${v.toFixed(2)}x`
+                  }}
+                >
+                  <SliderTrack>
+                    <SliderThumb />
+                  </SliderTrack>
+                </Slider>
               </div>
 
-              <div className="flex flex-col gap-1">
-                <div className="flex justify-between text-xs font-medium">
-                  <span className="text-fd-muted-foreground">
-                    Radius Multiplier
-                  </span>
-                  <span className="font-mono font-bold text-fd-foreground">
-                    {themeState.radiusFactor.toFixed(2)}x
-                  </span>
-                </div>
-                <input
-                  type="range"
-                  min="0"
-                  max="2.5"
-                  step="0.1"
+              <div>
+                <Slider
+                  aria-label="Radius Multiplier"
+                  label="Radius Multiplier"
+                  minValue={0}
+                  maxValue={2.5}
+                  step={0.1}
                   value={themeState.radiusFactor}
-                  onChange={(e) => {
-                    const val = Number.parseFloat(e.target.value)
+                  onChange={(val) => {
+                    const nextVal = typeof val === 'number' ? val : val[0]
                     updateTheme({
-                      radiusFactor: val,
+                      radiusFactor: nextVal,
                       radius: {
                         id: 'custom',
                         name: 'Custom',
-                        radiusFactor: val,
+                        radiusFactor: nextVal,
                         description: 'Custom radius',
                       },
                     })
                   }}
-                  className="w-full accent-fd-primary cursor-pointer"
-                />
+                  getValueLabel={(val) => {
+                    const v = (Array.isArray(val) ? val[0] : val) ?? 0
+                    return `${v.toFixed(2)}x`
+                  }}
+                >
+                  <SliderTrack>
+                    <SliderThumb />
+                  </SliderTrack>
+                </Slider>
               </div>
             </div>
           )}
@@ -670,6 +670,7 @@ export function ThemeStudio() {
               {/* Dashboard Top Row Stats */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <Stat
+                  variant="flat"
                   label="Monthly Recurring Revenue"
                   value="$42,900"
                   trend="+18.4%"
@@ -677,6 +678,7 @@ export function ThemeStudio() {
                   trendLabel="vs last month"
                 />
                 <Stat
+                  variant="flat"
                   label="Active Subscribers"
                   value="1,842"
                   trend="+12.1%"
@@ -684,31 +686,27 @@ export function ThemeStudio() {
                   trendLabel="vs last month"
                 />
                 <Stat
+                  variant="flat"
                   label="Conversion Rate"
                   value="4.82%"
                   trend="+0.8%"
                   trendDirection="up"
                   trendLabel="vs last month"
                 />
-                <Card variant="flat" className="h-full">
-                  <CardBody className="flex flex-col justify-between h-full">
-                    <span className="text-xs text-fd-muted-foreground font-medium">
-                      Quarterly Goal Target
-                    </span>
-                    <div className="flex items-center gap-3 my-2">
-                      <PercentageCircle value={78} size={56} />
-                      <div className="flex flex-col">
-                        <span className="text-lg font-bold text-fd-foreground">
-                          78%
-                        </span>
-                        <span className="text-xs text-fd-muted-foreground">
-                          On track
-                        </span>
-                      </div>
+                <Stat variant="flat" label="Quarterly Goal Target">
+                  <div className="flex items-center gap-3 my-1">
+                    <PercentageCircle value={78} size={56} />
+                    <div className="flex flex-col">
+                      <span className="text-lg font-bold text-fd-foreground">
+                        78%
+                      </span>
+                      <span className="text-xs text-fd-muted-foreground">
+                        On track
+                      </span>
                     </div>
-                    <PercentageBar value={78} />
-                  </CardBody>
-                </Card>
+                  </div>
+                  <PercentageBar value={78} />
+                </Stat>
               </div>
 
               {/* Chart & TopList Middle Row */}
@@ -957,7 +955,9 @@ export function ThemeStudio() {
                     isSelected={switchChecked}
                     onChange={setSwitchChecked}
                   >
-                    {switchChecked ? 'Enabled' : 'Disabled'}
+                    <span className="inline-block w-16 text-left">
+                      {switchChecked ? 'Enabled' : 'Disabled'}
+                    </span>
                   </Switch>
                 </div>
 
@@ -970,28 +970,22 @@ export function ThemeStudio() {
                   <Checkbox value="sms">SMS Priority</Checkbox>
                 </CheckboxGroup>
 
-                <div className="flex flex-col gap-1.5">
-                  <div className="flex justify-between text-xs">
-                    <span className="text-fd-muted-foreground">
-                      Volume Level
-                    </span>
-                    <span className="font-mono text-fd-foreground">
-                      {sliderValue}%
-                    </span>
-                  </div>
-                  <Slider
-                    value={sliderValue}
-                    onChange={(v) =>
-                      setSliderValue(Array.isArray(v) ? v[0]! : v)
-                    }
-                    minValue={0}
-                    maxValue={100}
-                  >
-                    <SliderTrack>
-                      <SliderThumb />
-                    </SliderTrack>
-                  </Slider>
-                </div>
+                <Slider
+                  label="Volume Level"
+                  value={sliderValue}
+                  onChange={(v) =>
+                    setSliderValue(Array.isArray(v) ? (v[0] ?? 0) : v)
+                  }
+                  minValue={0}
+                  maxValue={100}
+                  getValueLabel={(v) =>
+                    `${(Array.isArray(v) ? v[0] : v) ?? 0}%`
+                  }
+                >
+                  <SliderTrack>
+                    <SliderThumb />
+                  </SliderTrack>
+                </Slider>
               </CardBody>
             </Card>
           </div>
