@@ -57,7 +57,7 @@ export default function Home() {
               </div>
 
               {/* Heading */}
-              <h1 className="text-4xl font-extrabold tracking-tight sm:text-6xl max-w-3xl mx-auto lg:mx-0 leading-[1.1] mb-6">
+              <h1 className="text-4xl font-extrabold tracking-tight sm:text-6xl max-w-3xl mx-auto lg:mx-0 leading-[1.3] mb-6">
                 <span className="block text-fd-foreground">
                   Clean by default.
                 </span>
@@ -100,7 +100,7 @@ export default function Home() {
 
               {/* Install Command */}
               <div className="flex justify-center lg:justify-start w-full mb-8">
-                <CopyBlock command="bun add @moul-dev/ui" />
+                <CopyBlock packageName="@moul-dev/ui" defaultManager="pnpm" />
               </div>
 
               {/* Actions */}
