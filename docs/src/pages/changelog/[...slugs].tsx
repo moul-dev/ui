@@ -1,6 +1,8 @@
 import type { PageProps } from 'waku/router'
 import { unstable_notFound } from 'waku/router/server'
 import { getMDXComponents } from '@/components/mdx'
+import { OpenGraph } from '@/components/open-graph'
+import { getDevlogOgImageUrl } from '@/lib/og'
 import { changelogSource } from '@/lib/source'
 
 export default function Page({ slugs }: PageProps<'/changelog/[...slugs]'>) {
@@ -10,8 +12,24 @@ export default function Page({ slugs }: PageProps<'/changelog/[...slugs]'>) {
   const MDX = page.data.body
   const { author, avatar, date } = page.data
 
+  const publishedTime = typeof date === 'string' ? date : date.toISOString()
+
+  const ogImageUrl = getDevlogOgImageUrl(page.data.title, {
+    subtitle: page.data.description,
+    author_name: author,
+    avatar: avatar,
+  })
+
   return (
     <main className="mx-auto w-full max-w-3xl px-4 py-16">
+      <OpenGraph
+        title={`${page.data.title} — Moul UI Changelog`}
+        description={page.data.description}
+        image={ogImageUrl}
+        type="article"
+        author={author}
+        publishedTime={publishedTime}
+      />
       <div className="mb-6">
         <a
           href="/changelog"

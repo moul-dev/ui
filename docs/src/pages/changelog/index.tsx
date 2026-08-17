@@ -1,3 +1,5 @@
+import { OpenGraph } from '@/components/open-graph'
+import { getDocOgImageUrl } from '@/lib/og'
 import { changelogSource } from '@/lib/source'
 
 export default function ChangelogIndex() {
@@ -7,8 +9,18 @@ export default function ChangelogIndex() {
     return dateB.getTime() - dateA.getTime()
   })
 
+  const ogImage = getDocOgImageUrl(
+    'Changelog',
+    'All notable releases, enhancements, and fixes in Moul UI.',
+  )
+
   return (
     <main className="mx-auto w-full max-w-3xl px-4 py-16">
+      <OpenGraph
+        title="Changelog — Moul UI"
+        description="All notable releases, enhancements, and fixes in Moul UI."
+        image={ogImage}
+      />
       <h1 className="text-4xl font-bold mb-2">Changelog</h1>
       <p className="text-fd-muted-foreground mb-12">
         All notable changes to Moul UI.

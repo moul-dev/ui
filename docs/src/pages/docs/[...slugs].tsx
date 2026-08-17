@@ -12,8 +12,10 @@ import { ExternalLink } from 'lucide-react'
 import type { PageProps } from 'waku/router'
 import { unstable_notFound } from 'waku/router/server'
 import { getMDXComponents } from '@/components/mdx'
+import { OpenGraph } from '@/components/open-graph'
+import { getDocOgImageUrl } from '@/lib/og'
 import { gitConfig } from '@/lib/shared'
-import { getPageImage, getPageMarkdownUrl, source } from '@/lib/source'
+import { getPageMarkdownUrl, source } from '@/lib/source'
 
 export default function Page({ slugs }: PageProps<'/docs/[...slugs]'>) {
   const page = source.getPage(slugs)
@@ -28,9 +30,16 @@ export default function Page({ slugs }: PageProps<'/docs/[...slugs]'>) {
       : `https://react-aria.adobe.com/${reactAria}`
     : null
 
+  const ogImageUrl = getDocOgImageUrl(page.data.title, page.data.description)
+
   return (
     <DocsPage toc={page.data.toc}>
-      <meta property="og:image" content={getPageImage(slugs).url} />
+      <OpenGraph
+        title={`${page.data.title} — Moul UI`}
+        description={page.data.description}
+        image={ogImageUrl}
+        type="article"
+      />
       <DocsTitle>{page.data.title}</DocsTitle>
       <DocsDescription className="mb-0">
         {page.data.description}

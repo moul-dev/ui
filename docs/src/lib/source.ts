@@ -2,12 +2,8 @@ import { changelog, docs } from 'collections/server'
 import { loader } from 'fumadocs-core/source'
 import { lucideIconsPlugin } from 'fumadocs-core/source/lucide-icons'
 import { toFumadocsSource } from 'fumadocs-mdx/runtime/server'
-import {
-  changelogRoute,
-  docsContentRoute,
-  docsImageRoute,
-  docsRoute,
-} from './shared'
+import { getDocOgImageUrl } from './og'
+import { changelogRoute, docsContentRoute, docsRoute } from './shared'
 
 export const source = loader({
   source: docs.toFumadocsSource(),
@@ -21,11 +17,13 @@ export const changelogSource = loader({
 })
 
 export function getPageImage(slugs: string[]) {
-  const segments = [...slugs, 'image.webp']
+  const page = source.getPage(slugs)
+  const title = page?.data.title || slugs[slugs.length - 1] || 'Documentation'
+  const description = page?.data.description
 
   return {
-    segments,
-    url: `${docsImageRoute}/${segments.join('/')}`,
+    segments: slugs,
+    url: getDocOgImageUrl(title, description),
   }
 }
 

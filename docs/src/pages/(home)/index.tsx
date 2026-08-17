@@ -2,15 +2,17 @@ import { Link } from 'waku'
 import { CopyBlock } from '@/components/copy-block'
 import { InteractiveGrid } from '@/components/interactive-grid'
 import { LiquidGlassCard } from '@/components/liquid-glass-card'
+import { OpenGraph } from '@/components/open-graph'
 import { WebGLLogo } from '@/components/webgl-logo'
+import { getHomeOgImageUrl } from '@/lib/og'
 
 export default function Home() {
   return (
     <>
-      <title>Moul UI — Clean by default. Adaptable by design.</title>
-      <meta
-        name="description"
-        content="Meet Moul UI. The UI library forged for moul.dev, engineered for your next big idea. Perfect for product engineers who want a modern, consistent baseline."
+      <OpenGraph
+        title="Moul UI — Clean by default. Adaptable by design."
+        description="Meet Moul UI. The UI library forged for moul.dev, engineered for your next big idea. Accessible, zero-runtime React components built with React Aria and StyleX."
+        image={getHomeOgImageUrl()}
       />
 
       <div className="flex-1 flex flex-col justify-center overflow-hidden">

@@ -15,7 +15,6 @@
   "dependencies": {
     "@moul-dev/ui": "workspace:*",
     "@stylexjs/stylex": "^0.19.0",
-    "@takumi-rs/image-response": "^1.8.5",
     "fumadocs-core": "16.10.5",
     "fumadocs-mdx": "15.0.12",
     "fumadocs-ui": "16.10.5",
