@@ -7,10 +7,14 @@ import { styles } from './Stat.styles'
 export interface StatProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'style'> {
   label: React.ReactNode
-  value: React.ReactNode
+  value?: React.ReactNode
+  variant?: 'default' | 'flat' | 'glass' | 'elevated'
+  icon?: React.ReactNode
+  description?: React.ReactNode
   trend?: string | number
   trendDirection?: 'up' | 'down' | 'neutral'
   trendLabel?: React.ReactNode
+  children?: React.ReactNode
   style?: StyleXStyles
 }
 
@@ -48,9 +52,13 @@ export const Stat = React.forwardRef<HTMLDivElement, StatProps>(function Stat(
   {
     label,
     value,
+    variant = 'default',
+    icon,
+    description,
     trend,
     trendDirection = 'neutral',
     trendLabel,
+    children,
     className,
     style,
     ...rest
@@ -59,6 +67,10 @@ export const Stat = React.forwardRef<HTMLDivElement, StatProps>(function Stat(
 ) {
   const { className: stylexClass, style: stylexStyle } = stylex.props(
     styles.container,
+    variant === 'default' && styles.variantDefault,
+    variant === 'flat' && styles.variantFlat,
+    variant === 'glass' && styles.variantGlass,
+    variant === 'elevated' && styles.variantElevated,
     style,
   )
 
@@ -69,6 +81,8 @@ export const Stat = React.forwardRef<HTMLDivElement, StatProps>(function Stat(
     trendDirection === 'neutral' && styles.trendNeutral,
   )
 
+  const hasFooter = trend !== undefined || trendLabel !== undefined
+
   return (
     <div
       {...rest}
@@ -76,9 +90,24 @@ export const Stat = React.forwardRef<HTMLDivElement, StatProps>(function Stat(
       className={[stylexClass, className].filter(Boolean).join(' ')}
       style={stylexStyle}
     >
-      <span {...stylex.props(styles.label)}>{label}</span>
-      <span {...stylex.props(styles.value)}>{value}</span>
-      {(trend !== undefined || trendLabel !== undefined) && (
+      <div {...stylex.props(styles.header)}>
+        <span {...stylex.props(styles.label)}>{label}</span>
+        {icon && <div {...stylex.props(styles.icon)}>{icon}</div>}
+      </div>
+
+      {(value !== undefined || description || children) && (
+        <div {...stylex.props(styles.body)}>
+          {value !== undefined && (
+            <span {...stylex.props(styles.value)}>{value}</span>
+          )}
+          {description && (
+            <span {...stylex.props(styles.description)}>{description}</span>
+          )}
+          {children}
+        </div>
+      )}
+
+      {hasFooter && (
         <div {...stylex.props(styles.footer)}>
           {trend !== undefined && (
             <span {...badgeStyles}>

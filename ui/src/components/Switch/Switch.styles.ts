@@ -21,10 +21,14 @@ export const styles = stylex.create({
   },
   track: {
     position: 'relative',
-    width: tokens.spacing8, // 32px
-    height: tokens.spacing5, // 20px
+    display: 'inline-flex',
+    alignItems: 'center',
+    width: tokens.spacing8,
+    height: tokens.spacing5,
+    padding: '2px',
     borderRadius: tokens.radiusFull,
     backgroundColor: tokens.colorBorder,
+    boxSizing: 'border-box',
     transitionProperty: 'background-color, box-shadow',
     transitionDuration: '0.15s',
     transitionTimingFunction: 'ease-in-out',
@@ -43,20 +47,20 @@ export const styles = stylex.create({
     outlineColor: tokens.colorBorderFocus,
   },
   thumb: {
-    position: 'absolute',
-    top: '1px', // (20px - 18px) / 2 = 1px (Let's make thumb 18px so it has 1px padding!)
-    insetInlineStart: '1px',
-    width: '18px',
-    height: '18px',
+    display: 'block',
+    height: '100%',
+    aspectRatio: '1 / 1',
     borderRadius: tokens.radiusFull,
     backgroundColor: tokens.colorBg,
     boxShadow: tokens.shadowSm,
-    transitionProperty: 'inset-inline-start, transform',
+    transform: 'translateX(0)',
+    transitionProperty: 'transform',
     transitionDuration: '0.15s',
     transitionTimingFunction: 'ease-in-out',
+    pointerEvents: 'none',
   },
   thumbChecked: {
-    insetInlineStart: 'calc(100% - 19px)', // 32px - 18px - 1px = 13px
+    transform: `translateX(calc(${tokens.spacing8} - ${tokens.spacing5}))`,
   },
   label: {
     paddingInlineStart: tokens.spacing1,
