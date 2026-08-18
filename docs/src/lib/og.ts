@@ -34,7 +34,7 @@ export interface OgImageOptions {
 
 export const OG_BASE_URL = 'https://og.moul.dev'
 export const DEFAULT_SITE_TITLE = 'Moul UI'
-export const DEFAULT_TAGLINE = 'Clean by default. Adaptable by design.'
+export const DEFAULT_TAGLINE = 'Engineered for flow. Crafted to scale.'
 export const DEFAULT_DESCRIPTION =
   'Accessible, zero-runtime React UI component library built on React Aria and StyleX.'
 

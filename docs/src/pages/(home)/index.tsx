@@ -10,7 +10,7 @@ export default function Home() {
   return (
     <>
       <OpenGraph
-        title="Moul UI — Clean by default. Adaptable by design."
+        title="Moul UI — Engineered for flow. Crafted to scale."
         description="Meet Moul UI. The UI library forged for moul.dev, engineered for your next big idea. Accessible, zero-runtime React components built with React Aria and StyleX."
         image={getHomeOgImageUrl()}
       />
@@ -61,7 +61,7 @@ export default function Home() {
               {/* Heading */}
               <h1 className="text-4xl font-extrabold tracking-tight sm:text-6xl max-w-3xl mx-auto lg:mx-0 leading-[1.3] mb-6">
                 <span className="block text-fd-foreground">
-                  Clean by default.
+                  Engineered for flow.
                 </span>
                 <span
                   className="block bg-clip-text text-transparent"
@@ -70,7 +70,7 @@ export default function Home() {
                       'linear-gradient(to right, oklch(0.72 calc(0.17 * var(--brand-chroma-multiplier, 1)) calc(var(--brand-hue, 250) - 5)), oklch(0.78 calc(0.16 * var(--brand-chroma-multiplier, 1)) calc(var(--brand-hue, 250) + 10)), oklch(0.72 calc(0.14 * var(--brand-chroma-multiplier, 1)) calc(var(--brand-hue, 250) - 15)))',
                   }}
                 >
-                  Adaptable by design.
+                  Crafted to scale.
                 </span>
               </h1>
 
