@@ -13,6 +13,16 @@ import {
   ComboBox,
   ComboBoxItem,
   DoughnutChart,
+  Drawer,
+  DrawerBody,
+  DrawerCloseButton,
+  DrawerDialog,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerOverlay,
+  type DrawerPlacement,
+  type DrawerSize,
+  DrawerTitle,
   Form,
   InputOTP,
   InputOTPGroup,
@@ -110,6 +120,102 @@ export function ModalDemo() {
           </ModalDialog>
         </Modal>
       </ModalOverlay>
+    </div>
+  )
+}
+
+export function DrawerDemo() {
+  const [isOpen, setIsOpen] = useState(false)
+  const [placement, setPlacement] = useState<DrawerPlacement>('right')
+  const [size, setSize] = useState<DrawerSize>('md')
+
+  const openDrawer = (
+    nextPlacement: DrawerPlacement = 'right',
+    nextSize: DrawerSize = 'md',
+  ) => {
+    setPlacement(nextPlacement)
+    setSize(nextSize)
+    setIsOpen(true)
+  }
+
+  return (
+    <div className="flex flex-wrap items-center gap-3">
+      <Button onPress={() => openDrawer('right', 'md')}>
+        Right (Default 600px)
+      </Button>
+      <Button variant="outline" onPress={() => openDrawer('left', 'md')}>
+        Left Drawer
+      </Button>
+      <Button variant="secondary" onPress={() => openDrawer('bottom', 'md')}>
+        Bottom Sheet
+      </Button>
+      <Button variant="secondary" onPress={() => openDrawer('top', 'sm')}>
+        Top Drawer
+      </Button>
+
+      <DrawerOverlay
+        isOpen={isOpen}
+        onOpenChange={setIsOpen}
+        placement={placement}
+        size={size}
+      >
+        <Drawer placement={placement} size={size}>
+          <DrawerDialog>
+            <DrawerHeader>
+              <DrawerTitle>
+                {placement.charAt(0).toUpperCase() + placement.slice(1)} Drawer
+              </DrawerTitle>
+              <DrawerCloseButton />
+            </DrawerHeader>
+            <DrawerBody>
+              <div className="space-y-4">
+                <p className="text-sm text-neutral-600 dark:text-neutral-400">
+                  This drawer is anchored to the{' '}
+                  <strong className="text-neutral-950 dark:text-neutral-100">
+                    {placement}
+                  </strong>{' '}
+                  edge. On desktop viewports, its default width is around{' '}
+                  <strong className="text-neutral-950 dark:text-neutral-100">
+                    600px
+                  </strong>
+                  . On mobile viewports (≤ 640px), it automatically expands to
+                  full width.
+                </p>
+                <div className="rounded-lg border border-neutral-200 dark:border-neutral-800 p-4 bg-neutral-50/50 dark:bg-neutral-900/50">
+                  <h4 className="text-sm font-semibold mb-1 text-neutral-900 dark:text-neutral-100">
+                    Sticky Top & Bottom Sections
+                  </h4>
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                    Scroll this body section to see how the title/close button at
+                    the top and the action buttons at the bottom stay pinned in
+                    place.
+                  </p>
+                </div>
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className="p-4 rounded-lg border border-neutral-200 dark:border-neutral-800 bg-neutral-50/30 dark:bg-neutral-900/30 space-y-1"
+                  >
+                    <div className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
+                      Configuration Item #{i + 1}
+                    </div>
+                    <div className="text-xs text-neutral-500 dark:text-neutral-400">
+                      Settings and content fields can be composed inside
+                      DrawerBody freely.
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </DrawerBody>
+            <DrawerFooter>
+              <Button variant="outline" onPress={() => setIsOpen(false)}>
+                Cancel
+              </Button>
+              <Button onPress={() => setIsOpen(false)}>Save Changes</Button>
+            </DrawerFooter>
+          </DrawerDialog>
+        </Drawer>
+      </DrawerOverlay>
     </div>
   )
 }

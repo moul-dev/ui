@@ -65,6 +65,7 @@ function Root({ children }: { children: React.ReactNode }) {
 - [Form](/docs/components/form): Form wrapper integrating with React Aria validation and server actions.
 
 ### Overlays & Dialogs
+- [Drawer](/docs/components/drawer): Multi-directional sliding drawer overlay (`right`, `left`, `top`, `bottom`) with sticky action headers/footers and responsive full-width mobile sizing.
 - [Modal](/docs/components/modal): Accessible dialog overlays with `ModalOverlay`, `ModalDialog`, `ModalHeader`, `ModalBody`, and `ModalFooter`.
 - [AlertDialog](/docs/components/alertdialog): Confirmation and destructive alert dialogs.
 - [Popover](/docs/components/popover): Positioned popover overlays anchored to trigger elements.

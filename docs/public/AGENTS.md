@@ -274,6 +274,41 @@ import { InputOTP, InputOTPGroup, InputOTPSlot, InputOTPSeparator, REGEXP_ONLY_D
 
 ### Overlays & Dialogs
 
+#### `Drawer`
+```tsx
+import {
+  Drawer,
+  DrawerOverlay,
+  DrawerDialog,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerCloseButton,
+  DrawerBody,
+  DrawerFooter,
+  Button
+} from '@moul-dev/ui';
+
+<DrawerOverlay isOpen={isOpen} onOpenChange={setIsOpen} placement="right" size="md" isDismissable>
+  <Drawer placement="right" size="md">
+    <DrawerDialog>
+      <DrawerHeader>
+        <DrawerTitle>Account Settings</DrawerTitle>
+        <DrawerCloseButton />
+      </DrawerHeader>
+      <DrawerBody>
+        <p className="text-sm text-neutral-600 dark:text-neutral-400">
+          Manage your notification preferences and account details.
+        </p>
+      </DrawerBody>
+      <DrawerFooter>
+        <Button variant="outline" onPress={() => setIsOpen(false)}>Cancel</Button>
+        <Button variant="primary" onPress={() => setIsOpen(false)}>Save Changes</Button>
+      </DrawerFooter>
+    </DrawerDialog>
+  </Drawer>
+</DrawerOverlay>
+```
+
 #### `Modal`
 ```tsx
 import {

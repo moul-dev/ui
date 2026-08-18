@@ -61,6 +61,28 @@ export { Description } from './components/Description'
 export type { DescriptionProps } from './components/Description/Description'
 export type { DoughnutChartProps } from './components/DoughnutChart'
 export { DoughnutChart } from './components/DoughnutChart'
+export {
+  Drawer,
+  DrawerBody,
+  DrawerCloseButton,
+  DrawerDialog,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerOverlay,
+  DrawerTitle,
+} from './components/Drawer'
+export type {
+  DrawerBodyProps,
+  DrawerCloseButtonProps,
+  DrawerDialogProps,
+  DrawerFooterProps,
+  DrawerHeaderProps,
+  DrawerOverlayProps,
+  DrawerPlacement,
+  DrawerProps,
+  DrawerSize,
+  DrawerTitleProps,
+} from './components/Drawer'
 export { ErrorMessage } from './components/ErrorMessage'
 export type { ErrorMessageProps } from './components/ErrorMessage/ErrorMessage'
 export { FieldError } from './components/FieldError'

@@ -25,6 +25,7 @@
    - [InputOTP](#inputotp)
    - [Form & Field Validation](#form--field-validation)
 5. [Overlays & Dialogs](#overlays--dialogs)
+   - [Drawer](#drawer)
    - [Modal](#modal)
    - [AlertDialog](#alertdialog)
    - [Popover](#popover)
@@ -352,6 +353,45 @@ import {
 ---
 
 ## 5. Overlays & Dialogs
+
+### Drawer
+Multi-directional sliding drawer overlay (`right`, `left`, `top`, `bottom`) with sticky header & footer.
+
+```tsx
+import {
+  Drawer,
+  DrawerOverlay,
+  DrawerDialog,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerCloseButton,
+  DrawerBody,
+  DrawerFooter,
+  Button
+} from '@moul-dev/ui';
+
+<DrawerOverlay isOpen={isOpen} onOpenChange={setIsOpen} placement="right" size="md" isDismissable>
+  <Drawer placement="right" size="md">
+    <DrawerDialog>
+      <DrawerHeader>
+        <DrawerTitle>Account Settings</DrawerTitle>
+        <DrawerCloseButton />
+      </DrawerHeader>
+      <DrawerBody>
+        <p className="text-sm text-neutral-600 dark:text-neutral-400">
+          Manage your account settings and preferences.
+        </p>
+      </DrawerBody>
+      <DrawerFooter>
+        <Button variant="outline" onPress={() => setIsOpen(false)}>Cancel</Button>
+        <Button variant="primary" onPress={() => setIsOpen(false)}>Save Changes</Button>
+      </DrawerFooter>
+    </DrawerDialog>
+  </Drawer>
+</DrawerOverlay>
+```
+
+---
 
 ### Modal
 Accessible dialog overlay.

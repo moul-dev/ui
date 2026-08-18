@@ -10,6 +10,18 @@ import {
 } from './components/AlertDialog'
 import { Button } from './components/Button'
 import { Card, CardBody, CardFooter, CardHeader } from './components/Card'
+import {
+  Drawer,
+  DrawerBody,
+  DrawerCloseButton,
+  DrawerDialog,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerOverlay,
+  type DrawerPlacement,
+  type DrawerSize,
+  DrawerTitle,
+} from './components/Drawer'
 import { Modal, ModalOverlay } from './components/Modal'
 import {
   Sidebar,
@@ -353,6 +365,21 @@ const styles = stylex.create({
 function App() {
   const [count, setCount] = useState(0)
 
+  // Drawer interactive state
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+  const [drawerPlacement, setDrawerPlacement] =
+    useState<DrawerPlacement>('right')
+  const [drawerSize, setDrawerSize] = useState<DrawerSize>('md')
+
+  const openDrawer = (
+    placement: DrawerPlacement = 'right',
+    size: DrawerSize = 'md',
+  ) => {
+    setDrawerPlacement(placement)
+    setDrawerSize(size)
+    setIsDrawerOpen(true)
+  }
+
   // Sidebar interactive states
   const [activeTab, setActiveTab] = useState('home')
   const [isCollapsed, setIsCollapsed] = useState(false)
@@ -567,12 +594,37 @@ function App() {
             </div>
           </section>
 
-          {/* Dialogs Showcase */}
+          {/* Drawers & Overlays Showcase */}
           <section {...stylex.props(styles.section)}>
-            <h2 {...stylex.props(styles.sectionTitle)}>Overlays & Dialogs</h2>
+            <h2 {...stylex.props(styles.sectionTitle)}>Drawers & Overlays</h2>
             <div {...stylex.props(styles.buttonGroup)}>
+              <Button
+                variant="primary"
+                onPress={() => openDrawer('right', 'md')}
+              >
+                Open Right Drawer (600px)
+              </Button>
+              <Button
+                variant="secondary"
+                onPress={() => openDrawer('left', 'md')}
+              >
+                Open Left Drawer
+              </Button>
+              <Button
+                variant="secondary"
+                onPress={() => openDrawer('bottom', 'md')}
+              >
+                Open Bottom Sheet
+              </Button>
+              <Button
+                variant="secondary"
+                onPress={() => openDrawer('top', 'sm')}
+              >
+                Open Top Drawer
+              </Button>
+
               <DialogTrigger>
-                <Button variant="primary">Delete Account</Button>
+                <Button variant="outline">Delete Account Modal</Button>
                 <ModalOverlay>
                   <Modal>
                     <AlertDialog>
@@ -599,6 +651,68 @@ function App() {
                 </ModalOverlay>
               </DialogTrigger>
             </div>
+
+            <DrawerOverlay
+              isOpen={isDrawerOpen}
+              onOpenChange={setIsDrawerOpen}
+              placement={drawerPlacement}
+              size={drawerSize}
+            >
+              <Drawer placement={drawerPlacement} size={drawerSize}>
+                <DrawerDialog>
+                  <DrawerHeader>
+                    <DrawerTitle>
+                      {drawerPlacement.charAt(0).toUpperCase() +
+                        drawerPlacement.slice(1)}{' '}
+                      Drawer ({drawerSize})
+                    </DrawerTitle>
+                    <DrawerCloseButton />
+                  </DrawerHeader>
+                  <DrawerBody>
+                    <p style={{ margin: '0 0 16px 0', opacity: 0.8 }}>
+                      This drawer is anchored to the{' '}
+                      <strong>{drawerPlacement}</strong> with a default desktop
+                      size of <strong>{drawerSize === 'md' ? '600px' : drawerSize}</strong>.
+                      On small screens, it automatically adapts to 100% full-width.
+                    </p>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                      {Array.from({ length: 6 }).map((_, i) => (
+                        <div
+                          key={i}
+                          style={{
+                            padding: '16px',
+                            borderRadius: '8px',
+                            border: '1px solid rgba(128, 128, 128, 0.2)',
+                            background: 'rgba(128, 128, 128, 0.05)',
+                          }}
+                        >
+                          <h4 style={{ margin: '0 0 8px 0', fontSize: '14px', fontWeight: 600 }}>
+                            Section {i + 1}: Configuration Item
+                          </h4>
+                          <p style={{ margin: 0, fontSize: '13px', opacity: 0.7 }}>
+                            Notice that as you scroll this body content, the top header (with title and close button) and bottom footer (with action buttons) remain sticky.
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </DrawerBody>
+                  <DrawerFooter>
+                    <Button
+                      variant="secondary"
+                      onPress={() => setIsDrawerOpen(false)}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      variant="primary"
+                      onPress={() => setIsDrawerOpen(false)}
+                    >
+                      Save Changes
+                    </Button>
+                  </DrawerFooter>
+                </DrawerDialog>
+              </Drawer>
+            </DrawerOverlay>
           </section>
 
           {/* Alerts Showcase */}

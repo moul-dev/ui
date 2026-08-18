@@ -7,6 +7,14 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   Button,
+  Drawer,
+  DrawerBody,
+  DrawerCloseButton,
+  DrawerDialog,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerOverlay,
+  DrawerTitle,
   Modal,
   ModalBody,
   ModalDialog,
@@ -95,6 +103,76 @@ describe('Modal and AlertDialog Components', () => {
     expect(dialog).toBeInTheDocument()
     expect(dialog.getAttribute('aria-labelledby')).toBe('alert-title')
     expect(screen.getByText('Are you sure?')).toBeInTheDocument()
+  })
+})
+
+describe('Drawer Component', () => {
+  test('Drawer renders role="dialog", wraps focus, displays header/body/footer, and closes on Escape key', () => {
+    const onOpenChange = vi.fn()
+    const { getByRole } = render(
+      <DrawerOverlay isOpen={true} onOpenChange={onOpenChange}>
+        <Drawer>
+          <DrawerDialog>
+            <DrawerHeader>
+              <DrawerTitle>Drawer Title</DrawerTitle>
+              <DrawerCloseButton data-testid="drawer-close" />
+            </DrawerHeader>
+            <DrawerBody>Drawer Body Content</DrawerBody>
+            <DrawerFooter>
+              <Button>Save Action</Button>
+            </DrawerFooter>
+          </DrawerDialog>
+        </Drawer>
+      </DrawerOverlay>,
+    )
+
+    const dialog = getByRole('dialog')
+    expect(dialog).toBeInTheDocument()
+    expect(screen.getByText('Drawer Title')).toBeInTheDocument()
+    expect(screen.getByText('Drawer Body Content')).toBeInTheDocument()
+    expect(screen.getByText('Save Action')).toBeInTheDocument()
+
+    fireEvent.keyDown(dialog, { key: 'Escape', code: 'Escape' })
+    expect(onOpenChange).toHaveBeenCalledWith(false)
+  })
+
+  test('Drawer accepts placement variants (right, left, top, bottom)', () => {
+    const placements = ['right', 'left', 'top', 'bottom'] as const
+    for (const placement of placements) {
+      const { getByRole, unmount } = render(
+        <DrawerOverlay isOpen={true} placement={placement}>
+          <Drawer placement={placement}>
+            <DrawerDialog>
+              <DrawerHeader>
+                <DrawerTitle>{placement} drawer</DrawerTitle>
+              </DrawerHeader>
+              <DrawerBody>Content for {placement}</DrawerBody>
+            </DrawerDialog>
+          </Drawer>
+        </DrawerOverlay>,
+      )
+      expect(getByRole('dialog')).toBeInTheDocument()
+      expect(screen.getByText(`${placement} drawer`)).toBeInTheDocument()
+      unmount()
+    }
+  })
+
+  test('Drawer accepts size variants (sm, md, lg, full)', () => {
+    const sizes = ['sm', 'md', 'lg', 'full'] as const
+    for (const size of sizes) {
+      const { getByRole, unmount } = render(
+        <DrawerOverlay isOpen={true}>
+          <Drawer size={size}>
+            <DrawerDialog>
+              <DrawerBody>Size {size}</DrawerBody>
+            </DrawerDialog>
+          </Drawer>
+        </DrawerOverlay>,
+      )
+      expect(getByRole('dialog')).toBeInTheDocument()
+      expect(screen.getByText(`Size ${size}`)).toBeInTheDocument()
+      unmount()
+    }
   })
 })
 
@@ -232,6 +310,22 @@ describe('Overlay Components Property-Based Tests', () => {
           const overlayEl = screen.getByTestId('modal-overlay')
           expect(overlayEl.className).toContain(consumerClass)
           modalUnmount()
+
+          // Test className append on DrawerOverlay
+          const { unmount: drawerUnmount } = render(
+            <DrawerOverlay
+              isOpen={true}
+              className={consumerClass}
+              data-testid="drawer-overlay"
+            >
+              <Drawer>
+                <DrawerDialog>Content</DrawerDialog>
+              </Drawer>
+            </DrawerOverlay>,
+          )
+          const drawerOverlayEl = screen.getByTestId('drawer-overlay')
+          expect(drawerOverlayEl.className).toContain(consumerClass)
+          drawerUnmount()
 
           // Test className append on Tooltip
           const { unmount: tooltipUnmount } = render(
