@@ -47,6 +47,10 @@ Run these commands from the root directory:
   ```bash
   bun run build:docs
   ```
+- **Bump CalVer Version**:
+  ```bash
+  bun run bump
+  ```
 
 ## Tech Stack & Configurations
 

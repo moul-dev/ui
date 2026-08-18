@@ -186,9 +186,9 @@ export function DrawerDemo() {
                     Sticky Top & Bottom Sections
                   </h4>
                   <p className="text-xs text-neutral-500 dark:text-neutral-400">
-                    Scroll this body section to see how the title/close button at
-                    the top and the action buttons at the bottom stay pinned in
-                    place.
+                    Scroll this body section to see how the title/close button
+                    at the top and the action buttons at the bottom stay pinned
+                    in place.
                   </p>
                 </div>
                 {Array.from({ length: 6 }).map((_, i) => (

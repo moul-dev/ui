@@ -672,10 +672,20 @@ function App() {
                     <p style={{ margin: '0 0 16px 0', opacity: 0.8 }}>
                       This drawer is anchored to the{' '}
                       <strong>{drawerPlacement}</strong> with a default desktop
-                      size of <strong>{drawerSize === 'md' ? '600px' : drawerSize}</strong>.
-                      On small screens, it automatically adapts to 100% full-width.
+                      size of{' '}
+                      <strong>
+                        {drawerSize === 'md' ? '600px' : drawerSize}
+                      </strong>
+                      . On small screens, it automatically adapts to 100%
+                      full-width.
                     </p>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '16px',
+                      }}
+                    >
                       {Array.from({ length: 6 }).map((_, i) => (
                         <div
                           key={i}
@@ -686,11 +696,25 @@ function App() {
                             background: 'rgba(128, 128, 128, 0.05)',
                           }}
                         >
-                          <h4 style={{ margin: '0 0 8px 0', fontSize: '14px', fontWeight: 600 }}>
+                          <h4
+                            style={{
+                              margin: '0 0 8px 0',
+                              fontSize: '14px',
+                              fontWeight: 600,
+                            }}
+                          >
                             Section {i + 1}: Configuration Item
                           </h4>
-                          <p style={{ margin: 0, fontSize: '13px', opacity: 0.7 }}>
-                            Notice that as you scroll this body content, the top header (with title and close button) and bottom footer (with action buttons) remain sticky.
+                          <p
+                            style={{
+                              margin: 0,
+                              fontSize: '13px',
+                              opacity: 0.7,
+                            }}
+                          >
+                            Notice that as you scroll this body content, the top
+                            header (with title and close button) and bottom
+                            footer (with action buttons) remain sticky.
                           </p>
                         </div>
                       ))}

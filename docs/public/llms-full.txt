@@ -636,7 +636,7 @@ import {
     </SidebarGroup>
     <SidebarDivider />
     <SidebarFooter>
-      <span>v2026.08.17</span>
+      <span>v2026.08.18</span>
     </SidebarFooter>
   </SidebarAside>
   <SidebarMain>

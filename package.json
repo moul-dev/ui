@@ -1,6 +1,7 @@
 {
   "name": "moul-ui-workspace",
   "private": true,
+  "version": "2026.08.18",
   "workspaces": [
     "ui",
     "docs"
@@ -15,6 +16,8 @@
     "dev:ui": "bun --cwd ui dev",
     "dev:docs": "bun --cwd docs dev",
     "dev": "bun --cwd ui build:watch & bun run dev:ui & bun run dev:docs",
+    "bump": "bun scripts/bump-version.ts",
+    "version:bump": "bun scripts/bump-version.ts",
     "lint": "biome check",
     "format": "biome format --write"
   },

@@ -1,5 +1,5 @@
 // Entrypoint for @moul-dev/ui component library
-export const version = '2026.08.17'
+export const version = '2026.08.18'
 
 export { Alert } from './components/Alert'
 export type { AlertProps, AlertVariant } from './components/Alert/Alert'
@@ -61,16 +61,6 @@ export { Description } from './components/Description'
 export type { DescriptionProps } from './components/Description/Description'
 export type { DoughnutChartProps } from './components/DoughnutChart'
 export { DoughnutChart } from './components/DoughnutChart'
-export {
-  Drawer,
-  DrawerBody,
-  DrawerCloseButton,
-  DrawerDialog,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerOverlay,
-  DrawerTitle,
-} from './components/Drawer'
 export type {
   DrawerBodyProps,
   DrawerCloseButtonProps,
@@ -82,6 +72,16 @@ export type {
   DrawerProps,
   DrawerSize,
   DrawerTitleProps,
+} from './components/Drawer'
+export {
+  Drawer,
+  DrawerBody,
+  DrawerCloseButton,
+  DrawerDialog,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerOverlay,
+  DrawerTitle,
 } from './components/Drawer'
 export { ErrorMessage } from './components/ErrorMessage'
 export type { ErrorMessageProps } from './components/ErrorMessage/ErrorMessage'

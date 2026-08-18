@@ -91,7 +91,11 @@ export const ChartContainer = React.forwardRef<
       ref={ref}
       variant={variant}
       elevation={elevation}
-      style={[styles.container, edgeToEdge && styles.containerEdgeToEdge, style]}
+      style={[
+        styles.container,
+        edgeToEdge && styles.containerEdgeToEdge,
+        style,
+      ]}
       className={className}
     >
       <div
@@ -130,4 +134,3 @@ export const ChartContainer = React.forwardRef<
     </Card>
   )
 })
-
