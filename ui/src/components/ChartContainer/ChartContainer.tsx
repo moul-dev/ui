@@ -2,6 +2,7 @@
 import type { StyleXStyles } from '@stylexjs/stylex'
 import * as stylex from '@stylexjs/stylex'
 import * as React from 'react'
+import { Card, type CardVariant, type Elevation } from '../Card'
 import { Spinner } from '../Spinner'
 import { styles } from './ChartContainer.styles'
 
@@ -24,6 +25,8 @@ export interface ChartContainerProps
   style?: StyleXStyles
   edgeToEdge?: boolean
   showHeaderDivider?: boolean
+  variant?: CardVariant
+  elevation?: Elevation
 }
 
 export const ChartContainer = React.forwardRef<
@@ -44,16 +47,12 @@ export const ChartContainer = React.forwardRef<
     style,
     edgeToEdge = false,
     showHeaderDivider = false,
+    variant = 'default',
+    elevation = 1,
     ...rest
   },
   ref,
 ) {
-  const { className: stylexClass, style: stylexStyle } = stylex.props(
-    styles.card,
-    edgeToEdge && styles.cardEdgeToEdge,
-    style,
-  )
-
   const renderedLegend = React.useMemo(() => {
     if (!legend || legend.length === 0) return null
 
@@ -87,11 +86,13 @@ export const ChartContainer = React.forwardRef<
   }, [legend, legendLimit])
 
   return (
-    <div
+    <Card
       {...rest}
       ref={ref}
-      className={[stylexClass, className].filter(Boolean).join(' ')}
-      style={stylexStyle}
+      variant={variant}
+      elevation={elevation}
+      style={[styles.container, edgeToEdge && styles.containerEdgeToEdge, style]}
+      className={className}
     >
       <div
         {...stylex.props(
@@ -126,6 +127,7 @@ export const ChartContainer = React.forwardRef<
           children
         )}
       </div>
-    </div>
+    </Card>
   )
 })
+

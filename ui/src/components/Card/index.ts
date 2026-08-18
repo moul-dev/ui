@@ -1,4 +1,4 @@
-export type { CardProps } from './Card'
+export type { CardProps, CardVariant, Elevation } from './Card'
 export { Card } from './Card'
 export type { CardBodyProps } from './CardBody'
 export { CardBody } from './CardBody'

@@ -37,6 +37,8 @@ export type {
   CardFooterProps,
   CardHeaderProps,
   CardProps,
+  CardVariant,
+  Elevation,
 } from './components/Card'
 export { Card, CardBody, CardFooter, CardHeader } from './components/Card'
 export type {

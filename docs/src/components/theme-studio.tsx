@@ -712,27 +712,36 @@ export function ThemeStudio() {
               {/* Chart & TopList Middle Row */}
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
                 <div className="lg:col-span-2 w-full">
-                  <ChartContainer
-                    title="Revenue Analytics"
-                    description="Monthly cash flow and targets"
-                    actions={
-                      <ButtonGroup>
-                        <Button variant="outline" size="sm">
-                          Monthly
-                        </Button>
-                        <Button variant="primary" size="sm">
-                          Quarterly
-                        </Button>
-                      </ButtonGroup>
-                    }
-                  >
-                    <AreaChart
-                      data={revenueChartData}
-                      categories={['revenue', 'profit']}
-                      indexKey="month"
-                      height={260}
-                    />
-                  </ChartContainer>
+                  <Card>
+                    <CardHeader>
+                      <div className="flex items-center justify-between w-full">
+                        <div>
+                          <h3 className="text-sm font-bold text-fd-foreground">
+                            Revenue Analytics
+                          </h3>
+                          <p className="text-xs text-fd-muted-foreground mt-0.5">
+                            Monthly cash flow and targets
+                          </p>
+                        </div>
+                        <ButtonGroup>
+                          <Button variant="outline" size="sm">
+                            Monthly
+                          </Button>
+                          <Button variant="primary" size="sm">
+                            Quarterly
+                          </Button>
+                        </ButtonGroup>
+                      </div>
+                    </CardHeader>
+                    <CardBody>
+                      <AreaChart
+                        data={revenueChartData}
+                        categories={['revenue', 'profit']}
+                        indexKey="month"
+                        height={260}
+                      />
+                    </CardBody>
+                  </Card>
                 </div>
 
                 <div className="w-full">

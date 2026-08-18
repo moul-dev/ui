@@ -2,23 +2,14 @@ import * as stylex from '@stylexjs/stylex'
 import { tokens } from '../../tokens/tokens.stylex'
 
 export const styles = stylex.create({
-  card: {
-    backgroundColor: tokens.colorBg,
-    borderRadius: tokens.radiusMd,
-    borderWidth: '1px',
-    borderStyle: 'solid',
-    borderColor: tokens.colorBorderSubtle,
+  container: {
     padding: tokens.spacing6,
-    boxShadow: tokens.shadowSm,
-    display: 'flex',
-    flexDirection: 'column',
     gap: tokens.spacing4,
     fontFamily: tokens.fontFamilyBase,
     position: 'relative',
     color: tokens.colorFg,
-    overflow: 'hidden',
   },
-  cardEdgeToEdge: {
+  containerEdgeToEdge: {
     padding: 0,
     gap: 0,
   },
