@@ -21,6 +21,7 @@ export interface ButtonProps extends Omit<AriaButtonProps, 'style'> {
     | 'danger'
     | 'danger-soft'
   size?: 'sm' | 'md' | 'lg'
+  isIcon?: boolean
 }
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
@@ -28,6 +29,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     {
       variant = 'primary',
       size = 'md',
+      isIcon = false,
       isPending,
       isDisabled,
       style,
@@ -37,6 +39,8 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     },
     ref,
   ) {
+    const sizeSuffix = size === 'sm' ? 'Sm' : size === 'lg' ? 'Lg' : 'Md'
+
     if (process.env.NODE_ENV !== 'production') {
       warnMissingLabel('Button', {
         label: rest['aria-label'],
@@ -56,6 +60,10 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             styles.base,
             styles[variant],
             styles[size],
+            isIcon &&
+              styles[
+                `icon${sizeSuffix}` as keyof typeof styles
+              ],
             renderProps.isPending && styles.isPending,
             renderProps.isDisabled && styles.isDisabled,
             style,
@@ -67,6 +75,10 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             styles.base,
             styles[variant],
             styles[size],
+            isIcon &&
+              styles[
+                `icon${sizeSuffix}` as keyof typeof styles
+              ],
             renderProps.isPending && styles.isPending,
             renderProps.isDisabled && styles.isDisabled,
             style,

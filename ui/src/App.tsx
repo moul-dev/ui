@@ -22,6 +22,7 @@ import {
   type DrawerSize,
   DrawerTitle,
 } from './components/Drawer'
+import { Logs, SERVER_LOGS } from './components/LogsViewer'
 import { Modal, ModalOverlay } from './components/Modal'
 import {
   Sidebar,
@@ -309,6 +310,22 @@ const styles = stylex.create({
     display: 'flex',
     flexDirection: 'column',
     gap: '32px',
+  },
+  wideCard: {
+    background: 'rgba(30, 41, 59, 0.4)',
+    border: '1px solid rgba(255, 255, 255, 0.05)',
+    borderRadius: '24px',
+    padding: '32px',
+    backdropFilter: 'blur(16px)',
+    WebkitBackdropFilter: 'blur(16px)',
+    boxShadow: '0 20px 40px rgba(0, 0, 0, 0.3)',
+    maxWidth: '1000px',
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '24px',
+    marginTop: '24px',
+    marginBottom: '48px',
   },
   section: {
     display: 'flex',
@@ -940,6 +957,28 @@ function App() {
                 </Typography.Label>
               </div>
             </div>
+          </section>
+        </div>
+
+        {/* Logs Component Showcase */}
+        <div {...stylex.props(styles.wideCard)}>
+          <section {...stylex.props(styles.section)}>
+            <h2 {...stylex.props(styles.sectionTitle)}>
+              Logs Component Showcase (React Aria Table)
+            </h2>
+            <p style={{ margin: 0, fontSize: '0.9rem', color: '#94a3b8' }}>
+              Interactive log stream viewer parsing structured server logs with
+              level filtering, live search, line numbers, status code pills, and
+              inspection panel.
+            </p>
+            <Logs
+              data={SERVER_LOGS}
+              title="Mould Engine Logs"
+              inspectorMode="drawer"
+              drawerPlacement="right"
+              drawerSize="md"
+              maxHeight="460px"
+            />
           </section>
         </div>
       </SidebarMain>

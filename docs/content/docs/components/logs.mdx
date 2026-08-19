@@ -1,0 +1,123 @@
+---
+title: Logs
+description: High-performance log stream and event viewer component built on React Aria Table and StyleX.
+---
+
+import { Logs, SERVER_LOGS, SERVER_LOG_RAW } from '@moul-dev/ui';
+
+# Logs
+
+The `Logs` component is an accessible, developer-focused log stream viewer built on top of React Aria `Table` and styled with StyleX design tokens. It provides real-time search, severity level filtering, key-value attribute inspection, line wrapping toggles, and detail inspection panels.
+
+## Import
+
+```tsx
+import { Logs, SERVER_LOGS, parseLogs } from '@moul-dev/ui';
+```
+
+## Preview
+
+<ComponentPreview>
+  <Logs
+    data={SERVER_LOGS}
+    title="Mould Engine Server Logs"
+    defaultSelectedKeys={['log-8']}
+    maxHeight="380px"
+    className="w-full"
+  />
+</ComponentPreview>
+
+```tsx
+import { Logs, SERVER_LOGS } from '@moul-dev/ui';
+
+export default function Example() {
+  return (
+    <Logs
+      data={SERVER_LOGS}
+      title="Mould Engine Server Logs"
+      defaultSelectedKeys={['log-8']}
+      maxHeight="400px"
+    />
+  );
+}
+```
+
+---
+
+## Features
+
+- **React Aria Table Foundation**: Full ARIA `grid` accessibility, keyboard navigation (arrow keys, row selection), and accessible column headers.
+- **Automatic Log Parsing**: Pass raw multi-line strings (like `server.log`), JSON log lines, or structured `LogItem[]` objects.
+- **Severity Level Filtering**: Quick filter chips for `All`, `Errors`, `Warnings`, `Info`, and `Debug` with real-time event counters.
+- **Live Search**: Filter messages, timestamps, and structured key-value attributes instantly.
+- **Key-Value Attribute Chips**: Automatically detects and highlights attributes (e.g. `status=200`, `latency="3.12ms"`, `path="/api/..."`, `error="..."`).
+- **Interactive Inspector**: Select any log entry to view structured metadata and copy the raw log line with one click.
+- **Quick Operations**: Includes Copy All, Export / Download, line-wrap toggle, and compact density mode.
+
+---
+
+## Usage Examples
+
+### 1. Using Raw Text (e.g. `server.log`)
+
+You can pass a raw multi-line log string directly into the `text` prop:
+
+```tsx
+import { Logs } from '@moul-dev/ui';
+
+const rawLogs = `2026/08/19 11:16:49 INFO Starting mould engine server addr="http://localhost:8090" env="development" version="dev"
+2026/08/19 11:16:52 INFO HTTP request bytes_sent=48 ip="127.0.0.1" latency="182.4µs" method="GET" path="/api/health" status=200
+2026/08/19 11:17:21 ERRO HTTP request bytes_sent=112 email="alex@example.com" ip="192.168.1.80" latency="14.85ms" method="POST" path="/api/mouls/orders/records" status=500 user_id="usr_01j7k9p2" error="database locked (sqlite busy)"`;
+
+export function RawLogExample() {
+  return <Logs text={rawLogs} title="Server Console" />;
+}
+```
+
+### 2. Compact Density Mode
+
+Enable compact mode for dense log inspection:
+
+```tsx
+<Logs data={SERVER_LOGS} compact />
+```
+
+### 3. Custom Log Parser Utility
+
+You can also use the exported `parseLogs` and `parseLogLine` utilities independently:
+
+```tsx
+import { parseLogs, parseLogLine } from '@moul-dev/ui';
+
+const items = parseLogs(rawText);
+console.log(items[0].attributes?.status); // 200
+```
+
+---
+
+## API Reference
+
+### Logs Props
+
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `data` | `(LogItem \| string)[]` | `[]` | Array of log items or raw log lines. |
+| `text` | `string` | — | Raw multi-line log string. |
+| `title` | `React.ReactNode` | `'Logs'` | Title displayed in the top toolbar. |
+| `showToolbar` | `boolean` | `true` | Whether to show the top filter and action toolbar. |
+| `showLineNumbers` | `boolean` | `true` | Whether to display row line numbers. |
+| `showTimestamps` | `boolean` | `true` | Whether to display the timestamp column. |
+| `showLevels` | `boolean` | `true` | Whether to display severity level badges. |
+| `showAttributes` | `boolean` | `true` | Whether to render key-value chips in message cells. |
+| `showInspector` | `boolean` | `true` | Whether to display the details inspector for selected rows. |
+| `compact` | `boolean` | `false` | Enable compact table density. |
+| `wrapLines` | `boolean` | `true` | Whether to wrap long log lines. |
+| `maxHeight` | `string \| number` | — | Maximum height with vertical scroll container. |
+| `selectionMode` | `'none' \| 'single' \| 'multiple'` | `'single'` | React Aria row selection mode. |
+| `selectedKeys` | `'all' \| Iterable<Key>` | — | Controlled selected row keys. |
+| `onSelectionChange` | `(keys: 'all' \| Set<Key>) => void` | — | Selection change callback. |
+| `filterLevel` | `'all' \| 'info' \| 'warn' \| 'error' \| 'debug' \| 'trace'` | `'all'` | Controlled filter level. |
+| `searchQuery` | `string` | `''` | Controlled search filter query. |
+| `onClear` | `() => void` | — | Callback fired when Clear button is clicked. |
+| `onDownload` | `() => void` | — | Callback fired when Export button is clicked. |
+| `onCopy` | `(text: string) => void` | — | Callback fired when copy button is clicked. |

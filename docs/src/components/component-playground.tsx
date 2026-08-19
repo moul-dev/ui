@@ -286,7 +286,7 @@ const REGISTRY: Record<string, ComponentConfig> = {
       variant: 'primary',
       size: 'md',
       isDisabled: false,
-      isSquare: false,
+      isIcon: false,
       children: 'Mute Audio',
     },
     props: [
@@ -317,9 +317,9 @@ const REGISTRY: Record<string, ComponentConfig> = {
         defaultValue: false,
       },
       {
-        name: 'isSquare',
+        name: 'isIcon',
         type: 'boolean',
-        label: 'Square Style',
+        label: 'Icon Only Style',
         defaultValue: false,
       },
     ],
@@ -1191,12 +1191,12 @@ export default function Example() {
 }`
       }
       case 'ToggleButton': {
-        const { variant, size, isDisabled, isSquare, children } = activeProps
+        const { variant, size, isDisabled, isIcon, children } = activeProps
         let propsStr = ''
         if (variant !== 'primary') propsStr += ` variant="${variant}"`
         if (size !== 'md') propsStr += ` size="${size}"`
         if (isDisabled) propsStr += ` isDisabled`
-        if (isSquare) propsStr += ` isSquare`
+        if (isIcon) propsStr += ` isIcon`
         return `import { ToggleButton } from '@moul-dev/ui';
 import { useState } from 'react';
 

@@ -111,6 +111,30 @@ export type { LineChartProps } from './components/LineChart'
 export { LineChart } from './components/LineChart'
 export { Link } from './components/Link'
 export type { LinkProps } from './components/Link/Link'
+export type {
+  HighlightTextProps,
+  LogAttributeChipProps,
+  LogFilterLevel,
+  LogItem,
+  LogLevel,
+  LogLevelBadgeProps,
+  LogsProps,
+  LogsViewerProps,
+} from './components/LogsViewer'
+export {
+  HighlightText,
+  LogAttributeChip,
+  LogLevelBadge,
+  Logs,
+  LogsViewer,
+  normalizeLogLevel,
+  parseAttributes,
+  parseLogLine,
+  parseLogs,
+  SERVER_LOG_RAW,
+  SERVER_LOGS,
+  stripAttributes,
+} from './components/LogsViewer'
 export {
   Modal,
   ModalBody,

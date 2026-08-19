@@ -199,6 +199,13 @@ export function applyThemeToDOM(theme: {
   )
   root.style.setProperty('--brand-font-scale', theme.fontScale.toString())
   root.style.setProperty('--brand-radius-factor', theme.radiusFactor.toString())
+
+  // Broadcast event so all components react instantly without page refresh
+  window.dispatchEvent(
+    new CustomEvent('moul-theme-change', {
+      detail: theme,
+    }),
+  )
 }
 
 export function saveThemeToStorage(theme: {

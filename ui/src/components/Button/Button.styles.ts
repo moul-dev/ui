@@ -7,6 +7,7 @@ export const styles = stylex.create({
     display: 'inline-flex',
     alignItems: 'center',
     justifyContent: 'center',
+    gap: tokens.spacing2,
     fontWeight: tokens.fontWeightMedium,
     cursor: 'pointer',
     transitionProperty: 'background-color, border-color, box-shadow, transform',
@@ -51,6 +52,21 @@ export const styles = stylex.create({
     borderRadius: tokens.radiusMd,
     fontSize: tokens.fontSizeMd,
     lineHeight: tokens.lineHeightMd,
+  },
+  iconSm: {
+    width: `calc(${tokens.spacing1} * 2 + ${tokens.lineHeightXs})`,
+    paddingInline: 0,
+    paddingBlock: 0,
+  },
+  iconMd: {
+    width: `calc(${tokens.spacing2} * 2 + ${tokens.lineHeightSm})`,
+    paddingInline: 0,
+    paddingBlock: 0,
+  },
+  iconLg: {
+    width: `calc(${tokens.spacing2} * 2 + ${tokens.lineHeightMd})`,
+    paddingInline: 0,
+    paddingBlock: 0,
   },
   primary: {
     backgroundColor: tokens.colorPrimary500,

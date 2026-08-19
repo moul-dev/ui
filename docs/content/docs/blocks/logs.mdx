@@ -1,0 +1,99 @@
+---
+title: Logs
+description: An enterprise-grade log stream and event viewer block built with React Aria Table, StyleX, and a slide-out Drawer inspector.
+---
+
+# Logs
+
+The `Logs` block is a complete, accessible monitoring and log inspection system designed for cloud consoles, server dashboards, and telemetry streams. Built on React Aria `Table` primitives and styled with StyleX design tokens, it features real-time search, severity level filters, quick operations, structured key-value chips, and a responsive slide-out **Drawer Inspector**.
+
+## Preview
+
+<BlockPreview 
+  previewUrl="/preview/logs" 
+  title="Logs Block Preview" 
+  description="Experience the complete responsive log inspection block with live streaming simulation, key-value chips, and slide-out Drawer details."
+/>
+
+---
+
+## Import
+
+```tsx
+import {
+  Logs,
+  SERVER_LOGS,
+  SERVER_LOG_RAW,
+  parseLogs,
+  parseLogLine,
+} from '@moul-dev/ui';
+```
+
+---
+
+## Layout & Features
+
+### 1. Slide-out Drawer Inspector
+Selecting or clicking any log entry slides out a **Drawer Inspector** (built directly with the `@moul-dev/ui` `<Drawer>` component). The drawer offers:
+- **Full Message & Copy**: Formatted log message with one-click copy.
+- **Structured Fields Table**: Interactive breakdown of attributes (e.g., `status=200`, `ip="192.168.1.45"`, `latency="3.12ms"`, `error="..."`).
+- **Raw Log Output**: Clean monospace block for raw terminal/syslog format.
+- **JSON Object View**: Formatted JSON representation with quick copy.
+- **Previous / Next Navigation**: Cycle through filtered logs without leaving the drawer.
+
+```tsx
+<Logs
+  data={SERVER_LOGS}
+  inspectorMode="drawer"
+  drawerPlacement="right"
+  drawerSize="md"
+  title="Cluster Server Logs"
+/>
+```
+
+### 2. Multi-Format Log Parsing
+Accepts raw multiline strings (e.g. from `server.log`), JSON log strings, or pre-parsed `LogItem[]` arrays:
+
+```tsx
+// 1. Pass raw server log text directly
+<Logs text={SERVER_LOG_RAW} />
+
+// 2. Pass parsed objects
+<Logs data={SERVER_LOGS} />
+```
+
+### 3. Responsive Desktop & Mobile Design
+- **Desktop**: Tabular layout with sticky headers, line numbers, timestamps, status badges, message attributes, and a dedicated Inspect trigger.
+- **Mobile**: Responsive horizontal scroll and compact density modes with touch-friendly tap targets. The slide-out drawer automatically adapts to full viewport width on mobile devices.
+
+---
+
+## API Reference
+
+### Logs Props
+
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `data` | `(LogItem \| string)[]` | `[]` | Array of log items or raw log lines. |
+| `text` | `string` | — | Raw multiline log string. |
+| `title` | `React.ReactNode` | `'Logs'` | Title displayed in the top toolbar. |
+| `inspectorMode` | `'drawer' \| 'inline' \| 'none'` | `'drawer'` | How the log inspector is presented when a row is selected. |
+| `drawerPlacement`| `'top' \| 'bottom' \| 'left' \| 'right'` | `'right'` | Drawer slide-in direction when `inspectorMode="drawer"`. |
+| `drawerSize` | `'sm' \| 'md' \| 'lg' \| 'full'` | `'md'` | Width/size of the inspector drawer. |
+| `showToolbar` | `boolean` | `true` | Whether to display top search, filter, and action toolbar. |
+| `showLineNumbers` | `boolean` | `true` | Whether to display line numbers. |
+| `showTimestamps` | `boolean` | `true` | Whether to display timestamps. |
+| `showLevels` | `boolean` | `true` | Whether to display severity level badges. |
+| `showAttributes` | `boolean` | `true` | Whether to render key-value chips inside message cells. |
+| `compact` | `boolean` | `false` | Enables dense spacing layout. |
+| `wrapLines` | `boolean` | `true` | Whether to wrap long log lines. |
+| `maxHeight` | `string \| number` | — | Constrains table height with vertical scrolling. |
+| `selectionMode` | `'none' \| 'single' \| 'multiple'` | `'single'` | React Aria row selection mode. |
+| `selectedKeys` | `'all' \| Iterable<Key>` | — | Controlled selected row keys. |
+| `onSelectionChange` | `(keys: 'all' \| Set<Key>) => void` | — | Selection change callback. |
+| `filterLevel` | `'all' \| 'info' \| 'warn' \| 'error' \| 'debug'` | `'all'` | Controlled severity filter level. |
+| `searchQuery` | `string` | `''` | Controlled search query. |
+| `onClear` | `() => void` | — | Callback fired when the Clear button is pressed. |
+| `onDownload` | `() => void` | — | Callback fired when Export logs is pressed. |
+| `onCopy` | `(text: string) => void` | — | Callback fired when Copy is pressed. |
+| `onRowClick` | `(log: LogItem) => void` | — | Callback fired when a row is clicked. |

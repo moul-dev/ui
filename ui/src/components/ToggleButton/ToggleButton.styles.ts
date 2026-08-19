@@ -7,6 +7,7 @@ export const styles = stylex.create({
     display: 'inline-flex',
     alignItems: 'center',
     justifyContent: 'center',
+    gap: tokens.spacing2,
     fontWeight: tokens.fontWeightMedium,
     cursor: 'pointer',
     transitionProperty: 'background-color, border-color, color, transform',
@@ -211,15 +212,15 @@ export const styles = stylex.create({
   selectionIndicatorSecondary: {
     backgroundColor: tokens.colorNeutral200,
   },
-  squareSm: {
+  iconSm: {
     paddingInline: tokens.spacing1,
     aspectRatio: '1/1',
   },
-  squareMd: {
+  iconMd: {
     paddingInline: tokens.spacing2,
     aspectRatio: '1/1',
   },
-  squareLg: {
+  iconLg: {
     paddingInline: tokens.spacing2,
     aspectRatio: '1/1',
   },

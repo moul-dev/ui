@@ -18,7 +18,7 @@ export interface ToggleButtonProps
   className?: string
   size?: 'sm' | 'md' | 'lg'
   variant?: 'primary' | 'secondary'
-  isSquare?: boolean
+  isIcon?: boolean
 }
 
 export const ToggleButton = React.forwardRef<
@@ -28,7 +28,7 @@ export const ToggleButton = React.forwardRef<
   {
     size,
     variant = 'primary',
-    isSquare = false,
+    isIcon = false,
     isSelected,
     defaultSelected,
     onChange,
@@ -67,9 +67,9 @@ export const ToggleButton = React.forwardRef<
         const { className: stylexClass } = stylex.props(
           styles.base,
           styles[resolvedSize as keyof typeof styles],
-          isSquare &&
+          isIcon &&
             styles[
-              `square${resolvedSize.charAt(0).toUpperCase()}${resolvedSize.slice(1)}` as keyof typeof styles
+              `icon${resolvedSize.charAt(0).toUpperCase()}${resolvedSize.slice(1)}` as keyof typeof styles
             ],
           styles[variant],
           renderProps.isSelected && selectedStyle,
@@ -114,9 +114,9 @@ export const ToggleButton = React.forwardRef<
         const { style: stylexStyle } = stylex.props(
           styles.base,
           styles[resolvedSize as keyof typeof styles],
-          isSquare &&
+          isIcon &&
             styles[
-              `square${resolvedSize.charAt(0).toUpperCase()}${resolvedSize.slice(1)}` as keyof typeof styles
+              `icon${resolvedSize.charAt(0).toUpperCase()}${resolvedSize.slice(1)}` as keyof typeof styles
             ],
           styles[variant],
           renderProps.isSelected && selectedStyle,
