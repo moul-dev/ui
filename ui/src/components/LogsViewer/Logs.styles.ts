@@ -64,10 +64,7 @@ export const styles = stylex.create({
     minWidth: '240px',
   },
   filterGroup: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: tokens.spacing2,
-    flexWrap: 'wrap',
+    flexShrink: 0,
   },
   tableScrollContainer: {
     position: 'relative',
@@ -249,7 +246,7 @@ export const styles = stylex.create({
     display: 'inline-flex',
     alignItems: 'center',
     gap: tokens.spacing1,
-    paddingBlock: 0,
+    paddingBlock: '1px',
     paddingInline: tokens.spacing1,
     fontSize: tokens.fontSizeXs,
     backgroundColor: tokens.colorNeutral100,
@@ -260,19 +257,27 @@ export const styles = stylex.create({
     color: tokens.colorFgSubtle,
     fontFamily:
       'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
+    lineHeight: tokens.lineHeightXs,
   },
   attributeChipError: {
     backgroundColor: tokens.colorAlertBgError,
     borderColor: tokens.colorAlertBorderError,
-    color: tokens.colorError500,
   },
   attributeKey: {
     fontWeight: tokens.fontWeightMedium,
     color: tokens.colorFgSubtle,
   },
+  attributeKeyError: {
+    color: tokens.colorError600,
+    fontWeight: tokens.fontWeightSemibold,
+  },
   attributeValue: {
     fontWeight: tokens.fontWeightNormal,
     color: tokens.colorFg,
+  },
+  attributeValueError: {
+    color: tokens.colorError600,
+    fontWeight: tokens.fontWeightMedium,
   },
   statusSuccess: {
     color: tokens.colorSuccess600,
@@ -472,6 +477,18 @@ export const styles = stylex.create({
     borderRadius: tokens.radiusSm,
     paddingInline: tokens.spacing1,
     fontWeight: tokens.fontWeightSemibold,
+  },
+  // ── Visually Hidden for Screen Readers / Live Regions ─────────────────
+  visuallyHidden: {
+    position: 'absolute',
+    width: '1px',
+    height: '1px',
+    padding: 0,
+    margin: '-1px',
+    overflow: 'hidden',
+    clip: 'rect(0, 0, 0, 0)',
+    whiteSpace: 'nowrap',
+    borderWidth: 0,
   },
 })
 

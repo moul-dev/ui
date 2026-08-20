@@ -76,7 +76,9 @@ export interface LogsProps
    */
   isInspectorOpen?: boolean
   /**
-   * Default open state for the drawer inspector.
+   * Default open state for the drawer inspector (initial uncontrolled state).
+   * Note: Changing this prop post-mount does not reset internal state; use `isInspectorOpen` for controlled state.
+   * @default false
    */
   defaultInspectorOpen?: boolean
   /**
@@ -126,7 +128,8 @@ export interface LogsProps
    */
   selectedKeys?: 'all' | Iterable<Key>
   /**
-   * Default selected log keys.
+   * Default selected log keys (initial uncontrolled state).
+   * Note: Changing this prop post-mount does not reset internal state; use `selectedKeys` for controlled state.
    */
   defaultSelectedKeys?: 'all' | Iterable<Key>
   /**
@@ -138,7 +141,8 @@ export interface LogsProps
    */
   filterLevel?: LogFilterLevel
   /**
-   * Default filter level.
+   * Default filter level (initial uncontrolled state).
+   * Note: Changing this prop post-mount does not reset internal state; use `filterLevel` for controlled state.
    * @default 'all'
    */
   defaultFilterLevel?: LogFilterLevel
@@ -151,7 +155,8 @@ export interface LogsProps
    */
   searchQuery?: string
   /**
-   * Default search query.
+   * Default search query (initial uncontrolled state).
+   * Note: Changing this prop post-mount does not reset internal state; use `searchQuery` for controlled state.
    */
   defaultSearchQuery?: string
   /**
@@ -175,7 +180,8 @@ export interface LogsProps
    */
   follow?: boolean
   /**
-   * Default follow / auto-scroll state.
+   * Default follow / auto-scroll state (initial uncontrolled state).
+   * Note: Changing this prop post-mount does not reset internal state; use `follow` for controlled state.
    * @default false
    */
   defaultFollow?: boolean

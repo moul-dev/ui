@@ -28,9 +28,10 @@ import {
 import { Check, Copy, Export, Pause, Play, Trash } from '@phosphor-icons/react'
 import { SearchField } from '../SearchField'
 import { ToggleButton } from '../ToggleButton'
+import { ToggleButtonGroup } from '../ToggleButtonGroup'
 import { styles } from './Logs.styles'
 import type { LogFilterLevel, LogItem, LogLevel, LogsProps } from './Logs.types'
-import { parseLogs } from './parseLogs'
+import { normalizeLogLevel, parseLogs } from './parseLogs'
 
 // ── Log Level Badge Subcomponent ─────────────────────────────────────
 
@@ -45,7 +46,7 @@ export function LogLevelBadge({
   style,
   className,
 }: LogLevelBadgeProps) {
-  const normLevel = (level as LogLevel) || 'info'
+  const normLevel = normalizeLogLevel(level)
 
   const levelVariantMap: Record<LogLevel, BadgeVariant> = {
     info: 'primary',
@@ -132,25 +133,37 @@ export function LogAttributeChip({ name, value }: LogAttributeChipProps) {
   const stringValue = String(value)
   const isErrorKey = name === 'error' || name === 'err'
 
-  // If attribute is status code, render using Badge component
+  // If attribute is status code, render using status-specific style
   if (name === 'status' && typeof value === 'number') {
-    const badgeVariant: BadgeVariant =
-      value >= 500 ? 'error' : value >= 400 ? 'warning' : 'success'
+    const statusStyle =
+      value >= 500
+        ? styles.statusError
+        : value >= 400
+          ? styles.statusWarn
+          : styles.statusSuccess
 
     return (
       <span {...stylex.props(styles.attributeChip)}>
         <span {...stylex.props(styles.attributeKey)}>status=</span>
-        <Badge variant={badgeVariant}>{value}</Badge>
+        <span {...stylex.props(styles.attributeValue, statusStyle)}>
+          {value}
+        </span>
       </span>
     )
   }
 
-  // If attribute is error, highlight with error badge or text
+  // If attribute is error, highlight cleanly within the chip container
   if (isErrorKey) {
     return (
       <span {...stylex.props(styles.attributeChip, styles.attributeChipError)}>
-        <span {...stylex.props(styles.attributeKey)}>error=</span>
-        <Badge variant="error">"{stringValue}"</Badge>
+        <span {...stylex.props(styles.attributeKey, styles.attributeKeyError)}>
+          {name}=
+        </span>
+        <span
+          {...stylex.props(styles.attributeValue, styles.attributeValueError)}
+        >
+          {typeof value === 'string' ? `"${stringValue}"` : stringValue}
+        </span>
       </span>
     )
   }
@@ -198,6 +211,7 @@ export function HighlightText({
             <mark
               key={index}
               {...stylex.props(styles.searchHighlight)}
+              aria-label={`highlighted match: ${part}`}
             >
               {part}
             </mark>
@@ -259,8 +273,9 @@ export const Logs = React.forwardRef<HTMLDivElement, LogsProps>(function Logs(
   ref,
 ) {
   // Resolve active inspector mode (support backwards-compat for showInspector)
-  const resolvedInspectorMode =
-    inspectorMode ?? (showInspector === false ? 'none' : 'drawer')
+  const resolvedInspectorMode = React.useMemo(() => {
+    return inspectorMode ?? (showInspector === false ? 'none' : 'drawer')
+  }, [inspectorMode, showInspector])
 
   // Parse logs from data or text prop
   const allLogs: LogItem[] = React.useMemo(() => {
@@ -315,6 +330,9 @@ export const Logs = React.forwardRef<HTMLDivElement, LogsProps>(function Logs(
   const isFollow =
     controlledFollow !== undefined ? controlledFollow : internalFollow
 
+  const isFollowRef = React.useRef(isFollow)
+  isFollowRef.current = isFollow
+
   const setIsFollow = React.useCallback(
     (nextFollow: boolean) => {
       setInternalFollow(nextFollow)
@@ -327,14 +345,14 @@ export const Logs = React.forwardRef<HTMLDivElement, LogsProps>(function Logs(
 
   // Scroll listener to pause follow when scrolled up
   const handleScroll = React.useCallback(() => {
-    if (!tableScrollRef.current || !isFollow) return
+    if (!tableScrollRef.current || !isFollowRef.current) return
     const el = tableScrollRef.current
     const distanceFromBottom =
       el.scrollHeight - el.scrollTop - el.clientHeight
     if (distanceFromBottom > 35) {
       setIsFollow(false)
     }
-  }, [isFollow, setIsFollow])
+  }, [setIsFollow])
 
   const handleToggleFollow = (isSelected?: boolean) => {
     const next = typeof isSelected === 'boolean' ? isSelected : !isFollow
@@ -354,19 +372,15 @@ export const Logs = React.forwardRef<HTMLDivElement, LogsProps>(function Logs(
   // Selection state
   const [internalSelectedKeys, setInternalSelectedKeys] = React.useState<
     'all' | Set<Key>
-  >(
-    defaultSelectedKeys
-      ? defaultSelectedKeys === 'all'
-        ? 'all'
-        : new Set(defaultSelectedKeys)
-      : new Set(),
-  )
+  >(() => {
+    if (!defaultSelectedKeys) return new Set()
+    if (defaultSelectedKeys === 'all') return 'all'
+    return new Set(defaultSelectedKeys)
+  })
 
   const selectedKeys =
     controlledSelectedKeys !== undefined
-      ? controlledSelectedKeys === 'all'
-        ? 'all'
-        : new Set(controlledSelectedKeys)
+      ? controlledSelectedKeys
       : internalSelectedKeys
 
   const handleSelectionChange = (keys: 'all' | Set<Key>) => {
@@ -443,8 +457,22 @@ export const Logs = React.forwardRef<HTMLDivElement, LogsProps>(function Logs(
 
   // Find currently selected log item and its index
   const selectedLogItem = React.useMemo(() => {
-    if (selectedKeys === 'all' || selectedKeys.size === 0) return null
-    const firstKey = Array.from(selectedKeys)[0]
+    if (selectedKeys === 'all') return null
+    if (!selectedKeys) return null
+    let firstKey: Key | undefined
+    if (selectedKeys instanceof Set) {
+      if (selectedKeys.size === 0) return null
+      firstKey = selectedKeys.values().next().value
+    } else if (Array.isArray(selectedKeys)) {
+      if (selectedKeys.length === 0) return null
+      firstKey = selectedKeys[0]
+    } else {
+      const iter = (selectedKeys as Iterable<Key>)[Symbol.iterator]()
+      const item = iter.next()
+      if (item.done) return null
+      firstKey = item.value
+    }
+    if (firstKey === undefined) return null
     return allLogs.find((l) => String(l.id) === String(firstKey)) || null
   }, [allLogs, selectedKeys])
 
@@ -528,6 +556,104 @@ export const Logs = React.forwardRef<HTMLDivElement, LogsProps>(function Logs(
   const { className: stylexClass, style: stylexStyle } = stylex.props(
     styles.container,
     style,
+  )
+
+  // Precompute static and semi-static StyleX props to prevent double-computations during table renders
+  const tableProps = React.useMemo(() => stylex.props(styles.table), [])
+  const headerProps = React.useMemo(() => stylex.props(styles.header), [])
+  const bodyProps = React.useMemo(() => stylex.props(styles.body), [])
+
+  const columnLineNumberProps = React.useMemo(
+    () =>
+      stylex.props(
+        styles.column,
+        compact && styles.columnCompact,
+        styles.columnLineNumber,
+      ),
+    [compact],
+  )
+  const columnTimestampProps = React.useMemo(
+    () =>
+      stylex.props(
+        styles.column,
+        compact && styles.columnCompact,
+        styles.columnTimestamp,
+      ),
+    [compact],
+  )
+  const columnLevelProps = React.useMemo(
+    () =>
+      stylex.props(
+        styles.column,
+        compact && styles.columnCompact,
+        styles.columnLevel,
+      ),
+    [compact],
+  )
+  const columnMessageProps = React.useMemo(
+    () =>
+      stylex.props(
+        styles.column,
+        compact && styles.columnCompact,
+        styles.columnMessage,
+      ),
+    [compact],
+  )
+  const columnActionsProps = React.useMemo(
+    () =>
+      stylex.props(
+        styles.column,
+        compact && styles.columnCompact,
+        styles.columnActions,
+      ),
+    [compact],
+  )
+
+  const cellLineNumberProps = React.useMemo(
+    () =>
+      stylex.props(
+        styles.cell,
+        compact && styles.cellCompact,
+        styles.cellLineNumber,
+      ),
+    [compact],
+  )
+  const cellTimestampProps = React.useMemo(
+    () =>
+      stylex.props(
+        styles.cell,
+        compact && styles.cellCompact,
+        styles.cellTimestamp,
+      ),
+    [compact],
+  )
+  const cellLevelProps = React.useMemo(
+    () =>
+      stylex.props(
+        styles.cell,
+        compact && styles.cellCompact,
+        styles.cellLevel,
+      ),
+    [compact],
+  )
+  const cellMessageProps = React.useMemo(
+    () =>
+      stylex.props(
+        styles.cell,
+        compact && styles.cellCompact,
+        styles.cellMessage,
+        wrapLines ? styles.cellWrap : styles.cellNoWrap,
+      ),
+    [compact, wrapLines],
+  )
+  const cellActionsProps = React.useMemo(
+    () =>
+      stylex.props(
+        styles.cell,
+        compact && styles.cellCompact,
+        styles.cellActions,
+      ),
+    [compact],
   )
 
   const filterLevels: { key: LogFilterLevel; label: string }[] = [
@@ -630,10 +756,18 @@ export const Logs = React.forwardRef<HTMLDivElement, LogsProps>(function Logs(
               />
             </div>
 
-            <div
-              {...stylex.props(styles.filterGroup)}
-              role="group"
+            <ToggleButtonGroup
               aria-label="Filter by level"
+              selectionMode="single"
+              disallowEmptySelection
+              selectedKeys={new Set([activeFilterLevel])}
+              onSelectionChange={(keys) => {
+                const key = Array.from(keys)[0] as LogFilterLevel
+                if (key) {
+                  handleFilterLevelChange(key)
+                }
+              }}
+              style={styles.filterGroup}
             >
               {filterLevels.map(({ key, label }) => {
                 const count = levelCounts[key] || 0
@@ -650,18 +784,30 @@ export const Logs = React.forwardRef<HTMLDivElement, LogsProps>(function Logs(
                 return (
                   <ToggleButton
                     key={key}
-                    isSelected={isActive}
-                    onChange={() => handleFilterLevelChange(key)}
+                    id={key}
+                    aria-label={`${label} (${count})`}
                   >
                     <span>{label}</span>
                     <Badge variant={countVariant}>{count}</Badge>
                   </ToggleButton>
                 )
               })}
-            </div>
+            </ToggleButtonGroup>
           </div>
         </div>
       )}
+
+      {/* ── Screen Reader Live Region for Log Arrivals ── */}
+      <div
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        {...stylex.props(styles.visuallyHidden)}
+      >
+        {isFollow
+          ? `${filteredLogs.length} logs total, streaming live`
+          : `${filteredLogs.length} logs displayed`}
+      </div>
 
       {/* ── Table Container ── */}
       <div
@@ -675,30 +821,18 @@ export const Logs = React.forwardRef<HTMLDivElement, LogsProps>(function Logs(
           selectionMode={selectionMode}
           selectedKeys={selectedKeys}
           onSelectionChange={handleSelectionChange}
-          className={() => stylex.props(styles.table).className || ''}
-          style={() => stylex.props(styles.table).style || {}}
+          className={tableProps.className}
+          style={tableProps.style}
         >
           <AriaTableHeader
-            className={() => stylex.props(styles.header).className || ''}
-            style={() => stylex.props(styles.header).style || {}}
+            className={headerProps.className}
+            style={headerProps.style}
           >
             {showLineNumbers && (
               <AriaColumn
                 isRowHeader
-                className={() =>
-                  stylex.props(
-                    styles.column,
-                    compact && styles.columnCompact,
-                    styles.columnLineNumber,
-                  ).className || ''
-                }
-                style={() =>
-                  stylex.props(
-                    styles.column,
-                    compact && styles.columnCompact,
-                    styles.columnLineNumber,
-                  ).style || {}
-                }
+                className={columnLineNumberProps.className}
+                style={columnLineNumberProps.style}
               >
                 #
               </AriaColumn>
@@ -706,20 +840,8 @@ export const Logs = React.forwardRef<HTMLDivElement, LogsProps>(function Logs(
 
             {showTimestamps && (
               <AriaColumn
-                className={() =>
-                  stylex.props(
-                    styles.column,
-                    compact && styles.columnCompact,
-                    styles.columnTimestamp,
-                  ).className || ''
-                }
-                style={() =>
-                  stylex.props(
-                    styles.column,
-                    compact && styles.columnCompact,
-                    styles.columnTimestamp,
-                  ).style || {}
-                }
+                className={columnTimestampProps.className}
+                style={columnTimestampProps.style}
               >
                 Timestamp
               </AriaColumn>
@@ -727,20 +849,8 @@ export const Logs = React.forwardRef<HTMLDivElement, LogsProps>(function Logs(
 
             {showLevels && (
               <AriaColumn
-                className={() =>
-                  stylex.props(
-                    styles.column,
-                    compact && styles.columnCompact,
-                    styles.columnLevel,
-                  ).className || ''
-                }
-                style={() =>
-                  stylex.props(
-                    styles.column,
-                    compact && styles.columnCompact,
-                    styles.columnLevel,
-                  ).style || {}
-                }
+                className={columnLevelProps.className}
+                style={columnLevelProps.style}
               >
                 Level
               </AriaColumn>
@@ -748,39 +858,15 @@ export const Logs = React.forwardRef<HTMLDivElement, LogsProps>(function Logs(
 
             <AriaColumn
               isRowHeader={!showLineNumbers}
-              className={() =>
-                stylex.props(
-                  styles.column,
-                  compact && styles.columnCompact,
-                  styles.columnMessage,
-                ).className || ''
-              }
-              style={() =>
-                stylex.props(
-                  styles.column,
-                  compact && styles.columnCompact,
-                  styles.columnMessage,
-                ).style || {}
-              }
+              className={columnMessageProps.className}
+              style={columnMessageProps.style}
             >
               Message
             </AriaColumn>
 
             <AriaColumn
-              className={() =>
-                stylex.props(
-                  styles.column,
-                  compact && styles.columnCompact,
-                  styles.columnActions,
-                ).className || ''
-              }
-              style={() =>
-                stylex.props(
-                  styles.column,
-                  compact && styles.columnCompact,
-                  styles.columnActions,
-                ).style || {}
-              }
+              className={columnActionsProps.className}
+              style={columnActionsProps.style}
             >
               <span className="sr-only">Actions</span>
             </AriaColumn>
@@ -788,13 +874,53 @@ export const Logs = React.forwardRef<HTMLDivElement, LogsProps>(function Logs(
 
           <AriaTableBody
             items={filteredLogs}
-            className={() => stylex.props(styles.body).className || ''}
-            style={() => stylex.props(styles.body).style || {}}
+            className={bodyProps.className}
+            style={bodyProps.style}
           >
             {(log) => {
               const isError = log.level === 'error'
               const isWarn = log.level === 'warn'
               const isFatal = log.level === 'fatal'
+
+              let lastRenderState: {
+                isHovered?: boolean
+                isSelected?: boolean
+                isFocused?: boolean
+              } | null = null
+              let cachedRowProps: {
+                className?: string
+                style?: React.CSSProperties
+              } = {}
+
+              const getRowStyleProps = (renderProps: {
+                isHovered: boolean
+                isSelected: boolean
+                isFocused: boolean
+              }) => {
+                if (
+                  lastRenderState &&
+                  lastRenderState.isHovered === renderProps.isHovered &&
+                  lastRenderState.isSelected === renderProps.isSelected &&
+                  lastRenderState.isFocused === renderProps.isFocused
+                ) {
+                  return cachedRowProps
+                }
+                lastRenderState = {
+                  isHovered: renderProps.isHovered,
+                  isSelected: renderProps.isSelected,
+                  isFocused: renderProps.isFocused,
+                }
+                cachedRowProps = stylex.props(
+                  styles.row,
+                  isError && styles.rowError,
+                  isWarn && styles.rowWarn,
+                  isFatal && styles.rowFatal,
+                  renderProps.isHovered && styles.rowHovered,
+                  renderProps.isSelected && styles.rowSelected,
+                  renderProps.isFocused && styles.rowFocused,
+                )
+                return cachedRowProps
+              }
 
               return (
                 <AriaRow
@@ -806,47 +932,17 @@ export const Logs = React.forwardRef<HTMLDivElement, LogsProps>(function Logs(
                       setDrawerOpen(true)
                     }
                   }}
-                  className={(renderProps) => {
-                    const { className: stylexClass } = stylex.props(
-                      styles.row,
-                      isError && styles.rowError,
-                      isWarn && styles.rowWarn,
-                      isFatal && styles.rowFatal,
-                      renderProps.isHovered && styles.rowHovered,
-                      renderProps.isSelected && styles.rowSelected,
-                      renderProps.isFocused && styles.rowFocused,
-                    )
-                    return stylexClass || ''
-                  }}
-                  style={(renderProps) => {
-                    const { style: stylexStyle } = stylex.props(
-                      styles.row,
-                      isError && styles.rowError,
-                      isWarn && styles.rowWarn,
-                      isFatal && styles.rowFatal,
-                      renderProps.isHovered && styles.rowHovered,
-                      renderProps.isSelected && styles.rowSelected,
-                      renderProps.isFocused && styles.rowFocused,
-                    )
-                    return stylexStyle || {}
-                  }}
+                  className={(renderProps) =>
+                    getRowStyleProps(renderProps).className || ''
+                  }
+                  style={(renderProps) =>
+                    getRowStyleProps(renderProps).style || {}
+                  }
                 >
                   {showLineNumbers && (
                     <AriaCell
-                      className={() =>
-                        stylex.props(
-                          styles.cell,
-                          compact && styles.cellCompact,
-                          styles.cellLineNumber,
-                        ).className || ''
-                      }
-                      style={() =>
-                        stylex.props(
-                          styles.cell,
-                          compact && styles.cellCompact,
-                          styles.cellLineNumber,
-                        ).style || {}
-                      }
+                      className={cellLineNumberProps.className}
+                      style={cellLineNumberProps.style}
                     >
                       {log.lineNumber}
                     </AriaCell>
@@ -854,20 +950,8 @@ export const Logs = React.forwardRef<HTMLDivElement, LogsProps>(function Logs(
 
                   {showTimestamps && (
                     <AriaCell
-                      className={() =>
-                        stylex.props(
-                          styles.cell,
-                          compact && styles.cellCompact,
-                          styles.cellTimestamp,
-                        ).className || ''
-                      }
-                      style={() =>
-                        stylex.props(
-                          styles.cell,
-                          compact && styles.cellCompact,
-                          styles.cellTimestamp,
-                        ).style || {}
-                      }
+                      className={cellTimestampProps.className}
+                      style={cellTimestampProps.style}
                     >
                       {log.timestamp || '—'}
                     </AriaCell>
@@ -875,42 +959,16 @@ export const Logs = React.forwardRef<HTMLDivElement, LogsProps>(function Logs(
 
                   {showLevels && (
                     <AriaCell
-                      className={() =>
-                        stylex.props(
-                          styles.cell,
-                          compact && styles.cellCompact,
-                          styles.cellLevel,
-                        ).className || ''
-                      }
-                      style={() =>
-                        stylex.props(
-                          styles.cell,
-                          compact && styles.cellCompact,
-                          styles.cellLevel,
-                        ).style || {}
-                      }
+                      className={cellLevelProps.className}
+                      style={cellLevelProps.style}
                     >
                       <LogLevelBadge level={log.level} />
                     </AriaCell>
                   )}
 
                   <AriaCell
-                    className={() =>
-                      stylex.props(
-                        styles.cell,
-                        compact && styles.cellCompact,
-                        styles.cellMessage,
-                        wrapLines ? styles.cellWrap : styles.cellNoWrap,
-                      ).className || ''
-                    }
-                    style={() =>
-                      stylex.props(
-                        styles.cell,
-                        compact && styles.cellCompact,
-                        styles.cellMessage,
-                        wrapLines ? styles.cellWrap : styles.cellNoWrap,
-                      ).style || {}
-                    }
+                    className={cellMessageProps.className}
+                    style={cellMessageProps.style}
                   >
                     <div
                       {...stylex.props(
@@ -947,20 +1005,8 @@ export const Logs = React.forwardRef<HTMLDivElement, LogsProps>(function Logs(
                   </AriaCell>
 
                   <AriaCell
-                    className={() =>
-                      stylex.props(
-                        styles.cell,
-                        compact && styles.cellCompact,
-                        styles.cellActions,
-                      ).className || ''
-                    }
-                    style={() =>
-                      stylex.props(
-                        styles.cell,
-                        compact && styles.cellCompact,
-                        styles.cellActions,
-                      ).style || {}
-                    }
+                    className={cellActionsProps.className}
+                    style={cellActionsProps.style}
                   >
                     {resolvedInspectorMode === 'drawer' && (
                       <Button

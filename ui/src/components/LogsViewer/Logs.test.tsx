@@ -106,6 +106,20 @@ describe('LogLevelBadge component', () => {
     expect(badge).toBeInTheDocument()
     expect(badge.getAttribute('aria-label')).toBe('Level: error')
   })
+
+  test('normalizes raw level strings and non-standard strings', () => {
+    const { getByText: getByText1 } = render(<LogLevelBadge level="ERRO" />)
+    expect(getByText1('ERROR')).toBeInTheDocument()
+
+    const { getByText: getByText2 } = render(<LogLevelBadge level="warning" />)
+    expect(getByText2('WARN')).toBeInTheDocument()
+
+    const { getByText: getByText3 } = render(<LogLevelBadge level="fata" />)
+    expect(getByText3('FATAL')).toBeInTheDocument()
+
+    const { getByText: getByText4 } = render(<LogLevelBadge />)
+    expect(getByText4('INFO')).toBeInTheDocument()
+  })
 })
 
 describe('Logs component suite', () => {
@@ -130,6 +144,14 @@ describe('Logs component suite', () => {
     // Table rows: 1 header row + 17 log rows
     const rows = screen.getAllByRole('row')
     expect(rows.length).toBe(18)
+
+    // Screen reader live region
+    const liveRegion = screen.getByRole('status', {
+      name: (_accessibleName, element) =>
+        element.textContent?.includes('17 logs displayed') ?? false,
+    })
+    expect(liveRegion).toBeInTheDocument()
+    expect(liveRegion).toHaveAttribute('aria-live', 'polite')
   })
 
   test('renders directly from raw text string (server.log)', () => {
@@ -140,23 +162,38 @@ describe('Logs component suite', () => {
     expect(screen.getByText('Server failed to run')).toBeInTheDocument()
   })
 
-  test('filters logs by severity level when level pill is clicked', () => {
+  test('filters logs by severity level when level pill is clicked with radio group semantics', () => {
     render(<Logs data={SERVER_LOGS} />)
+
+    // Radio group role
+    const radioGroup = screen.getByRole('radiogroup', {
+      name: 'Filter by level',
+    })
+    expect(radioGroup).toBeInTheDocument()
+
+    // All pill should initially be checked
+    const allPill = screen.getByRole('radio', { name: /All/i })
+    expect(allPill).toHaveAttribute('aria-checked', 'true')
 
     // Initially 18 rows (1 header + 17 data)
     expect(screen.getAllByRole('row')).toHaveLength(18)
 
     // Click "Errors" filter
-    const errorPill = screen.getByRole('button', { name: /Errors/i })
+    const errorPill = screen.getByRole('radio', { name: /Errors/i })
+    expect(errorPill).toHaveAttribute('aria-checked', 'false')
     fireEvent.click(errorPill)
+    expect(errorPill).toHaveAttribute('aria-checked', 'true')
+    expect(allPill).toHaveAttribute('aria-checked', 'false')
 
     // There are 3 ERRO + 1 FATA = 4 error/fatal logs + 1 header row = 5 rows
     const rowsAfterErrorFilter = screen.getAllByRole('row')
     expect(rowsAfterErrorFilter).toHaveLength(5)
 
     // Click "Warnings" filter
-    const warnPill = screen.getByRole('button', { name: /Warnings/i })
+    const warnPill = screen.getByRole('radio', { name: /Warnings/i })
     fireEvent.click(warnPill)
+    expect(warnPill).toHaveAttribute('aria-checked', 'true')
+    expect(errorPill).toHaveAttribute('aria-checked', 'false')
 
     // 3 WARN lines + 1 header = 4 rows
     expect(screen.getAllByRole('row')).toHaveLength(4)
@@ -315,13 +352,14 @@ describe('HighlightText component', () => {
     expect(container.querySelector('mark')).toBeNull()
   })
 
-  test('wraps matched substring in mark tag', () => {
+  test('wraps matched substring in mark tag with aria-label', () => {
     const { container } = render(
       <HighlightText text="Hello World" highlight="World" />,
     )
     const mark = container.querySelector('mark')
     expect(mark).not.toBeNull()
     expect(mark?.textContent).toBe('World')
+    expect(mark?.getAttribute('aria-label')).toBe('highlighted match: World')
   })
 
   test('handles case-insensitive matches', () => {
@@ -330,6 +368,7 @@ describe('HighlightText component', () => {
     )
     const mark = container.querySelector('mark')
     expect(mark?.textContent).toBe('Timeout')
+    expect(mark?.getAttribute('aria-label')).toBe('highlighted match: Timeout')
   })
 })
 

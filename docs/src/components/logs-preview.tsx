@@ -5,6 +5,7 @@ import {
   Button,
   type LogItem,
   Logs,
+  parseLogLine,
   SERVER_LOGS,
   Stat,
   Switch,
@@ -135,27 +136,18 @@ export function LogsPreview() {
 
       currentIdx = (currentIdx + 1) % SAMPLE_STREAM_EVENTS.length
 
-      const level: 'info' | 'warn' | 'error' | 'debug' = rawLine.includes(
-        'ERRO',
-      )
-        ? 'error'
-        : rawLine.includes('WARN')
-          ? 'warn'
-          : rawLine.includes('DEBU')
-            ? 'debug'
-            : 'info'
-
-      setLogsList((curr: LogItem[]) => [
-        ...curr,
-        {
-          id: `stream-${Date.now()}-${currentIdx}`,
-          raw: rawLine,
-          message: rawLine,
-          lineNumber: curr.length + 1,
-          timestamp: new Date().toLocaleTimeString(),
-          level,
-        },
-      ])
+      setLogsList((curr: LogItem[]) => {
+        const parsed = parseLogLine(rawLine, curr.length)
+        return [
+          ...curr,
+          {
+            ...parsed,
+            id: `stream-${Date.now()}-${currentIdx}`,
+            lineNumber: curr.length + 1,
+            timestamp: parsed.timestamp || new Date().toLocaleTimeString(),
+          },
+        ]
+      })
     }, 2500)
 
     return () => clearInterval(timer)
@@ -181,17 +173,17 @@ export function LogsPreview() {
       sample = `${timestamp} INFO User authenticated email="user_${Math.floor(Math.random() * 1000)}@moul.dev" method="oauth2" status=200`
     }
 
-    setLogsList((curr: LogItem[]) => [
-      ...curr,
-      {
-        id: `manual-${Date.now()}`,
-        raw: sample,
-        message: sample,
-        lineNumber: curr.length + 1,
-        timestamp: timestamp.slice(11),
-        level,
-      },
-    ])
+    setLogsList((curr: LogItem[]) => {
+      const parsed = parseLogLine(sample, curr.length)
+      return [
+        ...curr,
+        {
+          ...parsed,
+          id: `manual-${Date.now()}`,
+          lineNumber: curr.length + 1,
+        },
+      ]
+    })
   }
 
   const handleReset = () => {
