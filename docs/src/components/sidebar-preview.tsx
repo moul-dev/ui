@@ -172,7 +172,8 @@ export function SidebarPreview() {
       selectedKey={activeTab}
       onSelectionChange={setActiveTab}
       variant="solid"
-      className="transition-colors duration-300"
+      className="h-screen w-screen transition-colors duration-300"
+      style={{ height: '100vh', width: '100vw' }}
     >
       {/* ── Sidebar Layout Left ── */}
       <SidebarAside

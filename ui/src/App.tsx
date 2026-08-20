@@ -412,6 +412,7 @@ function App() {
       selectedKey={activeTab}
       onSelectionChange={setActiveTab}
       variant={sidebarVariant}
+      style={{ height: '100vh', width: '100vw' }}
     >
       {/* Premium Apple Music/Podcast style Sidebar Demo */}
       <SidebarAside showCollapseToggle={showToggle}>

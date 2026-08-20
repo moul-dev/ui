@@ -39,10 +39,15 @@ export const styles = stylex.create({
     borderColor: tokens.colorBorder,
   },
   glass: {
-    backgroundColor: tokens.colorBgGlass,
-    borderColor: tokens.colorBorderGlass,
-    backdropFilter: 'blur(20px)',
-    WebkitBackdropFilter: 'blur(20px)',
+    backgroundColor: tokens.colorBgSubtle,
+    borderColor: tokens.colorBorder,
+    '@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))':
+      {
+        backgroundColor: tokens.colorBgGlass,
+        borderColor: tokens.colorBorderGlass,
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+      },
   },
 
   // ── Sidebar Header ──────────────────────────────────────────────────
@@ -337,9 +342,9 @@ export const styles = stylex.create({
   },
   layout: {
     display: 'flex',
-    height: '100vh',
-    maxHeight: '100vh',
-    width: '100vw',
+    height: '100%',
+    maxHeight: '100%',
+    width: '100%',
     backgroundColor: tokens.colorBg,
     color: tokens.colorFg,
     fontFamily: tokens.fontFamilyBase,

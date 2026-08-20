@@ -17,6 +17,7 @@ interface SidebarContextValue {
   onSelectionChange?: (key: string) => void
   variant: 'solid' | 'glass'
   onCollapseToggle: () => void
+  showCollapseToggle?: boolean
 }
 
 const SidebarContext = React.createContext<SidebarContextValue | undefined>(
@@ -43,6 +44,7 @@ const ChevronLeftIcon = () => (
     fill="none"
     strokeLinecap="round"
     strokeLinejoin="round"
+    aria-hidden="true"
   >
     <polyline points="15 18 9 12 15 6" />
   </svg>
@@ -58,6 +60,7 @@ const ChevronRightIcon = () => (
     fill="none"
     strokeLinecap="round"
     strokeLinejoin="round"
+    aria-hidden="true"
   >
     <polyline points="9 18 15 12 9 6" />
   </svg>
@@ -74,6 +77,7 @@ const ChevronDownIcon = ({ className }: { className?: string }) => (
     strokeLinecap="round"
     strokeLinejoin="round"
     className={className}
+    aria-hidden="true"
   >
     <polyline points="6 9 12 15 18 9" />
   </svg>
@@ -105,6 +109,7 @@ export const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
       defaultSelectedKey,
       onSelectionChange,
       variant = 'solid',
+      showCollapseToggle,
       style,
       className,
       children,
@@ -122,22 +127,24 @@ export const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
         ? controlledSelectedKey
         : localSelectedKey
 
-    const handleCollapseToggle = () => {
-      const nextCollapsed = !isCollapsed
+    const handleCollapseToggle = React.useCallback(() => {
       if (onCollapseChange) {
-        onCollapseChange(nextCollapsed)
+        onCollapseChange(!isCollapsed)
       } else {
-        setLocalCollapsed(nextCollapsed)
+        setLocalCollapsed((prev) => !prev)
       }
-    }
+    }, [isCollapsed, onCollapseChange])
 
-    const handleSelection = (key: string) => {
-      if (onSelectionChange) {
-        onSelectionChange(key)
-      } else {
-        setLocalSelectedKey(key)
-      }
-    }
+    const handleSelection = React.useCallback(
+      (key: string) => {
+        if (onSelectionChange) {
+          onSelectionChange(key)
+        } else {
+          setLocalSelectedKey(key)
+        }
+      },
+      [onSelectionChange],
+    )
 
     const contextValue = React.useMemo(
       () => ({
@@ -146,19 +153,29 @@ export const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
         onSelectionChange: handleSelection,
         variant,
         onCollapseToggle: handleCollapseToggle,
+        showCollapseToggle,
       }),
-      [isCollapsed, selectedKey, onSelectionChange, variant],
+      [
+        isCollapsed,
+        selectedKey,
+        handleSelection,
+        variant,
+        handleCollapseToggle,
+        showCollapseToggle,
+      ],
+    )
+
+    const { className: stylexClass, style: stylexStyle } = stylex.props(
+      styles.layout,
     )
 
     return (
       <SidebarContext.Provider value={contextValue}>
         <div
           ref={ref}
-          className={[stylex.props(styles.layout).className, className]
-            .filter(Boolean)
-            .join(' ')}
+          className={[stylexClass, className].filter(Boolean).join(' ')}
           style={{
-            ...stylex.props(styles.layout).style,
+            ...stylexStyle,
             ...style,
           }}
         >
@@ -182,27 +199,17 @@ export const SidebarHeader = React.forwardRef<
   SidebarHeaderProps
 >(function SidebarHeader({ style, className, children }, ref) {
   const { isCollapsed } = useSidebar()
+  const { className: stylexClass, style: stylexStyle } = stylex.props(
+    styles.header,
+    isCollapsed && styles.headerCollapsed,
+    style,
+  )
 
   return (
     <div
       ref={ref}
-      className={[
-        stylex.props(
-          styles.header,
-          isCollapsed && styles.headerCollapsed,
-          style,
-        ).className,
-        className,
-      ]
-        .filter(Boolean)
-        .join(' ')}
-      style={
-        stylex.props(
-          styles.header,
-          isCollapsed && styles.headerCollapsed,
-          style,
-        ).style
-      }
+      className={[stylexClass, className].filter(Boolean).join(' ')}
+      style={stylexStyle}
     >
       <div
         {...stylex.props(
@@ -258,38 +265,38 @@ export const SidebarGroup = React.forwardRef<HTMLDivElement, SidebarGroupProps>(
       }
     }
 
+    const { className: stylexClass, style: stylexStyle } = stylex.props(
+      styles.group,
+      isCollapsed && styles.groupCollapsed,
+      style,
+    )
+
     return (
       <div
         ref={ref}
-        className={[
-          stylex.props(
-            styles.group,
-            isCollapsed && styles.groupCollapsed,
-            style,
-          ).className,
-          className,
-        ]
-          .filter(Boolean)
-          .join(' ')}
-        style={
-          stylex.props(
-            styles.group,
-            isCollapsed && styles.groupCollapsed,
-            style,
-          ).style
-        }
+        className={[stylexClass, className].filter(Boolean).join(' ')}
+        style={stylexStyle}
       >
         {title && !isCollapsed && (
           <div
-            role={collapsible ? 'button' : undefined}
-            tabIndex={collapsible ? 0 : undefined}
-            onClick={handleToggleExpand}
-            onKeyDown={(e) => {
-              if (collapsible && (e.key === 'Enter' || e.key === ' ')) {
-                e.preventDefault()
-                handleToggleExpand()
-              }
-            }}
+            {...(collapsible
+              ? {
+                  role: 'button' as const,
+                  'aria-expanded': isGroupExpanded,
+                  tabIndex: 0,
+                  onClick: handleToggleExpand,
+                  onKeyDown: (e: React.KeyboardEvent<HTMLDivElement>) => {
+                    if (
+                      e.key === 'Enter' ||
+                      e.key === ' ' ||
+                      e.key === 'Spacebar'
+                    ) {
+                      e.preventDefault()
+                      handleToggleExpand()
+                    }
+                  },
+                }
+              : {})}
             {...stylex.props(
               styles.groupHeader,
               collapsible && styles.groupHeaderCollapsible,
@@ -357,13 +364,24 @@ export const SidebarItem = React.forwardRef<
   const isSelected =
     controlledSelected !== undefined
       ? controlledSelected
-      : id !== undefined && selectedKey === id
+      : typeof id === 'string' &&
+        id.length > 0 &&
+        selectedKey !== undefined &&
+        selectedKey === id
 
   const handlePress = () => {
-    if (id !== undefined && onSelectionChange) {
+    if (typeof id === 'string' && id.length > 0 && onSelectionChange) {
       onSelectionChange(id)
     }
   }
+
+  const { className: stylexClass, style: stylexStyle } = stylex.props(
+    styles.item,
+    styles.itemHover,
+    isSelected && styles.itemSelected,
+    isCollapsed && styles.itemCollapsed,
+    style,
+  )
 
   const renderContent = (
     <AriaLink
@@ -371,26 +389,9 @@ export const SidebarItem = React.forwardRef<
       href={href}
       ref={ref}
       onPress={handlePress}
-      className={() => {
-        const { className: stylexClass } = stylex.props(
-          styles.item,
-          styles.itemHover,
-          isSelected && styles.itemSelected,
-          isCollapsed && styles.itemCollapsed,
-          style,
-        )
-        return [stylexClass, className].filter(Boolean).join(' ')
-      }}
-      style={() => {
-        const { style: stylexStyle } = stylex.props(
-          styles.item,
-          styles.itemHover,
-          isSelected && styles.itemSelected,
-          isCollapsed && styles.itemCollapsed,
-          style,
-        )
-        return stylexStyle ?? {}
-      }}
+      aria-current={isSelected ? 'page' : undefined}
+      className={[stylexClass, className].filter(Boolean).join(' ')}
+      style={stylexStyle ?? {}}
     >
       {icon && (
         <span
@@ -444,29 +445,18 @@ export const SidebarFooter = React.forwardRef<
   ref,
 ) {
   const { isCollapsed } = useSidebar()
+  const { className: stylexClass, style: stylexStyle } = stylex.props(
+    styles.footer,
+    showBorder && styles.footerBorder,
+    isCollapsed && styles.footerCollapsed,
+    style,
+  )
 
   return (
     <div
       ref={ref}
-      className={[
-        stylex.props(
-          styles.footer,
-          showBorder && styles.footerBorder,
-          isCollapsed && styles.footerCollapsed,
-          style,
-        ).className,
-        className,
-      ]
-        .filter(Boolean)
-        .join(' ')}
-      style={
-        stylex.props(
-          styles.footer,
-          showBorder && styles.footerBorder,
-          isCollapsed && styles.footerCollapsed,
-          style,
-        ).style
-      }
+      className={[stylexClass, className].filter(Boolean).join(' ')}
+      style={stylexStyle}
     >
       <div
         {...stylex.props(
@@ -492,71 +482,73 @@ export const SidebarDivider = React.forwardRef<
   SidebarDividerProps
 >(function SidebarDivider({ style, className }, ref) {
   const { isCollapsed } = useSidebar()
+  const { className: stylexClass, style: stylexStyle } = stylex.props(
+    styles.divider,
+    isCollapsed && styles.dividerCollapsed,
+    style,
+  )
 
   return (
     <div
       ref={ref}
-      {...stylex.props(
-        styles.divider,
-        isCollapsed && styles.dividerCollapsed,
-        style,
-      )}
-      className={[
-        stylex.props(
-          styles.divider,
-          isCollapsed && styles.dividerCollapsed,
-          style,
-        ).className,
-        className,
-      ]
-        .filter(Boolean)
-        .join(' ')}
+      role="separator"
+      aria-orientation="horizontal"
+      className={[stylexClass, className].filter(Boolean).join(' ')}
+      style={stylexStyle}
     />
   )
 })
 
-// ── SidebarLayout Component ──────────────────────────────────────────
-
 // ── SidebarAside Component ───────────────────────────────────────────
 
 export interface SidebarAsideProps {
+  'aria-label'?: string
   style?: React.CSSProperties
   className?: string
   children?: React.ReactNode
   showCollapseToggle?: boolean
 }
 
-export const SidebarAside = React.forwardRef<HTMLDivElement, SidebarAsideProps>(
+export const SidebarAside = React.forwardRef<HTMLElement, SidebarAsideProps>(
   function SidebarAside(
-    { style, className, children, showCollapseToggle = true },
+    {
+      'aria-label': ariaLabel = 'Sidebar',
+      style,
+      className,
+      children,
+      showCollapseToggle: propShowCollapseToggle,
+    },
     ref,
   ) {
-    const { isCollapsed, variant, onCollapseToggle } = useSidebar()
+    const {
+      isCollapsed,
+      variant,
+      onCollapseToggle,
+      showCollapseToggle: contextShowToggle,
+    } = useSidebar()
+    const shouldShowToggle =
+      propShowCollapseToggle !== undefined
+        ? propShowCollapseToggle
+        : (contextShowToggle ?? true)
+
+    const { className: stylexClass, style: stylexStyle } = stylex.props(
+      styles.sidebar,
+      styles[variant],
+      isCollapsed ? styles.collapsed : styles.expanded,
+    )
 
     return (
-      <div
+      <aside
         ref={ref}
-        className={[
-          stylex.props(
-            styles.sidebar,
-            styles[variant],
-            isCollapsed ? styles.collapsed : styles.expanded,
-          ).className,
-          className,
-        ]
-          .filter(Boolean)
-          .join(' ')}
+        aria-label={ariaLabel}
+        className={[stylexClass, className].filter(Boolean).join(' ')}
         style={{
-          ...stylex.props(
-            styles.sidebar,
-            styles[variant],
-            isCollapsed ? styles.collapsed : styles.expanded,
-          ).style,
+          ...stylexStyle,
           ...style,
         }}
       >
         {children}
-        {showCollapseToggle && (
+        {shouldShowToggle && (
           <button
             type="button"
             aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
@@ -569,7 +561,7 @@ export const SidebarAside = React.forwardRef<HTMLDivElement, SidebarAsideProps>(
             {isCollapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
           </button>
         )}
-      </div>
+      </aside>
     )
   },
 )
@@ -584,18 +576,16 @@ export interface SidebarMainProps {
 
 export const SidebarMain = React.forwardRef<HTMLDivElement, SidebarMainProps>(
   function SidebarMain({ style, className, children }, ref) {
+    const { className: stylexClass, style: stylexStyle } = stylex.props(
+      styles.mainContent,
+      style,
+    )
+
     return (
       <div
         ref={ref}
-        className={[
-          stylex.props(styles.mainContent, style).className,
-          className,
-        ]
-          .filter(Boolean)
-          .join(' ')}
-        style={{
-          ...stylex.props(styles.mainContent, style).style,
-        }}
+        className={[stylexClass, className].filter(Boolean).join(' ')}
+        style={stylexStyle}
       >
         {children}
       </div>
