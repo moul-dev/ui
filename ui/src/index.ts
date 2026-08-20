@@ -285,4 +285,5 @@ export type {
 } from './components/Typography/Typography'
 export type { ThemeProviderProps } from './theme/ThemeProvider'
 export { ThemeProvider } from './theme/ThemeProvider'
+export type { Tokens } from './tokens/tokens.stylex'
 export { tokens } from './tokens/tokens.stylex'

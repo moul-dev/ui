@@ -24,9 +24,10 @@ export default defineConfig({
   build: {
     target: 'esnext',
     lib: {
-      entry: resolve(__dirname, 'src/index.ts'),
-      name: 'MoulUI',
-      fileName: 'moul-ui',
+      entry: {
+        'moul-ui': resolve(__dirname, 'src/index.ts'),
+        'tokens.stylex': resolve(__dirname, 'src/tokens/tokens.stylex.ts'),
+      },
       formats: ['es'],
     },
     rollupOptions: {

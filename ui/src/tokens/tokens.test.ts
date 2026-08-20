@@ -91,3 +91,53 @@ describe('Property 2: No hardcoded style values in component definitions', () =>
     })
   })
 })
+
+describe('Design Tokens Export and StyleX Compatibility', () => {
+  test('exports tokens object with complete design token categories', async () => {
+    const { tokens } = await import('./tokens.stylex')
+    expect(tokens).toBeDefined()
+
+    // Core Colors
+    expect(tokens.colorBg).toBeDefined()
+    expect(tokens.colorBgSubtle).toBeDefined()
+    expect(tokens.colorBgElevated).toBeDefined()
+    expect(tokens.colorFg).toBeDefined()
+    expect(tokens.colorFgSubtle).toBeDefined()
+    expect(tokens.colorBorder).toBeDefined()
+    expect(tokens.colorPrimary500).toBeDefined()
+    expect(tokens.colorError500).toBeDefined()
+    expect(tokens.colorWarning500).toBeDefined()
+    expect(tokens.colorSuccess500).toBeDefined()
+
+    // Spacing
+    expect(tokens.spacing1).toBeDefined()
+    expect(tokens.spacing2).toBeDefined()
+    expect(tokens.spacing3).toBeDefined()
+    expect(tokens.spacing4).toBeDefined()
+    expect(tokens.spacing8).toBeDefined()
+
+    // Typography
+    expect(tokens.fontSizeSm).toBeDefined()
+    expect(tokens.fontSizeMd).toBeDefined()
+    expect(tokens.fontWeightMedium).toBeDefined()
+    expect(tokens.fontFamilyBase).toBeDefined()
+
+    // Radius & Shadows
+    expect(tokens.radiusSm).toBeDefined()
+    expect(tokens.radiusMd).toBeDefined()
+    expect(tokens.shadowSm).toBeDefined()
+    expect(tokens.shadowMd).toBeDefined()
+
+    // Charts & Z-Index
+    expect(tokens.colorChart1).toBeDefined()
+    expect(tokens.zIndexModal).toBeDefined()
+  })
+
+  test('can be re-exported and imported from library root index', async () => {
+    const lib = await import('../index')
+    expect(lib.tokens).toBeDefined()
+    expect(lib.tokens.colorBg).toBeDefined()
+    expect(lib.tokens.colorPrimary500).toBeDefined()
+  })
+})
+

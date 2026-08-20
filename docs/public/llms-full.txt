@@ -731,3 +731,19 @@ import { Stat, TopList, PercentageBar, PercentageCircle } from '@moul-dev/ui';
   --brand-font-scale: 1.0;          /* 0.9 to 1.1 */
 }
 ```
+
+### StyleX Token Usage
+```tsx
+import * as stylex from '@stylexjs/stylex';
+import { tokens, type Tokens } from '@moul-dev/ui'; // or '@moul-dev/ui/tokens'
+
+const styles = stylex.create({
+  card: {
+    backgroundColor: tokens.colorBg,
+    color: tokens.colorFg,
+    padding: tokens.spacing4,
+    borderRadius: tokens.radiusMd,
+    borderColor: tokens.colorBorderSubtle,
+  },
+});
+```

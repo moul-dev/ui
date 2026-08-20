@@ -39,6 +39,14 @@
       "types": "./dist/src/index.d.ts",
       "import": "./dist/moul-ui.js"
     },
+    "./tokens": {
+      "types": "./dist/src/tokens/tokens.stylex.d.ts",
+      "import": "./dist/tokens.stylex.js"
+    },
+    "./tokens.stylex": {
+      "types": "./dist/src/tokens/tokens.stylex.d.ts",
+      "import": "./dist/tokens.stylex.js"
+    },
     "./style": {
       "style": "./dist/assets/stylex.css",
       "default": "./dist/assets/stylex.css"

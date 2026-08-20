@@ -178,3 +178,5 @@ export const tokens = stylex.defineVars({
   colorChart7: 'light-dark(oklch(0.64 0.17 145), oklch(0.68 0.15 145))', // Green
   colorChart8: 'light-dark(oklch(0.60 0 0),      oklch(0.65 0 0))', // Gray / Neutral
 })
+
+export type Tokens = typeof tokens
