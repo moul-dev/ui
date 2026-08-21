@@ -333,8 +333,24 @@ export const Logs = React.forwardRef<HTMLDivElement, LogsProps>(function Logs(
   const isFollowRef = React.useRef(isFollow)
   isFollowRef.current = isFollow
 
+  const lastScrollTopRef = React.useRef(0)
+  const isUserInteractingRef = React.useRef(false)
+  const userInteractTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const markUserInteraction = React.useCallback(() => {
+    isUserInteractingRef.current = true
+    if (userInteractTimerRef.current) {
+      clearTimeout(userInteractTimerRef.current)
+    }
+    userInteractTimerRef.current = setTimeout(() => {
+      isUserInteractingRef.current = false
+    }, 300)
+  }, [])
+
   const setIsFollow = React.useCallback(
     (nextFollow: boolean) => {
+      if (isFollowRef.current === nextFollow) return
+      isFollowRef.current = nextFollow
       setInternalFollow(nextFollow)
       onFollowChange?.(nextFollow)
     },
@@ -343,29 +359,58 @@ export const Logs = React.forwardRef<HTMLDivElement, LogsProps>(function Logs(
 
   const tableScrollRef = React.useRef<HTMLDivElement>(null)
 
-  // Scroll listener to pause follow when scrolled up
+  const scrollToBottom = React.useCallback((smooth = true) => {
+    if (!tableScrollRef.current) return
+
+    // Run in requestAnimationFrame so newly rendered rows are fully laid out and measured by browser
+    requestAnimationFrame(() => {
+      if (!tableScrollRef.current) return
+      const el = tableScrollRef.current
+      const target = el.scrollHeight
+      const prefersReducedMotion =
+        typeof window !== 'undefined' &&
+        window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches
+
+      const behavior = smooth && !prefersReducedMotion ? 'smooth' : 'auto'
+
+      if (typeof el.scrollTo === 'function') {
+        el.scrollTo({
+          top: target,
+          behavior,
+        })
+      } else {
+        el.scrollTop = target
+      }
+      lastScrollTopRef.current = target
+    })
+  }, [])
+
+  // Scroll listener to pause follow ONLY when user manually scrolls up away from bottom
   const handleScroll = React.useCallback(() => {
-    if (!tableScrollRef.current || !isFollowRef.current) return
+    if (!tableScrollRef.current) return
     const el = tableScrollRef.current
-    const distanceFromBottom =
-      el.scrollHeight - el.scrollTop - el.clientHeight
-    if (distanceFromBottom > 35) {
-      setIsFollow(false)
+    const currentScrollTop = el.scrollTop
+    const maxScrollTop = el.scrollHeight - el.clientHeight
+    const distanceFromBottom = Math.max(0, maxScrollTop - currentScrollTop)
+
+    // User manually scrolled UP away from bottom: pause follow
+    if (isFollowRef.current) {
+      if (isUserInteractingRef.current && currentScrollTop < lastScrollTopRef.current && distanceFromBottom > 35) {
+        setIsFollow(false)
+      }
+    } else if (isUserInteractingRef.current && distanceFromBottom <= 5) {
+      // User manually scrolled back down to the very bottom: auto-resume follow
+      setIsFollow(true)
     }
+
+    lastScrollTopRef.current = currentScrollTop
   }, [setIsFollow])
 
   const handleToggleFollow = (isSelected?: boolean) => {
     const next = typeof isSelected === 'boolean' ? isSelected : !isFollow
     setIsFollow(next)
-    if (next && tableScrollRef.current) {
-      if (typeof tableScrollRef.current.scrollTo === 'function') {
-        tableScrollRef.current.scrollTo({
-          top: tableScrollRef.current.scrollHeight,
-          behavior: 'smooth',
-        })
-      } else {
-        tableScrollRef.current.scrollTop = tableScrollRef.current.scrollHeight
-      }
+    if (next) {
+      scrollToBottom(true)
     }
   }
 
@@ -451,9 +496,8 @@ export const Logs = React.forwardRef<HTMLDivElement, LogsProps>(function Logs(
   // Auto-scroll when new logs arrive if follow is active
   React.useEffect(() => {
     if (!isFollow || !tableScrollRef.current) return
-    const el = tableScrollRef.current
-    el.scrollTop = el.scrollHeight
-  }, [filteredLogs, isFollow])
+    scrollToBottom()
+  }, [filteredLogs, isFollow, scrollToBottom])
 
   // Find currently selected log item and its index
   const selectedLogItem = React.useMemo(() => {
@@ -812,6 +856,10 @@ export const Logs = React.forwardRef<HTMLDivElement, LogsProps>(function Logs(
       <div
         ref={tableScrollRef}
         onScroll={handleScroll}
+        onWheel={markUserInteraction}
+        onTouchMove={markUserInteraction}
+        onPointerDown={markUserInteraction}
+        onKeyDown={markUserInteraction}
         {...stylex.props(styles.tableScrollContainer)}
         style={maxHeight ? { maxHeight } : undefined}
       >

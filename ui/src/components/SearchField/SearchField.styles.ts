@@ -99,6 +99,20 @@ export const styles = stylex.create({
     fontFamily: tokens.fontFamilyBase,
     outline: 'none',
     boxSizing: 'border-box',
+    '::-webkit-search-cancel-button': {
+      display: 'none',
+      WebkitAppearance: 'none',
+    },
+    '::-webkit-search-decoration': {
+      display: 'none',
+      WebkitAppearance: 'none',
+    },
+    '::-webkit-search-results-button': {
+      display: 'none',
+    },
+    '::-webkit-search-results-decoration': {
+      display: 'none',
+    },
   },
   inputSm: {
     paddingBlock: 0,

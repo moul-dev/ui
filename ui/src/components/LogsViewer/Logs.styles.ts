@@ -72,6 +72,10 @@ export const styles = stylex.create({
     overflowX: 'auto',
     overflowY: 'auto',
     backgroundColor: tokens.colorBg,
+    scrollBehavior: 'smooth',
+    '@media (prefers-reduced-motion: reduce)': {
+      scrollBehavior: 'auto',
+    },
   },
   table: {
     borderCollapse: 'collapse',

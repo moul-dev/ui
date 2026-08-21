@@ -325,9 +325,9 @@ describe('Logs component suite', () => {
     expect(screen.getByText('Alias Test')).toBeInTheDocument()
   })
 
-  test('toggles follow mode and calls onFollowChange', () => {
+  test('toggles follow mode and calls onFollowChange', async () => {
     const onFollowChangeSpy = vi.fn()
-    render(
+    const { container } = render(
       <Logs
         data={SERVER_LOGS}
         defaultFollow={false}
@@ -342,6 +342,36 @@ describe('Logs component suite', () => {
     fireEvent.click(followBtn)
     expect(onFollowChangeSpy).toHaveBeenCalledWith(true)
     expect(screen.getByLabelText('Pause live follow')).toBeInTheDocument()
+
+    // Allow microtasks from scrollToBottom to settle
+    await Promise.resolve()
+
+    // Find the scroll container
+    const scrollContainer =
+      container.querySelector('table')?.parentElement
+    expect(scrollContainer).toBeInTheDocument()
+
+    if (scrollContainer) {
+      // Set initial bottom scroll position
+      Object.defineProperty(scrollContainer, 'scrollHeight', { value: 1000, writable: true, configurable: true })
+      Object.defineProperty(scrollContainer, 'clientHeight', { value: 300, writable: true, configurable: true })
+      Object.defineProperty(scrollContainer, 'scrollTop', { value: 700, writable: true, configurable: true })
+      fireEvent.scroll(scrollContainer)
+
+      // Simulate scrolling up (distanceFromBottom > 35 and scrollTop decreased with user interaction)
+      fireEvent.wheel(scrollContainer)
+      Object.defineProperty(scrollContainer, 'scrollTop', { value: 100, writable: true, configurable: true }) // distanceFromBottom = 600
+      fireEvent.scroll(scrollContainer)
+      expect(onFollowChangeSpy).toHaveBeenCalledWith(false)
+      expect(screen.getByLabelText('Follow latest logs')).toBeInTheDocument()
+
+      // Simulate scrolling back to the bottom with user interaction (distanceFromBottom <= 5)
+      fireEvent.wheel(scrollContainer)
+      Object.defineProperty(scrollContainer, 'scrollTop', { value: 700, writable: true, configurable: true }) // distanceFromBottom = 0
+      fireEvent.scroll(scrollContainer)
+      expect(onFollowChangeSpy).toHaveBeenCalledWith(true)
+      expect(screen.getByLabelText('Pause live follow')).toBeInTheDocument()
+    }
   })
 
   test('renders search filter input, level filter buttons, and action buttons in top toolbar', () => {
