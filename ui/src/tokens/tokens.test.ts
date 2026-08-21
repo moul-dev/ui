@@ -139,4 +139,18 @@ describe('Design Tokens Export and StyleX Compatibility', () => {
     expect(lib.tokens.colorBg).toBeDefined()
     expect(lib.tokens.colorPrimary500).toBeDefined()
   })
+
+  test('built dist/tokens.stylex.js contains actual token values instead of internal var hashes', () => {
+    const distPath = 'dist/tokens.stylex.js'
+    if (fs.existsSync(distPath)) {
+      const content = fs.readFileSync(distPath, 'utf-8')
+      // Ensure actual color definitions are preserved
+      expect(content).toContain('light-dark(oklch(')
+      expect(content).toContain('colorAlertBorderAccent')
+      expect(content).toContain('colorBg')
+      // Ensure it does not contain compiled internal var hashes like "var(--xtwqyzw)"
+      expect(content).not.toMatch(/:\s*['"]var\(--x[a-z0-9]+\)['"]/)
+    }
+  })
 })
+
