@@ -25,4 +25,3 @@ export {
   parseLogs,
   stripAttributes,
 } from './parseLogs'
-

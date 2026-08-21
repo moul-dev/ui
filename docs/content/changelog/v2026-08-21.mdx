@@ -1,0 +1,141 @@
+---
+title: v2026.08.21 — Logs Viewer, Drawer Component, StyleX Tokens & Developer Experience
+description: Introducing the high-performance Logs stream viewer with slide-out drawer inspection, the accessible multi-directional Drawer primitive, public StyleX tokens exports, and versioning workflow automation.
+date: 2026-08-21
+author: Phearak S. Tha
+avatar: https://github.com/thasophearak.png
+---
+
+This release expands **Moul UI** with powerful new developer and dashboard primitives, led by the high-performance **Logs Viewer**, the multi-directional **Drawer** overlay, direct **StyleX Tokens** exports, and automated versioning tooling.
+
+---
+
+## 🪵 High-Performance Logs & Stream Viewer
+
+We have introduced the `Logs` and `LogsViewer` components (`/docs/components/logs` and `/docs/blocks/logs`), a high-performance log inspection and streaming system designed for cloud consoles, telemetry dashboards, and developer tooling.
+
+- **React Aria Table Foundation:** Full ARIA grid accessibility, keyboard navigation, row selection, and accessible headers.
+- **Real-Time Follow Mode:** Auto-tails incoming log streams with smooth scrolling lock, automatically pausing follow mode when the user scrolls up and resuming when returned to the bottom.
+- **Severity Level Filtering:** Instant filter chips for `All`, `Errors`, `Warnings`, `Info`, `Debug`, and `Trace` with live event counters.
+- **Live Search & Highlighting:** Real-time substring and regex searching with keyword highlighting across message text, timestamps, and metadata attributes.
+- **Key-Value Attribute Chips:** Automatic detection and extraction of structured key-value pairs (e.g. `status=200`, `latency="182.4µs"`, `path="/api/..."`, `error="..."`).
+- **Slide-out Drawer Inspector:** Integrated `<Drawer>` inspector displaying formatted messages, structured fields table, raw terminal output, formatted JSON view, and one-click copy.
+- **Display Modes & Operations:** Compact density mode, line numbers toggle, timestamp visibility toggle, line wrap controls, and export/copy utilities.
+
+```tsx
+import { Logs, SERVER_LOGS } from '@moul-dev/ui';
+
+export function ServerLogsConsole() {
+  return (
+    <Logs
+      data={SERVER_LOGS}
+      title="Cluster Server Logs"
+      inspectorMode="drawer"
+      drawerPlacement="right"
+      maxHeight="480px"
+    />
+  );
+}
+```
+
+---
+
+## 🗄️ Multi-Directional Drawer Component
+
+The new `Drawer` primitive (`/docs/components/drawer`) delivers accessible slide-over panels and sheet overlays built on React Aria Dialog primitives and StyleX animation tokens.
+
+- **Multi-Directional Placements:** Slide-in transitions from `right`, `left`, `top`, or `bottom`.
+- **Responsive Sizing:** Built-in size presets (`sm`, `md`, `lg`, `full`) with automatic full-width adaptation on mobile viewports.
+- **Compound Architecture:** Structured subcomponents for seamless composition:
+  - `<DrawerOverlay>`
+  - `<Drawer>`
+  - `<DrawerDialog>`
+  - `<DrawerHeader>`
+  - `<DrawerTitle>`
+  - `<DrawerCloseButton>`
+  - `<DrawerBody>`
+  - `<DrawerFooter>`
+- **Motion & Accessibility:** Backdrop blur styling, GPU-accelerated enter/exit transitions, focus trapping, and Escape key dismissal.
+
+```tsx
+import {
+  Button,
+  Drawer,
+  DrawerBody,
+  DrawerCloseButton,
+  DrawerDialog,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerOverlay,
+  DrawerTitle,
+} from '@moul-dev/ui';
+import { useState } from 'react';
+
+export function DrawerExample() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <>
+      <Button onPress={() => setIsOpen(true)}>Open Drawer</Button>
+      <DrawerOverlay isOpen={isOpen} onOpenChange={setIsOpen} placement="right" size="md" isDismissable>
+        <Drawer placement="right" size="md">
+          <DrawerDialog>
+            <DrawerHeader>
+              <DrawerTitle>Account Settings</DrawerTitle>
+              <DrawerCloseButton />
+            </DrawerHeader>
+            <DrawerBody>
+              <p>Manage your workspace preferences and profile settings.</p>
+            </DrawerBody>
+            <DrawerFooter>
+              <Button variant="secondary" onPress={() => setIsOpen(false)}>Cancel</Button>
+              <Button variant="primary" onPress={() => setIsOpen(false)}>Save Changes</Button>
+            </DrawerFooter>
+          </DrawerDialog>
+        </Drawer>
+      </DrawerOverlay>
+    </>
+  );
+}
+```
+
+---
+
+## 🎨 Public StyleX Design Tokens Export
+
+Consumers can now import and reference the core StyleX design tokens directly from `@moul-dev/ui`:
+
+```tsx
+import { tokens } from '@moul-dev/ui';
+import * as stylex from '@stylexjs/stylex';
+
+const styles = stylex.create({
+  card: {
+    backgroundColor: tokens.surfaceElevated,
+    borderColor: tokens.borderSubtle,
+    borderRadius: tokens.radiusLg,
+    padding: tokens.space4,
+    color: tokens.textPrimary,
+  },
+});
+```
+
+- Enables seamless custom component styling while staying synchronized with Moul UI's color system, typography scale, spacing, and radius tokens.
+- Updated package exports and Vite library build configurations to bundle type definitions for `tokens`.
+
+---
+
+## 🧩 Component Refinements & Testing
+
+- **Sidebar:** Refined collapsible sidebar mechanics and navigation states, optimized layout padding, and added comprehensive unit test suite (`Sidebar.test.tsx`).
+- **ToggleButton & Button:** Added new size tokens, active state indicators, and layout alignment for toolbar clusters.
+- **ChartContainer & Card:** Improved theme token propagation and responsive chart scaling across varied container widths.
+- **Form Inputs:** Polished focus rings, hover indicators, and border contrast for `SearchField`, `NumberField`, `ComboBox`, `TextField`, and `TextArea`.
+
+---
+
+## 🛠️ Developer Experience & Tooling
+
+- **Automated CalVer Bump Script:** Added `bun run bump` (`scripts/bump-version.ts`) to automate synchronized version bumps across root and workspace `package.json`, React index exports, metadata attributes, documentation badges, and AI agent context files.
+- **Dynamic Open Graph Images:** Integrated server-rendered Open Graph card generation (`docs/src/components/open-graph.tsx`, `docs/src/lib/og.ts`) across docs pages, changelog posts, and preview routes.
+- **Documentation UX:** Refined package manager selector tab focus outlines and navigation links.

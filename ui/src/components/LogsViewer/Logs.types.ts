@@ -215,4 +215,3 @@ export interface LogsProps
 }
 
 export type LogsViewerProps = LogsProps
-

@@ -140,4 +140,3 @@ describe('Design Tokens Export and StyleX Compatibility', () => {
     expect(lib.tokens.colorPrimary500).toBeDefined()
   })
 })
-

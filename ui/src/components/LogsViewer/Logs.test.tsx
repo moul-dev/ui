@@ -347,27 +347,46 @@ describe('Logs component suite', () => {
     await Promise.resolve()
 
     // Find the scroll container
-    const scrollContainer =
-      container.querySelector('table')?.parentElement
+    const scrollContainer = container.querySelector('table')?.parentElement
     expect(scrollContainer).toBeInTheDocument()
 
     if (scrollContainer) {
       // Set initial bottom scroll position
-      Object.defineProperty(scrollContainer, 'scrollHeight', { value: 1000, writable: true, configurable: true })
-      Object.defineProperty(scrollContainer, 'clientHeight', { value: 300, writable: true, configurable: true })
-      Object.defineProperty(scrollContainer, 'scrollTop', { value: 700, writable: true, configurable: true })
+      Object.defineProperty(scrollContainer, 'scrollHeight', {
+        value: 1000,
+        writable: true,
+        configurable: true,
+      })
+      Object.defineProperty(scrollContainer, 'clientHeight', {
+        value: 300,
+        writable: true,
+        configurable: true,
+      })
+      Object.defineProperty(scrollContainer, 'scrollTop', {
+        value: 700,
+        writable: true,
+        configurable: true,
+      })
       fireEvent.scroll(scrollContainer)
 
       // Simulate scrolling up (distanceFromBottom > 35 and scrollTop decreased with user interaction)
       fireEvent.wheel(scrollContainer)
-      Object.defineProperty(scrollContainer, 'scrollTop', { value: 100, writable: true, configurable: true }) // distanceFromBottom = 600
+      Object.defineProperty(scrollContainer, 'scrollTop', {
+        value: 100,
+        writable: true,
+        configurable: true,
+      }) // distanceFromBottom = 600
       fireEvent.scroll(scrollContainer)
       expect(onFollowChangeSpy).toHaveBeenCalledWith(false)
       expect(screen.getByLabelText('Follow latest logs')).toBeInTheDocument()
 
       // Simulate scrolling back to the bottom with user interaction (distanceFromBottom <= 5)
       fireEvent.wheel(scrollContainer)
-      Object.defineProperty(scrollContainer, 'scrollTop', { value: 700, writable: true, configurable: true }) // distanceFromBottom = 0
+      Object.defineProperty(scrollContainer, 'scrollTop', {
+        value: 700,
+        writable: true,
+        configurable: true,
+      }) // distanceFromBottom = 0
       fireEvent.scroll(scrollContainer)
       expect(onFollowChangeSpy).toHaveBeenCalledWith(true)
       expect(screen.getByLabelText('Pause live follow')).toBeInTheDocument()
@@ -442,4 +461,3 @@ describe('HighlightText component', () => {
     expect(mark?.getAttribute('aria-label')).toBe('highlighted match: Timeout')
   })
 })
-

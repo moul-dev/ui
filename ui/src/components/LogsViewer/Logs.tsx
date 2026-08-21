@@ -335,7 +335,9 @@ export const Logs = React.forwardRef<HTMLDivElement, LogsProps>(function Logs(
 
   const lastScrollTopRef = React.useRef(0)
   const isUserInteractingRef = React.useRef(false)
-  const userInteractTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null)
+  const userInteractTimerRef = React.useRef<ReturnType<
+    typeof setTimeout
+  > | null>(null)
 
   const markUserInteraction = React.useCallback(() => {
     isUserInteractingRef.current = true
@@ -395,7 +397,11 @@ export const Logs = React.forwardRef<HTMLDivElement, LogsProps>(function Logs(
 
     // User manually scrolled UP away from bottom: pause follow
     if (isFollowRef.current) {
-      if (isUserInteractingRef.current && currentScrollTop < lastScrollTopRef.current && distanceFromBottom > 35) {
+      if (
+        isUserInteractingRef.current &&
+        currentScrollTop < lastScrollTopRef.current &&
+        distanceFromBottom > 35
+      ) {
         setIsFollow(false)
       }
     } else if (isUserInteractingRef.current && distanceFromBottom <= 5) {
@@ -480,10 +486,10 @@ export const Logs = React.forwardRef<HTMLDivElement, LogsProps>(function Logs(
         const matchRaw = log.raw?.toLowerCase().includes(query)
         const matchAttributes = log.attributes
           ? Object.entries(log.attributes).some(
-            ([k, v]) =>
-              k.toLowerCase().includes(query) ||
-              String(v).toLowerCase().includes(query),
-          )
+              ([k, v]) =>
+                k.toLowerCase().includes(query) ||
+                String(v).toLowerCase().includes(query),
+            )
           : false
 
         return matchMessage || matchTimestamp || matchRaw || matchAttributes
@@ -1156,11 +1162,7 @@ export const Logs = React.forwardRef<HTMLDivElement, LogsProps>(function Logs(
                     {k === 'status' && typeof v === 'number' ? (
                       <Badge
                         variant={
-                          v >= 500
-                            ? 'error'
-                            : v >= 400
-                              ? 'warning'
-                              : 'success'
+                          v >= 500 ? 'error' : v >= 400 ? 'warning' : 'success'
                         }
                       >
                         {v}
@@ -1209,9 +1211,7 @@ export const Logs = React.forwardRef<HTMLDivElement, LogsProps>(function Logs(
               <DrawerHeader>
                 <div {...stylex.props(styles.drawerHeaderSingleLine)}>
                   <div {...stylex.props(styles.drawerHeaderTitleGroup)}>
-                    <DrawerTitle>
-                      Log #{selectedLogItem.lineNumber}
-                    </DrawerTitle>
+                    <DrawerTitle>Log #{selectedLogItem.lineNumber}</DrawerTitle>
                     <LogLevelBadge level={selectedLogItem.level} />
                     {selectedLogItem.timestamp && (
                       <span {...stylex.props(styles.drawerHeaderTimestamp)}>
@@ -1285,7 +1285,7 @@ export const Logs = React.forwardRef<HTMLDivElement, LogsProps>(function Logs(
                                   </span>
                                   <span {...stylex.props(styles.drawerAttrVal)}>
                                     {key === 'status' &&
-                                      typeof val === 'number' ? (
+                                    typeof val === 'number' ? (
                                       <Badge
                                         variant={
                                           val >= 500
@@ -1412,4 +1412,3 @@ export const Logs = React.forwardRef<HTMLDivElement, LogsProps>(function Logs(
 })
 
 export const LogsViewer = Logs
-

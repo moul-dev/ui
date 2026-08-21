@@ -60,10 +60,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             styles.base,
             styles[variant],
             styles[size],
-            isIcon &&
-              styles[
-                `icon${sizeSuffix}` as keyof typeof styles
-              ],
+            isIcon && styles[`icon${sizeSuffix}` as keyof typeof styles],
             renderProps.isPending && styles.isPending,
             renderProps.isDisabled && styles.isDisabled,
             style,
@@ -75,10 +72,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             styles.base,
             styles[variant],
             styles[size],
-            isIcon &&
-              styles[
-                `icon${sizeSuffix}` as keyof typeof styles
-              ],
+            isIcon && styles[`icon${sizeSuffix}` as keyof typeof styles],
             renderProps.isPending && styles.isPending,
             renderProps.isDisabled && styles.isDisabled,
             style,
