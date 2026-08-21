@@ -343,6 +343,47 @@ describe('Logs component suite', () => {
     expect(onFollowChangeSpy).toHaveBeenCalledWith(true)
     expect(screen.getByLabelText('Pause live follow')).toBeInTheDocument()
   })
+
+  test('renders search filter input, level filter buttons, and action buttons in top toolbar', () => {
+    const onClearSpy = vi.fn()
+    const onDownloadSpy = vi.fn()
+    render(
+      <Logs
+        data={SERVER_LOGS}
+        title="App Logs"
+        showToolbar={true}
+        showFollowButton={true}
+        onClear={onClearSpy}
+        onDownload={onDownloadSpy}
+      />,
+    )
+
+    // Search input
+    const searchField = screen.getByLabelText('Filter logs')
+    expect(searchField).toBeInTheDocument()
+
+    // Filter level pills in ToggleButtonGroup
+    const allRadio = screen.getByRole('radio', { name: /All/i })
+    const errorRadio = screen.getByRole('radio', { name: /Errors/i })
+    const warnRadio = screen.getByRole('radio', { name: /Warnings/i })
+    const infoRadio = screen.getByRole('radio', { name: /Info/i })
+    const debugRadio = screen.getByRole('radio', { name: /Debug/i })
+    expect(allRadio).toBeInTheDocument()
+    expect(errorRadio).toBeInTheDocument()
+    expect(warnRadio).toBeInTheDocument()
+    expect(infoRadio).toBeInTheDocument()
+    expect(debugRadio).toBeInTheDocument()
+
+    // Toolbar action buttons
+    const followButton = screen.getByLabelText('Follow latest logs')
+    const copyButton = screen.getByLabelText('Copy filtered logs')
+    const exportButton = screen.getByLabelText('Export logs')
+    const clearButton = screen.getByLabelText('Clear logs')
+    expect(followButton).toBeInTheDocument()
+    expect(copyButton).toBeInTheDocument()
+    expect(exportButton).toBeInTheDocument()
+    expect(clearButton).toBeInTheDocument()
+  })
 })
 
 describe('HighlightText component', () => {

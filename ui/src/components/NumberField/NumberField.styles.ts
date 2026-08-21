@@ -13,12 +13,20 @@ export const styles = stylex.create({
     alignItems: 'stretch',
     borderWidth: '1px',
     borderStyle: 'solid',
+    borderColor: tokens.colorBorder,
+    backgroundColor: tokens.colorBg,
     boxShadow: tokens.shadowSm,
     overflow: 'hidden',
     boxSizing: 'border-box',
     transitionProperty: 'border-color, box-shadow',
     transitionDuration: '0.15s',
     transitionTimingFunction: 'ease-in-out',
+    ':hover': {
+      borderColor: tokens.colorNeutral400,
+    },
+    '@media (prefers-reduced-motion: reduce)': {
+      transitionProperty: 'none',
+    },
   },
   groupSm: {
     height: `calc(${tokens.spacing1} * 2 + ${tokens.lineHeightXs})`,

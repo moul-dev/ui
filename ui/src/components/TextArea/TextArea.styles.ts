@@ -18,6 +18,8 @@ export const styles = stylex.create({
     borderRadius: tokens.radiusMd,
     borderWidth: '1px',
     borderStyle: 'solid',
+    borderColor: tokens.colorBorder,
+    backgroundColor: tokens.colorBg,
     color: tokens.colorFg,
     fontFamily: tokens.fontFamilyBase,
     fontSize: tokens.fontSizeMd,

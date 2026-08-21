@@ -13,6 +13,8 @@ export const styles = stylex.create({
     width: '100%',
     borderWidth: '1px',
     borderStyle: 'solid',
+    borderColor: tokens.colorBorder,
+    backgroundColor: tokens.colorBg,
     color: tokens.colorFg,
     fontFamily: tokens.fontFamilyBase,
     outline: 'none',

@@ -10,6 +10,7 @@ export const styles = stylex.create({
     gap: tokens.spacing2,
     fontWeight: tokens.fontWeightMedium,
     cursor: 'pointer',
+    boxSizing: 'border-box',
     transitionProperty: 'background-color, border-color, box-shadow, transform',
     transitionDuration: '0.15s',
     transitionTimingFunction: 'ease-in-out',

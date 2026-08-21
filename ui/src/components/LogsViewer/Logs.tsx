@@ -435,10 +435,10 @@ export const Logs = React.forwardRef<HTMLDivElement, LogsProps>(function Logs(
         const matchRaw = log.raw?.toLowerCase().includes(query)
         const matchAttributes = log.attributes
           ? Object.entries(log.attributes).some(
-              ([k, v]) =>
-                k.toLowerCase().includes(query) ||
-                String(v).toLowerCase().includes(query),
-            )
+            ([k, v]) =>
+              k.toLowerCase().includes(query) ||
+              String(v).toLowerCase().includes(query),
+          )
           : false
 
         return matchMessage || matchTimestamp || matchRaw || matchAttributes
@@ -752,7 +752,6 @@ export const Logs = React.forwardRef<HTMLDivElement, LogsProps>(function Logs(
                 placeholder={searchPlaceholder}
                 value={searchQuery}
                 onChange={handleSearchChange}
-                variant="secondary"
               />
             </div>
 
@@ -1238,7 +1237,7 @@ export const Logs = React.forwardRef<HTMLDivElement, LogsProps>(function Logs(
                                   </span>
                                   <span {...stylex.props(styles.drawerAttrVal)}>
                                     {key === 'status' &&
-                                    typeof val === 'number' ? (
+                                      typeof val === 'number' ? (
                                       <Badge
                                         variant={
                                           val >= 500
