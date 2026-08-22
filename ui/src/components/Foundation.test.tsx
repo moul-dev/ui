@@ -202,6 +202,20 @@ describe('Spinner component', () => {
     expect(warnSpy).not.toHaveBeenCalled()
   })
 
+  test('supports size prop (sm, md, lg, xl)', () => {
+    const { container } = render(
+      <>
+        <Spinner size="sm" aria-label="Small" />
+        <Spinner size="md" aria-label="Medium" />
+        <Spinner size="lg" aria-label="Large" />
+        <Spinner size="xl" aria-label="Extra Large" />
+      </>,
+    )
+
+    const spinners = container.querySelectorAll('[role="progressbar"]')
+    expect(spinners.length).toBe(4)
+  })
+
   test('includes prefers-reduced-motion CSS rule', () => {
     const spinnerStylesPath = path.resolve(
       __dirname,
@@ -222,6 +236,24 @@ describe('Skeleton component', () => {
     expect(element).toBeInTheDocument()
     expect(element.className).toContain('custom-skeleton')
     expect(ref.current).toBe(element)
+  })
+
+  test('supports shape variants (block, text, circle)', () => {
+    const { container: blockContainer } = render(<Skeleton variant="block" />)
+    const { container: textContainer } = render(<Skeleton variant="text" />)
+    const { container: circleContainer } = render(<Skeleton variant="circle" />)
+
+    expect(blockContainer.querySelector('[role="status"]')).toBeInTheDocument()
+    expect(textContainer.querySelector('[role="status"]')).toBeInTheDocument()
+    expect(circleContainer.querySelector('[role="status"]')).toBeInTheDocument()
+  })
+
+  test('renders multiple skeleton items when count > 1', () => {
+    const { container } = render(<Skeleton count={4} variant="text" />)
+    const wrapper = container.querySelector('[role="status"]')
+    expect(wrapper).toBeInTheDocument()
+    const items = container.querySelectorAll('[aria-hidden="true"]')
+    expect(items.length).toBe(4)
   })
 
   test('includes prefers-reduced-motion CSS rule', () => {

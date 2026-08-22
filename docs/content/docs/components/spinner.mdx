@@ -1,20 +1,24 @@
 ---
 title: Spinner
-description: Documentation for the Spinner component.
+description: Accessible loading indicator supporting multiple size scales.
 ---
 
 import { Spinner } from '@moul-dev/ui';
 
-
 # Spinner
+
+The `Spinner` component is an accessible animated indicator informing users of ongoing asynchronous processes and loading states.
 
 ## Preview
 
 <ComponentPreview>
-  <Spinner />
+  <div className="flex items-center gap-6">
+    <Spinner size="sm" aria-label="Loading small" />
+    <Spinner size="md" aria-label="Loading medium" />
+    <Spinner size="lg" aria-label="Loading large" />
+    <Spinner size="xl" aria-label="Loading extra large" />
+  </div>
 </ComponentPreview>
-
-The `Spinner` component is built with React Aria and styled using StyleX.
 
 ## Import
 
@@ -22,18 +26,62 @@ The `Spinner` component is built with React Aria and styled using StyleX.
 import { Spinner } from '@moul-dev/ui';
 ```
 
-## Usage
+## Sizes
 
-Here is a basic example of how to use the `Spinner` component:
+`Spinner` supports four standardized sizes: `sm`, `md` (default), `lg`, and `xl`.
+
+<ComponentPreview>
+  <div className="flex items-center gap-6">
+    <div className="flex flex-col items-center gap-2">
+      <Spinner size="sm" aria-label="Small" />
+      <span className="text-xs text-neutral-400">sm (16px)</span>
+    </div>
+    <div className="flex flex-col items-center gap-2">
+      <Spinner size="md" aria-label="Medium" />
+      <span className="text-xs text-neutral-400">md (20px)</span>
+    </div>
+    <div className="flex flex-col items-center gap-2">
+      <Spinner size="lg" aria-label="Large" />
+      <span className="text-xs text-neutral-400">lg (28px)</span>
+    </div>
+    <div className="flex flex-col items-center gap-2">
+      <Spinner size="xl" aria-label="Extra Large" />
+      <span className="text-xs text-neutral-400">xl (32px)</span>
+    </div>
+  </div>
+</ComponentPreview>
 
 ```tsx
-import { Spinner } from '@moul-dev/ui';
-
-export default function Example() {
-  return (
-    <Spinner>
-      {/* Component content */}
-    </Spinner>
-  );
-}
+<Spinner size="sm" aria-label="Loading" />
+<Spinner size="md" aria-label="Loading" />
+<Spinner size="lg" aria-label="Loading" />
+<Spinner size="xl" aria-label="Loading" />
 ```
+
+## Accessibility
+
+When using `Spinner`, always supply an `aria-label` or `aria-labelledby` attribute so screen readers announce the loading progress.
+
+```tsx
+<Spinner aria-label="Fetching dashboard telemetry..." />
+```
+
+## Props
+
+<TypeTable
+  type={{
+    size: {
+      type: "'sm' | 'md' | 'lg' | 'xl'",
+      default: "'md'",
+      description: 'The dimensions of the spinner.',
+    },
+    'aria-label': {
+      type: 'string',
+      description: 'Accessible label announcing the loading operation.',
+    },
+    className: {
+      type: 'string',
+      description: 'Custom CSS class name for the spinner element.',
+    },
+  }}
+/>

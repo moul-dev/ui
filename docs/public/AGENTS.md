@@ -409,9 +409,11 @@ import { Alert } from '@moul-dev/ui';
 ```tsx
 import { Badge, Avatar } from '@moul-dev/ui';
 
-// Badge Variants: 'default' | 'primary' | 'success' | 'warning' | 'danger' | 'info' | 'neutral' | 'outline'
-<Badge variant="success" size="md">Operational</Badge>
-<Badge variant="danger" size="sm">Degraded</Badge>
+// Badge Variants: 'neutral' | 'primary' | 'success' | 'warning' | 'error' | 'dot'
+// Sizes: 'sm' | 'md' | 'lg', with optional dot status indicator
+<Badge variant="success" size="md" dot>Operational</Badge>
+<Badge variant="error" size="sm" dot>Degraded</Badge>
+<Badge variant="dot">Status</Badge>
 
 // Avatar Sizes: 'xs' | 'sm' | 'md' | 'lg' | 'xl'
 <Avatar
@@ -421,6 +423,18 @@ import { Badge, Avatar } from '@moul-dev/ui';
   size="md"
   status="online"
 />
+```
+
+#### `Spinner` & `Skeleton`
+```tsx
+import { Spinner, Skeleton } from '@moul-dev/ui';
+
+// Spinner Sizes: 'sm' | 'md' | 'lg' | 'xl'
+<Spinner size="md" aria-label="Loading..." />
+
+// Skeleton Shapes: 'block' | 'text' | 'circle', with count prop
+<Skeleton variant="circle" />
+<Skeleton variant="text" count={3} />
 ```
 
 #### `Toast`
@@ -485,26 +499,32 @@ import { Tabs, TabList, Tab, TabPanels, TabPanel } from '@moul-dev/ui';
 
 #### `Table`
 ```tsx
-import { Table, TableHeader, Column, TableBody, Row, Cell } from '@moul-dev/ui';
+import { Table, TableHeader, Column, TableBody, Row, Cell, Badge } from '@moul-dev/ui';
 
-<Table aria-label="Transactions table" selectionMode="multiple">
+<Table
+  aria-label="Transactions table"
+  selectionMode="multiple"
+  stickyHeader
+  sortDescriptor={{ column: 'txId', direction: 'ascending' }}
+  onSortChange={(descriptor) => console.log(descriptor)}
+>
   <TableHeader>
-    <Column isRowHeader>Transaction ID</Column>
-    <Column>Amount</Column>
-    <Column>Status</Column>
-    <Column>Date</Column>
+    <Column id="txId" isRowHeader allowsSorting>Transaction ID</Column>
+    <Column id="amount" allowsSorting>Amount</Column>
+    <Column id="status">Status</Column>
+    <Column id="date" allowsSorting>Date</Column>
   </TableHeader>
   <TableBody>
     <Row id="tx-101">
       <Cell>TX-98402</Cell>
       <Cell>$1,240.00</Cell>
-      <Cell>Completed</Cell>
+      <Cell><Badge variant="success" size="sm" dot>Completed</Badge></Cell>
       <Cell>2026-08-16</Cell>
     </Row>
     <Row id="tx-102">
       <Cell>TX-98403</Cell>
       <Cell>$89.50</Cell>
-      <Cell>Pending</Cell>
+      <Cell><Badge variant="warning" size="sm" dot>Pending</Badge></Cell>
       <Cell>2026-08-17</Cell>
     </Row>
   </TableBody>

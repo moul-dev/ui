@@ -32,6 +32,36 @@ describe('Badge component', () => {
     const element = getByText('Done')
     expect(element.className).toContain('custom-badge-class')
   })
+
+  test('supports size prop (sm, md, lg)', () => {
+    const { getByText: getSm } = render(<Badge size="sm">Small</Badge>)
+    const { getByText: getMd } = render(<Badge size="md">Medium</Badge>)
+    const { getByText: getLg } = render(<Badge size="lg">Large</Badge>)
+
+    expect(getSm('Small')).toBeInTheDocument()
+    expect(getMd('Medium')).toBeInTheDocument()
+    expect(getLg('Large')).toBeInTheDocument()
+  })
+
+  test('renders dot status indicator when dot prop is true', () => {
+    const { container, getByText } = render(
+      <Badge variant="success" dot>
+        Active
+      </Badge>,
+    )
+    expect(getByText('Active')).toBeInTheDocument()
+    const dot = container.querySelector('[aria-hidden="true"]')
+    expect(dot).toBeInTheDocument()
+  })
+
+  test('renders dot variant correctly', () => {
+    const { container, getByText } = render(
+      <Badge variant="dot">Status Dot</Badge>,
+    )
+    expect(getByText('Status Dot')).toBeInTheDocument()
+    const dot = container.querySelector('[aria-hidden="true"]')
+    expect(dot).toBeInTheDocument()
+  })
 })
 
 describe('Avatar component', () => {

@@ -1,60 +1,259 @@
 ---
 title: Table
-description: Documentation for the Table component.
+description: Accessible data table component built on React Aria Components and StyleX with sticky headers, column sorting, selection, loading states, and empty state slots.
 reactAria: Table
 ---
 
-import { Table, TableHeader, TableBody, Row, Column, Cell } from '@moul-dev/ui';
-
+import { Table, TableHeader, TableBody, Row, Column, Cell, Badge } from '@moul-dev/ui';
 
 # Table
 
+The `Table` component renders accessible, keyboard-navigable data tables with built-in sticky headers, interactive column sorting with visual direction indicators, single and multiple row selection, and customizable loading and empty state slots.
+
 ## Preview
 
+<ComponentPlayground component="Table" />
+
+## Import
+
+```tsx
+import {
+  Table,
+  TableHeader,
+  Column,
+  TableBody,
+  Row,
+  Cell,
+} from '@moul-dev/ui';
+```
+
+## Interactive Table Demo
+
+Experience interactive column sorting, search filtering, row selection, sticky header, and loading/empty state toggling:
+
 <ComponentPreview>
-  <Table aria-label="Simple Table" className="border border-neutral-200 dark:border-neutral-800 rounded-lg overflow-hidden w-96">
+  <TableDemo />
+</ComponentPreview>
+
+## Basic Usage
+
+Construct a table declaratively with compound subcomponents:
+
+<ComponentPreview>
+  <Table aria-label="Services Table" className="border border-neutral-200 dark:border-neutral-800 rounded-lg overflow-hidden w-full max-w-xl">
     <TableHeader>
-      <Column isRowHeader>Name</Column>
-      <Column>Type</Column>
+      <Column isRowHeader>Service</Column>
+      <Column>Cluster</Column>
       <Column>Status</Column>
     </TableHeader>
     <TableBody>
       <Row>
-        <Cell>Button</Cell>
-        <Cell>Action</Cell>
-        <Cell>Stable</Cell>
+        <Cell>Auth Gateway</Cell>
+        <Cell>us-east-1</Cell>
+        <Cell><Badge variant="success" size="sm" dot>Active</Badge></Cell>
       </Row>
       <Row>
-        <Cell>Select</Cell>
-        <Cell>Form</Cell>
-        <Cell>Beta</Cell>
+        <Cell>Telemetry Queue</Cell>
+        <Cell>eu-central-1</Cell>
+        <Cell><Badge variant="success" size="sm" dot>Active</Badge></Cell>
+      </Row>
+      <Row>
+        <Cell>Search Indexer</Cell>
+        <Cell>ap-northeast-1</Cell>
+        <Cell><Badge variant="warning" size="sm" dot>Degraded</Badge></Cell>
       </Row>
     </TableBody>
   </Table>
 </ComponentPreview>
 
-The `Table` component is built with React Aria and styled using StyleX.
-
-## Import
-
 ```tsx
-import { Table } from '@moul-dev/ui';
-```
-
-## Usage
-
-Here is a basic example of how to use the `Table` component:
-
-```tsx
-import { Table } from '@moul-dev/ui';
+import { Table, TableHeader, Column, TableBody, Row, Cell, Badge } from '@moul-dev/ui';
 
 export default function Example() {
   return (
-    <Table>
-      {/* Component content */}
+    <Table aria-label="Services Table">
+      <TableHeader>
+        <Column isRowHeader>Service</Column>
+        <Column>Cluster</Column>
+        <Column>Status</Column>
+      </TableHeader>
+      <TableBody>
+        <Row>
+          <Cell>Auth Gateway</Cell>
+          <Cell>us-east-1</Cell>
+          <Cell><Badge variant="success" size="sm" dot>Active</Badge></Cell>
+        </Row>
+        <Row>
+          <Cell>Telemetry Queue</Cell>
+          <Cell>eu-central-1</Cell>
+          <Cell><Badge variant="success" size="sm" dot>Active</Badge></Cell>
+        </Row>
+        <Row>
+          <Cell>Search Indexer</Cell>
+          <Cell>ap-northeast-1</Cell>
+          <Cell><Badge variant="warning" size="sm" dot>Degraded</Badge></Cell>
+        </Row>
+      </TableBody>
     </Table>
   );
 }
+```
+
+## Column Sorting
+
+Set `allowsSorting` on any `<Column>` to make it interactive. The table automatically renders directional sort indicator icons (ascending, descending, or unsorted):
+
+```tsx
+import { Table, TableHeader, Column, TableBody, Row, Cell } from '@moul-dev/ui';
+import { useState } from 'react';
+
+export default function SortableExample() {
+  const [sortDescriptor, setSortDescriptor] = useState({
+    column: 'name',
+    direction: 'ascending',
+  });
+
+  const [items, setItems] = useState([
+    { id: '1', name: 'Auth Gateway', role: 'Security', latency: '24ms' },
+    { id: '2', name: 'Database Cluster', role: 'Storage', latency: '4ms' },
+    { id: '3', name: 'Edge CDN', role: 'Networking', latency: '142ms' },
+  ]);
+
+  const handleSortChange = (descriptor) => {
+    setSortDescriptor(descriptor);
+    setItems((prev) =>
+      [...prev].sort((a, b) => {
+        const first = a[descriptor.column];
+        const second = b[descriptor.column];
+        const cmp = String(first).localeCompare(String(second), undefined, { numeric: true });
+        return descriptor.direction === 'descending' ? -cmp : cmp;
+      })
+    );
+  };
+
+  return (
+    <Table
+      aria-label="Sortable Table"
+      sortDescriptor={sortDescriptor}
+      onSortChange={handleSortChange}
+    >
+      <TableHeader>
+        <Column id="name" allowsSorting isRowHeader>
+          Service Name
+        </Column>
+        <Column id="role" allowsSorting>
+          Role
+        </Column>
+        <Column id="latency" allowsSorting>
+          Latency
+        </Column>
+      </TableHeader>
+      <TableBody items={items}>
+        {(item) => (
+          <Row key={item.id} id={item.id}>
+            <Cell>{item.name}</Cell>
+            <Cell>{item.role}</Cell>
+            <Cell>{item.latency}</Cell>
+          </Row>
+        )}
+      </TableBody>
+    </Table>
+  );
+}
+```
+
+## Row Selection
+
+Enable `selectionMode="single"` or `selectionMode="multiple"` for interactive row selection with full keyboard navigation (arrows, spacebar):
+
+```tsx
+import { Table, TableHeader, Column, TableBody, Row, Cell } from '@moul-dev/ui';
+import { useState } from 'react';
+
+export default function SelectionExample() {
+  const [selectedKeys, setSelectedKeys] = useState(new Set(['1']));
+
+  return (
+    <Table
+      aria-label="Selectable Table"
+      selectionMode="multiple"
+      selectedKeys={selectedKeys}
+      onSelectionChange={setSelectedKeys}
+    >
+      <TableHeader>
+        <Column isRowHeader>Name</Column>
+        <Column>Role</Column>
+      </TableHeader>
+      <TableBody>
+        <Row id="1">
+          <Cell>Auth Gateway</Cell>
+          <Cell>Security</Cell>
+        </Row>
+        <Row id="2">
+          <Cell>PostgreSQL</Cell>
+          <Cell>Database</Cell>
+        </Row>
+      </TableBody>
+    </Table>
+  );
+}
+```
+
+## Sticky Header
+
+Pass `stickyHeader` on `<Table>` (or `sticky` on `<TableHeader>`) to keep column headers pinned while scrolling through data:
+
+```tsx
+<div style={{ maxHeight: '280px', overflowY: 'auto' }}>
+  <Table aria-label="Telemetry Logs" stickyHeader>
+    <TableHeader>
+      <Column isRowHeader>Timestamp</Column>
+      <Column>Level</Column>
+      <Column>Message</Column>
+    </TableHeader>
+    <TableBody items={logs}>
+      {(log) => (
+        <Row key={log.id}>
+          <Cell>{log.timestamp}</Cell>
+          <Cell>{log.level}</Cell>
+          <Cell>{log.message}</Cell>
+        </Row>
+      )}
+    </TableBody>
+  </Table>
+</div>
+```
+
+## Loading and Empty States
+
+Configure `isLoading` or `emptyState` slots to provide clear feedback when fetching data or when no rows match query filters:
+
+```tsx
+// Loading State
+<Table aria-label="Loading Table" isLoading>
+  <TableHeader>
+    <Column isRowHeader>Name</Column>
+    <Column>Status</Column>
+  </TableHeader>
+  <TableBody items={[]} />
+</Table>
+
+// Empty State Slot
+<Table
+  aria-label="Empty Table"
+  emptyState={
+    <div className="py-8 text-center text-neutral-500">
+      <p className="text-sm font-medium">No results found</p>
+      <p className="text-xs mt-1">Try adjusting your search criteria.</p>
+    </div>
+  }
+>
+  <TableHeader>
+    <Column isRowHeader>Name</Column>
+    <Column>Status</Column>
+  </TableHeader>
+  <TableBody items={[]} />
+</Table>
 ```
 
 ## Props
@@ -63,36 +262,120 @@ export default function Example() {
 
 <TypeTable
   type={{
-    'selectionMode': {
+    selectionMode: {
       type: "'none' | 'single' | 'multiple'",
       default: "'none'",
-      description: "The selection mode permitted.",
+      description: 'The row selection mode allowed.',
+    },
+    selectedKeys: {
+      type: "'all' | Iterable<Key>",
+      description: 'The currently selected row keys (controlled).',
+    },
+    onSelectionChange: {
+      type: "(keys: 'all' | Set<Key>) => void",
+      description: 'Callback fired when row selection changes.',
+    },
+    stickyHeader: {
+      type: 'boolean',
+      default: 'false',
+      description: 'Enables sticky positioning for the table header on scroll.',
+    },
+    isLoading: {
+      type: 'boolean',
+      default: 'false',
+      description: 'Displays the loading state slot across the table body.',
+    },
+    loadingState: {
+      type: 'ReactNode',
+      description: 'Custom loading component slot (defaults to Spinner + label).',
+    },
+    emptyState: {
+      type: 'ReactNode',
+      description: 'Custom empty state component slot rendered when collection has no items.',
+    },
+    sortDescriptor: {
+      type: '{ column: Key, direction: "ascending" | "descending" }',
+      description: 'Current sort descriptor configuration for the table.',
+    },
+    onSortChange: {
+      type: '(descriptor: SortDescriptor) => void',
+      description: 'Callback fired when column sorting is toggled.',
+    },
+    className: {
+      type: 'string',
+      description: 'Custom CSS class name for the table element.',
     },
   }}
 />
 
-<Accordions>
-  <Accordion title="Value">
-    <TypeTable
-          type={{
-            'onSelectionChange': {
-              type: "(keys: 'all' | Set<Key>) => void",
-              description: "Fires when row selection changes.",
-            },
-          }}
-        />
-  </Accordion>
-  <Accordion title="Styling">
-    <TypeTable
-          type={{
-            'className': {
-              type: "string",
-              description: "The CSS className.",
-            },
-          }}
-        />
-  </Accordion>
-</Accordions>
+### TableHeader Props
 
-Default className: `react-aria-Table`
+<TypeTable
+  type={{
+    sticky: {
+      type: 'boolean',
+      description: 'Overrides table-level stickyHeader setting for this header.',
+    },
+    className: {
+      type: 'string',
+      description: 'Custom CSS class name for the thead element.',
+    },
+  }}
+/>
 
+### Column Props
+
+<TypeTable
+  type={{
+    allowsSorting: {
+      type: 'boolean',
+      default: 'false',
+      description: 'Whether the column can be clicked to sort data.',
+    },
+    showSortIndicator: {
+      type: 'boolean',
+      default: 'true',
+      description: 'Whether to display the directional sort indicator icon.',
+    },
+    isRowHeader: {
+      type: 'boolean',
+      default: 'false',
+      description: 'Designates this column as the primary header cell for each row (accessibility).',
+    },
+    className: {
+      type: 'string | ((props: ColumnRenderProps) => string)',
+      description: 'Custom CSS class name or render function for the th element.',
+    },
+  }}
+/>
+
+### TableBody Props
+
+<TypeTable
+  type={{
+    items: {
+      type: 'Iterable<T>',
+      description: 'Collection items array used for dynamic row rendering.',
+    },
+    isLoading: {
+      type: 'boolean',
+      description: 'Overrides table-level isLoading setting for this body.',
+    },
+    loadingState: {
+      type: 'ReactNode',
+      description: 'Custom loading component slot.',
+    },
+    emptyState: {
+      type: 'ReactNode',
+      description: 'Custom empty state component slot.',
+    },
+    renderEmptyState: {
+      type: '() => ReactNode',
+      description: 'Custom render function for empty states.',
+    },
+    className: {
+      type: 'string',
+      description: 'Custom CSS class name for the tbody element.',
+    },
+  }}
+/>

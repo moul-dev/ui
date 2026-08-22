@@ -27,6 +27,12 @@ import {
   SliderThumb,
   SliderTrack,
   Switch,
+  Table,
+  TableBody,
+  TableHeader,
+  Column,
+  Row,
+  Cell,
   Tag,
   TagGroup,
   TextField,
@@ -374,15 +380,30 @@ const REGISTRY: Record<string, ComponentConfig> = {
     name: 'Badge',
     defaultProps: {
       variant: 'neutral',
+      size: 'md',
+      dot: false,
       children: 'Active Status',
     },
     props: [
       {
+        name: 'size',
+        type: 'select',
+        label: 'Size',
+        options: ['sm', 'md', 'lg'],
+        defaultValue: 'md',
+      },
+      {
         name: 'variant',
         type: 'select',
         label: 'Variant',
-        options: ['neutral', 'primary', 'success', 'warning', 'error'],
+        options: ['neutral', 'primary', 'success', 'warning', 'error', 'dot'],
         defaultValue: 'neutral',
+      },
+      {
+        name: 'dot',
+        type: 'boolean',
+        label: 'Dot Indicator',
+        defaultValue: false,
       },
       {
         name: 'children',
@@ -878,6 +899,196 @@ const REGISTRY: Record<string, ComponentConfig> = {
       },
     ],
   },
+  Table: {
+    name: 'Table',
+    defaultProps: {
+      selectionMode: 'none',
+      stickyHeader: false,
+      isLoading: false,
+      allowsSorting: true,
+      showSortIndicator: true,
+    },
+    props: [
+      {
+        name: 'selectionMode',
+        type: 'select',
+        label: 'Selection Mode',
+        options: ['none', 'single', 'multiple'],
+        defaultValue: 'none',
+      },
+      {
+        name: 'stickyHeader',
+        type: 'boolean',
+        label: 'Sticky Header',
+        defaultValue: false,
+      },
+      {
+        name: 'isLoading',
+        type: 'boolean',
+        label: 'Loading State',
+        defaultValue: false,
+      },
+      {
+        name: 'allowsSorting',
+        type: 'boolean',
+        label: 'Enable Column Sorting',
+        defaultValue: true,
+      },
+      {
+        name: 'showSortIndicator',
+        type: 'boolean',
+        label: 'Show Sort Indicator',
+        defaultValue: true,
+      },
+    ],
+  },
+}
+
+function TablePreviewWrapper({
+  selectionMode,
+  stickyHeader,
+  isLoading,
+  allowsSorting,
+  showSortIndicator,
+}: {
+  selectionMode: 'none' | 'single' | 'multiple'
+  stickyHeader: boolean
+  isLoading: boolean
+  allowsSorting: boolean
+  showSortIndicator: boolean
+}) {
+  const [sortDescriptor, setSortDescriptor] = useState<{
+    column: string
+    direction: 'ascending' | 'descending'
+  }>({
+    column: 'name',
+    direction: 'ascending',
+  })
+  const [selectedKeys, setSelectedKeys] = useState<any>(new Set(['1']))
+
+  const rows = [
+    {
+      id: '1',
+      name: 'Auth Gateway',
+      role: 'Security',
+      status: 'Operational',
+      variant: 'success' as const,
+      latency: '24ms',
+    },
+    {
+      id: '2',
+      name: 'PostgreSQL Primary',
+      role: 'Database',
+      status: 'Operational',
+      variant: 'success' as const,
+      latency: '4ms',
+    },
+    {
+      id: '3',
+      name: 'Global Edge CDN',
+      role: 'Edge',
+      status: 'Degraded',
+      variant: 'warning' as const,
+      latency: '142ms',
+    },
+    {
+      id: '4',
+      name: 'Worker Queue',
+      role: 'Compute',
+      status: 'Operational',
+      variant: 'success' as const,
+      latency: '18ms',
+    },
+  ]
+
+  const sortedRows = [...rows].sort((a: any, b: any) => {
+    const col = sortDescriptor.column as keyof typeof a
+    const first = a[col]
+    const second = b[col]
+    const cmp = String(first).localeCompare(String(second), undefined, {
+      numeric: true,
+    })
+    return sortDescriptor.direction === 'descending' ? -cmp : cmp
+  })
+
+  return (
+    <div className="w-full max-w-xl max-h-[260px] overflow-y-auto rounded-lg border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950">
+      <Table
+        aria-label="Playground Table"
+        selectionMode={selectionMode}
+        selectedKeys={selectedKeys}
+        onSelectionChange={setSelectedKeys}
+        stickyHeader={stickyHeader}
+        isLoading={isLoading}
+        emptyState={
+          <div className="py-6 text-center text-xs text-neutral-500">
+            No rows available.
+          </div>
+        }
+        sortDescriptor={sortDescriptor}
+        onSortChange={(desc) =>
+          setSortDescriptor({
+            column: String(desc.column),
+            direction: desc.direction || 'ascending',
+          })
+        }
+      >
+        <TableHeader>
+          <Column
+            id="name"
+            isRowHeader
+            allowsSorting={allowsSorting}
+            showSortIndicator={showSortIndicator}
+          >
+            Service
+          </Column>
+          <Column
+            id="role"
+            allowsSorting={allowsSorting}
+            showSortIndicator={showSortIndicator}
+          >
+            Role
+          </Column>
+          <Column
+            id="status"
+            allowsSorting={allowsSorting}
+            showSortIndicator={showSortIndicator}
+          >
+            Status
+          </Column>
+          <Column
+            id="latency"
+            allowsSorting={allowsSorting}
+            showSortIndicator={showSortIndicator}
+          >
+            Latency
+          </Column>
+        </TableHeader>
+        <TableBody items={isLoading ? [] : sortedRows}>
+          {(item: any) => (
+            <Row key={item.id} id={item.id}>
+              <Cell>
+                <span className="font-semibold text-neutral-900 dark:text-neutral-100">
+                  {item.name}
+                </span>
+              </Cell>
+              <Cell>{item.role}</Cell>
+              <Cell>
+                <Badge variant={item.variant} size="sm" dot>
+                  {item.status}
+                </Badge>
+              </Cell>
+              <Cell>
+                <span className="font-mono text-xs text-neutral-500">
+                  {item.latency}
+                </span>
+              </Cell>
+            </Row>
+          )}
+        </TableBody>
+      </Table>
+    </div>
+  )
 }
 
 function SidebarPreviewWrapper({
@@ -1462,9 +1673,11 @@ export default function Example() {
 }`
       }
       case 'Badge': {
-        const { variant, children } = activeProps
+        const { variant, size, dot, children } = activeProps
         let propsStr = ''
-        if (variant !== 'neutral') propsStr += ` variant="${variant}"`
+        if (size && size !== 'md') propsStr += ` size="${size}"`
+        if (variant && variant !== 'neutral') propsStr += ` variant="${variant}"`
+        if (dot) propsStr += ' dot'
         return `import { Badge } from '@moul-dev/ui';
 
 export default function Example() {
@@ -1725,6 +1938,69 @@ export default function Example() {
   );
 }`
       }
+      case 'Table': {
+        const { selectionMode, stickyHeader, isLoading, allowsSorting, showSortIndicator } = activeProps
+        let propsStr = ''
+        if (selectionMode !== 'none') propsStr += ` selectionMode="${selectionMode}"`
+        if (stickyHeader) propsStr += ' stickyHeader'
+        if (isLoading) propsStr += ' isLoading'
+        const colSortStr = allowsSorting ? ' allowsSorting' : ''
+        const colIndStr = showSortIndicator === false ? ' showSortIndicator={false}' : ''
+
+        return `import {
+  Table,
+  TableHeader,
+  Column,
+  TableBody,
+  Row,
+  Cell,
+  Badge,
+} from '@moul-dev/ui';
+import { useState } from 'react';
+
+export default function Example() {
+  const [sortDescriptor, setSortDescriptor] = useState({
+    column: 'name',
+    direction: 'ascending',
+  });
+
+  const services = [
+    { id: '1', name: 'Auth Gateway', role: 'Security', status: 'Operational', variant: 'success' },
+    { id: '2', name: 'PostgreSQL Primary', role: 'Database', status: 'Operational', variant: 'success' },
+    { id: '3', name: 'Global Edge CDN', role: 'Edge', status: 'Degraded', variant: 'warning' },
+    { id: '4', name: 'Worker Queue', role: 'Compute', status: 'Operational', variant: 'success' },
+  ];
+
+  return (
+    <Table
+      aria-label="Services Table"${propsStr}
+      sortDescriptor={sortDescriptor}
+      onSortChange={setSortDescriptor}
+    >
+      <TableHeader>
+        <Column id="name" isRowHeader${colSortStr}${colIndStr}>Service</Column>
+        <Column id="role"${colSortStr}${colIndStr}>Role</Column>
+        <Column id="status"${colSortStr}${colIndStr}>Status</Column>
+        <Column id="latency"${colSortStr}${colIndStr}>Latency</Column>
+      </TableHeader>
+      <TableBody items={services}>
+        {(item) => (
+          <Row key={item.id} id={item.id}>
+            <Cell>{item.name}</Cell>
+            <Cell>{item.role}</Cell>
+            <Cell>
+              <Badge variant={item.variant} size="sm" dot>
+                {item.status}
+              </Badge>
+            </Cell>
+            <Cell>{item.latency}</Cell>
+          </Row>
+        )}
+      </TableBody>
+    </Table>
+  );
+}`
+      }
       default:
         return `<${component} />`
     }
@@ -1922,6 +2198,16 @@ export default function Example() {
           />
         )
       }
+      case 'Table':
+        return (
+          <TablePreviewWrapper
+            selectionMode={activeProps.selectionMode}
+            stickyHeader={activeProps.stickyHeader}
+            isLoading={activeProps.isLoading}
+            allowsSorting={activeProps.allowsSorting}
+            showSortIndicator={activeProps.showSortIndicator}
+          />
+        )
       default:
         return <div>No Preview Available</div>
     }

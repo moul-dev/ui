@@ -1,26 +1,25 @@
 ---
 title: Skeleton
-description: Documentation for the Skeleton component.
+description: Animated loading placeholders supporting shape variants (block, text, circle) and stacked count.
 ---
 
 import { Skeleton } from '@moul-dev/ui';
 
-
 # Skeleton
+
+The `Skeleton` component is an accessible animated placeholder used to render loading states that simulate layout content while data is loading.
 
 ## Preview
 
 <ComponentPreview>
-  <div className="flex items-center space-x-4 w-72">
-    <Skeleton className="h-12 w-12 rounded-full" />
+  <div className="flex items-center gap-4 w-72">
+    <Skeleton variant="circle" />
     <div className="space-y-2 flex-1">
-      <Skeleton className="h-4 w-full" />
-      <Skeleton className="h-4 w-5/6" />
+      <Skeleton variant="text" />
+      <Skeleton variant="text" style={{ width: '80%' }} />
     </div>
   </div>
 </ComponentPreview>
-
-The `Skeleton` component is built with React Aria and styled using StyleX.
 
 ## Import
 
@@ -28,18 +27,74 @@ The `Skeleton` component is built with React Aria and styled using StyleX.
 import { Skeleton } from '@moul-dev/ui';
 ```
 
-## Usage
+## Shape Variants
 
-Here is a basic example of how to use the `Skeleton` component:
+`Skeleton` supports three shape variants: `block` (default), `text`, and `circle`:
+
+<ComponentPreview>
+  <div className="flex flex-col gap-4 w-72">
+    <div>
+      <span className="text-xs text-neutral-400 mb-1 block">Block (variant="block")</span>
+      <Skeleton variant="block" />
+    </div>
+    <div>
+      <span className="text-xs text-neutral-400 mb-1 block">Text Line (variant="text")</span>
+      <Skeleton variant="text" />
+    </div>
+    <div>
+      <span className="text-xs text-neutral-400 mb-1 block">Circle / Avatar (variant="circle")</span>
+      <Skeleton variant="circle" />
+    </div>
+  </div>
+</ComponentPreview>
 
 ```tsx
-import { Skeleton } from '@moul-dev/ui';
+// Rectangular block placeholder
+<Skeleton variant="block" />
 
-export default function Example() {
-  return (
-    <Skeleton>
-      {/* Component content */}
-    </Skeleton>
-  );
-}
+// Text line placeholder
+<Skeleton variant="text" />
+
+// Circular avatar / icon placeholder
+<Skeleton variant="circle" />
 ```
+
+## Multi-item Count
+
+Use the `count` prop to render multiple stacked skeleton items with automatic spacing:
+
+<ComponentPreview>
+  <div className="w-72">
+    <Skeleton variant="text" count={4} />
+  </div>
+</ComponentPreview>
+
+```tsx
+<Skeleton variant="text" count={4} />
+```
+
+## Props
+
+<TypeTable
+  type={{
+    variant: {
+      type: "'block' | 'text' | 'circle'",
+      default: "'block'",
+      description: 'The visual shape geometry of the placeholder.',
+    },
+    shape: {
+      type: "'block' | 'text' | 'circle'",
+      default: "'block'",
+      description: 'Alias for variant prop.',
+    },
+    count: {
+      type: 'number',
+      default: '1',
+      description: 'Number of stacked skeleton items to render.',
+    },
+    className: {
+      type: 'string',
+      description: 'Custom CSS class name applied to the skeleton root.',
+    },
+  }}
+/>

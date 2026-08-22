@@ -8,6 +8,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
 } from './components/AlertDialog'
+import { Badge, type BadgeSize } from './components/Badge'
 import { Button } from './components/Button'
 import { Card, CardBody, CardFooter, CardHeader } from './components/Card'
 import {
@@ -37,6 +38,16 @@ import {
   SidebarItem,
   SidebarMain,
 } from './components/Sidebar'
+import { Skeleton } from './components/Skeleton'
+import { Spinner } from './components/Spinner'
+import {
+  Cell,
+  Column,
+  Row,
+  Table,
+  TableBody,
+  TableHeader,
+} from './components/Table'
 import { ToggleButton } from './components/ToggleButton'
 import { ToggleButtonGroup } from './components/ToggleButtonGroup'
 import { Typography } from './components/Typography'
@@ -428,6 +439,21 @@ function App() {
   const [pageSize, setPageSize] = useState(10)
   const [progressVal, setProgressVal] = useState(65)
   const [isIndeterminateProgress, setIsIndeterminateProgress] = useState(false)
+
+  // Enhanced components interactive state
+  const [badgeSize, setBadgeSize] = useState<BadgeSize>('md')
+  const [skeletonShape, setSkeletonShape] = useState<'block' | 'text' | 'circle'>('block')
+  const [skeletonCount, setSkeletonCount] = useState(3)
+  const [tableSort, setTableSort] = useState<{
+    column: string
+    direction: 'ascending' | 'descending'
+  }>({
+    column: 'name',
+    direction: 'ascending',
+  })
+  const [isTableLoading, setIsTableLoading] = useState(false)
+  const [isTableEmpty, setIsTableEmpty] = useState(false)
+  const [isTableSticky, setIsTableSticky] = useState(false)
 
   return (
     <Sidebar
@@ -1133,6 +1159,196 @@ function App() {
                 shape="circle"
                 onChange={setCurrentPage}
               />
+            </div>
+          </section>
+        </div>
+
+        {/* Badge Showcase */}
+        <div {...stylex.props(styles.wideCard)}>
+          <section {...stylex.props(styles.section)}>
+            <h2 {...stylex.props(styles.sectionTitle)}>Badge Component Showcase</h2>
+            <p style={{ margin: 0, fontSize: '0.9rem', color: '#94a3b8' }}>
+              Status badges with size scaling (sm, md, lg), semantic colors, and dot indicator variants.
+            </p>
+
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
+              <span style={{ fontSize: '0.85rem', color: '#94a3b8' }}>Active Size:</span>
+              <Button size="sm" variant={badgeSize === 'sm' ? 'primary' : 'outline'} onPress={() => setBadgeSize('sm')}>SM</Button>
+              <Button size="sm" variant={badgeSize === 'md' ? 'primary' : 'outline'} onPress={() => setBadgeSize('md')}>MD</Button>
+              <Button size="sm" variant={badgeSize === 'lg' ? 'primary' : 'outline'} onPress={() => setBadgeSize('lg')}>LG</Button>
+            </div>
+
+            <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
+              <Badge size={badgeSize} variant="neutral">Neutral</Badge>
+              <Badge size={badgeSize} variant="primary">Primary</Badge>
+              <Badge size={badgeSize} variant="success">Success</Badge>
+              <Badge size={badgeSize} variant="warning">Warning</Badge>
+              <Badge size={badgeSize} variant="error">Error</Badge>
+            </div>
+
+            <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
+              <Badge size={badgeSize} variant="dot">Status Dot</Badge>
+              <Badge size={badgeSize} variant="success" dot>Operational</Badge>
+              <Badge size={badgeSize} variant="warning" dot>Degraded</Badge>
+              <Badge size={badgeSize} variant="error" dot>Incident</Badge>
+              <Badge size={badgeSize} variant="primary" dot>Deploying</Badge>
+            </div>
+          </section>
+        </div>
+
+        {/* Skeleton Showcase */}
+        <div {...stylex.props(styles.wideCard)}>
+          <section {...stylex.props(styles.section)}>
+            <h2 {...stylex.props(styles.sectionTitle)}>Skeleton Component Showcase</h2>
+            <p style={{ margin: 0, fontSize: '0.9rem', color: '#94a3b8' }}>
+              Loading placeholders supporting shape variants (block, text, circle) and stacked count prop.
+            </p>
+
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
+              <span style={{ fontSize: '0.85rem', color: '#94a3b8' }}>Shape:</span>
+              <Button size="sm" variant={skeletonShape === 'block' ? 'primary' : 'outline'} onPress={() => setSkeletonShape('block')}>Block</Button>
+              <Button size="sm" variant={skeletonShape === 'text' ? 'primary' : 'outline'} onPress={() => setSkeletonShape('text')}>Text</Button>
+              <Button size="sm" variant={skeletonShape === 'circle' ? 'primary' : 'outline'} onPress={() => setSkeletonShape('circle')}>Circle</Button>
+
+              <span style={{ fontSize: '0.85rem', color: '#94a3b8', marginLeft: '12px' }}>Count:</span>
+              <Button size="sm" variant={skeletonCount === 1 ? 'primary' : 'outline'} onPress={() => setSkeletonCount(1)}>1</Button>
+              <Button size="sm" variant={skeletonCount === 3 ? 'primary' : 'outline'} onPress={() => setSkeletonCount(3)}>3</Button>
+              <Button size="sm" variant={skeletonCount === 5 ? 'primary' : 'outline'} onPress={() => setSkeletonCount(5)}>5</Button>
+            </div>
+
+            <div style={{ maxWidth: '400px' }}>
+              <Skeleton variant={skeletonShape} count={skeletonCount} />
+            </div>
+
+            <div style={{ display: 'flex', gap: '16px', alignItems: 'center', maxWidth: '400px', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '8px', padding: '16px' }}>
+              <Skeleton variant="circle" />
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <Skeleton variant="text" />
+                <div style={{ width: '60%' }}>
+                  <Skeleton variant="text" />
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        {/* Spinner Showcase */}
+        <div {...stylex.props(styles.wideCard)}>
+          <section {...stylex.props(styles.section)}>
+            <h2 {...stylex.props(styles.sectionTitle)}>Spinner Component Showcase</h2>
+            <p style={{ margin: 0, fontSize: '0.9rem', color: '#94a3b8' }}>
+              Accessible loading spinners in four standardized sizes.
+            </p>
+
+            <div style={{ display: 'flex', gap: '24px', alignItems: 'center', flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                <Spinner size="sm" aria-label="Small spinner" />
+                <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Small (sm)</span>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                <Spinner size="md" aria-label="Medium spinner" />
+                <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Medium (md)</span>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                <Spinner size="lg" aria-label="Large spinner" />
+                <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Large (lg)</span>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                <Spinner size="xl" aria-label="Extra large spinner" />
+                <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>XL (xl)</span>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        {/* Table Showcase */}
+        <div {...stylex.props(styles.wideCard)}>
+          <section {...stylex.props(styles.section)}>
+            <h2 {...stylex.props(styles.sectionTitle)}>Table Component Showcase</h2>
+            <p style={{ margin: 0, fontSize: '0.9rem', color: '#94a3b8' }}>
+              Data table with built-in sticky header, sort indicators, and loading / empty state slots.
+            </p>
+
+            <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
+              <Button
+                size="sm"
+                variant={isTableSticky ? 'primary' : 'outline'}
+                onPress={() => setIsTableSticky((v) => !v)}
+              >
+                Sticky Header: {isTableSticky ? 'ON' : 'OFF'}
+              </Button>
+              <Button
+                size="sm"
+                variant={isTableLoading ? 'primary' : 'outline'}
+                onPress={() => setIsTableLoading((v) => !v)}
+              >
+                Loading State: {isTableLoading ? 'ON' : 'OFF'}
+              </Button>
+              <Button
+                size="sm"
+                variant={isTableEmpty ? 'primary' : 'outline'}
+                onPress={() => setIsTableEmpty((v) => !v)}
+              >
+                Empty State: {isTableEmpty ? 'ON' : 'OFF'}
+              </Button>
+            </div>
+
+            <div style={{ maxHeight: '280px', overflowY: 'auto', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '8px' }}>
+              <Table
+                aria-label="Cluster Services Table"
+                stickyHeader={isTableSticky}
+                isLoading={isTableLoading}
+                emptyState={
+                  <EmptyState
+                    variant="default"
+                    icon={<FolderIcon />}
+                    title="No cluster services found"
+                    description="Deploy a new service to monitor bandwidth and latency."
+                    action={<Button size="sm">Deploy Service</Button>}
+                  />
+                }
+                sortDescriptor={tableSort}
+                onSortChange={(descriptor) =>
+                  setTableSort({
+                    column: String(descriptor.column),
+                    direction: descriptor.direction || 'ascending',
+                  })
+                }
+              >
+                <TableHeader>
+                  <Column id="name" allowsSorting isRowHeader>
+                    Service Name
+                  </Column>
+                  <Column id="role" allowsSorting>
+                    Cluster Role
+                  </Column>
+                  <Column id="status" allowsSorting>
+                    Status
+                  </Column>
+                  <Column id="bandwidth" allowsSorting>
+                    Bandwidth
+                  </Column>
+                </TableHeader>
+                <TableBody items={isTableEmpty || isTableLoading ? [] : [
+                  { id: '1', name: 'Authentication API', role: 'Security', status: 'Operational', variant: 'success', bandwidth: '1.2 GB/s' },
+                  { id: '2', name: 'PostgreSQL Primary', role: 'Database', status: 'Operational', variant: 'success', bandwidth: '4.8 GB/s' },
+                  { id: '3', name: 'Global Edge CDN', role: 'Edge', status: 'Degraded', variant: 'warning', bandwidth: '820 MB/s' },
+                  { id: '4', name: 'Background Workers', role: 'Compute', status: 'Operational', variant: 'success', bandwidth: '340 MB/s' },
+                ]}>
+                  {(item) => (
+                    <Row key={item.id}>
+                      <Cell>{item.name}</Cell>
+                      <Cell>{item.role}</Cell>
+                      <Cell>
+                        <Badge size="sm" variant={item.variant as any} dot>
+                          {item.status}
+                        </Badge>
+                      </Cell>
+                      <Cell>{item.bandwidth}</Cell>
+                    </Row>
+                  )}
+                </TableBody>
+              </Table>
             </div>
           </section>
         </div>

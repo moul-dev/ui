@@ -1,18 +1,17 @@
 ---
 title: Badge
-description: Documentation for the Badge component.
+description: Status badge indicators in multiple color variants, size scalings, and dot status indicators.
 ---
 
 import { Badge } from '@moul-dev/ui';
 
-
 # Badge
+
+The `Badge` component displays compact status metadata, labels, counts, and live system status indicators.
 
 ## Preview
 
 <ComponentPlayground component="Badge" />
-
-The `Badge` component is built with React Aria and styled using StyleX.
 
 ## Import
 
@@ -20,18 +19,93 @@ The `Badge` component is built with React Aria and styled using StyleX.
 import { Badge } from '@moul-dev/ui';
 ```
 
-## Usage
+## Sizes
 
-Here is a basic example of how to use the `Badge` component:
+`Badge` provides three standardized sizes: `sm`, `md` (default), and `lg`.
+
+<ComponentPreview>
+  <div className="flex items-center gap-3">
+    <Badge size="sm" variant="primary">Small (sm)</Badge>
+    <Badge size="md" variant="primary">Medium (md)</Badge>
+    <Badge size="lg" variant="primary">Large (lg)</Badge>
+  </div>
+</ComponentPreview>
 
 ```tsx
-import { Badge } from '@moul-dev/ui';
-
-export default function Example() {
-  return (
-    <Badge>
-      {/* Component content */}
-    </Badge>
-  );
-}
+<Badge size="sm" variant="primary">Small (sm)</Badge>
+<Badge size="md" variant="primary">Medium (md)</Badge>
+<Badge size="lg" variant="primary">Large (lg)</Badge>
 ```
+
+## Color Variants
+
+Choose from standard semantic color variants:
+
+<ComponentPreview>
+  <div className="flex items-center gap-3 flex-wrap">
+    <Badge variant="neutral">Neutral</Badge>
+    <Badge variant="primary">Primary</Badge>
+    <Badge variant="success">Success</Badge>
+    <Badge variant="warning">Warning</Badge>
+    <Badge variant="error">Error</Badge>
+  </div>
+</ComponentPreview>
+
+```tsx
+<Badge variant="neutral">Neutral</Badge>
+<Badge variant="primary">Primary</Badge>
+<Badge variant="success">Success</Badge>
+<Badge variant="warning">Warning</Badge>
+<Badge variant="error">Error</Badge>
+```
+
+## Dot Status Indicators
+
+Enable the `dot` prop or use `variant="dot"` to display a circular status indicator alongside your label:
+
+<ComponentPreview>
+  <div className="flex items-center gap-3 flex-wrap">
+    <Badge variant="dot">Status Dot</Badge>
+    <Badge variant="success" dot>Operational</Badge>
+    <Badge variant="warning" dot>Degraded</Badge>
+    <Badge variant="error" dot>Incident</Badge>
+    <Badge variant="primary" dot>Deploying</Badge>
+  </div>
+</ComponentPreview>
+
+```tsx
+// Standalone status dot
+<Badge variant="dot">Status Dot</Badge>
+
+// Semantic color dots
+<Badge variant="success" dot>Operational</Badge>
+<Badge variant="warning" dot>Degraded</Badge>
+<Badge variant="error" dot>Incident</Badge>
+<Badge variant="primary" dot>Deploying</Badge>
+```
+
+## Props
+
+<TypeTable
+  type={{
+    size: {
+      type: "'sm' | 'md' | 'lg'",
+      default: "'md'",
+      description: 'The size scaling of the badge.',
+    },
+    variant: {
+      type: "'neutral' | 'primary' | 'success' | 'warning' | 'error' | 'dot'",
+      default: "'neutral'",
+      description: 'The semantic color style or status dot variant.',
+    },
+    dot: {
+      type: 'boolean',
+      default: 'false',
+      description: 'Whether to render a status dot indicator before children.',
+    },
+    className: {
+      type: 'string',
+      description: 'Custom CSS class name for the badge container.',
+    },
+  }}
+/>

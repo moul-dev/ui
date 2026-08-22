@@ -17,6 +17,12 @@ export const styles = stylex.create({
     borderBottomStyle: 'solid',
     borderBottomColor: tokens.colorBorder,
   },
+  headerSticky: {
+    position: 'sticky',
+    top: 0,
+    zIndex: tokens.zIndexDropdown,
+    backgroundColor: tokens.colorBgSubtle,
+  },
   column: {
     paddingBlock: tokens.spacing3,
     paddingInline: tokens.spacing4,
@@ -33,6 +39,32 @@ export const styles = stylex.create({
       outlineOffset: '-2px',
       outlineColor: tokens.colorBorderFocus,
     },
+  },
+  columnSortable: {
+    cursor: 'pointer',
+    userSelect: 'none',
+  },
+  columnHovered: {
+    backgroundColor: tokens.colorNeutral100,
+  },
+  columnContent: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: tokens.spacing2,
+    width: '100%',
+  },
+  sortIndicator: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+    color: tokens.colorFgSubtle,
+    transitionProperty: 'color, transform',
+    transitionDuration: '0.15s',
+  },
+  sortIndicatorActive: {
+    color: tokens.colorPrimary500,
   },
   body: {
     outline: 'none',
@@ -75,5 +107,27 @@ export const styles = stylex.create({
       outlineOffset: '-2px',
       outlineColor: tokens.colorBorderFocus,
     },
+  },
+  emptyState: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingBlock: tokens.spacing8,
+    paddingInline: tokens.spacing4,
+    textAlign: 'center',
+    color: tokens.colorFgSubtle,
+    width: '100%',
+  },
+  loadingState: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: tokens.spacing3,
+    paddingBlock: tokens.spacing8,
+    paddingInline: tokens.spacing4,
+    textAlign: 'center',
+    color: tokens.colorFgSubtle,
+    width: '100%',
   },
 })

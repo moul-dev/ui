@@ -7,9 +7,12 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AreaChart,
+  Badge,
   BarChart,
   Button,
+  Cell,
   ChartContainer,
+  Column,
   ComboBox,
   ComboBoxItem,
   DoughnutChart,
@@ -62,6 +65,10 @@ import {
   SidebarItem,
   SidebarMain,
   Stat,
+  Table,
+  TableBody,
+  TableHeader,
+  Row,
   Tag,
   TagGroup,
   TextField,
@@ -1435,4 +1442,240 @@ export function PaginationDemo() {
     </div>
   )
 }
+
+export function TableDemo() {
+  const [sortDescriptor, setSortDescriptor] = useState<{
+    column: string
+    direction: 'ascending' | 'descending'
+  }>({
+    column: 'name',
+    direction: 'ascending',
+  })
+  const [selectionMode, setSelectionMode] = useState<'none' | 'single' | 'multiple'>('multiple')
+  const [selectedKeys, setSelectedKeys] = useState<any>(new Set(['2']))
+  const [stickyHeader, setStickyHeader] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [isEmpty, setIsEmpty] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
+
+  const initialRows = [
+    {
+      id: '1',
+      name: 'Auth Service',
+      team: 'Security',
+      region: 'us-east-1',
+      status: 'Operational',
+      variant: 'success' as const,
+      latency: '24ms',
+      requests: '1.2M req/s',
+    },
+    {
+      id: '2',
+      name: 'PostgreSQL Primary',
+      team: 'Data Platform',
+      region: 'us-west-2',
+      status: 'Operational',
+      variant: 'success' as const,
+      latency: '4ms',
+      requests: '450k req/s',
+    },
+    {
+      id: '3',
+      name: 'Edge CDN Gateway',
+      team: 'Networking',
+      region: 'global',
+      status: 'Degraded',
+      variant: 'warning' as const,
+      latency: '142ms',
+      requests: '3.8M req/s',
+    },
+    {
+      id: '4',
+      name: 'Worker Queue',
+      team: 'Compute',
+      region: 'eu-central-1',
+      status: 'Operational',
+      variant: 'success' as const,
+      latency: '18ms',
+      requests: '820k req/s',
+    },
+    {
+      id: '5',
+      name: 'Payment Processing',
+      team: 'Billing',
+      region: 'us-east-1',
+      status: 'Incident',
+      variant: 'error' as const,
+      latency: '520ms',
+      requests: '95k req/s',
+    },
+  ]
+
+  const filteredRows = initialRows.filter(
+    (row) =>
+      row.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      row.team.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      row.region.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      row.status.toLowerCase().includes(searchQuery.toLowerCase()),
+  )
+
+  const sortedRows = [...filteredRows].sort((a: any, b: any) => {
+    const col = sortDescriptor.column as keyof typeof a
+    const first = a[col]
+    const second = b[col]
+    const cmp = String(first).localeCompare(String(second), undefined, {
+      numeric: true,
+    })
+    return sortDescriptor.direction === 'descending' ? -cmp : cmp
+  })
+
+  const rows = isEmpty || isLoading ? [] : sortedRows
+
+  return (
+    <div className="flex flex-col gap-4 w-full max-w-3xl p-4 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/20">
+      {/* Interactive Control Bar */}
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-2 flex-1 min-w-[200px]">
+          <input
+            type="text"
+            placeholder="Search services, teams, regions..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full px-3 py-1.5 text-xs rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-neutral-900 dark:text-neutral-100 placeholder-neutral-400 focus:outline-hidden focus:ring-2 focus:ring-indigo-500"
+          />
+        </div>
+
+        <div className="flex items-center gap-1.5 flex-wrap">
+          <div className="flex items-center border border-neutral-200 dark:border-neutral-800 rounded-lg p-0.5 bg-white dark:bg-neutral-900">
+            {(['none', 'single', 'multiple'] as const).map((mode) => (
+              <button
+                key={mode}
+                type="button"
+                onClick={() => setSelectionMode(mode)}
+                className={`px-2.5 py-1 text-xs font-medium rounded-md transition-colors ${
+                  selectionMode === mode
+                    ? 'bg-indigo-600 text-white shadow-xs'
+                    : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-950 dark:hover:text-neutral-100'
+                }`}
+              >
+                {mode === 'none' ? 'No Select' : mode === 'single' ? 'Single' : 'Multi'}
+              </button>
+            ))}
+          </div>
+
+          <Button
+            size="sm"
+            variant={stickyHeader ? 'primary' : 'outline'}
+            onPress={() => setStickyHeader((v) => !v)}
+          >
+            Sticky: {stickyHeader ? 'ON' : 'OFF'}
+          </Button>
+
+          <Button
+            size="sm"
+            variant={isLoading ? 'primary' : 'outline'}
+            onPress={() => setIsLoading((v) => !v)}
+          >
+            Loading: {isLoading ? 'ON' : 'OFF'}
+          </Button>
+
+          <Button
+            size="sm"
+            variant={isEmpty ? 'primary' : 'outline'}
+            onPress={() => setIsEmpty((v) => !v)}
+          >
+            Empty: {isEmpty ? 'ON' : 'OFF'}
+          </Button>
+        </div>
+      </div>
+
+      {/* Selected Items Summary Bar */}
+      {selectionMode !== 'none' && (
+        <div className="flex items-center justify-between text-xs text-neutral-500 px-1">
+          <span>
+            Selected: <strong className="text-neutral-900 dark:text-neutral-100">{selectedKeys === 'all' ? rows.length : selectedKeys.size ?? 0}</strong> of {rows.length} rows
+          </span>
+          {((selectedKeys === 'all') || (selectedKeys.size && selectedKeys.size > 0)) && (
+            <button
+              type="button"
+              onClick={() => setSelectedKeys(new Set())}
+              className="text-indigo-600 dark:text-indigo-400 hover:underline font-medium"
+            >
+              Clear selection
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* Table Container */}
+      <div className="max-h-[300px] overflow-y-auto rounded-lg border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950">
+        <Table
+          aria-label="Interactive Cluster Services Table"
+          selectionMode={selectionMode}
+          selectedKeys={selectedKeys}
+          onSelectionChange={setSelectedKeys}
+          stickyHeader={stickyHeader}
+          isLoading={isLoading}
+          emptyState={
+            <div className="py-8 text-center">
+              <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">No matching services found</p>
+              <p className="text-xs text-neutral-500 mt-1">Try changing your search keywords or clearing filters.</p>
+            </div>
+          }
+          sortDescriptor={sortDescriptor}
+          onSortChange={(desc) =>
+            setSortDescriptor({
+              column: String(desc.column),
+              direction: desc.direction || 'ascending',
+            })
+          }
+        >
+          <TableHeader>
+            <Column id="name" allowsSorting isRowHeader>
+              Service
+            </Column>
+            <Column id="team" allowsSorting>
+              Team
+            </Column>
+            <Column id="region" allowsSorting>
+              Region
+            </Column>
+            <Column id="status" allowsSorting>
+              Status
+            </Column>
+            <Column id="latency" allowsSorting>
+              Latency
+            </Column>
+            <Column id="requests" allowsSorting>
+              Throughput
+            </Column>
+          </TableHeader>
+          <TableBody items={rows}>
+            {(item: any) => (
+              <Row key={item.id} id={item.id}>
+                <Cell>
+                  <span className="font-semibold text-neutral-900 dark:text-neutral-100">{item.name}</span>
+                </Cell>
+                <Cell>{item.team}</Cell>
+                <Cell>
+                  <span className="font-mono text-xs text-neutral-500">{item.region}</span>
+                </Cell>
+                <Cell>
+                  <Badge variant={item.variant} size="sm" dot>
+                    {item.status}
+                  </Badge>
+                </Cell>
+                <Cell>
+                  <span className="font-mono text-xs">{item.latency}</span>
+                </Cell>
+                <Cell>{item.requests}</Cell>
+              </Row>
+            )}
+          </TableBody>
+        </Table>
+      </div>
+    </div>
+  )
+}
+
 

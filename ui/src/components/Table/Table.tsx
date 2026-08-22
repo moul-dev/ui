@@ -16,32 +16,120 @@ import {
   type TableHeaderProps as AriaTableHeaderProps,
   type TableProps as AriaTableProps,
 } from 'react-aria-components'
+import { Spinner } from '../Spinner'
 import { styles } from './Table.styles'
+
+// ── Icons ─────────────────────────────────────────────────────────────
+
+const SortAscIcon = () => (
+  <svg
+    viewBox="0 0 24 24"
+    width="14"
+    height="14"
+    stroke="currentColor"
+    strokeWidth="2"
+    fill="none"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M12 19V5M5 12l7-7 7 7" />
+  </svg>
+)
+
+const SortDescIcon = () => (
+  <svg
+    viewBox="0 0 24 24"
+    width="14"
+    height="14"
+    stroke="currentColor"
+    strokeWidth="2"
+    fill="none"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M12 5v14M5 12l7 7 7-7" />
+  </svg>
+)
+
+const SortUnsortedIcon = () => (
+  <svg
+    viewBox="0 0 24 24"
+    width="14"
+    height="14"
+    stroke="currentColor"
+    strokeWidth="2"
+    fill="none"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    opacity="0.4"
+  >
+    <path d="M7 15l5 5 5-5M7 9l5-5 5 5" />
+  </svg>
+)
+
+// ── Table Context ─────────────────────────────────────────────────────
+
+interface TableContextValue {
+  stickyHeader?: boolean
+  isLoading?: boolean
+  loadingState?: React.ReactNode
+  emptyState?: React.ReactNode
+}
+
+const TableContext = React.createContext<TableContextValue>({})
 
 // ── Table Component ───────────────────────────────────────────────────
 
 export interface TableProps extends Omit<AriaTableProps, 'style'> {
   style?: StyleXStyles
   className?: string
+  stickyHeader?: boolean
+  isLoading?: boolean
+  loadingState?: React.ReactNode
+  emptyState?: React.ReactNode
 }
 
 export const Table = React.forwardRef<HTMLTableElement, TableProps>(
-  function Table({ style, className, children, ...rest }, ref) {
+  function Table(
+    {
+      style,
+      className,
+      stickyHeader = false,
+      isLoading = false,
+      loadingState,
+      emptyState,
+      children,
+      ...rest
+    },
+    ref,
+  ) {
+    const contextValue = React.useMemo(
+      () => ({
+        stickyHeader,
+        isLoading,
+        loadingState,
+        emptyState,
+      }),
+      [stickyHeader, isLoading, loadingState, emptyState],
+    )
+
     return (
-      <AriaTable
-        {...rest}
-        ref={ref}
-        className={() => {
-          const { className: stylexClass } = stylex.props(styles.table, style)
-          return [stylexClass, className].filter(Boolean).join(' ')
-        }}
-        style={() => {
-          const { style: stylexStyle } = stylex.props(styles.table, style)
-          return stylexStyle || {}
-        }}
-      >
-        {children}
-      </AriaTable>
+      <TableContext.Provider value={contextValue}>
+        <AriaTable
+          {...rest}
+          ref={ref}
+          className={() => {
+            const { className: stylexClass } = stylex.props(styles.table, style)
+            return [stylexClass, className].filter(Boolean).join(' ')
+          }}
+          style={() => {
+            const { style: stylexStyle } = stylex.props(styles.table, style)
+            return stylexStyle || {}
+          }}
+        >
+          {children}
+        </AriaTable>
+      </TableContext.Provider>
     )
   },
 )
@@ -52,22 +140,37 @@ export interface TableHeaderProps<T>
   extends Omit<AriaTableHeaderProps<T>, 'style'> {
   style?: StyleXStyles
   className?: string
+  sticky?: boolean
 }
 
 export const TableHeader = React.forwardRef<
   HTMLTableSectionElement,
   TableHeaderProps<any>
->(function TableHeader({ style, className, children, ...rest }, ref) {
+>(function TableHeader(
+  { style, className, sticky, children, ...rest },
+  ref,
+) {
+  const { stickyHeader: tableSticky } = React.useContext(TableContext)
+  const isSticky = sticky ?? tableSticky
+
   return (
     <AriaTableHeader
       {...rest}
       ref={ref}
       className={() => {
-        const { className: stylexClass } = stylex.props(styles.header, style)
+        const { className: stylexClass } = stylex.props(
+          styles.header,
+          isSticky && styles.headerSticky,
+          style,
+        )
         return [stylexClass, className].filter(Boolean).join(' ')
       }}
       style={() => {
-        const { style: stylexStyle } = stylex.props(styles.header, style)
+        const { style: stylexStyle } = stylex.props(
+          styles.header,
+          isSticky && styles.headerSticky,
+          style,
+        )
         return stylexStyle || {}
       }}
     >
@@ -78,27 +181,73 @@ export const TableHeader = React.forwardRef<
 
 // ── Column Component ──────────────────────────────────────────────────
 
-export interface ColumnProps extends Omit<AriaColumnProps, 'style'> {
+export interface ColumnProps
+  extends Omit<AriaColumnProps, 'style' | 'className'> {
   style?: StyleXStyles
-  className?: string
+  className?: AriaColumnProps['className']
+  showSortIndicator?: boolean
 }
 
 export const Column = React.forwardRef<HTMLTableHeaderCellElement, ColumnProps>(
-  function Column({ style, className, children, ...rest }, ref) {
+  function Column(
+    { style, className, showSortIndicator = true, children, ...rest },
+    ref,
+  ) {
     return (
       <AriaColumn
         {...rest}
         ref={ref}
-        className={() => {
-          const { className: stylexClass } = stylex.props(styles.column, style)
-          return [stylexClass, className].filter(Boolean).join(' ')
+        className={(renderProps) => {
+          const { className: stylexClass } = stylex.props(
+            styles.column,
+            renderProps.allowsSorting && styles.columnSortable,
+            renderProps.isHovered && styles.columnHovered,
+            style,
+          )
+          const userClass =
+            typeof className === 'function' ? (className as any)(renderProps) : className
+          return [stylexClass, userClass].filter(Boolean).join(' ')
         }}
-        style={() => {
-          const { style: stylexStyle } = stylex.props(styles.column, style)
+        style={(renderProps) => {
+          const { style: stylexStyle } = stylex.props(
+            styles.column,
+            renderProps.allowsSorting && styles.columnSortable,
+            style,
+          )
           return stylexStyle || {}
         }}
       >
-        {children}
+        {(renderProps) => {
+          const content =
+            typeof children === 'function'
+              ? children(renderProps)
+              : children
+
+          if (!renderProps.allowsSorting || !showSortIndicator) {
+            return content
+          }
+
+          return (
+            <div {...stylex.props(styles.columnContent)}>
+              <span>{content}</span>
+              <span
+                aria-hidden="true"
+                {...stylex.props(
+                  styles.sortIndicator,
+                  renderProps.sortDirection && styles.sortIndicatorActive,
+                )}
+              >
+                {renderProps.sortDirection === 'ascending' ? (
+                  <SortAscIcon />
+                ) : renderProps.sortDirection === 'descending' ? (
+                  <SortDescIcon />
+                ) : (
+                  <SortUnsortedIcon />
+                )}
+              </span>
+            </div>
+          )
+        }}
       </AriaColumn>
     )
   },
@@ -110,16 +259,62 @@ export interface TableBodyProps<T>
   extends Omit<AriaTableBodyProps<T>, 'style'> {
   style?: StyleXStyles
   className?: string
+  isLoading?: boolean
+  loadingState?: React.ReactNode
+  emptyState?: React.ReactNode
 }
 
 export const TableBody = React.forwardRef<
   HTMLTableSectionElement,
   TableBodyProps<any>
->(function TableBody({ style, className, children, ...rest }, ref) {
+>(function TableBody(
+  {
+    style,
+    className,
+    isLoading,
+    loadingState,
+    emptyState,
+    renderEmptyState,
+    children,
+    ...rest
+  },
+  ref,
+) {
+  const ctx = React.useContext(TableContext)
+  const activeLoading = isLoading ?? ctx.isLoading
+  const activeLoadingState = loadingState ?? ctx.loadingState
+  const activeEmptyState = emptyState ?? ctx.emptyState
+
+  const defaultRenderEmpty = () => {
+    if (activeLoading) {
+      return (
+        <div {...stylex.props(styles.loadingState)}>
+          {activeLoadingState || (
+            <>
+              <Spinner size="md" aria-label="Loading table data..." />
+              <span>Loading data...</span>
+            </>
+          )}
+        </div>
+      )
+    }
+    if (activeEmptyState) {
+      return (
+        <div {...stylex.props(styles.emptyState)}>{activeEmptyState}</div>
+      )
+    }
+    return null
+  }
+
+  const effectiveRenderEmpty =
+    renderEmptyState ||
+    (activeLoading || activeEmptyState ? defaultRenderEmpty : undefined)
+
   return (
     <AriaTableBody
       {...rest}
       ref={ref}
+      renderEmptyState={effectiveRenderEmpty}
       className={() => {
         const { className: stylexClass } = stylex.props(styles.body, style)
         return [stylexClass, className].filter(Boolean).join(' ')

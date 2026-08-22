@@ -5,8 +5,11 @@ import * as React from 'react'
 import { warnMissingLabel } from '../../utils/warnMissingLabel'
 import { styles } from './Spinner.styles'
 
+export type SpinnerSize = 'sm' | 'md' | 'lg' | 'xl'
+
 export interface SpinnerProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'style'> {
+  size?: SpinnerSize
   style?: StyleXStyles
   className?: string
   'aria-label'?: string
@@ -16,6 +19,7 @@ export interface SpinnerProps
 export const Spinner = React.forwardRef<HTMLDivElement, SpinnerProps>(
   function Spinner(
     {
+      size = 'md',
       style,
       className,
       children,
@@ -35,6 +39,7 @@ export const Spinner = React.forwardRef<HTMLDivElement, SpinnerProps>(
 
     const { className: stylexClass, style: stylexStyle } = stylex.props(
       styles.base,
+      styles[size],
       style,
     )
     return (

@@ -20,7 +20,11 @@ export { AreaChart } from './components/AreaChart'
 export { Avatar } from './components/Avatar'
 export type { AvatarProps } from './components/Avatar/Avatar'
 export { Badge } from './components/Badge'
-export type { BadgeProps, BadgeVariant } from './components/Badge/Badge'
+export type {
+  BadgeProps,
+  BadgeSize,
+  BadgeVariant,
+} from './components/Badge/Badge'
 export type { BarChartProps } from './components/BarChart'
 export { BarChart } from './components/BarChart'
 export type {
@@ -258,7 +262,11 @@ export {
   SidebarMain,
 } from './components/Sidebar'
 export { Skeleton } from './components/Skeleton'
-export type { SkeletonProps } from './components/Skeleton/Skeleton'
+export type {
+  SkeletonProps,
+  SkeletonShape,
+  SkeletonVariant,
+} from './components/Skeleton/Skeleton'
 export { Slider, SliderThumb, SliderTrack } from './components/Slider'
 export type {
   SliderProps,
@@ -266,7 +274,10 @@ export type {
   SliderTrackProps,
 } from './components/Slider/Slider'
 export { Spinner } from './components/Spinner'
-export type { SpinnerProps } from './components/Spinner/Spinner'
+export type {
+  SpinnerProps,
+  SpinnerSize,
+} from './components/Spinner/Spinner'
 export type { StatProps } from './components/Stat'
 export { Stat } from './components/Stat'
 export { Switch } from './components/Switch'
