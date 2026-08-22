@@ -1,0 +1,182 @@
+---
+title: ProgressBar
+description: Accessible linear progress bar built on React Aria Components and StyleX.
+---
+
+import { ProgressBar, Button } from '@moul-dev/ui';
+
+# ProgressBar
+
+The `ProgressBar` component visually indicates the status of an ongoing operation, supporting determinate percentage values, indeterminate animated loading bars, custom metric labels, and semantic color variants.
+
+## Preview
+
+<ComponentPlayground component="ProgressBar" />
+
+## Import
+
+```tsx
+import { ProgressBar } from '@moul-dev/ui';
+```
+
+## Interactive Demo
+
+<ComponentPreview>
+  <ProgressBarDemo />
+</ComponentPreview>
+
+## Determinate vs Indeterminate
+
+`ProgressBar` handles both bounded progress (e.g. `value={65}`) and indefinite loading states (`isIndeterminate={true}`):
+
+<ComponentPreview>
+  <div className="flex flex-col gap-5 w-full max-w-xl">
+    <ProgressBar label="Determinate (45%)" value={45} />
+    <ProgressBar label="Indeterminate (Loading...)" isIndeterminate />
+  </div>
+</ComponentPreview>
+
+```tsx
+// Determinate
+<ProgressBar label="Determinate (45%)" value={45} />
+
+// Indeterminate linear bar
+<ProgressBar label="Indeterminate (Loading...)" isIndeterminate />
+```
+
+## Color Variants
+
+Choose between semantic color variants mapped directly to StyleX design system tokens:
+
+<ComponentPreview>
+  <div className="flex flex-col gap-4 w-full max-w-xl">
+    <ProgressBar label="Primary" value={75} variant="primary" />
+    <ProgressBar label="Accent" value={60} variant="accent" />
+    <ProgressBar label="Success" value={95} variant="success" />
+    <ProgressBar label="Warning" value={50} variant="warning" />
+    <ProgressBar label="Error" value={25} variant="error" />
+    <ProgressBar label="Neutral" value={40} variant="neutral" />
+  </div>
+</ComponentPreview>
+
+```tsx
+<ProgressBar label="Primary" value={75} variant="primary" />
+<ProgressBar label="Accent" value={60} variant="accent" />
+<ProgressBar label="Success" value={95} variant="success" />
+<ProgressBar label="Warning" value={50} variant="warning" />
+<ProgressBar label="Error" value={25} variant="error" />
+<ProgressBar label="Neutral" value={40} variant="neutral" />
+```
+
+## Sizes and Shapes
+
+Select from `sm` (4px), `md` (8px), and `lg` (12px) track heights, and `pill` or `square` corners:
+
+<ComponentPreview>
+  <div className="flex flex-col gap-5 w-full max-w-xl">
+    <ProgressBar label="Small (sm) - Pill" value={40} size="sm" shape="pill" />
+    <ProgressBar label="Medium (md) - Pill" value={60} size="md" shape="pill" />
+    <ProgressBar label="Large (lg) - Pill" value={80} size="lg" shape="pill" />
+    <ProgressBar label="Square Shape" value={70} shape="square" size="md" />
+  </div>
+</ComponentPreview>
+
+```tsx
+<ProgressBar label="Small (sm)" value={40} size="sm" shape="pill" />
+<ProgressBar label="Medium (md)" value={60} size="md" shape="pill" />
+<ProgressBar label="Large (lg)" value={80} size="lg" shape="pill" />
+<ProgressBar label="Square Shape" value={70} shape="square" />
+```
+
+## Custom Value Labels
+
+Use `valueLabel` to display formatted quantities, storage metrics, or steps:
+
+<ComponentPreview>
+  <div className="flex flex-col gap-4 w-full max-w-xl">
+    <ProgressBar
+      label="Cloud Storage"
+      value={65}
+      valueLabel="6.5 GB / 10 GB"
+      showValueText
+    />
+    <ProgressBar
+      label="Onboarding Wizard"
+      value={60}
+      valueLabel="Step 3 of 5"
+      showValueText
+      variant="accent"
+    />
+  </div>
+</ComponentPreview>
+
+```tsx
+<ProgressBar
+  label="Cloud Storage"
+  value={65}
+  valueLabel="6.5 GB / 10 GB"
+  showValueText
+/>
+
+<ProgressBar
+  label="Onboarding Wizard"
+  value={60}
+  valueLabel="Step 3 of 5"
+  showValueText
+  variant="accent"
+/>
+```
+
+## API Reference
+
+<TypeTable
+  type={{
+    value: {
+      type: 'number',
+      default: '0',
+      description: 'Current progress value between minValue and maxValue.',
+    },
+    minValue: {
+      type: 'number',
+      default: '0',
+      description: 'Minimum value of the progress bar.',
+    },
+    maxValue: {
+      type: 'number',
+      default: '100',
+      description: 'Maximum value of the progress bar.',
+    },
+    isIndeterminate: {
+      type: 'boolean',
+      default: 'false',
+      description: 'Whether progress is indeterminate (pulsing linear animation).',
+    },
+    label: {
+      type: 'ReactNode',
+      description: 'Visible label text placed above the track.',
+    },
+    valueLabel: {
+      type: 'string',
+      description: 'Custom text representation of the value (e.g. "Step 2 of 5").',
+    },
+    showValueText: {
+      type: 'boolean',
+      description: 'Whether to show the percentage or valueLabel on the right.',
+    },
+    variant: {
+      type: "'primary' | 'accent' | 'success' | 'warning' | 'error' | 'neutral'",
+      default: "'primary'",
+      description: 'Color theme of the progress fill.',
+    },
+    size: {
+      type: "'sm' | 'md' | 'lg'",
+      default: "'md'",
+      description: 'Height of the progress track (sm: 4px, md: 8px, lg: 12px).',
+    },
+    shape: {
+      type: "'pill' | 'square'",
+      default: "'pill'",
+      description: 'Corner radius style of the track and fill bar.',
+    },
+  }}
+/>

@@ -8,10 +8,13 @@ import {
   CardBody,
   CardFooter,
   CardHeader,
+  EmptyState,
   InputOTP,
   InputOTPGroup,
   InputOTPSeparator,
   InputOTPSlot,
+  Pagination,
+  ProgressBar,
   Select,
   SelectItem,
   Sidebar,
@@ -478,6 +481,198 @@ const REGISTRY: Record<string, ComponentConfig> = {
       },
     ],
   },
+  ProgressBar: {
+    name: 'ProgressBar',
+    defaultProps: {
+      value: 65,
+      variant: 'primary',
+      size: 'md',
+      shape: 'pill',
+      isIndeterminate: false,
+      label: 'Upload Progress',
+      showValueText: true,
+    },
+    props: [
+      {
+        name: 'value',
+        type: 'number',
+        label: 'Progress Value (%)',
+        min: 0,
+        max: 100,
+        step: 5,
+        defaultValue: 65,
+      },
+      {
+        name: 'variant',
+        type: 'select',
+        label: 'Color Variant',
+        options: ['primary', 'accent', 'success', 'warning', 'error', 'neutral'],
+        defaultValue: 'primary',
+      },
+      {
+        name: 'size',
+        type: 'select',
+        label: 'Track Size',
+        options: ['sm', 'md', 'lg'],
+        defaultValue: 'md',
+      },
+      {
+        name: 'shape',
+        type: 'select',
+        label: 'Shape',
+        options: ['pill', 'square'],
+        defaultValue: 'pill',
+      },
+      {
+        name: 'isIndeterminate',
+        type: 'boolean',
+        label: 'Indeterminate',
+        defaultValue: false,
+      },
+      {
+        name: 'label',
+        type: 'text',
+        label: 'Label',
+        defaultValue: 'Upload Progress',
+      },
+      {
+        name: 'showValueText',
+        type: 'boolean',
+        label: 'Show Value Text',
+        defaultValue: true,
+      },
+    ],
+  },
+  EmptyState: {
+    name: 'EmptyState',
+    defaultProps: {
+      variant: 'card',
+      size: 'md',
+      align: 'center',
+      title: 'No repositories found',
+      description:
+        'You haven\'t created any repositories yet. Get started by creating your first project.',
+      showAction: true,
+      showSecondaryAction: true,
+    },
+    props: [
+      {
+        name: 'variant',
+        type: 'select',
+        label: 'Variant',
+        options: ['default', 'card', 'dashed'],
+        defaultValue: 'card',
+      },
+      {
+        name: 'size',
+        type: 'select',
+        label: 'Size',
+        options: ['sm', 'md', 'lg'],
+        defaultValue: 'md',
+      },
+      {
+        name: 'align',
+        type: 'select',
+        label: 'Alignment',
+        options: ['center', 'start'],
+        defaultValue: 'center',
+      },
+      {
+        name: 'title',
+        type: 'text',
+        label: 'Title',
+        defaultValue: 'No repositories found',
+      },
+      {
+        name: 'description',
+        type: 'text',
+        label: 'Description',
+        defaultValue:
+          'You haven\'t created any repositories yet. Get started by creating your first project.',
+      },
+      {
+        name: 'showAction',
+        type: 'boolean',
+        label: 'Show Primary Action',
+        defaultValue: true,
+      },
+      {
+        name: 'showSecondaryAction',
+        type: 'boolean',
+        label: 'Show Secondary Action',
+        defaultValue: true,
+      },
+    ],
+  },
+  Pagination: {
+    name: 'Pagination',
+    defaultProps: {
+      totalPages: 10,
+      size: 'md',
+      variant: 'outline',
+      shape: 'rounded',
+      showSummary: true,
+      showPageSize: true,
+      showFirstLast: true,
+      showPrevNext: true,
+    },
+    props: [
+      {
+        name: 'totalPages',
+        type: 'number',
+        label: 'Total Pages',
+        min: 1,
+        max: 50,
+        step: 1,
+        defaultValue: 10,
+      },
+      {
+        name: 'variant',
+        type: 'select',
+        label: 'Variant',
+        options: ['primary', 'outline', 'ghost', 'subtle'],
+        defaultValue: 'outline',
+      },
+      {
+        name: 'size',
+        type: 'select',
+        label: 'Size',
+        options: ['sm', 'md', 'lg'],
+        defaultValue: 'md',
+      },
+      {
+        name: 'shape',
+        type: 'select',
+        label: 'Shape',
+        options: ['rounded', 'circle', 'square'],
+        defaultValue: 'rounded',
+      },
+      {
+        name: 'showSummary',
+        type: 'boolean',
+        label: 'Show Summary Counter',
+        defaultValue: true,
+      },
+      {
+        name: 'showPageSize',
+        type: 'boolean',
+        label: 'Show Page Size Selector',
+        defaultValue: true,
+      },
+      {
+        name: 'showFirstLast',
+        type: 'boolean',
+        label: 'Show First / Last Buttons',
+        defaultValue: true,
+      },
+      {
+        name: 'showPrevNext',
+        type: 'boolean',
+        label: 'Show Prev / Next Buttons',
+        defaultValue: true,
+      },
+    ],
+  },
   TagGroup: {
     name: 'TagGroup',
     defaultProps: {
@@ -875,6 +1070,30 @@ function AlertPreviewWrapper({
     >
       {description}
     </Alert>
+  )
+}
+
+function PaginationPreviewWrapper({ activeProps }: { activeProps: any }) {
+  const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = useState(10)
+
+  return (
+    <div className="w-full max-w-xl py-2">
+      <Pagination
+        page={page}
+        onChange={setPage}
+        pageSize={pageSize}
+        onPageSizeChange={setPageSize}
+        totalPages={activeProps.totalPages}
+        variant={activeProps.variant}
+        size={activeProps.size}
+        shape={activeProps.shape}
+        showSummary={activeProps.showSummary}
+        showPageSize={activeProps.showPageSize}
+        showFirstLast={activeProps.showFirstLast}
+        showPrevNext={activeProps.showPrevNext}
+      />
+    </div>
   )
 }
 
@@ -1298,6 +1517,75 @@ export default function Example() {
   );
 }`
       }
+      case 'ProgressBar': {
+        const { value, variant, size, shape, isIndeterminate, label, showValueText } = activeProps
+        let propsStr = ''
+        if (value !== 50) propsStr += ` value={${value}}`
+        if (variant !== 'primary') propsStr += ` variant="${variant}"`
+        if (size !== 'md') propsStr += ` size="${size}"`
+        if (shape !== 'pill') propsStr += ` shape="${shape}"`
+        if (isIndeterminate) propsStr += ` isIndeterminate`
+        if (label) propsStr += ` label="${label}"`
+        if (showValueText) propsStr += ` showValueText`
+
+        return `import { ProgressBar } from '@moul-dev/ui';
+
+export default function Example() {
+  return (
+    <ProgressBar${propsStr} />
+  );
+}`
+      }
+      case 'EmptyState': {
+        const { variant, size, align, title, description, showAction, showSecondaryAction } = activeProps
+        let propsStr = ''
+        if (variant !== 'default') propsStr += ` variant="${variant}"`
+        if (size !== 'md') propsStr += ` size="${size}"`
+        if (align !== 'center') propsStr += ` align="${align}"`
+        if (title) propsStr += ` title="${title}"`
+        if (description) propsStr += ` description="${description}"`
+
+        return `import { EmptyState, Button } from '@moul-dev/ui';
+
+export default function Example() {
+  return (
+    <EmptyState${propsStr}${
+      showAction ? '\n      action={<Button size="sm">Create New</Button>}' : ''
+    }${
+      showSecondaryAction ? '\n      secondaryAction={<Button size="sm" variant="ghost">Learn More</Button>}' : ''
+    }
+    />
+  );
+}`
+      }
+      case 'Pagination': {
+        const { totalPages, variant, size, shape, showSummary, showPageSize, showFirstLast, showPrevNext } = activeProps
+        let propsStr = ` totalPages={${totalPages}}`
+        if (variant !== 'outline') propsStr += ` variant="${variant}"`
+        if (size !== 'md') propsStr += ` size="${size}"`
+        if (shape !== 'rounded') propsStr += ` shape="${shape}"`
+        if (showSummary) propsStr += ` showSummary`
+        if (showPageSize) propsStr += ` showPageSize`
+        if (showFirstLast) propsStr += ` showFirstLast`
+        if (!showPrevNext) propsStr += ` showPrevNext={false}`
+
+        return `import { Pagination } from '@moul-dev/ui';
+import { useState } from 'react';
+
+export default function Example() {
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  return (
+    <Pagination
+      page={page}
+      onChange={setPage}
+      pageSize={pageSize}
+      onPageSizeChange={setPageSize}${propsStr}
+    />
+  );
+}`
+      }
       case 'TagGroup': {
         const { label, variant, size, selectionMode } = activeProps
         let propsStr = ''
@@ -1512,6 +1800,60 @@ export default function Example() {
             hasCloseButton={activeProps.hasCloseButton}
           />
         )
+      case 'ProgressBar':
+        return (
+          <div className="w-full max-w-md py-4">
+            <ProgressBar
+              value={activeProps.value}
+              variant={activeProps.variant}
+              size={activeProps.size}
+              shape={activeProps.shape}
+              isIndeterminate={activeProps.isIndeterminate}
+              label={activeProps.label}
+              showValueText={activeProps.showValueText}
+            />
+          </div>
+        )
+      case 'EmptyState':
+        return (
+          <div className="w-full max-w-md py-2">
+            <EmptyState
+              variant={activeProps.variant}
+              size={activeProps.size}
+              align={activeProps.align}
+              icon={
+                <svg
+                  viewBox="0 0 24 24"
+                  width="22"
+                  height="22"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+                </svg>
+              }
+              title={activeProps.title}
+              description={activeProps.description}
+              action={
+                activeProps.showAction ? (
+                  <Button size="sm">Create Repository</Button>
+                ) : undefined
+              }
+              secondaryAction={
+                activeProps.showSecondaryAction ? (
+                  <Button size="sm" variant="ghost">
+                    Import Project
+                  </Button>
+                ) : undefined
+              }
+            />
+          </div>
+        )
+      case 'Pagination':
+        return <PaginationPreviewWrapper activeProps={activeProps} />
       case 'TagGroup':
         return (
           <TagGroupPreviewWrapper

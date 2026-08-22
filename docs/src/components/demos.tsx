@@ -23,6 +23,11 @@ import {
   type DrawerPlacement,
   type DrawerSize,
   DrawerTitle,
+  EmptyState,
+  EmptyStateActions,
+  EmptyStateDescription,
+  EmptyStateIcon,
+  EmptyStateTitle,
   Form,
   InputOTP,
   InputOTPGroup,
@@ -35,8 +40,18 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPageSize,
+  PaginationPrevious,
+  PaginationSummary,
   PercentageBar,
   PercentageCircle,
+  ProgressBar,
   REGEXP_ONLY_DIGITS,
   Sidebar,
   SidebarAside,
@@ -1255,3 +1270,169 @@ export function SidebarDemo() {
     </Sidebar>
   )
 }
+
+export function ProgressBarDemo() {
+  const [value, setValue] = useState(60)
+  const [isIndeterminate, setIsIndeterminate] = useState(false)
+  const [variant, setVariant] = useState<'primary' | 'success' | 'warning' | 'error'>('primary')
+
+  return (
+    <div className="flex flex-col gap-6 w-full max-w-xl p-4 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/20">
+      <div className="flex items-center justify-between gap-3 flex-wrap">
+        <div className="flex items-center gap-2">
+          <Button
+            size="sm"
+            variant="outline"
+            onPress={() => setValue((v) => Math.max(0, v - 10))}
+          >
+            -10%
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            onPress={() => setValue((v) => Math.min(100, v + 10))}
+          >
+            +10%
+          </Button>
+          <Button
+            size="sm"
+            variant={isIndeterminate ? 'primary' : 'ghost'}
+            onPress={() => setIsIndeterminate((v) => !v)}
+          >
+            {isIndeterminate ? 'Indeterminate: ON' : 'Indeterminate: OFF'}
+          </Button>
+        </div>
+
+        <div className="flex items-center gap-1.5">
+          {(['primary', 'success', 'warning', 'error'] as const).map((v) => (
+            <Button
+              key={v}
+              size="sm"
+              variant={variant === v ? 'primary' : 'ghost'}
+              onPress={() => setVariant(v)}
+              className="capitalize text-xs"
+            >
+              {v}
+            </Button>
+          ))}
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-4">
+        <ProgressBar
+          label="File Upload Progress"
+          value={value}
+          isIndeterminate={isIndeterminate}
+          variant={variant}
+          size="md"
+        />
+
+        <ProgressBar
+          label="Memory Allocation"
+          value={value}
+          valueLabel={`${Math.round(value * 16)} MB / 1600 MB`}
+          isIndeterminate={isIndeterminate}
+          variant={variant}
+          size="sm"
+        />
+      </div>
+    </div>
+  )
+}
+
+export function EmptyStateDemo() {
+  const [variant, setVariant] = useState<'default' | 'card' | 'dashed'>('card')
+
+  return (
+    <div className="flex flex-col gap-4 w-full max-w-xl">
+      <div className="flex items-center gap-2 justify-center">
+        {(['default', 'card', 'dashed'] as const).map((v) => (
+          <Button
+            key={v}
+            size="sm"
+            variant={variant === v ? 'primary' : 'outline'}
+            onPress={() => setVariant(v)}
+            className="capitalize"
+          >
+            {v} Variant
+          </Button>
+        ))}
+      </div>
+
+      <EmptyState
+        variant={variant}
+        icon={
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+          </svg>
+        }
+        title="No repositories found"
+        description="You haven't created any repositories yet. Get started by creating your first project repository."
+        action={<Button size="sm">Create Repository</Button>}
+        secondaryAction={<Button size="sm" variant="ghost">Import Repo</Button>}
+      />
+    </div>
+  )
+}
+
+export function PaginationDemo() {
+  const [page, setPage] = useState(3)
+  const [pageSize, setPageSize] = useState(10)
+
+  const sampleUsers = Array.from({ length: 100 }, (_, i) => ({
+    id: i + 1,
+    name: `User ${i + 1}`,
+    role: i % 3 === 0 ? 'Admin' : i % 2 === 0 ? 'Editor' : 'Viewer',
+    status: i % 4 === 0 ? 'Inactive' : 'Active',
+  }))
+
+  const paginatedData = sampleUsers.slice((page - 1) * pageSize, page * pageSize)
+
+  return (
+    <div className="flex flex-col gap-4 w-full max-w-2xl p-4 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/20">
+      <div className="overflow-x-auto rounded-lg border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950">
+        <table className="w-full text-left text-sm">
+          <thead className="border-b border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900 text-xs font-semibold text-neutral-500">
+            <tr>
+              <th className="p-3">ID</th>
+              <th className="p-3">Name</th>
+              <th className="p-3">Role</th>
+              <th className="p-3">Status</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-neutral-200 dark:divide-neutral-800">
+            {paginatedData.map((u) => (
+              <tr key={u.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-900/40">
+                <td className="p-3 font-mono text-xs">{u.id}</td>
+                <td className="p-3 font-medium">{u.name}</td>
+                <td className="p-3 text-neutral-500">{u.role}</td>
+                <td className="p-3">
+                  <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                    u.status === 'Active'
+                      ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-400'
+                      : 'bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400'
+                  }`}>
+                    {u.status}
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <Pagination
+        page={page}
+        total={sampleUsers.length}
+        pageSize={pageSize}
+        showSummary
+        showPageSize
+        showFirstLast
+        showPrevNext
+        onChange={setPage}
+        onPageSizeChange={setPageSize}
+      />
+    </div>
+  )
+}
+

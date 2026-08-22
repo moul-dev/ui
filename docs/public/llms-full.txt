@@ -33,10 +33,13 @@
 6. [Feedback & Status](#feedback--status)
    - [Alert](#alert)
    - [Badge](#badge)
+   - [ProgressBar](#progressbar)
    - [Spinner & Skeleton](#spinner--skeleton)
+   - [EmptyState](#emptystate)
    - [Toast Notification System](#toast-notification-system)
 7. [Navigation & Layout](#navigation--layout)
    - [Card](#card)
+   - [Pagination](#pagination)
    - [Tabs](#tabs)
    - [Table](#table)
    - [Breadcrumbs](#breadcrumbs)
@@ -510,6 +513,41 @@ import { Badge, Avatar } from '@moul-dev/ui';
 
 ---
 
+### ProgressBar
+Linear progress indicator supporting determinate values and indeterminate pulsing animations.
+
+```tsx
+import { ProgressBar } from '@moul-dev/ui';
+
+// Determinate with label & percentage
+<ProgressBar label="Loading assets" value={65} variant="primary" size="md" />
+
+// Indeterminate linear bar
+<ProgressBar label="Processing request..." isIndeterminate variant="accent" />
+
+// Custom formatted value label
+<ProgressBar label="Storage" value={45} valueLabel="450 MB / 1 GB" showValueText />
+```
+
+---
+
+### EmptyState
+Placeholder layout for empty tables, search results, and unconfigured widgets.
+
+```tsx
+import { EmptyState, Button } from '@moul-dev/ui';
+
+<EmptyState
+  variant="card"
+  title="No repositories found"
+  description="Get started by creating your first project repository."
+  action={<Button size="sm">Create Repository</Button>}
+  secondaryAction={<Button size="sm" variant="ghost">Import</Button>}
+/>
+```
+
+---
+
 ### Toast System
 ```tsx
 import { ToastContainer, toastQueue, Button } from '@moul-dev/ui';
@@ -547,6 +585,31 @@ import { Card, CardHeader, CardBody, CardFooter, Button } from '@moul-dev/ui';
     <Button variant="outline" size="sm">View Metrics</Button>
   </CardFooter>
 </Card>
+```
+
+---
+
+### Pagination
+Navigation landmark with smart truncation ellipses, rows-per-page dropdown, and summary counters.
+
+```tsx
+import { Pagination } from '@moul-dev/ui';
+import { useState } from 'react';
+
+const [page, setPage] = useState(1);
+const [pageSize, setPageSize] = useState(10);
+
+<Pagination
+  page={page}
+  onChange={setPage}
+  total={250}
+  pageSize={pageSize}
+  onPageSizeChange={setPageSize}
+  showSummary
+  showPageSize
+  showFirstLast
+  showPrevNext
+/>
 ```
 
 ---

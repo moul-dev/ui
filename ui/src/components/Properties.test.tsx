@@ -26,6 +26,7 @@ import {
   ComboBox,
   ComboBoxItem,
   Description,
+  EmptyState,
   ErrorMessage,
   FieldError,
   Form,
@@ -36,9 +37,11 @@ import {
   ModalDialog,
   ModalOverlay,
   NumberField,
+  Pagination,
   Popover,
   PopoverDialog,
   PopoverTrigger,
+  ProgressBar,
   Radio,
   RadioGroup,
   Row,
@@ -320,6 +323,24 @@ const allComponents = [
           </Row>
         </TableBody>
       </Table>
+    ),
+  },
+  {
+    name: 'EmptyState',
+    render: (props: any) => (
+      <EmptyState title="Title" description="Desc" {...props} />
+    ),
+  },
+  {
+    name: 'Pagination',
+    render: (props: any) => (
+      <Pagination page={1} totalPages={5} {...props} />
+    ),
+  },
+  {
+    name: 'ProgressBar',
+    render: (props: any) => (
+      <ProgressBar value={50} aria-label="Progress" {...props} />
     ),
   },
 ]
@@ -1160,10 +1181,8 @@ describe('Centralized Component Properties Tests', () => {
         const originalDocument = globalThis.document
 
         try {
-          // @ts-expect-error
-          delete globalThis.window
-          // @ts-expect-error
-          delete globalThis.document
+          delete (globalThis as any).window
+          delete (globalThis as any).document
 
           const html = renderToString(comp.render({}))
           expect(typeof html).toBe('string')

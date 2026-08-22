@@ -1,0 +1,255 @@
+---
+title: Pagination
+description: Accessible navigation landmark for paginated lists, data tables, and search results.
+---
+
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationPrevious, PaginationNext, PaginationEllipsis, PaginationSummary, PaginationPageSize, Button } from '@moul-dev/ui';
+
+# Pagination
+
+The `Pagination` component enables users to navigate across large datasets divided into multiple pages. It features automatic sibling truncation ellipses, rows-per-page selection dropdowns, total summary counts, and complete ARIA landmark semantics.
+
+## Preview
+
+<ComponentPlayground component="Pagination" />
+
+## Import
+
+```tsx
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationPrevious,
+  PaginationNext,
+  PaginationFirst,
+  PaginationLast,
+  PaginationEllipsis,
+  PaginationSummary,
+  PaginationPageSize,
+} from '@moul-dev/ui';
+```
+
+## Interactive Table Demo
+
+<ComponentPreview>
+  <PaginationDemo />
+</ComponentPreview>
+
+## Basic Usage
+
+Pass `page`, `totalPages`, and `onChange` for standard controlled pagination:
+
+<ComponentPreview>
+  <div className="flex flex-col gap-4 w-full max-w-xl">
+    <Pagination page={3} totalPages={10} />
+  </div>
+</ComponentPreview>
+
+```tsx
+import { Pagination } from '@moul-dev/ui';
+import { useState } from 'react';
+
+export default function Example() {
+  const [page, setPage] = useState(1);
+
+  return (
+    <Pagination
+      page={page}
+      totalPages={10}
+      onChange={setPage}
+    />
+  );
+}
+```
+
+## With Summary and Page Size Selector
+
+Enable `showSummary` and `showPageSize` to provide complete data table navigation:
+
+<ComponentPreview>
+  <div className="flex flex-col gap-4 w-full max-w-2xl">
+    <Pagination
+      page={2}
+      total={250}
+      pageSize={10}
+      showSummary
+      showPageSize
+      showFirstLast
+      showPrevNext
+    />
+  </div>
+</ComponentPreview>
+
+```tsx
+import { Pagination } from '@moul-dev/ui';
+import { useState } from 'react';
+
+export default function Example() {
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  return (
+    <Pagination
+      page={page}
+      total={250}
+      pageSize={pageSize}
+      showSummary
+      showPageSize
+      showFirstLast
+      showPrevNext
+      onChange={setPage}
+      onPageSizeChange={setPageSize}
+    />
+  );
+}
+```
+
+## Shapes & Variants
+
+Choose between `rounded`, `circle`, or `square` button shapes, and `outline`, `ghost`, `primary`, or `subtle` styles:
+
+<ComponentPreview>
+  <div className="flex flex-col gap-6 w-full max-w-xl">
+    <Pagination page={4} totalPages={8} variant="outline" shape="rounded" />
+    <Pagination page={4} totalPages={8} variant="subtle" shape="circle" />
+    <Pagination page={4} totalPages={8} variant="ghost" shape="square" />
+  </div>
+</ComponentPreview>
+
+```tsx
+<Pagination page={4} totalPages={8} variant="outline" shape="rounded" />
+<Pagination page={4} totalPages={8} variant="subtle" shape="circle" />
+<Pagination page={4} totalPages={8} variant="ghost" shape="square" />
+```
+
+## Compound Composition
+
+You can build custom layouts by composing subcomponents inside `<Pagination>`:
+
+```tsx
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationPrevious,
+  PaginationNext,
+  PaginationEllipsis,
+  PaginationSummary,
+} from '@moul-dev/ui';
+
+export default function CustomPagination() {
+  return (
+    <Pagination page={3} totalPages={10}>
+      <PaginationSummary>Page 3 of 10</PaginationSummary>
+      <PaginationContent>
+        <PaginationItem>
+          <PaginationPrevious />
+        </PaginationItem>
+        <PaginationItem>
+          <PaginationLink page={1} />
+        </PaginationItem>
+        <PaginationItem>
+          <PaginationEllipsis />
+        </PaginationItem>
+        <PaginationItem>
+          <PaginationLink page={3} isActive />
+        </PaginationItem>
+        <PaginationItem>
+          <PaginationEllipsis />
+        </PaginationItem>
+        <PaginationItem>
+          <PaginationLink page={10} />
+        </PaginationItem>
+        <PaginationItem>
+          <PaginationNext />
+        </PaginationItem>
+      </PaginationContent>
+    </Pagination>
+  );
+}
+```
+
+## API Reference
+
+<TypeTable
+  type={{
+    page: {
+      type: 'number',
+      description: 'Controlled current active page number (1-indexed).',
+    },
+    defaultPage: {
+      type: 'number',
+      default: '1',
+      description: 'Uncontrolled initial active page.',
+    },
+    totalPages: {
+      type: 'number',
+      description: 'Total number of pages available.',
+    },
+    total: {
+      type: 'number',
+      description: 'Total number of items (used to compute totalPages when pageSize is set).',
+    },
+    pageSize: {
+      type: 'number',
+      default: '10',
+      description: 'Number of items per page.',
+    },
+    pageSizeOptions: {
+      type: 'number[]',
+      default: '[10, 20, 50, 100]',
+      description: 'Available options for rows-per-page selector.',
+    },
+    siblingCount: {
+      type: 'number',
+      default: '1',
+      description: 'Number of sibling page numbers to show on either side of active page.',
+    },
+    onChange: {
+      type: '(page: number) => void',
+      description: 'Callback invoked when a new page is selected.',
+    },
+    onPageSizeChange: {
+      type: '(pageSize: number) => void',
+      description: 'Callback invoked when page size dropdown value changes.',
+    },
+    showSummary: {
+      type: 'boolean',
+      default: 'false',
+      description: 'Whether to show the "Showing X-Y of Z" summary counter.',
+    },
+    showPageSize: {
+      type: 'boolean',
+      default: 'false',
+      description: 'Whether to display the rows-per-page select dropdown.',
+    },
+    showFirstLast: {
+      type: 'boolean',
+      default: 'false',
+      description: 'Whether to render jump-to-first and jump-to-last button icons.',
+    },
+    showPrevNext: {
+      type: 'boolean',
+      default: 'true',
+      description: 'Whether to render previous and next navigation buttons.',
+    },
+    variant: {
+      type: "'primary' | 'outline' | 'ghost' | 'subtle'",
+      default: "'outline'",
+      description: 'Visual style of page button items.',
+    },
+    size: {
+      type: "'sm' | 'md' | 'lg'",
+      default: "'md'",
+      description: 'Scale of pagination buttons (sm: 28px, md: 36px, lg: 44px).',
+    },
+    shape: {
+      type: "'rounded' | 'circle' | 'square'",
+      default: "'rounded'",
+      description: 'Border radius shape of button elements.',
+    },
+  }}
+/>

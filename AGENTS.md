@@ -70,9 +70,9 @@ Run these commands from the root directory:
 
 When generating or editing React code using `@moul-dev/ui` components:
 
-1. **Imports**: Always import from `@moul-dev/ui` (e.g. `import { Button, TextField, Modal, Card, AreaChart } from '@moul-dev/ui'`).
+1. **Imports**: Always import from `@moul-dev/ui` (e.g. `import { Button, TextField, Modal, Card, AreaChart, Pagination, ProgressBar, EmptyState } from '@moul-dev/ui'`).
 2. **Event Handlers**: Use React Aria's `onPress` instead of `onClick` on `<Button>`, `<Link>`, and interactive triggers.
-3. **Selection & Collections**: Use `selectedKey` / `defaultSelectedKey` or `selectedKeys` and `onSelectionChange` for collection components (`Select`, `ComboBox`, `Tabs`, `Table`, `TagGroup`, `Sidebar`).
+3. **Selection & Collections**: Use `selectedKey` / `defaultSelectedKey` or `selectedKeys` and `onSelectionChange` for collection components (`Select`, `ComboBox`, `Tabs`, `Table`, `TagGroup`, `Sidebar`, `Pagination`).
 4. **Dialogs & Overlays**: Use `isOpen` and `onOpenChange` on `<ModalOverlay>` / `<Popover>` / `<AlertDialog>`.
 5. **Accessibility**: Always provide an `aria-label` when rendering icon-only buttons.
 6. **Compound Structure**: Follow compound component patterns (e.g., `<Modal><ModalOverlay><ModalDialog><ModalHeader>...`).

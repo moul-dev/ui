@@ -74,12 +74,15 @@ function Root({ children }: { children: React.ReactNode }) {
 ### Feedback & Status
 - [Alert](/docs/components/alert): Inline banner alert messages with `info`, `success`, `warning`, `error`, and `neutral` variants.
 - [Badge](/docs/components/badge): Status badge indicators in multiple color variants and sizes.
+- [ProgressBar](/docs/components/progressbar): Linear progress bar for determinate metrics and indeterminate loading animations.
 - [Spinner](/docs/components/spinner): Accessible loading spinners.
 - [Skeleton](/docs/components/skeleton): Loading placeholder skeletons for text, cards, and avatars.
+- [EmptyState](/docs/components/emptystate): Clean placeholder layout with icon, title, description, and action CTA buttons.
 - [Toast](/docs/components/toast): Global toast notification system with `toastQueue` and `ToastContainer`.
 
 ### Navigation & Layout
 - [Breadcrumbs](/docs/components/breadcrumbs): Hierarchical navigation breadcrumb trails.
+- [Pagination](/docs/components/pagination): Accessible data navigation with smart sibling truncation, page size selector, and summary counter.
 - [Tabs](/docs/components/tabs): Accessible tabbed navigation with `TabList`, `Tab`, `TabPanels`, and `TabPanel`.
 - [Table](/docs/components/table): Interactive data tables with column sorting, row selection, and keyboard navigation.
 - [Card](/docs/components/card): Container surfaces with `CardHeader`, `CardBody`, and `CardFooter`.

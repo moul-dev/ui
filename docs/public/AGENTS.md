@@ -85,6 +85,8 @@ Components such as `Modal`, `AlertDialog`, `Card`, `Tabs`, `Table`, `Select`, an
 - `Modal`: `<Modal>`, `<ModalOverlay>`, `<ModalDialog>`, `<ModalHeader>`, `<ModalBody>`, `<ModalFooter>`
 - `Tabs`: `<Tabs>`, `<TabList>`, `<Tab>`, `<TabPanels>`, `<TabPanel>`
 - `Table`: `<Table>`, `<TableHeader>`, `<Column>`, `<TableBody>`, `<Row>`, `<Cell>`
+- `EmptyState`: `<EmptyState>`, `<EmptyStateIcon>`, `<EmptyStateTitle>`, `<EmptyStateDescription>`, `<EmptyStateActions>`
+- `Pagination`: `<Pagination>`, `<PaginationContent>`, `<PaginationItem>`, `<PaginationLink>`, `<PaginationPrevious>`, `<PaginationNext>`, `<PaginationEllipsis>`, `<PaginationSummary>`, `<PaginationPageSize>`
 - `Sidebar`: `<Sidebar>`, `<SidebarAside>`, `<SidebarHeader>`, `<SidebarGroup>`, `<SidebarItem>`, `<SidebarFooter>`, `<SidebarMain>`
 
 ---

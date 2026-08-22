@@ -22,8 +22,11 @@ import {
   type DrawerSize,
   DrawerTitle,
 } from './components/Drawer'
+import { EmptyState } from './components/EmptyState'
 import { Logs, SERVER_LOGS } from './components/LogsViewer'
 import { Modal, ModalOverlay } from './components/Modal'
+import { Pagination } from './components/Pagination'
+import { ProgressBar } from './components/ProgressBar'
 import {
   Sidebar,
   SidebarAside,
@@ -101,6 +104,21 @@ const AlbumIcon = () => (
   >
     <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
     <circle cx="12" cy="12" r="3" />
+  </svg>
+)
+
+const FolderIcon = () => (
+  <svg
+    viewBox="0 0 24 24"
+    width="18"
+    height="18"
+    stroke="currentColor"
+    strokeWidth="2"
+    fill="none"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
   </svg>
 )
 
@@ -404,6 +422,12 @@ function App() {
     'glass',
   )
   const [showToggle, setShowToggle] = useState(true)
+
+  // New components interactive state
+  const [currentPage, setCurrentPage] = useState(2)
+  const [pageSize, setPageSize] = useState(10)
+  const [progressVal, setProgressVal] = useState(65)
+  const [isIndeterminateProgress, setIsIndeterminateProgress] = useState(false)
 
   return (
     <Sidebar
@@ -980,6 +1004,136 @@ function App() {
               drawerSize="md"
               maxHeight="460px"
             />
+          </section>
+        </div>
+        {/* ProgressBar Showcase */}
+        <div {...stylex.props(styles.wideCard)}>
+          <section {...stylex.props(styles.section)}>
+            <h2 {...stylex.props(styles.sectionTitle)}>
+              ProgressBar Component Showcase
+            </h2>
+            <p style={{ margin: 0, fontSize: '0.9rem', color: '#94a3b8' }}>
+              Accessible linear loading indicator supporting determinate values, indeterminate animations, multiple color variants, and sizes.
+            </p>
+
+            <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
+              <Button
+                size="sm"
+                variant="outline"
+                onPress={() => setProgressVal((p) => Math.max(0, p - 10))}
+              >
+                -10%
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                onPress={() => setProgressVal((p) => Math.min(100, p + 10))}
+              >
+                +10%
+              </Button>
+              <Button
+                size="sm"
+                variant={isIndeterminateProgress ? 'primary' : 'ghost'}
+                onPress={() => setIsIndeterminateProgress((v) => !v)}
+              >
+                {isIndeterminateProgress ? 'Indeterminate: ON' : 'Toggle Indeterminate'}
+              </Button>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxWidth: '600px' }}>
+              <ProgressBar
+                label="Primary Progress (md)"
+                value={progressVal}
+                isIndeterminate={isIndeterminateProgress}
+                variant="primary"
+                size="md"
+              />
+              <ProgressBar
+                label="Success Accent (lg)"
+                value={progressVal}
+                isIndeterminate={isIndeterminateProgress}
+                variant="success"
+                size="lg"
+              />
+              <ProgressBar
+                label="Warning Stage (sm)"
+                value={progressVal}
+                isIndeterminate={isIndeterminateProgress}
+                variant="warning"
+                size="sm"
+              />
+              <ProgressBar
+                label="Custom Value Text"
+                value={progressVal}
+                valueLabel={`${progressVal * 10} MB / 1000 MB`}
+                variant="accent"
+              />
+            </div>
+          </section>
+        </div>
+
+        {/* EmptyState Showcase */}
+        <div {...stylex.props(styles.wideCard)}>
+          <section {...stylex.props(styles.section)}>
+            <h2 {...stylex.props(styles.sectionTitle)}>
+              EmptyState Component Showcase
+            </h2>
+            <p style={{ margin: 0, fontSize: '0.9rem', color: '#94a3b8' }}>
+              Consistent placeholder UI for tables, lists, charts, and empty dashboard widgets.
+            </p>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px' }}>
+              <EmptyState
+                variant="card"
+                icon={<FolderIcon />}
+                title="No repositories found"
+                description="Get started by creating a new repository or importing an existing project."
+                action={<Button size="sm">Create Repository</Button>}
+                secondaryAction={<Button size="sm" variant="ghost">Import</Button>}
+              />
+
+              <EmptyState
+                variant="dashed"
+                icon={<RadioIcon />}
+                title="No active audio streams"
+                description="Connect a streaming audio source to begin real-time telemetry."
+                action={<Button size="sm" variant="outline">Connect Stream</Button>}
+              />
+            </div>
+          </section>
+        </div>
+
+        {/* Pagination Showcase */}
+        <div {...stylex.props(styles.wideCard)}>
+          <section {...stylex.props(styles.section)}>
+            <h2 {...stylex.props(styles.sectionTitle)}>
+              Pagination Component Showcase
+            </h2>
+            <p style={{ margin: 0, fontSize: '0.9rem', color: '#94a3b8' }}>
+              Full navigation controls with smart sibling truncation, rows-per-page selection, item counts, and ARIA landmarks.
+            </p>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+              <Pagination
+                page={currentPage}
+                total={120}
+                pageSize={pageSize}
+                showSummary
+                showPageSize
+                showFirstLast
+                showPrevNext
+                onChange={setCurrentPage}
+                onPageSizeChange={setPageSize}
+              />
+
+              <Pagination
+                page={currentPage}
+                totalPages={10}
+                variant="subtle"
+                shape="circle"
+                onChange={setCurrentPage}
+              />
+            </div>
           </section>
         </div>
       </SidebarMain>
