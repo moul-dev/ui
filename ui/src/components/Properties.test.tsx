@@ -333,9 +333,7 @@ const allComponents = [
   },
   {
     name: 'Pagination',
-    render: (props: any) => (
-      <Pagination page={1} totalPages={5} {...props} />
-    ),
+    render: (props: any) => <Pagination page={1} totalPages={5} {...props} />,
   },
   {
     name: 'ProgressBar',

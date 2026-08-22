@@ -7,7 +7,6 @@ import ts from 'typescript'
 import dts from 'vite-plugin-dts'
 import { defineConfig, type Plugin } from 'vitest/config'
 
-
 function preserveTokensStylexPlugin(): Plugin {
   return {
     name: 'preserve-tokens-stylex',
@@ -43,8 +42,6 @@ function preserveTokensStylexPlugin(): Plugin {
     },
   }
 }
-
-
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -90,4 +87,3 @@ export default defineConfig({
     },
   },
 })
-

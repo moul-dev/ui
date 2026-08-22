@@ -6,10 +6,15 @@ import {
   AvatarGroup,
   Badge,
   Button,
+  Calendar,
   Card,
   CardBody,
   CardFooter,
   CardHeader,
+  Cell,
+  Column,
+  DatePicker,
+  DateRangePicker,
   EmptyState,
   InputOTP,
   InputOTPGroup,
@@ -17,6 +22,8 @@ import {
   InputOTPSlot,
   Pagination,
   ProgressBar,
+  RangeCalendar,
+  Row,
   Select,
   SelectItem,
   Sidebar,
@@ -32,9 +39,6 @@ import {
   Table,
   TableBody,
   TableHeader,
-  Column,
-  Row,
-  Cell,
   Tag,
   TagGroup,
   TextField,
@@ -576,7 +580,14 @@ const REGISTRY: Record<string, ComponentConfig> = {
         name: 'variant',
         type: 'select',
         label: 'Color Variant',
-        options: ['primary', 'accent', 'success', 'warning', 'error', 'neutral'],
+        options: [
+          'primary',
+          'accent',
+          'success',
+          'warning',
+          'error',
+          'neutral',
+        ],
         defaultValue: 'primary',
       },
       {
@@ -621,7 +632,7 @@ const REGISTRY: Record<string, ComponentConfig> = {
       align: 'center',
       title: 'No repositories found',
       description:
-        'You haven\'t created any repositories yet. Get started by creating your first project.',
+        "You haven't created any repositories yet. Get started by creating your first project.",
       showAction: true,
       showSecondaryAction: true,
     },
@@ -658,7 +669,7 @@ const REGISTRY: Record<string, ComponentConfig> = {
         type: 'text',
         label: 'Description',
         defaultValue:
-          'You haven\'t created any repositories yet. Get started by creating your first project.',
+          "You haven't created any repositories yet. Get started by creating your first project.",
       },
       {
         name: 'showAction',
@@ -988,6 +999,122 @@ const REGISTRY: Record<string, ComponentConfig> = {
         type: 'boolean',
         label: 'Show Sort Indicator',
         defaultValue: true,
+      },
+    ],
+  },
+  Calendar: {
+    name: 'Calendar',
+    defaultProps: {
+      mode: 'single',
+      isDisabled: false,
+      isReadOnly: false,
+      showSelectedValue: true,
+    },
+    props: [
+      {
+        name: 'mode',
+        type: 'select',
+        label: 'Mode',
+        options: ['single', 'range'],
+        defaultValue: 'single',
+      },
+      {
+        name: 'isDisabled',
+        type: 'boolean',
+        label: 'Disabled',
+        defaultValue: false,
+      },
+      {
+        name: 'isReadOnly',
+        type: 'boolean',
+        label: 'Read Only',
+        defaultValue: false,
+      },
+      {
+        name: 'showSelectedValue',
+        type: 'boolean',
+        label: 'Show Selected Date',
+        defaultValue: true,
+      },
+    ],
+  },
+  DatePicker: {
+    name: 'DatePicker',
+    defaultProps: {
+      mode: 'single',
+      label: 'Meeting Date',
+      description: 'Select your preferred meeting date.',
+      errorMessage: 'Please select a valid future date.',
+      variant: 'primary',
+      size: 'md',
+      isDisabled: false,
+      isInvalid: false,
+      isReadOnly: false,
+      isRequired: false,
+    },
+    props: [
+      {
+        name: 'mode',
+        type: 'select',
+        label: 'Mode',
+        options: ['single', 'range'],
+        defaultValue: 'single',
+      },
+      {
+        name: 'variant',
+        type: 'select',
+        label: 'Variant',
+        options: ['primary', 'secondary'],
+        defaultValue: 'primary',
+      },
+      {
+        name: 'size',
+        type: 'select',
+        label: 'Size',
+        options: ['sm', 'md', 'lg'],
+        defaultValue: 'md',
+      },
+      {
+        name: 'label',
+        type: 'text',
+        label: 'Label',
+        defaultValue: 'Meeting Date',
+      },
+      {
+        name: 'description',
+        type: 'text',
+        label: 'Description',
+        defaultValue: 'Select your preferred meeting date.',
+      },
+      {
+        name: 'errorMessage',
+        type: 'text',
+        label: 'Error Message',
+        defaultValue: 'Please select a valid future date.',
+      },
+      {
+        name: 'isDisabled',
+        type: 'boolean',
+        label: 'Disabled',
+        defaultValue: false,
+      },
+      {
+        name: 'isInvalid',
+        type: 'boolean',
+        label: 'Invalid',
+        defaultValue: false,
+      },
+      {
+        name: 'isReadOnly',
+        type: 'boolean',
+        label: 'Read Only',
+        defaultValue: false,
+      },
+      {
+        name: 'isRequired',
+        type: 'boolean',
+        label: 'Required',
+        defaultValue: false,
       },
     ],
   },
@@ -1454,6 +1581,97 @@ function InputOTPPreviewWrapper({
   )
 }
 
+function CalendarPreviewWrapper({ activeProps }: { activeProps: any }) {
+  const { mode, isDisabled, isReadOnly, showSelectedValue } = activeProps
+  const [date, setDate] = useState<any>(null)
+  const [range, setRange] = useState<any>(null)
+
+  if (mode === 'range') {
+    return (
+      <div className="flex flex-col items-center gap-3 py-2">
+        <RangeCalendar
+          aria-label="Trip booking dates"
+          value={range}
+          onChange={setRange}
+          isDisabled={isDisabled}
+          isReadOnly={isReadOnly}
+        />
+        {showSelectedValue && range && (
+          <p className="text-xs text-neutral-500 font-mono">
+            {range.start?.toString()} → {range.end?.toString()}
+          </p>
+        )}
+      </div>
+    )
+  }
+
+  return (
+    <div className="flex flex-col items-center gap-3 py-2">
+      <Calendar
+        aria-label="Appointment date"
+        value={date}
+        onChange={setDate}
+        isDisabled={isDisabled}
+        isReadOnly={isReadOnly}
+      />
+      {showSelectedValue && date && (
+        <p className="text-xs text-neutral-500 font-mono">
+          Selected: {date.toString()}
+        </p>
+      )}
+    </div>
+  )
+}
+
+function DatePickerPreviewWrapper({ activeProps }: { activeProps: any }) {
+  const {
+    mode,
+    label,
+    description,
+    errorMessage,
+    variant,
+    size,
+    isDisabled,
+    isInvalid,
+    isReadOnly,
+    isRequired,
+  } = activeProps
+
+  if (mode === 'range') {
+    return (
+      <div className="w-full max-w-xs py-4 flex flex-col justify-center">
+        <DateRangePicker
+          label={label}
+          description={description}
+          errorMessage={errorMessage}
+          variant={variant}
+          size={size}
+          isDisabled={isDisabled}
+          isInvalid={isInvalid}
+          isReadOnly={isReadOnly}
+          isRequired={isRequired}
+        />
+      </div>
+    )
+  }
+
+  return (
+    <div className="w-full max-w-xs py-4 flex flex-col justify-center">
+      <DatePicker
+        label={label}
+        description={description}
+        errorMessage={errorMessage}
+        variant={variant}
+        size={size}
+        isDisabled={isDisabled}
+        isInvalid={isInvalid}
+        isReadOnly={isReadOnly}
+        isRequired={isRequired}
+      />
+    </div>
+  )
+}
+
 export function ComponentPlayground({ component }: { component: string }) {
   const config = REGISTRY[component]
 
@@ -1744,7 +1962,8 @@ export default function Example() {
         const { variant, size, dot, children } = activeProps
         let propsStr = ''
         if (size && size !== 'md') propsStr += ` size="${size}"`
-        if (variant && variant !== 'neutral') propsStr += ` variant="${variant}"`
+        if (variant && variant !== 'neutral')
+          propsStr += ` variant="${variant}"`
         if (dot) propsStr += ' dot'
         return `import { Badge } from '@moul-dev/ui';
 
@@ -1799,7 +2018,15 @@ export default function Example() {
 }`
       }
       case 'ProgressBar': {
-        const { value, variant, size, shape, isIndeterminate, label, showValueText } = activeProps
+        const {
+          value,
+          variant,
+          size,
+          shape,
+          isIndeterminate,
+          label,
+          showValueText,
+        } = activeProps
         let propsStr = ''
         if (value !== 50) propsStr += ` value={${value}}`
         if (variant !== 'primary') propsStr += ` variant="${variant}"`
@@ -1818,7 +2045,15 @@ export default function Example() {
 }`
       }
       case 'EmptyState': {
-        const { variant, size, align, title, description, showAction, showSecondaryAction } = activeProps
+        const {
+          variant,
+          size,
+          align,
+          title,
+          description,
+          showAction,
+          showSecondaryAction,
+        } = activeProps
         let propsStr = ''
         if (variant !== 'default') propsStr += ` variant="${variant}"`
         if (size !== 'md') propsStr += ` size="${size}"`
@@ -1833,14 +2068,25 @@ export default function Example() {
     <EmptyState${propsStr}${
       showAction ? '\n      action={<Button size="sm">Create New</Button>}' : ''
     }${
-      showSecondaryAction ? '\n      secondaryAction={<Button size="sm" variant="ghost">Learn More</Button>}' : ''
+      showSecondaryAction
+        ? '\n      secondaryAction={<Button size="sm" variant="ghost">Learn More</Button>}'
+        : ''
     }
     />
   );
 }`
       }
       case 'Pagination': {
-        const { totalPages, variant, size, shape, showSummary, showPageSize, showFirstLast, showPrevNext } = activeProps
+        const {
+          totalPages,
+          variant,
+          size,
+          shape,
+          showSummary,
+          showPageSize,
+          showFirstLast,
+          showPrevNext,
+        } = activeProps
         let propsStr = ` totalPages={${totalPages}}`
         if (variant !== 'outline') propsStr += ` variant="${variant}"`
         if (size !== 'md') propsStr += ` size="${size}"`
@@ -2007,13 +2253,21 @@ export default function Example() {
 }`
       }
       case 'Table': {
-        const { selectionMode, stickyHeader, isLoading, allowsSorting, showSortIndicator } = activeProps
+        const {
+          selectionMode,
+          stickyHeader,
+          isLoading,
+          allowsSorting,
+          showSortIndicator,
+        } = activeProps
         let propsStr = ''
-        if (selectionMode !== 'none') propsStr += ` selectionMode="${selectionMode}"`
+        if (selectionMode !== 'none')
+          propsStr += ` selectionMode="${selectionMode}"`
         if (stickyHeader) propsStr += ' stickyHeader'
         if (isLoading) propsStr += ' isLoading'
         const colSortStr = allowsSorting ? ' allowsSorting' : ''
-        const colIndStr = showSortIndicator === false ? ' showSortIndicator={false}' : ''
+        const colIndStr =
+          showSortIndicator === false ? ' showSortIndicator={false}' : ''
 
         return `import {
   Table,
@@ -2066,6 +2320,106 @@ export default function Example() {
         )}
       </TableBody>
     </Table>
+  );
+}`
+      }
+      case 'Calendar': {
+        const { mode, isDisabled, isReadOnly, showSelectedValue } = activeProps
+        const isRange = mode === 'range'
+        let propsStr = ''
+        if (isDisabled) propsStr += '\n      isDisabled'
+        if (isReadOnly) propsStr += '\n      isReadOnly'
+
+        if (isRange) {
+          return `import { RangeCalendar } from '@moul-dev/ui';
+import { useState } from 'react';
+
+export default function Example() {
+  const [range, setRange] = useState(null);
+
+  return (
+    <div className="flex flex-col items-center gap-3">
+      <RangeCalendar
+        aria-label="Trip booking dates"
+        value={range}
+        onChange={setRange}${propsStr}
+      />${
+        showSelectedValue
+          ? `
+      {range && (
+        <p className="text-xs text-neutral-500">
+          {range.start?.toString()} → {range.end?.toString()}
+        </p>
+      )}`
+          : ''
+      }
+    </div>
+  );
+}`
+        }
+
+        return `import { Calendar } from '@moul-dev/ui';
+import { useState } from 'react';
+
+export default function Example() {
+  const [date, setDate] = useState(null);
+
+  return (
+    <div className="flex flex-col items-center gap-3">
+      <Calendar
+        aria-label="Appointment date"
+        value={date}
+        onChange={setDate}${propsStr}
+      />${
+        showSelectedValue
+          ? `
+      {date && (
+        <p className="text-xs text-neutral-500">
+          Selected: {date.toString()}
+        </p>
+      )}`
+          : ''
+      }
+    </div>
+  );
+}`
+      }
+      case 'DatePicker': {
+        const {
+          mode,
+          label,
+          description,
+          errorMessage,
+          variant,
+          size,
+          isDisabled,
+          isInvalid,
+          isReadOnly,
+          isRequired,
+        } = activeProps
+
+        const isRange = mode === 'range'
+        const compName = isRange ? 'DateRangePicker' : 'DatePicker'
+        let propsStr = ''
+
+        if (label) propsStr += `\n      label="${label}"`
+        if (description) propsStr += `\n      description="${description}"`
+        if (errorMessage && isInvalid)
+          propsStr += `\n      errorMessage="${errorMessage}"`
+        if (variant && variant !== 'primary')
+          propsStr += `\n      variant="${variant}"`
+        if (size && size !== 'md') propsStr += `\n      size="${size}"`
+        if (isDisabled) propsStr += `\n      isDisabled`
+        if (isInvalid) propsStr += `\n      isInvalid`
+        if (isReadOnly) propsStr += `\n      isReadOnly`
+        if (isRequired) propsStr += `\n      isRequired`
+
+        return `import { ${compName} } from '@moul-dev/ui';
+
+export default function Example() {
+  return (
+    <${compName}${propsStr}
+    />
   );
 }`
       }
@@ -2291,6 +2645,10 @@ export default function Example() {
             showSortIndicator={activeProps.showSortIndicator}
           />
         )
+      case 'Calendar':
+        return <CalendarPreviewWrapper activeProps={activeProps} />
+      case 'DatePicker':
+        return <DatePickerPreviewWrapper activeProps={activeProps} />
       default:
         return <div>No Preview Available</div>
     }

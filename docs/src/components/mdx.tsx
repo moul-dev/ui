@@ -85,7 +85,7 @@ import {
   TypographySpan,
 } from '@moul-dev/ui'
 import { Accordion, Accordions } from 'fumadocs-ui/components/accordion'
-import { Card as FumaCard, Cards } from 'fumadocs-ui/components/card'
+import { Cards, Card as FumaCard } from 'fumadocs-ui/components/card'
 import { Step, Steps } from 'fumadocs-ui/components/steps'
 import { Tab, Tabs } from 'fumadocs-ui/components/tabs'
 import { TypeTable } from 'fumadocs-ui/components/type-table'

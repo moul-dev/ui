@@ -1,23 +1,6 @@
 import * as stylex from '@stylexjs/stylex'
 import { useState } from 'react'
 import { DialogTrigger } from 'react-aria-components'
-import {
-  Avatar,
-  AvatarGroup,
-  Calendar,
-  CommandPalette,
-  CommandPaletteEmpty,
-  CommandPaletteFooter,
-  CommandPaletteInput,
-  CommandPaletteItem,
-  CommandPaletteList,
-  CommandPaletteSection,
-  DateField,
-  DatePicker,
-  DateRangePicker,
-  Kbd,
-  RangeCalendar,
-} from './index'
 import { Alert } from './components/Alert'
 import {
   AlertDialog,
@@ -68,6 +51,23 @@ import {
 import { ToggleButton } from './components/ToggleButton'
 import { ToggleButtonGroup } from './components/ToggleButtonGroup'
 import { Typography } from './components/Typography'
+import {
+  Avatar,
+  AvatarGroup,
+  Calendar,
+  CommandPalette,
+  CommandPaletteEmpty,
+  CommandPaletteFooter,
+  CommandPaletteInput,
+  CommandPaletteItem,
+  CommandPaletteList,
+  CommandPaletteSection,
+  DateField,
+  DatePicker,
+  DateRangePicker,
+  Kbd,
+  RangeCalendar,
+} from './index'
 
 // ── Icons ────────────────────────────────────────────────────────────
 
@@ -459,7 +459,9 @@ function App() {
 
   // Enhanced components interactive state
   const [badgeSize, setBadgeSize] = useState<BadgeSize>('md')
-  const [skeletonShape, setSkeletonShape] = useState<'block' | 'text' | 'circle'>('block')
+  const [skeletonShape, setSkeletonShape] = useState<
+    'block' | 'text' | 'circle'
+  >('block')
   const [skeletonCount, setSkeletonCount] = useState(3)
   const [tableSort, setTableSort] = useState<{
     column: string
@@ -551,7 +553,16 @@ function App() {
       {/* Main Sandbox Showcase */}
       <SidebarMain style={styles.mainContent}>
         <header {...stylex.props(styles.header)}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', flexWrap: 'wrap', gap: '16px' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              width: '100%',
+              flexWrap: 'wrap',
+              gap: '16px',
+            }}
+          >
             <div>
               <h1 {...stylex.props(styles.title)}>Moul UI</h1>
               <p {...stylex.props(styles.subtitle)}>
@@ -1080,10 +1091,18 @@ function App() {
               ProgressBar Component Showcase
             </h2>
             <p style={{ margin: 0, fontSize: '0.9rem', color: '#94a3b8' }}>
-              Accessible linear loading indicator supporting determinate values, indeterminate animations, multiple color variants, and sizes.
+              Accessible linear loading indicator supporting determinate values,
+              indeterminate animations, multiple color variants, and sizes.
             </p>
 
-            <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
+            <div
+              style={{
+                display: 'flex',
+                gap: '12px',
+                alignItems: 'center',
+                flexWrap: 'wrap',
+              }}
+            >
               <Button
                 size="sm"
                 variant="outline"
@@ -1103,11 +1122,20 @@ function App() {
                 variant={isIndeterminateProgress ? 'primary' : 'ghost'}
                 onPress={() => setIsIndeterminateProgress((v) => !v)}
               >
-                {isIndeterminateProgress ? 'Indeterminate: ON' : 'Toggle Indeterminate'}
+                {isIndeterminateProgress
+                  ? 'Indeterminate: ON'
+                  : 'Toggle Indeterminate'}
               </Button>
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxWidth: '600px' }}>
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '16px',
+                maxWidth: '600px',
+              }}
+            >
               <ProgressBar
                 label="Primary Progress (md)"
                 value={progressVal}
@@ -1146,17 +1174,28 @@ function App() {
               EmptyState Component Showcase
             </h2>
             <p style={{ margin: 0, fontSize: '0.9rem', color: '#94a3b8' }}>
-              Consistent placeholder UI for tables, lists, charts, and empty dashboard widgets.
+              Consistent placeholder UI for tables, lists, charts, and empty
+              dashboard widgets.
             </p>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px' }}>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+                gap: '20px',
+              }}
+            >
               <EmptyState
                 variant="card"
                 icon={<FolderIcon />}
                 title="No repositories found"
                 description="Get started by creating a new repository or importing an existing project."
                 action={<Button size="sm">Create Repository</Button>}
-                secondaryAction={<Button size="sm" variant="ghost">Import</Button>}
+                secondaryAction={
+                  <Button size="sm" variant="ghost">
+                    Import
+                  </Button>
+                }
               />
 
               <EmptyState
@@ -1164,7 +1203,11 @@ function App() {
                 icon={<RadioIcon />}
                 title="No active audio streams"
                 description="Connect a streaming audio source to begin real-time telemetry."
-                action={<Button size="sm" variant="outline">Connect Stream</Button>}
+                action={
+                  <Button size="sm" variant="outline">
+                    Connect Stream
+                  </Button>
+                }
               />
             </div>
           </section>
@@ -1177,10 +1220,13 @@ function App() {
               Pagination Component Showcase
             </h2>
             <p style={{ margin: 0, fontSize: '0.9rem', color: '#94a3b8' }}>
-              Full navigation controls with smart sibling truncation, rows-per-page selection, item counts, and ARIA landmarks.
+              Full navigation controls with smart sibling truncation,
+              rows-per-page selection, item counts, and ARIA landmarks.
             </p>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            <div
+              style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}
+            >
               <Pagination
                 page={currentPage}
                 total={120}
@@ -1207,32 +1253,96 @@ function App() {
         {/* Badge Showcase */}
         <div {...stylex.props(styles.wideCard)}>
           <section {...stylex.props(styles.section)}>
-            <h2 {...stylex.props(styles.sectionTitle)}>Badge Component Showcase</h2>
+            <h2 {...stylex.props(styles.sectionTitle)}>
+              Badge Component Showcase
+            </h2>
             <p style={{ margin: 0, fontSize: '0.9rem', color: '#94a3b8' }}>
-              Status badges with size scaling (sm, md, lg), semantic colors, and dot indicator variants.
+              Status badges with size scaling (sm, md, lg), semantic colors, and
+              dot indicator variants.
             </p>
 
-            <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
-              <span style={{ fontSize: '0.85rem', color: '#94a3b8' }}>Active Size:</span>
-              <Button size="sm" variant={badgeSize === 'sm' ? 'primary' : 'outline'} onPress={() => setBadgeSize('sm')}>SM</Button>
-              <Button size="sm" variant={badgeSize === 'md' ? 'primary' : 'outline'} onPress={() => setBadgeSize('md')}>MD</Button>
-              <Button size="sm" variant={badgeSize === 'lg' ? 'primary' : 'outline'} onPress={() => setBadgeSize('lg')}>LG</Button>
+            <div
+              style={{
+                display: 'flex',
+                gap: '8px',
+                alignItems: 'center',
+                flexWrap: 'wrap',
+              }}
+            >
+              <span style={{ fontSize: '0.85rem', color: '#94a3b8' }}>
+                Active Size:
+              </span>
+              <Button
+                size="sm"
+                variant={badgeSize === 'sm' ? 'primary' : 'outline'}
+                onPress={() => setBadgeSize('sm')}
+              >
+                SM
+              </Button>
+              <Button
+                size="sm"
+                variant={badgeSize === 'md' ? 'primary' : 'outline'}
+                onPress={() => setBadgeSize('md')}
+              >
+                MD
+              </Button>
+              <Button
+                size="sm"
+                variant={badgeSize === 'lg' ? 'primary' : 'outline'}
+                onPress={() => setBadgeSize('lg')}
+              >
+                LG
+              </Button>
             </div>
 
-            <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
-              <Badge size={badgeSize} variant="neutral">Neutral</Badge>
-              <Badge size={badgeSize} variant="primary">Primary</Badge>
-              <Badge size={badgeSize} variant="success">Success</Badge>
-              <Badge size={badgeSize} variant="warning">Warning</Badge>
-              <Badge size={badgeSize} variant="error">Error</Badge>
+            <div
+              style={{
+                display: 'flex',
+                gap: '12px',
+                alignItems: 'center',
+                flexWrap: 'wrap',
+              }}
+            >
+              <Badge size={badgeSize} variant="neutral">
+                Neutral
+              </Badge>
+              <Badge size={badgeSize} variant="primary">
+                Primary
+              </Badge>
+              <Badge size={badgeSize} variant="success">
+                Success
+              </Badge>
+              <Badge size={badgeSize} variant="warning">
+                Warning
+              </Badge>
+              <Badge size={badgeSize} variant="error">
+                Error
+              </Badge>
             </div>
 
-            <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
-              <Badge size={badgeSize} variant="dot">Status Dot</Badge>
-              <Badge size={badgeSize} variant="success" dot>Operational</Badge>
-              <Badge size={badgeSize} variant="warning" dot>Degraded</Badge>
-              <Badge size={badgeSize} variant="error" dot>Incident</Badge>
-              <Badge size={badgeSize} variant="primary" dot>Deploying</Badge>
+            <div
+              style={{
+                display: 'flex',
+                gap: '12px',
+                alignItems: 'center',
+                flexWrap: 'wrap',
+              }}
+            >
+              <Badge size={badgeSize} variant="dot">
+                Status Dot
+              </Badge>
+              <Badge size={badgeSize} variant="success" dot>
+                Operational
+              </Badge>
+              <Badge size={badgeSize} variant="warning" dot>
+                Degraded
+              </Badge>
+              <Badge size={badgeSize} variant="error" dot>
+                Incident
+              </Badge>
+              <Badge size={badgeSize} variant="primary" dot>
+                Deploying
+              </Badge>
             </div>
           </section>
         </div>
@@ -1240,30 +1350,103 @@ function App() {
         {/* Skeleton Showcase */}
         <div {...stylex.props(styles.wideCard)}>
           <section {...stylex.props(styles.section)}>
-            <h2 {...stylex.props(styles.sectionTitle)}>Skeleton Component Showcase</h2>
+            <h2 {...stylex.props(styles.sectionTitle)}>
+              Skeleton Component Showcase
+            </h2>
             <p style={{ margin: 0, fontSize: '0.9rem', color: '#94a3b8' }}>
-              Loading placeholders supporting shape variants (block, text, circle) and stacked count prop.
+              Loading placeholders supporting shape variants (block, text,
+              circle) and stacked count prop.
             </p>
 
-            <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
-              <span style={{ fontSize: '0.85rem', color: '#94a3b8' }}>Shape:</span>
-              <Button size="sm" variant={skeletonShape === 'block' ? 'primary' : 'outline'} onPress={() => setSkeletonShape('block')}>Block</Button>
-              <Button size="sm" variant={skeletonShape === 'text' ? 'primary' : 'outline'} onPress={() => setSkeletonShape('text')}>Text</Button>
-              <Button size="sm" variant={skeletonShape === 'circle' ? 'primary' : 'outline'} onPress={() => setSkeletonShape('circle')}>Circle</Button>
+            <div
+              style={{
+                display: 'flex',
+                gap: '8px',
+                alignItems: 'center',
+                flexWrap: 'wrap',
+              }}
+            >
+              <span style={{ fontSize: '0.85rem', color: '#94a3b8' }}>
+                Shape:
+              </span>
+              <Button
+                size="sm"
+                variant={skeletonShape === 'block' ? 'primary' : 'outline'}
+                onPress={() => setSkeletonShape('block')}
+              >
+                Block
+              </Button>
+              <Button
+                size="sm"
+                variant={skeletonShape === 'text' ? 'primary' : 'outline'}
+                onPress={() => setSkeletonShape('text')}
+              >
+                Text
+              </Button>
+              <Button
+                size="sm"
+                variant={skeletonShape === 'circle' ? 'primary' : 'outline'}
+                onPress={() => setSkeletonShape('circle')}
+              >
+                Circle
+              </Button>
 
-              <span style={{ fontSize: '0.85rem', color: '#94a3b8', marginLeft: '12px' }}>Count:</span>
-              <Button size="sm" variant={skeletonCount === 1 ? 'primary' : 'outline'} onPress={() => setSkeletonCount(1)}>1</Button>
-              <Button size="sm" variant={skeletonCount === 3 ? 'primary' : 'outline'} onPress={() => setSkeletonCount(3)}>3</Button>
-              <Button size="sm" variant={skeletonCount === 5 ? 'primary' : 'outline'} onPress={() => setSkeletonCount(5)}>5</Button>
+              <span
+                style={{
+                  fontSize: '0.85rem',
+                  color: '#94a3b8',
+                  marginLeft: '12px',
+                }}
+              >
+                Count:
+              </span>
+              <Button
+                size="sm"
+                variant={skeletonCount === 1 ? 'primary' : 'outline'}
+                onPress={() => setSkeletonCount(1)}
+              >
+                1
+              </Button>
+              <Button
+                size="sm"
+                variant={skeletonCount === 3 ? 'primary' : 'outline'}
+                onPress={() => setSkeletonCount(3)}
+              >
+                3
+              </Button>
+              <Button
+                size="sm"
+                variant={skeletonCount === 5 ? 'primary' : 'outline'}
+                onPress={() => setSkeletonCount(5)}
+              >
+                5
+              </Button>
             </div>
 
             <div style={{ maxWidth: '400px' }}>
               <Skeleton variant={skeletonShape} count={skeletonCount} />
             </div>
 
-            <div style={{ display: 'flex', gap: '16px', alignItems: 'center', maxWidth: '400px', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '8px', padding: '16px' }}>
+            <div
+              style={{
+                display: 'flex',
+                gap: '16px',
+                alignItems: 'center',
+                maxWidth: '400px',
+                border: '1px solid rgba(255,255,255,0.08)',
+                borderRadius: '8px',
+                padding: '16px',
+              }}
+            >
               <Skeleton variant="circle" />
-              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <div
+                style={{
+                  flex: 1,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '8px',
+                }}
+              >
                 <Skeleton variant="text" />
                 <div style={{ width: '60%' }}>
                   <Skeleton variant="text" />
@@ -1276,27 +1459,72 @@ function App() {
         {/* Spinner Showcase */}
         <div {...stylex.props(styles.wideCard)}>
           <section {...stylex.props(styles.section)}>
-            <h2 {...stylex.props(styles.sectionTitle)}>Spinner Component Showcase</h2>
+            <h2 {...stylex.props(styles.sectionTitle)}>
+              Spinner Component Showcase
+            </h2>
             <p style={{ margin: 0, fontSize: '0.9rem', color: '#94a3b8' }}>
               Accessible loading spinners in four standardized sizes.
             </p>
 
-            <div style={{ display: 'flex', gap: '24px', alignItems: 'center', flexWrap: 'wrap' }}>
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+            <div
+              style={{
+                display: 'flex',
+                gap: '24px',
+                alignItems: 'center',
+                flexWrap: 'wrap',
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: '8px',
+                }}
+              >
                 <Spinner size="sm" aria-label="Small spinner" />
-                <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Small (sm)</span>
+                <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
+                  Small (sm)
+                </span>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: '8px',
+                }}
+              >
                 <Spinner size="md" aria-label="Medium spinner" />
-                <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Medium (md)</span>
+                <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
+                  Medium (md)
+                </span>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: '8px',
+                }}
+              >
                 <Spinner size="lg" aria-label="Large spinner" />
-                <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Large (lg)</span>
+                <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
+                  Large (lg)
+                </span>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: '8px',
+                }}
+              >
                 <Spinner size="xl" aria-label="Extra large spinner" />
-                <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>XL (xl)</span>
+                <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
+                  XL (xl)
+                </span>
               </div>
             </div>
           </section>
@@ -1305,12 +1533,22 @@ function App() {
         {/* Table Showcase */}
         <div {...stylex.props(styles.wideCard)}>
           <section {...stylex.props(styles.section)}>
-            <h2 {...stylex.props(styles.sectionTitle)}>Table Component Showcase</h2>
+            <h2 {...stylex.props(styles.sectionTitle)}>
+              Table Component Showcase
+            </h2>
             <p style={{ margin: 0, fontSize: '0.9rem', color: '#94a3b8' }}>
-              Data table with built-in sticky header, sort indicators, and loading / empty state slots.
+              Data table with built-in sticky header, sort indicators, and
+              loading / empty state slots.
             </p>
 
-            <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
+            <div
+              style={{
+                display: 'flex',
+                gap: '12px',
+                alignItems: 'center',
+                flexWrap: 'wrap',
+              }}
+            >
               <Button
                 size="sm"
                 variant={isTableSticky ? 'primary' : 'outline'}
@@ -1334,7 +1572,14 @@ function App() {
               </Button>
             </div>
 
-            <div style={{ maxHeight: '280px', overflowY: 'auto', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '8px' }}>
+            <div
+              style={{
+                maxHeight: '280px',
+                overflowY: 'auto',
+                border: '1px solid rgba(255,255,255,0.08)',
+                borderRadius: '8px',
+              }}
+            >
               <Table
                 aria-label="Cluster Services Table"
                 stickyHeader={isTableSticky}
@@ -1370,12 +1615,46 @@ function App() {
                     Bandwidth
                   </Column>
                 </TableHeader>
-                <TableBody items={isTableEmpty || isTableLoading ? [] : [
-                  { id: '1', name: 'Authentication API', role: 'Security', status: 'Operational', variant: 'success', bandwidth: '1.2 GB/s' },
-                  { id: '2', name: 'PostgreSQL Primary', role: 'Database', status: 'Operational', variant: 'success', bandwidth: '4.8 GB/s' },
-                  { id: '3', name: 'Global Edge CDN', role: 'Edge', status: 'Degraded', variant: 'warning', bandwidth: '820 MB/s' },
-                  { id: '4', name: 'Background Workers', role: 'Compute', status: 'Operational', variant: 'success', bandwidth: '340 MB/s' },
-                ]}>
+                <TableBody
+                  items={
+                    isTableEmpty || isTableLoading
+                      ? []
+                      : [
+                          {
+                            id: '1',
+                            name: 'Authentication API',
+                            role: 'Security',
+                            status: 'Operational',
+                            variant: 'success',
+                            bandwidth: '1.2 GB/s',
+                          },
+                          {
+                            id: '2',
+                            name: 'PostgreSQL Primary',
+                            role: 'Database',
+                            status: 'Operational',
+                            variant: 'success',
+                            bandwidth: '4.8 GB/s',
+                          },
+                          {
+                            id: '3',
+                            name: 'Global Edge CDN',
+                            role: 'Edge',
+                            status: 'Degraded',
+                            variant: 'warning',
+                            bandwidth: '820 MB/s',
+                          },
+                          {
+                            id: '4',
+                            name: 'Background Workers',
+                            role: 'Compute',
+                            status: 'Operational',
+                            variant: 'success',
+                            bandwidth: '340 MB/s',
+                          },
+                        ]
+                  }
+                >
                   {(item) => (
                     <Row key={item.id}>
                       <Cell>{item.name}</Cell>
@@ -1399,40 +1678,129 @@ function App() {
           <section {...stylex.props(styles.section)}>
             <h2 {...stylex.props(styles.sectionTitle)}>Avatar & AvatarGroup</h2>
             <p style={{ margin: 0, fontSize: '0.9rem', color: '#94a3b8' }}>
-              Avatars supporting size variants (xs–2xl), shapes (circle/square), status indicator dots, and overlapping AvatarGroup with excess limits.
+              Avatars supporting size variants (xs–2xl), shapes (circle/square),
+              status indicator dots, and overlapping AvatarGroup with excess
+              limits.
             </p>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div
+              style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}
+            >
               <div>
-                <span style={{ fontSize: '0.8rem', color: '#64748b', display: 'block', marginBottom: '8px' }}>
+                <span
+                  style={{
+                    fontSize: '0.8rem',
+                    color: '#64748b',
+                    display: 'block',
+                    marginBottom: '8px',
+                  }}
+                >
                   Sizes & Status Indicators (Online, Away, Busy, Offline):
                 </span>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
-                  <Avatar initials="XS" size="xs" status="online" aria-label="XS Online" />
-                  <Avatar initials="SM" size="sm" status="away" aria-label="SM Away" />
-                  <Avatar initials="MD" size="md" status="busy" aria-label="MD Busy" />
-                  <Avatar initials="LG" size="lg" status="offline" aria-label="LG Offline" />
-                  <Avatar initials="XL" size="xl" status="online" aria-label="XL Online" />
-                  <Avatar initials="2X" size="2xl" status="online" aria-label="2XL Online" />
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    flexWrap: 'wrap',
+                  }}
+                >
+                  <Avatar
+                    initials="XS"
+                    size="xs"
+                    status="online"
+                    aria-label="XS Online"
+                  />
+                  <Avatar
+                    initials="SM"
+                    size="sm"
+                    status="away"
+                    aria-label="SM Away"
+                  />
+                  <Avatar
+                    initials="MD"
+                    size="md"
+                    status="busy"
+                    aria-label="MD Busy"
+                  />
+                  <Avatar
+                    initials="LG"
+                    size="lg"
+                    status="offline"
+                    aria-label="LG Offline"
+                  />
+                  <Avatar
+                    initials="XL"
+                    size="xl"
+                    status="online"
+                    aria-label="XL Online"
+                  />
+                  <Avatar
+                    initials="2X"
+                    size="2xl"
+                    status="online"
+                    aria-label="2XL Online"
+                  />
                 </div>
               </div>
 
               <div>
-                <span style={{ fontSize: '0.8rem', color: '#64748b', display: 'block', marginBottom: '8px' }}>
+                <span
+                  style={{
+                    fontSize: '0.8rem',
+                    color: '#64748b',
+                    display: 'block',
+                    marginBottom: '8px',
+                  }}
+                >
                   Square Shape with Status:
                 </span>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <Avatar initials="SQ" shape="square" size="sm" status="online" aria-label="Square SM" />
-                  <Avatar initials="SQ" shape="square" size="md" status="busy" aria-label="Square MD" />
-                  <Avatar initials="SQ" shape="square" size="lg" status="away" aria-label="Square LG" />
+                <div
+                  style={{ display: 'flex', alignItems: 'center', gap: '12px' }}
+                >
+                  <Avatar
+                    initials="SQ"
+                    shape="square"
+                    size="sm"
+                    status="online"
+                    aria-label="Square SM"
+                  />
+                  <Avatar
+                    initials="SQ"
+                    shape="square"
+                    size="md"
+                    status="busy"
+                    aria-label="Square MD"
+                  />
+                  <Avatar
+                    initials="SQ"
+                    shape="square"
+                    size="lg"
+                    status="away"
+                    aria-label="Square LG"
+                  />
                 </div>
               </div>
 
               <div>
-                <span style={{ fontSize: '0.8rem', color: '#64748b', display: 'block', marginBottom: '8px' }}>
+                <span
+                  style={{
+                    fontSize: '0.8rem',
+                    color: '#64748b',
+                    display: 'block',
+                    marginBottom: '8px',
+                  }}
+                >
                   AvatarGroup (Stacked with Max Limit):
                 </span>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '24px', flexWrap: 'wrap' }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '24px',
+                    flexWrap: 'wrap',
+                  }}
+                >
                   <AvatarGroup max={3} aria-label="Project Team">
                     <Avatar initials="AL" aria-label="Alex" />
                     <Avatar initials="BT" aria-label="Beth" />
@@ -1441,7 +1809,12 @@ function App() {
                     <Avatar initials="EV" aria-label="Evan" />
                   </AvatarGroup>
 
-                  <AvatarGroup size="sm" shape="square" max={4} aria-label="Square Group">
+                  <AvatarGroup
+                    size="sm"
+                    shape="square"
+                    max={4}
+                    aria-label="Square Group"
+                  >
                     <Avatar initials="U1" aria-label="User 1" />
                     <Avatar initials="U2" aria-label="User 2" />
                     <Avatar initials="U3" aria-label="User 3" />
@@ -1458,13 +1831,29 @@ function App() {
         {/* DatePicker & Calendar Showcase */}
         <div {...stylex.props(styles.wideCard)}>
           <section {...stylex.props(styles.section)}>
-            <h2 {...stylex.props(styles.sectionTitle)}>DatePicker & Calendar Suite</h2>
+            <h2 {...stylex.props(styles.sectionTitle)}>
+              DatePicker & Calendar Suite
+            </h2>
             <p style={{ margin: 0, fontSize: '0.9rem', color: '#94a3b8' }}>
-              Full DatePicker, DateRangePicker, DateField, and interactive Calendar month grids.
+              Full DatePicker, DateRangePicker, DateField, and interactive
+              Calendar month grids.
             </p>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px', alignItems: 'start' }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                gap: '24px',
+                alignItems: 'start',
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '16px',
+                }}
+              >
                 <DatePicker
                   label="Appointment Date"
                   description="Pick a date for your consultation"
@@ -1479,9 +1868,25 @@ function App() {
                 />
               </div>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center' }}>
-                <span style={{ fontSize: '0.8rem', color: '#64748b' }}>Interactive Calendar Grids:</span>
-                <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', justifyContent: 'center' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '12px',
+                  alignItems: 'center',
+                }}
+              >
+                <span style={{ fontSize: '0.8rem', color: '#64748b' }}>
+                  Interactive Calendar Grids:
+                </span>
+                <div
+                  style={{
+                    display: 'flex',
+                    gap: '16px',
+                    flexWrap: 'wrap',
+                    justifyContent: 'center',
+                  }}
+                >
                   <Calendar aria-label="Single date calendar" />
                   <RangeCalendar aria-label="Date range calendar" />
                 </div>
@@ -1544,7 +1949,9 @@ function App() {
               <CommandPaletteItem
                 shortcut={['⌘', 'T']}
                 description="Toggle glass or solid background theme"
-                onAction={() => setSidebarVariant((v) => (v === 'glass' ? 'solid' : 'glass'))}
+                onAction={() =>
+                  setSidebarVariant((v) => (v === 'glass' ? 'solid' : 'glass'))
+                }
               >
                 Toggle Theme Style
               </CommandPaletteItem>

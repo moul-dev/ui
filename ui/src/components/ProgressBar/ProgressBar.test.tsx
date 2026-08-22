@@ -115,7 +115,9 @@ describe('ProgressBar component', () => {
     render(<ProgressBar value={40} />)
     expect(
       warnSpy.mock.calls.some((call: any[]) =>
-        call[0]?.includes('[ProgressBar] This component has no accessible name'),
+        call[0]?.includes(
+          '[ProgressBar] This component has no accessible name',
+        ),
       ),
     ).toBe(true)
   })

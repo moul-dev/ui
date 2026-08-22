@@ -38,7 +38,8 @@ export const EmptyStateIcon = React.forwardRef<
   const context = React.useContext(EmptyStateContext)
   const size = propSize ?? context.size
   const sizeSuffix = size.charAt(0).toUpperCase() + size.slice(1)
-  const sizeStyle = styles[`icon${sizeSuffix}` as 'iconSm' | 'iconMd' | 'iconLg']
+  const sizeStyle =
+    styles[`icon${sizeSuffix}` as 'iconSm' | 'iconMd' | 'iconLg']
 
   const { className: stylexClass, style: stylexStyle } = stylex.props(
     styles.iconWrapper,
@@ -266,9 +267,7 @@ export const EmptyState = React.forwardRef<HTMLDivElement, EmptyStateProps>(
           {icon && <EmptyStateIcon size={size}>{icon}</EmptyStateIcon>}
           {(title || description) && (
             <div {...stylex.props(styles.content)}>
-              {title && (
-                <EmptyStateTitle size={size}>{title}</EmptyStateTitle>
-              )}
+              {title && <EmptyStateTitle size={size}>{title}</EmptyStateTitle>}
               {description && (
                 <EmptyStateDescription size={size}>
                   {description}

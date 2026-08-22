@@ -85,7 +85,10 @@ export const DateInput = React.forwardRef<HTMLDivElement, DateInputProps>(
         className={[stylexClass, className].filter(Boolean).join(' ')}
         style={stylexStyle}
       >
-        {children || ((segment: any) => <DateSegment key={segment.type} segment={segment} />)}
+        {children ||
+          ((segment: any) => (
+            <DateSegment key={segment.type} segment={segment} />
+          ))}
       </AriaDateInput>
     )
   },

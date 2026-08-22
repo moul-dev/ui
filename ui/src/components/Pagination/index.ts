@@ -1,17 +1,3 @@
-export {
-  generatePagination,
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationFirst,
-  PaginationItem,
-  PaginationLast,
-  PaginationLink,
-  PaginationNext,
-  PaginationPageSize,
-  PaginationPrevious,
-  PaginationSummary,
-} from './Pagination'
 export type {
   PaginationContentProps,
   PaginationEllipsisProps,
@@ -25,4 +11,18 @@ export type {
   PaginationSize,
   PaginationSummaryProps,
   PaginationVariant,
+} from './Pagination'
+export {
+  generatePagination,
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationFirst,
+  PaginationItem,
+  PaginationLast,
+  PaginationLink,
+  PaginationNext,
+  PaginationPageSize,
+  PaginationPrevious,
+  PaginationSummary,
 } from './Pagination'

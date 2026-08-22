@@ -83,3 +83,16 @@ When generating or editing React code using `@moul-dev/ui` components:
 - **Full LLM Single-File Reference**: `docs/public/llms-full.txt` (served at `/llms-full.txt`)
 - **Docs Guide**: `docs/content/docs/llms.mdx` (served at `/docs/llms`)
 
+## Changelog Writing Guidelines
+
+When writing or updating changelog entries in `docs/content/changelog/`:
+
+1. **Role & Voice:** Write as a highly experienced software engineer, open-source maintainer, and tech craftsman. Quiet authority, humble peer, direct and plainspoken. Use an honest, reflective "I" (Phearak S. Tha), never corporate "we".
+2. **Banned Language:** Never use marketing buzzwords ("game-changing", "revolutionary", "seamless", "next-generation", "thrilled to announce", "lightning-fast"). Use precise, empirical context.
+3. **Sentence Variance & Formatting:** Alternate dense technical explanations with short, punchy statements. Use clean, functional headers without emoji noise. Keep paragraphs short (2–4 sentences max). Use contextual footnotes (`[^1]`) sparingly for historical/technical asides.
+4. **4-Step Execution Flow:**
+   1. State current state or core problem in the first two sentences.
+   2. Build underlying mental model and background context first.
+   3. Walk through mechanisms, philosophy, or solutions step-by-step with clean code examples.
+   4. Conclude with a focus on human care, craftsmanship, or the long-term sustainable vision.
+

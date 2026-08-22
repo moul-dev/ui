@@ -23,8 +23,12 @@ describe('CommandPalette component', () => {
       </CommandPalette>,
     )
 
-    expect(screen.getByRole('dialog', { name: 'Command Palette' })).toBeInTheDocument()
-    expect(screen.getByRole('textbox', { name: 'Search commands' })).toBeInTheDocument()
+    expect(
+      screen.getByRole('dialog', { name: 'Command Palette' }),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByRole('textbox', { name: 'Search commands' }),
+    ).toBeInTheDocument()
     expect(screen.getByText('Create Project')).toBeInTheDocument()
     expect(screen.getByText('Actions')).toBeInTheDocument()
   })
@@ -68,7 +72,9 @@ describe('CommandPalette component', () => {
       <CommandPalette isOpen={true} onOpenChange={handleOpenChange}>
         <CommandPaletteInput />
         <CommandPaletteList>
-          <CommandPaletteItem onAction={handleAction}>Deploy</CommandPaletteItem>
+          <CommandPaletteItem onAction={handleAction}>
+            Deploy
+          </CommandPaletteItem>
         </CommandPaletteList>
       </CommandPalette>,
     )
@@ -89,8 +95,12 @@ describe('CommandPalette component', () => {
       <CommandPalette isOpen={true} onOpenChange={handleOpenChange}>
         <CommandPaletteInput />
         <CommandPaletteList>
-          <CommandPaletteItem onAction={handleFirst}>First Action</CommandPaletteItem>
-          <CommandPaletteItem onAction={handleSecond}>Second Action</CommandPaletteItem>
+          <CommandPaletteItem onAction={handleFirst}>
+            First Action
+          </CommandPaletteItem>
+          <CommandPaletteItem onAction={handleSecond}>
+            Second Action
+          </CommandPaletteItem>
         </CommandPaletteList>
       </CommandPalette>,
     )

@@ -3,6 +3,7 @@ import { fireEvent, render, screen } from '@testing-library/react'
 import * as React from 'react'
 import { describe, expect, test, vi } from 'vitest'
 import {
+  generatePagination,
   Pagination,
   PaginationContent,
   PaginationEllipsis,
@@ -12,7 +13,6 @@ import {
   PaginationPageSize,
   PaginationPrevious,
   PaginationSummary,
-  generatePagination,
 } from './Pagination'
 
 const testStyles = stylex.create({
@@ -105,7 +105,9 @@ describe('Pagination component', () => {
 
   test('works in uncontrolled mode with defaultPage', () => {
     const handleChange = vi.fn()
-    render(<Pagination defaultPage={1} totalPages={5} onChange={handleChange} />)
+    render(
+      <Pagination defaultPage={1} totalPages={5} onChange={handleChange} />,
+    )
 
     const page2 = screen.getByRole('button', { name: 'Page 2' })
     fireEvent.click(page2)

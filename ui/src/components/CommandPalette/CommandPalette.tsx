@@ -35,7 +35,10 @@ export function useCommandPalette(options: UseCommandPaletteOptions = {}) {
       for (const sc of shortcuts) {
         const parts = sc.toLowerCase().split('+')
         const key = parts[parts.length - 1]
-        const needsMeta = parts.includes('meta') || parts.includes('cmd') || parts.includes('command')
+        const needsMeta =
+          parts.includes('meta') ||
+          parts.includes('cmd') ||
+          parts.includes('command')
         const needsCtrl = parts.includes('ctrl') || parts.includes('control')
         const needsShift = parts.includes('shift')
         const needsAlt = parts.includes('alt')
@@ -46,7 +49,11 @@ export function useCommandPalette(options: UseCommandPaletteOptions = {}) {
         const altMatch = needsAlt ? event.altKey : true
         const keyMatch = event.key.toLowerCase() === key
 
-        if ((needsMeta || needsCtrl) && (event.metaKey || event.ctrlKey) && keyMatch) {
+        if (
+          (needsMeta || needsCtrl) &&
+          (event.metaKey || event.ctrlKey) &&
+          keyMatch
+        ) {
           event.preventDefault()
           toggle()
           return
@@ -87,12 +94,15 @@ interface CommandPaletteContextValue {
   matchCount: number
 }
 
-const CommandPaletteContext = React.createContext<CommandPaletteContextValue | null>(null)
+const CommandPaletteContext =
+  React.createContext<CommandPaletteContextValue | null>(null)
 
 export function useCommandPaletteContext() {
   const context = React.useContext(CommandPaletteContext)
   if (!context) {
-    throw new Error('CommandPalette compound components must be used within <CommandPalette>')
+    throw new Error(
+      'CommandPalette compound components must be used within <CommandPalette>',
+    )
   }
   return context
 }
@@ -128,219 +138,249 @@ export interface CommandPaletteProps {
   children?: React.ReactNode
 }
 
-export const CommandPalette = React.forwardRef<HTMLDivElement, CommandPaletteProps>(
-  function CommandPalette(
-    {
-      isOpen: controlledOpen,
-      defaultOpen = false,
-      onOpenChange,
-      shortcut = ['Meta+k', 'Ctrl+k'],
-      size = 'md',
-      style,
-      className,
-      children,
+export const CommandPalette = React.forwardRef<
+  HTMLDivElement,
+  CommandPaletteProps
+>(function CommandPalette(
+  {
+    isOpen: controlledOpen,
+    defaultOpen = false,
+    onOpenChange,
+    shortcut = ['Meta+k', 'Ctrl+k'],
+    size = 'md',
+    style,
+    className,
+    children,
+  },
+  ref,
+) {
+  const [uncontrolledOpen, setUncontrolledOpen] = React.useState(defaultOpen)
+  const isControlled = controlledOpen !== undefined
+  const isOpen = isControlled ? controlledOpen : uncontrolledOpen
+
+  const handleOpenChange = React.useCallback(
+    (nextOpen: boolean) => {
+      if (!isControlled) {
+        setUncontrolledOpen(nextOpen)
+      }
+      onOpenChange?.(nextOpen)
     },
-    ref,
-  ) {
-    const [uncontrolledOpen, setUncontrolledOpen] = React.useState(defaultOpen)
-    const isControlled = controlledOpen !== undefined
-    const isOpen = isControlled ? controlledOpen : uncontrolledOpen
+    [isControlled, onOpenChange],
+  )
 
-    const handleOpenChange = React.useCallback(
-      (nextOpen: boolean) => {
-        if (!isControlled) {
-          setUncontrolledOpen(nextOpen)
-        }
-        onOpenChange?.(nextOpen)
-      },
-      [isControlled, onOpenChange],
-    )
+  // Global keyboard shortcut listener
+  React.useEffect(() => {
+    if (!shortcut) return
 
-    // Global keyboard shortcut listener
-    React.useEffect(() => {
-      if (!shortcut) return
+    const shortcuts = Array.isArray(shortcut) ? shortcut : [shortcut]
+    const handleGlobalKeyDown = (event: KeyboardEvent) => {
+      for (const sc of shortcuts) {
+        const parts = sc.toLowerCase().split('+')
+        const key = parts[parts.length - 1]
+        const isCmdOrCtrl =
+          parts.includes('meta') ||
+          parts.includes('ctrl') ||
+          parts.includes('cmd')
 
-      const shortcuts = Array.isArray(shortcut) ? shortcut : [shortcut]
-      const handleGlobalKeyDown = (event: KeyboardEvent) => {
-        for (const sc of shortcuts) {
-          const parts = sc.toLowerCase().split('+')
-          const key = parts[parts.length - 1]
-          const isCmdOrCtrl = parts.includes('meta') || parts.includes('ctrl') || parts.includes('cmd')
-
-          if (isCmdOrCtrl && (event.metaKey || event.ctrlKey) && event.key.toLowerCase() === key) {
-            event.preventDefault()
-            handleOpenChange(!isOpen)
-            return
-          }
+        if (
+          isCmdOrCtrl &&
+          (event.metaKey || event.ctrlKey) &&
+          event.key.toLowerCase() === key
+        ) {
+          event.preventDefault()
+          handleOpenChange(!isOpen)
+          return
         }
       }
+    }
 
-      window.addEventListener('keydown', handleGlobalKeyDown)
-      return () => window.removeEventListener('keydown', handleGlobalKeyDown)
-    }, [shortcut, isOpen, handleOpenChange])
+    window.addEventListener('keydown', handleGlobalKeyDown)
+    return () => window.removeEventListener('keydown', handleGlobalKeyDown)
+  }, [shortcut, isOpen, handleOpenChange])
 
-    const [search, setSearch] = React.useState('')
-    const [activeId, setActiveId] = React.useState<string | null>(null)
-    const [itemIds, setItemIds] = React.useState<string[]>([])
-    const itemsMapRef = React.useRef<Map<string, CommandPaletteItemData>>(new Map())
+  const [search, setSearch] = React.useState('')
+  const [activeId, setActiveId] = React.useState<string | null>(null)
+  const [itemIds, setItemIds] = React.useState<string[]>([])
+  const itemsMapRef = React.useRef<Map<string, CommandPaletteItemData>>(
+    new Map(),
+  )
 
-    // Reset search and active on close
-    React.useEffect(() => {
-      if (!isOpen) {
-        setSearch('')
-        setActiveId(null)
-        setItemIds([])
-        itemsMapRef.current.clear()
-      }
-    }, [isOpen])
+  // Reset search and active on close
+  React.useEffect(() => {
+    if (!isOpen) {
+      setSearch('')
+      setActiveId(null)
+      setItemIds([])
+      itemsMapRef.current.clear()
+    }
+  }, [isOpen])
 
-    const registerItem = React.useCallback((item: CommandPaletteItemData) => {
-      itemsMapRef.current.set(item.id, item)
-      setItemIds((prev) => (prev.includes(item.id) ? prev : [...prev, item.id]))
+  const registerItem = React.useCallback((item: CommandPaletteItemData) => {
+    itemsMapRef.current.set(item.id, item)
+    setItemIds((prev) => (prev.includes(item.id) ? prev : [...prev, item.id]))
 
-      return () => {
-        itemsMapRef.current.delete(item.id)
-        setItemIds((prev) => prev.filter((id) => id !== item.id))
-      }
-    }, [])
+    return () => {
+      itemsMapRef.current.delete(item.id)
+      setItemIds((prev) => prev.filter((id) => id !== item.id))
+    }
+  }, [])
 
-    // Ensure the first matching item is selected by default
-    React.useEffect(() => {
-      if (itemIds.length > 0) {
-        setActiveId((curr) => (curr && itemIds.includes(curr) ? curr : itemIds[0]))
-      } else {
-        setActiveId(null)
-      }
-    }, [itemIds])
+  // Ensure the first matching item is selected by default
+  React.useEffect(() => {
+    if (itemIds.length > 0) {
+      setActiveId((curr) =>
+        curr && itemIds.includes(curr) ? curr : itemIds[0],
+      )
+    } else {
+      setActiveId(null)
+    }
+  }, [itemIds])
 
-    const close = React.useCallback(() => {
-      handleOpenChange(false)
-    }, [handleOpenChange])
+  const close = React.useCallback(() => {
+    handleOpenChange(false)
+  }, [handleOpenChange])
 
-    const navigateNext = React.useCallback(() => {
-      if (itemIds.length === 0) return
-      setActiveId((curr) => {
-        const currentIndex = curr ? itemIds.indexOf(curr) : -1
-        const nextIndex = (currentIndex + 1) % itemIds.length
-        const nextId = itemIds[nextIndex]
-        const elem = itemsMapRef.current.get(nextId)?.getElement?.()
-        elem?.scrollIntoView?.({ block: 'nearest' })
-        return nextId
-      })
-    }, [itemIds])
+  const navigateNext = React.useCallback(() => {
+    if (itemIds.length === 0) return
+    setActiveId((curr) => {
+      const currentIndex = curr ? itemIds.indexOf(curr) : -1
+      const nextIndex = (currentIndex + 1) % itemIds.length
+      const nextId = itemIds[nextIndex]
+      const elem = itemsMapRef.current.get(nextId)?.getElement?.()
+      elem?.scrollIntoView?.({ block: 'nearest' })
+      return nextId
+    })
+  }, [itemIds])
 
-    const navigatePrev = React.useCallback(() => {
-      if (itemIds.length === 0) return
-      setActiveId((curr) => {
-        const currentIndex = curr ? itemIds.indexOf(curr) : -1
-        const prevIndex = (currentIndex - 1 + itemIds.length) % itemIds.length
-        const prevId = itemIds[prevIndex]
-        const elem = itemsMapRef.current.get(prevId)?.getElement?.()
-        elem?.scrollIntoView?.({ block: 'nearest' })
-        return prevId
-      })
-    }, [itemIds])
+  const navigatePrev = React.useCallback(() => {
+    if (itemIds.length === 0) return
+    setActiveId((curr) => {
+      const currentIndex = curr ? itemIds.indexOf(curr) : -1
+      const prevIndex = (currentIndex - 1 + itemIds.length) % itemIds.length
+      const prevId = itemIds[prevIndex]
+      const elem = itemsMapRef.current.get(prevId)?.getElement?.()
+      elem?.scrollIntoView?.({ block: 'nearest' })
+      return prevId
+    })
+  }, [itemIds])
 
-    const selectActive = React.useCallback(() => {
-      if (!activeId) return
-      const item = itemsMapRef.current.get(activeId)
-      if (item?.onAction) {
-        item.onAction()
+  const selectActive = React.useCallback(() => {
+    if (!activeId) return
+    const item = itemsMapRef.current.get(activeId)
+    if (item?.onAction) {
+      item.onAction()
+      close()
+    }
+  }, [activeId, close])
+
+  const handleKeyDown = React.useCallback(
+    (e: React.KeyboardEvent<HTMLElement>) => {
+      if (e.key === 'ArrowDown') {
+        e.preventDefault()
+        e.stopPropagation()
+        navigateNext()
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault()
+        e.stopPropagation()
+        navigatePrev()
+      } else if (e.key === 'Enter') {
+        e.preventDefault()
+        e.stopPropagation()
+        selectActive()
+      } else if (e.key === 'Escape') {
+        e.preventDefault()
+        e.stopPropagation()
         close()
       }
-    }, [activeId, close])
+    },
+    [navigateNext, navigatePrev, selectActive, close],
+  )
 
-    const handleKeyDown = React.useCallback(
-      (e: React.KeyboardEvent<HTMLElement>) => {
-        if (e.key === 'ArrowDown') {
-          e.preventDefault()
-          e.stopPropagation()
-          navigateNext()
-        } else if (e.key === 'ArrowUp') {
-          e.preventDefault()
-          e.stopPropagation()
-          navigatePrev()
-        } else if (e.key === 'Enter') {
-          e.preventDefault()
-          e.stopPropagation()
-          selectActive()
-        } else if (e.key === 'Escape') {
-          e.preventDefault()
-          e.stopPropagation()
-          close()
-        }
-      },
-      [navigateNext, navigatePrev, selectActive, close],
-    )
+  const contextValue = React.useMemo(
+    () => ({
+      search,
+      setSearch,
+      activeId,
+      setActiveId,
+      registerItem,
+      handleKeyDown,
+      selectActive,
+      close,
+      matchCount: itemIds.length,
+    }),
+    [
+      search,
+      activeId,
+      registerItem,
+      handleKeyDown,
+      selectActive,
+      close,
+      itemIds.length,
+    ],
+  )
 
-    const contextValue = React.useMemo(
-      () => ({
-        search,
-        setSearch,
-        activeId,
-        setActiveId,
-        registerItem,
-        handleKeyDown,
-        selectActive,
-        close,
-        matchCount: itemIds.length,
-      }),
-      [search, activeId, registerItem, handleKeyDown, selectActive, close, itemIds.length],
-    )
+  if (!isOpen) return null
 
-    if (!isOpen) return null
-
-    return (
-      <CommandPaletteContext.Provider value={contextValue}>
-        <AriaModalOverlay
-          isOpen={isOpen}
-          onOpenChange={handleOpenChange}
-          isDismissable
+  return (
+    <CommandPaletteContext.Provider value={contextValue}>
+      <AriaModalOverlay
+        isOpen={isOpen}
+        onOpenChange={handleOpenChange}
+        isDismissable
+        className={(_) => {
+          const { className: stylexClass } = stylex.props(styles.overlay)
+          return stylexClass || ''
+        }}
+        style={(_) => {
+          const { style: stylexStyle } = stylex.props(styles.overlay)
+          return stylexStyle ?? {}
+        }}
+      >
+        <AriaModal
           className={(_) => {
-            const { className: stylexClass } = stylex.props(styles.overlay)
-            return stylexClass || ''
+            const { className: stylexClass } = stylex.props(
+              styles.dialog,
+              styles[size],
+              style,
+            )
+            return [stylexClass, className].filter(Boolean).join(' ')
           }}
           style={(_) => {
-            const { style: stylexStyle } = stylex.props(styles.overlay)
+            const { style: stylexStyle } = stylex.props(
+              styles.dialog,
+              styles[size],
+              style,
+            )
             return stylexStyle ?? {}
           }}
         >
-          <AriaModal
-            className={(_) => {
-              const { className: stylexClass } = stylex.props(
-                styles.dialog,
-                styles[size],
-                style,
-              )
-              return [stylexClass, className].filter(Boolean).join(' ')
-            }}
-            style={(_) => {
-              const { style: stylexStyle } = stylex.props(
-                styles.dialog,
-                styles[size],
-                style,
-              )
-              return stylexStyle ?? {}
+          <AriaDialog
+            ref={ref}
+            aria-label="Command Palette"
+            style={{
+              outline: 'none',
+              display: 'flex',
+              flexDirection: 'column',
+              width: '100%',
             }}
           >
-            <AriaDialog
-              ref={ref}
-              aria-label="Command Palette"
-              style={{ outline: 'none', display: 'flex', flexDirection: 'column', width: '100%' }}
+            <div
+              onKeyDown={handleKeyDown}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                width: '100%',
+                outline: 'none',
+              }}
             >
-              <div
-                onKeyDown={handleKeyDown}
-                style={{ display: 'flex', flexDirection: 'column', width: '100%', outline: 'none' }}
-              >
-                {children}
-              </div>
-            </AriaDialog>
-          </AriaModal>
-        </AriaModalOverlay>
-      </CommandPaletteContext.Provider>
-    )
-  },
-)
+              {children}
+            </div>
+          </AriaDialog>
+        </AriaModal>
+      </AriaModalOverlay>
+    </CommandPaletteContext.Provider>
+  )
+})
 
 // ── CommandPaletteInput Component ─────────────────────────────────────
 
@@ -386,7 +426,10 @@ export const CommandPaletteInput = React.forwardRef<
   )
 
   return (
-    <div className={[wrapperClass, className].filter(Boolean).join(' ')} style={wrapperStyle}>
+    <div
+      className={[wrapperClass, className].filter(Boolean).join(' ')}
+      style={wrapperStyle}
+    >
       <SearchIcon />
       <input
         {...rest}
@@ -410,7 +453,11 @@ export const CommandPaletteInput = React.forwardRef<
           ✕
         </button>
       )}
-      {showKbd && <Kbd onClick={close} style={styles.kbdEsc}>ESC</Kbd>}
+      {showKbd && (
+        <Kbd onClick={close} style={styles.kbdEsc}>
+          ESC
+        </Kbd>
+      )}
     </div>
   )
 })
@@ -426,9 +473,15 @@ export interface CommandPaletteListProps
 export const CommandPaletteList = React.forwardRef<
   HTMLDivElement,
   CommandPaletteListProps
->(function CommandPaletteList({ style, className, onKeyDown, children, ...rest }, ref) {
+>(function CommandPaletteList(
+  { style, className, onKeyDown, children, ...rest },
+  ref,
+) {
   const { handleKeyDown } = useCommandPaletteContext()
-  const { className: listClass, style: listStyle } = stylex.props(styles.list, style)
+  const { className: listClass, style: listStyle } = stylex.props(
+    styles.list,
+    style,
+  )
 
   const handleListKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     handleKeyDown(e)
@@ -462,7 +515,10 @@ export interface CommandPaletteSectionProps
 export const CommandPaletteSection = React.forwardRef<
   HTMLDivElement,
   CommandPaletteSectionProps
->(function CommandPaletteSection({ heading, style, className, children, ...rest }, ref) {
+>(function CommandPaletteSection(
+  { heading, style, className, children, ...rest },
+  ref,
+) {
   const { className: sectionClass, style: sectionStyle } = stylex.props(
     styles.section,
     style,
@@ -518,7 +574,8 @@ export const CommandPaletteItem = React.forwardRef<
 ) {
   const id = React.useId()
   const itemRef = React.useRef<HTMLDivElement | null>(null)
-  const { search, activeId, setActiveId, registerItem, close } = useCommandPaletteContext()
+  const { search, activeId, setActiveId, registerItem, close } =
+    useCommandPaletteContext()
   const isActive = activeId === id
 
   React.useImperativeHandle(ref, () => itemRef.current!)
@@ -559,7 +616,11 @@ export const CommandPaletteItem = React.forwardRef<
     close()
   }
 
-  const shortcuts = shortcut ? (Array.isArray(shortcut) ? shortcut : [shortcut]) : []
+  const shortcuts = shortcut
+    ? Array.isArray(shortcut)
+      ? shortcut
+      : [shortcut]
+    : []
 
   const { className: itemClass, style: itemStyle } = stylex.props(
     styles.item,

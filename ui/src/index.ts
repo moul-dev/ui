@@ -1,5 +1,5 @@
 // Entrypoint for @moul-dev/ui component library
-export const version = '2026.08.21'
+export const version = '2026.08.22'
 
 export { Alert } from './components/Alert'
 export type { AlertProps, AlertVariant } from './components/Alert/Alert'
@@ -17,7 +17,6 @@ export type {
 } from './components/AlertDialog/AlertDialog'
 export type { AreaChartProps } from './components/AreaChart'
 export { AreaChart } from './components/AreaChart'
-export { Avatar, AvatarGroup, AvatarGroupContext } from './components/Avatar'
 export type {
   AvatarGroupContextValue,
   AvatarGroupProps,
@@ -27,6 +26,7 @@ export type {
   AvatarStatus,
   AvatarStatusPosition,
 } from './components/Avatar'
+export { Avatar, AvatarGroup, AvatarGroupContext } from './components/Avatar'
 export { Badge } from './components/Badge'
 export type {
   BadgeProps,
@@ -44,17 +44,17 @@ export { Button } from './components/Button'
 export type { ButtonProps } from './components/Button/Button'
 export { ButtonGroup } from './components/ButtonGroup'
 export type { ButtonGroupProps } from './components/ButtonGroup/ButtonGroup'
-export {
-  Calendar,
-  CalendarCell,
-  CalendarGrid,
-  RangeCalendar,
-} from './components/Calendar'
 export type {
   CalendarCellProps,
   CalendarGridProps,
   CalendarProps,
   RangeCalendarProps,
+} from './components/Calendar'
+export {
+  Calendar,
+  CalendarCell,
+  CalendarGrid,
+  RangeCalendar,
 } from './components/Calendar'
 export type {
   CardBodyProps,
@@ -81,6 +81,16 @@ export type {
   ComboBoxProps,
   ComboBoxSectionProps,
 } from './components/ComboBox/ComboBox'
+export type {
+  CommandPaletteEmptyProps,
+  CommandPaletteFooterProps,
+  CommandPaletteInputProps,
+  CommandPaletteItemProps,
+  CommandPaletteListProps,
+  CommandPaletteProps,
+  CommandPaletteSectionProps,
+  UseCommandPaletteOptions,
+} from './components/CommandPalette'
 export {
   CommandPalette,
   CommandPaletteEmpty,
@@ -93,30 +103,20 @@ export {
   useCommandPaletteContext,
 } from './components/CommandPalette'
 export type {
-  CommandPaletteEmptyProps,
-  CommandPaletteFooterProps,
-  CommandPaletteInputProps,
-  CommandPaletteItemProps,
-  CommandPaletteListProps,
-  CommandPaletteProps,
-  CommandPaletteSectionProps,
-  UseCommandPaletteOptions,
-} from './components/CommandPalette'
+  DateFieldProps,
+  DateInputProps,
+  DateSegmentProps,
+} from './components/DateField'
 export {
   DateField,
   DateInput,
   DateSegment,
 } from './components/DateField'
 export type {
-  DateFieldProps,
-  DateInputProps,
-  DateSegmentProps,
-} from './components/DateField'
-export { DatePicker, DateRangePicker } from './components/DatePicker'
-export type {
   DatePickerProps,
   DateRangePickerProps,
 } from './components/DatePicker'
+export { DatePicker, DateRangePicker } from './components/DatePicker'
 export { Description } from './components/Description'
 export type { DescriptionProps } from './components/Description/Description'
 export type { DoughnutChartProps } from './components/DoughnutChart'
@@ -143,13 +143,6 @@ export {
   DrawerOverlay,
   DrawerTitle,
 } from './components/Drawer'
-export {
-  EmptyState,
-  EmptyStateActions,
-  EmptyStateDescription,
-  EmptyStateIcon,
-  EmptyStateTitle,
-} from './components/EmptyState'
 export type {
   EmptyStateActionsProps,
   EmptyStateAlign,
@@ -159,6 +152,13 @@ export type {
   EmptyStateSize,
   EmptyStateTitleProps,
   EmptyStateVariant,
+} from './components/EmptyState'
+export {
+  EmptyState,
+  EmptyStateActions,
+  EmptyStateDescription,
+  EmptyStateIcon,
+  EmptyStateTitle,
 } from './components/EmptyState'
 export { ErrorMessage } from './components/ErrorMessage'
 export type { ErrorMessageProps } from './components/ErrorMessage/ErrorMessage'
@@ -230,6 +230,20 @@ export type {
 } from './components/Modal/Modal'
 export { NumberField } from './components/NumberField'
 export type { NumberFieldProps } from './components/NumberField/NumberField'
+export type {
+  PaginationContentProps,
+  PaginationEllipsisProps,
+  PaginationItemProps,
+  PaginationLinkProps,
+  PaginationNextProps,
+  PaginationPageSizeProps,
+  PaginationPreviousProps,
+  PaginationProps,
+  PaginationShape,
+  PaginationSize,
+  PaginationSummaryProps,
+  PaginationVariant,
+} from './components/Pagination'
 export {
   generatePagination,
   Pagination,
@@ -245,36 +259,22 @@ export {
   PaginationSummary,
 } from './components/Pagination'
 export type {
-  PaginationContentProps,
-  PaginationEllipsisProps,
-  PaginationItemProps,
-  PaginationLinkProps,
-  PaginationNextProps,
-  PaginationPageSizeProps,
-  PaginationPreviousProps,
-  PaginationProps,
-  PaginationShape,
-  PaginationSize,
-  PaginationSummaryProps,
-  PaginationVariant,
-} from './components/Pagination'
-export type {
   PercentageBarProps,
   PercentageCircleProps,
 } from './components/Percentage'
 export { PercentageBar, PercentageCircle } from './components/Percentage'
-export { ProgressBar } from './components/ProgressBar'
+export { Popover, PopoverDialog, PopoverTrigger } from './components/Popover'
+export type {
+  PopoverDialogProps,
+  PopoverProps,
+} from './components/Popover/Popover'
 export type {
   ProgressBarProps,
   ProgressBarShape,
   ProgressBarSize,
   ProgressBarVariant,
 } from './components/ProgressBar'
-export { Popover, PopoverDialog, PopoverTrigger } from './components/Popover'
-export type {
-  PopoverDialogProps,
-  PopoverProps,
-} from './components/Popover/Popover'
+export { ProgressBar } from './components/ProgressBar'
 export { Radio, RadioGroup } from './components/RadioGroup'
 export type {
   RadioGroupProps,

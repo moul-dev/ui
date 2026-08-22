@@ -9,10 +9,10 @@ import {
   type DatePickerProps as AriaDatePickerProps,
   DateRangePicker as AriaDateRangePicker,
   type DateRangePickerProps as AriaDateRangePickerProps,
-  type DateValue,
   Dialog as AriaDialog,
   Group as AriaGroup,
   Popover as AriaPopover,
+  type DateValue,
   type ValidationResult,
 } from 'react-aria-components'
 import { Calendar, RangeCalendar } from '../Calendar'
@@ -53,123 +53,130 @@ export interface DatePickerProps<T extends DateValue = DateValue>
   size?: 'sm' | 'md' | 'lg'
 }
 
-export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps<any>>(
-  function DatePicker(
-    {
-      label,
-      description,
-      errorMessage,
-      variant = 'primary',
-      size = 'md',
-      style,
-      className,
-      ...rest
-    },
-    ref,
-  ) {
-    const sizeSuffix = size === 'sm' ? 'Sm' : size === 'lg' ? 'Lg' : 'Md'
-    const groupSizeStyle = styles[`group${sizeSuffix}` as keyof typeof styles]
-    const { className: dialogClass, style: dialogStyle } = stylex.props(styles.dialog)
+export const DatePicker = React.forwardRef<
+  HTMLDivElement,
+  DatePickerProps<any>
+>(function DatePicker(
+  {
+    label,
+    description,
+    errorMessage,
+    variant = 'primary',
+    size = 'md',
+    style,
+    className,
+    ...rest
+  },
+  ref,
+) {
+  const sizeSuffix = size === 'sm' ? 'Sm' : size === 'lg' ? 'Lg' : 'Md'
+  const groupSizeStyle = styles[`group${sizeSuffix}` as keyof typeof styles]
+  const { className: dialogClass, style: dialogStyle } = stylex.props(
+    styles.dialog,
+  )
 
-    return (
-      <AriaDatePicker
-        {...rest}
-        ref={ref}
-        className={(_) => {
-          const { className: stylexClass } = stylex.props(styles.container)
-          return [stylexClass, className].filter(Boolean).join(' ')
-        }}
-        style={(_) => {
-          const { style: stylexStyle } = stylex.props(styles.container)
-          return stylexStyle ?? {}
-        }}
-      >
-        {({ isInvalid, isDisabled }) => (
-          <>
-            {label && <Label>{label}</Label>}
-            <AriaGroup
+  return (
+    <AriaDatePicker
+      {...rest}
+      ref={ref}
+      className={(_) => {
+        const { className: stylexClass } = stylex.props(styles.container)
+        return [stylexClass, className].filter(Boolean).join(' ')
+      }}
+      style={(_) => {
+        const { style: stylexStyle } = stylex.props(styles.container)
+        return stylexStyle ?? {}
+      }}
+    >
+      {({ isInvalid, isDisabled }) => (
+        <>
+          {label && <Label>{label}</Label>}
+          <AriaGroup
+            className={(renderProps) => {
+              const { className: stylexClass } = stylex.props(
+                styles.group,
+                groupSizeStyle,
+                styles[variant],
+                renderProps.isHovered && styles.groupHover,
+                renderProps.isFocusWithin && styles.groupFocused,
+                isInvalid && styles.groupInvalid,
+                isInvalid &&
+                  renderProps.isFocusWithin &&
+                  styles.groupFocusedInvalid,
+                isDisabled && styles.groupDisabled,
+                style,
+              )
+              return stylexClass || ''
+            }}
+            style={(renderProps) => {
+              const { style: stylexStyle } = stylex.props(
+                styles.group,
+                groupSizeStyle,
+                styles[variant],
+                renderProps.isHovered && styles.groupHover,
+                renderProps.isFocusWithin && styles.groupFocused,
+                isInvalid && styles.groupInvalid,
+                isInvalid &&
+                  renderProps.isFocusWithin &&
+                  styles.groupFocusedInvalid,
+                isDisabled && styles.groupDisabled,
+                style,
+              )
+              return stylexStyle || {}
+            }}
+          >
+            <DateInput />
+            <AriaButton
+              aria-label="Open calendar"
               className={(renderProps) => {
                 const { className: stylexClass } = stylex.props(
-                  styles.group,
-                  groupSizeStyle,
-                  styles[variant],
-                  renderProps.isHovered && styles.groupHover,
-                  renderProps.isFocusWithin && styles.groupFocused,
-                  isInvalid && styles.groupInvalid,
-                  isInvalid && renderProps.isFocusWithin && styles.groupFocusedInvalid,
-                  isDisabled && styles.groupDisabled,
-                  style,
+                  styles.triggerButton,
+                  renderProps.isHovered && styles.triggerButtonHover,
+                  renderProps.isPressed && styles.triggerButtonPressed,
+                  renderProps.isFocusVisible && styles.triggerButtonFocused,
+                  renderProps.isDisabled && styles.triggerButtonDisabled,
                 )
                 return stylexClass || ''
               }}
               style={(renderProps) => {
                 const { style: stylexStyle } = stylex.props(
-                  styles.group,
-                  groupSizeStyle,
-                  styles[variant],
-                  renderProps.isHovered && styles.groupHover,
-                  renderProps.isFocusWithin && styles.groupFocused,
-                  isInvalid && styles.groupInvalid,
-                  isInvalid && renderProps.isFocusWithin && styles.groupFocusedInvalid,
-                  isDisabled && styles.groupDisabled,
-                  style,
+                  styles.triggerButton,
+                  renderProps.isHovered && styles.triggerButtonHover,
+                  renderProps.isPressed && styles.triggerButtonPressed,
+                  renderProps.isFocusVisible && styles.triggerButtonFocused,
+                  renderProps.isDisabled && styles.triggerButtonDisabled,
                 )
                 return stylexStyle || {}
               }}
             >
-              <DateInput />
-              <AriaButton
-                aria-label="Open calendar"
-                className={(renderProps) => {
-                  const { className: stylexClass } = stylex.props(
-                    styles.triggerButton,
-                    renderProps.isHovered && styles.triggerButtonHover,
-                    renderProps.isPressed && styles.triggerButtonPressed,
-                    renderProps.isFocusVisible && styles.triggerButtonFocused,
-                    renderProps.isDisabled && styles.triggerButtonDisabled,
-                  )
-                  return stylexClass || ''
-                }}
-                style={(renderProps) => {
-                  const { style: stylexStyle } = stylex.props(
-                    styles.triggerButton,
-                    renderProps.isHovered && styles.triggerButtonHover,
-                    renderProps.isPressed && styles.triggerButtonPressed,
-                    renderProps.isFocusVisible && styles.triggerButtonFocused,
-                    renderProps.isDisabled && styles.triggerButtonDisabled,
-                  )
-                  return stylexStyle || {}
-                }}
-              >
-                <CalendarIcon />
-              </AriaButton>
-            </AriaGroup>
-            {description && <Description>{description}</Description>}
-            <FieldError errorMessage={errorMessage} />
-            <AriaPopover
-              className={(_) => {
-                const { className: stylexClass } = stylex.props(styles.popover)
-                return stylexClass || ''
-              }}
-              style={(_) => {
-                const { style: stylexStyle } = stylex.props(styles.popover)
-                return stylexStyle ?? {}
-              }}
+              <CalendarIcon />
+            </AriaButton>
+          </AriaGroup>
+          {description && <Description>{description}</Description>}
+          <FieldError errorMessage={errorMessage} />
+          <AriaPopover
+            className={(_) => {
+              const { className: stylexClass } = stylex.props(styles.popover)
+              return stylexClass || ''
+            }}
+            style={(_) => {
+              const { style: stylexStyle } = stylex.props(styles.popover)
+              return stylexStyle ?? {}
+            }}
+          >
+            <AriaDialog
+              aria-label={label || 'Calendar'}
+              className={dialogClass}
+              style={dialogStyle}
             >
-              <AriaDialog
-                aria-label={label || 'Calendar'}
-                className={dialogClass}
-                style={dialogStyle}
-              >
-                <Calendar />
-              </AriaDialog>
-            </AriaPopover>
-          </>
-        )}
-      </AriaDatePicker>
-    )
-  },
-)
+              <Calendar />
+            </AriaDialog>
+          </AriaPopover>
+        </>
+      )}
+    </AriaDatePicker>
+  )
+})
 
 // ── DateRangePicker Component ────────────────────────────────────────
 
@@ -184,124 +191,131 @@ export interface DateRangePickerProps<T extends DateValue = DateValue>
   size?: 'sm' | 'md' | 'lg'
 }
 
-export const DateRangePicker = React.forwardRef<HTMLDivElement, DateRangePickerProps<any>>(
-  function DateRangePicker(
-    {
-      label,
-      description,
-      errorMessage,
-      variant = 'primary',
-      size = 'md',
-      style,
-      className,
-      ...rest
-    },
-    ref,
-  ) {
-    const sizeSuffix = size === 'sm' ? 'Sm' : size === 'lg' ? 'Lg' : 'Md'
-    const groupSizeStyle = styles[`group${sizeSuffix}` as keyof typeof styles]
-    const { className: dialogClass, style: dialogStyle } = stylex.props(styles.dialog)
+export const DateRangePicker = React.forwardRef<
+  HTMLDivElement,
+  DateRangePickerProps<any>
+>(function DateRangePicker(
+  {
+    label,
+    description,
+    errorMessage,
+    variant = 'primary',
+    size = 'md',
+    style,
+    className,
+    ...rest
+  },
+  ref,
+) {
+  const sizeSuffix = size === 'sm' ? 'Sm' : size === 'lg' ? 'Lg' : 'Md'
+  const groupSizeStyle = styles[`group${sizeSuffix}` as keyof typeof styles]
+  const { className: dialogClass, style: dialogStyle } = stylex.props(
+    styles.dialog,
+  )
 
-    return (
-      <AriaDateRangePicker
-        {...rest}
-        ref={ref}
-        className={(_) => {
-          const { className: stylexClass } = stylex.props(styles.container)
-          return [stylexClass, className].filter(Boolean).join(' ')
-        }}
-        style={(_) => {
-          const { style: stylexStyle } = stylex.props(styles.container)
-          return stylexStyle ?? {}
-        }}
-      >
-        {({ isInvalid, isDisabled }) => (
-          <>
-            {label && <Label>{label}</Label>}
-            <AriaGroup
+  return (
+    <AriaDateRangePicker
+      {...rest}
+      ref={ref}
+      className={(_) => {
+        const { className: stylexClass } = stylex.props(styles.container)
+        return [stylexClass, className].filter(Boolean).join(' ')
+      }}
+      style={(_) => {
+        const { style: stylexStyle } = stylex.props(styles.container)
+        return stylexStyle ?? {}
+      }}
+    >
+      {({ isInvalid, isDisabled }) => (
+        <>
+          {label && <Label>{label}</Label>}
+          <AriaGroup
+            className={(renderProps) => {
+              const { className: stylexClass } = stylex.props(
+                styles.group,
+                groupSizeStyle,
+                styles[variant],
+                renderProps.isHovered && styles.groupHover,
+                renderProps.isFocusWithin && styles.groupFocused,
+                isInvalid && styles.groupInvalid,
+                isInvalid &&
+                  renderProps.isFocusWithin &&
+                  styles.groupFocusedInvalid,
+                isDisabled && styles.groupDisabled,
+                style,
+              )
+              return stylexClass || ''
+            }}
+            style={(renderProps) => {
+              const { style: stylexStyle } = stylex.props(
+                styles.group,
+                groupSizeStyle,
+                styles[variant],
+                renderProps.isHovered && styles.groupHover,
+                renderProps.isFocusWithin && styles.groupFocused,
+                isInvalid && styles.groupInvalid,
+                isInvalid &&
+                  renderProps.isFocusWithin &&
+                  styles.groupFocusedInvalid,
+                isDisabled && styles.groupDisabled,
+                style,
+              )
+              return stylexStyle || {}
+            }}
+          >
+            <DateInput slot="start" />
+            <span aria-hidden="true" {...stylex.props(styles.rangeSeparator)}>
+              –
+            </span>
+            <DateInput slot="end" />
+            <AriaButton
+              aria-label="Open range calendar"
               className={(renderProps) => {
                 const { className: stylexClass } = stylex.props(
-                  styles.group,
-                  groupSizeStyle,
-                  styles[variant],
-                  renderProps.isHovered && styles.groupHover,
-                  renderProps.isFocusWithin && styles.groupFocused,
-                  isInvalid && styles.groupInvalid,
-                  isInvalid && renderProps.isFocusWithin && styles.groupFocusedInvalid,
-                  isDisabled && styles.groupDisabled,
-                  style,
+                  styles.triggerButton,
+                  renderProps.isHovered && styles.triggerButtonHover,
+                  renderProps.isPressed && styles.triggerButtonPressed,
+                  renderProps.isFocusVisible && styles.triggerButtonFocused,
+                  renderProps.isDisabled && styles.triggerButtonDisabled,
                 )
                 return stylexClass || ''
               }}
               style={(renderProps) => {
                 const { style: stylexStyle } = stylex.props(
-                  styles.group,
-                  groupSizeStyle,
-                  styles[variant],
-                  renderProps.isHovered && styles.groupHover,
-                  renderProps.isFocusWithin && styles.groupFocused,
-                  isInvalid && styles.groupInvalid,
-                  isInvalid && renderProps.isFocusWithin && styles.groupFocusedInvalid,
-                  isDisabled && styles.groupDisabled,
-                  style,
+                  styles.triggerButton,
+                  renderProps.isHovered && styles.triggerButtonHover,
+                  renderProps.isPressed && styles.triggerButtonPressed,
+                  renderProps.isFocusVisible && styles.triggerButtonFocused,
+                  renderProps.isDisabled && styles.triggerButtonDisabled,
                 )
                 return stylexStyle || {}
               }}
             >
-              <DateInput slot="start" />
-              <span aria-hidden="true" {...stylex.props(styles.rangeSeparator)}>
-                –
-              </span>
-              <DateInput slot="end" />
-              <AriaButton
-                aria-label="Open range calendar"
-                className={(renderProps) => {
-                  const { className: stylexClass } = stylex.props(
-                    styles.triggerButton,
-                    renderProps.isHovered && styles.triggerButtonHover,
-                    renderProps.isPressed && styles.triggerButtonPressed,
-                    renderProps.isFocusVisible && styles.triggerButtonFocused,
-                    renderProps.isDisabled && styles.triggerButtonDisabled,
-                  )
-                  return stylexClass || ''
-                }}
-                style={(renderProps) => {
-                  const { style: stylexStyle } = stylex.props(
-                    styles.triggerButton,
-                    renderProps.isHovered && styles.triggerButtonHover,
-                    renderProps.isPressed && styles.triggerButtonPressed,
-                    renderProps.isFocusVisible && styles.triggerButtonFocused,
-                    renderProps.isDisabled && styles.triggerButtonDisabled,
-                  )
-                  return stylexStyle || {}
-                }}
-              >
-                <CalendarIcon />
-              </AriaButton>
-            </AriaGroup>
-            {description && <Description>{description}</Description>}
-            <FieldError errorMessage={errorMessage} />
-            <AriaPopover
-              className={(_) => {
-                const { className: stylexClass } = stylex.props(styles.popover)
-                return stylexClass || ''
-              }}
-              style={(_) => {
-                const { style: stylexStyle } = stylex.props(styles.popover)
-                return stylexStyle ?? {}
-              }}
+              <CalendarIcon />
+            </AriaButton>
+          </AriaGroup>
+          {description && <Description>{description}</Description>}
+          <FieldError errorMessage={errorMessage} />
+          <AriaPopover
+            className={(_) => {
+              const { className: stylexClass } = stylex.props(styles.popover)
+              return stylexClass || ''
+            }}
+            style={(_) => {
+              const { style: stylexStyle } = stylex.props(styles.popover)
+              return stylexStyle ?? {}
+            }}
+          >
+            <AriaDialog
+              aria-label={label || 'Date range calendar'}
+              className={dialogClass}
+              style={dialogStyle}
             >
-              <AriaDialog
-                aria-label={label || 'Date range calendar'}
-                className={dialogClass}
-                style={dialogStyle}
-              >
-                <RangeCalendar />
-              </AriaDialog>
-            </AriaPopover>
-          </>
-        )}
-      </AriaDateRangePicker>
-    )
-  },
-)
+              <RangeCalendar />
+            </AriaDialog>
+          </AriaPopover>
+        </>
+      )}
+    </AriaDateRangePicker>
+  )
+})

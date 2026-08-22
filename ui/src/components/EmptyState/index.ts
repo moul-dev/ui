@@ -1,10 +1,3 @@
-export {
-  EmptyState,
-  EmptyStateActions,
-  EmptyStateDescription,
-  EmptyStateIcon,
-  EmptyStateTitle,
-} from './EmptyState'
 export type {
   EmptyStateActionsProps,
   EmptyStateAlign,
@@ -14,4 +7,11 @@ export type {
   EmptyStateSize,
   EmptyStateTitleProps,
   EmptyStateVariant,
+} from './EmptyState'
+export {
+  EmptyState,
+  EmptyStateActions,
+  EmptyStateDescription,
+  EmptyStateIcon,
+  EmptyStateTitle,
 } from './EmptyState'

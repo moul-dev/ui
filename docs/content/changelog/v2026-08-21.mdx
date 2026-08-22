@@ -1,26 +1,28 @@
 ---
-title: v2026.08.21 — Logs Viewer, Drawer Component, StyleX Tokens & Developer Experience
-description: Introducing the high-performance Logs stream viewer with slide-out drawer inspection, the accessible multi-directional Drawer primitive, public StyleX tokens exports, and versioning workflow automation.
+title: v2026.08.21 — Logs Stream Viewer, Drawer Component, and Design Tokens Export
+description: High-throughput log streaming with drawer inspection, accessible multi-directional slide-overs, public StyleX tokens, and CalVer automation.
 date: 2026-08-21
 author: Phearak S. Tha
 avatar: https://github.com/thasophearak.png
 ---
 
-This release expands **Moul UI** with powerful new developer and dashboard primitives, led by the high-performance **Logs Viewer**, the multi-directional **Drawer** overlay, direct **StyleX Tokens** exports, and automated versioning tooling.
+Inspecting live telemetry in a web browser usually degrades into choppy rendering and lost scroll positions. This release introduces a dedicated `Logs` viewer with slide-out drawer inspection, a multi-directional `Drawer` primitive, direct `StyleX` token exports, and automated versioning tooling.
+
+When debugging distributed services during an incident, you need clarity under pressure. You cannot afford browser tabs freezing while parsing thousands of incoming log lines or losing your place every time a background worker emits a trace.
+
+It needs to handle high throughput. It needs to stay responsive.
 
 ---
 
-## 🪵 High-Performance Logs & Stream Viewer
+## Logs Viewer
 
-We have introduced the `Logs` and `LogsViewer` components (`/docs/components/logs` and `/docs/blocks/logs`), a high-performance log inspection and streaming system designed for cloud consoles, telemetry dashboards, and developer tooling.
+Telemetry interfaces require predictable scrolling, rapid filtering, and granular detail inspection. The `Logs` and `LogsViewer` components (`/docs/components/logs` and `/docs/blocks/logs`) provide a structured log stream viewer built on top of React Aria table grids:
 
-- **React Aria Table Foundation:** Full ARIA grid accessibility, keyboard navigation, row selection, and accessible headers.
-- **Real-Time Follow Mode:** Auto-tails incoming log streams with smooth scrolling lock, automatically pausing follow mode when the user scrolls up and resuming when returned to the bottom.
-- **Severity Level Filtering:** Instant filter chips for `All`, `Errors`, `Warnings`, `Info`, `Debug`, and `Trace` with live event counters.
-- **Live Search & Highlighting:** Real-time substring and regex searching with keyword highlighting across message text, timestamps, and metadata attributes.
-- **Key-Value Attribute Chips:** Automatic detection and extraction of structured key-value pairs (e.g. `status=200`, `latency="182.4µs"`, `path="/api/..."`, `error="..."`).
-- **Slide-out Drawer Inspector:** Integrated `<Drawer>` inspector displaying formatted messages, structured fields table, raw terminal output, formatted JSON view, and one-click copy.
-- **Display Modes & Operations:** Compact density mode, line numbers toggle, timestamp visibility toggle, line wrap controls, and export/copy utilities.
+- **Follow Mode & Scroll Lock:** Automatically tails incoming log streams with smooth auto-scrolling. It pauses follow mode immediately when you scroll up to inspect a line, and resumes when you return to the bottom.
+- **Severity Level Filtering:** Instant filter buttons for `All`, `Errors`, `Warnings`, `Info`, `Debug`, and `Trace` with live event count badges.
+- **Search & Substring Highlighting:** Real-time query matching across message bodies, timestamps, and structured attributes.
+- **Key-Value Attribute Extraction:** Automatic detection of structured key-value pairs (such as `status=200`, `latency="182.4µs"`, `path="/api/..."`).
+- **Slide-out Drawer Inspector:** Integrated side drawer displaying structured field tables, raw terminal text, formatted JSON views, and one-click clipboard copying.
 
 ```tsx
 import { Logs, SERVER_LOGS } from '@moul-dev/ui';
@@ -40,22 +42,16 @@ export function ServerLogsConsole() {
 
 ---
 
-## 🗄️ Multi-Directional Drawer Component
+## Multi-Directional Drawer Component
 
-The new `Drawer` primitive (`/docs/components/drawer`) delivers accessible slide-over panels and sheet overlays built on React Aria Dialog primitives and StyleX animation tokens.
+Side sheets and slide-over panels are essential for secondary tasks like viewing record details, inspecting telemetry, or editing preferences without losing page context.
+
+The `Drawer` primitive (`/docs/components/drawer`) builds on React Aria dialog primitives with hardware-accelerated StyleX transitions:
 
 - **Multi-Directional Placements:** Slide-in transitions from `right`, `left`, `top`, or `bottom`.
-- **Responsive Sizing:** Built-in size presets (`sm`, `md`, `lg`, `full`) with automatic full-width adaptation on mobile viewports.
-- **Compound Architecture:** Structured subcomponents for seamless composition:
-  - `<DrawerOverlay>`
-  - `<Drawer>`
-  - `<DrawerDialog>`
-  - `<DrawerHeader>`
-  - `<DrawerTitle>`
-  - `<DrawerCloseButton>`
-  - `<DrawerBody>`
-  - `<DrawerFooter>`
-- **Motion & Accessibility:** Backdrop blur styling, GPU-accelerated enter/exit transitions, focus trapping, and Escape key dismissal.
+- **Responsive Sizing:** Sizing presets (`sm`, `md`, `lg`, `full`) with automatic full-screen adaptation on smaller viewports.
+- **Compound Architecture:** Declarative subcomponents (`DrawerOverlay`, `Drawer`, `DrawerDialog`, `DrawerHeader`, `DrawerTitle`, `DrawerCloseButton`, `DrawerBody`, `DrawerFooter`).
+- **Focus Trapping & Escape Dismissal:** Strict focus boundaries and keyboard escape handling to ensure accessibility compliance.
 
 ```tsx
 import {
@@ -101,9 +97,9 @@ export function DrawerExample() {
 
 ---
 
-## 🎨 Public StyleX Design Tokens Export
+## Public StyleX Tokens Export
 
-Consumers can now import and reference the core StyleX design tokens directly from `@moul-dev/ui`:
+You can now import the core StyleX tokens directly from `@moul-dev/ui`:
 
 ```tsx
 import { tokens } from '@moul-dev/ui';
@@ -120,22 +116,32 @@ const styles = stylex.create({
 });
 ```
 
-- Enables seamless custom component styling while staying synchronized with Moul UI's color system, typography scale, spacing, and radius tokens.
-- Updated package exports and Vite library build configurations to bundle type definitions for `tokens`.
+This allows custom application components to stay aligned with the color system, typography scale, spacing, and radius tokens without duplicating CSS custom property definitions.
 
 ---
 
-## 🧩 Component Refinements & Testing
+## Component Refinements
 
-- **Sidebar:** Refined collapsible sidebar mechanics and navigation states, optimized layout padding, and added comprehensive unit test suite (`Sidebar.test.tsx`).
-- **ToggleButton & Button:** Added new size tokens, active state indicators, and layout alignment for toolbar clusters.
-- **ChartContainer & Card:** Improved theme token propagation and responsive chart scaling across varied container widths.
-- **Form Inputs:** Polished focus rings, hover indicators, and border contrast for `SearchField`, `NumberField`, `ComboBox`, `TextField`, and `TextArea`.
+- **Sidebar:** Refined layout padding, active navigation state indicators, and added a dedicated unit test suite.
+- **Button & ToggleButton:** Added size tokens and alignment helpers for compact toolbar groupings.
+- **ChartContainer & Card:** Improved theme token inheritance and chart resize responsiveness.
+- **Form Inputs:** Sharpened focus ring contrast and hover feedback on `SearchField`, `NumberField`, `ComboBox`, `TextField`, and `TextArea`.
 
 ---
 
-## 🛠️ Developer Experience & Tooling
+## Tooling and Versioning Automation
 
-- **Automated CalVer Bump Script:** Added `bun run bump` (`scripts/bump-version.ts`) to automate synchronized version bumps across root and workspace `package.json`, React index exports, metadata attributes, documentation badges, and AI agent context files.
-- **Dynamic Open Graph Images:** Integrated server-rendered Open Graph card generation (`docs/src/components/open-graph.tsx`, `docs/src/lib/og.ts`) across docs pages, changelog posts, and preview routes.
-- **Documentation UX:** Refined package manager selector tab focus outlines and navigation links.
+- **Automated CalVer Bump Script:** Added `bun run bump` (`scripts/bump-version.ts`) to handle synchronized version bumps across package manifests, TypeScript entry points, documentation badges, and AI agent context files.
+- **Dynamic Open Graph Cards:** Implemented server-side Open Graph image generation for documentation pages and changelog posts.
+
+---
+
+## On Developer Tooling and Calm Focus
+
+Internal operational tools often get treated as second-class citizens. Teams ship rough, unstyled log dumps because "it is just for developers."
+
+When you are debugging an outage at 2 AM, legible typography, stable scroll tracking, and intuitive keyboard navigation make a real difference[^1].
+
+Treat internal tools with the same respect as user-facing software.
+
+[^1]: The log follow mode uses passive scroll event listeners and `requestAnimationFrame` batching to keep main-thread CPU overhead near zero during heavy bursts.

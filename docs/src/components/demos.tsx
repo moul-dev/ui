@@ -74,6 +74,7 @@ import {
   ProgressBar,
   RangeCalendar,
   REGEXP_ONLY_DIGITS,
+  Row,
   Sidebar,
   SidebarAside,
   SidebarDivider,
@@ -86,7 +87,6 @@ import {
   Table,
   TableBody,
   TableHeader,
-  Row,
   Tag,
   TagGroup,
   TextField,
@@ -1299,7 +1299,9 @@ export function SidebarDemo() {
 export function ProgressBarDemo() {
   const [value, setValue] = useState(60)
   const [isIndeterminate, setIsIndeterminate] = useState(false)
-  const [variant, setVariant] = useState<'primary' | 'success' | 'warning' | 'error'>('primary')
+  const [variant, setVariant] = useState<
+    'primary' | 'success' | 'warning' | 'error'
+  >('primary')
 
   return (
     <div className="flex flex-col gap-6 w-full max-w-xl p-4 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/20">
@@ -1387,14 +1389,25 @@ export function EmptyStateDemo() {
       <EmptyState
         variant={variant}
         icon={
-          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg
+            viewBox="0 0 24 24"
+            width="24"
+            height="24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
             <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
           </svg>
         }
         title="No repositories found"
         description="You haven't created any repositories yet. Get started by creating your first project repository."
         action={<Button size="sm">Create Repository</Button>}
-        secondaryAction={<Button size="sm" variant="ghost">Import Repo</Button>}
+        secondaryAction={
+          <Button size="sm" variant="ghost">
+            Import Repo
+          </Button>
+        }
       />
     </div>
   )
@@ -1411,7 +1424,10 @@ export function PaginationDemo() {
     status: i % 4 === 0 ? 'Inactive' : 'Active',
   }))
 
-  const paginatedData = sampleUsers.slice((page - 1) * pageSize, page * pageSize)
+  const paginatedData = sampleUsers.slice(
+    (page - 1) * pageSize,
+    page * pageSize,
+  )
 
   return (
     <div className="flex flex-col gap-4 w-full max-w-2xl p-4 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/20">
@@ -1427,16 +1443,21 @@ export function PaginationDemo() {
           </thead>
           <tbody className="divide-y divide-neutral-200 dark:divide-neutral-800">
             {paginatedData.map((u) => (
-              <tr key={u.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-900/40">
+              <tr
+                key={u.id}
+                className="hover:bg-neutral-50 dark:hover:bg-neutral-900/40"
+              >
                 <td className="p-3 font-mono text-xs">{u.id}</td>
                 <td className="p-3 font-medium">{u.name}</td>
                 <td className="p-3 text-neutral-500">{u.role}</td>
                 <td className="p-3">
-                  <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
-                    u.status === 'Active'
-                      ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-400'
-                      : 'bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400'
-                  }`}>
+                  <span
+                    className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                      u.status === 'Active'
+                        ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-400'
+                        : 'bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400'
+                    }`}
+                  >
                     {u.status}
                   </span>
                 </td>
@@ -1469,7 +1490,9 @@ export function TableDemo() {
     column: 'name',
     direction: 'ascending',
   })
-  const [selectionMode, setSelectionMode] = useState<'none' | 'single' | 'multiple'>('multiple')
+  const [selectionMode, setSelectionMode] = useState<
+    'none' | 'single' | 'multiple'
+  >('multiple')
   const [selectedKeys, setSelectedKeys] = useState<any>(new Set(['2']))
   const [stickyHeader, setStickyHeader] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -1576,7 +1599,11 @@ export function TableDemo() {
                     : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-950 dark:hover:text-neutral-100'
                 }`}
               >
-                {mode === 'none' ? 'No Select' : mode === 'single' ? 'Single' : 'Multi'}
+                {mode === 'none'
+                  ? 'No Select'
+                  : mode === 'single'
+                    ? 'Single'
+                    : 'Multi'}
               </button>
             ))}
           </div>
@@ -1611,9 +1638,14 @@ export function TableDemo() {
       {selectionMode !== 'none' && (
         <div className="flex items-center justify-between text-xs text-neutral-500 px-1">
           <span>
-            Selected: <strong className="text-neutral-900 dark:text-neutral-100">{selectedKeys === 'all' ? rows.length : selectedKeys.size ?? 0}</strong> of {rows.length} rows
+            Selected:{' '}
+            <strong className="text-neutral-900 dark:text-neutral-100">
+              {selectedKeys === 'all' ? rows.length : (selectedKeys.size ?? 0)}
+            </strong>{' '}
+            of {rows.length} rows
           </span>
-          {((selectedKeys === 'all') || (selectedKeys.size && selectedKeys.size > 0)) && (
+          {(selectedKeys === 'all' ||
+            (selectedKeys.size && selectedKeys.size > 0)) && (
             <button
               type="button"
               onClick={() => setSelectedKeys(new Set())}
@@ -1636,8 +1668,12 @@ export function TableDemo() {
           isLoading={isLoading}
           emptyState={
             <div className="py-8 text-center">
-              <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">No matching services found</p>
-              <p className="text-xs text-neutral-500 mt-1">Try changing your search keywords or clearing filters.</p>
+              <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
+                No matching services found
+              </p>
+              <p className="text-xs text-neutral-500 mt-1">
+                Try changing your search keywords or clearing filters.
+              </p>
             </div>
           }
           sortDescriptor={sortDescriptor}
@@ -1672,11 +1708,15 @@ export function TableDemo() {
             {(item: any) => (
               <Row key={item.id} id={item.id}>
                 <Cell>
-                  <span className="font-semibold text-neutral-900 dark:text-neutral-100">{item.name}</span>
+                  <span className="font-semibold text-neutral-900 dark:text-neutral-100">
+                    {item.name}
+                  </span>
                 </Cell>
                 <Cell>{item.team}</Cell>
                 <Cell>
-                  <span className="font-mono text-xs text-neutral-500">{item.region}</span>
+                  <span className="font-mono text-xs text-neutral-500">
+                    {item.region}
+                  </span>
                 </Cell>
                 <Cell>
                   <Badge variant={item.variant} size="sm" dot>
@@ -1745,20 +1785,22 @@ export function AvatarDemo() {
 
         <div className="flex items-center gap-1.5 text-xs">
           <span className="text-neutral-500">Status:</span>
-          {(['none', 'online', 'away', 'busy', 'offline'] as const).map((st) => (
-            <button
-              key={st}
-              type="button"
-              onClick={() => setStatus(st)}
-              className={`px-2 py-1 rounded text-xs font-medium capitalize transition-colors ${
-                status === st
-                  ? 'bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900'
-                  : 'bg-neutral-200/60 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200'
-              }`}
-            >
-              {st}
-            </button>
-          ))}
+          {(['none', 'online', 'away', 'busy', 'offline'] as const).map(
+            (st) => (
+              <button
+                key={st}
+                type="button"
+                onClick={() => setStatus(st)}
+                className={`px-2 py-1 rounded text-xs font-medium capitalize transition-colors ${
+                  status === st
+                    ? 'bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900'
+                    : 'bg-neutral-200/60 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200'
+                }`}
+              >
+                {st}
+              </button>
+            ),
+          )}
         </div>
       </div>
 
@@ -1878,7 +1920,8 @@ export function CommandPaletteDemo() {
   return (
     <div className="flex flex-col items-center justify-center gap-4 p-8 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/30">
       <p className="text-xs text-neutral-500">
-        Press <Kbd>⌘K</Kbd> or click the button below to launch the Command Palette
+        Press <Kbd>⌘K</Kbd> or click the button below to launch the Command
+        Palette
       </p>
 
       <Button variant="primary" onPress={() => setIsOpen(true)}>
@@ -1945,6 +1988,3 @@ export function CommandPaletteDemo() {
     </div>
   )
 }
-
-
-

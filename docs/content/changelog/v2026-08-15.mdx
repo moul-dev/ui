@@ -1,14 +1,12 @@
 ---
-title: v2026.08.15 — Component System & Architecture
-description: A complete breakdown of the primitive components, zero-runtime styling engine, and interaction mechanics powering Moul UI.
+title: v2026.08.15 — Architecture and Core Primitives
+description: The primitive components, zero-runtime styling engine, and interaction mechanics powering Moul UI.
 date: 2026-08-15
 author: Phearak S. Tha
 avatar: https://github.com/thasophearak.png
 ---
 
 UI component libraries often force a trade-off between accessible interaction primitives and bundle execution speed. Moul UI eliminates this compromise by combining React Aria's accessibility layer with StyleX's build-time CSS compilation engine.
-
-## The Foundations
 
 Building resilient web components requires separating interaction state logic from visual presentation. Traditional utility frameworks inject runtime script evaluation to compute CSS class names on every render pass.
 
@@ -17,15 +15,17 @@ Moul UI decouples these concerns into two distinct layers:
 - **React Aria Components:** Handles focus management, ARIA roles, keyboard navigation, and dynamic interaction states natively.
 - **StyleX Engine:** Compiles atomic styles into a static CSS file during compilation, eliminating runtime CSS parser overhead.
 
-The result is instant initial renders and predictable frame rates during user interactions.
+It is fast on first load. It is consistent under interaction.
 
-## Primitive Components
+---
 
-The library provides core building blocks designed to compose complex dashboard and application interfaces:
+## Core Primitives
+
+The library provides foundational building blocks designed to compose complex dashboard and application interfaces:
 
 ### Interactive Primitives
 
-- **Button & ToggleButton:** Custom interaction states with built-in loading spinners, press handlers, and structural variant tokens.
+- **Button & ToggleButton:** Interaction states with built-in loading spinners, press handlers, and structural variant tokens.
 - **InputOTP:** Segmented pin and verification code inputs featuring automatic focus routing across digit slots.
 - **ComboBox & Select:** Accessible dropdown selections with search filtering, keyboard navigation, and virtualized list support.
 - **Form & Validation:** Integrated form boundaries with native browser validation hooks and accessible error messaging.
@@ -42,10 +42,12 @@ The library provides core building blocks designed to compose complex dashboard 
 - **Table:** Accessible data tables supporting column headers, row selection, and key navigation.
 - **Badge, Tag & Kbd:** Micro-formatting elements for status indicators, categorization, and key bindings.
 
-## Visual Craftsmanship
+---
 
-Software should feel light and tactile under the user's fingers. Every element in Moul UI relies on a unified token system that responds dynamically to light and dark color schemes[^1].
+## On Visual Craftsmanship
 
-We test every component against strict accessibility criteria and real-world keyboard workflows. The goal remains simple: build predictable foundation tools that let product teams ship with confidence.
+Software should feel light and tactile under your fingers. Every element in Moul UI relies on a unified token system that responds dynamically to light and dark color schemes[^1].
+
+I test every component against strict accessibility criteria and real-world keyboard workflows. The goal is simple: build predictable foundation tools that let product teams ship with confidence.
 
 [^1]: Themes apply CSS variables at root scope, avoiding layout recalculations or script re-renders on theme switches.

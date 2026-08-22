@@ -60,7 +60,9 @@ export const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
         className={[stylexClass, className].filter(Boolean).join(' ')}
         style={stylexStyle}
       >
-        {showDot && <span aria-hidden="true" className={dotClass} style={dotStyle} />}
+        {showDot && (
+          <span aria-hidden="true" className={dotClass} style={dotStyle} />
+        )}
         {children}
       </span>
     )

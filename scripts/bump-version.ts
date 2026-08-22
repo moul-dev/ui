@@ -342,21 +342,36 @@ async function main() {
     if (!existsSync(changelogPath)) {
       const changelogTemplate = `---
 title: v${nextVersion} — Release Summary
-description: Release notes and component updates for Moul UI v${nextVersion}.
+description: Release notes and architectural updates for Moul UI v${nextVersion}.
 date: ${todayIso}
 author: Phearak S. Tha
 avatar: https://github.com/thasophearak.png
 ---
 
-This release updates **Moul UI** to **v${nextVersion}**.
+This release updates **Moul UI** to **v${nextVersion}**. State the core problem or update in the first two sentences.
+
+Build the underlying mental model and background context here. Keep paragraphs between 2 and 4 sentences. Alternate dense technical explanations with short, punchy statements.
+
+It is fast. It is predictable. And it stays out of your way.
 
 ---
 
-## 🚀 Highlights & Improvements
+## Core Primitives
 
-- Component enhancements and accessibility refinements.
-- Documentation updates and theme studio improvements.
+Walk through the mechanism, philosophy, and implementation step-by-step using functional headers and precise technical descriptions:
 
+- **Component Refinement:** Detail specific architectural improvements, keyboard accessibility, or token integrations.
+- **State Handling:** Explain prop changes, event signatures, or focus management.
+
+---
+
+## On Craft and Sustainability
+
+Conclude with a focus on human care, engineering craftsmanship, and long-term maintainability[^1].
+
+Take care of the fundamentals. The rest follows.
+
+[^1]: Technical aside or context regarding zero-runtime styling or performance.
 `
       if (!options.dryRun) {
         writeFileSync(changelogPath, changelogTemplate, 'utf8')

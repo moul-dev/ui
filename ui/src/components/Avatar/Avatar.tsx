@@ -68,7 +68,10 @@ export const Avatar = React.forwardRef<HTMLDivElement, AvatarProps>(
 
     if (process.env.NODE_ENV !== 'production') {
       warnMissingLabel('Avatar', {
-        label: alt || rest['aria-label'] || (status ? `${status} status` : undefined),
+        label:
+          alt ||
+          rest['aria-label'] ||
+          (status ? `${status} status` : undefined),
         labelledBy: rest['aria-labelledby'],
         children: initials,
       })
@@ -76,7 +79,8 @@ export const Avatar = React.forwardRef<HTMLDivElement, AvatarProps>(
 
     const shapeStyleKey = shape === 'circle' ? 'circle' : `square_${size}`
     const sizeStyle = styles[size] || styles.md
-    const shapeStyle = styles[shapeStyleKey as keyof typeof styles] || styles.circle
+    const shapeStyle =
+      styles[shapeStyleKey as keyof typeof styles] || styles.circle
 
     const { className: stylexClass, style: stylexStyle } = stylex.props(
       styles.base,
@@ -108,7 +112,10 @@ export const Avatar = React.forwardRef<HTMLDivElement, AvatarProps>(
     const renderStatusDot = () => {
       if (!status) return null
 
-      const posKey = statusPosition === 'top-right' ? 'status_topRight' : 'status_bottomRight'
+      const posKey =
+        statusPosition === 'top-right'
+          ? 'status_topRight'
+          : 'status_bottomRight'
       const colorKey = `status_${status}` as keyof typeof styles
       const sizeKey = `statusSize_${size}` as keyof typeof styles
 
@@ -136,9 +143,7 @@ export const Avatar = React.forwardRef<HTMLDivElement, AvatarProps>(
         className={[stylexClass, className].filter(Boolean).join(' ')}
         style={stylexStyle}
       >
-        <div {...stylex.props(styles.innerWrapper)}>
-          {renderContent()}
-        </div>
+        <div {...stylex.props(styles.innerWrapper)}>{renderContent()}</div>
         {renderStatusDot()}
       </div>
     )

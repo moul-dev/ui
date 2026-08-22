@@ -255,7 +255,8 @@ export const PaginationLink = React.forwardRef<
   const shapeSuffix = shape.charAt(0).toUpperCase() + shape.slice(1)
   const variantSuffix = variant.charAt(0).toUpperCase() + variant.slice(1)
 
-  const sizeStyle = styles[`link${sizeSuffix}` as 'linkSm' | 'linkMd' | 'linkLg']
+  const sizeStyle =
+    styles[`link${sizeSuffix}` as 'linkSm' | 'linkMd' | 'linkLg']
   const shapeStyle =
     styles[
       `shape${shapeSuffix}` as 'shapeRounded' | 'shapeCircle' | 'shapeSquare'
@@ -295,7 +296,9 @@ export const PaginationLink = React.forwardRef<
           renderProps.isHovered && !isActive && styles.linkHover,
           renderProps.isFocusVisible && styles.linkFocus,
           isActive &&
-            (variant === 'outline' ? styles.linkActiveOutline : styles.linkActive),
+            (variant === 'outline'
+              ? styles.linkActiveOutline
+              : styles.linkActive),
           isDisabled && styles.linkDisabled,
           style,
         )
@@ -310,7 +313,9 @@ export const PaginationLink = React.forwardRef<
           renderProps.isHovered && !isActive && styles.linkHover,
           renderProps.isFocusVisible && styles.linkFocus,
           isActive &&
-            (variant === 'outline' ? styles.linkActiveOutline : styles.linkActive),
+            (variant === 'outline'
+              ? styles.linkActiveOutline
+              : styles.linkActive),
           isDisabled && styles.linkDisabled,
           style,
         )
@@ -333,10 +338,7 @@ export interface PaginationPreviousProps extends PaginationLinkProps {
 export const PaginationPrevious = React.forwardRef<
   HTMLButtonElement,
   PaginationPreviousProps
->(function PaginationPrevious(
-  { showText = false, children, ...props },
-  ref,
-) {
+>(function PaginationPrevious({ showText = false, children, ...props }, ref) {
   const context = React.useContext(PaginationContext)
   const isDisabled = props.isDisabled ?? context.page <= 1
 
@@ -541,7 +543,7 @@ export const PaginationSummary = React.forwardRef<
   const content =
     typeof children === 'function'
       ? children({ start, end, total, page, totalPages })
-      : children ?? `Showing ${start}–${end} of ${total}`
+      : (children ?? `Showing ${start}–${end} of ${total}`)
 
   return (
     <span
@@ -638,13 +640,15 @@ export interface PaginationProps
   onChange?: (page: number) => void
   onPageChange?: (page: number) => void
   onPageSizeChange?: (pageSize: number) => void
-  summary?: React.ReactNode | ((info: {
-    start: number
-    end: number
-    total: number
-    page: number
-    totalPages: number
-  }) => React.ReactNode)
+  summary?:
+    | React.ReactNode
+    | ((info: {
+        start: number
+        end: number
+        total: number
+        page: number
+        totalPages: number
+      }) => React.ReactNode)
   style?: StyleXStyles
   className?: string
   children?: React.ReactNode

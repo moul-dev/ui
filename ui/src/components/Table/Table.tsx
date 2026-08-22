@@ -146,10 +146,7 @@ export interface TableHeaderProps<T>
 export const TableHeader = React.forwardRef<
   HTMLTableSectionElement,
   TableHeaderProps<any>
->(function TableHeader(
-  { style, className, sticky, children, ...rest },
-  ref,
-) {
+>(function TableHeader({ style, className, sticky, children, ...rest }, ref) {
   const { stickyHeader: tableSticky } = React.useContext(TableContext)
   const isSticky = sticky ?? tableSticky
 
@@ -205,7 +202,9 @@ export const Column = React.forwardRef<HTMLTableHeaderCellElement, ColumnProps>(
             style,
           )
           const userClass =
-            typeof className === 'function' ? (className as any)(renderProps) : className
+            typeof className === 'function'
+              ? (className as any)(renderProps)
+              : className
           return [stylexClass, userClass].filter(Boolean).join(' ')
         }}
         style={(renderProps) => {
@@ -219,9 +218,7 @@ export const Column = React.forwardRef<HTMLTableHeaderCellElement, ColumnProps>(
       >
         {(renderProps) => {
           const content =
-            typeof children === 'function'
-              ? children(renderProps)
-              : children
+            typeof children === 'function' ? children(renderProps) : children
 
           if (!renderProps.allowsSorting || !showSortIndicator) {
             return content
@@ -299,9 +296,7 @@ export const TableBody = React.forwardRef<
       )
     }
     if (activeEmptyState) {
-      return (
-        <div {...stylex.props(styles.emptyState)}>{activeEmptyState}</div>
-      )
+      return <div {...stylex.props(styles.emptyState)}>{activeEmptyState}</div>
     }
     return null
   }

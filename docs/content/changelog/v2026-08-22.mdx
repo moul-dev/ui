@@ -1,0 +1,370 @@
+---
+title: v2026.08.22 — CommandPalette, Date & Calendar Suite, Pagination, and Table Primitives
+description: Keyboard-first command palette, calendar and date range inputs, composable pagination, linear progress indicators, empty states, and sortable table columns.
+date: 2026-08-22
+author: Phearak S. Tha
+avatar: https://github.com/thasophearak.png
+---
+
+Building dense web tools usually stalls when navigation and time-based inputs require custom state wiring from scratch. This release adds six foundational suites to Moul UI: a keyboard-driven command palette, a complete date and calendar system, composable pagination, linear progress indicators, empty states, and sortable table columns.
+
+When building complex interfaces, accessibility is often treated as a late-stage retrofit rather than structural load-bearing timber. I wanted primitives where keyboard ergonomics, focus restoration, and internationalized date math work by default without runtime style bloat.
+
+It is fast. It is predictable. And it stays out of your way.
+
+---
+
+## CommandPalette
+
+Hunting through nested navigation menus slows users down. A command palette acts like an index in a dense textbook: one shortcut surfaces every action in a unified dialog.
+
+The `CommandPalette` suite (`/docs/components/commandpalette`) pairs global hotkey handling with real-time substring filtering and keyboard navigation:
+
+- **Shortcut Hook (`useCommandPalette`):** Registers `⌘K` / `Ctrl+K` globally and manages open state across the tree.
+- **Search & Highlighting:** Real-time query matching that dynamically highlights matched text in labels and keywords.
+- **Keyboard Navigation:** Native `ArrowUp` / `ArrowDown` list cycling, active item scroll synchronization, `Enter` selection, and `Escape` dismissal.
+- **Compound Architecture:** Structured components (`CommandPaletteInput`, `CommandPaletteList`, `CommandPaletteSection`, `CommandPaletteItem`, `CommandPaletteEmpty`, `CommandPaletteFooter`) for full layout control.
+
+```tsx
+import {
+  Button,
+  CommandPalette,
+  CommandPaletteEmpty,
+  CommandPaletteFooter,
+  CommandPaletteInput,
+  CommandPaletteItem,
+  CommandPaletteList,
+  CommandPaletteSection,
+  Kbd,
+  useCommandPalette,
+} from '@moul-dev/ui';
+
+export function QuickActionCenter() {
+  const { isOpen, setIsOpen, open } = useCommandPalette();
+
+  return (
+    <>
+      <Button onPress={open}>
+        Open Command Palette <Kbd>⌘K</Kbd>
+      </Button>
+
+      <CommandPalette isOpen={isOpen} onOpenChange={setIsOpen} placeholder="Type a command or search...">
+        <CommandPaletteInput />
+        <CommandPaletteList>
+          <CommandPaletteSection heading="Navigation">
+            <CommandPaletteItem id="nav-dashboard" onAction={() => navigate('/dashboard')} shortcut="⌘D">
+              Dashboard
+            </CommandPaletteItem>
+            <CommandPaletteItem id="nav-settings" onAction={() => navigate('/settings')} shortcut="⌘S">
+              Workspace Settings
+            </CommandPaletteItem>
+          </CommandPaletteSection>
+
+          <CommandPaletteSection heading="Actions">
+            <CommandPaletteItem id="act-new-project" onAction={() => createProject()} shortcut="⌘N">
+              Create New Project
+            </CommandPaletteItem>
+            <CommandPaletteItem id="act-copy-link" onAction={() => copyInviteLink()}>
+              Copy Workspace Invite Link
+            </CommandPaletteItem>
+          </CommandPaletteSection>
+
+          <CommandPaletteEmpty>No matching commands found.</CommandPaletteEmpty>
+        </CommandPaletteList>
+        <CommandPaletteFooter />
+      </CommandPalette>
+    </>
+  );
+}
+```
+
+---
+
+## DatePicker, DateRangePicker, and Calendar
+
+Date inputs are deceptively difficult to implement well. Between calendar systems, locale-specific formatting, time zone offsets, and segmented key navigation, home-grown date fields almost always break down under real-world usage.
+
+The date suite (`/docs/components/datepicker` and `/docs/components/calendar`) builds on top of React Aria date primitives and `@internationalized/date`:
+
+- **`DatePicker` & `DateRangePicker`:** Masked segmented date inputs paired with popover calendar overlays for single dates and date spans.
+- **`Calendar` & `RangeCalendar`:** Standalone calendar grids with accessible month/year pagination, disabled date ranges, and localized day headers.
+- **`DateField`, `DateInput` & `DateSegment`:** Composable segmented inputs for fast inline form entry without dropdowns.
+- **StyleX State Tokens:** Hardware-accelerated continuous range track styling, today indicators, and validation state rings.
+
+```tsx
+import { Calendar, DatePicker, DateRangePicker, DateField } from '@moul-dev/ui';
+
+export function BookingSchedule() {
+  return (
+    <div className="flex flex-col gap-6">
+      <DatePicker
+        label="Event Date"
+        description="Select the scheduled launch date"
+      />
+
+      <DateRangePicker
+        label="Reservation Window"
+        description="Select check-in and check-out dates"
+      />
+
+      <Calendar aria-label="Appointment date selector" />
+    </div>
+  );
+}
+```
+
+---
+
+## Composable Pagination
+
+Navigating multi-page datasets should never require reinventing sibling page arithmetic or responsive truncation logic.
+
+The `Pagination` suite (`/docs/components/pagination`) supports both a high-level controlled API and composable compound subcomponents:
+
+- **Dual API Surface:** Use `<Pagination page={page} totalPages={10} onChange={setPage} />` for simple cases, or compound blocks (`PaginationContent`, `PaginationItem`, `PaginationLink`, `PaginationPrevious`, `PaginationNext`, `PaginationEllipsis`) for bespoke navigation layouts.
+- **Sibling Range Algorithm:** Built-in `generatePagination` utility automatically computes visible sibling numbers and ellipsis breaks based on active page position.
+- **Auxiliary Add-ons:** Dedicated `<PaginationPageSize>` dropdown and `<PaginationSummary>` record count labels.
+
+```tsx
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPageSize,
+  PaginationPrevious,
+  PaginationSummary,
+} from '@moul-dev/ui';
+import { useState } from 'react';
+
+export function DataTablePagination() {
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const totalItems = 248;
+  const totalPages = Math.ceil(totalItems / pageSize);
+
+  return (
+    <Pagination
+      page={page}
+      totalPages={totalPages}
+      onChange={setPage}
+      variant="outline"
+      shape="rounded"
+      size="md"
+      showFirstLast
+    />
+  );
+}
+```
+
+---
+
+## Linear ProgressBar
+
+When an application is executing background work, users need clear, accurate feedback on progress.
+
+The `ProgressBar` component (`/docs/components/progressbar`) renders accessible indicators for both deterministic progress and open-ended loading sequences:
+
+- **Determinate & Indeterminate Modes:** Switch between explicit percentage values (`value={64}`) and continuous animated CSS shimmers (`isIndeterminate`).
+- **Semantic Color Variants:** Full integration with design tokens for `primary`, `accent`, `success`, `warning`, `error`, and `neutral`.
+- **ARIA Semantics:** Implements standard `role="progressbar"` with live value formatting, custom labels, and screen reader announcements.
+
+```tsx
+import { ProgressBar } from '@moul-dev/ui';
+
+export function UploadProgress() {
+  return (
+    <div className="flex flex-col gap-4 max-w-md">
+      <ProgressBar
+        label="Uploading Assets"
+        value={64}
+        variant="primary"
+        size="md"
+        shape="rounded"
+      />
+
+      <ProgressBar
+        label="Syncing Database..."
+        isIndeterminate
+        variant="accent"
+        size="sm"
+      />
+    </div>
+  );
+}
+```
+
+---
+
+## EmptyState Fallback Primitives
+
+Zero-data screens are where users frequently get stranded. When a query returns no records or a project directory is empty, a thoughtful fallback clarifies what happened and what to do next.
+
+The `EmptyState` component (`/docs/components/emptystate`) standardizes zero-data views across tables, search results, and onboarding views:
+
+- **Composable Structure:** Assemble layouts with `<EmptyState>`, `<EmptyStateIcon>`, `<EmptyStateTitle>`, `<EmptyStateDescription>`, and `<EmptyStateActions>`.
+- **Visual Surface Variants:** `default` for transparent inline embeds, `card` for bordered containers, and `dashed` for empty dropzones or unpopulated workspace slots.
+
+```tsx
+import {
+  Button,
+  EmptyState,
+  EmptyStateActions,
+  EmptyStateDescription,
+  EmptyStateIcon,
+  EmptyStateTitle,
+} from '@moul-dev/ui';
+
+export function NoProjectsEmptyState() {
+  return (
+    <EmptyState variant="dashed" size="md">
+      <EmptyStateIcon>
+        <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" />
+          <polyline points="13 2 13 9 20 9" />
+        </svg>
+      </EmptyStateIcon>
+      <EmptyStateTitle>No projects created yet</EmptyStateTitle>
+      <EmptyStateDescription>
+        Get started by creating your first deployment workspace or import an existing repository.
+      </EmptyStateDescription>
+      <EmptyStateActions>
+        <Button variant="secondary">Import Git Repo</Button>
+        <Button variant="primary">Create Project</Button>
+      </EmptyStateActions>
+    </EmptyState>
+  );
+}
+```
+
+---
+
+## Avatar and AvatarGroup
+
+The `Avatar` primitive (`/docs/components/avatar`) now supports presence badges and stacked team clusters via `AvatarGroup`:
+
+- **Presence Indicators:** Real-time status badges (`online`, `offline`, `busy`, `away`) with configurable anchor positions and accessible labels.
+- **Stacked Clusters:** Overlapping group layouts with `max` threshold limits, automatic `+N` overflow counters, and border rings for contrast separation.
+- **Fallback Recovery:** Automatic initials generation from name strings and graceful image loading error recovery.
+
+```tsx
+import { Avatar, AvatarGroup } from '@moul-dev/ui';
+
+export function TeamMembers() {
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="flex gap-4 items-center">
+        <Avatar src="https://github.com/thasophearak.png" status="online" size="lg" />
+        <Avatar initials="PT" status="busy" size="lg" shape="square" />
+        <Avatar initials="AL" status="away" statusPosition="top-right" size="lg" />
+      </div>
+
+      <AvatarGroup max={3} size="md">
+        <Avatar src="https://github.com/thasophearak.png" alt="Phearak" />
+        <Avatar initials="JD" alt="Jane Doe" />
+        <Avatar initials="AC" alt="Alex Chen" />
+        <Avatar initials="SK" alt="Sarah Kim" />
+        <Avatar initials="MR" alt="Mike Ross" />
+      </AvatarGroup>
+    </div>
+  );
+}
+```
+
+---
+
+## Table Enhancements
+
+Data tables in enterprise workflows require sorting, loading skeletons, and sticky positioning. I refined the core `Table` primitive (`/docs/components/table`) to handle these patterns cleanly:
+
+- **Sortable Columns:** Support for `allowsSorting={true}` on `<Column>` with bidirectional sort glyphs.
+- **Sticky Headers:** Fixed header rows during vertical container scrolling via `stickyHeader` prop.
+- **Integrated Loading & Empty Slots:** Built-in `isLoading` spinners and `emptyState` fallback renderers directly inside the grid layout.
+
+```tsx
+import {
+  Cell,
+  Column,
+  EmptyState,
+  Row,
+  Table,
+  TableBody,
+  TableHeader,
+} from '@moul-dev/ui';
+
+export function ProductsTable({ products, sortDescriptor, onSortChange, isLoading }) {
+  return (
+    <Table
+      aria-label="Products Inventory"
+      sortDescriptor={sortDescriptor}
+      onSortChange={onSortChange}
+      stickyHeader
+      isLoading={isLoading}
+      emptyState={
+        <EmptyState
+          title="No products found"
+          description="Try adjusting your search or filters."
+        />
+      }
+    >
+      <TableHeader>
+        <Column id="name" allowsSorting isRowHeader>Product</Column>
+        <Column id="category" allowsSorting>Category</Column>
+        <Column id="price" allowsSorting>Price</Column>
+        <Column id="status">Status</Column>
+      </TableHeader>
+      <TableBody items={products}>
+        {(item) => (
+          <Row key={item.id}>
+            <Cell>{item.name}</Cell>
+            <Cell>{item.category}</Cell>
+            <Cell>${item.price}</Cell>
+            <Cell>{item.status}</Cell>
+          </Row>
+        )}
+      </TableBody>
+    </Table>
+  );
+}
+```
+
+---
+
+## Badge, Skeleton, and Spinner Refinements
+
+- **Badge:** Added `dot` variant and `dot` boolean prop for concise status indicators across all colorways.
+- **Skeleton:** Added `variant` presets (`block`, `text`, `circle`) and a `count` prop for generating multi-line skeleton layouts with `aria-busy="true"`.
+- **Spinner:** Explicit `role="progressbar"` with `aria-live="polite"` and development-time accessibility warnings when labels are omitted.
+
+---
+
+## StyleX Design Tokens Export
+
+Design tokens are now exported directly from the package entry point:
+
+```tsx
+import { tokens } from '@moul-dev/ui';
+```
+
+This exposes compiled CSS variable names and TypeScript definitions for colors, radii, spacing, typography scales, and surface elevations.
+
+---
+
+## Automated Verification and Agent Guidelines
+
+- **232 Automated Unit Tests:** Expanded test suites covering keyboard traps, focus cycles, ARIA roles, and SSR parity across all components.
+- **Machine-Readable Rules:** Synchronized `AGENTS.md`, `llms.txt`, and `llms-full.txt` with all new component signatures and usage recipes.
+
+---
+
+## On Craft and Infrastructure
+
+A component library is not just a bundle of code in `node_modules`. It is a foundational agreement on how software should feel when human beings interact with it all day.
+
+I spent hours testing keyboard focus order, aria live announcements, and date arithmetic edge cases so that engineers using this library don't have to debug those same problems repeatedly[^1].
+
+Take care of the fundamentals. The rest follows.
+
+[^1]: Calendar navigation strictly follows RFC 5545 date semantics and handles Right-to-Left (RTL) reading directions automatically through React Aria's internationalization engine.

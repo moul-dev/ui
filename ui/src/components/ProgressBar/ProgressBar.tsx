@@ -59,10 +59,10 @@ export const ProgressBar = React.forwardRef<HTMLDivElement, ProgressBarProps>(
     if (process.env.NODE_ENV !== 'production') {
       warnMissingLabel('ProgressBar', {
         label:
-          rest['aria-label'] ||
-          (typeof label === 'string' ? label : undefined),
+          rest['aria-label'] || (typeof label === 'string' ? label : undefined),
         labelledBy: rest['aria-labelledby'],
-        children: typeof children === 'function' ? undefined : (children ?? label),
+        children:
+          typeof children === 'function' ? undefined : (children ?? label),
       })
     }
 
@@ -74,8 +74,7 @@ export const ProgressBar = React.forwardRef<HTMLDivElement, ProgressBarProps>(
         {...rest}
         ref={ref}
         aria-label={
-          rest['aria-label'] ??
-          (typeof label === 'string' ? label : undefined)
+          rest['aria-label'] ?? (typeof label === 'string' ? label : undefined)
         }
         className={() => {
           const { className: stylexClass } = stylex.props(
@@ -100,8 +99,10 @@ export const ProgressBar = React.forwardRef<HTMLDivElement, ProgressBarProps>(
 
           const { percentage, valueText, isIndeterminate } = renderProps
           const pct = percentage ?? 0
-          const shouldShowValue = showValueText ?? (label !== undefined && !isIndeterminate)
-          const displayValue = valueText ?? (isIndeterminate ? '' : `${Math.round(pct)}%`)
+          const shouldShowValue =
+            showValueText ?? (label !== undefined && !isIndeterminate)
+          const displayValue =
+            valueText ?? (isIndeterminate ? '' : `${Math.round(pct)}%`)
 
           const trackSizeStyle =
             styles[`track${sizeSuffix}` as 'trackSm' | 'trackMd' | 'trackLg']
@@ -125,11 +126,7 @@ export const ProgressBar = React.forwardRef<HTMLDivElement, ProgressBarProps>(
                 </div>
               )}
               <div
-                {...stylex.props(
-                  styles.track,
-                  trackSizeStyle,
-                  trackShapeStyle,
-                )}
+                {...stylex.props(styles.track, trackSizeStyle, trackShapeStyle)}
               >
                 <div
                   {...stylex.props(

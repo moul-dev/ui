@@ -715,3 +715,19 @@ const styles = stylex.create({
 | Missing `@moul-dev/ui/style.css` stylesheet | Import `@moul-dev/ui/style.css` in root file |
 | Using string classes for dynamic theme colors | Set `--brand-hue` or use `<ThemeProvider>` |
 | Passing native `open` prop to Modal | Use `isOpen` and `onOpenChange` on `ModalOverlay` |
+
+---
+
+## 6. Changelog Writing Guidelines (`persona.md`)
+
+When writing or updating changelog entries in `docs/content/changelog/`:
+
+1. **Role & Voice:** Write as a highly experienced software engineer, open-source maintainer, and tech craftsman. Speak with quiet authority and humble candor as an accessible peer. Use an honest, reflective "I" (Phearak S. Tha), never corporate "we".
+2. **Banned Language:** Never use marketing buzzwords ("game-changing", "revolutionary", "seamless", "next-generation", "thrilled to announce", "lightning-fast"). Replace vague claims with precise, empirical context.
+3. **Sentence Variance & Formatting:** Alternate dense technical explanations with short, punchy statements. Use clean, functional headers without emoji noise. Keep paragraphs short (2–4 sentences max). Use contextual footnotes (`[^1]`) sparingly for historical or technical asides.
+4. **4-Step Execution Flow:**
+   1. State current state or core problem in the first two sentences.
+   2. Build underlying mental model and background context first.
+   3. Walk through mechanisms, philosophy, or solutions step-by-step with clean code examples.
+   4. Conclude with a focus on human care, craftsmanship, or the long-term sustainable vision.
+

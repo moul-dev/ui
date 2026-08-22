@@ -13,10 +13,10 @@ import {
   CalendarGridHeader as AriaCalendarGridHeader,
   CalendarHeaderCell as AriaCalendarHeaderCell,
   type CalendarProps as AriaCalendarProps,
-  type DateValue,
   Heading as AriaHeading,
   RangeCalendar as AriaRangeCalendar,
   type RangeCalendarProps as AriaRangeCalendarProps,
+  type DateValue,
 } from 'react-aria-components'
 import { styles } from './Calendar.styles'
 
@@ -58,65 +58,68 @@ export interface CalendarCellProps
   className?: string
 }
 
-export const CalendarCell = React.forwardRef<HTMLTableCellElement, CalendarCellProps>(
-  function CalendarCell({ style, className, date, ...rest }, ref) {
-    return (
-      <AriaCalendarCell
-        {...rest}
-        ref={ref}
-        date={date}
-        className={(renderProps) => {
-          const rp = renderProps as any
-          const isRangeStart = rp.isSelectionStart && rp.isRangeSelection
-          const isRangeEnd = rp.isSelectionEnd && rp.isRangeSelection
-          const isRangeMiddle =
-            rp.isRangeSelection && !rp.isSelectionStart && !rp.isSelectionEnd
+export const CalendarCell = React.forwardRef<
+  HTMLTableCellElement,
+  CalendarCellProps
+>(function CalendarCell({ style, className, date, ...rest }, ref) {
+  return (
+    <AriaCalendarCell
+      {...rest}
+      ref={ref}
+      date={date}
+      className={(renderProps) => {
+        const rp = renderProps as any
+        const isRangeStart = rp.isSelectionStart && rp.isRangeSelection
+        const isRangeEnd = rp.isSelectionEnd && rp.isRangeSelection
+        const isRangeMiddle =
+          rp.isRangeSelection && !rp.isSelectionStart && !rp.isSelectionEnd
 
-          const { className: stylexClass } = stylex.props(
-            styles.cell,
-            renderProps.isHovered && styles.cellHovered,
-            renderProps.isFocusVisible && styles.cellFocused,
-            renderProps.isSelected && !rp.isRangeSelection && styles.cellSelected,
-            isRangeStart && styles.cellSelectionStart,
-            isRangeEnd && styles.cellSelectionEnd,
-            isRangeMiddle && styles.cellRangeSelection,
-            (rp.isToday || renderProps.formattedDate === 'today') && styles.cellToday,
-            renderProps.isOutsideMonth && styles.cellOutsideMonth,
-            renderProps.isDisabled && styles.cellDisabled,
-            renderProps.isUnavailable && styles.cellUnavailable,
-            renderProps.isInvalid && styles.cellInvalid,
-            style,
-          )
-          return [stylexClass, className].filter(Boolean).join(' ')
-        }}
-        style={(renderProps) => {
-          const rp = renderProps as any
-          const isRangeStart = rp.isSelectionStart && rp.isRangeSelection
-          const isRangeEnd = rp.isSelectionEnd && rp.isRangeSelection
-          const isRangeMiddle =
-            rp.isRangeSelection && !rp.isSelectionStart && !rp.isSelectionEnd
+        const { className: stylexClass } = stylex.props(
+          styles.cell,
+          renderProps.isHovered && styles.cellHovered,
+          renderProps.isFocusVisible && styles.cellFocused,
+          renderProps.isSelected && !rp.isRangeSelection && styles.cellSelected,
+          isRangeStart && styles.cellSelectionStart,
+          isRangeEnd && styles.cellSelectionEnd,
+          isRangeMiddle && styles.cellRangeSelection,
+          (rp.isToday || renderProps.formattedDate === 'today') &&
+            styles.cellToday,
+          renderProps.isOutsideMonth && styles.cellOutsideMonth,
+          renderProps.isDisabled && styles.cellDisabled,
+          renderProps.isUnavailable && styles.cellUnavailable,
+          renderProps.isInvalid && styles.cellInvalid,
+          style,
+        )
+        return [stylexClass, className].filter(Boolean).join(' ')
+      }}
+      style={(renderProps) => {
+        const rp = renderProps as any
+        const isRangeStart = rp.isSelectionStart && rp.isRangeSelection
+        const isRangeEnd = rp.isSelectionEnd && rp.isRangeSelection
+        const isRangeMiddle =
+          rp.isRangeSelection && !rp.isSelectionStart && !rp.isSelectionEnd
 
-          const { style: stylexStyle } = stylex.props(
-            styles.cell,
-            renderProps.isHovered && styles.cellHovered,
-            renderProps.isFocusVisible && styles.cellFocused,
-            renderProps.isSelected && !rp.isRangeSelection && styles.cellSelected,
-            isRangeStart && styles.cellSelectionStart,
-            isRangeEnd && styles.cellSelectionEnd,
-            isRangeMiddle && styles.cellRangeSelection,
-            (rp.isToday || renderProps.formattedDate === 'today') && styles.cellToday,
-            renderProps.isOutsideMonth && styles.cellOutsideMonth,
-            renderProps.isDisabled && styles.cellDisabled,
-            renderProps.isUnavailable && styles.cellUnavailable,
-            renderProps.isInvalid && styles.cellInvalid,
-            style,
-          )
-          return stylexStyle ?? {}
-        }}
-      />
-    )
-  },
-)
+        const { style: stylexStyle } = stylex.props(
+          styles.cell,
+          renderProps.isHovered && styles.cellHovered,
+          renderProps.isFocusVisible && styles.cellFocused,
+          renderProps.isSelected && !rp.isRangeSelection && styles.cellSelected,
+          isRangeStart && styles.cellSelectionStart,
+          isRangeEnd && styles.cellSelectionEnd,
+          isRangeMiddle && styles.cellRangeSelection,
+          (rp.isToday || renderProps.formattedDate === 'today') &&
+            styles.cellToday,
+          renderProps.isOutsideMonth && styles.cellOutsideMonth,
+          renderProps.isDisabled && styles.cellDisabled,
+          renderProps.isUnavailable && styles.cellUnavailable,
+          renderProps.isInvalid && styles.cellInvalid,
+          style,
+        )
+        return stylexStyle ?? {}
+      }}
+    />
+  )
+})
 
 // ── CalendarGrid Component ───────────────────────────────────────────
 
@@ -126,9 +129,18 @@ export interface CalendarGridProps {
   children?: (date: any) => React.ReactElement
 }
 
-export function CalendarGrid({ style, className, children }: CalendarGridProps) {
-  const { className: gridClass, style: gridStyle } = stylex.props(styles.grid, style)
-  const { className: headerCellClass, style: headerCellStyle } = stylex.props(styles.gridHeaderCell)
+export function CalendarGrid({
+  style,
+  className,
+  children,
+}: CalendarGridProps) {
+  const { className: gridClass, style: gridStyle } = stylex.props(
+    styles.grid,
+    style,
+  )
+  const { className: headerCellClass, style: headerCellStyle } = stylex.props(
+    styles.gridHeaderCell,
+  )
 
   return (
     <AriaCalendarGrid
@@ -167,7 +179,10 @@ export const Calendar = React.forwardRef<HTMLDivElement, CalendarProps<any>>(
         {...rest}
         ref={ref}
         className={(_) => {
-          const { className: stylexClass } = stylex.props(styles.calendar, style)
+          const { className: stylexClass } = stylex.props(
+            styles.calendar,
+            style,
+          )
           return [stylexClass, className].filter(Boolean).join(' ')
         }}
         style={(_) => {
@@ -244,78 +259,79 @@ export interface RangeCalendarProps<T extends DateValue = DateValue>
   className?: string
 }
 
-export const RangeCalendar = React.forwardRef<HTMLDivElement, RangeCalendarProps<any>>(
-  function RangeCalendar({ style, className, ...rest }, ref) {
-    return (
-      <AriaRangeCalendar
-        {...rest}
-        ref={ref}
-        className={(_) => {
-          const { className: stylexClass } = stylex.props(styles.calendar, style)
-          return [stylexClass, className].filter(Boolean).join(' ')
-        }}
-        style={(_) => {
-          const { style: stylexStyle } = stylex.props(styles.calendar, style)
-          return stylexStyle ?? {}
-        }}
-      >
-        <header {...stylex.props(styles.header)}>
-          <AriaButton
-            slot="previous"
-            aria-label="Previous month"
-            className={(renderProps) => {
-              const { className: stylexClass } = stylex.props(
-                styles.navButton,
-                renderProps.isHovered && styles.navButtonHover,
-                renderProps.isPressed && styles.navButtonPressed,
-                renderProps.isFocusVisible && styles.navButtonFocused,
-                renderProps.isDisabled && styles.navButtonDisabled,
-              )
-              return stylexClass || ''
-            }}
-            style={(renderProps) => {
-              const { style: stylexStyle } = stylex.props(
-                styles.navButton,
-                renderProps.isHovered && styles.navButtonHover,
-                renderProps.isPressed && styles.navButtonPressed,
-                renderProps.isFocusVisible && styles.navButtonFocused,
-                renderProps.isDisabled && styles.navButtonDisabled,
-              )
-              return stylexStyle || {}
-            }}
-          >
-            <ChevronLeftIcon />
-          </AriaButton>
-          <AriaHeading {...stylex.props(styles.heading)} />
-          <AriaButton
-            slot="next"
-            aria-label="Next month"
-            className={(renderProps) => {
-              const { className: stylexClass } = stylex.props(
-                styles.navButton,
-                renderProps.isHovered && styles.navButtonHover,
-                renderProps.isPressed && styles.navButtonPressed,
-                renderProps.isFocusVisible && styles.navButtonFocused,
-                renderProps.isDisabled && styles.navButtonDisabled,
-              )
-              return stylexClass || ''
-            }}
-            style={(renderProps) => {
-              const { style: stylexStyle } = stylex.props(
-                styles.navButton,
-                renderProps.isHovered && styles.navButtonHover,
-                renderProps.isPressed && styles.navButtonPressed,
-                renderProps.isFocusVisible && styles.navButtonFocused,
-                renderProps.isDisabled && styles.navButtonDisabled,
-              )
-              return stylexStyle || {}
-            }}
-          >
-            <ChevronRightIcon />
-          </AriaButton>
-        </header>
-        <CalendarGrid />
-      </AriaRangeCalendar>
-    )
-  },
-)
+export const RangeCalendar = React.forwardRef<
+  HTMLDivElement,
+  RangeCalendarProps<any>
+>(function RangeCalendar({ style, className, ...rest }, ref) {
+  return (
+    <AriaRangeCalendar
+      {...rest}
+      ref={ref}
+      className={(_) => {
+        const { className: stylexClass } = stylex.props(styles.calendar, style)
+        return [stylexClass, className].filter(Boolean).join(' ')
+      }}
+      style={(_) => {
+        const { style: stylexStyle } = stylex.props(styles.calendar, style)
+        return stylexStyle ?? {}
+      }}
+    >
+      <header {...stylex.props(styles.header)}>
+        <AriaButton
+          slot="previous"
+          aria-label="Previous month"
+          className={(renderProps) => {
+            const { className: stylexClass } = stylex.props(
+              styles.navButton,
+              renderProps.isHovered && styles.navButtonHover,
+              renderProps.isPressed && styles.navButtonPressed,
+              renderProps.isFocusVisible && styles.navButtonFocused,
+              renderProps.isDisabled && styles.navButtonDisabled,
+            )
+            return stylexClass || ''
+          }}
+          style={(renderProps) => {
+            const { style: stylexStyle } = stylex.props(
+              styles.navButton,
+              renderProps.isHovered && styles.navButtonHover,
+              renderProps.isPressed && styles.navButtonPressed,
+              renderProps.isFocusVisible && styles.navButtonFocused,
+              renderProps.isDisabled && styles.navButtonDisabled,
+            )
+            return stylexStyle || {}
+          }}
+        >
+          <ChevronLeftIcon />
+        </AriaButton>
+        <AriaHeading {...stylex.props(styles.heading)} />
+        <AriaButton
+          slot="next"
+          aria-label="Next month"
+          className={(renderProps) => {
+            const { className: stylexClass } = stylex.props(
+              styles.navButton,
+              renderProps.isHovered && styles.navButtonHover,
+              renderProps.isPressed && styles.navButtonPressed,
+              renderProps.isFocusVisible && styles.navButtonFocused,
+              renderProps.isDisabled && styles.navButtonDisabled,
+            )
+            return stylexClass || ''
+          }}
+          style={(renderProps) => {
+            const { style: stylexStyle } = stylex.props(
+              styles.navButton,
+              renderProps.isHovered && styles.navButtonHover,
+              renderProps.isPressed && styles.navButtonPressed,
+              renderProps.isFocusVisible && styles.navButtonFocused,
+              renderProps.isDisabled && styles.navButtonDisabled,
+            )
+            return stylexStyle || {}
+          }}
+        >
+          <ChevronRightIcon />
+        </AriaButton>
+      </header>
+      <CalendarGrid />
+    </AriaRangeCalendar>
+  )
+})

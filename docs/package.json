@@ -1,7 +1,7 @@
 {
   "name": "docs",
   "private": true,
-  "version": "2026.08.21",
+  "version": "2026.08.22",
   "type": "module",
   "sideEffects": false,
   "scripts": {

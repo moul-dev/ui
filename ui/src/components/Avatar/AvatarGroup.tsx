@@ -48,7 +48,7 @@ export const AvatarGroup = React.forwardRef<HTMLDivElement, AvatarGroupProps>(
     const totalCount = validChildren.length
     const hasMax = typeof max === 'number' && max > 0 && totalCount > max
     const visibleChildren = hasMax ? validChildren.slice(0, max) : validChildren
-    const remainingCount = excessCount ?? (totalCount - visibleChildren.length)
+    const remainingCount = excessCount ?? totalCount - visibleChildren.length
 
     const overlapStyleKey = `groupOverlap_${size}` as keyof typeof styles
 
@@ -58,7 +58,8 @@ export const AvatarGroup = React.forwardRef<HTMLDivElement, AvatarGroupProps>(
     )
 
     const shapeStyleKey = shape === 'circle' ? 'circle' : `square_${size}`
-    const shapeStyle = styles[shapeStyleKey as keyof typeof styles] || styles.circle
+    const shapeStyle =
+      styles[shapeStyleKey as keyof typeof styles] || styles.circle
 
     return (
       <AvatarGroupContext.Provider value={{ size, shape }}>

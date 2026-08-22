@@ -153,4 +153,3 @@ describe('Design Tokens Export and StyleX Compatibility', () => {
     }
   })
 })
-

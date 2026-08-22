@@ -1,4 +1,3 @@
-export { Avatar } from './Avatar'
 export type {
   AvatarProps,
   AvatarShape,
@@ -6,8 +5,9 @@ export type {
   AvatarStatus,
   AvatarStatusPosition,
 } from './Avatar'
-export { AvatarGroup, AvatarGroupContext } from './AvatarGroup'
+export { Avatar } from './Avatar'
 export type {
   AvatarGroupContextValue,
   AvatarGroupProps,
 } from './AvatarGroup'
+export { AvatarGroup, AvatarGroupContext } from './AvatarGroup'

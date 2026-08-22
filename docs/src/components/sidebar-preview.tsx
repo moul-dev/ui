@@ -199,7 +199,7 @@ export function SidebarPreview() {
                 className="text-[10px] font-medium font-mono"
                 style={{ color: tokens.colorFgSubtle }}
               >
-                v2026.08.21
+                v2026.08.22
               </span>
             </div>
           )}

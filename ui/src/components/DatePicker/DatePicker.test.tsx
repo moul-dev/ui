@@ -7,8 +7,12 @@ import { DatePicker, DateRangePicker } from './index'
 describe('Calendar component', () => {
   test('renders heading and navigation buttons', () => {
     render(<Calendar aria-label="Event date" />)
-    expect(screen.getByRole('button', { name: 'Previous month' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Next month' })).toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: 'Previous month' }),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: 'Next month' }),
+    ).toBeInTheDocument()
     expect(screen.getByRole('grid')).toBeInTheDocument()
   })
 })
@@ -16,8 +20,12 @@ describe('Calendar component', () => {
 describe('RangeCalendar component', () => {
   test('renders grid and previous/next buttons', () => {
     render(<RangeCalendar aria-label="Trip dates" />)
-    expect(screen.getByRole('button', { name: 'Previous month' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Next month' })).toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: 'Previous month' }),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: 'Next month' }),
+    ).toBeInTheDocument()
     expect(screen.getByRole('grid')).toBeInTheDocument()
   })
 })
@@ -46,7 +54,9 @@ describe('DatePicker component', () => {
   test('renders label, input, and calendar trigger button', () => {
     render(<DatePicker label="Appointment" />)
     expect(screen.getByText('Appointment')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /calendar/i })).toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: /calendar/i }),
+    ).toBeInTheDocument()
   })
 })
 
@@ -54,6 +64,8 @@ describe('DateRangePicker component', () => {
   test('renders label, start/end inputs, and calendar trigger button', () => {
     render(<DateRangePicker label="Booking Period" />)
     expect(screen.getByText('Booking Period')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /calendar/i })).toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: /calendar/i }),
+    ).toBeInTheDocument()
   })
 })

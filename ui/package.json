@@ -1,6 +1,6 @@
 {
   "name": "@moul-dev/ui",
-  "version": "2026.08.21",
+  "version": "2026.08.22",
   "description": "Accessible, zero-runtime React component library built on React Aria and StyleX",
   "license": "MIT",
   "type": "module",

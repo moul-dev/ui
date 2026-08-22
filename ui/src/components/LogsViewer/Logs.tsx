@@ -1,4 +1,5 @@
 'use client'
+import { Check, Copy, Export, Pause, Play, Trash } from '@phosphor-icons/react'
 import type { StyleXStyles } from '@stylexjs/stylex'
 import * as stylex from '@stylexjs/stylex'
 import * as React from 'react'
@@ -25,7 +26,6 @@ import {
   DrawerOverlay,
   DrawerTitle,
 } from '../Drawer'
-import { Check, Copy, Export, Pause, Play, Trash } from '@phosphor-icons/react'
 import { SearchField } from '../SearchField'
 import { ToggleButton } from '../ToggleButton'
 import { ToggleButtonGroup } from '../ToggleButtonGroup'
