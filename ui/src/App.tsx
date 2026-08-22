@@ -1,6 +1,23 @@
 import * as stylex from '@stylexjs/stylex'
 import { useState } from 'react'
 import { DialogTrigger } from 'react-aria-components'
+import {
+  Avatar,
+  AvatarGroup,
+  Calendar,
+  CommandPalette,
+  CommandPaletteEmpty,
+  CommandPaletteFooter,
+  CommandPaletteInput,
+  CommandPaletteItem,
+  CommandPaletteList,
+  CommandPaletteSection,
+  DateField,
+  DatePicker,
+  DateRangePicker,
+  Kbd,
+  RangeCalendar,
+} from './index'
 import { Alert } from './components/Alert'
 import {
   AlertDialog,
@@ -454,6 +471,7 @@ function App() {
   const [isTableLoading, setIsTableLoading] = useState(false)
   const [isTableEmpty, setIsTableEmpty] = useState(false)
   const [isTableSticky, setIsTableSticky] = useState(false)
+  const [isCommandOpen, setIsCommandOpen] = useState(false)
 
   return (
     <Sidebar
@@ -522,7 +540,7 @@ function App() {
         <SidebarDivider />
 
         <SidebarFooter showBorder={false}>
-          <div {...stylex.props(styles.avatar)}>P</div>
+          <Avatar initials="PT" size="sm" shape="circle" status="online" />
           <div {...stylex.props(styles.profileInfo)}>
             <span {...stylex.props(styles.profileName)}>Phearak S.</span>
             <span {...stylex.props(styles.profileEmail)}>phearak@moul.dev</span>
@@ -533,10 +551,33 @@ function App() {
       {/* Main Sandbox Showcase */}
       <SidebarMain style={styles.mainContent}>
         <header {...stylex.props(styles.header)}>
-          <h1 {...stylex.props(styles.title)}>Moul UI</h1>
-          <p {...stylex.props(styles.subtitle)}>
-            Vite + React-TS + React Aria + StyleX Components Sandbox
-          </p>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', flexWrap: 'wrap', gap: '16px' }}>
+            <div>
+              <h1 {...stylex.props(styles.title)}>Moul UI</h1>
+              <p {...stylex.props(styles.subtitle)}>
+                Vite + React-TS + React Aria + StyleX Components Sandbox
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setIsCommandOpen(true)}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '8px 16px',
+                borderRadius: '8px',
+                backgroundColor: 'rgba(255, 255, 255, 0.06)',
+                border: '1px solid rgba(255, 255, 255, 0.12)',
+                color: '#94a3b8',
+                fontSize: '0.875rem',
+                cursor: 'pointer',
+              }}
+            >
+              <span>Search Commands...</span>
+              <Kbd>⌘K</Kbd>
+            </button>
+          </div>
         </header>
 
         {/* Sidebar Controls Card */}
@@ -1352,6 +1393,166 @@ function App() {
             </div>
           </section>
         </div>
+
+        {/* Avatar & AvatarGroup Showcase */}
+        <div {...stylex.props(styles.card)}>
+          <section {...stylex.props(styles.section)}>
+            <h2 {...stylex.props(styles.sectionTitle)}>Avatar & AvatarGroup</h2>
+            <p style={{ margin: 0, fontSize: '0.9rem', color: '#94a3b8' }}>
+              Avatars supporting size variants (xs–2xl), shapes (circle/square), status indicator dots, and overlapping AvatarGroup with excess limits.
+            </p>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div>
+                <span style={{ fontSize: '0.8rem', color: '#64748b', display: 'block', marginBottom: '8px' }}>
+                  Sizes & Status Indicators (Online, Away, Busy, Offline):
+                </span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+                  <Avatar initials="XS" size="xs" status="online" aria-label="XS Online" />
+                  <Avatar initials="SM" size="sm" status="away" aria-label="SM Away" />
+                  <Avatar initials="MD" size="md" status="busy" aria-label="MD Busy" />
+                  <Avatar initials="LG" size="lg" status="offline" aria-label="LG Offline" />
+                  <Avatar initials="XL" size="xl" status="online" aria-label="XL Online" />
+                  <Avatar initials="2X" size="2xl" status="online" aria-label="2XL Online" />
+                </div>
+              </div>
+
+              <div>
+                <span style={{ fontSize: '0.8rem', color: '#64748b', display: 'block', marginBottom: '8px' }}>
+                  Square Shape with Status:
+                </span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <Avatar initials="SQ" shape="square" size="sm" status="online" aria-label="Square SM" />
+                  <Avatar initials="SQ" shape="square" size="md" status="busy" aria-label="Square MD" />
+                  <Avatar initials="SQ" shape="square" size="lg" status="away" aria-label="Square LG" />
+                </div>
+              </div>
+
+              <div>
+                <span style={{ fontSize: '0.8rem', color: '#64748b', display: 'block', marginBottom: '8px' }}>
+                  AvatarGroup (Stacked with Max Limit):
+                </span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '24px', flexWrap: 'wrap' }}>
+                  <AvatarGroup max={3} aria-label="Project Team">
+                    <Avatar initials="AL" aria-label="Alex" />
+                    <Avatar initials="BT" aria-label="Beth" />
+                    <Avatar initials="CK" aria-label="Chris" />
+                    <Avatar initials="DL" aria-label="Dana" />
+                    <Avatar initials="EV" aria-label="Evan" />
+                  </AvatarGroup>
+
+                  <AvatarGroup size="sm" shape="square" max={4} aria-label="Square Group">
+                    <Avatar initials="U1" aria-label="User 1" />
+                    <Avatar initials="U2" aria-label="User 2" />
+                    <Avatar initials="U3" aria-label="User 3" />
+                    <Avatar initials="U4" aria-label="User 4" />
+                    <Avatar initials="U5" aria-label="User 5" />
+                    <Avatar initials="U6" aria-label="User 6" />
+                  </AvatarGroup>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        {/* DatePicker & Calendar Showcase */}
+        <div {...stylex.props(styles.wideCard)}>
+          <section {...stylex.props(styles.section)}>
+            <h2 {...stylex.props(styles.sectionTitle)}>DatePicker & Calendar Suite</h2>
+            <p style={{ margin: 0, fontSize: '0.9rem', color: '#94a3b8' }}>
+              Full DatePicker, DateRangePicker, DateField, and interactive Calendar month grids.
+            </p>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px', alignItems: 'start' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <DatePicker
+                  label="Appointment Date"
+                  description="Pick a date for your consultation"
+                />
+                <DateRangePicker
+                  label="Reservation Period"
+                  description="Check-in to check-out dates"
+                />
+                <DateField
+                  label="Manual Date Input"
+                  description="Type date directly or use arrow keys"
+                />
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center' }}>
+                <span style={{ fontSize: '0.8rem', color: '#64748b' }}>Interactive Calendar Grids:</span>
+                <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', justifyContent: 'center' }}>
+                  <Calendar aria-label="Single date calendar" />
+                  <RangeCalendar aria-label="Date range calendar" />
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        {/* CommandPalette Modal Dialog */}
+        <CommandPalette isOpen={isCommandOpen} onOpenChange={setIsCommandOpen}>
+          <CommandPaletteInput placeholder="Type a command or search..." />
+          <CommandPaletteList>
+            <CommandPaletteSection heading="Navigation">
+              <CommandPaletteItem
+                icon={<HomeIcon />}
+                shortcut={['G', 'H']}
+                onAction={() => setActiveTab('home')}
+              >
+                Go to Home
+              </CommandPaletteItem>
+              <CommandPaletteItem
+                icon={<RadioIcon />}
+                shortcut={['G', 'R']}
+                onAction={() => setActiveTab('radio')}
+              >
+                Go to Radio
+              </CommandPaletteItem>
+              <CommandPaletteItem
+                icon={<PlaylistIcon />}
+                shortcut={['G', 'P']}
+                onAction={() => setActiveTab('all-playlists')}
+              >
+                View Playlists
+              </CommandPaletteItem>
+              <CommandPaletteItem
+                icon={<SettingsIcon />}
+                shortcut={['G', 'S']}
+                onAction={() => setActiveTab('settings')}
+              >
+                Open Settings
+              </CommandPaletteItem>
+            </CommandPaletteSection>
+
+            <CommandPaletteSection heading="Actions">
+              <CommandPaletteItem
+                icon={<FolderIcon />}
+                shortcut={['⌘', 'N']}
+                description="Create a new dashboard project"
+                onAction={() => alert('New project created!')}
+              >
+                Create New Project
+              </CommandPaletteItem>
+              <CommandPaletteItem
+                shortcut={['⌘', 'D']}
+                description="Toggle sidebar collapse"
+                onAction={() => setIsCollapsed((v) => !v)}
+              >
+                Toggle Sidebar
+              </CommandPaletteItem>
+              <CommandPaletteItem
+                shortcut={['⌘', 'T']}
+                description="Toggle glass or solid background theme"
+                onAction={() => setSidebarVariant((v) => (v === 'glass' ? 'solid' : 'glass'))}
+              >
+                Toggle Theme Style
+              </CommandPaletteItem>
+            </CommandPaletteSection>
+          </CommandPaletteList>
+          <CommandPaletteEmpty>No matching commands found.</CommandPaletteEmpty>
+          <CommandPaletteFooter />
+        </CommandPalette>
       </SidebarMain>
     </Sidebar>
   )

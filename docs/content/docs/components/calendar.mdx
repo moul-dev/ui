@@ -1,0 +1,79 @@
+---
+title: Calendar
+description: Accessible monthly calendar views for single date and date range selection.
+---
+
+import { Calendar, RangeCalendar } from '@moul-dev/ui';
+
+# Calendar
+
+Calendars display a monthly grid view with accessible month navigation, keyboard date stepping, and single or range date selection powered by React Aria and StyleX.
+
+## Interactive Preview
+
+<ComponentPreview>
+  <CalendarDemo />
+</ComponentPreview>
+
+## Installation
+
+```tsx
+import { Calendar, RangeCalendar } from '@moul-dev/ui';
+```
+
+## Basic Calendar
+
+```tsx
+<Calendar aria-label="Appointment date" />
+```
+
+## Range Calendar
+
+Use `RangeCalendar` when selecting a range between a start date and an end date:
+
+```tsx
+<RangeCalendar aria-label="Trip booking dates" />
+```
+
+## Controlled State
+
+You can control the calendar's value using internationalized dates:
+
+```tsx
+import { useState } from 'react';
+import { Calendar } from '@moul-dev/ui';
+
+export function Example() {
+  const [selectedDate, setSelectedDate] = useState(null);
+
+  return (
+    <div className="flex flex-col gap-3 items-center">
+      <Calendar
+        value={selectedDate}
+        onChange={setSelectedDate}
+        aria-label="Event date"
+      />
+      {selectedDate && (
+        <p className="text-xs text-neutral-500">
+          Selected: {selectedDate.toString()}
+        </p>
+      )}
+    </div>
+  );
+}
+```
+
+## Props
+
+### Calendar
+
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `value` | `DateValue` | — | Controlled date value |
+| `defaultValue` | `DateValue` | — | Default date value |
+| `onChange` | `(value: DateValue) => void` | — | Handler called when date selection changes |
+| `minValue` | `DateValue` | — | Minimum selectable date |
+| `maxValue` | `DateValue` | — | Maximum selectable date |
+| `isDisabled` | `boolean` | `false` | Whether the calendar is disabled |
+| `isReadOnly` | `boolean` | `false` | Whether the calendar is read-only |
+| `isDateUnavailable` | `(date: DateValue) => boolean` | — | Callback to mark specific dates as unavailable |

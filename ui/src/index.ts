@@ -17,8 +17,16 @@ export type {
 } from './components/AlertDialog/AlertDialog'
 export type { AreaChartProps } from './components/AreaChart'
 export { AreaChart } from './components/AreaChart'
-export { Avatar } from './components/Avatar'
-export type { AvatarProps } from './components/Avatar/Avatar'
+export { Avatar, AvatarGroup, AvatarGroupContext } from './components/Avatar'
+export type {
+  AvatarGroupContextValue,
+  AvatarGroupProps,
+  AvatarProps,
+  AvatarShape,
+  AvatarSize,
+  AvatarStatus,
+  AvatarStatusPosition,
+} from './components/Avatar'
 export { Badge } from './components/Badge'
 export type {
   BadgeProps,
@@ -36,6 +44,18 @@ export { Button } from './components/Button'
 export type { ButtonProps } from './components/Button/Button'
 export { ButtonGroup } from './components/ButtonGroup'
 export type { ButtonGroupProps } from './components/ButtonGroup/ButtonGroup'
+export {
+  Calendar,
+  CalendarCell,
+  CalendarGrid,
+  RangeCalendar,
+} from './components/Calendar'
+export type {
+  CalendarCellProps,
+  CalendarGridProps,
+  CalendarProps,
+  RangeCalendarProps,
+} from './components/Calendar'
 export type {
   CardBodyProps,
   CardFooterProps,
@@ -61,6 +81,42 @@ export type {
   ComboBoxProps,
   ComboBoxSectionProps,
 } from './components/ComboBox/ComboBox'
+export {
+  CommandPalette,
+  CommandPaletteEmpty,
+  CommandPaletteFooter,
+  CommandPaletteInput,
+  CommandPaletteItem,
+  CommandPaletteList,
+  CommandPaletteSection,
+  useCommandPalette,
+  useCommandPaletteContext,
+} from './components/CommandPalette'
+export type {
+  CommandPaletteEmptyProps,
+  CommandPaletteFooterProps,
+  CommandPaletteInputProps,
+  CommandPaletteItemProps,
+  CommandPaletteListProps,
+  CommandPaletteProps,
+  CommandPaletteSectionProps,
+  UseCommandPaletteOptions,
+} from './components/CommandPalette'
+export {
+  DateField,
+  DateInput,
+  DateSegment,
+} from './components/DateField'
+export type {
+  DateFieldProps,
+  DateInputProps,
+  DateSegmentProps,
+} from './components/DateField'
+export { DatePicker, DateRangePicker } from './components/DatePicker'
+export type {
+  DatePickerProps,
+  DateRangePickerProps,
+} from './components/DatePicker'
 export { Description } from './components/Description'
 export type { DescriptionProps } from './components/Description/Description'
 export type { DoughnutChartProps } from './components/DoughnutChart'

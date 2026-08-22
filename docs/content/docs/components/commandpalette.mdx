@@ -1,0 +1,124 @@
+---
+title: CommandPalette
+description: Fast, keyboard-first modal command center with search filtering, sections, action shortcuts, and global hotkeys.
+---
+
+import { CommandPalette, useCommandPalette, Kbd } from '@moul-dev/ui';
+
+# CommandPalette
+
+A modal search and quick-action menu inspired by tools like Linear and Raycast, providing global shortcut binding, compound sub-components, and auto-filtering.
+
+## Interactive Preview
+
+<ComponentPreview>
+  <CommandPaletteDemo />
+</ComponentPreview>
+
+## Installation
+
+```tsx
+import {
+  CommandPalette,
+  CommandPaletteInput,
+  CommandPaletteList,
+  CommandPaletteSection,
+  CommandPaletteItem,
+  CommandPaletteEmpty,
+  CommandPaletteFooter,
+  useCommandPalette,
+} from '@moul-dev/ui';
+```
+
+## Basic Usage
+
+You can manage the palette state with the `useCommandPalette` hook, which automatically binds the `⌘K` / `Ctrl+K` global keyboard shortcut:
+
+```tsx
+import { useState } from 'react';
+import {
+  Button,
+  CommandPalette,
+  CommandPaletteInput,
+  CommandPaletteList,
+  CommandPaletteSection,
+  CommandPaletteItem,
+  CommandPaletteEmpty,
+  CommandPaletteFooter,
+  useCommandPalette,
+} from '@moul-dev/ui';
+
+export function Example() {
+  const { isOpen, setIsOpen, open } = useCommandPalette();
+
+  return (
+    <>
+      <Button onPress={open}>
+        Open Command Palette (⌘K)
+      </Button>
+
+      <CommandPalette isOpen={isOpen} onOpenChange={setIsOpen}>
+        <CommandPaletteInput placeholder="Search commands..." />
+        <CommandPaletteList>
+          <CommandPaletteSection heading="Navigation">
+            <CommandPaletteItem
+              shortcut={['G', 'H']}
+              onAction={() => console.log('Home')}
+            >
+              Home
+            </CommandPaletteItem>
+            <CommandPaletteItem
+              shortcut={['G', 'D']}
+              onAction={() => console.log('Dashboard')}
+            >
+              Dashboard
+            </CommandPaletteItem>
+          </CommandPaletteSection>
+
+          <CommandPaletteSection heading="Actions">
+            <CommandPaletteItem
+              shortcut={['⌘', 'N']}
+              description="Create a new document"
+              onAction={() => console.log('New Document')}
+            >
+              New Document
+            </CommandPaletteItem>
+          </CommandPaletteSection>
+        </CommandPaletteList>
+        <CommandPaletteEmpty>No matching commands found.</CommandPaletteEmpty>
+        <CommandPaletteFooter />
+      </CommandPalette>
+    </>
+  );
+}
+```
+
+## Keyboard Navigation
+
+- <Kbd>↑</Kbd> / <Kbd>↓</Kbd> : Navigate highlighted items
+- <Kbd>↵</Kbd> : Execute highlighted command and close palette
+- <Kbd>ESC</Kbd> : Dismiss palette
+- <Kbd>⌘K</Kbd> / <Kbd>Ctrl+K</Kbd> : Global toggle
+
+## Props
+
+### CommandPalette
+
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `isOpen` | `boolean` | — | Controlled open state |
+| `defaultOpen` | `boolean` | `false` | Uncontrolled default open state |
+| `onOpenChange` | `(open: boolean) => void` | — | Handler called when open state changes |
+| `shortcut` | `string \| string[]` | `['Meta+k', 'Ctrl+k']` | Global shortcut key combinations |
+| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Maximum width size variant |
+
+### CommandPaletteItem
+
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `icon` | `React.ReactNode` | — | Left icon adornment |
+| `description` | `React.ReactNode` | — | Secondary subtitle text |
+| `shortcut` | `string \| string[]` | — | Keyboard shortcut keycaps rendered on the right |
+| `keywords` | `string[]` | — | Additional terms to match against during search filtering |
+| `onAction` | `() => void` | — | Callback invoked when item is selected |
+| `isDisabled` | `boolean` | `false` | Disables item interaction |

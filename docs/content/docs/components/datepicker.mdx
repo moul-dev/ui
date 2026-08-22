@@ -1,0 +1,79 @@
+---
+title: DatePicker
+description: DatePickers combine segmented text inputs with a calendar popover for selecting single dates and date ranges.
+---
+
+import { DatePicker, DateRangePicker, DateField } from '@moul-dev/ui';
+
+# DatePicker
+
+A form input component combining accessible partitioned date fields with interactive calendar dropdowns.
+
+## Interactive Preview
+
+<ComponentPreview>
+  <DatePickerDemo />
+</ComponentPreview>
+
+## Installation
+
+```tsx
+import { DatePicker, DateRangePicker, DateField } from '@moul-dev/ui';
+```
+
+## Basic DatePicker
+
+```tsx
+<DatePicker
+  label="Meeting Date"
+  description="Select your preferred meeting date"
+/>
+```
+
+## DateRangePicker
+
+Use `DateRangePicker` for booking reservations or analytics date filtering:
+
+```tsx
+<DateRangePicker
+  label="Stay Duration"
+  description="Select check-in and check-out dates"
+/>
+```
+
+## DateField
+
+Use `DateField` when a standalone masked date input without a popover calendar is desired:
+
+```tsx
+<DateField
+  label="Birth Date"
+  description="Enter in MM/DD/YYYY format"
+/>
+```
+
+## Validation & States
+
+```tsx
+<DatePicker
+  label="Expiry Date"
+  isInvalid
+  errorMessage="Please select a valid future date"
+/>
+```
+
+## Props
+
+### DatePicker & DateRangePicker
+
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `label` | `string` | — | Accessible label for the input |
+| `description` | `string` | — | Help text rendered below the input |
+| `errorMessage` | `string \| ((v) => string)` | — | Error message shown when invalid |
+| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Size variant |
+| `variant` | `'primary' \| 'secondary'` | `'primary'` | Visual background variant |
+| `isDisabled` | `boolean` | `false` | Whether the input is disabled |
+| `isInvalid` | `boolean` | `false` | Marks the field as invalid |
+| `minValue` | `DateValue` | — | Earliest selectable date |
+| `maxValue` | `DateValue` | — | Latest selectable date |

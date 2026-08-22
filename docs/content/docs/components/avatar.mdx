@@ -1,42 +1,152 @@
 ---
 title: Avatar
-description: Documentation for the Avatar component.
+description: Avatars represent users, organizations, or entities with size variants, shapes, status indicators, and group stacking.
 ---
 
-import { Avatar } from '@moul-dev/ui';
-
+import { Avatar, AvatarGroup } from '@moul-dev/ui';
 
 # Avatar
 
+The `Avatar` component represents users or entities with support for image loading, initials fallback, default silhouette fallback, online/offline status dots, and overlapping `AvatarGroup` stacks.
+
 ## Preview
 
-<ComponentPreview>
-  <div className="flex gap-4">
-    <Avatar src="https://github.com/thasophearak.png" alt="Phearak S. Tha" />
-    <Avatar src="https://github.com/moul-dev.png" alt="moul.dev" />
-  </div>
-</ComponentPreview>
-
-The `Avatar` component is built with React Aria and styled using StyleX.
+<ComponentPlayground component="Avatar" />
 
 ## Import
 
 ```tsx
-import { Avatar } from '@moul-dev/ui';
+import { Avatar, AvatarGroup } from '@moul-dev/ui';
 ```
 
-## Usage
+## Sizes
 
-Here is a basic example of how to use the `Avatar` component:
+Avatars come in six standardized sizes: `xs` (24px), `sm` (32px), `md` (40px, default), `lg` (48px), `xl` (56px), and `2xl` (64px).
+
+<ComponentPreview>
+  <div className="flex items-center gap-4 flex-wrap">
+    <Avatar initials="XS" size="xs" aria-label="Extra small avatar" />
+    <Avatar initials="SM" size="sm" aria-label="Small avatar" />
+    <Avatar initials="MD" size="md" aria-label="Medium avatar" />
+    <Avatar initials="LG" size="lg" aria-label="Large avatar" />
+    <Avatar initials="XL" size="xl" aria-label="Extra large avatar" />
+    <Avatar initials="2X" size="2xl" aria-label="2X large avatar" />
+  </div>
+</ComponentPreview>
 
 ```tsx
-import { Avatar } from '@moul-dev/ui';
-
-export default function Example() {
-  return (
-    <Avatar>
-      {/* Component content */}
-    </Avatar>
-  );
-}
+<Avatar initials="XS" size="xs" />
+<Avatar initials="SM" size="sm" />
+<Avatar initials="MD" size="md" />
+<Avatar initials="LG" size="lg" />
+<Avatar initials="XL" size="xl" />
+<Avatar initials="2X" size="2xl" />
 ```
+
+## Shapes
+
+Avatars support `circle` (default) and `square` shapes with rounded squircle corners.
+
+<ComponentPreview>
+  <div className="flex items-center gap-4">
+    <Avatar initials="CI" shape="circle" size="lg" aria-label="Circle avatar" />
+    <Avatar initials="SQ" shape="square" size="lg" aria-label="Square avatar" />
+  </div>
+</ComponentPreview>
+
+```tsx
+<Avatar initials="CI" shape="circle" size="lg" />
+<Avatar initials="SQ" shape="square" size="lg" />
+```
+
+## Status Indicators
+
+Display online, away, busy, or offline status dots anchored to the avatar with an elevated background ring.
+
+<ComponentPreview>
+  <div className="flex items-center gap-4 flex-wrap">
+    <Avatar initials="ON" status="online" size="lg" aria-label="Online status" />
+    <Avatar initials="AW" status="away" size="lg" aria-label="Away status" />
+    <Avatar initials="BU" status="busy" size="lg" aria-label="Busy status" />
+    <Avatar initials="OF" status="offline" size="lg" aria-label="Offline status" />
+  </div>
+</ComponentPreview>
+
+```tsx
+<Avatar initials="ON" status="online" size="lg" />
+<Avatar initials="AW" status="away" size="lg" />
+<Avatar initials="BU" status="busy" size="lg" />
+<Avatar initials="OF" status="offline" size="lg" />
+```
+
+## AvatarGroup
+
+Use `AvatarGroup` to stack multiple avatars together with negative overlap. Set the `max` prop to automatically display the remaining count with a `+N` badge.
+
+<ComponentPreview>
+  <div className="flex flex-col gap-6">
+    <AvatarGroup max={3} aria-label="Team members">
+      <Avatar initials="AL" aria-label="Alex" />
+      <Avatar initials="BT" aria-label="Beth" />
+      <Avatar initials="CK" aria-label="Chris" />
+      <Avatar initials="DL" aria-label="Dana" />
+      <Avatar initials="EV" aria-label="Evan" />
+    </AvatarGroup>
+
+    <AvatarGroup size="sm" shape="square" max={4} aria-label="Engineers group">
+      <Avatar initials="E1" aria-label="Dev 1" />
+      <Avatar initials="E2" aria-label="Dev 2" />
+      <Avatar initials="E3" aria-label="Dev 3" />
+      <Avatar initials="E4" aria-label="Dev 4" />
+      <Avatar initials="E5" aria-label="Dev 5" />
+    </AvatarGroup>
+  </div>
+</ComponentPreview>
+
+```tsx
+<AvatarGroup max={3} aria-label="Team members">
+  <Avatar initials="AL" aria-label="Alex" />
+  <Avatar initials="BT" aria-label="Beth" />
+  <Avatar initials="CK" aria-label="Chris" />
+  <Avatar initials="DL" aria-label="Dana" />
+  <Avatar initials="EV" aria-label="Evan" />
+</AvatarGroup>
+```
+
+## Props
+
+<TypeTable
+  type={{
+    src: {
+      type: 'string',
+      description: 'Image URL source for the avatar.',
+    },
+    alt: {
+      type: 'string',
+      description: 'Alternative text for the image.',
+    },
+    initials: {
+      type: 'string',
+      description: 'Initials displayed when image is not present or fails to load.',
+    },
+    size: {
+      type: "'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'",
+      default: "'md'",
+      description: 'The size scaling and font dimensions of the avatar.',
+    },
+    shape: {
+      type: "'circle' | 'square'",
+      default: "'circle'",
+      description: 'The border radius geometry of the avatar.',
+    },
+    status: {
+      type: "'online' | 'offline' | 'busy' | 'away'",
+      description: 'Live status indicator dot anchored to the avatar.',
+    },
+    statusPosition: {
+      type: "'bottom-right' | 'top-right'",
+      default: "'bottom-right'",
+      description: 'Placement location of the status dot.',
+    },
+  }}
+/>

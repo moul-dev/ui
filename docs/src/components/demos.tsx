@@ -7,14 +7,30 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AreaChart,
+  Avatar,
+  AvatarGroup,
+  type AvatarShape,
+  type AvatarSize,
+  type AvatarStatus,
   Badge,
   BarChart,
   Button,
+  Calendar,
   Cell,
   ChartContainer,
   Column,
   ComboBox,
   ComboBoxItem,
+  CommandPalette,
+  CommandPaletteEmpty,
+  CommandPaletteFooter,
+  CommandPaletteInput,
+  CommandPaletteItem,
+  CommandPaletteList,
+  CommandPaletteSection,
+  DateField,
+  DatePicker,
+  DateRangePicker,
   DoughnutChart,
   Drawer,
   DrawerBody,
@@ -36,6 +52,7 @@ import {
   InputOTPGroup,
   InputOTPSeparator,
   InputOTPSlot,
+  Kbd,
   LineChart,
   Modal,
   ModalBody,
@@ -55,6 +72,7 @@ import {
   PercentageBar,
   PercentageCircle,
   ProgressBar,
+  RangeCalendar,
   REGEXP_ONLY_DIGITS,
   Sidebar,
   SidebarAside,
@@ -1677,5 +1695,256 @@ export function TableDemo() {
     </div>
   )
 }
+
+// ── Avatar Demo ──────────────────────────────────────────────────────
+
+export function AvatarDemo() {
+  const [size, setSize] = useState<AvatarSize>('md')
+  const [shape, setShape] = useState<AvatarShape>('circle')
+  const [status, setStatus] = useState<AvatarStatus | 'none'>('online')
+
+  return (
+    <div className="flex flex-col gap-6 p-6 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/30">
+      {/* Controls */}
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="flex items-center gap-1.5 text-xs">
+          <span className="text-neutral-500">Size:</span>
+          {(['xs', 'sm', 'md', 'lg', 'xl', '2xl'] as AvatarSize[]).map((s) => (
+            <button
+              key={s}
+              type="button"
+              onClick={() => setSize(s)}
+              className={`px-2 py-1 rounded text-xs font-medium uppercase transition-colors ${
+                size === s
+                  ? 'bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900'
+                  : 'bg-neutral-200/60 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200'
+              }`}
+            >
+              {s}
+            </button>
+          ))}
+        </div>
+
+        <div className="flex items-center gap-1.5 text-xs">
+          <span className="text-neutral-500">Shape:</span>
+          {(['circle', 'square'] as AvatarShape[]).map((sh) => (
+            <button
+              key={sh}
+              type="button"
+              onClick={() => setShape(sh)}
+              className={`px-2 py-1 rounded text-xs font-medium capitalize transition-colors ${
+                shape === sh
+                  ? 'bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900'
+                  : 'bg-neutral-200/60 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200'
+              }`}
+            >
+              {sh}
+            </button>
+          ))}
+        </div>
+
+        <div className="flex items-center gap-1.5 text-xs">
+          <span className="text-neutral-500">Status:</span>
+          {(['none', 'online', 'away', 'busy', 'offline'] as const).map((st) => (
+            <button
+              key={st}
+              type="button"
+              onClick={() => setStatus(st)}
+              className={`px-2 py-1 rounded text-xs font-medium capitalize transition-colors ${
+                status === st
+                  ? 'bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900'
+                  : 'bg-neutral-200/60 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200'
+              }`}
+            >
+              {st}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Interactive Avatar Preview */}
+      <div className="flex items-center justify-around py-4 flex-wrap gap-6 bg-white dark:bg-neutral-950 p-6 rounded-lg border border-neutral-200 dark:border-neutral-800">
+        <div className="flex flex-col items-center gap-2">
+          <Avatar
+            src="https://github.com/thasophearak.png"
+            alt="Phearak S. Tha"
+            size={size}
+            shape={shape}
+            status={status === 'none' ? undefined : status}
+          />
+          <span className="text-xs text-neutral-500">Image Avatar</span>
+        </div>
+
+        <div className="flex flex-col items-center gap-2">
+          <Avatar
+            initials="PT"
+            aria-label="Phearak Tha"
+            size={size}
+            shape={shape}
+            status={status === 'none' ? undefined : status}
+          />
+          <span className="text-xs text-neutral-500">Initials Avatar</span>
+        </div>
+
+        <div className="flex flex-col items-center gap-2">
+          <Avatar
+            aria-label="Default user"
+            size={size}
+            shape={shape}
+            status={status === 'none' ? undefined : status}
+          />
+          <span className="text-xs text-neutral-500">Default Icon</span>
+        </div>
+      </div>
+
+      {/* Avatar Group Preview */}
+      <div className="flex flex-col gap-2">
+        <span className="text-xs font-semibold text-neutral-700 dark:text-neutral-300">
+          Stacked AvatarGroup with Max Overflow (+N)
+        </span>
+        <div className="flex items-center gap-8 py-4 px-6 bg-white dark:bg-neutral-950 rounded-lg border border-neutral-200 dark:border-neutral-800 flex-wrap">
+          <AvatarGroup max={3} aria-label="Design team">
+            <Avatar initials="AL" aria-label="Alex" />
+            <Avatar initials="BT" aria-label="Beth" />
+            <Avatar initials="CK" aria-label="Chris" />
+            <Avatar initials="DL" aria-label="Dana" />
+            <Avatar initials="EV" aria-label="Evan" />
+          </AvatarGroup>
+
+          <AvatarGroup size="sm" shape="square" max={4} aria-label="Engineers">
+            <Avatar initials="E1" aria-label="Dev 1" />
+            <Avatar initials="E2" aria-label="Dev 2" />
+            <Avatar initials="E3" aria-label="Dev 3" />
+            <Avatar initials="E4" aria-label="Dev 4" />
+            <Avatar initials="E5" aria-label="Dev 5" />
+          </AvatarGroup>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ── Calendar Demo ────────────────────────────────────────────────────
+
+export function CalendarDemo() {
+  return (
+    <div className="flex flex-col md:flex-row gap-8 items-center justify-center p-6 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/30">
+      <div className="flex flex-col items-center gap-3">
+        <span className="text-xs font-semibold text-neutral-700 dark:text-neutral-300">
+          Single Date Calendar
+        </span>
+        <Calendar aria-label="Select appointment date" />
+      </div>
+
+      <div className="flex flex-col items-center gap-3">
+        <span className="text-xs font-semibold text-neutral-700 dark:text-neutral-300">
+          Date Range Calendar
+        </span>
+        <RangeCalendar aria-label="Select trip dates" />
+      </div>
+    </div>
+  )
+}
+
+// ── DatePicker Demo ──────────────────────────────────────────────────
+
+export function DatePickerDemo() {
+  return (
+    <div className="flex flex-col gap-6 p-6 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/30 max-w-lg mx-auto">
+      <DatePicker
+        label="Event Date"
+        description="Select the scheduled event day"
+      />
+
+      <DateRangePicker
+        label="Booking Range"
+        description="Select check-in and check-out dates"
+      />
+
+      <DateField
+        label="Manual Date Input"
+        description="Type directly into month/day/year segments"
+      />
+    </div>
+  )
+}
+
+// ── CommandPalette Demo ──────────────────────────────────────────────
+
+export function CommandPaletteDemo() {
+  const [isOpen, setIsOpen] = useState(false)
+  const [lastAction, setLastAction] = useState<string | null>(null)
+
+  return (
+    <div className="flex flex-col items-center justify-center gap-4 p-8 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/30">
+      <p className="text-xs text-neutral-500">
+        Press <Kbd>⌘K</Kbd> or click the button below to launch the Command Palette
+      </p>
+
+      <Button variant="primary" onPress={() => setIsOpen(true)}>
+        Open Command Palette
+      </Button>
+
+      {lastAction && (
+        <div className="text-xs px-3 py-1.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+          Triggered action: <strong>{lastAction}</strong>
+        </div>
+      )}
+
+      <CommandPalette isOpen={isOpen} onOpenChange={setIsOpen}>
+        <CommandPaletteInput placeholder="Search commands, docs, or actions..." />
+        <CommandPaletteList>
+          <CommandPaletteSection heading="Navigation">
+            <CommandPaletteItem
+              shortcut={['G', 'H']}
+              onAction={() => setLastAction('Navigated to Home')}
+            >
+              Go to Home
+            </CommandPaletteItem>
+            <CommandPaletteItem
+              shortcut={['G', 'D']}
+              onAction={() => setLastAction('Navigated to Docs')}
+            >
+              Browse Components
+            </CommandPaletteItem>
+            <CommandPaletteItem
+              shortcut={['G', 'S']}
+              onAction={() => setLastAction('Opened Settings')}
+            >
+              Account Settings
+            </CommandPaletteItem>
+          </CommandPaletteSection>
+
+          <CommandPaletteSection heading="Actions">
+            <CommandPaletteItem
+              shortcut={['⌘', 'N']}
+              description="Create a new dashboard project"
+              onAction={() => setLastAction('Created New Project')}
+            >
+              Create New Project
+            </CommandPaletteItem>
+            <CommandPaletteItem
+              shortcut={['⌘', 'C']}
+              description="Copy installation command"
+              onAction={() => setLastAction('Copied install command')}
+            >
+              Copy npm install
+            </CommandPaletteItem>
+            <CommandPaletteItem
+              shortcut={['⌘', 'T']}
+              description="Switch between light and dark themes"
+              onAction={() => setLastAction('Toggled Theme')}
+            >
+              Toggle Theme
+            </CommandPaletteItem>
+          </CommandPaletteSection>
+        </CommandPaletteList>
+        <CommandPaletteEmpty>No matching commands found.</CommandPaletteEmpty>
+        <CommandPaletteFooter />
+      </CommandPalette>
+    </div>
+  )
+}
+
 
 

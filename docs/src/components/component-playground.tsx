@@ -2,6 +2,8 @@
 
 import {
   Alert,
+  Avatar,
+  AvatarGroup,
   Badge,
   Button,
   Card,
@@ -116,6 +118,53 @@ interface ComponentConfig {
 }
 
 const REGISTRY: Record<string, ComponentConfig> = {
+  Avatar: {
+    name: 'Avatar',
+    defaultProps: {
+      initials: 'PT',
+      src: 'https://github.com/thasophearak.png',
+      alt: 'Phearak Tha',
+      size: 'md',
+      shape: 'circle',
+      status: 'online',
+      useImage: true,
+    },
+    props: [
+      {
+        name: 'size',
+        type: 'select',
+        label: 'Size',
+        options: ['xs', 'sm', 'md', 'lg', 'xl', '2xl'],
+        defaultValue: 'md',
+      },
+      {
+        name: 'shape',
+        type: 'select',
+        label: 'Shape',
+        options: ['circle', 'square'],
+        defaultValue: 'circle',
+      },
+      {
+        name: 'status',
+        type: 'select',
+        label: 'Status Dot',
+        options: ['none', 'online', 'away', 'busy', 'offline'],
+        defaultValue: 'online',
+      },
+      {
+        name: 'initials',
+        type: 'text',
+        label: 'Initials (Fallback)',
+        defaultValue: 'PT',
+      },
+      {
+        name: 'useImage',
+        type: 'boolean',
+        label: 'Use Image Source',
+        defaultValue: true,
+      },
+    ],
+  },
   Button: {
     name: 'Button',
     defaultProps: {
@@ -1523,6 +1572,25 @@ export default function Example() {
   );
 }`
       }
+      case 'Avatar': {
+        const { size, shape, status, initials, useImage, alt } = activeProps
+        let propsStr = ''
+        if (useImage) {
+          propsStr += ` src="https://github.com/thasophearak.png" alt="${alt || 'Phearak Tha'}"`
+        } else if (initials) {
+          propsStr += ` initials="${initials}"`
+        }
+        if (size !== 'md') propsStr += ` size="${size}"`
+        if (shape !== 'circle') propsStr += ` shape="${shape}"`
+        if (status && status !== 'none') propsStr += ` status="${status}"`
+        return `import { Avatar } from '@moul-dev/ui';
+
+export default function Example() {
+  return (
+    <Avatar${propsStr} />
+  );
+}`
+      }
       case 'Button': {
         const { variant, size, isDisabled, isPending, children } = activeProps
         let propsStr = ''
@@ -2057,6 +2125,21 @@ export default function Example() {
             </SliderTrack>
           </Slider>
         )
+      case 'Avatar': {
+        const { size, shape, status, initials, useImage, alt } = activeProps
+        return (
+          <div className="flex items-center justify-center py-6">
+            <Avatar
+              src={useImage ? 'https://github.com/thasophearak.png' : undefined}
+              alt={alt || 'Phearak Tha'}
+              initials={initials}
+              size={size}
+              shape={shape}
+              status={status === 'none' ? undefined : status}
+            />
+          </div>
+        )
+      }
       case 'Badge':
         return <Badge {...activeProps}>{activeProps.children}</Badge>
       case 'Toast':
