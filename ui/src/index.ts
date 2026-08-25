@@ -1,5 +1,5 @@
 // Entrypoint for @moul-dev/ui component library
-export const version = '2026.08.22'
+export const version = '2026.08.25'
 
 export { Alert } from './components/Alert'
 export type { AlertProps, AlertVariant } from './components/Alert/Alert'

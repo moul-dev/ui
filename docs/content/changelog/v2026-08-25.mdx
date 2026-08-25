@@ -1,0 +1,70 @@
+---
+title: v2026.08.25 — Table Primitives Overhaul and TanStack Ecosystem Integration
+description: Zero-runtime semantic HTML data table primitives styled with StyleX, tailored for TanStack Table, TanStack Store, and TanStack Pacer.
+date: 2026-08-25
+author: Phearak S. Tha
+avatar: https://github.com/thasophearak.png
+---
+
+High-density data tables in complex applications often collapse when forced into rigid UI component wrappers. When you need column pinning, server-side pagination, multi-column sorting, or virtualization, opinionated table abstractions get in the way of headless data engines.
+
+In earlier iterations, wrapping React Aria collection components imposed structural constraints on nested DOM elements. By decomposing the table into zero-runtime semantic HTML primitives styled with StyleX, the markup remains completely transparent while integrating naturally with headless engines like TanStack Table.
+
+Zero runtime overhead. Full semantic control.
+
+---
+
+## Interactive TanStack Table Showcase
+
+Try the live table below. It integrates `@moul-dev/ui` table primitives with `@tanstack/react-table` for multi-column sorting and row selection, `@tanstack/react-store` for reactive column visibility preferences, and `@tanstack/react-pacer` for debounced search filtering:
+
+<ComponentPreview>
+  <TableDemo />
+</ComponentPreview>
+
+---
+
+## Deconstructed Semantic Hierarchy
+
+Data grids should emit standard HTML table elements rather than synthetic container trees. The overhauled `Table` suite (`/docs/components/table`) provides an unopinionated set of compound primitives:
+
+- **`<Table>`:** The root element with built-in responsive horizontal overflow containment (`wrapInContainer`) and configurable layout algorithms (`layout="auto"` or `layout="fixed"`).
+- **`<TableHeader>` & `<TableFooter>`:** Semantic `<thead>` and `<tfoot>` elements with support for sticky pinned positioning.
+- **`<TableRow>`:** Semantic `<tr>` element supporting hover states, zebra striping, and row selection styling.
+- **`<TableHead>`:** Semantic `<th>` header element supporting sticky column pinning (`pinned="left" | "right"`), explicit column widths, and bidirectional sorting indicators.
+- **`<TableCell>`:** Semantic `<td>` element with support for column pinning, custom text alignment, and tabular numeric font variants (`tabular`).
+- **`<TableCaption>`:** Semantic `<caption>` element with top or bottom placement options.
+- **`<TableEmpty>` & `<TableSkeleton>`:** Dedicated empty state rows with `colSpan` handling and animated placeholder loading skeletons to prevent layout shift.
+
+---
+
+## Density, Pinning, and Numeric Precision
+
+Telemetry consoles and financial workflows require high information density. The new primitives handle these layout patterns through native CSS properties:
+
+- **Density Modes:** The `dense` prop on `<Table>` reduces vertical cell padding to maximize visible data on compact screens.
+- **Zebra Striping:** The `striped` prop alternates row backgrounds for legibility across wide multi-column views.
+- **Sticky Column Pinning:** Columns can be frozen to the left or right edge using hardware-accelerated sticky positioning, ensuring row headers and action menus remain visible during horizontal scrolling[^1].
+- **Tabular Numerics:** The `align="numeric"` and `tabular` props enforce right alignment and monospace digits so decimal values line up vertically without optical jitter.
+
+---
+
+## Headless Architecture
+
+A component library should not fight or duplicate state machines that the open-source ecosystem has already refined.
+
+Instead of bundling a heavy internal table state engine, Moul UI focuses on delivering clean semantic HTML primitives with compile-time StyleX styles. Whether you drive your table with simple component state or connect it to TanStack Table, TanStack Store, TanStack Virtual, and TanStack Query, the primitives adapt without friction.
+
+---
+
+## On Primitives and Longevity
+
+Data tables are the workhorses of business software. Engineers spend weeks fighting component abstractions that attempt to do too much inside the view layer.
+
+By stepping back to standard HTML table elements styled with compile-time CSS, I wanted to provide a durable foundation. Whether you manage records with simple React hooks or an enterprise headless engine, the primitives stay fast, predictable, and out of your way.
+
+Build on solid ground.
+
+---
+
+[^1]: Column pinning utilizes `position: sticky` with hardware-accelerated composite layers, ensuring zero visual jitter during horizontal touch scrolling across Chromium and WebKit rendering engines.
