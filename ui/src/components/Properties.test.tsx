@@ -19,10 +19,8 @@ import {
   CardBody,
   CardFooter,
   CardHeader,
-  Cell,
   Checkbox,
   CheckboxGroup,
-  Column,
   ComboBox,
   ComboBoxItem,
   Description,
@@ -44,7 +42,6 @@ import {
   ProgressBar,
   Radio,
   RadioGroup,
-  Row,
   SearchField,
   Select,
   SelectItem,
@@ -59,7 +56,10 @@ import {
   TabList,
   Table,
   TableBody,
+  TableCell,
+  TableHead,
   TableHeader,
+  TableRow,
   TabPanel,
   Tabs,
   TextArea,
@@ -315,12 +315,14 @@ const allComponents = [
     render: (props: any) => (
       <Table aria-label="Table" {...props}>
         <TableHeader>
-          <Column>Col</Column>
+          <TableRow>
+            <TableHead>Col</TableHead>
+          </TableRow>
         </TableHeader>
         <TableBody>
-          <Row>
-            <Cell>Cell</Cell>
-          </Row>
+          <TableRow>
+            <TableCell>Cell</TableCell>
+          </TableRow>
         </TableBody>
       </Table>
     ),
@@ -468,18 +470,20 @@ const interactiveComponents = [
   {
     name: 'Table',
     render: (props: any) => (
-      <Table aria-label="Table" {...props}>
+      <Table wrapInContainer={false} aria-label="Table" {...props}>
         <TableHeader>
-          <Column>Col</Column>
+          <TableRow>
+            <TableHead>Col</TableHead>
+          </TableRow>
         </TableHeader>
         <TableBody>
-          <Row>
-            <Cell>Cell</Cell>
-          </Row>
+          <TableRow>
+            <TableCell>Cell</TableCell>
+          </TableRow>
         </TableBody>
       </Table>
     ),
-    role: 'grid',
+    role: 'table',
   },
 ]
 
@@ -744,6 +748,7 @@ describe('Centralized Component Properties Tests', () => {
             )
               return true
             if (comp.role === 'navigation' && tag === 'NAV') return true
+            if (comp.role === 'table' && tag === 'TABLE') return true
             if (
               comp.role === 'slider' &&
               tag === 'INPUT' &&

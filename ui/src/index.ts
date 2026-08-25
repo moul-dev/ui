@@ -339,20 +339,28 @@ export { Stat } from './components/Stat'
 export { Switch } from './components/Switch'
 export type { SwitchProps } from './components/Switch/Switch'
 export type {
-  CellProps,
-  ColumnProps,
-  RowProps,
   TableBodyProps,
+  TableCaptionProps,
+  TableCellProps,
+  TableEmptyProps,
+  TableFooterProps,
+  TableHeadProps,
   TableHeaderProps,
   TableProps,
+  TableRowProps,
+  TableSkeletonProps,
 } from './components/Table'
 export {
-  Cell,
-  Column,
-  Row,
   Table,
   TableBody,
+  TableCaption,
+  TableCell,
+  TableEmpty,
+  TableFooter,
+  TableHead,
   TableHeader,
+  TableRow,
+  TableSkeleton,
 } from './components/Table'
 export type {
   TabListProps,

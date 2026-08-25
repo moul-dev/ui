@@ -41,12 +41,15 @@ import {
 import { Skeleton } from './components/Skeleton'
 import { Spinner } from './components/Spinner'
 import {
-  Cell,
-  Column,
-  Row,
   Table,
   TableBody,
+  TableCell,
+  TableEmpty,
+  TableFooter,
+  TableHead,
   TableHeader,
+  TableRow,
+  TableSkeleton,
 } from './components/Table'
 import { ToggleButton } from './components/ToggleButton'
 import { ToggleButtonGroup } from './components/ToggleButtonGroup'
@@ -465,14 +468,17 @@ function App() {
   const [skeletonCount, setSkeletonCount] = useState(3)
   const [tableSort, setTableSort] = useState<{
     column: string
-    direction: 'ascending' | 'descending'
+    direction: 'asc' | 'desc'
   }>({
     column: 'name',
-    direction: 'ascending',
+    direction: 'asc',
   })
   const [isTableLoading, setIsTableLoading] = useState(false)
   const [isTableEmpty, setIsTableEmpty] = useState(false)
   const [isTableSticky, setIsTableSticky] = useState(false)
+  const [isTableDense, setIsTableDense] = useState(false)
+  const [isTableStriped, setIsTableStriped] = useState(false)
+  const [isTablePinned, setIsTablePinned] = useState(false)
   const [isCommandOpen, setIsCommandOpen] = useState(false)
 
   return (
@@ -1537,14 +1543,13 @@ function App() {
               Table Component Showcase
             </h2>
             <p style={{ margin: 0, fontSize: '0.9rem', color: '#94a3b8' }}>
-              Data table with built-in sticky header, sort indicators, and
-              loading / empty state slots.
+              Semantic zero-runtime data table with sticky headers, sorting, density, striping, and skeleton states.
             </p>
 
             <div
               style={{
                 display: 'flex',
-                gap: '12px',
+                gap: '8px',
                 alignItems: 'center',
                 flexWrap: 'wrap',
               }}
@@ -1554,27 +1559,48 @@ function App() {
                 variant={isTableSticky ? 'primary' : 'outline'}
                 onPress={() => setIsTableSticky((v) => !v)}
               >
-                Sticky Header: {isTableSticky ? 'ON' : 'OFF'}
+                Sticky: {isTableSticky ? 'ON' : 'OFF'}
+              </Button>
+              <Button
+                size="sm"
+                variant={isTableDense ? 'primary' : 'outline'}
+                onPress={() => setIsTableDense((v) => !v)}
+              >
+                Dense: {isTableDense ? 'ON' : 'OFF'}
+              </Button>
+              <Button
+                size="sm"
+                variant={isTableStriped ? 'primary' : 'outline'}
+                onPress={() => setIsTableStriped((v) => !v)}
+              >
+                Striped: {isTableStriped ? 'ON' : 'OFF'}
+              </Button>
+              <Button
+                size="sm"
+                variant={isTablePinned ? 'primary' : 'outline'}
+                onPress={() => setIsTablePinned((v) => !v)}
+              >
+                Pinning: {isTablePinned ? 'ON' : 'OFF'}
               </Button>
               <Button
                 size="sm"
                 variant={isTableLoading ? 'primary' : 'outline'}
                 onPress={() => setIsTableLoading((v) => !v)}
               >
-                Loading State: {isTableLoading ? 'ON' : 'OFF'}
+                Loading: {isTableLoading ? 'ON' : 'OFF'}
               </Button>
               <Button
                 size="sm"
                 variant={isTableEmpty ? 'primary' : 'outline'}
                 onPress={() => setIsTableEmpty((v) => !v)}
               >
-                Empty State: {isTableEmpty ? 'ON' : 'OFF'}
+                Empty: {isTableEmpty ? 'ON' : 'OFF'}
               </Button>
             </div>
 
             <div
               style={{
-                maxHeight: '280px',
+                maxHeight: '320px',
                 overflowY: 'auto',
                 border: '1px solid rgba(255,255,255,0.08)',
                 borderRadius: '8px',
@@ -1583,91 +1609,129 @@ function App() {
               <Table
                 aria-label="Cluster Services Table"
                 stickyHeader={isTableSticky}
-                isLoading={isTableLoading}
-                emptyState={
-                  <EmptyState
-                    variant="default"
-                    icon={<FolderIcon />}
-                    title="No cluster services found"
-                    description="Deploy a new service to monitor bandwidth and latency."
-                    action={<Button size="sm">Deploy Service</Button>}
-                  />
-                }
-                sortDescriptor={tableSort}
-                onSortChange={(descriptor) =>
-                  setTableSort({
-                    column: String(descriptor.column),
-                    direction: descriptor.direction || 'ascending',
-                  })
-                }
+                dense={isTableDense}
+                striped={isTableStriped}
               >
                 <TableHeader>
-                  <Column id="name" allowsSorting isRowHeader>
-                    Service Name
-                  </Column>
-                  <Column id="role" allowsSorting>
-                    Cluster Role
-                  </Column>
-                  <Column id="status" allowsSorting>
-                    Status
-                  </Column>
-                  <Column id="bandwidth" allowsSorting>
-                    Bandwidth
-                  </Column>
+                  <TableRow>
+                    <TableHead
+                      pinned={isTablePinned ? 'left' : undefined}
+                      pinOffset={0}
+                      sortDirection={
+                        tableSort.column === 'name' ? tableSort.direction : null
+                      }
+                      onSort={() =>
+                        setTableSort((prev) => ({
+                          column: 'name',
+                          direction:
+                            prev.column === 'name' && prev.direction === 'asc'
+                              ? 'desc'
+                              : 'asc',
+                        }))
+                      }
+                    >
+                      Service Name
+                    </TableHead>
+                    <TableHead
+                      sortDirection={
+                        tableSort.column === 'role' ? tableSort.direction : null
+                      }
+                      onSort={() =>
+                        setTableSort((prev) => ({
+                          column: 'role',
+                          direction:
+                            prev.column === 'role' && prev.direction === 'asc'
+                              ? 'desc'
+                              : 'asc',
+                        }))
+                      }
+                    >
+                      Cluster Role
+                    </TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead align="numeric">Bandwidth</TableHead>
+                  </TableRow>
                 </TableHeader>
-                <TableBody
-                  items={
-                    isTableEmpty || isTableLoading
-                      ? []
-                      : [
-                          {
-                            id: '1',
-                            name: 'Authentication API',
-                            role: 'Security',
-                            status: 'Operational',
-                            variant: 'success',
-                            bandwidth: '1.2 GB/s',
-                          },
-                          {
-                            id: '2',
-                            name: 'PostgreSQL Primary',
-                            role: 'Database',
-                            status: 'Operational',
-                            variant: 'success',
-                            bandwidth: '4.8 GB/s',
-                          },
-                          {
-                            id: '3',
-                            name: 'Global Edge CDN',
-                            role: 'Edge',
-                            status: 'Degraded',
-                            variant: 'warning',
-                            bandwidth: '820 MB/s',
-                          },
-                          {
-                            id: '4',
-                            name: 'Background Workers',
-                            role: 'Compute',
-                            status: 'Operational',
-                            variant: 'success',
-                            bandwidth: '340 MB/s',
-                          },
-                        ]
-                  }
-                >
-                  {(item) => (
-                    <Row key={item.id}>
-                      <Cell>{item.name}</Cell>
-                      <Cell>{item.role}</Cell>
-                      <Cell>
-                        <Badge size="sm" variant={item.variant as any} dot>
-                          {item.status}
-                        </Badge>
-                      </Cell>
-                      <Cell>{item.bandwidth}</Cell>
-                    </Row>
+                <TableBody>
+                  {isTableLoading ? (
+                    <TableSkeleton rows={4} columns={4} />
+                  ) : isTableEmpty ? (
+                    <TableEmpty colSpan={4}>
+                      <EmptyState
+                        variant="default"
+                        icon={<FolderIcon />}
+                        title="No cluster services found"
+                        description="Deploy a new service to monitor bandwidth and latency."
+                        action={<Button size="sm">Deploy Service</Button>}
+                      />
+                    </TableEmpty>
+                  ) : (
+                    [
+                      {
+                        id: '1',
+                        name: 'Authentication API',
+                        role: 'Security',
+                        status: 'Operational',
+                        variant: 'success',
+                        bandwidth: '1.2 GB/s',
+                      },
+                      {
+                        id: '2',
+                        name: 'PostgreSQL Primary',
+                        role: 'Database',
+                        status: 'Operational',
+                        variant: 'success',
+                        bandwidth: '4.8 GB/s',
+                      },
+                      {
+                        id: '3',
+                        name: 'Global Edge CDN',
+                        role: 'Edge',
+                        status: 'Degraded',
+                        variant: 'warning',
+                        bandwidth: '820 MB/s',
+                      },
+                      {
+                        id: '4',
+                        name: 'Background Workers',
+                        role: 'Compute',
+                        status: 'Operational',
+                        variant: 'success',
+                        bandwidth: '340 MB/s',
+                      },
+                    ]
+                      .sort((a, b) => {
+                        const col = tableSort.column as keyof typeof a
+                        const first = a[col] || ''
+                        const second = b[col] || ''
+                        const cmp = String(first).localeCompare(String(second))
+                        return tableSort.direction === 'desc' ? -cmp : cmp
+                      })
+                      .map((item) => (
+                        <TableRow key={item.id}>
+                          <TableCell
+                            pinned={isTablePinned ? 'left' : undefined}
+                            pinOffset={0}
+                          >
+                            <span style={{ fontWeight: 600 }}>{item.name}</span>
+                          </TableCell>
+                          <TableCell>{item.role}</TableCell>
+                          <TableCell>
+                            <Badge size="sm" variant={item.variant as any} dot>
+                              {item.status}
+                            </Badge>
+                          </TableCell>
+                          <TableCell align="numeric">{item.bandwidth}</TableCell>
+                        </TableRow>
+                      ))
                   )}
                 </TableBody>
+                <TableFooter>
+                  <TableRow>
+                    <TableCell colSpan={3}>Active Cluster Summary</TableCell>
+                    <TableCell align="numeric">4 Nodes</TableCell>
+                  </TableRow>
+                </TableFooter>
               </Table>
             </div>
           </section>

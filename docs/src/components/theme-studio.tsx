@@ -17,11 +17,9 @@ import {
   Card,
   CardBody,
   CardHeader,
-  Cell,
   ChartContainer,
   Checkbox,
   CheckboxGroup,
-  Column,
   ComboBox,
   ComboBoxItem,
   DoughnutChart,
@@ -44,7 +42,6 @@ import {
   PopoverDialog,
   PopoverTrigger,
   REGEXP_ONLY_DIGITS,
-  Row,
   SearchField,
   Select,
   SelectItem,
@@ -58,7 +55,10 @@ import {
   TabList,
   Table,
   TableBody,
+  TableCell,
+  TableHead,
   TableHeader,
+  TableRow,
   TabPanel,
   TabPanels,
   Tabs,
@@ -1093,20 +1093,23 @@ export function ThemeStudio() {
           <Card className="border border-fd-border/70 overflow-hidden shadow-sm">
             <Table
               aria-label="Customer Accounts Table"
-              selectionMode="multiple"
+              hoverable
+              striped
             >
               <TableHeader>
-                <Column isRowHeader>User</Column>
-                <Column>Role</Column>
-                <Column>Plan</Column>
-                <Column>Status</Column>
-                <Column>Total Spent</Column>
-                <Column>Action</Column>
+                <TableRow>
+                  <TableHead>User</TableHead>
+                  <TableHead>Role</TableHead>
+                  <TableHead>Plan</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead align="numeric">Total Spent</TableHead>
+                  <TableHead align="center">Action</TableHead>
+                </TableRow>
               </TableHeader>
-              <TableBody items={mockTableUsers}>
-                {(item) => (
-                  <Row key={item.id}>
-                    <Cell>
+              <TableBody>
+                {mockTableUsers.map((item) => (
+                  <TableRow key={item.id}>
+                    <TableCell>
                       <div className="flex items-center gap-2.5">
                         <Avatar
                           initials={item.name.slice(0, 2).toUpperCase()}
@@ -1121,10 +1124,10 @@ export function ThemeStudio() {
                           </span>
                         </div>
                       </div>
-                    </Cell>
-                    <Cell>{item.role}</Cell>
-                    <Cell>{item.plan}</Cell>
-                    <Cell>
+                    </TableCell>
+                    <TableCell>{item.role}</TableCell>
+                    <TableCell>{item.plan}</TableCell>
+                    <TableCell>
                       <Badge
                         variant={
                           item.status === 'Active'
@@ -1136,19 +1139,19 @@ export function ThemeStudio() {
                       >
                         {item.status}
                       </Badge>
-                    </Cell>
-                    <Cell>
+                    </TableCell>
+                    <TableCell align="numeric">
                       <span className="font-mono font-medium">
                         {item.spent}
                       </span>
-                    </Cell>
-                    <Cell>
+                    </TableCell>
+                    <TableCell align="center">
                       <Button variant="ghost" size="sm">
                         Manage
                       </Button>
-                    </Cell>
-                  </Row>
-                )}
+                    </TableCell>
+                  </TableRow>
+                ))}
               </TableBody>
             </Table>
           </Card>

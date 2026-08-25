@@ -1,9 +1,25 @@
 export type {
-  CellProps,
-  ColumnProps,
-  RowProps,
   TableBodyProps,
+  TableCaptionProps,
+  TableCellProps,
+  TableEmptyProps,
+  TableFooterProps,
+  TableHeadProps,
   TableHeaderProps,
   TableProps,
+  TableRowProps,
+  TableSkeletonProps,
 } from './Table'
-export { Cell, Column, Row, Table, TableBody, TableHeader } from './Table'
+
+export {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableEmpty,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+  TableSkeleton,
+} from './Table'

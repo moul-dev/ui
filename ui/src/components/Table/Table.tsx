@@ -2,21 +2,6 @@
 import type { StyleXStyles } from '@stylexjs/stylex'
 import * as stylex from '@stylexjs/stylex'
 import * as React from 'react'
-import {
-  Cell as AriaCell,
-  type CellProps as AriaCellProps,
-  Column as AriaColumn,
-  type ColumnProps as AriaColumnProps,
-  Row as AriaRow,
-  type RowProps as AriaRowProps,
-  Table as AriaTable,
-  TableBody as AriaTableBody,
-  type TableBodyProps as AriaTableBodyProps,
-  TableHeader as AriaTableHeader,
-  type TableHeaderProps as AriaTableHeaderProps,
-  type TableProps as AriaTableProps,
-} from 'react-aria-components'
-import { Spinner } from '../Spinner'
 import { styles } from './Table.styles'
 
 // ── Icons ─────────────────────────────────────────────────────────────
@@ -31,6 +16,7 @@ const SortAscIcon = () => (
     fill="none"
     strokeLinecap="round"
     strokeLinejoin="round"
+    aria-hidden="true"
   >
     <path d="M12 19V5M5 12l7-7 7 7" />
   </svg>
@@ -46,6 +32,7 @@ const SortDescIcon = () => (
     fill="none"
     strokeLinecap="round"
     strokeLinejoin="round"
+    aria-hidden="true"
   >
     <path d="M12 5v14M5 12l7 7 7-7" />
   </svg>
@@ -62,31 +49,45 @@ const SortUnsortedIcon = () => (
     strokeLinecap="round"
     strokeLinejoin="round"
     opacity="0.4"
+    aria-hidden="true"
   >
     <path d="M7 15l5 5 5-5M7 9l5-5 5 5" />
   </svg>
 )
 
-// ── Table Context ─────────────────────────────────────────────────────
+// ── Context ───────────────────────────────────────────────────────────
 
 interface TableContextValue {
+  dense?: boolean
+  striped?: boolean
+  hoverable?: boolean
   stickyHeader?: boolean
-  isLoading?: boolean
-  loadingState?: React.ReactNode
-  emptyState?: React.ReactNode
 }
 
 const TableContext = React.createContext<TableContextValue>({})
 
-// ── Table Component ───────────────────────────────────────────────────
+// ── Table Root Component ──────────────────────────────────────────────
 
-export interface TableProps extends Omit<AriaTableProps, 'style'> {
+export interface TableProps
+  extends Omit<React.TableHTMLAttributes<HTMLTableElement>, 'style'> {
   style?: StyleXStyles
   className?: string
+  /** Compact padding for high-density data */
+  dense?: boolean
+  /** Alternating row background colors */
+  striped?: boolean
+  /** Highlight rows on hover */
+  hoverable?: boolean
+  /** Keep table header pinned to top on scroll */
   stickyHeader?: boolean
-  isLoading?: boolean
-  loadingState?: React.ReactNode
-  emptyState?: React.ReactNode
+  /** Table layout algorithm */
+  layout?: 'auto' | 'fixed'
+  /** Wrap table in a responsive horizontal scroll container (default: true) */
+  wrapInContainer?: boolean
+  /** Style for the responsive container wrapper */
+  containerStyle?: StyleXStyles
+  /** Class name for the responsive container wrapper */
+  containerClassName?: string
 }
 
 export const Table = React.forwardRef<HTMLTableElement, TableProps>(
@@ -94,10 +95,14 @@ export const Table = React.forwardRef<HTMLTableElement, TableProps>(
     {
       style,
       className,
+      dense = false,
+      striped = false,
+      hoverable = true,
       stickyHeader = false,
-      isLoading = false,
-      loadingState,
-      emptyState,
+      layout = 'auto',
+      wrapInContainer = true,
+      containerStyle,
+      containerClassName,
       children,
       ...rest
     },
@@ -105,289 +110,589 @@ export const Table = React.forwardRef<HTMLTableElement, TableProps>(
   ) {
     const contextValue = React.useMemo(
       () => ({
+        dense,
+        striped,
+        hoverable,
         stickyHeader,
-        isLoading,
-        loadingState,
-        emptyState,
       }),
-      [stickyHeader, isLoading, loadingState, emptyState],
+      [dense, striped, hoverable, stickyHeader],
     )
 
-    return (
+    const { className: tableStylexClass, style: tableInlineStyle } =
+      stylex.props(
+        styles.table,
+        layout === 'fixed' ? styles.tableFixed : styles.tableAuto,
+        style,
+      )
+
+    const finalClassName = [tableStylexClass, className]
+      .filter(Boolean)
+      .join(' ')
+
+    const tableElement = (
       <TableContext.Provider value={contextValue}>
-        <AriaTable
+        <table
           {...rest}
           ref={ref}
-          className={() => {
-            const { className: stylexClass } = stylex.props(styles.table, style)
-            return [stylexClass, className].filter(Boolean).join(' ')
-          }}
-          style={() => {
-            const { style: stylexStyle } = stylex.props(styles.table, style)
-            return stylexStyle || {}
-          }}
+          className={finalClassName || undefined}
+          style={tableInlineStyle}
         >
           {children}
-        </AriaTable>
+        </table>
       </TableContext.Provider>
+    )
+
+    if (!wrapInContainer) {
+      return tableElement
+    }
+
+    const { className: wrapStylexClass, style: wrapInlineStyle } = stylex.props(
+      styles.wrapper,
+      containerStyle,
+    )
+
+    const finalWrapClassName = [wrapStylexClass, containerClassName]
+      .filter(Boolean)
+      .join(' ')
+
+    return (
+      <div
+        className={finalWrapClassName || undefined}
+        style={wrapInlineStyle}
+        data-moul-table-wrapper=""
+      >
+        {tableElement}
+      </div>
     )
   },
 )
 
 // ── TableHeader Component ─────────────────────────────────────────────
 
-export interface TableHeaderProps<T>
-  extends Omit<AriaTableHeaderProps<T>, 'style'> {
+export interface TableHeaderProps
+  extends Omit<React.HTMLAttributes<HTMLTableSectionElement>, 'style'> {
   style?: StyleXStyles
   className?: string
+  /** Pinned sticky header state */
   sticky?: boolean
 }
 
 export const TableHeader = React.forwardRef<
   HTMLTableSectionElement,
-  TableHeaderProps<any>
+  TableHeaderProps
 >(function TableHeader({ style, className, sticky, children, ...rest }, ref) {
-  const { stickyHeader: tableSticky } = React.useContext(TableContext)
-  const isSticky = sticky ?? tableSticky
+  const ctx = React.useContext(TableContext)
+  const isSticky = sticky ?? ctx.stickyHeader
+
+  const { className: stylexClass, style: inlineStyle } = stylex.props(
+    styles.header,
+    isSticky && styles.headerSticky,
+    style,
+  )
 
   return (
-    <AriaTableHeader
+    <thead
       {...rest}
       ref={ref}
-      className={() => {
-        const { className: stylexClass } = stylex.props(
-          styles.header,
-          isSticky && styles.headerSticky,
-          style,
-        )
-        return [stylexClass, className].filter(Boolean).join(' ')
-      }}
-      style={() => {
-        const { style: stylexStyle } = stylex.props(
-          styles.header,
-          isSticky && styles.headerSticky,
-          style,
-        )
-        return stylexStyle || {}
-      }}
+      className={[stylexClass, className].filter(Boolean).join(' ') || undefined}
+      style={inlineStyle}
     >
       {children}
-    </AriaTableHeader>
+    </thead>
   )
 })
 
-// ── Column Component ──────────────────────────────────────────────────
-
-export interface ColumnProps
-  extends Omit<AriaColumnProps, 'style' | 'className'> {
-  style?: StyleXStyles
-  className?: AriaColumnProps['className']
-  showSortIndicator?: boolean
-}
-
-export const Column = React.forwardRef<HTMLTableHeaderCellElement, ColumnProps>(
-  function Column(
-    { style, className, showSortIndicator = true, children, ...rest },
-    ref,
-  ) {
-    return (
-      <AriaColumn
-        {...rest}
-        ref={ref}
-        className={(renderProps) => {
-          const { className: stylexClass } = stylex.props(
-            styles.column,
-            renderProps.allowsSorting && styles.columnSortable,
-            renderProps.isHovered && styles.columnHovered,
-            style,
-          )
-          const userClass =
-            typeof className === 'function'
-              ? (className as any)(renderProps)
-              : className
-          return [stylexClass, userClass].filter(Boolean).join(' ')
-        }}
-        style={(renderProps) => {
-          const { style: stylexStyle } = stylex.props(
-            styles.column,
-            renderProps.allowsSorting && styles.columnSortable,
-            style,
-          )
-          return stylexStyle || {}
-        }}
-      >
-        {(renderProps) => {
-          const content =
-            typeof children === 'function' ? children(renderProps) : children
-
-          if (!renderProps.allowsSorting || !showSortIndicator) {
-            return content
-          }
-
-          return (
-            <div {...stylex.props(styles.columnContent)}>
-              <span>{content}</span>
-              <span
-                aria-hidden="true"
-                {...stylex.props(
-                  styles.sortIndicator,
-                  renderProps.sortDirection && styles.sortIndicatorActive,
-                )}
-              >
-                {renderProps.sortDirection === 'ascending' ? (
-                  <SortAscIcon />
-                ) : renderProps.sortDirection === 'descending' ? (
-                  <SortDescIcon />
-                ) : (
-                  <SortUnsortedIcon />
-                )}
-              </span>
-            </div>
-          )
-        }}
-      </AriaColumn>
-    )
-  },
-)
-
 // ── TableBody Component ───────────────────────────────────────────────
 
-export interface TableBodyProps<T>
-  extends Omit<AriaTableBodyProps<T>, 'style'> {
+export interface TableBodyProps
+  extends Omit<React.HTMLAttributes<HTMLTableSectionElement>, 'style'> {
   style?: StyleXStyles
   className?: string
-  isLoading?: boolean
-  loadingState?: React.ReactNode
-  emptyState?: React.ReactNode
 }
 
 export const TableBody = React.forwardRef<
   HTMLTableSectionElement,
-  TableBodyProps<any>
->(function TableBody(
-  {
+  TableBodyProps
+>(function TableBody({ style, className, children, ...rest }, ref) {
+  const { className: stylexClass, style: inlineStyle } = stylex.props(
+    styles.body,
     style,
-    className,
-    isLoading,
-    loadingState,
-    emptyState,
-    renderEmptyState,
-    children,
-    ...rest
-  },
-  ref,
-) {
-  const ctx = React.useContext(TableContext)
-  const activeLoading = isLoading ?? ctx.isLoading
-  const activeLoadingState = loadingState ?? ctx.loadingState
-  const activeEmptyState = emptyState ?? ctx.emptyState
-
-  const defaultRenderEmpty = () => {
-    if (activeLoading) {
-      return (
-        <div {...stylex.props(styles.loadingState)}>
-          {activeLoadingState || (
-            <>
-              <Spinner size="md" aria-label="Loading table data..." />
-              <span>Loading data...</span>
-            </>
-          )}
-        </div>
-      )
-    }
-    if (activeEmptyState) {
-      return <div {...stylex.props(styles.emptyState)}>{activeEmptyState}</div>
-    }
-    return null
-  }
-
-  const effectiveRenderEmpty =
-    renderEmptyState ||
-    (activeLoading || activeEmptyState ? defaultRenderEmpty : undefined)
+  )
 
   return (
-    <AriaTableBody
+    <tbody
       {...rest}
       ref={ref}
-      renderEmptyState={effectiveRenderEmpty}
-      className={() => {
-        const { className: stylexClass } = stylex.props(styles.body, style)
-        return [stylexClass, className].filter(Boolean).join(' ')
-      }}
-      style={() => {
-        const { style: stylexStyle } = stylex.props(styles.body, style)
-        return stylexStyle || {}
-      }}
+      className={[stylexClass, className].filter(Boolean).join(' ') || undefined}
+      style={inlineStyle}
     >
       {children}
-    </AriaTableBody>
+    </tbody>
   )
 })
 
-// ── Row Component ─────────────────────────────────────────────────────
+// ── TableFooter Component ─────────────────────────────────────────────
 
-export interface RowProps<T> extends Omit<AriaRowProps<T>, 'style'> {
+export interface TableFooterProps
+  extends Omit<React.HTMLAttributes<HTMLTableSectionElement>, 'style'> {
   style?: StyleXStyles
   className?: string
+  /** Pinned sticky footer state */
+  sticky?: boolean
 }
 
-export const Row = React.forwardRef<HTMLTableRowElement, RowProps<any>>(
-  function Row({ style, className, children, ...rest }, ref) {
+export const TableFooter = React.forwardRef<
+  HTMLTableSectionElement,
+  TableFooterProps
+>(function TableFooter({ style, className, sticky, children, ...rest }, ref) {
+  const { className: stylexClass, style: inlineStyle } = stylex.props(
+    styles.footer,
+    sticky && styles.footerSticky,
+    style,
+  )
+
+  return (
+    <tfoot
+      {...rest}
+      ref={ref}
+      className={[stylexClass, className].filter(Boolean).join(' ') || undefined}
+      style={inlineStyle}
+    >
+      {children}
+    </tfoot>
+  )
+})
+
+// ── TableRow Component ────────────────────────────────────────────────
+
+export interface TableRowProps
+  extends Omit<React.HTMLAttributes<HTMLTableRowElement>, 'style'> {
+  style?: StyleXStyles
+  className?: string
+  /** Selected row state */
+  selected?: boolean
+  /** Enable hover highlight for this row */
+  hoverable?: boolean
+  /** Indicates the row is clickable */
+  interactive?: boolean
+}
+
+export const TableRow = React.forwardRef<HTMLTableRowElement, TableRowProps>(
+  function TableRow(
+    {
+      style,
+      className,
+      selected = false,
+      hoverable,
+      interactive = false,
+      children,
+      ...rest
+    },
+    ref,
+  ) {
+    const ctx = React.useContext(TableContext)
+    const isHoverable = hoverable ?? ctx.hoverable
+
+    const { className: stylexClass, style: inlineStyle } = stylex.props(
+      styles.row,
+      isHoverable && styles.rowHoverable,
+      ctx.striped && styles.rowStriped,
+      selected && styles.rowSelected,
+      interactive && styles.rowInteractive,
+      style,
+    )
+
     return (
-      <AriaRow
+      <tr
         {...rest}
         ref={ref}
-        className={(renderProps) => {
-          const { className: stylexClass } = stylex.props(
-            styles.row,
-            renderProps.isHovered && styles.rowHovered,
-            renderProps.isSelected && styles.rowSelected,
-            renderProps.isFocused && styles.rowFocused,
-            style,
-          )
-          return [stylexClass, className].filter(Boolean).join(' ')
-        }}
-        style={(renderProps) => {
-          const { style: stylexStyle } = stylex.props(
-            styles.row,
-            renderProps.isHovered && styles.rowHovered,
-            renderProps.isSelected && styles.rowSelected,
-            renderProps.isFocused && styles.rowFocused,
-            style,
-          )
-          return stylexStyle || {}
-        }}
+        aria-selected={selected ? 'true' : undefined}
+        className={
+          [stylexClass, className].filter(Boolean).join(' ') || undefined
+        }
+        style={inlineStyle}
       >
         {children}
-      </AriaRow>
+      </tr>
     )
   },
 )
 
-// ── Cell Component ────────────────────────────────────────────────────
+// ── TableHead (th) Component ──────────────────────────────────────────
 
-export interface CellProps extends Omit<AriaCellProps, 'style'> {
+export interface TableHeadProps
+  extends Omit<React.ThHTMLAttributes<HTMLTableCellElement>, 'style' | 'align' | 'width'> {
   style?: StyleXStyles
   className?: string
+  /** Text & content alignment */
+  align?: 'left' | 'center' | 'right' | 'numeric'
+  /** Column pinning support */
+  pinned?: 'left' | 'right' | 'start' | 'end'
+  /** Pinning offset (e.g., 0, '120px') */
+  pinOffset?: number | string
+  /** Explicit column width */
+  width?: number | string
+  /** Minimum column width */
+  minWidth?: number | string
+  /** Maximum column width */
+  maxWidth?: number | string
+  /** Current column sort direction */
+  sortDirection?: 'asc' | 'desc' | 'ascending' | 'descending' | false | null
+  /** Callback fired when sortable column header is clicked or activated */
+  onSort?: () => void
+  /** Show sorting chevron indicator */
+  showSortIndicator?: boolean
+  /** Custom sort indicator component slot */
+  sortIndicator?: React.ReactNode
 }
 
-export const Cell = React.forwardRef<HTMLTableCellElement, CellProps>(
-  function Cell({ style, className, children, ...rest }, ref) {
+export const TableHead = React.forwardRef<HTMLTableCellElement, TableHeadProps>(
+  function TableHead(
+    {
+      style,
+      className,
+      align = 'left',
+      pinned,
+      pinOffset,
+      width,
+      minWidth,
+      maxWidth,
+      sortDirection,
+      onSort,
+      showSortIndicator = true,
+      sortIndicator,
+      children,
+      onClick,
+      onKeyDown,
+      ...rest
+    },
+    ref,
+  ) {
+    const ctx = React.useContext(TableContext)
+    const isSortable = Boolean(
+      onSort || (sortDirection !== undefined && sortDirection !== null),
+    )
+
+    const isSortedAsc =
+      sortDirection === 'asc' || sortDirection === 'ascending'
+    const isSortedDesc =
+      sortDirection === 'desc' || sortDirection === 'descending'
+    const isSorted = isSortedAsc || isSortedDesc
+
+    const ariaSortValue = isSortedAsc
+      ? 'ascending'
+      : isSortedDesc
+        ? 'descending'
+        : isSortable
+          ? 'none'
+          : undefined
+
+    const isPinnedLeft = pinned === 'left' || pinned === 'start'
+    const isPinnedRight = pinned === 'right' || pinned === 'end'
+
+    const { className: stylexClass, style: inlineStyle } = stylex.props(
+      styles.head,
+      ctx.dense && styles.headDense,
+      isSortable && styles.headSortable,
+      align === 'center'
+        ? styles.alignCenter
+        : align === 'right' || align === 'numeric'
+          ? styles.alignRight
+          : styles.alignLeft,
+      isPinnedLeft && styles.pinnedLeftHead,
+      isPinnedRight && styles.pinnedRightHead,
+      style,
+    )
+
+    const pinStyle: React.CSSProperties = {}
+    if (isPinnedLeft && pinOffset !== undefined) {
+      pinStyle.insetInlineStart =
+        typeof pinOffset === 'number' ? `${pinOffset}px` : pinOffset
+    } else if (isPinnedRight && pinOffset !== undefined) {
+      pinStyle.insetInlineEnd =
+        typeof pinOffset === 'number' ? `${pinOffset}px` : pinOffset
+    }
+    if (width !== undefined) {
+      pinStyle.width = typeof width === 'number' ? `${width}px` : width
+    }
+    if (minWidth !== undefined) {
+      pinStyle.minWidth =
+        typeof minWidth === 'number' ? `${minWidth}px` : minWidth
+    }
+    if (maxWidth !== undefined) {
+      pinStyle.maxWidth =
+        typeof maxWidth === 'number' ? `${maxWidth}px` : maxWidth
+    }
+
+    const handleClick = (e: React.MouseEvent<HTMLTableCellElement>) => {
+      onClick?.(e)
+      if (isSortable && onSort && !e.defaultPrevented) {
+        onSort()
+      }
+    }
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLTableCellElement>) => {
+      onKeyDown?.(e)
+      if (
+        isSortable &&
+        onSort &&
+        !e.defaultPrevented &&
+        (e.key === 'Enter' || e.key === ' ')
+      ) {
+        e.preventDefault()
+        onSort()
+      }
+    }
+
     return (
-      <AriaCell
+      <th
         {...rest}
         ref={ref}
-        className={() => {
-          const { className: stylexClass } = stylex.props(styles.cell, style)
-          return [stylexClass, className].filter(Boolean).join(' ')
-        }}
-        style={() => {
-          const { style: stylexStyle } = stylex.props(styles.cell, style)
-          return stylexStyle || {}
-        }}
+        scope={rest.scope || 'col'}
+        aria-sort={ariaSortValue}
+        tabIndex={isSortable ? 0 : rest.tabIndex}
+        onClick={handleClick}
+        onKeyDown={handleKeyDown}
+        className={
+          [stylexClass, className].filter(Boolean).join(' ') || undefined
+        }
+        style={{ ...inlineStyle, ...pinStyle }}
       >
-        {children}
-      </AriaCell>
+        {isSortable && showSortIndicator ? (
+          <div
+            {...stylex.props(
+              styles.headContent,
+              align === 'center'
+                ? styles.headContentAlignCenter
+                : align === 'right' || align === 'numeric'
+                  ? styles.headContentAlignRight
+                  : styles.headContentAlignLeft,
+            )}
+          >
+            <span>{children}</span>
+            <span
+              aria-hidden="true"
+              {...stylex.props(
+                styles.sortIndicator,
+                isSorted && styles.sortIndicatorActive,
+              )}
+            >
+              {sortIndicator || (
+                isSortedAsc ? (
+                  <SortAscIcon />
+                ) : isSortedDesc ? (
+                  <SortDescIcon />
+                ) : (
+                  <SortUnsortedIcon />
+                )
+              )}
+            </span>
+          </div>
+        ) : (
+          children
+        )}
+      </th>
     )
   },
 )
+
+// ── TableCell (td) Component ──────────────────────────────────────────
+
+export interface TableCellProps
+  extends Omit<React.TdHTMLAttributes<HTMLTableCellElement>, 'style' | 'align' | 'width'> {
+  style?: StyleXStyles
+  className?: string
+  /** Text & numeric alignment */
+  align?: 'left' | 'center' | 'right' | 'numeric'
+  /** Column pinning support */
+  pinned?: 'left' | 'right' | 'start' | 'end'
+  /** Pinning offset (e.g., 0, '120px') */
+  pinOffset?: number | string
+  /** Explicit cell/column width */
+  width?: number | string
+  /** Minimum cell/column width */
+  minWidth?: number | string
+  /** Maximum cell/column width */
+  maxWidth?: number | string
+  /** Enable tabular figures for consistent numeric layout */
+  tabular?: boolean
+}
+
+export const TableCell = React.forwardRef<HTMLTableCellElement, TableCellProps>(
+  function TableCell(
+    {
+      style,
+      className,
+      align = 'left',
+      pinned,
+      pinOffset,
+      width,
+      minWidth,
+      maxWidth,
+      tabular = false,
+      children,
+      ...rest
+    },
+    ref,
+  ) {
+    const ctx = React.useContext(TableContext)
+
+    const isPinnedLeft = pinned === 'left' || pinned === 'start'
+    const isPinnedRight = pinned === 'right' || pinned === 'end'
+
+    const { className: stylexClass, style: inlineStyle } = stylex.props(
+      styles.cell,
+      ctx.dense && styles.cellDense,
+      (tabular || align === 'numeric') && styles.cellTabular,
+      align === 'center'
+        ? styles.alignCenter
+        : align === 'right' || align === 'numeric'
+          ? styles.alignRight
+          : styles.alignLeft,
+      isPinnedLeft && styles.pinnedLeft,
+      isPinnedRight && styles.pinnedRight,
+      style,
+    )
+
+    const pinStyle: React.CSSProperties = {}
+    if (isPinnedLeft && pinOffset !== undefined) {
+      pinStyle.insetInlineStart =
+        typeof pinOffset === 'number' ? `${pinOffset}px` : pinOffset
+    } else if (isPinnedRight && pinOffset !== undefined) {
+      pinStyle.insetInlineEnd =
+        typeof pinOffset === 'number' ? `${pinOffset}px` : pinOffset
+    }
+    if (width !== undefined) {
+      pinStyle.width = typeof width === 'number' ? `${width}px` : width
+    }
+    if (minWidth !== undefined) {
+      pinStyle.minWidth =
+        typeof minWidth === 'number' ? `${minWidth}px` : minWidth
+    }
+    if (maxWidth !== undefined) {
+      pinStyle.maxWidth =
+        typeof maxWidth === 'number' ? `${maxWidth}px` : maxWidth
+    }
+
+    return (
+      <td
+        {...rest}
+        ref={ref}
+        className={
+          [stylexClass, className].filter(Boolean).join(' ') || undefined
+        }
+        style={{ ...inlineStyle, ...pinStyle }}
+      >
+        {children}
+      </td>
+    )
+  },
+)
+
+// ── TableCaption Component ────────────────────────────────────────────
+
+export interface TableCaptionProps
+  extends Omit<React.HTMLAttributes<HTMLTableCaptionElement>, 'style'> {
+  style?: StyleXStyles
+  className?: string
+  /** Placement side of the caption */
+  side?: 'top' | 'bottom'
+}
+
+export const TableCaption = React.forwardRef<
+  HTMLTableCaptionElement,
+  TableCaptionProps
+>(function TableCaption(
+  { style, className, side = 'bottom', children, ...rest },
+  ref,
+) {
+  const { className: stylexClass, style: inlineStyle } = stylex.props(
+    styles.caption,
+    side === 'top' && styles.captionTop,
+    style,
+  )
+
+  return (
+    <caption
+      {...rest}
+      ref={ref}
+      className={[stylexClass, className].filter(Boolean).join(' ') || undefined}
+      style={inlineStyle}
+    >
+      {children}
+    </caption>
+  )
+})
+
+// ── TableEmpty Component ──────────────────────────────────────────────
+
+export interface TableEmptyProps
+  extends Omit<React.HTMLAttributes<HTMLTableRowElement>, 'style'> {
+  colSpan?: number
+  style?: StyleXStyles
+  cellStyle?: StyleXStyles
+  className?: string
+  cellClassName?: string
+}
+
+export const TableEmpty = React.forwardRef<HTMLTableRowElement, TableEmptyProps>(
+  function TableEmpty(
+    {
+      colSpan = 1,
+      style,
+      cellStyle,
+      className,
+      cellClassName,
+      children,
+      ...rest
+    },
+    ref,
+  ) {
+    const { className: cellClass, style: cellInline } = stylex.props(
+      styles.emptyCell,
+      cellStyle,
+    )
+
+    return (
+      <TableRow {...rest} ref={ref} hoverable={false} style={style} className={className}>
+        <td
+          colSpan={colSpan}
+          className={[cellClass, cellClassName].filter(Boolean).join(' ') || undefined}
+          style={cellInline}
+        >
+          {children}
+        </td>
+      </TableRow>
+    )
+  },
+)
+
+// ── TableSkeleton Component ───────────────────────────────────────────
+
+export interface TableSkeletonProps {
+  rows?: number
+  columns?: number
+  style?: StyleXStyles
+}
+
+export function TableSkeleton({
+  rows = 5,
+  columns = 4,
+  style,
+}: TableSkeletonProps) {
+  return (
+    <>
+      {Array.from({ length: rows }).map((_, rIdx) => (
+        // biome-ignore lint/suspicious/noArrayIndexKey: deterministic placeholder keys
+        <TableRow key={`skeleton-row-${rIdx}`} hoverable={false} style={style}>
+          {Array.from({ length: columns }).map((_, cIdx) => (
+            // biome-ignore lint/suspicious/noArrayIndexKey: deterministic placeholder keys
+            <TableCell key={`skeleton-cell-${rIdx}-${cIdx}`}>
+              <div {...stylex.props(styles.skeletonBar)} />
+            </TableCell>
+          ))}
+        </TableRow>
+      ))}
+    </>
+  )
+}

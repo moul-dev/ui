@@ -5,15 +5,15 @@ import { describe, expect, test } from 'vitest'
 import {
   BreadcrumbItem,
   Breadcrumbs,
-  Cell,
-  Column,
   Link,
-  Row,
   Tab,
   TabList,
   Table,
   TableBody,
+  TableCell,
+  TableHead,
   TableHeader,
+  TableRow,
   TabPanel,
   TabPanels,
   Tabs,
@@ -200,10 +200,10 @@ describe('Breadcrumbs Component Suite', () => {
 })
 
 describe('Table Component Suite', () => {
-  test('renders structured grid with appropriate ARIA roles', () => {
+  test('renders structured semantic table with appropriate elements and refs', () => {
     const tableRef = React.createRef<HTMLTableElement>()
     const headerRef = React.createRef<HTMLTableSectionElement>()
-    const colRef = React.createRef<HTMLTableHeaderCellElement>()
+    const colRef = React.createRef<HTMLTableCellElement>()
     const bodyRef = React.createRef<HTMLTableSectionElement>()
     const rowRef = React.createRef<HTMLTableRowElement>()
     const cellRef = React.createRef<HTMLTableCellElement>()
@@ -211,20 +211,20 @@ describe('Table Component Suite', () => {
     render(
       <Table ref={tableRef} aria-label="Inventory">
         <TableHeader ref={headerRef}>
-          <Column ref={colRef} isRowHeader>
-            Name
-          </Column>
-          <Column>Count</Column>
+          <TableRow>
+            <TableHead ref={colRef}>Name</TableHead>
+            <TableHead>Count</TableHead>
+          </TableRow>
         </TableHeader>
         <TableBody ref={bodyRef}>
-          <Row ref={rowRef}>
-            <Cell ref={cellRef}>Apples</Cell>
-            <Cell>10</Cell>
-          </Row>
-          <Row>
-            <Cell>Oranges</Cell>
-            <Cell>5</Cell>
-          </Row>
+          <TableRow ref={rowRef}>
+            <TableCell ref={cellRef}>Apples</TableCell>
+            <TableCell>10</TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>Oranges</TableCell>
+            <TableCell>5</TableCell>
+          </TableRow>
         </TableBody>
       </Table>,
     )
@@ -236,36 +236,35 @@ describe('Table Component Suite', () => {
     expect(rowRef.current).toBeInTheDocument()
     expect(cellRef.current).toBeInTheDocument()
 
-    const table = screen.getByRole('grid')
+    const table = screen.getByRole('table')
     expect(table).toBeInTheDocument()
 
     const rows = screen.getAllByRole('row')
     expect(rows).toHaveLength(3) // 1 header row + 2 data rows
 
-    const cells = screen.getAllByRole('gridcell')
-    expect(cells).toHaveLength(2) // 2 rows * 1 gridcell
-
-    const rowHeaders = screen.getAllByRole('rowheader')
-    expect(rowHeaders).toHaveLength(2) // 2 rows * 1 rowheader
+    const cells = screen.getAllByRole('cell')
+    expect(cells).toHaveLength(4) // 2 rows * 2 cells
   })
 
-  test('handles cell focus and selection styles', () => {
+  test('handles selected row state', () => {
     render(
-      <Table aria-label="Selectable Inventory" selectionMode="single">
+      <Table aria-label="Selectable Inventory">
         <TableHeader>
-          <Column isRowHeader>Name</Column>
-          <Column>Count</Column>
+          <TableRow>
+            <TableHead>Name</TableHead>
+            <TableHead>Count</TableHead>
+          </TableRow>
         </TableHeader>
         <TableBody>
-          <Row id="row-1">
-            <Cell>Apples</Cell>
-            <Cell>10</Cell>
-          </Row>
+          <TableRow selected>
+            <TableCell>Apples</TableCell>
+            <TableCell>10</TableCell>
+          </TableRow>
         </TableBody>
       </Table>,
     )
 
     const firstCell = screen.getByText('Apples')
-    expect(firstCell).toBeInTheDocument()
+    expect(firstCell.closest('tr')).toHaveAttribute('aria-selected', 'true')
   })
 })

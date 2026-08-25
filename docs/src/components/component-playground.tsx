@@ -11,8 +11,6 @@ import {
   CardBody,
   CardFooter,
   CardHeader,
-  Cell,
-  Column,
   DatePicker,
   DateRangePicker,
   EmptyState,
@@ -23,7 +21,6 @@ import {
   Pagination,
   ProgressBar,
   RangeCalendar,
-  Row,
   Select,
   SelectItem,
   Sidebar,
@@ -35,10 +32,15 @@ import {
   Slider,
   SliderThumb,
   SliderTrack,
+  Stat,
   Switch,
   Table,
   TableBody,
+  TableCell,
+  TableHead,
   TableHeader,
+  TableRow,
+  TableSkeleton,
   Tag,
   TagGroup,
   TextField,
@@ -962,19 +964,31 @@ const REGISTRY: Record<string, ComponentConfig> = {
   Table: {
     name: 'Table',
     defaultProps: {
-      selectionMode: 'none',
+      dense: true,
+      striped: false,
+      hoverable: true,
       stickyHeader: false,
       isLoading: false,
       allowsSorting: true,
-      showSortIndicator: true,
     },
     props: [
       {
-        name: 'selectionMode',
-        type: 'select',
-        label: 'Selection Mode',
-        options: ['none', 'single', 'multiple'],
-        defaultValue: 'none',
+        name: 'dense',
+        type: 'boolean',
+        label: 'Dense Padding',
+        defaultValue: true,
+      },
+      {
+        name: 'striped',
+        type: 'boolean',
+        label: 'Zebra Striping',
+        defaultValue: false,
+      },
+      {
+        name: 'hoverable',
+        type: 'boolean',
+        label: 'Row Hover Effect',
+        defaultValue: true,
       },
       {
         name: 'stickyHeader',
@@ -985,7 +999,7 @@ const REGISTRY: Record<string, ComponentConfig> = {
       {
         name: 'isLoading',
         type: 'boolean',
-        label: 'Loading State',
+        label: 'Loading Skeleton',
         defaultValue: false,
       },
       {
@@ -995,10 +1009,10 @@ const REGISTRY: Record<string, ComponentConfig> = {
         defaultValue: true,
       },
       {
-        name: 'showSortIndicator',
+        name: 'pinnedColumns',
         type: 'boolean',
-        label: 'Show Sort Indicator',
-        defaultValue: true,
+        label: 'Sticky Column Pinning',
+        defaultValue: false,
       },
     ],
   },
@@ -1121,26 +1135,29 @@ const REGISTRY: Record<string, ComponentConfig> = {
 }
 
 function TablePreviewWrapper({
-  selectionMode,
+  dense,
+  striped,
+  hoverable,
   stickyHeader,
   isLoading,
   allowsSorting,
-  showSortIndicator,
+  pinnedColumns = false,
 }: {
-  selectionMode: 'none' | 'single' | 'multiple'
+  dense: boolean
+  striped: boolean
+  hoverable: boolean
   stickyHeader: boolean
   isLoading: boolean
   allowsSorting: boolean
-  showSortIndicator: boolean
+  pinnedColumns?: boolean
 }) {
   const [sortDescriptor, setSortDescriptor] = useState<{
     column: string
-    direction: 'ascending' | 'descending'
+    direction: 'asc' | 'desc'
   }>({
     column: 'name',
-    direction: 'ascending',
+    direction: 'asc',
   })
-  const [selectedKeys, setSelectedKeys] = useState<any>(new Set(['1']))
 
   const rows = [
     {
@@ -1184,82 +1201,102 @@ function TablePreviewWrapper({
     const cmp = String(first).localeCompare(String(second), undefined, {
       numeric: true,
     })
-    return sortDescriptor.direction === 'descending' ? -cmp : cmp
+    return sortDescriptor.direction === 'desc' ? -cmp : cmp
   })
+
+  const handleSort = (colName: string) => {
+    if (!allowsSorting) return
+    setSortDescriptor((prev) => ({
+      column: colName,
+      direction:
+        prev.column === colName && prev.direction === 'asc' ? 'desc' : 'asc',
+    }))
+  }
 
   return (
     <div className="w-full max-w-xl max-h-[260px] overflow-y-auto rounded-lg border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950">
       <Table
         aria-label="Playground Table"
-        selectionMode={selectionMode}
-        selectedKeys={selectedKeys}
-        onSelectionChange={setSelectedKeys}
+        dense={dense}
+        striped={striped}
+        hoverable={hoverable}
         stickyHeader={stickyHeader}
-        isLoading={isLoading}
-        emptyState={
-          <div className="py-6 text-center text-xs text-neutral-500">
-            No rows available.
-          </div>
-        }
-        sortDescriptor={sortDescriptor}
-        onSortChange={(desc) =>
-          setSortDescriptor({
-            column: String(desc.column),
-            direction: desc.direction || 'ascending',
-          })
-        }
+        wrapInContainer={false}
       >
         <TableHeader>
-          <Column
-            id="name"
-            isRowHeader
-            allowsSorting={allowsSorting}
-            showSortIndicator={showSortIndicator}
-          >
-            Service
-          </Column>
-          <Column
-            id="role"
-            allowsSorting={allowsSorting}
-            showSortIndicator={showSortIndicator}
-          >
-            Role
-          </Column>
-          <Column
-            id="status"
-            allowsSorting={allowsSorting}
-            showSortIndicator={showSortIndicator}
-          >
-            Status
-          </Column>
-          <Column
-            id="latency"
-            allowsSorting={allowsSorting}
-            showSortIndicator={showSortIndicator}
-          >
-            Latency
-          </Column>
+          <TableRow>
+            <TableHead
+              pinned={pinnedColumns ? 'left' : undefined}
+              pinOffset={pinnedColumns ? 0 : undefined}
+              sortDirection={
+                sortDescriptor.column === 'name'
+                  ? sortDescriptor.direction
+                  : null
+              }
+              onSort={allowsSorting ? () => handleSort('name') : undefined}
+            >
+              Service
+            </TableHead>
+            <TableHead
+              sortDirection={
+                sortDescriptor.column === 'role'
+                  ? sortDescriptor.direction
+                  : null
+              }
+              onSort={allowsSorting ? () => handleSort('role') : undefined}
+            >
+              Role
+            </TableHead>
+            <TableHead
+              sortDirection={
+                sortDescriptor.column === 'status'
+                  ? sortDescriptor.direction
+                  : null
+              }
+              onSort={allowsSorting ? () => handleSort('status') : undefined}
+            >
+              Status
+            </TableHead>
+            <TableHead
+              align="numeric"
+              sortDirection={
+                sortDescriptor.column === 'latency'
+                  ? sortDescriptor.direction
+                  : null
+              }
+              onSort={allowsSorting ? () => handleSort('latency') : undefined}
+            >
+              Latency
+            </TableHead>
+          </TableRow>
         </TableHeader>
-        <TableBody items={isLoading ? [] : sortedRows}>
-          {(item: any) => (
-            <Row key={item.id} id={item.id}>
-              <Cell>
-                <span className="font-semibold text-neutral-900 dark:text-neutral-100">
-                  {item.name}
-                </span>
-              </Cell>
-              <Cell>{item.role}</Cell>
-              <Cell>
-                <Badge variant={item.variant} size="sm" dot>
-                  {item.status}
-                </Badge>
-              </Cell>
-              <Cell>
-                <span className="font-mono text-xs text-neutral-500">
-                  {item.latency}
-                </span>
-              </Cell>
-            </Row>
+        <TableBody>
+          {isLoading ? (
+            <TableSkeleton rows={4} columns={4} />
+          ) : (
+            sortedRows.map((item) => (
+              <TableRow key={item.id}>
+                <TableCell
+                  pinned={pinnedColumns ? 'left' : undefined}
+                  pinOffset={pinnedColumns ? 0 : undefined}
+                >
+                  <span className="font-semibold text-neutral-900 dark:text-neutral-100">
+                    {item.name}
+                  </span>
+                </TableCell>
+                <TableCell>{item.role}</TableCell>
+                <TableCell>
+                  <Badge variant={item.variant} dot>
+                    {item.status}
+                  </Badge>
+                </TableCell>
+                <TableCell align="numeric">
+                  <span className="font-mono text-xs text-neutral-500">
+                    {item.latency}
+                  </span>
+                </TableCell>
+              </TableRow>
+            ))
           )}
         </TableBody>
       </Table>
@@ -1734,8 +1771,8 @@ export function ComponentPlayground({ component }: { component: string }) {
       </InputOTPGroup>`
           : `      <InputOTPGroup>
 ${Array.from({ length: maxLength || 4 })
-  .map((_, i) => `        <InputOTPSlot index={${i}} />`)
-  .join('\n')}
+            .map((_, i) => `        <InputOTPSlot index={${i}} />`)
+            .join('\n')}
       </InputOTPGroup>`
 
         return `import {
@@ -2065,13 +2102,11 @@ export default function Example() {
 
 export default function Example() {
   return (
-    <EmptyState${propsStr}${
-      showAction ? '\n      action={<Button size="sm">Create New</Button>}' : ''
-    }${
-      showSecondaryAction
-        ? '\n      secondaryAction={<Button size="sm" variant="ghost">Learn More</Button>}'
-        : ''
-    }
+    <EmptyState${propsStr}${showAction ? '\n      action={<Button size="sm">Create New</Button>}' : ''
+          }${showSecondaryAction
+            ? '\n      secondaryAction={<Button size="sm" variant="ghost">Learn More</Button>}'
+            : ''
+          }
     />
   );
 }`
@@ -2343,16 +2378,15 @@ export default function Example() {
         aria-label="Trip booking dates"
         value={range}
         onChange={setRange}${propsStr}
-      />${
-        showSelectedValue
-          ? `
+      />${showSelectedValue
+              ? `
       {range && (
         <p className="text-xs text-neutral-500">
           {range.start?.toString()} → {range.end?.toString()}
         </p>
       )}`
-          : ''
-      }
+              : ''
+            }
     </div>
   );
 }`
@@ -2370,16 +2404,15 @@ export default function Example() {
         aria-label="Appointment date"
         value={date}
         onChange={setDate}${propsStr}
-      />${
-        showSelectedValue
-          ? `
+      />${showSelectedValue
+            ? `
       {date && (
         <p className="text-xs text-neutral-500">
           Selected: {date.toString()}
         </p>
       )}`
-          : ''
-      }
+            : ''
+          }
     </div>
   );
 }`
@@ -2638,11 +2671,13 @@ export default function Example() {
       case 'Table':
         return (
           <TablePreviewWrapper
-            selectionMode={activeProps.selectionMode}
+            dense={activeProps.dense}
+            striped={activeProps.striped}
+            hoverable={activeProps.hoverable}
             stickyHeader={activeProps.stickyHeader}
             isLoading={activeProps.isLoading}
             allowsSorting={activeProps.allowsSorting}
-            showSortIndicator={activeProps.showSortIndicator}
+            pinnedColumns={activeProps.pinnedColumns}
           />
         )
       case 'Calendar':

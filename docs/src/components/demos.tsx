@@ -16,9 +16,8 @@ import {
   BarChart,
   Button,
   Calendar,
-  Cell,
   ChartContainer,
-  Column,
+  Checkbox,
   ComboBox,
   ComboBoxItem,
   CommandPalette,
@@ -74,7 +73,6 @@ import {
   ProgressBar,
   RangeCalendar,
   REGEXP_ONLY_DIGITS,
-  Row,
   Sidebar,
   SidebarAside,
   SidebarDivider,
@@ -86,7 +84,14 @@ import {
   Stat,
   Table,
   TableBody,
+  TableCaption,
+  TableCell,
+  TableEmpty,
+  TableFooter,
+  TableHead,
   TableHeader,
+  TableRow,
+  TableSkeleton,
   Tag,
   TagGroup,
   TextField,
@@ -95,8 +100,30 @@ import {
   tokens,
   useToast,
 } from '@moul-dev/ui'
-import type React from 'react'
-import { useState } from 'react'
+import {
+  createColumnHelper,
+  createCoreRowModel,
+  createFilteredRowModel,
+  createPaginatedRowModel,
+  createSortedRowModel,
+  flexRender,
+  stockFeatures,
+  tableFeatures,
+  type PaginationState,
+  type RowSelectionState,
+  type SortingState,
+  useTable,
+} from '@tanstack/react-table'
+import { useVirtualizer } from '@tanstack/react-virtual'
+import {
+  QueryClient,
+  QueryClientProvider,
+  useQuery,
+} from '@tanstack/react-query'
+import { Store } from '@tanstack/store'
+import { useStore } from '@tanstack/react-store'
+import { useDebouncedValue } from '@tanstack/react-pacer'
+import React, { useMemo, useRef, useState } from 'react'
 
 export function AlertDialogDemo() {
   const [isOpen, setIsOpen] = useState(false)
@@ -393,7 +420,7 @@ export function TagGroupDemo() {
             label="Small size"
             size="sm"
             variant="primary"
-            onRemove={() => {}}
+            onRemove={() => { }}
           >
             <Tag id="sm1">Small Tag</Tag>
             <Tag id="sm2">Tag 2</Tag>
@@ -403,7 +430,7 @@ export function TagGroupDemo() {
             label="Medium size"
             size="md"
             variant="secondary"
-            onRemove={() => {}}
+            onRemove={() => { }}
           >
             <Tag id="md1">Medium Tag</Tag>
             <Tag id="md2">Tag 2</Tag>
@@ -413,7 +440,7 @@ export function TagGroupDemo() {
             label="Large size"
             size="lg"
             variant="tertiary"
-            onRemove={() => {}}
+            onRemove={() => { }}
           >
             <Tag id="lg1">Large Tag</Tag>
             <Tag id="lg2">Tag 2</Tag>
@@ -1452,11 +1479,10 @@ export function PaginationDemo() {
                 <td className="p-3 text-neutral-500">{u.role}</td>
                 <td className="p-3">
                   <span
-                    className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
-                      u.status === 'Active'
-                        ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-400'
-                        : 'bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400'
-                    }`}
+                    className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${u.status === 'Active'
+                      ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-400'
+                      : 'bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400'
+                      }`}
                   >
                     {u.status}
                   </span>
@@ -1482,138 +1508,401 @@ export function PaginationDemo() {
   )
 }
 
+// ── Table Ecosystem Demos ──────────────────────────────────────────
+
+interface ServiceRow {
+  id: string
+  name: string
+  team: string
+  region: string
+  status: string
+  variant: 'success' | 'warning' | 'error'
+  cpu: string
+  memory: string
+  latency: string
+  requests: string
+  uptime: string
+}
+
+const initialServices: ServiceRow[] = [
+  {
+    id: 'srv-1',
+    name: 'Auth Gateway',
+    team: 'Security',
+    region: 'us-east-1',
+    status: 'Operational',
+    variant: 'success',
+    cpu: '18%',
+    memory: '1.4 GB',
+    latency: '24ms',
+    requests: '1.2M req/s',
+    uptime: '99.99%',
+  },
+  {
+    id: 'srv-2',
+    name: 'PostgreSQL Primary',
+    team: 'Data Platform',
+    region: 'us-west-2',
+    status: 'Operational',
+    variant: 'success',
+    cpu: '42%',
+    memory: '14.2 GB',
+    latency: '4ms',
+    requests: '450k req/s',
+    uptime: '99.98%',
+  },
+  {
+    id: 'srv-3',
+    name: 'Edge CDN Gateway',
+    team: 'Networking',
+    region: 'global',
+    status: 'Degraded',
+    variant: 'warning',
+    cpu: '78%',
+    memory: '3.8 GB',
+    latency: '142ms',
+    requests: '3.8M req/s',
+    uptime: '99.85%',
+  },
+  {
+    id: 'srv-4',
+    name: 'Telemetry Ingestion',
+    team: 'Compute',
+    region: 'eu-central-1',
+    status: 'Operational',
+    variant: 'success',
+    cpu: '31%',
+    memory: '2.1 GB',
+    latency: '18ms',
+    requests: '820k req/s',
+    uptime: '100%',
+  },
+  {
+    id: 'srv-5',
+    name: 'Payment Processing',
+    team: 'Billing',
+    region: 'us-east-1',
+    status: 'Incident',
+    variant: 'error',
+    cpu: '94%',
+    memory: '8.6 GB',
+    latency: '520ms',
+    requests: '95k req/s',
+    uptime: '98.90%',
+  },
+  {
+    id: 'srv-6',
+    name: 'Search Indexer',
+    team: 'Search',
+    region: 'ap-northeast-1',
+    status: 'Operational',
+    variant: 'success',
+    cpu: '55%',
+    memory: '6.4 GB',
+    latency: '32ms',
+    requests: '610k req/s',
+    uptime: '99.95%',
+  },
+  {
+    id: 'srv-7',
+    name: 'Media Transcoder',
+    team: 'Media',
+    region: 'us-east-2',
+    status: 'Operational',
+    variant: 'success',
+    cpu: '64%',
+    memory: '5.2 GB',
+    latency: '85ms',
+    requests: '140k req/s',
+    uptime: '99.90%',
+  },
+  {
+    id: 'srv-8',
+    name: 'Notification Hub',
+    team: 'Messaging',
+    region: 'eu-west-1',
+    status: 'Operational',
+    variant: 'success',
+    cpu: '22%',
+    memory: '1.8 GB',
+    latency: '12ms',
+    requests: '2.1M req/s',
+    uptime: '99.99%',
+  },
+]
+
+// Global reactive store using TanStack Store for table view preferences
+const tablePreferencesStore = new Store({
+  dense: true,
+  striped: false,
+  stickyHeader: true,
+  stickyPinning: true,
+})
+
+/**
+ * Full TanStack Table v9 + TanStack Store + TanStack Pacer Showcase
+ */
 export function TableDemo() {
-  const [sortDescriptor, setSortDescriptor] = useState<{
-    column: string
-    direction: 'ascending' | 'descending'
-  }>({
-    column: 'name',
-    direction: 'ascending',
+  const [data] = useState<ServiceRow[]>(initialServices)
+  const [sorting, setSorting] = useState<SortingState>([
+    { id: 'name', desc: false },
+  ])
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({
+    'srv-2': true,
   })
-  const [selectionMode, setSelectionMode] = useState<
-    'none' | 'single' | 'multiple'
-  >('multiple')
-  const [selectedKeys, setSelectedKeys] = useState<any>(new Set(['2']))
-  const [stickyHeader, setStickyHeader] = useState(false)
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 5,
+  })
+  const [searchQuery, setSearchQuery] = useState('')
+  const [debouncedSearch] = useDebouncedValue(searchQuery, { wait: 250 })
   const [isLoading, setIsLoading] = useState(false)
   const [isEmpty, setIsEmpty] = useState(false)
-  const [searchQuery, setSearchQuery] = useState('')
 
-  const initialRows = [
-    {
-      id: '1',
-      name: 'Auth Service',
-      team: 'Security',
-      region: 'us-east-1',
-      status: 'Operational',
-      variant: 'success' as const,
-      latency: '24ms',
-      requests: '1.2M req/s',
-    },
-    {
-      id: '2',
-      name: 'PostgreSQL Primary',
-      team: 'Data Platform',
-      region: 'us-west-2',
-      status: 'Operational',
-      variant: 'success' as const,
-      latency: '4ms',
-      requests: '450k req/s',
-    },
-    {
-      id: '3',
-      name: 'Edge CDN Gateway',
-      team: 'Networking',
-      region: 'global',
-      status: 'Degraded',
-      variant: 'warning' as const,
-      latency: '142ms',
-      requests: '3.8M req/s',
-    },
-    {
-      id: '4',
-      name: 'Worker Queue',
-      team: 'Compute',
-      region: 'eu-central-1',
-      status: 'Operational',
-      variant: 'success' as const,
-      latency: '18ms',
-      requests: '820k req/s',
-    },
-    {
-      id: '5',
-      name: 'Payment Processing',
-      team: 'Billing',
-      region: 'us-east-1',
-      status: 'Incident',
-      variant: 'error' as const,
-      latency: '520ms',
-      requests: '95k req/s',
-    },
-  ]
+  // Reactive state from TanStack Store
+  const prefs = useStore(tablePreferencesStore)
 
-  const filteredRows = initialRows.filter(
-    (row) =>
-      row.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      row.team.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      row.region.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      row.status.toLowerCase().includes(searchQuery.toLowerCase()),
+  const columns = useMemo<any[]>(
+    () => [
+      {
+        id: 'select',
+        size: 44,
+        minSize: 44,
+        maxSize: 44,
+        header: ({ table }: any) => (
+          <div className="flex items-center justify-center">
+            <Checkbox
+              aria-label="Select all rows on page"
+              isSelected={table.getIsAllPageRowsSelected()}
+              isIndeterminate={table.getIsSomePageRowsSelected()}
+              onChange={(val) => table.toggleAllPageRowsSelected(val)}
+            />
+          </div>
+        ),
+        cell: ({ row }: any) => (
+          <div className="flex items-center justify-center">
+            <Checkbox
+              aria-label={`Select ${row.original.name}`}
+              isSelected={row.getIsSelected()}
+              onChange={(val) => row.toggleSelected(val)}
+            />
+          </div>
+        ),
+      },
+      {
+        accessorKey: 'name',
+        header: 'Service Name',
+        size: 190,
+        minSize: 170,
+        cell: (info: any) => (
+          <div className="flex flex-col">
+            <span className="font-semibold text-neutral-900 dark:text-neutral-100">
+              {info.getValue()}
+            </span>
+            <span className="text-xs text-neutral-400 font-mono">
+              {info.row.original.id}
+            </span>
+          </div>
+        ),
+      },
+      {
+        accessorKey: 'team',
+        header: 'Team',
+        size: 130,
+        minSize: 110,
+        cell: (info: any) => (
+          <span className="text-neutral-700 dark:text-neutral-300">
+            {info.getValue()}
+          </span>
+        ),
+      },
+      {
+        accessorKey: 'region',
+        header: 'Region',
+        size: 120,
+        minSize: 100,
+        cell: (info: any) => (
+          <span className="font-mono text-xs px-1.5 py-0.5 rounded bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300">
+            {info.getValue()}
+          </span>
+        ),
+      },
+      {
+        accessorKey: 'status',
+        header: 'Health',
+        size: 130,
+        minSize: 110,
+        cell: (info: any) => (
+          <Badge variant={info.row.original.variant} dot>
+            {info.getValue()}
+          </Badge>
+        ),
+      },
+      {
+        accessorKey: 'cpu',
+        header: 'CPU Load',
+        size: 100,
+        minSize: 90,
+        cell: (info: any) => (
+          <span className="font-mono text-xs text-neutral-600 dark:text-neutral-400">
+            {info.getValue()}
+          </span>
+        ),
+      },
+      {
+        accessorKey: 'memory',
+        header: 'Memory',
+        size: 110,
+        minSize: 95,
+        cell: (info: any) => (
+          <span className="font-mono text-xs text-neutral-600 dark:text-neutral-400">
+            {info.getValue()}
+          </span>
+        ),
+      },
+      {
+        accessorKey: 'latency',
+        header: 'Latency',
+        size: 100,
+        minSize: 90,
+        cell: (info: any) => (
+          <span className="font-mono text-xs text-neutral-600 dark:text-neutral-400">
+            {info.getValue()}
+          </span>
+        ),
+      },
+      {
+        accessorKey: 'requests',
+        header: 'Throughput',
+        size: 140,
+        minSize: 120,
+        cell: (info: any) => (
+          <span className="font-medium text-neutral-900 dark:text-neutral-100">
+            {info.getValue()}
+          </span>
+        ),
+      },
+      {
+        accessorKey: 'uptime',
+        header: 'Uptime',
+        size: 100,
+        minSize: 90,
+        cell: (info: any) => (
+          <span className="font-mono text-xs text-emerald-600 dark:text-emerald-400 font-medium">
+            {info.getValue()}
+          </span>
+        ),
+      },
+      {
+        id: 'actions',
+        header: 'Action',
+        size: 96,
+        minSize: 96,
+        maxSize: 96,
+        cell: ({ row }: any) => (
+          <Button
+            size="sm"
+            variant="ghost"
+            onPress={() => alert(`Managing service: ${row.original.name}`)}
+          >
+            Manage
+          </Button>
+        ),
+      },
+    ],
+    [],
   )
 
-  const sortedRows = [...filteredRows].sort((a: any, b: any) => {
-    const col = sortDescriptor.column as keyof typeof a
-    const first = a[col]
-    const second = b[col]
-    const cmp = String(first).localeCompare(String(second), undefined, {
-      numeric: true,
-    })
-    return sortDescriptor.direction === 'descending' ? -cmp : cmp
+  const activeData = isEmpty ? [] : data
+
+  const columnPinning = useMemo(() => {
+    if (!prefs.stickyPinning) return { start: [], end: [] }
+    return {
+      start: ['select', 'name'],
+      end: ['actions'],
+    }
+  }, [prefs.stickyPinning])
+
+  const table = useTable({
+    data: activeData,
+    columns,
+    state: {
+      sorting,
+      globalFilter: debouncedSearch,
+      rowSelection,
+      pagination,
+      columnPinning,
+    },
+    onSortingChange: setSorting,
+    onRowSelectionChange: setRowSelection,
+    onPaginationChange: setPagination,
+    features: tableFeatures({
+      ...stockFeatures,
+      coreRowModel: createCoreRowModel(),
+      sortedRowModel: createSortedRowModel(),
+      filteredRowModel: createFilteredRowModel(),
+      paginatedRowModel: createPaginatedRowModel(),
+    }),
+    getRowId: (row: any) => row.id,
   })
 
-  const rows = isEmpty || isLoading ? [] : sortedRows
+  const selectedCount = Object.keys(rowSelection).filter(
+    (k) => rowSelection[k],
+  ).length
 
   return (
-    <div className="flex flex-col gap-4 w-full max-w-3xl p-4 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/20">
-      {/* Interactive Control Bar */}
+    <div className="flex flex-col gap-4 w-full max-w-4xl p-5 rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white/70 dark:bg-neutral-900/40 backdrop-blur-md shadow-xs">
+      {/* Top Controls Bar */}
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-2 flex-1 min-w-[200px]">
+        <div className="flex items-center gap-2 flex-1 min-w-[240px]">
           <input
             type="text"
-            placeholder="Search services, teams, regions..."
+            placeholder="Pacer debounced search (services, teams, regions)..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full px-3 py-1.5 text-xs rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-neutral-900 dark:text-neutral-100 placeholder-neutral-400 focus:outline-hidden focus:ring-2 focus:ring-indigo-500"
+            className="w-full px-3.5 py-1.5 text-xs rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 placeholder-neutral-400 focus:outline-hidden focus:ring-2 focus:ring-indigo-500 transition-all"
           />
         </div>
 
+        {/* View Preferences (TanStack Store) */}
         <div className="flex items-center gap-1.5 flex-wrap">
-          <div className="flex items-center border border-neutral-200 dark:border-neutral-800 rounded-lg p-0.5 bg-white dark:bg-neutral-900">
-            {(['none', 'single', 'multiple'] as const).map((mode) => (
-              <button
-                key={mode}
-                type="button"
-                onClick={() => setSelectionMode(mode)}
-                className={`px-2.5 py-1 text-xs font-medium rounded-md transition-colors ${
-                  selectionMode === mode
-                    ? 'bg-indigo-600 text-white shadow-xs'
-                    : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-950 dark:hover:text-neutral-100'
-                }`}
-              >
-                {mode === 'none'
-                  ? 'No Select'
-                  : mode === 'single'
-                    ? 'Single'
-                    : 'Multi'}
-              </button>
-            ))}
-          </div>
+          <Button
+            size="sm"
+            variant={prefs.stickyPinning ? 'primary' : 'outline'}
+            onPress={() =>
+              tablePreferencesStore.setState((s) => ({
+                ...s,
+                stickyPinning: !s.stickyPinning,
+              }))
+            }
+          >
+            Column Pinning: {prefs.stickyPinning ? 'ON' : 'OFF'}
+          </Button>
 
           <Button
             size="sm"
-            variant={stickyHeader ? 'primary' : 'outline'}
-            onPress={() => setStickyHeader((v) => !v)}
+            variant={prefs.dense ? 'primary' : 'outline'}
+            onPress={() =>
+              tablePreferencesStore.setState((s) => ({
+                ...s,
+                dense: !s.dense,
+              }))
+            }
           >
-            Sticky: {stickyHeader ? 'ON' : 'OFF'}
+            Dense: {prefs.dense ? 'ON' : 'OFF'}
+          </Button>
+
+          <Button
+            size="sm"
+            variant={prefs.striped ? 'primary' : 'outline'}
+            onPress={() =>
+              tablePreferencesStore.setState((s) => ({
+                ...s,
+                striped: !s.striped,
+              }))
+            }
+          >
+            Striped: {prefs.striped ? 'ON' : 'OFF'}
           </Button>
 
           <Button
@@ -1635,99 +1924,286 @@ export function TableDemo() {
       </div>
 
       {/* Selected Items Summary Bar */}
-      {selectionMode !== 'none' && (
-        <div className="flex items-center justify-between text-xs text-neutral-500 px-1">
+      {selectedCount > 0 && (
+        <div className="flex items-center justify-between px-3 py-2 rounded-lg bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800/60 text-xs text-indigo-900 dark:text-indigo-200">
           <span>
-            Selected:{' '}
-            <strong className="text-neutral-900 dark:text-neutral-100">
-              {selectedKeys === 'all' ? rows.length : (selectedKeys.size ?? 0)}
-            </strong>{' '}
-            of {rows.length} rows
+            <strong>{selectedCount}</strong>{' '}
+            {selectedCount === 1 ? 'service' : 'services'} selected across table
           </span>
-          {(selectedKeys === 'all' ||
-            (selectedKeys.size && selectedKeys.size > 0)) && (
+          <div className="flex items-center gap-2">
             <button
               type="button"
-              onClick={() => setSelectedKeys(new Set())}
-              className="text-indigo-600 dark:text-indigo-400 hover:underline font-medium"
+              onClick={() => setRowSelection({})}
+              className="text-xs font-semibold text-indigo-700 dark:text-indigo-300 hover:underline"
             >
               Clear selection
             </button>
-          )}
+            <Button size="sm" variant="danger">
+              Batch Restart ({selectedCount})
+            </Button>
+          </div>
         </div>
       )}
 
-      {/* Table Container */}
-      <div className="max-h-[300px] overflow-y-auto rounded-lg border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950">
+      {/* Table Container with Horizontal Scroll */}
+      <div className="max-h-[360px] overflow-auto rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950">
         <Table
-          aria-label="Interactive Cluster Services Table"
-          selectionMode={selectionMode}
-          selectedKeys={selectedKeys}
-          onSelectionChange={setSelectedKeys}
-          stickyHeader={stickyHeader}
-          isLoading={isLoading}
-          emptyState={
-            <div className="py-8 text-center">
-              <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
-                No matching services found
-              </p>
-              <p className="text-xs text-neutral-500 mt-1">
-                Try changing your search keywords or clearing filters.
-              </p>
-            </div>
-          }
-          sortDescriptor={sortDescriptor}
-          onSortChange={(desc) =>
-            setSortDescriptor({
-              column: String(desc.column),
-              direction: desc.direction || 'ascending',
-            })
-          }
+          aria-label="Cluster Services Table"
+          layout="fixed"
+          dense={prefs.dense}
+          striped={prefs.striped}
+          stickyHeader={prefs.stickyHeader}
+          wrapInContainer={false}
+          className="min-w-[1260px]"
         >
           <TableHeader>
-            <Column id="name" allowsSorting isRowHeader>
-              Service
-            </Column>
-            <Column id="team" allowsSorting>
-              Team
-            </Column>
-            <Column id="region" allowsSorting>
-              Region
-            </Column>
-            <Column id="status" allowsSorting>
-              Status
-            </Column>
-            <Column id="latency" allowsSorting>
-              Latency
-            </Column>
-            <Column id="requests" allowsSorting>
-              Throughput
-            </Column>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id}>
+                {headerGroup.headers.map((header) => {
+                  const isSortable = header.column.getCanSort()
+                  const sortDir = header.column.getIsSorted()
+                  const isPinned = header.column.getIsPinned()
+                  const pinOffset =
+                    isPinned === 'start'
+                      ? header.column.getStart('start')
+                      : isPinned === 'end'
+                        ? header.column.getAfter('end')
+                        : undefined
+
+                  return (
+                    <TableHead
+                      key={header.id}
+                      width={header.getSize()}
+                      minWidth={header.column.columnDef.minSize}
+                      maxWidth={header.column.columnDef.maxSize}
+                      pinned={
+                        isPinned
+                          ? isPinned === 'start'
+                            ? 'left'
+                            : 'right'
+                          : undefined
+                      }
+                      pinOffset={pinOffset}
+                      sortDirection={sortDir}
+                      onSort={
+                        isSortable
+                          ? () => header.column.toggleSorting()
+                          : undefined
+                      }
+                    >
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
+                    </TableHead>
+                  )
+                })}
+              </TableRow>
+            ))}
           </TableHeader>
-          <TableBody items={rows}>
-            {(item: any) => (
-              <Row key={item.id} id={item.id}>
-                <Cell>
-                  <span className="font-semibold text-neutral-900 dark:text-neutral-100">
-                    {item.name}
-                  </span>
-                </Cell>
-                <Cell>{item.team}</Cell>
-                <Cell>
-                  <span className="font-mono text-xs text-neutral-500">
-                    {item.region}
-                  </span>
-                </Cell>
-                <Cell>
-                  <Badge variant={item.variant} size="sm" dot>
-                    {item.status}
-                  </Badge>
-                </Cell>
-                <Cell>
-                  <span className="font-mono text-xs">{item.latency}</span>
-                </Cell>
-                <Cell>{item.requests}</Cell>
-              </Row>
+          <TableBody>
+            {isLoading ? (
+              <TableSkeleton rows={5} columns={columns.length} />
+            ) : table.getRowModel().rows.length === 0 ? (
+              <TableEmpty colSpan={columns.length}>
+                <EmptyState
+                  variant="default"
+                  title="No services match your query"
+                  description="Try adjusting your debounced search terms or clearing active filters."
+                  action={
+                    <Button size="sm" onPress={() => setSearchQuery('')}>
+                      Clear Search
+                    </Button>
+                  }
+                />
+              </TableEmpty>
+            ) : (
+              table.getRowModel().rows.map((row) => (
+                <TableRow key={row.id} selected={row.getIsSelected()}>
+                  {row.getVisibleCells().map((cell) => {
+                    const isPinned = cell.column.getIsPinned()
+                    const pinOffset =
+                      isPinned === 'start'
+                        ? cell.column.getStart('start')
+                        : isPinned === 'end'
+                          ? cell.column.getAfter('end')
+                          : undefined
+
+                    return (
+                      <TableCell
+                        key={cell.id}
+                        width={cell.column.getSize()}
+                        minWidth={cell.column.columnDef.minSize}
+                        maxWidth={cell.column.columnDef.maxSize}
+                        pinned={
+                          isPinned
+                            ? isPinned === 'start'
+                              ? 'left'
+                              : 'right'
+                            : undefined
+                        }
+                        pinOffset={pinOffset}
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </TableCell>
+                    )
+                  })}
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+          <TableFooter>
+            <TableRow>
+              <TableCell
+                colSpan={2}
+                pinned={prefs.stickyPinning ? 'left' : undefined}
+                pinOffset={0}
+              >
+                <span className="text-xs text-neutral-500">
+                  Showing {table.getRowModel().rows.length} of{' '}
+                  {table.getFilteredRowModel().rows.length} total services
+                </span>
+              </TableCell>
+              <TableCell colSpan={9} align="right">
+                <span className="text-xs font-mono text-neutral-500">
+                  Cluster Health: 100% Verified
+                </span>
+              </TableCell>
+            </TableRow>
+          </TableFooter>
+        </Table>
+      </div>
+
+      {/* Pagination Footer */}
+      <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-neutral-500 pt-1">
+        <span>
+          Page <strong>{pagination.pageIndex + 1}</strong> of{' '}
+          <strong>{table.getPageCount() || 1}</strong>
+        </span>
+        <div className="flex items-center gap-1.5">
+          <Button
+            size="sm"
+            variant="outline"
+            onPress={() => table.previousPage()}
+            isDisabled={!table.getCanPreviousPage()}
+          >
+            Previous
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            onPress={() => table.nextPage()}
+            isDisabled={!table.getCanNextPage()}
+          >
+            Next
+          </Button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/**
+ * TanStack Virtual Showcase: 2,000 Rows Windowed Scrolling
+ */
+export function TableVirtualDemo() {
+  const parentRef = useRef<HTMLDivElement>(null)
+
+  // Generate 2,000 synthetic records
+  const virtualData = useMemo(() => {
+    return Array.from({ length: 2000 }, (_, i) => ({
+      id: `node-${i + 1}`,
+      host: `worker-node-${String(i + 1).padStart(4, '0')}.infra.internal`,
+      ip: `10.240.${Math.floor(i / 254)}.${(i % 254) + 1}`,
+      cpu: `${((i * 13) % 85) + 10}%`,
+      memory: `${(((i * 7) % 60) + 30).toFixed(1)} GB`,
+      status: i % 17 === 0 ? 'Degraded' : 'Healthy',
+      variant: (i % 17 === 0 ? 'warning' : 'success') as 'warning' | 'success',
+    }))
+  }, [])
+
+  const rowVirtualizer = useVirtualizer({
+    count: virtualData.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 40,
+    overscan: 12,
+  })
+
+  const virtualRows = rowVirtualizer.getVirtualItems()
+  const totalSize = rowVirtualizer.getTotalSize()
+  const firstVirtual = virtualRows[0]
+  const lastVirtual = virtualRows[virtualRows.length - 1]
+  const paddingTop = firstVirtual ? firstVirtual.start : 0
+  const paddingBottom = lastVirtual ? totalSize - lastVirtual.end : 0
+
+  return (
+    <div className="flex flex-col gap-3 w-full max-w-3xl p-4 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/20">
+      <div className="flex items-center justify-between text-xs text-neutral-500">
+        <span>
+          Rendering <strong>2,000</strong> virtualized rows via{' '}
+          <code className="text-indigo-600 dark:text-indigo-400 font-mono">
+            @tanstack/react-virtual
+          </code>
+        </span>
+        <span className="font-mono text-xs">
+          DOM Rows in View: <strong>{virtualRows.length}</strong>
+        </span>
+      </div>
+
+      <div
+        ref={parentRef}
+        className="max-h-[320px] overflow-y-auto rounded-lg border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950"
+      >
+        <Table stickyHeader dense wrapInContainer={false}>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Node Hostname</TableHead>
+              <TableHead>Private IP</TableHead>
+              <TableHead align="numeric">CPU Load</TableHead>
+              <TableHead align="numeric">Memory</TableHead>
+              <TableHead>Status</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {paddingTop > 0 && (
+              <tr>
+                <td style={{ height: `${paddingTop}px` }} colSpan={5} />
+              </tr>
+            )}
+            {virtualRows.map((virtualRow) => {
+              const item = virtualData[virtualRow.index]
+              if (!item) return null
+              return (
+                <TableRow key={item.id}>
+                  <TableCell>
+                    <span className="font-medium text-neutral-900 dark:text-neutral-100 font-mono text-xs">
+                      {item.host}
+                    </span>
+                  </TableCell>
+                  <TableCell>
+                    <span className="font-mono text-xs text-neutral-500">
+                      {item.ip}
+                    </span>
+                  </TableCell>
+                  <TableCell align="numeric">{item.cpu}</TableCell>
+                  <TableCell align="numeric">{item.memory}</TableCell>
+                  <TableCell>
+                    <Badge variant={item.variant} dot>
+                      {item.status}
+                    </Badge>
+                  </TableCell>
+                </TableRow>
+              )
+            })}
+            {paddingBottom > 0 && (
+              <tr>
+                <td style={{ height: `${paddingBottom}px` }} colSpan={5} />
+              </tr>
             )}
           </TableBody>
         </Table>
@@ -1735,6 +2211,138 @@ export function TableDemo() {
     </div>
   )
 }
+
+// TanStack Query Demo Client
+const queryClient = new QueryClient()
+
+function QueryTableInner() {
+  const [page, setPage] = useState(1)
+
+  // Simulated server fetch with TanStack Query
+  const { data, isFetching, refetch } = useQuery({
+    queryKey: ['server-logs', page],
+    queryFn: async () => {
+      await new Promise((res) => setTimeout(res, 400))
+      return {
+        page,
+        totalPages: 4,
+        records: Array.from({ length: 4 }, (_, i) => ({
+          id: `log-${page}-${i + 1}`,
+          timestamp: new Date(Date.now() - (page * 4 + i) * 60000).toISOString(),
+          level: (i % 3 === 0 ? 'ERROR' : i % 2 === 0 ? 'WARN' : 'INFO') as
+            | 'INFO'
+            | 'WARN'
+            | 'ERROR',
+          message: `Worker instance ${page * 10 + i} processed batch queue event successfully`,
+        })),
+      }
+    },
+  })
+
+  return (
+    <div className="flex flex-col gap-3 w-full max-w-3xl p-4 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/20">
+      <div className="flex items-center justify-between text-xs text-neutral-500">
+        <div className="flex items-center gap-2">
+          <span>
+            Server Query State:{' '}
+            <strong className="text-neutral-900 dark:text-neutral-100">
+              Page {page} of {data?.totalPages ?? 4}
+            </strong>
+          </span>
+          {isFetching && (
+            <span className="text-indigo-600 dark:text-indigo-400 animate-pulse font-medium">
+              • Fetching from cloud...
+            </span>
+          )}
+        </div>
+        <Button size="sm" variant="outline" onPress={() => refetch()}>
+          Refetch Query
+        </Button>
+      </div>
+
+      <div className="rounded-lg border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950 overflow-hidden">
+        <Table dense wrapInContainer={false}>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Event ID</TableHead>
+              <TableHead>Timestamp</TableHead>
+              <TableHead>Level</TableHead>
+              <TableHead>Log Payload</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {isFetching && !data ? (
+              <TableSkeleton rows={4} columns={4} />
+            ) : (
+              data?.records.map((item) => (
+                <TableRow key={item.id}>
+                  <TableCell>
+                    <span className="font-mono text-xs text-neutral-500">
+                      {item.id}
+                    </span>
+                  </TableCell>
+                  <TableCell>
+                    <span className="font-mono text-xs text-neutral-600 dark:text-neutral-400">
+                      {item.timestamp.slice(11, 19)}
+                    </span>
+                  </TableCell>
+                  <TableCell>
+                    <Badge
+                      variant={
+                        item.level === 'ERROR'
+                          ? 'error'
+                          : item.level === 'WARN'
+                            ? 'warning'
+                            : 'neutral'
+                      }
+                      dot
+                    >
+                      {item.level}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <span className="text-xs text-neutral-900 dark:text-neutral-100">
+                      {item.message}
+                    </span>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </div>
+
+      <div className="flex items-center justify-between pt-1">
+        <Button
+          size="sm"
+          variant="outline"
+          isDisabled={page <= 1 || isFetching}
+          onPress={() => setPage((p) => Math.max(1, p - 1))}
+        >
+          Previous Server Page
+        </Button>
+        <Button
+          size="sm"
+          variant="outline"
+          isDisabled={page >= 4 || isFetching}
+          onPress={() => setPage((p) => Math.min(4, p + 1))}
+        >
+          Next Server Page
+        </Button>
+      </div>
+    </div>
+  )
+}
+
+export function TableQueryDemo() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <QueryTableInner />
+    </QueryClientProvider>
+  )
+}
+
+// ── Avatar Demo ──────────────────────────────────────────────────────
 
 // ── Avatar Demo ──────────────────────────────────────────────────────
 
@@ -1754,11 +2362,10 @@ export function AvatarDemo() {
               key={s}
               type="button"
               onClick={() => setSize(s)}
-              className={`px-2 py-1 rounded text-xs font-medium uppercase transition-colors ${
-                size === s
-                  ? 'bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900'
-                  : 'bg-neutral-200/60 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200'
-              }`}
+              className={`px-2 py-1 rounded text-xs font-medium uppercase transition-colors ${size === s
+                ? 'bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900'
+                : 'bg-neutral-200/60 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200'
+                }`}
             >
               {s}
             </button>
@@ -1772,11 +2379,10 @@ export function AvatarDemo() {
               key={sh}
               type="button"
               onClick={() => setShape(sh)}
-              className={`px-2 py-1 rounded text-xs font-medium capitalize transition-colors ${
-                shape === sh
-                  ? 'bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900'
-                  : 'bg-neutral-200/60 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200'
-              }`}
+              className={`px-2 py-1 rounded text-xs font-medium capitalize transition-colors ${shape === sh
+                ? 'bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900'
+                : 'bg-neutral-200/60 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200'
+                }`}
             >
               {sh}
             </button>
@@ -1791,11 +2397,10 @@ export function AvatarDemo() {
                 key={st}
                 type="button"
                 onClick={() => setStatus(st)}
-                className={`px-2 py-1 rounded text-xs font-medium capitalize transition-colors ${
-                  status === st
-                    ? 'bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900'
-                    : 'bg-neutral-200/60 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200'
-                }`}
+                className={`px-2 py-1 rounded text-xs font-medium capitalize transition-colors ${status === st
+                  ? 'bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900'
+                  : 'bg-neutral-200/60 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200'
+                  }`}
               >
                 {st}
               </button>
