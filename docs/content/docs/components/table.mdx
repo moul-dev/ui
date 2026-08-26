@@ -47,7 +47,7 @@ Experience a full-featured data table powered by **TanStack Table**, **TanStack 
 Construct a table declaratively with standard semantic primitives without any external state dependencies:
 
 <ComponentPreview>
-  <Table aria-label="Cluster Services Table" className="border border-neutral-200 dark:border-neutral-800 rounded-lg overflow-hidden w-full max-w-2xl">
+  <Table aria-label="Cluster Services Table" className="w-full max-w-2xl">
     <TableCaption>Active production services across clusters</TableCaption>
     <TableHeader>
       <TableRow>
@@ -490,6 +490,11 @@ Display animated skeleton pulse rows while data is fetching, or render custom em
       type: 'boolean',
       default: 'false',
       description: 'Keeps the thead header pinned to the top on vertical scroll.',
+    },
+    bordered: {
+      type: 'boolean',
+      default: 'false',
+      description: 'Draws vertical column borders between cells.',
     },
     layout: {
       type: "'auto' | 'fixed'",

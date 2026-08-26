@@ -966,10 +966,12 @@ const REGISTRY: Record<string, ComponentConfig> = {
     defaultProps: {
       dense: true,
       striped: false,
+      bordered: false,
       hoverable: true,
       stickyHeader: false,
       isLoading: false,
       allowsSorting: true,
+      pinnedColumns: false,
     },
     props: [
       {
@@ -982,6 +984,12 @@ const REGISTRY: Record<string, ComponentConfig> = {
         name: 'striped',
         type: 'boolean',
         label: 'Zebra Striping',
+        defaultValue: false,
+      },
+      {
+        name: 'bordered',
+        type: 'boolean',
+        label: 'Bordered Columns',
         defaultValue: false,
       },
       {
@@ -1137,6 +1145,7 @@ const REGISTRY: Record<string, ComponentConfig> = {
 function TablePreviewWrapper({
   dense,
   striped,
+  bordered,
   hoverable,
   stickyHeader,
   isLoading,
@@ -1145,6 +1154,7 @@ function TablePreviewWrapper({
 }: {
   dense: boolean
   striped: boolean
+  bordered?: boolean
   hoverable: boolean
   stickyHeader: boolean
   isLoading: boolean
@@ -1214,14 +1224,14 @@ function TablePreviewWrapper({
   }
 
   return (
-    <div className="w-full max-w-xl max-h-[260px] overflow-y-auto rounded-lg border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950">
+    <div className="w-full max-w-xl max-h-[260px] overflow-y-auto">
       <Table
         aria-label="Playground Table"
         dense={dense}
         striped={striped}
+        bordered={bordered}
         hoverable={hoverable}
         stickyHeader={stickyHeader}
-        wrapInContainer={false}
       >
         <TableHeader>
           <TableRow>
@@ -2673,6 +2683,7 @@ export default function Example() {
           <TablePreviewWrapper
             dense={activeProps.dense}
             striped={activeProps.striped}
+            bordered={activeProps.bordered}
             hoverable={activeProps.hoverable}
             stickyHeader={activeProps.stickyHeader}
             isLoading={activeProps.isLoading}

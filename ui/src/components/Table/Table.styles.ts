@@ -12,6 +12,11 @@ export const styles = stylex.create({
     position: 'relative',
     width: '100%',
     overflowX: 'auto',
+    backgroundColor: tokens.colorBg,
+    borderWidth: '1px',
+    borderStyle: 'solid',
+    borderColor: tokens.colorBorder,
+    borderRadius: tokens.radiusMd,
   },
   table: {
     borderCollapse: 'collapse',
@@ -55,16 +60,20 @@ export const styles = stylex.create({
     backgroundColor: tokens.colorBgSubtle,
   },
   body: {
+    backgroundColor: tokens.colorBg,
     outline: 'none',
   },
   row: {
     borderBottomWidth: '1px',
     borderBottomStyle: 'solid',
     borderBottomColor: tokens.colorBorderSubtle,
-    backgroundColor: tokens.colorBg,
+    backgroundColor: 'transparent',
     transitionProperty: 'background-color, color',
     transitionDuration: '0.15s',
     transitionTimingFunction: 'ease-in-out',
+    ':last-child': {
+      borderBottomWidth: 0,
+    },
     '@media (prefers-reduced-motion: reduce)': {
       transitionProperty: 'none',
     },
@@ -94,9 +103,16 @@ export const styles = stylex.create({
     borderBottomWidth: '1px',
     borderBottomStyle: 'solid',
     borderBottomColor: tokens.colorBorder,
-    textAlign: 'start',
     verticalAlign: 'middle',
     outline: 'none',
+  },
+  headBordered: {
+    borderInlineEndWidth: '1px',
+    borderInlineEndStyle: 'solid',
+    borderInlineEndColor: tokens.colorBorder,
+    ':last-child': {
+      borderInlineEndWidth: 0,
+    },
   },
   headDense: {
     paddingBlock: tokens.spacing2,
@@ -144,6 +160,14 @@ export const styles = stylex.create({
     color: 'inherit',
     verticalAlign: 'middle',
     outline: 'none',
+  },
+  cellBordered: {
+    borderInlineEndWidth: '1px',
+    borderInlineEndStyle: 'solid',
+    borderInlineEndColor: tokens.colorBorderSubtle,
+    ':last-child': {
+      borderInlineEndWidth: 0,
+    },
   },
   cellDense: {
     paddingBlock: tokens.spacing2,
@@ -199,9 +223,16 @@ export const styles = stylex.create({
     color: tokens.colorFgSubtle,
     textAlign: 'start',
     captionSide: 'bottom',
+    borderTopWidth: '1px',
+    borderTopStyle: 'solid',
+    borderTopColor: tokens.colorBorderSubtle,
   },
   captionTop: {
     captionSide: 'top',
+    borderTopWidth: 0,
+    borderBottomWidth: '1px',
+    borderBottomStyle: 'solid',
+    borderBottomColor: tokens.colorBorderSubtle,
   },
   emptyCell: {
     paddingBlock: tokens.spacing8,

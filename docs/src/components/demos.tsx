@@ -1635,6 +1635,7 @@ const initialServices: ServiceRow[] = [
 const tablePreferencesStore = new Store({
   dense: true,
   striped: false,
+  bordered: false,
   stickyHeader: true,
   stickyPinning: true,
 })
@@ -1907,6 +1908,19 @@ export function TableDemo() {
 
           <Button
             size="sm"
+            variant={prefs.bordered ? 'primary' : 'outline'}
+            onPress={() =>
+              tablePreferencesStore.setState((s) => ({
+                ...s,
+                bordered: !s.bordered,
+              }))
+            }
+          >
+            Bordered: {prefs.bordered ? 'ON' : 'OFF'}
+          </Button>
+
+          <Button
+            size="sm"
             variant={isLoading ? 'primary' : 'outline'}
             onPress={() => setIsLoading((v) => !v)}
           >
@@ -1952,6 +1966,7 @@ export function TableDemo() {
           layout="fixed"
           dense={prefs.dense}
           striped={prefs.striped}
+          bordered={prefs.bordered}
           stickyHeader={prefs.stickyHeader}
           wrapInContainer={false}
           className="min-w-[1260px]"

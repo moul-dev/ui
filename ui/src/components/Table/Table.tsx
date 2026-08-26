@@ -62,6 +62,7 @@ interface TableContextValue {
   striped?: boolean
   hoverable?: boolean
   stickyHeader?: boolean
+  bordered?: boolean
 }
 
 const TableContext = React.createContext<TableContextValue>({})
@@ -72,6 +73,10 @@ export interface TableProps
   extends Omit<React.TableHTMLAttributes<HTMLTableElement>, 'style'> {
   style?: StyleXStyles
   className?: string
+  /** Style for the inner table element when wrapInContainer is true */
+  tableStyle?: StyleXStyles
+  /** Class name for the inner table element when wrapInContainer is true */
+  tableClassName?: string
   /** Compact padding for high-density data */
   dense?: boolean
   /** Alternating row background colors */
@@ -80,6 +85,8 @@ export interface TableProps
   hoverable?: boolean
   /** Keep table header pinned to top on scroll */
   stickyHeader?: boolean
+  /** Draw vertical column borders between cells */
+  bordered?: boolean
   /** Table layout algorithm */
   layout?: 'auto' | 'fixed'
   /** Wrap table in a responsive horizontal scroll container (default: true) */
@@ -95,10 +102,13 @@ export const Table = React.forwardRef<HTMLTableElement, TableProps>(
     {
       style,
       className,
+      tableStyle,
+      tableClassName,
       dense = false,
       striped = false,
       hoverable = true,
       stickyHeader = false,
+      bordered = false,
       layout = 'auto',
       wrapInContainer = true,
       containerStyle,
@@ -114,44 +124,55 @@ export const Table = React.forwardRef<HTMLTableElement, TableProps>(
         striped,
         hoverable,
         stickyHeader,
+        bordered,
       }),
-      [dense, striped, hoverable, stickyHeader],
+      [dense, striped, hoverable, stickyHeader, bordered],
     )
+
+    if (!wrapInContainer) {
+      const { className: tableStylexClass, style: tableInlineStyle } =
+        stylex.props(
+          styles.table,
+          layout === 'fixed' ? styles.tableFixed : styles.tableAuto,
+          style,
+        )
+
+      const finalClassName = [tableStylexClass, className]
+        .filter(Boolean)
+        .join(' ')
+
+      return (
+        <TableContext.Provider value={contextValue}>
+          <table
+            {...rest}
+            ref={ref}
+            className={finalClassName || undefined}
+            style={tableInlineStyle}
+          >
+            {children}
+          </table>
+        </TableContext.Provider>
+      )
+    }
 
     const { className: tableStylexClass, style: tableInlineStyle } =
       stylex.props(
         styles.table,
         layout === 'fixed' ? styles.tableFixed : styles.tableAuto,
-        style,
+        tableStyle,
       )
 
-    const finalClassName = [tableStylexClass, className]
+    const finalTableClassName = [tableStylexClass, tableClassName]
       .filter(Boolean)
       .join(' ')
-
-    const tableElement = (
-      <TableContext.Provider value={contextValue}>
-        <table
-          {...rest}
-          ref={ref}
-          className={finalClassName || undefined}
-          style={tableInlineStyle}
-        >
-          {children}
-        </table>
-      </TableContext.Provider>
-    )
-
-    if (!wrapInContainer) {
-      return tableElement
-    }
 
     const { className: wrapStylexClass, style: wrapInlineStyle } = stylex.props(
       styles.wrapper,
       containerStyle,
+      style,
     )
 
-    const finalWrapClassName = [wrapStylexClass, containerClassName]
+    const finalWrapClassName = [wrapStylexClass, containerClassName, className]
       .filter(Boolean)
       .join(' ')
 
@@ -161,7 +182,16 @@ export const Table = React.forwardRef<HTMLTableElement, TableProps>(
         style={wrapInlineStyle}
         data-moul-table-wrapper=""
       >
-        {tableElement}
+        <TableContext.Provider value={contextValue}>
+          <table
+            {...rest}
+            ref={ref}
+            className={finalTableClassName || undefined}
+            style={tableInlineStyle}
+          >
+            {children}
+          </table>
+        </TableContext.Provider>
       </div>
     )
   },
@@ -326,6 +356,8 @@ export interface TableHeadProps
   className?: string
   /** Text & content alignment */
   align?: 'left' | 'center' | 'right' | 'numeric'
+  /** Draw vertical column border */
+  bordered?: boolean
   /** Column pinning support */
   pinned?: 'left' | 'right' | 'start' | 'end'
   /** Pinning offset (e.g., 0, '120px') */
@@ -352,6 +384,7 @@ export const TableHead = React.forwardRef<HTMLTableCellElement, TableHeadProps>(
       style,
       className,
       align = 'left',
+      bordered,
       pinned,
       pinOffset,
       width,
@@ -372,6 +405,7 @@ export const TableHead = React.forwardRef<HTMLTableCellElement, TableHeadProps>(
     const isSortable = Boolean(
       onSort || (sortDirection !== undefined && sortDirection !== null),
     )
+    const isBordered = bordered ?? ctx.bordered
 
     const isSortedAsc =
       sortDirection === 'asc' || sortDirection === 'ascending'
@@ -394,11 +428,14 @@ export const TableHead = React.forwardRef<HTMLTableCellElement, TableHeadProps>(
       styles.head,
       ctx.dense && styles.headDense,
       isSortable && styles.headSortable,
+      isBordered && styles.headBordered,
       align === 'center'
         ? styles.alignCenter
-        : align === 'right' || align === 'numeric'
-          ? styles.alignRight
-          : styles.alignLeft,
+        : align === 'numeric'
+          ? styles.alignNumeric
+          : align === 'right'
+            ? styles.alignRight
+            : styles.alignLeft,
       isPinnedLeft && styles.pinnedLeftHead,
       isPinnedRight && styles.pinnedRightHead,
       style,
@@ -504,6 +541,8 @@ export interface TableCellProps
   className?: string
   /** Text & numeric alignment */
   align?: 'left' | 'center' | 'right' | 'numeric'
+  /** Draw vertical column border */
+  bordered?: boolean
   /** Column pinning support */
   pinned?: 'left' | 'right' | 'start' | 'end'
   /** Pinning offset (e.g., 0, '120px') */
@@ -524,6 +563,7 @@ export const TableCell = React.forwardRef<HTMLTableCellElement, TableCellProps>(
       style,
       className,
       align = 'left',
+      bordered,
       pinned,
       pinOffset,
       width,
@@ -536,6 +576,7 @@ export const TableCell = React.forwardRef<HTMLTableCellElement, TableCellProps>(
     ref,
   ) {
     const ctx = React.useContext(TableContext)
+    const isBordered = bordered ?? ctx.bordered
 
     const isPinnedLeft = pinned === 'left' || pinned === 'start'
     const isPinnedRight = pinned === 'right' || pinned === 'end'
@@ -543,12 +584,15 @@ export const TableCell = React.forwardRef<HTMLTableCellElement, TableCellProps>(
     const { className: stylexClass, style: inlineStyle } = stylex.props(
       styles.cell,
       ctx.dense && styles.cellDense,
+      isBordered && styles.cellBordered,
       (tabular || align === 'numeric') && styles.cellTabular,
       align === 'center'
         ? styles.alignCenter
-        : align === 'right' || align === 'numeric'
-          ? styles.alignRight
-          : styles.alignLeft,
+        : align === 'numeric'
+          ? styles.alignNumeric
+          : align === 'right'
+            ? styles.alignRight
+            : styles.alignLeft,
       isPinnedLeft && styles.pinnedLeft,
       isPinnedRight && styles.pinnedRight,
       style,

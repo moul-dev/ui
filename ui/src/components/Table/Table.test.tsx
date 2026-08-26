@@ -227,4 +227,27 @@ describe('Table component suite (semantic primitives)', () => {
     expect(pinnedHead).toHaveStyle({ insetInlineStart: '0px' })
     expect(pinnedCell).toHaveStyle({ insetInlineStart: '0px' })
   })
+
+  test('supports bordered prop on Table and cell primitives', () => {
+    const { getByText } = render(
+      <Table bordered>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Col 1</TableHead>
+            <TableHead>Col 2</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          <TableRow>
+            <TableCell>Data 1</TableCell>
+            <TableCell bordered={false}>Data 2</TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>,
+    )
+
+    expect(getByText('Col 1')).toBeInTheDocument()
+    expect(getByText('Data 1')).toBeInTheDocument()
+  })
 })
+

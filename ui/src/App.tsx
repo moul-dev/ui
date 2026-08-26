@@ -478,6 +478,7 @@ function App() {
   const [isTableSticky, setIsTableSticky] = useState(false)
   const [isTableDense, setIsTableDense] = useState(false)
   const [isTableStriped, setIsTableStriped] = useState(false)
+  const [isTableBordered, setIsTableBordered] = useState(false)
   const [isTablePinned, setIsTablePinned] = useState(false)
   const [isCommandOpen, setIsCommandOpen] = useState(false)
 
@@ -1577,6 +1578,13 @@ function App() {
               </Button>
               <Button
                 size="sm"
+                variant={isTableBordered ? 'primary' : 'outline'}
+                onPress={() => setIsTableBordered((v) => !v)}
+              >
+                Bordered: {isTableBordered ? 'ON' : 'OFF'}
+              </Button>
+              <Button
+                size="sm"
                 variant={isTablePinned ? 'primary' : 'outline'}
                 onPress={() => setIsTablePinned((v) => !v)}
               >
@@ -1602,8 +1610,6 @@ function App() {
               style={{
                 maxHeight: '320px',
                 overflowY: 'auto',
-                border: '1px solid rgba(255,255,255,0.08)',
-                borderRadius: '8px',
               }}
             >
               <Table
@@ -1611,6 +1617,7 @@ function App() {
                 stickyHeader={isTableSticky}
                 dense={isTableDense}
                 striped={isTableStriped}
+                bordered={isTableBordered}
               >
                 <TableHeader>
                   <TableRow>
