@@ -2,6 +2,7 @@
 import type { StyleXStyles } from '@stylexjs/stylex'
 import * as stylex from '@stylexjs/stylex'
 import * as React from 'react'
+import { Button } from '../Button'
 import { styles } from './Alert.styles'
 
 export type AlertVariant =
@@ -185,14 +186,13 @@ export const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
 
         {onClose && (
           <div {...stylex.props(styles.closeButtonContainer)}>
-            <button
-              type="button"
+            <Button
+              variant="ghost"
+              size="sm"
+              isIcon
               aria-label="Close alert"
-              onClick={onClose}
-              {...stylex.props(
-                styles.closeButton,
-                styles[`closeButton_${variant}`],
-              )}
+              onPress={onClose}
+              style={styles[`closeButton_${variant}` as keyof typeof styles]}
             >
               <svg
                 viewBox="0 0 24 24"
@@ -206,7 +206,7 @@ export const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
                 <line x1={18} y1={6} x2={6} y2={18} />
                 <line x1={6} y1={6} x2={18} y2={18} />
               </svg>
-            </button>
+            </Button>
           </div>
         )}
       </div>

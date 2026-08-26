@@ -74,23 +74,10 @@ export const styles = stylex.create({
     marginInlineStart: tokens.spacing3,
   },
 
-  closeButton: {
-    background: 'transparent',
-    border: 'none',
-    cursor: 'pointer',
+  closeButton_info: {
     color: tokens.colorFgSubtle,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: tokens.spacing1,
-    borderRadius: tokens.radiusSm,
-    transition: 'background-color 0.15s, color 0.15s',
     ':hover': {
       color: tokens.colorFg,
-    },
-  },
-  closeButton_info: {
-    ':hover': {
       backgroundColor: tokens.colorAlertHoverInfo,
     },
     ':active': {
@@ -98,7 +85,9 @@ export const styles = stylex.create({
     },
   },
   closeButton_loading: {
+    color: tokens.colorFgSubtle,
     ':hover': {
+      color: tokens.colorFg,
       backgroundColor: tokens.colorAlertHoverInfo,
     },
     ':active': {
@@ -106,7 +95,9 @@ export const styles = stylex.create({
     },
   },
   closeButton_accent: {
+    color: tokens.colorFgSubtle,
     ':hover': {
+      color: tokens.colorFg,
       backgroundColor: tokens.colorAlertHoverAccent,
     },
     ':active': {
@@ -114,7 +105,9 @@ export const styles = stylex.create({
     },
   },
   closeButton_success: {
+    color: tokens.colorFgSubtle,
     ':hover': {
+      color: tokens.colorFg,
       backgroundColor: tokens.colorAlertHoverSuccess,
     },
     ':active': {
@@ -122,7 +115,9 @@ export const styles = stylex.create({
     },
   },
   closeButton_warning: {
+    color: tokens.colorFgSubtle,
     ':hover': {
+      color: tokens.colorFg,
       backgroundColor: tokens.colorAlertHoverWarning,
     },
     ':active': {
@@ -130,7 +125,9 @@ export const styles = stylex.create({
     },
   },
   closeButton_error: {
+    color: tokens.colorFgSubtle,
     ':hover': {
+      color: tokens.colorFg,
       backgroundColor: tokens.colorAlertHoverError,
     },
     ':active': {

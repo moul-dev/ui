@@ -287,6 +287,48 @@ describe('Toast Component', () => {
     expect(errorToast).toBeInTheDocument()
     expect(errorToast).toHaveTextContent('Hello Error')
   })
+
+  test('Toast close button dismisses the toast when pressed', () => {
+    const TestComponent = () => {
+      const toast = useToast()
+      return (
+        <div>
+          <ToastContainer data-testid="toast-container" />
+          <Button
+            onPress={() =>
+              toast.show('Dismissable Toast', { variant: 'info', timeout: 10000 })
+            }
+          >
+            Show
+          </Button>
+        </div>
+      )
+    }
+
+    const { getByText, queryByText } = render(<TestComponent />)
+
+    // Trigger toast
+    fireEvent.click(getByText('Show'))
+
+    act(() => {
+      vi.advanceTimersByTime(50)
+    })
+
+    expect(getByText('Dismissable Toast')).toBeInTheDocument()
+
+    // Find close button by aria-label
+    const closeButtons = screen.getAllByLabelText('Close alert')
+    expect(closeButtons.length).toBeGreaterThan(0)
+
+    // Click close button
+    fireEvent.click(closeButtons[0])
+
+    act(() => {
+      vi.advanceTimersByTime(50)
+    })
+
+    expect(queryByText('Dismissable Toast')).not.toBeInTheDocument()
+  })
 })
 
 describe('Overlay Components Property-Based Tests', () => {
