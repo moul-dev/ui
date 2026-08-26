@@ -449,6 +449,7 @@ function App() {
   // Sidebar interactive states
   const [activeTab, setActiveTab] = useState('home')
   const [isCollapsed, setIsCollapsed] = useState(false)
+  const [isSidebarDense, setIsSidebarDense] = useState(false)
   const [sidebarVariant, setSidebarVariant] = useState<'solid' | 'glass'>(
     'glass',
   )
@@ -489,6 +490,7 @@ function App() {
       selectedKey={activeTab}
       onSelectionChange={setActiveTab}
       variant={sidebarVariant}
+      dense={isSidebarDense}
       style={{ height: '100vh', width: '100vw' }}
     >
       {/* Premium Apple Music/Podcast style Sidebar Demo */}
@@ -610,6 +612,13 @@ function App() {
               onPress={() => setIsCollapsed(!isCollapsed)}
             >
               Toggle Collapse ({isCollapsed ? 'Collapsed' : 'Expanded'})
+            </Button>
+            <Button
+              variant="secondary"
+              size="sm"
+              onPress={() => setIsSidebarDense(!isSidebarDense)}
+            >
+              Dense Mode: {isSidebarDense ? 'ON' : 'OFF'}
             </Button>
             <Button
               variant="secondary"

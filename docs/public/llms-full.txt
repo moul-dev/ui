@@ -697,7 +697,7 @@ import { TagGroup, Tag } from '@moul-dev/ui';
 ## 8. Application Blocks
 
 ### Sidebar
-Full collapsible sidebar navigation block with icons, groups, collapse toggle, and glassmorphic styling.
+Full collapsible sidebar navigation block with icons, groups, collapse toggle, dense mode, and glassmorphic styling.
 
 ```tsx
 import {
@@ -711,7 +711,7 @@ import {
   SidebarFooter
 } from '@moul-dev/ui';
 
-<Sidebar selectedKey={activeRoute} onSelectionChange={setActiveRoute}>
+<Sidebar selectedKey={activeRoute} onSelectionChange={setActiveRoute} dense={false}>
   <SidebarAside>
     <SidebarHeader>
       <h2 className="font-bold text-lg">App Console</h2>

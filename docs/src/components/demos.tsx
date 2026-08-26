@@ -1175,6 +1175,7 @@ function ChartActionPill() {
 export function SidebarDemo() {
   const [activeTab, setActiveTab] = useState('home')
   const [isCollapsed, setIsCollapsed] = useState(false)
+  const [isDense, setIsDense] = useState(false)
 
   // Simple inline SVGs for the demo
   const HomeIcon = () => (
@@ -1247,6 +1248,7 @@ export function SidebarDemo() {
       onCollapseChange={setIsCollapsed}
       selectedKey={activeTab}
       onSelectionChange={setActiveTab}
+      dense={isDense}
       variant="solid"
       className="flex gap-4 border border-neutral-200 dark:border-neutral-800 rounded-2xl w-full bg-neutral-950 text-neutral-100 shadow-xl"
       style={{ height: '450px', width: '100%' }}
@@ -1305,13 +1307,22 @@ export function SidebarDemo() {
           <h3 className="text-lg font-bold">
             Active Section: {activeTab.toUpperCase()}
           </h3>
-          <Button
-            variant="secondary"
-            size="sm"
-            onPress={() => setIsCollapsed(!isCollapsed)}
-          >
-            Toggle Sidebar
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="secondary"
+              size="sm"
+              onPress={() => setIsDense(!isDense)}
+            >
+              Dense: {isDense ? 'ON' : 'OFF'}
+            </Button>
+            <Button
+              variant="secondary"
+              size="sm"
+              onPress={() => setIsCollapsed(!isCollapsed)}
+            >
+              Toggle Sidebar
+            </Button>
+          </div>
         </div>
         <div className="flex-1 border border-dashed border-neutral-800 rounded-lg flex items-center justify-center text-sm text-neutral-400 bg-neutral-900/20 p-4 text-center">
           This is the application workspace.

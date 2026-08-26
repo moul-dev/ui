@@ -155,6 +155,7 @@ const recentActivity = [
 export function SidebarPreview() {
   const [activeTab, setActiveTab] = useState('dashboard')
   const [isCollapsed, setIsCollapsed] = useState(false)
+  const [isDense, setIsDense] = useState(false)
   const [otpValue, setOtpValue] = useState('')
   const [allowNotifications, setAllowNotifications] = useState(true)
   const [maintenanceMode, setMaintenanceMode] = useState(false)
@@ -171,6 +172,7 @@ export function SidebarPreview() {
       onCollapseChange={setIsCollapsed}
       selectedKey={activeTab}
       onSelectionChange={setActiveTab}
+      dense={isDense}
       variant="solid"
       className="h-screen w-screen transition-colors duration-300"
       style={{ height: '100vh', width: '100vw' }}
@@ -263,7 +265,24 @@ export function SidebarPreview() {
             </h2>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => setIsDense((prev) => !prev)}
+              className="inline-flex items-center justify-center gap-1.5 font-medium cursor-pointer border transition-colors h-8 px-3 text-xs rounded-lg shadow-xs hover:opacity-90"
+              style={{
+                backgroundColor: isDense
+                  ? tokens.colorPrimary500
+                  : tokens.colorBgElevated,
+                borderColor: isDense
+                  ? tokens.colorPrimary500
+                  : tokens.colorBorderSubtle,
+                color: isDense ? tokens.colorFgOnPrimary : tokens.colorFg,
+              }}
+            >
+              <span>Dense: {isDense ? 'ON' : 'OFF'}</span>
+            </button>
+
             <ThemeSelector />
 
             <a
@@ -590,6 +609,13 @@ export function SidebarPreview() {
                 />
 
                 <div className="space-y-4 pt-2">
+                  <Switch
+                    isSelected={isDense}
+                    onChange={setIsDense}
+                  >
+                    Compact / Dense Sidebar Layout
+                  </Switch>
+
                   <Switch
                     isSelected={allowNotifications}
                     onChange={setAllowNotifications}

@@ -60,6 +60,12 @@ export const styles = stylex.create({
     boxSizing: 'border-box',
     gap: tokens.spacing3,
   },
+  headerDense: {
+    minHeight: '48px',
+    paddingBlock: tokens.spacing2,
+    paddingInline: tokens.spacing3,
+    gap: tokens.spacing2,
+  },
   headerCollapsed: {
     justifyContent: 'center',
     paddingInline: tokens.spacing2,
@@ -73,6 +79,9 @@ export const styles = stylex.create({
     whiteSpace: 'nowrap',
     transitionProperty: 'opacity, transform',
     transitionDuration: '0.2s',
+  },
+  headerContentDense: {
+    gap: tokens.spacing2,
   },
   headerContentCollapsed: {
     justifyContent: 'center',
@@ -92,6 +101,12 @@ export const styles = stylex.create({
     gap: tokens.spacing3,
     minHeight: '64px',
   },
+  footerDense: {
+    minHeight: '48px',
+    paddingBlock: tokens.spacing2,
+    paddingInline: tokens.spacing3,
+    gap: tokens.spacing2,
+  },
   footerBorder: {
     borderBlockStartColor: tokens.colorBorderSubtle,
   },
@@ -109,6 +124,9 @@ export const styles = stylex.create({
     transitionProperty: 'opacity, transform',
     transitionDuration: '0.2s',
   },
+  footerContentDense: {
+    gap: tokens.spacing2,
+  },
   footerContentCollapsed: {
     justifyContent: 'center',
   },
@@ -120,6 +138,10 @@ export const styles = stylex.create({
     paddingInline: tokens.spacing3,
     paddingBlockEnd: tokens.spacing4,
     gap: tokens.spacing1,
+  },
+  groupDense: {
+    paddingInline: tokens.spacing2,
+    paddingBlockEnd: tokens.spacing2,
   },
   groupCollapsed: {
     paddingInline: tokens.spacing2,
@@ -141,6 +163,11 @@ export const styles = stylex.create({
     userSelect: 'none',
     boxSizing: 'border-box',
     height: tokens.spacing7,
+  },
+  groupHeaderDense: {
+    height: tokens.spacing6,
+    paddingBlock: tokens.spacing1,
+    paddingInline: tokens.spacing2,
   },
   groupHeaderCollapsible: {
     cursor: 'pointer',
@@ -199,6 +226,9 @@ export const styles = stylex.create({
     flexDirection: 'column',
     gap: tokens.spacing1,
   },
+  groupItemsInnerDense: {
+    gap: '2px',
+  },
 
   // ── Sidebar Item ────────────────────────────────────────────────────
   item: {
@@ -231,6 +261,12 @@ export const styles = stylex.create({
       outlineOffset: '2px',
     },
   },
+  itemDense: {
+    height: '30px',
+    paddingBlock: tokens.spacing1,
+    paddingInline: tokens.spacing2,
+    gap: tokens.spacing2,
+  },
 
   // Hover & Active/Selected states
   itemHover: {
@@ -254,6 +290,10 @@ export const styles = stylex.create({
     width: '36px',
     height: '36px',
     alignSelf: 'center',
+  },
+  itemCollapsedDense: {
+    width: '30px',
+    height: '30px',
   },
 
   // Icon container
@@ -293,6 +333,9 @@ export const styles = stylex.create({
     height: '1px',
     backgroundColor: tokens.colorBorderSubtle,
     borderStyle: 'none',
+  },
+  dividerDense: {
+    marginBlock: tokens.spacing2,
   },
   dividerCollapsed: {
     marginInline: tokens.spacing3,

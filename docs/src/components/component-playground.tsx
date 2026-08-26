@@ -936,6 +936,7 @@ const REGISTRY: Record<string, ComponentConfig> = {
     name: 'Sidebar',
     defaultProps: {
       variant: 'solid',
+      dense: false,
       isCollapsed: false,
       showCollapseToggle: true,
     },
@@ -946,6 +947,12 @@ const REGISTRY: Record<string, ComponentConfig> = {
         label: 'Variant',
         options: ['solid', 'glass'],
         defaultValue: 'solid',
+      },
+      {
+        name: 'dense',
+        type: 'boolean',
+        label: 'Dense Mode',
+        defaultValue: false,
       },
       {
         name: 'isCollapsed',
@@ -1316,10 +1323,12 @@ function TablePreviewWrapper({
 
 function SidebarPreviewWrapper({
   variant,
+  dense,
   isCollapsed,
   showCollapseToggle,
 }: {
   variant: 'solid' | 'glass'
+  dense: boolean
   isCollapsed: boolean
   showCollapseToggle: boolean
 }) {
@@ -1390,6 +1399,7 @@ function SidebarPreviewWrapper({
           selectedKey={activeTab}
           onSelectionChange={setActiveTab}
           variant={variant}
+          dense={dense}
           showCollapseToggle={showCollapseToggle}
         >
           <SidebarHeader>
@@ -2254,9 +2264,10 @@ export default function Example() {
 }`
       }
       case 'Sidebar': {
-        const { variant, isCollapsed, showCollapseToggle } = activeProps
+        const { variant, dense, isCollapsed, showCollapseToggle } = activeProps
         let propsStr = ''
         if (variant !== 'solid') propsStr += ` variant="${variant}"`
+        if (dense) propsStr += ` dense`
         if (isCollapsed) propsStr += ` isCollapsed`
         if (!showCollapseToggle) propsStr += ` showCollapseToggle={false}`
 
@@ -2669,10 +2680,11 @@ export default function Example() {
         )
       }
       case 'Sidebar': {
-        const { variant, isCollapsed, showCollapseToggle } = activeProps
+        const { variant, dense, isCollapsed, showCollapseToggle } = activeProps
         return (
           <SidebarPreviewWrapper
             variant={variant}
+            dense={dense}
             isCollapsed={isCollapsed}
             showCollapseToggle={showCollapseToggle}
           />

@@ -76,6 +76,13 @@ Setting the `isCollapsed` prop shrinks the sidebar to a slim icon-only strip. Wh
 - Hovering over a collapsed item displays a premium `Tooltip` showing the item's label.
 - Group headers and sub-content are collapsed/hidden.
 
+### Dense Mode
+Enable `dense` on `<Sidebar>` (or individual subcomponents) to render a compact navigation layout. In dense mode:
+- Item heights are reduced from 36px to 30px with tighter padding and gaps.
+- Header and footer minimum heights are reduced to 48px.
+- Group headers and dividers have tighter spacing.
+- Collapsed icons are scaled to 30px square while maintaining consistent alignment.
+
 ### Styling Variants
 Supports both `solid` (flat background) and `glass` (glassmorphic translucent backdrop filter) modes out of the box using the `variant` prop.
 
@@ -87,6 +94,7 @@ Supports both `solid` (flat background) and `glass` (glassmorphic translucent ba
 
 | Prop | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
+| `dense` | `boolean` | `false` | Whether to render the sidebar and its child elements in compact dense mode. |
 | `isCollapsed` | `boolean` | `false` | Controlled state for whether the sidebar is collapsed to icon-only. |
 | `defaultCollapsed` | `boolean` | `false` | Uncontrolled default state for the collapse layout. |
 | `onCollapseChange` | `(collapsed: boolean) => void` | — | Callback triggered when the collapse state changes. |
@@ -105,6 +113,12 @@ Supports both `solid` (flat background) and `glass` (glassmorphic translucent ba
 
 Accepts standard JSX children and compile-time StyleX layout overrides via the `style` prop.
 
+### SidebarHeader Props
+
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `dense` | `boolean` | `false` | Optional override for compact dense styling. Inherits from `<Sidebar>`. |
+
 ### SidebarGroup Props
 
 | Prop | Type | Default | Description |
@@ -114,6 +128,7 @@ Accepts standard JSX children and compile-time StyleX layout overrides via the `
 | `defaultExpanded` | `boolean` | `true` | The initial expansion state of the group. |
 | `isExpanded` | `boolean` | — | Controlled expansion state. |
 | `onExpandedChange` | `(expanded: boolean) => void` | — | Callback triggered when group expansion state toggles. |
+| `dense` | `boolean` | `false` | Optional override for compact dense styling. Cascades to child items. |
 
 ### SidebarItem Props
 
@@ -123,9 +138,17 @@ Accepts standard JSX children and compile-time StyleX layout overrides via the `
 | `href` | `string` | — | Render as a link using React Aria's Link capabilities. |
 | `icon` | `ReactNode` | — | The SVG or custom react component rendered on the left of the label. |
 | `isSelected` | `boolean` | — | Manual override to mark the item as selected. |
+| `dense` | `boolean` | `false` | Optional override for compact dense styling. Inherits from group/sidebar. |
+
+### SidebarDivider Props
+
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `dense` | `boolean` | `false` | Optional override for compact margin spacing. Inherits from `<Sidebar>`. |
 
 ### SidebarFooter Props
 
 | Prop | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
 | `showBorder` | `boolean` | `true` | Whether to display a divider border above the footer content. |
+| `dense` | `boolean` | `false` | Optional override for compact dense styling. Inherits from `<Sidebar>`. |

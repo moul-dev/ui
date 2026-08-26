@@ -18,6 +18,7 @@ interface SidebarContextValue {
   variant: 'solid' | 'glass'
   onCollapseToggle: () => void
   showCollapseToggle?: boolean
+  dense?: boolean
 }
 
 const SidebarContext = React.createContext<SidebarContextValue | undefined>(
@@ -94,6 +95,7 @@ export interface SidebarProps {
   onSelectionChange?: (key: string) => void
   variant?: 'solid' | 'glass'
   showCollapseToggle?: boolean
+  dense?: boolean
   style?: React.CSSProperties
   className?: string
   children?: React.ReactNode
@@ -110,6 +112,7 @@ export const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
       onSelectionChange,
       variant = 'solid',
       showCollapseToggle,
+      dense = false,
       style,
       className,
       children,
@@ -154,6 +157,7 @@ export const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
         variant,
         onCollapseToggle: handleCollapseToggle,
         showCollapseToggle,
+        dense,
       }),
       [
         isCollapsed,
@@ -162,6 +166,7 @@ export const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
         variant,
         handleCollapseToggle,
         showCollapseToggle,
+        dense,
       ],
     )
 
@@ -189,6 +194,7 @@ export const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
 // ── SidebarHeader Component ──────────────────────────────────────────
 
 export interface SidebarHeaderProps {
+  dense?: boolean
   style?: StyleXStyles
   className?: string
   children?: React.ReactNode
@@ -197,10 +203,15 @@ export interface SidebarHeaderProps {
 export const SidebarHeader = React.forwardRef<
   HTMLDivElement,
   SidebarHeaderProps
->(function SidebarHeader({ style, className, children }, ref) {
-  const { isCollapsed } = useSidebar()
+>(function SidebarHeader(
+  { dense: propDense, style, className, children },
+  ref,
+) {
+  const { isCollapsed, dense: contextDense } = useSidebar()
+  const isDense = propDense !== undefined ? propDense : (contextDense ?? false)
   const { className: stylexClass, style: stylexStyle } = stylex.props(
     styles.header,
+    isDense && styles.headerDense,
     isCollapsed && styles.headerCollapsed,
     style,
   )
@@ -214,6 +225,7 @@ export const SidebarHeader = React.forwardRef<
       <div
         {...stylex.props(
           styles.headerContent,
+          isDense && styles.headerContentDense,
           isCollapsed && styles.headerContentCollapsed,
         )}
       >
@@ -231,6 +243,7 @@ export interface SidebarGroupProps {
   defaultExpanded?: boolean
   isExpanded?: boolean
   onExpandedChange?: (expanded: boolean) => void
+  dense?: boolean
   style?: StyleXStyles
   className?: string
   children?: React.ReactNode
@@ -244,13 +257,18 @@ export const SidebarGroup = React.forwardRef<HTMLDivElement, SidebarGroupProps>(
       defaultExpanded = true,
       isExpanded: controlledExpanded,
       onExpandedChange,
+      dense: propDense,
       style,
       className,
       children,
     },
     ref,
   ) {
-    const { isCollapsed } = useSidebar()
+    const sidebarContext = useSidebar()
+    const { isCollapsed, dense: contextDense } = sidebarContext
+    const isDense =
+      propDense !== undefined ? propDense : (contextDense ?? false)
+
     const [localExpanded, setLocalExpanded] = React.useState(defaultExpanded)
     const isGroupExpanded =
       controlledExpanded !== undefined ? controlledExpanded : localExpanded
@@ -265,13 +283,22 @@ export const SidebarGroup = React.forwardRef<HTMLDivElement, SidebarGroupProps>(
       }
     }
 
+    const groupContextValue = React.useMemo(() => {
+      if (propDense === undefined) return sidebarContext
+      return {
+        ...sidebarContext,
+        dense: isDense,
+      }
+    }, [sidebarContext, propDense, isDense])
+
     const { className: stylexClass, style: stylexStyle } = stylex.props(
       styles.group,
+      isDense && styles.groupDense,
       isCollapsed && styles.groupCollapsed,
       style,
     )
 
-    return (
+    const groupContent = (
       <div
         ref={ref}
         className={[stylexClass, className].filter(Boolean).join(' ')}
@@ -299,6 +326,7 @@ export const SidebarGroup = React.forwardRef<HTMLDivElement, SidebarGroupProps>(
               : {})}
             {...stylex.props(
               styles.groupHeader,
+              isDense && styles.groupHeaderDense,
               collapsible && styles.groupHeaderCollapsible,
             )}
           >
@@ -324,10 +352,27 @@ export const SidebarGroup = React.forwardRef<HTMLDivElement, SidebarGroupProps>(
               : styles.groupItemsCollapsed,
           )}
         >
-          <div {...stylex.props(styles.groupItemsInner)}>{children}</div>
+          <div
+            {...stylex.props(
+              styles.groupItemsInner,
+              isDense && styles.groupItemsInnerDense,
+            )}
+          >
+            {children}
+          </div>
         </div>
       </div>
     )
+
+    if (propDense !== undefined) {
+      return (
+        <SidebarContext.Provider value={groupContextValue}>
+          {groupContent}
+        </SidebarContext.Provider>
+      )
+    }
+
+    return groupContent
   },
 )
 
@@ -338,6 +383,7 @@ export interface SidebarItemProps
   id?: string
   icon?: React.ReactNode
   isSelected?: boolean
+  dense?: boolean
   style?: StyleXStyles
   className?: string
   children?: React.ReactNode
@@ -352,6 +398,7 @@ export const SidebarItem = React.forwardRef<
     href,
     icon,
     isSelected: controlledSelected,
+    dense: propDense,
     style,
     className,
     children,
@@ -359,7 +406,13 @@ export const SidebarItem = React.forwardRef<
   },
   ref,
 ) {
-  const { isCollapsed, selectedKey, onSelectionChange } = useSidebar()
+  const {
+    isCollapsed,
+    selectedKey,
+    onSelectionChange,
+    dense: contextDense,
+  } = useSidebar()
+  const isDense = propDense !== undefined ? propDense : (contextDense ?? false)
 
   const isSelected =
     controlledSelected !== undefined
@@ -377,9 +430,11 @@ export const SidebarItem = React.forwardRef<
 
   const { className: stylexClass, style: stylexStyle } = stylex.props(
     styles.item,
+    isDense && styles.itemDense,
     styles.itemHover,
     isSelected && styles.itemSelected,
     isCollapsed && styles.itemCollapsed,
+    isCollapsed && isDense && styles.itemCollapsedDense,
     style,
   )
 
@@ -432,6 +487,7 @@ export const SidebarItem = React.forwardRef<
 
 export interface SidebarFooterProps {
   showBorder?: boolean
+  dense?: boolean
   style?: StyleXStyles
   className?: string
   children?: React.ReactNode
@@ -441,12 +497,14 @@ export const SidebarFooter = React.forwardRef<
   HTMLDivElement,
   SidebarFooterProps
 >(function SidebarFooter(
-  { showBorder = true, style, className, children },
+  { showBorder = true, dense: propDense, style, className, children },
   ref,
 ) {
-  const { isCollapsed } = useSidebar()
+  const { isCollapsed, dense: contextDense } = useSidebar()
+  const isDense = propDense !== undefined ? propDense : (contextDense ?? false)
   const { className: stylexClass, style: stylexStyle } = stylex.props(
     styles.footer,
+    isDense && styles.footerDense,
     showBorder && styles.footerBorder,
     isCollapsed && styles.footerCollapsed,
     style,
@@ -461,6 +519,7 @@ export const SidebarFooter = React.forwardRef<
       <div
         {...stylex.props(
           styles.footerContent,
+          isDense && styles.footerContentDense,
           isCollapsed && styles.footerContentCollapsed,
         )}
       >
@@ -473,6 +532,7 @@ export const SidebarFooter = React.forwardRef<
 // ── SidebarDivider Component ─────────────────────────────────────────
 
 export interface SidebarDividerProps {
+  dense?: boolean
   style?: StyleXStyles
   className?: string
 }
@@ -480,10 +540,12 @@ export interface SidebarDividerProps {
 export const SidebarDivider = React.forwardRef<
   HTMLDivElement,
   SidebarDividerProps
->(function SidebarDivider({ style, className }, ref) {
-  const { isCollapsed } = useSidebar()
+>(function SidebarDivider({ dense: propDense, style, className }, ref) {
+  const { isCollapsed, dense: contextDense } = useSidebar()
+  const isDense = propDense !== undefined ? propDense : (contextDense ?? false)
   const { className: stylexClass, style: stylexStyle } = stylex.props(
     styles.divider,
+    isDense && styles.dividerDense,
     isCollapsed && styles.dividerCollapsed,
     style,
   )
