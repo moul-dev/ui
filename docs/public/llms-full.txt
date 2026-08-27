@@ -722,7 +722,7 @@ import {
     </SidebarGroup>
     <SidebarDivider />
     <SidebarFooter>
-      <span>v2026.08.26</span>
+      <span>v2026.08.27</span>
     </SidebarFooter>
   </SidebarAside>
   <SidebarMain>
