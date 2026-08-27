@@ -301,6 +301,7 @@ export { Separator } from './components/Separator'
 export type { SeparatorProps } from './components/Separator/Separator'
 export type {
   SidebarAsideProps,
+  SidebarBrandProps,
   SidebarDividerProps,
   SidebarFooterProps,
   SidebarGroupProps,
@@ -308,16 +309,20 @@ export type {
   SidebarItemProps,
   SidebarMainProps,
   SidebarProps,
+  SidebarUserProps,
 } from './components/Sidebar'
 export {
   Sidebar,
   SidebarAside,
+  SidebarBrand,
   SidebarDivider,
   SidebarFooter,
   SidebarGroup,
   SidebarHeader,
   SidebarItem,
   SidebarMain,
+  SidebarUser,
+  useSidebar,
 } from './components/Sidebar'
 export { Skeleton } from './components/Skeleton'
 export type {

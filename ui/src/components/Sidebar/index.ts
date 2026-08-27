@@ -1,5 +1,6 @@
 export type {
   SidebarAsideProps,
+  SidebarBrandProps,
   SidebarDividerProps,
   SidebarFooterProps,
   SidebarGroupProps,
@@ -7,14 +8,18 @@ export type {
   SidebarItemProps,
   SidebarMainProps,
   SidebarProps,
+  SidebarUserProps,
 } from './Sidebar'
 export {
   Sidebar,
   SidebarAside,
+  SidebarBrand,
   SidebarDivider,
   SidebarFooter,
   SidebarGroup,
   SidebarHeader,
   SidebarItem,
   SidebarMain,
+  SidebarUser,
+  useSidebar,
 } from './Sidebar'

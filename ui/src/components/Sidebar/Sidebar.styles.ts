@@ -69,6 +69,7 @@ export const styles = stylex.create({
   headerCollapsed: {
     justifyContent: 'center',
     paddingInline: tokens.spacing2,
+    paddingBlock: tokens.spacing3,
   },
   headerContent: {
     display: 'flex',
@@ -85,6 +86,8 @@ export const styles = stylex.create({
   },
   headerContentCollapsed: {
     justifyContent: 'center',
+    gap: 0,
+    width: '100%',
   },
 
   // ── Sidebar Footer ──────────────────────────────────────────────────
@@ -113,6 +116,7 @@ export const styles = stylex.create({
   footerCollapsed: {
     justifyContent: 'center',
     paddingInline: tokens.spacing2,
+    paddingBlock: tokens.spacing3,
   },
   footerContent: {
     display: 'flex',
@@ -129,6 +133,151 @@ export const styles = stylex.create({
   },
   footerContentCollapsed: {
     justifyContent: 'center',
+    gap: 0,
+    width: '100%',
+  },
+
+  // ── Sidebar User / Profile ──────────────────────────────────────────
+  user: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: tokens.spacing3,
+    width: '100%',
+    minWidth: 0,
+    overflow: 'hidden',
+    boxSizing: 'border-box',
+    borderRadius: tokens.radiusMd,
+    textDecoration: 'none',
+    color: tokens.colorFg,
+  },
+  userInteractive: {
+    cursor: 'pointer',
+    userSelect: 'none',
+    paddingBlock: tokens.spacing1,
+    paddingInline: tokens.spacing2,
+    marginInline: `calc(-1 * ${tokens.spacing2})`,
+    transitionProperty: 'background-color, transform',
+    transitionDuration: '0.15s',
+    ':hover': {
+      backgroundColor: tokens.colorNeutral100,
+    },
+    ':active': {
+      transform: 'scale(0.98)',
+    },
+  },
+  userCollapsed: {
+    justifyContent: 'center',
+    gap: 0,
+    width: '100%',
+    paddingInline: 0,
+    marginInline: 0,
+  },
+  userDense: {
+    gap: tokens.spacing2,
+  },
+  userAvatarWrapper: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+  },
+  userInfo: {
+    display: 'flex',
+    flexDirection: 'column',
+    minWidth: 0,
+    flex: 1,
+    overflow: 'hidden',
+  },
+  userName: {
+    fontSize: tokens.fontSizeSm,
+    fontWeight: tokens.fontWeightSemibold,
+    color: tokens.colorFg,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+  },
+  userDescription: {
+    fontSize: tokens.fontSizeXs,
+    color: tokens.colorFgSubtle,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+    marginTop: '2px',
+  },
+  userAction: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+    color: tokens.colorFgSubtle,
+  },
+
+  // ── Sidebar Brand ───────────────────────────────────────────────────
+  brand: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: tokens.spacing3,
+    width: '100%',
+    minWidth: 0,
+    overflow: 'hidden',
+    boxSizing: 'border-box',
+    borderRadius: tokens.radiusMd,
+    textDecoration: 'none',
+    color: tokens.colorFg,
+  },
+  brandInteractive: {
+    cursor: 'pointer',
+    userSelect: 'none',
+    paddingBlock: tokens.spacing1,
+    paddingInline: tokens.spacing2,
+    marginInline: `calc(-1 * ${tokens.spacing2})`,
+    transitionProperty: 'background-color, transform',
+    transitionDuration: '0.15s',
+    ':hover': {
+      backgroundColor: tokens.colorNeutral100,
+    },
+    ':active': {
+      transform: 'scale(0.98)',
+    },
+  },
+  brandCollapsed: {
+    justifyContent: 'center',
+    gap: 0,
+    width: '100%',
+    paddingInline: 0,
+    marginInline: 0,
+  },
+  brandDense: {
+    gap: tokens.spacing2,
+  },
+  brandLogoWrapper: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+  },
+  brandInfo: {
+    display: 'flex',
+    flexDirection: 'column',
+    minWidth: 0,
+    flex: 1,
+    overflow: 'hidden',
+  },
+  brandTitle: {
+    fontSize: tokens.fontSizeSm,
+    fontWeight: tokens.fontWeightBold,
+    color: tokens.colorFg,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+  },
+  brandSubtitle: {
+    fontSize: tokens.fontSizeXs,
+    color: tokens.colorFgSubtle,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+    marginTop: '2px',
   },
 
   // ── Sidebar Group ───────────────────────────────────────────────────
@@ -381,7 +530,8 @@ export const styles = stylex.create({
     insetBlockEnd: 'auto',
     insetInlineEnd: 'auto',
     alignSelf: 'center',
-    marginBlock: tokens.spacing2,
+    marginBlockStart: tokens.spacing1,
+    marginBlockEnd: tokens.spacing3,
   },
   layout: {
     display: 'flex',

@@ -19,6 +19,7 @@ import {
   SidebarHeader,
   SidebarItem,
   SidebarMain,
+  SidebarUser,
   ThemeProvider,
   ToastContainer,
 } from './index'
@@ -80,35 +81,20 @@ const styles = stylex.create({
     width: '32px',
     height: '32px',
     borderRadius: '8px',
-    background: 'linear-gradient(135deg, #a855f7 0%, #6366f1 100%)',
+    backgroundColor: tokens.colorFg,
+    color: tokens.colorBg,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     fontWeight: 'bold',
     fontSize: '16px',
-    color: '#fff',
     flexShrink: 0,
   },
   logoText: {
     fontSize: '18px',
     fontWeight: 800,
-    background: 'linear-gradient(135deg, #a855f7 0%, #6366f1 100%)',
-    WebkitBackgroundClip: 'text',
-    WebkitTextFillColor: 'transparent',
-  },
-  profileInfo: {
-    display: 'flex',
-    flexDirection: 'column',
-    fontSize: '0.8125rem',
-    overflow: 'hidden',
-  },
-  profileName: {
-    fontWeight: 600,
     color: tokens.colorFg,
-  },
-  profileEmail: {
-    color: tokens.colorFgSubtle,
-    fontSize: '0.75rem',
+    letterSpacing: '-0.02em',
   },
   header: {
     width: '100%',
@@ -122,11 +108,9 @@ const styles = stylex.create({
   title: {
     fontSize: '2.5rem',
     fontWeight: 800,
-    background: 'linear-gradient(135deg, #a855f7 0%, #6366f1 100%)',
-    WebkitBackgroundClip: 'text',
-    WebkitTextFillColor: 'transparent',
+    color: tokens.colorFg,
     margin: 0,
-    letterSpacing: '-0.025em',
+    letterSpacing: '-0.03em',
   },
   subtitle: {
     fontSize: '1rem',
@@ -352,13 +336,18 @@ export function App() {
           <SidebarDivider />
 
           <SidebarFooter showBorder={false}>
-            <Avatar initials="PT" size="sm" shape="circle" status="online" />
-            <div {...stylex.props(styles.profileInfo)}>
-              <span {...stylex.props(styles.profileName)}>Phearak S.</span>
-              <span {...stylex.props(styles.profileEmail)}>
-                phearak@moul.dev
-              </span>
-            </div>
+            <SidebarUser
+              avatar={
+                <Avatar
+                  initials="PT"
+                  size="sm"
+                  shape="circle"
+                  status="online"
+                />
+              }
+              name="Phearak S."
+              description="phearak@moul.dev"
+            />
           </SidebarFooter>
         </SidebarAside>
 
@@ -409,7 +398,7 @@ export function App() {
                 <Button
                   key={cat.id}
                   size="sm"
-                  variant={selectedCategory === cat.id ? 'primary' : 'ghost'}
+                  variant={selectedCategory === cat.id ? 'secondary' : 'ghost'}
                   onPress={() => setSelectedCategory(cat.id)}
                 >
                   {cat.label}

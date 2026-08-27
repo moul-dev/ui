@@ -13,12 +13,14 @@ import {
   REGEXP_ONLY_DIGITS,
   Sidebar,
   SidebarAside,
+  SidebarBrand,
   SidebarDivider,
   SidebarFooter,
   SidebarGroup,
   SidebarHeader,
   SidebarItem,
   SidebarMain,
+  SidebarUser,
   Stat,
   Switch,
   TextField,
@@ -188,23 +190,30 @@ export function SidebarPreview() {
         }
       >
         <SidebarHeader>
-          <Logo iconOnly className="h-7 w-7 text-fd-primary flex-shrink-0" />
-          {!isCollapsed && (
-            <div className="flex flex-col overflow-hidden">
+          <SidebarBrand
+            logo={
+              <Logo
+                iconOnly
+                className="h-7 w-7 text-fd-primary flex-shrink-0"
+              />
+            }
+            title={
               <span
                 className="font-extrabold text-sm leading-tight whitespace-nowrap"
                 style={{ color: tokens.colorFg }}
               >
                 Moul UI
               </span>
+            }
+            subtitle={
               <span
                 className="text-[10px] font-medium font-mono"
                 style={{ color: tokens.colorFgSubtle }}
               >
                 v2026.08.26
               </span>
-            </div>
-          )}
+            }
+          />
         </SidebarHeader>
 
         <SidebarDivider />
@@ -230,22 +239,15 @@ export function SidebarPreview() {
         <SidebarDivider />
 
         <SidebarFooter showBorder={false}>
-          <div className="w-7 h-7 rounded-full bg-fd-primary text-fd-primary-foreground flex items-center justify-center font-bold text-xs flex-shrink-0 shadow-xs">
-            A
-          </div>
-          {!isCollapsed && (
-            <div className="flex flex-col text-[10px] overflow-hidden leading-tight">
-              <span className="font-semibold" style={{ color: tokens.colorFg }}>
-                Phearak S. Tha
-              </span>
-              <span
-                className="truncate max-w-[120px]"
-                style={{ color: tokens.colorFgSubtle }}
-              >
-                rak@moul.dev
-              </span>
-            </div>
-          )}
+          <SidebarUser
+            avatar={
+              <div className="w-7 h-7 rounded-full bg-fd-primary text-fd-primary-foreground flex items-center justify-center font-bold text-xs flex-shrink-0 shadow-xs">
+                A
+              </div>
+            }
+            name="Phearak S. Tha"
+            description="rak@moul.dev"
+          />
         </SidebarFooter>
       </SidebarAside>
 

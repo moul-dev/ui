@@ -103,7 +103,9 @@ export const BlocksSection: React.FC<BlocksSectionProps> = ({
 
         <div style={{ fontSize: '0.875rem', color: 'var(--colorFg, #f8fafc)' }}>
           Active Navigation ID:{' '}
-          <span style={{ color: '#a855f7', fontWeight: 600 }}>{activeTab}</span>
+          <span style={{ color: 'var(--colorFg, #f8fafc)', fontWeight: 700 }}>
+            {activeTab}
+          </span>
         </div>
       </section>
     </div>

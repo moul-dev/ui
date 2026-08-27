@@ -25,9 +25,11 @@ import {
   SidebarAside,
   SidebarMain,
   SidebarHeader,
+  SidebarBrand,
   SidebarGroup,
   SidebarItem,
   SidebarFooter,
+  SidebarUser,
   SidebarDivider,
 } from '@moul-dev/ui';
 ```
@@ -119,6 +121,16 @@ Accepts standard JSX children and compile-time StyleX layout overrides via the `
 | :--- | :--- | :--- | :--- |
 | `dense` | `boolean` | `false` | Optional override for compact dense styling. Inherits from `<Sidebar>`. |
 
+### SidebarBrand Props
+
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `logo` | `ReactNode` | — | Logo icon or badge rendered on the leading edge. |
+| `title` | `ReactNode` | — | Primary brand title text. |
+| `subtitle` | `ReactNode` | — | Secondary subtitle or version text. |
+| `dense` | `boolean` | `false` | Compact styling override. |
+| `onPress` | `() => void` | — | Optional callback making the brand trigger interactive. |
+
 ### SidebarGroup Props
 
 | Prop | Type | Default | Description |
@@ -152,3 +164,14 @@ Accepts standard JSX children and compile-time StyleX layout overrides via the `
 | :--- | :--- | :--- | :--- |
 | `showBorder` | `boolean` | `true` | Whether to display a divider border above the footer content. |
 | `dense` | `boolean` | `false` | Optional override for compact dense styling. Inherits from `<Sidebar>`. |
+
+### SidebarUser Props
+
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `avatar` | `ReactNode` | — | The `Avatar` component or custom node rendered on the leading edge. |
+| `name` | `ReactNode` | — | User's display name. |
+| `description` | `ReactNode` | — | User's email, handle, or subtitle. |
+| `action` | `ReactNode` | — | Optional trailing action (e.g. icon button or menu trigger). |
+| `dense` | `boolean` | `false` | Compact styling override. |
+| `onPress` | `() => void` | — | Optional callback making the user profile item interactive. |

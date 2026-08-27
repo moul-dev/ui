@@ -216,6 +216,13 @@ export const SidebarHeader = React.forwardRef<
     style,
   )
 
+  const renderedChildren = React.useMemo(() => {
+    if (!isCollapsed) return children
+    const childArray = React.Children.toArray(children)
+    if (childArray.length <= 1) return children
+    return childArray[0]
+  }, [children, isCollapsed])
+
   return (
     <div
       ref={ref}
@@ -229,11 +236,121 @@ export const SidebarHeader = React.forwardRef<
           isCollapsed && styles.headerContentCollapsed,
         )}
       >
-        {children}
+        {renderedChildren}
       </div>
     </div>
   )
 })
+
+// ── SidebarBrand Component ───────────────────────────────────────────
+
+export interface SidebarBrandProps {
+  logo?: React.ReactNode
+  title?: React.ReactNode
+  subtitle?: React.ReactNode
+  dense?: boolean
+  style?: StyleXStyles
+  className?: string
+  onClick?: () => void
+  onPress?: () => void
+  children?: React.ReactNode
+}
+
+export const SidebarBrand = React.forwardRef<HTMLDivElement, SidebarBrandProps>(
+  function SidebarBrand(
+    {
+      logo,
+      title,
+      subtitle,
+      dense: propDense,
+      style,
+      className,
+      onClick,
+      onPress,
+      children,
+    },
+    ref,
+  ) {
+    const { isCollapsed, dense: contextDense } = useSidebar()
+    const isDense =
+      propDense !== undefined ? propDense : (contextDense ?? false)
+    const isInteractive = Boolean(onClick || onPress)
+
+    const { className: stylexClass, style: stylexStyle } = stylex.props(
+      styles.brand,
+      isInteractive && styles.brandInteractive,
+      isDense && styles.brandDense,
+      isCollapsed && styles.brandCollapsed,
+      style,
+    )
+
+    const handlePress = () => {
+      onPress?.()
+      onClick?.()
+    }
+
+    const renderContent = (
+      <div
+        ref={ref}
+        role={isInteractive ? 'button' : undefined}
+        tabIndex={isInteractive ? 0 : undefined}
+        onClick={isInteractive ? handlePress : undefined}
+        onKeyDown={
+          isInteractive
+            ? (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  handlePress()
+                }
+              }
+            : undefined
+        }
+        className={[stylexClass, className].filter(Boolean).join(' ')}
+        style={stylexStyle}
+      >
+        {logo && <div {...stylex.props(styles.brandLogoWrapper)}>{logo}</div>}
+        {!isCollapsed && (
+          <>
+            {title || subtitle ? (
+              <div {...stylex.props(styles.brandInfo)}>
+                {title && (
+                  <span {...stylex.props(styles.brandTitle)}>{title}</span>
+                )}
+                {subtitle && (
+                  <span {...stylex.props(styles.brandSubtitle)}>
+                    {subtitle}
+                  </span>
+                )}
+              </div>
+            ) : (
+              children
+            )}
+          </>
+        )}
+      </div>
+    )
+
+    const tooltipLabel =
+      typeof title === 'string'
+        ? title
+        : typeof subtitle === 'string'
+          ? subtitle
+          : undefined
+
+    if (isCollapsed && tooltipLabel) {
+      return (
+        <TooltipTrigger delay={200}>
+          {renderContent}
+          <Tooltip placement="right" offset={12}>
+            {tooltipLabel}
+          </Tooltip>
+        </TooltipTrigger>
+      )
+    }
+
+    return renderContent
+  },
+)
 
 // ── SidebarGroup Component ───────────────────────────────────────────
 
@@ -510,6 +627,13 @@ export const SidebarFooter = React.forwardRef<
     style,
   )
 
+  const renderedChildren = React.useMemo(() => {
+    if (!isCollapsed) return children
+    const childArray = React.Children.toArray(children)
+    if (childArray.length <= 1) return children
+    return childArray[0]
+  }, [children, isCollapsed])
+
   return (
     <div
       ref={ref}
@@ -523,11 +647,125 @@ export const SidebarFooter = React.forwardRef<
           isCollapsed && styles.footerContentCollapsed,
         )}
       >
-        {children}
+        {renderedChildren}
       </div>
     </div>
   )
 })
+
+// ── SidebarUser Component ────────────────────────────────────────────
+
+export interface SidebarUserProps {
+  avatar?: React.ReactNode
+  name?: React.ReactNode
+  description?: React.ReactNode
+  action?: React.ReactNode
+  dense?: boolean
+  style?: StyleXStyles
+  className?: string
+  onClick?: () => void
+  onPress?: () => void
+  children?: React.ReactNode
+}
+
+export const SidebarUser = React.forwardRef<HTMLDivElement, SidebarUserProps>(
+  function SidebarUser(
+    {
+      avatar,
+      name,
+      description,
+      action,
+      dense: propDense,
+      style,
+      className,
+      onClick,
+      onPress,
+      children,
+    },
+    ref,
+  ) {
+    const { isCollapsed, dense: contextDense } = useSidebar()
+    const isDense =
+      propDense !== undefined ? propDense : (contextDense ?? false)
+    const isInteractive = Boolean(onClick || onPress)
+
+    const { className: stylexClass, style: stylexStyle } = stylex.props(
+      styles.user,
+      isInteractive && styles.userInteractive,
+      isDense && styles.userDense,
+      isCollapsed && styles.userCollapsed,
+      style,
+    )
+
+    const handlePress = () => {
+      onPress?.()
+      onClick?.()
+    }
+
+    const tooltipLabel = name
+      ? description
+        ? `${typeof name === 'string' ? name : ''}${typeof description === 'string' ? ` • ${description}` : ''}`
+        : name
+      : typeof description === 'string'
+        ? description
+        : undefined
+
+    const renderContent = (
+      <div
+        ref={ref}
+        role={isInteractive ? 'button' : undefined}
+        tabIndex={isInteractive ? 0 : undefined}
+        onClick={isInteractive ? handlePress : undefined}
+        onKeyDown={
+          isInteractive
+            ? (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  handlePress()
+                }
+              }
+            : undefined
+        }
+        className={[stylexClass, className].filter(Boolean).join(' ')}
+        style={stylexStyle}
+      >
+        {avatar && (
+          <div {...stylex.props(styles.userAvatarWrapper)}>{avatar}</div>
+        )}
+        {!isCollapsed && (
+          <>
+            {name || description ? (
+              <div {...stylex.props(styles.userInfo)}>
+                {name && <span {...stylex.props(styles.userName)}>{name}</span>}
+                {description && (
+                  <span {...stylex.props(styles.userDescription)}>
+                    {description}
+                  </span>
+                )}
+              </div>
+            ) : (
+              children
+            )}
+            {action && <div {...stylex.props(styles.userAction)}>{action}</div>}
+          </>
+        )}
+      </div>
+    )
+
+    if (isCollapsed && tooltipLabel) {
+      return (
+        <TooltipTrigger delay={200}>
+          {renderContent}
+          <Tooltip placement="right" offset={12}>
+            {tooltipLabel}
+          </Tooltip>
+        </TooltipTrigger>
+      )
+    }
+
+    return renderContent
+  },
+)
 
 // ── SidebarDivider Component ─────────────────────────────────────────
 
@@ -610,19 +848,34 @@ export const SidebarAside = React.forwardRef<HTMLElement, SidebarAsideProps>(
         }}
       >
         {children}
-        {shouldShowToggle && (
-          <button
-            type="button"
-            aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-            {...stylex.props(
-              styles.toggleButton,
-              isCollapsed && styles.toggleButtonCollapsed,
-            )}
-            onClick={onCollapseToggle}
-          >
-            {isCollapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-          </button>
-        )}
+        {shouldShowToggle &&
+          (isCollapsed ? (
+            <TooltipTrigger delay={200}>
+              <button
+                type="button"
+                aria-label="Expand sidebar"
+                {...stylex.props(
+                  styles.toggleButton,
+                  styles.toggleButtonCollapsed,
+                )}
+                onClick={onCollapseToggle}
+              >
+                <ChevronRightIcon />
+              </button>
+              <Tooltip placement="right" offset={12}>
+                Expand sidebar
+              </Tooltip>
+            </TooltipTrigger>
+          ) : (
+            <button
+              type="button"
+              aria-label="Collapse sidebar"
+              {...stylex.props(styles.toggleButton)}
+              onClick={onCollapseToggle}
+            >
+              <ChevronLeftIcon />
+            </button>
+          ))}
       </aside>
     )
   },

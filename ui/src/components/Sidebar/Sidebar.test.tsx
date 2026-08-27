@@ -5,12 +5,14 @@ import { describe, expect, test, vi } from 'vitest'
 import {
   Sidebar,
   SidebarAside,
+  SidebarBrand,
   SidebarDivider,
   SidebarFooter,
   SidebarGroup,
   SidebarHeader,
   SidebarItem,
   SidebarMain,
+  SidebarUser,
   useSidebar,
 } from './Sidebar'
 
@@ -230,5 +232,133 @@ describe('Sidebar Component Suite', () => {
     expect(() => render(<Consumer />)).toThrow(
       'Sidebar components must be rendered within a <Sidebar>',
     )
+  })
+
+  test('renders SidebarUser with avatar, name, and description and handles collapse', () => {
+    const handlePress = vi.fn()
+    const { rerender } = render(
+      <Sidebar isCollapsed={false}>
+        <SidebarAside>
+          <SidebarFooter>
+            <SidebarUser
+              avatar={<div data-testid="user-avatar">PT</div>}
+              name="Phearak S."
+              description="phearak@moul.dev"
+              onPress={handlePress}
+            />
+          </SidebarFooter>
+        </SidebarAside>
+      </Sidebar>,
+    )
+
+    expect(screen.getByTestId('user-avatar')).toBeInTheDocument()
+    expect(screen.getByText('Phearak S.')).toBeInTheDocument()
+    expect(screen.getByText('phearak@moul.dev')).toBeInTheDocument()
+
+    // Test interactive click
+    const userButton = screen.getByText('Phearak S.').closest('[role="button"]')
+    expect(userButton).toBeInTheDocument()
+    if (userButton) {
+      fireEvent.click(userButton)
+    }
+    expect(handlePress).toHaveBeenCalled()
+
+    // When collapsed, name and email are not rendered, only avatar
+    rerender(
+      <Sidebar isCollapsed={true}>
+        <SidebarAside>
+          <SidebarFooter>
+            <SidebarUser
+              avatar={<div data-testid="user-avatar">PT</div>}
+              name="Phearak S."
+              description="phearak@moul.dev"
+            />
+          </SidebarFooter>
+        </SidebarAside>
+      </Sidebar>,
+    )
+
+    expect(screen.getByTestId('user-avatar')).toBeInTheDocument()
+    expect(screen.queryByText('Phearak S.')).not.toBeInTheDocument()
+    expect(screen.queryByText('phearak@moul.dev')).not.toBeInTheDocument()
+  })
+
+  test('renders SidebarBrand with logo, title, and subtitle and handles collapse', () => {
+    const { rerender } = render(
+      <Sidebar isCollapsed={false}>
+        <SidebarAside>
+          <SidebarHeader>
+            <SidebarBrand
+              logo={<div data-testid="brand-logo">M</div>}
+              title="Moul UI"
+              subtitle="v2026.08.26"
+            />
+          </SidebarHeader>
+        </SidebarAside>
+      </Sidebar>,
+    )
+
+    expect(screen.getByTestId('brand-logo')).toBeInTheDocument()
+    expect(screen.getByText('Moul UI')).toBeInTheDocument()
+    expect(screen.getByText('v2026.08.26')).toBeInTheDocument()
+
+    // When collapsed, title and subtitle are hidden
+    rerender(
+      <Sidebar isCollapsed={true}>
+        <SidebarAside>
+          <SidebarHeader>
+            <SidebarBrand
+              logo={<div data-testid="brand-logo">M</div>}
+              title="Moul UI"
+              subtitle="v2026.08.26"
+            />
+          </SidebarHeader>
+        </SidebarAside>
+      </Sidebar>,
+    )
+
+    expect(screen.getByTestId('brand-logo')).toBeInTheDocument()
+    expect(screen.queryByText('Moul UI')).not.toBeInTheDocument()
+    expect(screen.queryByText('v2026.08.26')).not.toBeInTheDocument()
+  })
+
+  test('SidebarFooter and SidebarHeader automatically isolate primary child when collapsed with raw children', () => {
+    const { rerender } = render(
+      <Sidebar isCollapsed={false}>
+        <SidebarAside>
+          <SidebarHeader>
+            <div data-testid="raw-logo">Logo</div>
+            <div>Brand Title</div>
+          </SidebarHeader>
+          <SidebarFooter>
+            <div data-testid="raw-avatar">Avatar</div>
+            <div>User Profile Info</div>
+          </SidebarFooter>
+        </SidebarAside>
+      </Sidebar>,
+    )
+
+    expect(screen.getByText('Brand Title')).toBeInTheDocument()
+    expect(screen.getByText('User Profile Info')).toBeInTheDocument()
+
+    rerender(
+      <Sidebar isCollapsed={true}>
+        <SidebarAside>
+          <SidebarHeader>
+            <div data-testid="raw-logo">Logo</div>
+            <div>Brand Title</div>
+          </SidebarHeader>
+          <SidebarFooter>
+            <div data-testid="raw-avatar">Avatar</div>
+            <div>User Profile Info</div>
+          </SidebarFooter>
+        </SidebarAside>
+      </Sidebar>,
+    )
+
+    expect(screen.getByTestId('raw-logo')).toBeInTheDocument()
+    expect(screen.getByTestId('raw-avatar')).toBeInTheDocument()
+    expect(screen.queryByText('Brand Title')).not.toBeInTheDocument()
+    expect(screen.queryByText('User Profile Info')).not.toBeInTheDocument()
   })
 })
