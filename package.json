@@ -15,11 +15,14 @@
     "types:check": "bun --cwd ui tsc -b && bun --cwd docs types:check",
     "dev:ui": "bun --cwd ui dev",
     "dev:docs": "bun --cwd docs dev",
-    "dev": "bun --cwd ui build:watch & bun run dev:ui & bun run dev:docs",
+    "dev": "bun scripts/dev.ts",
+    "gen:component": "bun scripts/gen-component.ts",
+    "sync:llms": "bun scripts/sync-llms.ts",
     "bump": "bun scripts/bump-version.ts",
     "version:bump": "bun scripts/bump-version.ts",
     "lint": "biome check",
-    "format": "biome format --write"
+    "format": "biome format --write",
+    "prepare": "bun scripts/setup-hooks.ts"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.0"

@@ -1,34 +1,16 @@
 import * as stylex from '@stylexjs/stylex'
-import { useState } from 'react'
-import { DialogTrigger } from 'react-aria-components'
-import { Alert } from './components/Alert'
+import { useEffect, useMemo, useState } from 'react'
 import {
-  AlertDialog,
-  AlertDialogBody,
-  AlertDialogFooter,
-  AlertDialogHeader,
-} from './components/AlertDialog'
-import { Badge, type BadgeSize } from './components/Badge'
-import { Button } from './components/Button'
-import { Card, CardBody, CardFooter, CardHeader } from './components/Card'
-import {
-  Drawer,
-  DrawerBody,
-  DrawerCloseButton,
-  DrawerDialog,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerOverlay,
-  type DrawerPlacement,
-  type DrawerSize,
-  DrawerTitle,
-} from './components/Drawer'
-import { EmptyState } from './components/EmptyState'
-import { Logs, SERVER_LOGS } from './components/LogsViewer'
-import { Modal, ModalOverlay } from './components/Modal'
-import { Pagination } from './components/Pagination'
-import { ProgressBar } from './components/ProgressBar'
-import {
+  Avatar,
+  Button,
+  CommandPalette,
+  CommandPaletteEmpty,
+  CommandPaletteFooter,
+  CommandPaletteInput,
+  CommandPaletteItem,
+  CommandPaletteList,
+  CommandPaletteSection,
+  Kbd,
   Sidebar,
   SidebarAside,
   SidebarDivider,
@@ -37,217 +19,47 @@ import {
   SidebarHeader,
   SidebarItem,
   SidebarMain,
-} from './components/Sidebar'
-import { Skeleton } from './components/Skeleton'
-import { Spinner } from './components/Spinner'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableEmpty,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
-  TableSkeleton,
-} from './components/Table'
-import { ToggleButton } from './components/ToggleButton'
-import { ToggleButtonGroup } from './components/ToggleButtonGroup'
-import { Typography } from './components/Typography'
-import {
-  Avatar,
-  AvatarGroup,
-  Calendar,
-  CommandPalette,
-  CommandPaletteEmpty,
-  CommandPaletteFooter,
-  CommandPaletteInput,
-  CommandPaletteItem,
-  CommandPaletteList,
-  CommandPaletteSection,
-  DateField,
-  DatePicker,
-  DateRangePicker,
-  Kbd,
-  RangeCalendar,
+  ThemeProvider,
+  ToastContainer,
 } from './index'
-
-// ── Icons ────────────────────────────────────────────────────────────
-
-const HomeIcon = () => (
-  <svg
-    viewBox="0 0 24 24"
-    width="18"
-    height="18"
-    stroke="currentColor"
-    strokeWidth="2"
-    fill="none"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-    <polyline points="9 22 9 12 15 12 15 22" />
-  </svg>
-)
-
-const RadioIcon = () => (
-  <svg
-    viewBox="0 0 24 24"
-    width="18"
-    height="18"
-    stroke="currentColor"
-    strokeWidth="2"
-    fill="none"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <circle cx="12" cy="12" r="2" />
-    <path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14" />
-  </svg>
-)
-
-const ArtistIcon = () => (
-  <svg
-    viewBox="0 0 24 24"
-    width="18"
-    height="18"
-    stroke="currentColor"
-    strokeWidth="2"
-    fill="none"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-    <circle cx="12" cy="7" r="4" />
-  </svg>
-)
-
-const AlbumIcon = () => (
-  <svg
-    viewBox="0 0 24 24"
-    width="18"
-    height="18"
-    stroke="currentColor"
-    strokeWidth="2"
-    fill="none"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-    <circle cx="12" cy="12" r="3" />
-  </svg>
-)
-
-const FolderIcon = () => (
-  <svg
-    viewBox="0 0 24 24"
-    width="18"
-    height="18"
-    stroke="currentColor"
-    strokeWidth="2"
-    fill="none"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
-  </svg>
-)
-
-const SongIcon = () => (
-  <svg
-    viewBox="0 0 24 24"
-    width="18"
-    height="18"
-    stroke="currentColor"
-    strokeWidth="2"
-    fill="none"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M9 18V5l12-2v13" />
-    <circle cx="6" cy="18" r="3" />
-    <circle cx="18" cy="16" r="3" />
-  </svg>
-)
-
-const StoreIcon = () => (
-  <svg
-    viewBox="0 0 24 24"
-    width="18"
-    height="18"
-    stroke="currentColor"
-    strokeWidth="2"
-    fill="none"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
-    <line x1="3" y1="6" x2="21" y2="6" />
-    <path d="M16 10a4 4 0 0 1-8 0" />
-  </svg>
-)
-
-const DeviceIcon = () => (
-  <svg
-    viewBox="0 0 24 24"
-    width="18"
-    height="18"
-    stroke="currentColor"
-    strokeWidth="2"
-    fill="none"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
-    <line x1="12" y1="18" x2="12.01" y2="18" />
-  </svg>
-)
-
-const PlaylistIcon = () => (
-  <svg
-    viewBox="0 0 24 24"
-    width="18"
-    height="18"
-    stroke="currentColor"
-    strokeWidth="2"
-    fill="none"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <line x1="8" y1="6" x2="21" y2="6" />
-    <line x1="8" y1="12" x2="21" y2="12" />
-    <line x1="8" y1="18" x2="21" y2="18" />
-    <line x1="3" y1="6" x2="3.01" y2="6" />
-    <line x1="3" y1="12" x2="3.01" y2="12" />
-    <line x1="3" y1="18" x2="3.01" y2="18" />
-  </svg>
-)
-
-const SettingsIcon = () => (
-  <svg
-    viewBox="0 0 24 24"
-    width="18"
-    height="18"
-    stroke="currentColor"
-    strokeWidth="2"
-    fill="none"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <circle cx="12" cy="12" r="3" />
-    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
-  </svg>
-)
-
-// ── StyleX Styles ───────────────────────────────────────────────────
+import {
+  AlbumIcon,
+  ArtistIcon,
+  DeviceIcon,
+  HomeIcon,
+  MoonIcon,
+  PlaylistIcon,
+  RadioIcon,
+  SettingsIcon,
+  SongIcon,
+  StoreIcon,
+  SunIcon,
+} from './sandbox/icons'
+import { ActionsSection } from './sandbox/sections/ActionsSection'
+import { BlocksSection } from './sandbox/sections/BlocksSection'
+import { ChartsSection } from './sandbox/sections/ChartsSection'
+import { FeedbackSection } from './sandbox/sections/FeedbackSection'
+import { FormsSection } from './sandbox/sections/FormsSection'
+import { LayoutSection } from './sandbox/sections/LayoutSection'
+import { NavigationSection } from './sandbox/sections/NavigationSection'
+import { OverlaysSection } from './sandbox/sections/OverlaysSection'
+import type { SandboxCategory, SandboxCategoryId } from './sandbox/types'
+import { tokens } from './tokens/tokens.stylex'
 
 const styles = stylex.create({
+  themeRoot: {
+    minHeight: '100vh',
+    width: '100vw',
+    backgroundColor: tokens.colorBg,
+    color: tokens.colorFg,
+    transitionProperty: 'background-color, color',
+    transitionDuration: '200ms',
+    transitionTimingFunction: 'ease',
+    display: 'flex',
+  },
   mainContent: {
     flex: 1,
-    paddingTop: '12px',
-    paddingBottom: '12px',
-    paddingRight: '12px',
-    paddingLeft: '12px',
+    padding: '24px',
     overflowY: 'auto',
     height: '100%',
     backgroundColor: 'transparent',
@@ -256,6 +68,13 @@ const styles = stylex.create({
     alignItems: 'center',
     justifyContent: 'flex-start',
     boxSizing: 'border-box',
+  },
+  container: {
+    maxWidth: '1100px',
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '24px',
   },
   logo: {
     width: '32px',
@@ -277,19 +96,6 @@ const styles = stylex.create({
     WebkitBackgroundClip: 'text',
     WebkitTextFillColor: 'transparent',
   },
-  avatar: {
-    width: '32px',
-    height: '32px',
-    borderRadius: '50%',
-    backgroundColor: '#a855f7',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: '14px',
-    flexShrink: 0,
-  },
   profileInfo: {
     display: 'flex',
     flexDirection: 'column',
@@ -298,156 +104,143 @@ const styles = stylex.create({
   },
   profileName: {
     fontWeight: 600,
-    color: '#f8fafc',
+    color: tokens.colorFg,
   },
   profileEmail: {
-    color: '#94a3b8',
+    color: tokens.colorFgSubtle,
     fontSize: '0.75rem',
   },
-  controlsCard: {
-    background: 'rgba(30, 41, 59, 0.4)',
-    border: '1px solid rgba(255, 255, 255, 0.05)',
-    borderRadius: '24px',
-    padding: '24px',
-    backdropFilter: 'blur(16px)',
-    WebkitBackdropFilter: 'blur(16px)',
-    maxWidth: '600px',
+  header: {
     width: '100%',
-    marginBottom: '24px',
     display: 'flex',
-    flexDirection: 'column',
-    gap: '16px',
-  },
-  controlsTitle: {
-    margin: 0,
-    fontSize: '1rem',
-  },
-  controlsRow: {
-    display: 'flex',
-    gap: '16px',
+    justifyContent: 'space-between',
     alignItems: 'center',
     flexWrap: 'wrap',
-  },
-  header: {
-    textAlign: 'center',
-    marginBottom: '48px',
+    gap: '16px',
+    paddingBottom: '8px',
   },
   title: {
-    fontSize: '3rem',
+    fontSize: '2.5rem',
     fontWeight: 800,
     background: 'linear-gradient(135deg, #a855f7 0%, #6366f1 100%)',
     WebkitBackgroundClip: 'text',
     WebkitTextFillColor: 'transparent',
-    marginBottom: '12px',
+    margin: 0,
     letterSpacing: '-0.025em',
   },
   subtitle: {
-    fontSize: '1.1rem',
-    color: '#94a3b8',
-    fontWeight: 400,
-  },
-  card: {
-    background: 'rgba(30, 41, 59, 0.4)',
-    border: '1px solid rgba(255, 255, 255, 0.05)',
-    borderRadius: '24px',
-    padding: '40px',
-    backdropFilter: 'blur(16px)',
-    WebkitBackdropFilter: 'blur(16px)',
-    boxShadow: '0 20px 40px rgba(0, 0, 0, 0.3)',
-    maxWidth: '600px',
-    width: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '32px',
-  },
-  wideCard: {
-    background: 'rgba(30, 41, 59, 0.4)',
-    border: '1px solid rgba(255, 255, 255, 0.05)',
-    borderRadius: '24px',
-    padding: '32px',
-    backdropFilter: 'blur(16px)',
-    WebkitBackdropFilter: 'blur(16px)',
-    boxShadow: '0 20px 40px rgba(0, 0, 0, 0.3)',
-    maxWidth: '1000px',
-    width: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '24px',
-    marginTop: '24px',
-    marginBottom: '48px',
-  },
-  section: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '16px',
-    width: '100%',
-  },
-  sectionTitle: {
-    fontSize: '1.1rem',
-    fontWeight: 700,
-    color: '#94a3b8',
-    textTransform: 'uppercase',
-    letterSpacing: '0.05em',
-    borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-    paddingBottom: '8px',
-  },
-  buttonGroup: {
-    display: 'flex',
-    gap: '16px',
-    flexWrap: 'wrap',
-    alignItems: 'center',
-  },
-  counterText: {
     fontSize: '1rem',
-    color: '#cbd5e1',
-    fontWeight: 500,
+    color: tokens.colorFgSubtle,
+    fontWeight: 400,
+    margin: '4px 0 0 0',
   },
-  alertList: {
+  toolbar: {
     display: 'flex',
-    flexDirection: 'column',
-    gap: '16px',
-    width: '100%',
+    gap: '12px',
+    alignItems: 'center',
+    flexWrap: 'wrap',
   },
-  bulletList: {
-    margin: 0,
-    paddingLeft: '20px',
+  categoriesNav: {
     display: 'flex',
-    flexDirection: 'column',
-    gap: '4px',
+    gap: '8px',
+    flexWrap: 'wrap',
+    padding: '6px',
+    backgroundColor: tokens.colorBgSubtle,
+    borderRadius: tokens.radiusLg,
+    borderWidth: '1px',
+    borderStyle: 'solid',
+    borderColor: tokens.colorBorderSubtle,
+  },
+  searchBar: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '8px',
+    padding: '8px 16px',
+    borderRadius: '10px',
+    backgroundColor: tokens.colorBgSubtle,
+    borderWidth: '1px',
+    borderStyle: 'solid',
+    borderColor: tokens.colorBorderSubtle,
+    color: tokens.colorFgSubtle,
     fontSize: '0.875rem',
-    color: '#94a3b8',
-  },
-  cardsGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-    gap: '16px',
-    width: '100%',
-    marginTop: '12px',
+    cursor: 'pointer',
+    transition: 'all 150ms ease',
   },
 })
 
-// ── App Component ────────────────────────────────────────────────────
+const CATEGORIES: SandboxCategory[] = [
+  {
+    id: 'all',
+    label: 'All Components',
+    count: 59,
+    description: 'Explore the complete zero-runtime design system',
+  },
+  {
+    id: 'actions',
+    label: 'Actions',
+    count: 6,
+    description: 'Buttons, ButtonGroups, ToggleButtons, Links, Kbds',
+  },
+  {
+    id: 'forms',
+    label: 'Forms & Inputs',
+    count: 15,
+    description: 'Text, Date, Select, Checkboxes, Switches, Sliders, OTP',
+  },
+  {
+    id: 'overlays',
+    label: 'Overlays',
+    count: 6,
+    description: 'Drawers, Modals, AlertDialogs, Popovers, Tooltips',
+  },
+  {
+    id: 'feedback',
+    label: 'Feedback',
+    count: 7,
+    description: 'Alerts, Badges, Progress, Skeletons, Spinners, Toasts',
+  },
+  {
+    id: 'navigation',
+    label: 'Navigation',
+    count: 6,
+    description: 'Tabs, Pagination, Breadcrumbs, Data Tables, Tags',
+  },
+  {
+    id: 'layout',
+    label: 'Layout',
+    count: 5,
+    description: 'Cards, Avatars, AvatarGroups, Typography, Separators',
+  },
+  {
+    id: 'charts',
+    label: 'Charts & Logs',
+    count: 8,
+    description: 'Area, Bar, Line, Doughnut, Stats, TopList, LogsViewer',
+  },
+  {
+    id: 'blocks',
+    label: 'Blocks',
+    count: 2,
+    description: 'Application shell navigation and responsive sidebars',
+  },
+]
 
-function App() {
-  const [count, setCount] = useState(0)
+export function App() {
+  const [colorScheme, setColorScheme] = useState<'dark' | 'light'>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('moul-sandbox-color-scheme')
+      if (saved === 'light' || saved === 'dark') return saved
+    }
+    return 'dark'
+  })
 
-  // Drawer interactive state
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
-  const [drawerPlacement, setDrawerPlacement] =
-    useState<DrawerPlacement>('right')
-  const [drawerSize, setDrawerSize] = useState<DrawerSize>('md')
-
-  const openDrawer = (
-    placement: DrawerPlacement = 'right',
-    size: DrawerSize = 'md',
-  ) => {
-    setDrawerPlacement(placement)
-    setDrawerSize(size)
-    setIsDrawerOpen(true)
-  }
+  const [selectedCategory, setSelectedCategory] =
+    useState<SandboxCategoryId>('all')
+  const [filterQuery, setFilterQuery] = useState('')
+  const [isCommandOpen, setIsCommandOpen] = useState(false)
 
   // Sidebar interactive states
-  const [activeTab, setActiveTab] = useState('home')
+  const [activeSidebarKey, setActiveSidebarKey] = useState('home')
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [isSidebarDense, setIsSidebarDense] = useState(false)
   const [sidebarVariant, setSidebarVariant] = useState<'solid' | 'glass'>(
@@ -455,1593 +248,269 @@ function App() {
   )
   const [showToggle, setShowToggle] = useState(true)
 
-  // New components interactive state
-  const [currentPage, setCurrentPage] = useState(2)
-  const [pageSize, setPageSize] = useState(10)
-  const [progressVal, setProgressVal] = useState(65)
-  const [isIndeterminateProgress, setIsIndeterminateProgress] = useState(false)
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('moul-sandbox-color-scheme', colorScheme)
+      document.documentElement.setAttribute('data-theme', colorScheme)
+      document.documentElement.style.colorScheme = colorScheme
+    }
+  }, [colorScheme])
 
-  // Enhanced components interactive state
-  const [badgeSize, setBadgeSize] = useState<BadgeSize>('md')
-  const [skeletonShape, setSkeletonShape] = useState<
-    'block' | 'text' | 'circle'
-  >('block')
-  const [skeletonCount, setSkeletonCount] = useState(3)
-  const [tableSort, setTableSort] = useState<{
-    column: string
-    direction: 'asc' | 'desc'
-  }>({
-    column: 'name',
-    direction: 'asc',
-  })
-  const [isTableLoading, setIsTableLoading] = useState(false)
-  const [isTableEmpty, setIsTableEmpty] = useState(false)
-  const [isTableSticky, setIsTableSticky] = useState(false)
-  const [isTableDense, setIsTableDense] = useState(false)
-  const [isTableStriped, setIsTableStriped] = useState(false)
-  const [isTableBordered, setIsTableBordered] = useState(false)
-  const [isTablePinned, setIsTablePinned] = useState(false)
-  const [isCommandOpen, setIsCommandOpen] = useState(false)
+  const toggleTheme = () => {
+    setColorScheme((prev) => (prev === 'dark' ? 'light' : 'dark'))
+  }
+
+  const activeCategory = useMemo(
+    () => CATEGORIES.find((c) => c.id === selectedCategory) || CATEGORIES[0],
+    [selectedCategory],
+  )
+
+  const shouldShow = (cat: SandboxCategoryId) => {
+    if (selectedCategory === 'all') return true
+    return selectedCategory === cat
+  }
 
   return (
-    <Sidebar
-      isCollapsed={isCollapsed}
-      onCollapseChange={setIsCollapsed}
-      selectedKey={activeTab}
-      onSelectionChange={setActiveTab}
-      variant={sidebarVariant}
-      dense={isSidebarDense}
-      style={{ height: '100vh', width: '100vw' }}
-    >
-      {/* Premium Apple Music/Podcast style Sidebar Demo */}
-      <SidebarAside showCollapseToggle={showToggle}>
-        <SidebarHeader>
-          <div {...stylex.props(styles.logo)}>M</div>
-          <span {...stylex.props(styles.logoText)}>Moul UI</span>
-        </SidebarHeader>
+    <ThemeProvider colorScheme={colorScheme} style={styles.themeRoot}>
+      <ToastContainer />
+      <Sidebar
+        isCollapsed={isCollapsed}
+        onCollapseChange={setIsCollapsed}
+        selectedKey={activeSidebarKey}
+        onSelectionChange={setActiveSidebarKey}
+        variant={sidebarVariant}
+        dense={isSidebarDense}
+        style={{ height: '100vh', width: '100vw' }}
+      >
+        {/* Apple Music style Sidebar Showcase */}
+        <SidebarAside showCollapseToggle={showToggle}>
+          <SidebarHeader>
+            <div {...stylex.props(styles.logo)}>M</div>
+            <span {...stylex.props(styles.logoText)}>Moul UI</span>
+          </SidebarHeader>
 
-        <SidebarGroup title="Discover" collapsible={false}>
-          <SidebarItem id="home" icon={<HomeIcon />}>
-            Home
-          </SidebarItem>
-          <SidebarItem id="radio" icon={<RadioIcon />}>
-            Radio
-          </SidebarItem>
-        </SidebarGroup>
+          <SidebarGroup title="Discover" collapsible={false}>
+            <SidebarItem id="home" icon={<HomeIcon />}>
+              Home
+            </SidebarItem>
+            <SidebarItem id="radio" icon={<RadioIcon />}>
+              Radio
+            </SidebarItem>
+          </SidebarGroup>
 
-        <SidebarGroup title="Library" collapsible={true} defaultExpanded={true}>
-          <SidebarItem id="recent" icon={<ArtistIcon />}>
-            Recently Added
-          </SidebarItem>
-          <SidebarItem id="artists" icon={<ArtistIcon />}>
-            Artists
-          </SidebarItem>
-          <SidebarItem id="albums" icon={<AlbumIcon />}>
-            Albums
-          </SidebarItem>
-          <SidebarItem id="songs" icon={<SongIcon />}>
-            Songs
-          </SidebarItem>
-        </SidebarGroup>
-
-        <SidebarGroup title="Store" collapsible={true} defaultExpanded={false}>
-          <SidebarItem id="store" icon={<StoreIcon />}>
-            iTunes Store
-          </SidebarItem>
-        </SidebarGroup>
-
-        <SidebarGroup title="Devices" collapsible={true} defaultExpanded={true}>
-          <SidebarItem id="device" icon={<DeviceIcon />}>
-            Phearak S.'s iPhone
-          </SidebarItem>
-        </SidebarGroup>
-
-        <SidebarGroup title="Playlists" collapsible={false}>
-          <SidebarItem id="all-playlists" icon={<PlaylistIcon />}>
-            All Playlists
-          </SidebarItem>
-        </SidebarGroup>
-
-        <SidebarGroup title="Settings" collapsible={false}>
-          <SidebarItem id="settings" icon={<SettingsIcon />}>
-            Settings
-          </SidebarItem>
-        </SidebarGroup>
-
-        <SidebarDivider />
-
-        <SidebarFooter showBorder={false}>
-          <Avatar initials="PT" size="sm" shape="circle" status="online" />
-          <div {...stylex.props(styles.profileInfo)}>
-            <span {...stylex.props(styles.profileName)}>Phearak S.</span>
-            <span {...stylex.props(styles.profileEmail)}>phearak@moul.dev</span>
-          </div>
-        </SidebarFooter>
-      </SidebarAside>
-
-      {/* Main Sandbox Showcase */}
-      <SidebarMain style={styles.mainContent}>
-        <header {...stylex.props(styles.header)}>
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              width: '100%',
-              flexWrap: 'wrap',
-              gap: '16px',
-            }}
+          <SidebarGroup
+            title="Library"
+            collapsible={true}
+            defaultExpanded={true}
           >
-            <div>
-              <h1 {...stylex.props(styles.title)}>Moul UI</h1>
-              <p {...stylex.props(styles.subtitle)}>
-                Vite + React-TS + React Aria + StyleX Components Sandbox
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={() => setIsCommandOpen(true)}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                padding: '8px 16px',
-                borderRadius: '8px',
-                backgroundColor: 'rgba(255, 255, 255, 0.06)',
-                border: '1px solid rgba(255, 255, 255, 0.12)',
-                color: '#94a3b8',
-                fontSize: '0.875rem',
-                cursor: 'pointer',
-              }}
-            >
-              <span>Search Commands...</span>
-              <Kbd>⌘K</Kbd>
-            </button>
-          </div>
-        </header>
+            <SidebarItem id="recent" icon={<ArtistIcon />}>
+              Recently Added
+            </SidebarItem>
+            <SidebarItem id="artists" icon={<ArtistIcon />}>
+              Artists
+            </SidebarItem>
+            <SidebarItem id="albums" icon={<AlbumIcon />}>
+              Albums
+            </SidebarItem>
+            <SidebarItem id="songs" icon={<SongIcon />}>
+              Songs
+            </SidebarItem>
+          </SidebarGroup>
 
-        {/* Sidebar Controls Card */}
-        <section {...stylex.props(styles.controlsCard)}>
-          <Typography.Heading as="h3" style={styles.controlsTitle}>
-            Sidebar Interactive Controller
-          </Typography.Heading>
-          <div {...stylex.props(styles.controlsRow)}>
-            <Button
-              variant="secondary"
-              size="sm"
-              onPress={() => setIsCollapsed(!isCollapsed)}
-            >
-              Toggle Collapse ({isCollapsed ? 'Collapsed' : 'Expanded'})
-            </Button>
-            <Button
-              variant="secondary"
-              size="sm"
-              onPress={() => setIsSidebarDense(!isSidebarDense)}
-            >
-              Dense Mode: {isSidebarDense ? 'ON' : 'OFF'}
-            </Button>
-            <Button
-              variant="secondary"
-              size="sm"
-              onPress={() =>
-                setSidebarVariant(
-                  sidebarVariant === 'glass' ? 'solid' : 'glass',
-                )
-              }
-            >
-              Toggle Style: {sidebarVariant.toUpperCase()}
-            </Button>
-            <Button
-              variant="secondary"
-              size="sm"
-              onPress={() => setShowToggle(!showToggle)}
-            >
-              Floating Toggle Button: {showToggle ? 'Show' : 'Hide'}
-            </Button>
-          </div>
-          <span style={{ fontSize: '0.85rem', color: '#94a3b8' }}>
-            Current Active Key: <strong>{activeTab}</strong>
-          </span>
-        </section>
+          <SidebarGroup
+            title="Store"
+            collapsible={true}
+            defaultExpanded={false}
+          >
+            <SidebarItem id="store" icon={<StoreIcon />}>
+              iTunes Store
+            </SidebarItem>
+          </SidebarGroup>
 
-        {/* The rest of the showcases */}
-        <div {...stylex.props(styles.card)}>
-          {/* Interactive Button */}
-          <section {...stylex.props(styles.section)}>
-            <h2 {...stylex.props(styles.sectionTitle)}>Stateful Showcase</h2>
-            <div {...stylex.props(styles.buttonGroup)}>
-              <Button onPress={() => setCount((c) => c + 1)}>Click Me</Button>
-              <span {...stylex.props(styles.counterText)}>
-                Count is: <strong>{count}</strong>
+          <SidebarGroup
+            title="Devices"
+            collapsible={true}
+            defaultExpanded={true}
+          >
+            <SidebarItem id="device" icon={<DeviceIcon />}>
+              Phearak's Device
+            </SidebarItem>
+          </SidebarGroup>
+
+          <SidebarGroup title="Playlists" collapsible={false}>
+            <SidebarItem id="all-playlists" icon={<PlaylistIcon />}>
+              All Playlists
+            </SidebarItem>
+          </SidebarGroup>
+
+          <SidebarGroup title="Settings" collapsible={false}>
+            <SidebarItem id="settings" icon={<SettingsIcon />}>
+              Settings
+            </SidebarItem>
+          </SidebarGroup>
+
+          <SidebarDivider />
+
+          <SidebarFooter showBorder={false}>
+            <Avatar initials="PT" size="sm" shape="circle" status="online" />
+            <div {...stylex.props(styles.profileInfo)}>
+              <span {...stylex.props(styles.profileName)}>Phearak S.</span>
+              <span {...stylex.props(styles.profileEmail)}>
+                phearak@moul.dev
               </span>
             </div>
-          </section>
+          </SidebarFooter>
+        </SidebarAside>
 
-          {/* Button Variants */}
-          <section {...stylex.props(styles.section)}>
-            <h2 {...stylex.props(styles.sectionTitle)}>Variants</h2>
-            <div {...stylex.props(styles.buttonGroup)}>
-              <Button variant="primary">Primary Accent</Button>
-              <Button variant="secondary">Secondary Glass</Button>
-            </div>
-          </section>
-
-          {/* Toggle Button Showcase */}
-          <section {...stylex.props(styles.section)}>
-            <h2 {...stylex.props(styles.sectionTitle)}>Toggle Buttons</h2>
-            <div {...stylex.props(styles.buttonGroup)}>
-              <div
-                style={{ display: 'flex', gap: '8px', alignItems: 'center' }}
-              >
-                <span>Standalone (Primary):</span>
-                <ToggleButton variant="primary">Toggle</ToggleButton>
-                <ToggleButton variant="primary" defaultSelected>
-                  Selected
-                </ToggleButton>
-              </div>
-              <div
-                style={{ display: 'flex', gap: '8px', alignItems: 'center' }}
-              >
-                <span>Standalone (Secondary):</span>
-                <ToggleButton variant="secondary">Toggle</ToggleButton>
-                <ToggleButton variant="secondary" defaultSelected>
-                  Selected
-                </ToggleButton>
-              </div>
-              <div
-                style={{ display: 'flex', gap: '8px', alignItems: 'center' }}
-              >
-                <span>Group (Animated):</span>
-                <ToggleButtonGroup animated defaultSelectedKeys={['week']}>
-                  <ToggleButton id="day">Day</ToggleButton>
-                  <ToggleButton id="week">Week</ToggleButton>
-                  <ToggleButton id="month">Month</ToggleButton>
-                </ToggleButtonGroup>
-              </div>
-              <div
-                style={{ display: 'flex', gap: '8px', alignItems: 'center' }}
-              >
-                <span>Group Secondary (Animated):</span>
-                <ToggleButtonGroup animated defaultSelectedKeys={['bold']}>
-                  <ToggleButton id="bold" variant="secondary">
-                    Bold
-                  </ToggleButton>
-                  <ToggleButton id="italic" variant="secondary">
-                    Italic
-                  </ToggleButton>
-                  <ToggleButton id="underline" variant="secondary">
-                    Underline
-                  </ToggleButton>
-                </ToggleButtonGroup>
-              </div>
-            </div>
-          </section>
-
-          {/* Disabled States */}
-          <section {...stylex.props(styles.section)}>
-            <h2 {...stylex.props(styles.sectionTitle)}>Disabled State</h2>
-            <div {...stylex.props(styles.buttonGroup)}>
-              <Button variant="primary" isDisabled>
-                Primary Disabled
-              </Button>
-              <Button variant="secondary" isDisabled>
-                Secondary Disabled
-              </Button>
-            </div>
-          </section>
-
-          {/* Drawers & Overlays Showcase */}
-          <section {...stylex.props(styles.section)}>
-            <h2 {...stylex.props(styles.sectionTitle)}>Drawers & Overlays</h2>
-            <div {...stylex.props(styles.buttonGroup)}>
-              <Button
-                variant="primary"
-                onPress={() => openDrawer('right', 'md')}
-              >
-                Open Right Drawer (600px)
-              </Button>
-              <Button
-                variant="secondary"
-                onPress={() => openDrawer('left', 'md')}
-              >
-                Open Left Drawer
-              </Button>
-              <Button
-                variant="secondary"
-                onPress={() => openDrawer('bottom', 'md')}
-              >
-                Open Bottom Sheet
-              </Button>
-              <Button
-                variant="secondary"
-                onPress={() => openDrawer('top', 'sm')}
-              >
-                Open Top Drawer
-              </Button>
-
-              <DialogTrigger>
-                <Button variant="outline">Delete Account Modal</Button>
-                <ModalOverlay>
-                  <Modal>
-                    <AlertDialog>
-                      {({ close }) => (
-                        <>
-                          <AlertDialogHeader>Delete Account</AlertDialogHeader>
-                          <AlertDialogBody>
-                            Are you sure you want to delete your account? This
-                            action cannot be undone and all of your data will be
-                            permanently removed.
-                          </AlertDialogBody>
-                          <AlertDialogFooter>
-                            <Button variant="secondary" onPress={close}>
-                              Cancel
-                            </Button>
-                            <Button variant="danger" onPress={close}>
-                              Delete
-                            </Button>
-                          </AlertDialogFooter>
-                        </>
-                      )}
-                    </AlertDialog>
-                  </Modal>
-                </ModalOverlay>
-              </DialogTrigger>
-            </div>
-
-            <DrawerOverlay
-              isOpen={isDrawerOpen}
-              onOpenChange={setIsDrawerOpen}
-              placement={drawerPlacement}
-              size={drawerSize}
-            >
-              <Drawer placement={drawerPlacement} size={drawerSize}>
-                <DrawerDialog>
-                  <DrawerHeader>
-                    <DrawerTitle>
-                      {drawerPlacement.charAt(0).toUpperCase() +
-                        drawerPlacement.slice(1)}{' '}
-                      Drawer ({drawerSize})
-                    </DrawerTitle>
-                    <DrawerCloseButton />
-                  </DrawerHeader>
-                  <DrawerBody>
-                    <p style={{ margin: '0 0 16px 0', opacity: 0.8 }}>
-                      This drawer is anchored to the{' '}
-                      <strong>{drawerPlacement}</strong> with a default desktop
-                      size of{' '}
-                      <strong>
-                        {drawerSize === 'md' ? '600px' : drawerSize}
-                      </strong>
-                      . On small screens, it automatically adapts to 100%
-                      full-width.
-                    </p>
-                    <div
-                      style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: '16px',
-                      }}
-                    >
-                      {Array.from({ length: 6 }).map((_, i) => (
-                        <div
-                          key={i}
-                          style={{
-                            padding: '16px',
-                            borderRadius: '8px',
-                            border: '1px solid rgba(128, 128, 128, 0.2)',
-                            background: 'rgba(128, 128, 128, 0.05)',
-                          }}
-                        >
-                          <h4
-                            style={{
-                              margin: '0 0 8px 0',
-                              fontSize: '14px',
-                              fontWeight: 600,
-                            }}
-                          >
-                            Section {i + 1}: Configuration Item
-                          </h4>
-                          <p
-                            style={{
-                              margin: 0,
-                              fontSize: '13px',
-                              opacity: 0.7,
-                            }}
-                          >
-                            Notice that as you scroll this body content, the top
-                            header (with title and close button) and bottom
-                            footer (with action buttons) remain sticky.
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  </DrawerBody>
-                  <DrawerFooter>
-                    <Button
-                      variant="secondary"
-                      onPress={() => setIsDrawerOpen(false)}
-                    >
-                      Cancel
-                    </Button>
-                    <Button
-                      variant="primary"
-                      onPress={() => setIsDrawerOpen(false)}
-                    >
-                      Save Changes
-                    </Button>
-                  </DrawerFooter>
-                </DrawerDialog>
-              </Drawer>
-            </DrawerOverlay>
-          </section>
-
-          {/* Alerts Showcase */}
-          <section {...stylex.props(styles.section)}>
-            <h2 {...stylex.props(styles.sectionTitle)}>Alerts Showcase</h2>
-            <div {...stylex.props(styles.alertList)}>
-              {/* Info Standard */}
-              <Alert
-                variant="info"
-                title="New features available"
-                description="Check out our latest updates including dark mode support and improved accessibility features."
-              />
-
-              {/* Info with Accent & Action */}
-              <Alert
-                variant="accent"
-                title="Update available"
-                description="A new version of the application is available. Please refresh to get the latest features and bug fixes."
-                action={
-                  <Button variant="primary" size="sm">
-                    Refresh
-                  </Button>
-                }
-              />
-
-              {/* Error with Action & Bullet List */}
-              <Alert
-                variant="error"
-                title="Unable to connect to server"
-                action={
-                  <Button variant="danger" size="sm">
-                    Retry
-                  </Button>
-                }
-              >
-                <div style={{ marginTop: '8px' }}>
-                  <p
-                    style={{
-                      margin: '0 0 8px 0',
-                      fontSize: '0.875rem',
-                      color: '#94a3b8',
-                    }}
-                  >
-                    We're experiencing connection issues. Please try the
-                    following:
-                  </p>
-                  <ul {...stylex.props(styles.bulletList)}>
-                    <li>Check your internet connection</li>
-                    <li>Refresh the page</li>
-                    <li>Clear your browser cache</li>
-                  </ul>
-                </div>
-              </Alert>
-
-              {/* Success with Close button */}
-              <Alert
-                variant="success"
-                title="Profile updated successfully"
-                onClose={() => alert('Close clicked')}
-              />
-
-              {/* Loading/Processing State */}
-              <Alert
-                variant="loading"
-                title="Processing your request"
-                description="Please wait while we sync your data. This may take a few moments."
-              />
-
-              {/* Warning State */}
-              <Alert
-                variant="warning"
-                title="Scheduled maintenance"
-                description="Our services will be unavailable on Sunday, March 15th from 2:00 AM to 6:00 AM UTC for scheduled maintenance."
-              />
-            </div>
-          </section>
-
-          {/* Cards Showcase */}
-          <section {...stylex.props(styles.section)}>
-            <h2 {...stylex.props(styles.sectionTitle)}>Cards Showcase</h2>
-            <div {...stylex.props(styles.cardsGrid)}>
-              {/* Glass Card */}
-              <Card variant="glass" size="md">
-                <CardHeader>Glassmorphic Card</CardHeader>
-                <CardBody>
-                  Features a gorgeous glassmorphic style. Perfect for modern,
-                  premium designs.
-                </CardBody>
-                <CardFooter>
-                  <Button variant="secondary" size="sm">
-                    Cancel
-                  </Button>
-                  <Button variant="primary" size="sm">
-                    Save
-                  </Button>
-                </CardFooter>
-              </Card>
-
-              {/* Elevated Card */}
-              <Card variant="default" size="md" divided>
-                <CardHeader>Elevated Card</CardHeader>
-                <CardBody>
-                  Uses standard elevation with clean borders dividing header,
-                  body, and footer.
-                </CardBody>
-                <CardFooter>
-                  <Button variant="secondary" size="sm">
-                    Action
-                  </Button>
-                </CardFooter>
-              </Card>
-
-              {/* Flat Card */}
-              <Card variant="flat" size="sm">
-                <CardHeader>Flat Card</CardHeader>
-                <CardBody>Flat background without borders or shadows.</CardBody>
-                <CardFooter>
-                  <Button variant="secondary" size="sm">
-                    Close
-                  </Button>
-                </CardFooter>
-              </Card>
-            </div>
-          </section>
-
-          {/* Typography Showcase */}
-          <section {...stylex.props(styles.section)}>
-            <h2 {...stylex.props(styles.sectionTitle)}>Typography Showcase</h2>
-            <div
-              style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}
-            >
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '12px',
-                }}
-              >
-                <span
-                  style={{
-                    fontSize: '0.8125rem',
-                    color: '#94a3b8',
-                    fontWeight: 600,
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.05em',
-                  }}
-                >
-                  Standard Typography Tags (as prop)
-                </span>
-                <Typography as="h1">Heading 1 (h1)</Typography>
-                <Typography as="h2">Heading 2 (h2)</Typography>
-                <Typography as="h3">Heading 3 (h3)</Typography>
-                <Typography as="h4">Heading 4 (h4)</Typography>
-                <Typography as="h5">Heading 5 (h5)</Typography>
-                <Typography as="h6">Heading 6 (h6)</Typography>
-                <Typography as="p">
-                  Paragraph (p) - Standard body text.
-                </Typography>
-                <Typography as="span">
-                  Span (span) - Inline text wrapper.
-                </Typography>
-                <Typography as="label">
-                  Label (label) - Form label style.
-                </Typography>
-              </div>
-
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '12px',
-                  borderTop: '1px solid rgba(255, 255, 255, 0.08)',
-                  paddingTop: '16px',
-                }}
-              >
-                <span
-                  style={{
-                    fontSize: '0.8125rem',
-                    color: '#94a3b8',
-                    fontWeight: 600,
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.05em',
-                  }}
-                >
-                  Semantic Exports
-                </span>
-                <Typography.Heading as="h1">
-                  Heading 1 (Typography.Heading as="h1")
-                </Typography.Heading>
-                <Typography.Heading as="h3">
-                  Heading 3 (Typography.Heading as="h3")
-                </Typography.Heading>
-                <Typography.Paragraph>
-                  Paragraph (Typography.Paragraph) - Standard body text.
-                </Typography.Paragraph>
-                <Typography.Span>
-                  Span (Typography.Span) - Inline text element.
-                </Typography.Span>
-                <Typography.Label>
-                  Label (Typography.Label) - Form label element.
-                </Typography.Label>
-              </div>
-            </div>
-          </section>
-        </div>
-
-        {/* Logs Component Showcase */}
-        <div {...stylex.props(styles.wideCard)}>
-          <section {...stylex.props(styles.section)}>
-            <h2 {...stylex.props(styles.sectionTitle)}>
-              Logs Component Showcase (React Aria Table)
-            </h2>
-            <p style={{ margin: 0, fontSize: '0.9rem', color: '#94a3b8' }}>
-              Interactive log stream viewer parsing structured server logs with
-              level filtering, live search, line numbers, status code pills, and
-              inspection panel.
-            </p>
-            <Logs
-              data={SERVER_LOGS}
-              title="Mould Engine Logs"
-              inspectorMode="drawer"
-              drawerPlacement="right"
-              drawerSize="md"
-              maxHeight="460px"
-            />
-          </section>
-        </div>
-        {/* ProgressBar Showcase */}
-        <div {...stylex.props(styles.wideCard)}>
-          <section {...stylex.props(styles.section)}>
-            <h2 {...stylex.props(styles.sectionTitle)}>
-              ProgressBar Component Showcase
-            </h2>
-            <p style={{ margin: 0, fontSize: '0.9rem', color: '#94a3b8' }}>
-              Accessible linear loading indicator supporting determinate values,
-              indeterminate animations, multiple color variants, and sizes.
-            </p>
-
-            <div
-              style={{
-                display: 'flex',
-                gap: '12px',
-                alignItems: 'center',
-                flexWrap: 'wrap',
-              }}
-            >
-              <Button
-                size="sm"
-                variant="outline"
-                onPress={() => setProgressVal((p) => Math.max(0, p - 10))}
-              >
-                -10%
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                onPress={() => setProgressVal((p) => Math.min(100, p + 10))}
-              >
-                +10%
-              </Button>
-              <Button
-                size="sm"
-                variant={isIndeterminateProgress ? 'primary' : 'ghost'}
-                onPress={() => setIsIndeterminateProgress((v) => !v)}
-              >
-                {isIndeterminateProgress
-                  ? 'Indeterminate: ON'
-                  : 'Toggle Indeterminate'}
-              </Button>
-            </div>
-
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '16px',
-                maxWidth: '600px',
-              }}
-            >
-              <ProgressBar
-                label="Primary Progress (md)"
-                value={progressVal}
-                isIndeterminate={isIndeterminateProgress}
-                variant="primary"
-                size="md"
-              />
-              <ProgressBar
-                label="Success Accent (lg)"
-                value={progressVal}
-                isIndeterminate={isIndeterminateProgress}
-                variant="success"
-                size="lg"
-              />
-              <ProgressBar
-                label="Warning Stage (sm)"
-                value={progressVal}
-                isIndeterminate={isIndeterminateProgress}
-                variant="warning"
-                size="sm"
-              />
-              <ProgressBar
-                label="Custom Value Text"
-                value={progressVal}
-                valueLabel={`${progressVal * 10} MB / 1000 MB`}
-                variant="accent"
-              />
-            </div>
-          </section>
-        </div>
-
-        {/* EmptyState Showcase */}
-        <div {...stylex.props(styles.wideCard)}>
-          <section {...stylex.props(styles.section)}>
-            <h2 {...stylex.props(styles.sectionTitle)}>
-              EmptyState Component Showcase
-            </h2>
-            <p style={{ margin: 0, fontSize: '0.9rem', color: '#94a3b8' }}>
-              Consistent placeholder UI for tables, lists, charts, and empty
-              dashboard widgets.
-            </p>
-
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-                gap: '20px',
-              }}
-            >
-              <EmptyState
-                variant="card"
-                icon={<FolderIcon />}
-                title="No repositories found"
-                description="Get started by creating a new repository or importing an existing project."
-                action={<Button size="sm">Create Repository</Button>}
-                secondaryAction={
-                  <Button size="sm" variant="ghost">
-                    Import
-                  </Button>
-                }
-              />
-
-              <EmptyState
-                variant="dashed"
-                icon={<RadioIcon />}
-                title="No active audio streams"
-                description="Connect a streaming audio source to begin real-time telemetry."
-                action={
-                  <Button size="sm" variant="outline">
-                    Connect Stream
-                  </Button>
-                }
-              />
-            </div>
-          </section>
-        </div>
-
-        {/* Pagination Showcase */}
-        <div {...stylex.props(styles.wideCard)}>
-          <section {...stylex.props(styles.section)}>
-            <h2 {...stylex.props(styles.sectionTitle)}>
-              Pagination Component Showcase
-            </h2>
-            <p style={{ margin: 0, fontSize: '0.9rem', color: '#94a3b8' }}>
-              Full navigation controls with smart sibling truncation,
-              rows-per-page selection, item counts, and ARIA landmarks.
-            </p>
-
-            <div
-              style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}
-            >
-              <Pagination
-                page={currentPage}
-                total={120}
-                pageSize={pageSize}
-                showSummary
-                showPageSize
-                showFirstLast
-                showPrevNext
-                onChange={setCurrentPage}
-                onPageSizeChange={setPageSize}
-              />
-
-              <Pagination
-                page={currentPage}
-                totalPages={10}
-                variant="subtle"
-                shape="circle"
-                onChange={setCurrentPage}
-              />
-            </div>
-          </section>
-        </div>
-
-        {/* Badge Showcase */}
-        <div {...stylex.props(styles.wideCard)}>
-          <section {...stylex.props(styles.section)}>
-            <h2 {...stylex.props(styles.sectionTitle)}>
-              Badge Component Showcase
-            </h2>
-            <p style={{ margin: 0, fontSize: '0.9rem', color: '#94a3b8' }}>
-              Status badges with size scaling (sm, md, lg), semantic colors, and
-              dot indicator variants.
-            </p>
-
-            <div
-              style={{
-                display: 'flex',
-                gap: '8px',
-                alignItems: 'center',
-                flexWrap: 'wrap',
-              }}
-            >
-              <span style={{ fontSize: '0.85rem', color: '#94a3b8' }}>
-                Active Size:
-              </span>
-              <Button
-                size="sm"
-                variant={badgeSize === 'sm' ? 'primary' : 'outline'}
-                onPress={() => setBadgeSize('sm')}
-              >
-                SM
-              </Button>
-              <Button
-                size="sm"
-                variant={badgeSize === 'md' ? 'primary' : 'outline'}
-                onPress={() => setBadgeSize('md')}
-              >
-                MD
-              </Button>
-              <Button
-                size="sm"
-                variant={badgeSize === 'lg' ? 'primary' : 'outline'}
-                onPress={() => setBadgeSize('lg')}
-              >
-                LG
-              </Button>
-            </div>
-
-            <div
-              style={{
-                display: 'flex',
-                gap: '12px',
-                alignItems: 'center',
-                flexWrap: 'wrap',
-              }}
-            >
-              <Badge size={badgeSize} variant="neutral">
-                Neutral
-              </Badge>
-              <Badge size={badgeSize} variant="primary">
-                Primary
-              </Badge>
-              <Badge size={badgeSize} variant="success">
-                Success
-              </Badge>
-              <Badge size={badgeSize} variant="warning">
-                Warning
-              </Badge>
-              <Badge size={badgeSize} variant="error">
-                Error
-              </Badge>
-            </div>
-
-            <div
-              style={{
-                display: 'flex',
-                gap: '12px',
-                alignItems: 'center',
-                flexWrap: 'wrap',
-              }}
-            >
-              <Badge size={badgeSize} variant="dot">
-                Status Dot
-              </Badge>
-              <Badge size={badgeSize} variant="success" dot>
-                Operational
-              </Badge>
-              <Badge size={badgeSize} variant="warning" dot>
-                Degraded
-              </Badge>
-              <Badge size={badgeSize} variant="error" dot>
-                Incident
-              </Badge>
-              <Badge size={badgeSize} variant="primary" dot>
-                Deploying
-              </Badge>
-            </div>
-          </section>
-        </div>
-
-        {/* Skeleton Showcase */}
-        <div {...stylex.props(styles.wideCard)}>
-          <section {...stylex.props(styles.section)}>
-            <h2 {...stylex.props(styles.sectionTitle)}>
-              Skeleton Component Showcase
-            </h2>
-            <p style={{ margin: 0, fontSize: '0.9rem', color: '#94a3b8' }}>
-              Loading placeholders supporting shape variants (block, text,
-              circle) and stacked count prop.
-            </p>
-
-            <div
-              style={{
-                display: 'flex',
-                gap: '8px',
-                alignItems: 'center',
-                flexWrap: 'wrap',
-              }}
-            >
-              <span style={{ fontSize: '0.85rem', color: '#94a3b8' }}>
-                Shape:
-              </span>
-              <Button
-                size="sm"
-                variant={skeletonShape === 'block' ? 'primary' : 'outline'}
-                onPress={() => setSkeletonShape('block')}
-              >
-                Block
-              </Button>
-              <Button
-                size="sm"
-                variant={skeletonShape === 'text' ? 'primary' : 'outline'}
-                onPress={() => setSkeletonShape('text')}
-              >
-                Text
-              </Button>
-              <Button
-                size="sm"
-                variant={skeletonShape === 'circle' ? 'primary' : 'outline'}
-                onPress={() => setSkeletonShape('circle')}
-              >
-                Circle
-              </Button>
-
-              <span
-                style={{
-                  fontSize: '0.85rem',
-                  color: '#94a3b8',
-                  marginLeft: '12px',
-                }}
-              >
-                Count:
-              </span>
-              <Button
-                size="sm"
-                variant={skeletonCount === 1 ? 'primary' : 'outline'}
-                onPress={() => setSkeletonCount(1)}
-              >
-                1
-              </Button>
-              <Button
-                size="sm"
-                variant={skeletonCount === 3 ? 'primary' : 'outline'}
-                onPress={() => setSkeletonCount(3)}
-              >
-                3
-              </Button>
-              <Button
-                size="sm"
-                variant={skeletonCount === 5 ? 'primary' : 'outline'}
-                onPress={() => setSkeletonCount(5)}
-              >
-                5
-              </Button>
-            </div>
-
-            <div style={{ maxWidth: '400px' }}>
-              <Skeleton variant={skeletonShape} count={skeletonCount} />
-            </div>
-
-            <div
-              style={{
-                display: 'flex',
-                gap: '16px',
-                alignItems: 'center',
-                maxWidth: '400px',
-                border: '1px solid rgba(255,255,255,0.08)',
-                borderRadius: '8px',
-                padding: '16px',
-              }}
-            >
-              <Skeleton variant="circle" />
-              <div
-                style={{
-                  flex: 1,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '8px',
-                }}
-              >
-                <Skeleton variant="text" />
-                <div style={{ width: '60%' }}>
-                  <Skeleton variant="text" />
-                </div>
-              </div>
-            </div>
-          </section>
-        </div>
-
-        {/* Spinner Showcase */}
-        <div {...stylex.props(styles.wideCard)}>
-          <section {...stylex.props(styles.section)}>
-            <h2 {...stylex.props(styles.sectionTitle)}>
-              Spinner Component Showcase
-            </h2>
-            <p style={{ margin: 0, fontSize: '0.9rem', color: '#94a3b8' }}>
-              Accessible loading spinners in four standardized sizes.
-            </p>
-
-            <div
-              style={{
-                display: 'flex',
-                gap: '24px',
-                alignItems: 'center',
-                flexWrap: 'wrap',
-              }}
-            >
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  gap: '8px',
-                }}
-              >
-                <Spinner size="sm" aria-label="Small spinner" />
-                <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
-                  Small (sm)
-                </span>
-              </div>
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  gap: '8px',
-                }}
-              >
-                <Spinner size="md" aria-label="Medium spinner" />
-                <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
-                  Medium (md)
-                </span>
-              </div>
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  gap: '8px',
-                }}
-              >
-                <Spinner size="lg" aria-label="Large spinner" />
-                <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
-                  Large (lg)
-                </span>
-              </div>
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  gap: '8px',
-                }}
-              >
-                <Spinner size="xl" aria-label="Extra large spinner" />
-                <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
-                  XL (xl)
-                </span>
-              </div>
-            </div>
-          </section>
-        </div>
-
-        {/* Table Showcase */}
-        <div {...stylex.props(styles.wideCard)}>
-          <section {...stylex.props(styles.section)}>
-            <h2 {...stylex.props(styles.sectionTitle)}>
-              Table Component Showcase
-            </h2>
-            <p style={{ margin: 0, fontSize: '0.9rem', color: '#94a3b8' }}>
-              Semantic zero-runtime data table with sticky headers, sorting, density, striping, and skeleton states.
-            </p>
-
-            <div
-              style={{
-                display: 'flex',
-                gap: '8px',
-                alignItems: 'center',
-                flexWrap: 'wrap',
-              }}
-            >
-              <Button
-                size="sm"
-                variant={isTableSticky ? 'primary' : 'outline'}
-                onPress={() => setIsTableSticky((v) => !v)}
-              >
-                Sticky: {isTableSticky ? 'ON' : 'OFF'}
-              </Button>
-              <Button
-                size="sm"
-                variant={isTableDense ? 'primary' : 'outline'}
-                onPress={() => setIsTableDense((v) => !v)}
-              >
-                Dense: {isTableDense ? 'ON' : 'OFF'}
-              </Button>
-              <Button
-                size="sm"
-                variant={isTableStriped ? 'primary' : 'outline'}
-                onPress={() => setIsTableStriped((v) => !v)}
-              >
-                Striped: {isTableStriped ? 'ON' : 'OFF'}
-              </Button>
-              <Button
-                size="sm"
-                variant={isTableBordered ? 'primary' : 'outline'}
-                onPress={() => setIsTableBordered((v) => !v)}
-              >
-                Bordered: {isTableBordered ? 'ON' : 'OFF'}
-              </Button>
-              <Button
-                size="sm"
-                variant={isTablePinned ? 'primary' : 'outline'}
-                onPress={() => setIsTablePinned((v) => !v)}
-              >
-                Pinning: {isTablePinned ? 'ON' : 'OFF'}
-              </Button>
-              <Button
-                size="sm"
-                variant={isTableLoading ? 'primary' : 'outline'}
-                onPress={() => setIsTableLoading((v) => !v)}
-              >
-                Loading: {isTableLoading ? 'ON' : 'OFF'}
-              </Button>
-              <Button
-                size="sm"
-                variant={isTableEmpty ? 'primary' : 'outline'}
-                onPress={() => setIsTableEmpty((v) => !v)}
-              >
-                Empty: {isTableEmpty ? 'ON' : 'OFF'}
-              </Button>
-            </div>
-
-            <div
-              style={{
-                maxHeight: '320px',
-                overflowY: 'auto',
-              }}
-            >
-              <Table
-                aria-label="Cluster Services Table"
-                stickyHeader={isTableSticky}
-                dense={isTableDense}
-                striped={isTableStriped}
-                bordered={isTableBordered}
-              >
-                <TableHeader>
-                  <TableRow>
-                    <TableHead
-                      pinned={isTablePinned ? 'left' : undefined}
-                      pinOffset={0}
-                      sortDirection={
-                        tableSort.column === 'name' ? tableSort.direction : null
-                      }
-                      onSort={() =>
-                        setTableSort((prev) => ({
-                          column: 'name',
-                          direction:
-                            prev.column === 'name' && prev.direction === 'asc'
-                              ? 'desc'
-                              : 'asc',
-                        }))
-                      }
-                    >
-                      Service Name
-                    </TableHead>
-                    <TableHead
-                      sortDirection={
-                        tableSort.column === 'role' ? tableSort.direction : null
-                      }
-                      onSort={() =>
-                        setTableSort((prev) => ({
-                          column: 'role',
-                          direction:
-                            prev.column === 'role' && prev.direction === 'asc'
-                              ? 'desc'
-                              : 'asc',
-                        }))
-                      }
-                    >
-                      Cluster Role
-                    </TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead align="numeric">Bandwidth</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {isTableLoading ? (
-                    <TableSkeleton rows={4} columns={4} />
-                  ) : isTableEmpty ? (
-                    <TableEmpty colSpan={4}>
-                      <EmptyState
-                        variant="default"
-                        icon={<FolderIcon />}
-                        title="No cluster services found"
-                        description="Deploy a new service to monitor bandwidth and latency."
-                        action={<Button size="sm">Deploy Service</Button>}
-                      />
-                    </TableEmpty>
-                  ) : (
-                    [
-                      {
-                        id: '1',
-                        name: 'Authentication API',
-                        role: 'Security',
-                        status: 'Operational',
-                        variant: 'success',
-                        bandwidth: '1.2 GB/s',
-                      },
-                      {
-                        id: '2',
-                        name: 'PostgreSQL Primary',
-                        role: 'Database',
-                        status: 'Operational',
-                        variant: 'success',
-                        bandwidth: '4.8 GB/s',
-                      },
-                      {
-                        id: '3',
-                        name: 'Global Edge CDN',
-                        role: 'Edge',
-                        status: 'Degraded',
-                        variant: 'warning',
-                        bandwidth: '820 MB/s',
-                      },
-                      {
-                        id: '4',
-                        name: 'Background Workers',
-                        role: 'Compute',
-                        status: 'Operational',
-                        variant: 'success',
-                        bandwidth: '340 MB/s',
-                      },
-                    ]
-                      .sort((a, b) => {
-                        const col = tableSort.column as keyof typeof a
-                        const first = a[col] || ''
-                        const second = b[col] || ''
-                        const cmp = String(first).localeCompare(String(second))
-                        return tableSort.direction === 'desc' ? -cmp : cmp
-                      })
-                      .map((item) => (
-                        <TableRow key={item.id}>
-                          <TableCell
-                            pinned={isTablePinned ? 'left' : undefined}
-                            pinOffset={0}
-                          >
-                            <span style={{ fontWeight: 600 }}>{item.name}</span>
-                          </TableCell>
-                          <TableCell>{item.role}</TableCell>
-                          <TableCell>
-                            <Badge size="sm" variant={item.variant as any} dot>
-                              {item.status}
-                            </Badge>
-                          </TableCell>
-                          <TableCell align="numeric">{item.bandwidth}</TableCell>
-                        </TableRow>
-                      ))
-                  )}
-                </TableBody>
-                <TableFooter>
-                  <TableRow>
-                    <TableCell colSpan={3}>Active Cluster Summary</TableCell>
-                    <TableCell align="numeric">4 Nodes</TableCell>
-                  </TableRow>
-                </TableFooter>
-              </Table>
-            </div>
-          </section>
-        </div>
-
-        {/* Avatar & AvatarGroup Showcase */}
-        <div {...stylex.props(styles.card)}>
-          <section {...stylex.props(styles.section)}>
-            <h2 {...stylex.props(styles.sectionTitle)}>Avatar & AvatarGroup</h2>
-            <p style={{ margin: 0, fontSize: '0.9rem', color: '#94a3b8' }}>
-              Avatars supporting size variants (xs–2xl), shapes (circle/square),
-              status indicator dots, and overlapping AvatarGroup with excess
-              limits.
-            </p>
-
-            <div
-              style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}
-            >
+        {/* Main Content Area */}
+        <SidebarMain style={styles.mainContent}>
+          <div {...stylex.props(styles.container)}>
+            {/* Header */}
+            <header {...stylex.props(styles.header)}>
               <div>
-                <span
-                  style={{
-                    fontSize: '0.8rem',
-                    color: '#64748b',
-                    display: 'block',
-                    marginBottom: '8px',
-                  }}
-                >
-                  Sizes & Status Indicators (Online, Away, Busy, Offline):
-                </span>
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '12px',
-                    flexWrap: 'wrap',
-                  }}
-                >
-                  <Avatar
-                    initials="XS"
-                    size="xs"
-                    status="online"
-                    aria-label="XS Online"
-                  />
-                  <Avatar
-                    initials="SM"
-                    size="sm"
-                    status="away"
-                    aria-label="SM Away"
-                  />
-                  <Avatar
-                    initials="MD"
-                    size="md"
-                    status="busy"
-                    aria-label="MD Busy"
-                  />
-                  <Avatar
-                    initials="LG"
-                    size="lg"
-                    status="offline"
-                    aria-label="LG Offline"
-                  />
-                  <Avatar
-                    initials="XL"
-                    size="xl"
-                    status="online"
-                    aria-label="XL Online"
-                  />
-                  <Avatar
-                    initials="2X"
-                    size="2xl"
-                    status="online"
-                    aria-label="2XL Online"
-                  />
-                </div>
+                <h1 {...stylex.props(styles.title)}>Moul UI Sandbox</h1>
+                <p {...stylex.props(styles.subtitle)}>
+                  {activeCategory.description} • {activeCategory.count} items
+                </p>
               </div>
 
-              <div>
-                <span
-                  style={{
-                    fontSize: '0.8rem',
-                    color: '#64748b',
-                    display: 'block',
-                    marginBottom: '8px',
-                  }}
+              <div {...stylex.props(styles.toolbar)}>
+                {/* Theme Toggle Button */}
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onPress={toggleTheme}
+                  aria-label={`Switch to ${colorScheme === 'dark' ? 'light' : 'dark'} mode`}
                 >
-                  Square Shape with Status:
-                </span>
-                <div
-                  style={{ display: 'flex', alignItems: 'center', gap: '12px' }}
+                  {colorScheme === 'dark' ? <SunIcon /> : <MoonIcon />}
+                  <span>
+                    {colorScheme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+                  </span>
+                </Button>
+
+                {/* Quick Navigation Command Palette Trigger */}
+                <button
+                  type="button"
+                  onClick={() => setIsCommandOpen(true)}
+                  {...stylex.props(styles.searchBar)}
                 >
-                  <Avatar
-                    initials="SQ"
-                    shape="square"
-                    size="sm"
-                    status="online"
-                    aria-label="Square SM"
-                  />
-                  <Avatar
-                    initials="SQ"
-                    shape="square"
-                    size="md"
-                    status="busy"
-                    aria-label="Square MD"
-                  />
-                  <Avatar
-                    initials="SQ"
-                    shape="square"
-                    size="lg"
-                    status="away"
-                    aria-label="Square LG"
-                  />
-                </div>
+                  <span>Quick Navigation</span>
+                  <Kbd>⌘K</Kbd>
+                </button>
               </div>
+            </header>
 
-              <div>
-                <span
-                  style={{
-                    fontSize: '0.8rem',
-                    color: '#64748b',
-                    display: 'block',
-                    marginBottom: '8px',
-                  }}
-                >
-                  AvatarGroup (Stacked with Max Limit):
-                </span>
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '24px',
-                    flexWrap: 'wrap',
-                  }}
-                >
-                  <AvatarGroup max={3} aria-label="Project Team">
-                    <Avatar initials="AL" aria-label="Alex" />
-                    <Avatar initials="BT" aria-label="Beth" />
-                    <Avatar initials="CK" aria-label="Chris" />
-                    <Avatar initials="DL" aria-label="Dana" />
-                    <Avatar initials="EV" aria-label="Evan" />
-                  </AvatarGroup>
-
-                  <AvatarGroup
-                    size="sm"
-                    shape="square"
-                    max={4}
-                    aria-label="Square Group"
-                  >
-                    <Avatar initials="U1" aria-label="User 1" />
-                    <Avatar initials="U2" aria-label="User 2" />
-                    <Avatar initials="U3" aria-label="User 3" />
-                    <Avatar initials="U4" aria-label="User 4" />
-                    <Avatar initials="U5" aria-label="User 5" />
-                    <Avatar initials="U6" aria-label="User 6" />
-                  </AvatarGroup>
-                </div>
-              </div>
-            </div>
-          </section>
-        </div>
-
-        {/* DatePicker & Calendar Showcase */}
-        <div {...stylex.props(styles.wideCard)}>
-          <section {...stylex.props(styles.section)}>
-            <h2 {...stylex.props(styles.sectionTitle)}>
-              DatePicker & Calendar Suite
-            </h2>
-            <p style={{ margin: 0, fontSize: '0.9rem', color: '#94a3b8' }}>
-              Full DatePicker, DateRangePicker, DateField, and interactive
-              Calendar month grids.
-            </p>
-
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-                gap: '24px',
-                alignItems: 'start',
-              }}
+            {/* Category Filter Pills */}
+            <nav
+              aria-label="Component categories"
+              {...stylex.props(styles.categoriesNav)}
             >
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '16px',
-                }}
-              >
-                <DatePicker
-                  label="Appointment Date"
-                  description="Pick a date for your consultation"
-                />
-                <DateRangePicker
-                  label="Reservation Period"
-                  description="Check-in to check-out dates"
-                />
-                <DateField
-                  label="Manual Date Input"
-                  description="Type date directly or use arrow keys"
-                />
-              </div>
-
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '12px',
-                  alignItems: 'center',
-                }}
-              >
-                <span style={{ fontSize: '0.8rem', color: '#64748b' }}>
-                  Interactive Calendar Grids:
-                </span>
-                <div
-                  style={{
-                    display: 'flex',
-                    gap: '16px',
-                    flexWrap: 'wrap',
-                    justifyContent: 'center',
-                  }}
+              {CATEGORIES.map((cat) => (
+                <Button
+                  key={cat.id}
+                  size="sm"
+                  variant={selectedCategory === cat.id ? 'primary' : 'ghost'}
+                  onPress={() => setSelectedCategory(cat.id)}
                 >
-                  <Calendar aria-label="Single date calendar" />
-                  <RangeCalendar aria-label="Date range calendar" />
-                </div>
-              </div>
-            </div>
-          </section>
-        </div>
+                  {cat.label}
+                </Button>
+              ))}
+            </nav>
 
-        {/* CommandPalette Modal Dialog */}
-        <CommandPalette isOpen={isCommandOpen} onOpenChange={setIsCommandOpen}>
-          <CommandPaletteInput placeholder="Type a command or search..." />
-          <CommandPaletteList>
-            <CommandPaletteSection heading="Navigation">
-              <CommandPaletteItem
-                icon={<HomeIcon />}
-                shortcut={['G', 'H']}
-                onAction={() => setActiveTab('home')}
-              >
-                Go to Home
-              </CommandPaletteItem>
-              <CommandPaletteItem
-                icon={<RadioIcon />}
-                shortcut={['G', 'R']}
-                onAction={() => setActiveTab('radio')}
-              >
-                Go to Radio
-              </CommandPaletteItem>
-              <CommandPaletteItem
-                icon={<PlaylistIcon />}
-                shortcut={['G', 'P']}
-                onAction={() => setActiveTab('all-playlists')}
-              >
-                View Playlists
-              </CommandPaletteItem>
-              <CommandPaletteItem
-                icon={<SettingsIcon />}
-                shortcut={['G', 'S']}
-                onAction={() => setActiveTab('settings')}
-              >
-                Open Settings
-              </CommandPaletteItem>
-            </CommandPaletteSection>
-
-            <CommandPaletteSection heading="Actions">
-              <CommandPaletteItem
-                icon={<FolderIcon />}
-                shortcut={['⌘', 'N']}
-                description="Create a new dashboard project"
-                onAction={() => alert('New project created!')}
-              >
-                Create New Project
-              </CommandPaletteItem>
-              <CommandPaletteItem
-                shortcut={['⌘', 'D']}
-                description="Toggle sidebar collapse"
-                onAction={() => setIsCollapsed((v) => !v)}
-              >
-                Toggle Sidebar
-              </CommandPaletteItem>
-              <CommandPaletteItem
-                shortcut={['⌘', 'T']}
-                description="Toggle glass or solid background theme"
-                onAction={() =>
+            {/* Modular Component Sections */}
+            {shouldShow('blocks') && (
+              <BlocksSection
+                isCollapsed={isCollapsed}
+                onToggleCollapse={() => setIsCollapsed(!isCollapsed)}
+                isSidebarDense={isSidebarDense}
+                onToggleDense={() => setIsSidebarDense(!isSidebarDense)}
+                sidebarVariant={sidebarVariant}
+                onToggleVariant={() =>
                   setSidebarVariant((v) => (v === 'glass' ? 'solid' : 'glass'))
                 }
-              >
-                Toggle Theme Style
-              </CommandPaletteItem>
-            </CommandPaletteSection>
-          </CommandPaletteList>
-          <CommandPaletteEmpty>No matching commands found.</CommandPaletteEmpty>
-          <CommandPaletteFooter />
-        </CommandPalette>
-      </SidebarMain>
-    </Sidebar>
+                showToggle={showToggle}
+                onToggleShowToggle={() => setShowToggle(!showToggle)}
+                activeTab={activeSidebarKey}
+              />
+            )}
+
+            {shouldShow('actions') && <ActionsSection />}
+            {shouldShow('forms') && <FormsSection />}
+            {shouldShow('overlays') && (
+              <OverlaysSection
+                onOpenCommandPalette={() => setIsCommandOpen(true)}
+              />
+            )}
+            {shouldShow('feedback') && <FeedbackSection />}
+            {shouldShow('navigation') && <NavigationSection />}
+            {shouldShow('layout') && <LayoutSection />}
+            {shouldShow('charts') && <ChartsSection />}
+          </div>
+
+          {/* Command Palette Modal */}
+          <CommandPalette
+            isOpen={isCommandOpen}
+            onOpenChange={setIsCommandOpen}
+          >
+            <CommandPaletteInput
+              placeholder="Jump to component section or command..."
+              value={filterQuery}
+              onChange={(e) => setFilterQuery(e.target.value)}
+            />
+            <CommandPaletteList>
+              <CommandPaletteSection heading="Theme & Appearance">
+                <CommandPaletteItem
+                  icon={colorScheme === 'dark' ? <SunIcon /> : <MoonIcon />}
+                  shortcut={['⌘', 'M']}
+                  onAction={() => {
+                    toggleTheme()
+                    setIsCommandOpen(false)
+                  }}
+                >
+                  Switch to {colorScheme === 'dark' ? 'Light' : 'Dark'} Mode
+                </CommandPaletteItem>
+                <CommandPaletteItem
+                  shortcut={['⌘', 'T']}
+                  onAction={() => {
+                    setSidebarVariant((v) =>
+                      v === 'glass' ? 'solid' : 'glass',
+                    )
+                    setIsCommandOpen(false)
+                  }}
+                >
+                  Toggle Sidebar Surface ({sidebarVariant})
+                </CommandPaletteItem>
+                <CommandPaletteItem
+                  shortcut={['⌘', 'D']}
+                  onAction={() => {
+                    setIsCollapsed((v) => !v)
+                    setIsCommandOpen(false)
+                  }}
+                >
+                  Toggle Sidebar Collapse
+                </CommandPaletteItem>
+              </CommandPaletteSection>
+
+              <CommandPaletteSection heading="Categories">
+                {CATEGORIES.map((cat) => (
+                  <CommandPaletteItem
+                    key={cat.id}
+                    onAction={() => {
+                      setSelectedCategory(cat.id)
+                      setIsCommandOpen(false)
+                    }}
+                  >
+                    View {cat.label} ({cat.count})
+                  </CommandPaletteItem>
+                ))}
+              </CommandPaletteSection>
+            </CommandPaletteList>
+            <CommandPaletteEmpty>No matching items found.</CommandPaletteEmpty>
+            <CommandPaletteFooter />
+          </CommandPalette>
+        </SidebarMain>
+      </Sidebar>
+    </ThemeProvider>
   )
 }
 

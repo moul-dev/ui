@@ -609,10 +609,7 @@ export function SidebarPreview() {
                 />
 
                 <div className="space-y-4 pt-2">
-                  <Switch
-                    isSelected={isDense}
-                    onChange={setIsDense}
-                  >
+                  <Switch isSelected={isDense} onChange={setIsDense}>
                     Compact / Dense Sidebar Layout
                   </Switch>
 

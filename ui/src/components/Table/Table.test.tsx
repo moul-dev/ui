@@ -77,7 +77,9 @@ describe('Table component suite (semantic primitives)', () => {
       </Table>,
     )
 
-    expect(container.querySelector('[data-moul-table-wrapper]')).toBeInTheDocument()
+    expect(
+      container.querySelector('[data-moul-table-wrapper]'),
+    ).toBeInTheDocument()
 
     rerender(
       <Table wrapInContainer={false}>
@@ -100,16 +102,10 @@ describe('Table component suite (semantic primitives)', () => {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead
-              sortDirection="asc"
-              onSort={handleSort}
-            >
+            <TableHead sortDirection="asc" onSort={handleSort}>
               Username
             </TableHead>
-            <TableHead
-              sortDirection={false}
-              onSort={handleSort}
-            >
+            <TableHead sortDirection={false} onSort={handleSort}>
               Status
             </TableHead>
           </TableRow>
@@ -208,13 +204,17 @@ describe('Table component suite (semantic primitives)', () => {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead pinned="left" pinOffset={0}>Pinned Head</TableHead>
+            <TableHead pinned="left" pinOffset={0}>
+              Pinned Head
+            </TableHead>
             <TableHead>Regular Head</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           <TableRow>
-            <TableCell pinned="left" pinOffset={0}>Pinned Cell</TableCell>
+            <TableCell pinned="left" pinOffset={0}>
+              Pinned Cell
+            </TableCell>
             <TableCell>Regular Cell</TableCell>
           </TableRow>
         </TableBody>
@@ -250,4 +250,3 @@ describe('Table component suite (semantic primitives)', () => {
     expect(getByText('Data 1')).toBeInTheDocument()
   })
 })
-

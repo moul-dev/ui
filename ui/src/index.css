@@ -5,9 +5,9 @@ body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  background-color: #020617;
-  color: #f8fafc;
   font-family: "Google Sans", "Inter", system-ui, sans-serif;
+  min-height: 100vh;
+  width: 100%;
 }
 
 *,

@@ -1091,11 +1091,7 @@ export function ThemeStudio() {
           </div>
 
           <Card className="border border-fd-border/70 overflow-hidden shadow-sm">
-            <Table
-              aria-label="Customer Accounts Table"
-              hoverable
-              striped
-            >
+            <Table aria-label="Customer Accounts Table" hoverable striped>
               <TableHeader>
                 <TableRow>
                   <TableHead>User</TableHead>

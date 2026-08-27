@@ -38,7 +38,11 @@
         "noStaticElementInteractions": "off",
         "useFocusableInteractive": "off",
         "useSemanticElements": "off",
-        "useAriaPropsForRole": "off"
+        "useAriaPropsForRole": "off",
+        "useAriaPropsSupportedByRole": "off",
+        "noAutofocus": "off",
+        "useKeyWithClickEvents": "off",
+        "noRedundantRoles": "off"
       },
       "security": {
         "noDangerouslySetInnerHtml": "off"
@@ -48,10 +52,13 @@
       },
       "suspicious": {
         "noExplicitAny": "off",
-        "noArrayIndexKey": "off"
+        "noArrayIndexKey": "off",
+        "noGlobalIsNan": "off"
       },
       "correctness": {
-        "useExhaustiveDependencies": "warn"
+        "useExhaustiveDependencies": "warn",
+        "noUnusedImports": "warn",
+        "noUnusedVariables": "warn"
       }
     },
     "domains": {

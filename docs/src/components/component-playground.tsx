@@ -1791,8 +1791,8 @@ export function ComponentPlayground({ component }: { component: string }) {
       </InputOTPGroup>`
           : `      <InputOTPGroup>
 ${Array.from({ length: maxLength || 4 })
-            .map((_, i) => `        <InputOTPSlot index={${i}} />`)
-            .join('\n')}
+  .map((_, i) => `        <InputOTPSlot index={${i}} />`)
+  .join('\n')}
       </InputOTPGroup>`
 
         return `import {
@@ -2122,11 +2122,13 @@ export default function Example() {
 
 export default function Example() {
   return (
-    <EmptyState${propsStr}${showAction ? '\n      action={<Button size="sm">Create New</Button>}' : ''
-          }${showSecondaryAction
-            ? '\n      secondaryAction={<Button size="sm" variant="ghost">Learn More</Button>}'
-            : ''
-          }
+    <EmptyState${propsStr}${
+      showAction ? '\n      action={<Button size="sm">Create New</Button>}' : ''
+    }${
+      showSecondaryAction
+        ? '\n      secondaryAction={<Button size="sm" variant="ghost">Learn More</Button>}'
+        : ''
+    }
     />
   );
 }`
@@ -2399,15 +2401,16 @@ export default function Example() {
         aria-label="Trip booking dates"
         value={range}
         onChange={setRange}${propsStr}
-      />${showSelectedValue
-              ? `
+      />${
+        showSelectedValue
+          ? `
       {range && (
         <p className="text-xs text-neutral-500">
           {range.start?.toString()} → {range.end?.toString()}
         </p>
       )}`
-              : ''
-            }
+          : ''
+      }
     </div>
   );
 }`
@@ -2425,15 +2428,16 @@ export default function Example() {
         aria-label="Appointment date"
         value={date}
         onChange={setDate}${propsStr}
-      />${showSelectedValue
-            ? `
+      />${
+        showSelectedValue
+          ? `
       {date && (
         <p className="text-xs text-neutral-500">
           Selected: {date.toString()}
         </p>
       )}`
-            : ''
-          }
+          : ''
+      }
     </div>
   );
 }`

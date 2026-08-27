@@ -39,6 +39,19 @@ Run these commands from the root directory:
   ```bash
   bun run dev:docs
   ```
+- **Scaffold New Component**:
+  ```bash
+  bun run gen:component <ComponentName>
+  ```
+- **Sync & Validate LLM Context**:
+  ```bash
+  bun run sync:llms
+  ```
+- **Run Lint / Format (Biome)**:
+  ```bash
+  bun run lint
+  bun run format
+  ```
 - **Build UI Library**:
   ```bash
   bun run build:ui

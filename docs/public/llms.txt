@@ -61,6 +61,10 @@ function Root({ children }: { children: React.ReactNode }) {
 - [CheckboxGroup](/docs/components/checkboxgroup): Group of checkboxes with orientation and validation.
 - [RadioGroup](/docs/components/radiogroup): Radio selection group with horizontal/vertical layouts.
 - [Switch](/docs/components/switch): Toggle switch for boolean settings.
+- [Slider](/docs/components/slider): Accessible range and volume sliders.
+- [Calendar](/docs/components/calendar): Single date and date range calendar picker with keyboard navigation.
+- [DateField](/docs/components/datefield): Segmented date and time input with localized formatting.
+- [DatePicker](/docs/components/datepicker): Combined date field with popover calendar picker.
 - [InputOTP](/docs/components/inputotp): Segmented one-time password input with `InputOTPGroup`, `InputOTPSlot`, and `InputOTPSeparator`.
 - [Form](/docs/components/form): Form wrapper integrating with React Aria validation and server actions.
 
@@ -68,6 +72,7 @@ function Root({ children }: { children: React.ReactNode }) {
 - [Drawer](/docs/components/drawer): Multi-directional sliding drawer overlay (`right`, `left`, `top`, `bottom`) with sticky action headers/footers and responsive full-width mobile sizing.
 - [Modal](/docs/components/modal): Accessible dialog overlays with `ModalOverlay`, `ModalDialog`, `ModalHeader`, `ModalBody`, and `ModalFooter`.
 - [AlertDialog](/docs/components/alertdialog): Confirmation and destructive alert dialogs.
+- [CommandPalette](/docs/components/commandpalette): Keyboard-first fuzzy search command dialog (`Cmd+K`).
 - [Popover](/docs/components/popover): Positioned popover overlays anchored to trigger elements.
 - [Tooltip](/docs/components/tooltip): Informative tooltips triggered on hover or focus.
 
@@ -93,6 +98,7 @@ function Root({ children }: { children: React.ReactNode }) {
 
 ### Blocks
 - [Sidebar](/docs/blocks/sidebar): Collapsible application navigation sidebar featuring group toggles, icon-only collapse, and glassmorphic styling.
+- [LogsViewer](/docs/blocks/logs): Virtualized real-time log stream viewer with search filtering, log-level highlighting, and timestamp formatting.
 
 ### Charts & Analytics
 - [AreaChart](/docs/components/charts/areachart): Smooth area charts for trends and cumulative metrics.

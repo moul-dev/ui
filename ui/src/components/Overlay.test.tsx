@@ -296,7 +296,10 @@ describe('Toast Component', () => {
           <ToastContainer data-testid="toast-container" />
           <Button
             onPress={() =>
-              toast.show('Dismissable Toast', { variant: 'info', timeout: 10000 })
+              toast.show('Dismissable Toast', {
+                variant: 'info',
+                timeout: 10000,
+              })
             }
           >
             Show

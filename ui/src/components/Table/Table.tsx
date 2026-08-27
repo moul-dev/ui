@@ -224,7 +224,9 @@ export const TableHeader = React.forwardRef<
     <thead
       {...rest}
       ref={ref}
-      className={[stylexClass, className].filter(Boolean).join(' ') || undefined}
+      className={
+        [stylexClass, className].filter(Boolean).join(' ') || undefined
+      }
       style={inlineStyle}
     >
       {children}
@@ -253,7 +255,9 @@ export const TableBody = React.forwardRef<
     <tbody
       {...rest}
       ref={ref}
-      className={[stylexClass, className].filter(Boolean).join(' ') || undefined}
+      className={
+        [stylexClass, className].filter(Boolean).join(' ') || undefined
+      }
       style={inlineStyle}
     >
       {children}
@@ -285,7 +289,9 @@ export const TableFooter = React.forwardRef<
     <tfoot
       {...rest}
       ref={ref}
-      className={[stylexClass, className].filter(Boolean).join(' ') || undefined}
+      className={
+        [stylexClass, className].filter(Boolean).join(' ') || undefined
+      }
       style={inlineStyle}
     >
       {children}
@@ -351,7 +357,10 @@ export const TableRow = React.forwardRef<HTMLTableRowElement, TableRowProps>(
 // ── TableHead (th) Component ──────────────────────────────────────────
 
 export interface TableHeadProps
-  extends Omit<React.ThHTMLAttributes<HTMLTableCellElement>, 'style' | 'align' | 'width'> {
+  extends Omit<
+    React.ThHTMLAttributes<HTMLTableCellElement>,
+    'style' | 'align' | 'width'
+  > {
   style?: StyleXStyles
   className?: string
   /** Text & content alignment */
@@ -407,8 +416,7 @@ export const TableHead = React.forwardRef<HTMLTableCellElement, TableHeadProps>(
     )
     const isBordered = bordered ?? ctx.bordered
 
-    const isSortedAsc =
-      sortDirection === 'asc' || sortDirection === 'ascending'
+    const isSortedAsc = sortDirection === 'asc' || sortDirection === 'ascending'
     const isSortedDesc =
       sortDirection === 'desc' || sortDirection === 'descending'
     const isSorted = isSortedAsc || isSortedDesc
@@ -514,15 +522,14 @@ export const TableHead = React.forwardRef<HTMLTableCellElement, TableHeadProps>(
                 isSorted && styles.sortIndicatorActive,
               )}
             >
-              {sortIndicator || (
-                isSortedAsc ? (
+              {sortIndicator ||
+                (isSortedAsc ? (
                   <SortAscIcon />
                 ) : isSortedDesc ? (
                   <SortDescIcon />
                 ) : (
                   <SortUnsortedIcon />
-                )
-              )}
+                ))}
             </span>
           </div>
         ) : (
@@ -536,7 +543,10 @@ export const TableHead = React.forwardRef<HTMLTableCellElement, TableHeadProps>(
 // ── TableCell (td) Component ──────────────────────────────────────────
 
 export interface TableCellProps
-  extends Omit<React.TdHTMLAttributes<HTMLTableCellElement>, 'style' | 'align' | 'width'> {
+  extends Omit<
+    React.TdHTMLAttributes<HTMLTableCellElement>,
+    'style' | 'align' | 'width'
+  > {
   style?: StyleXStyles
   className?: string
   /** Text & numeric alignment */
@@ -660,7 +670,9 @@ export const TableCaption = React.forwardRef<
     <caption
       {...rest}
       ref={ref}
-      className={[stylexClass, className].filter(Boolean).join(' ') || undefined}
+      className={
+        [stylexClass, className].filter(Boolean).join(' ') || undefined
+      }
       style={inlineStyle}
     >
       {children}
@@ -679,37 +691,46 @@ export interface TableEmptyProps
   cellClassName?: string
 }
 
-export const TableEmpty = React.forwardRef<HTMLTableRowElement, TableEmptyProps>(
-  function TableEmpty(
-    {
-      colSpan = 1,
-      style,
-      cellStyle,
-      className,
-      cellClassName,
-      children,
-      ...rest
-    },
-    ref,
-  ) {
-    const { className: cellClass, style: cellInline } = stylex.props(
-      styles.emptyCell,
-      cellStyle,
-    )
-
-    return (
-      <TableRow {...rest} ref={ref} hoverable={false} style={style} className={className}>
-        <td
-          colSpan={colSpan}
-          className={[cellClass, cellClassName].filter(Boolean).join(' ') || undefined}
-          style={cellInline}
-        >
-          {children}
-        </td>
-      </TableRow>
-    )
+export const TableEmpty = React.forwardRef<
+  HTMLTableRowElement,
+  TableEmptyProps
+>(function TableEmpty(
+  {
+    colSpan = 1,
+    style,
+    cellStyle,
+    className,
+    cellClassName,
+    children,
+    ...rest
   },
-)
+  ref,
+) {
+  const { className: cellClass, style: cellInline } = stylex.props(
+    styles.emptyCell,
+    cellStyle,
+  )
+
+  return (
+    <TableRow
+      {...rest}
+      ref={ref}
+      hoverable={false}
+      style={style}
+      className={className}
+    >
+      <td
+        colSpan={colSpan}
+        className={
+          [cellClass, cellClassName].filter(Boolean).join(' ') || undefined
+        }
+        style={cellInline}
+      >
+        {children}
+      </td>
+    </TableRow>
+  )
+})
 
 // ── TableSkeleton Component ───────────────────────────────────────────
 

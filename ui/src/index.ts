@@ -71,6 +71,8 @@ export type {
 } from './components/ChartContainer'
 // Charts and Analytics Components
 export { ChartContainer } from './components/ChartContainer'
+export type { CustomTooltipProps } from './components/ChartTooltip'
+export { ChartTooltip } from './components/ChartTooltip'
 export { Checkbox } from './components/Checkbox'
 export type { CheckboxProps } from './components/Checkbox/Checkbox'
 export { CheckboxGroup } from './components/CheckboxGroup'
@@ -344,8 +346,8 @@ export type {
   TableCellProps,
   TableEmptyProps,
   TableFooterProps,
-  TableHeadProps,
   TableHeaderProps,
+  TableHeadProps,
   TableProps,
   TableRowProps,
   TableSkeletonProps,

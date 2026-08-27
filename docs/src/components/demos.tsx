@@ -100,6 +100,13 @@ import {
   tokens,
   useToast,
 } from '@moul-dev/ui'
+import { useDebouncedValue } from '@tanstack/react-pacer'
+import {
+  QueryClient,
+  QueryClientProvider,
+  useQuery,
+} from '@tanstack/react-query'
+import { useStore } from '@tanstack/react-store'
 import {
   createColumnHelper,
   createCoreRowModel,
@@ -107,23 +114,17 @@ import {
   createPaginatedRowModel,
   createSortedRowModel,
   flexRender,
-  stockFeatures,
-  tableFeatures,
   type PaginationState,
   type RowSelectionState,
   type SortingState,
+  stockFeatures,
+  tableFeatures,
   useTable,
 } from '@tanstack/react-table'
 import { useVirtualizer } from '@tanstack/react-virtual'
-import {
-  QueryClient,
-  QueryClientProvider,
-  useQuery,
-} from '@tanstack/react-query'
 import { Store } from '@tanstack/store'
-import { useStore } from '@tanstack/react-store'
-import { useDebouncedValue } from '@tanstack/react-pacer'
-import React, { useMemo, useRef, useState } from 'react'
+import type React from 'react'
+import { useMemo, useRef, useState } from 'react'
 
 export function AlertDialogDemo() {
   const [isOpen, setIsOpen] = useState(false)
@@ -420,7 +421,7 @@ export function TagGroupDemo() {
             label="Small size"
             size="sm"
             variant="primary"
-            onRemove={() => { }}
+            onRemove={() => {}}
           >
             <Tag id="sm1">Small Tag</Tag>
             <Tag id="sm2">Tag 2</Tag>
@@ -430,7 +431,7 @@ export function TagGroupDemo() {
             label="Medium size"
             size="md"
             variant="secondary"
-            onRemove={() => { }}
+            onRemove={() => {}}
           >
             <Tag id="md1">Medium Tag</Tag>
             <Tag id="md2">Tag 2</Tag>
@@ -440,7 +441,7 @@ export function TagGroupDemo() {
             label="Large size"
             size="lg"
             variant="tertiary"
-            onRemove={() => { }}
+            onRemove={() => {}}
           >
             <Tag id="lg1">Large Tag</Tag>
             <Tag id="lg2">Tag 2</Tag>
@@ -1490,10 +1491,11 @@ export function PaginationDemo() {
                 <td className="p-3 text-neutral-500">{u.role}</td>
                 <td className="p-3">
                   <span
-                    className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${u.status === 'Active'
-                      ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-400'
-                      : 'bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400'
-                      }`}
+                    className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                      u.status === 'Active'
+                        ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-400'
+                        : 'bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400'
+                    }`}
                   >
                     {u.status}
                   </span>
@@ -2254,7 +2256,9 @@ function QueryTableInner() {
         totalPages: 4,
         records: Array.from({ length: 4 }, (_, i) => ({
           id: `log-${page}-${i + 1}`,
-          timestamp: new Date(Date.now() - (page * 4 + i) * 60000).toISOString(),
+          timestamp: new Date(
+            Date.now() - (page * 4 + i) * 60000,
+          ).toISOString(),
           level: (i % 3 === 0 ? 'ERROR' : i % 2 === 0 ? 'WARN' : 'INFO') as
             | 'INFO'
             | 'WARN'
@@ -2388,10 +2392,11 @@ export function AvatarDemo() {
               key={s}
               type="button"
               onClick={() => setSize(s)}
-              className={`px-2 py-1 rounded text-xs font-medium uppercase transition-colors ${size === s
-                ? 'bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900'
-                : 'bg-neutral-200/60 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200'
-                }`}
+              className={`px-2 py-1 rounded text-xs font-medium uppercase transition-colors ${
+                size === s
+                  ? 'bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900'
+                  : 'bg-neutral-200/60 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200'
+              }`}
             >
               {s}
             </button>
@@ -2405,10 +2410,11 @@ export function AvatarDemo() {
               key={sh}
               type="button"
               onClick={() => setShape(sh)}
-              className={`px-2 py-1 rounded text-xs font-medium capitalize transition-colors ${shape === sh
-                ? 'bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900'
-                : 'bg-neutral-200/60 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200'
-                }`}
+              className={`px-2 py-1 rounded text-xs font-medium capitalize transition-colors ${
+                shape === sh
+                  ? 'bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900'
+                  : 'bg-neutral-200/60 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200'
+              }`}
             >
               {sh}
             </button>
@@ -2423,10 +2429,11 @@ export function AvatarDemo() {
                 key={st}
                 type="button"
                 onClick={() => setStatus(st)}
-                className={`px-2 py-1 rounded text-xs font-medium capitalize transition-colors ${status === st
-                  ? 'bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900'
-                  : 'bg-neutral-200/60 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200'
-                  }`}
+                className={`px-2 py-1 rounded text-xs font-medium capitalize transition-colors ${
+                  status === st
+                    ? 'bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900'
+                    : 'bg-neutral-200/60 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200'
+                }`}
               >
                 {st}
               </button>
