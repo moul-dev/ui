@@ -4,15 +4,13 @@ import { tokens } from '../../tokens/tokens.stylex'
 
 export const styles = stylex.create({
   // ── Sidebar Container ───────────────────────────────────────────────
+  // ── Sidebar Container ───────────────────────────────────────────────
   sidebar: {
     display: 'flex',
     flexDirection: 'column',
-    height: `calc(100% - ${tokens.spacing3} * 2)`,
-    marginBlock: tokens.spacing3,
-    marginInlineStart: tokens.spacing3,
-    marginInlineEnd: 0,
     flexShrink: 0,
-    transitionProperty: 'width, background-color, border-color, box-shadow',
+    transitionProperty:
+      'width, background-color, border-color, box-shadow, margin, border-radius',
     transitionDuration: '0.25s',
     transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
     boxSizing: 'border-box',
@@ -20,9 +18,28 @@ export const styles = stylex.create({
     position: 'relative',
     fontFamily: tokens.fontFamilyBase,
     color: tokens.colorFg,
+  },
+
+  // Sidebar Layout variants (framed vs flush/unframed)
+  sidebarFramed: {
+    height: `calc(100% - ${tokens.spacing3} * 2)`,
+    marginBlock: tokens.spacing3,
+    marginInlineStart: tokens.spacing3,
+    marginInlineEnd: 0,
     borderRadius: tokens.radiusLg,
     borderWidth: '1px',
     borderStyle: 'solid',
+  },
+  sidebarUnframed: {
+    height: `calc(100% - ${tokens.spacing3} * 2)`,
+    marginBlock: tokens.spacing3,
+    marginInlineStart: tokens.spacing3,
+    marginInlineEnd: 0,
+    borderRadius: 0,
+    borderWidth: 0,
+    borderStyle: 'none',
+    borderColor: 'transparent',
+    backgroundColor: 'transparent',
   },
 
   // Width variants
@@ -549,10 +566,49 @@ export const styles = stylex.create({
     flex: 1,
     display: 'flex',
     flexDirection: 'column',
-    height: '100%',
     overflowY: 'auto',
     boxSizing: 'border-box',
+    transitionProperty:
+      'background-color, border-color, box-shadow, margin, border-radius',
+    transitionDuration: '0.25s',
+    transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
+    fontFamily: tokens.fontFamilyBase,
+    color: tokens.colorFg,
+    minWidth: 0,
+  },
+  mainUnframed: {
+    height: '100%',
     backgroundColor: 'transparent',
     paddingBlockStart: tokens.spacing3,
+    borderWidth: 0,
+    borderStyle: 'none',
+    borderColor: 'transparent',
+    borderRadius: 0,
+    margin: 0,
+  },
+  mainFramed: {
+    height: `calc(100% - ${tokens.spacing3} * 2)`,
+    marginBlock: tokens.spacing3,
+    marginInlineEnd: tokens.spacing3,
+    marginInlineStart: 0,
+    borderRadius: tokens.radiusLg,
+    borderWidth: '1px',
+    borderStyle: 'solid',
+    overflow: 'hidden',
+  },
+  mainSolid: {
+    backgroundColor: tokens.colorBgSubtle,
+    borderColor: tokens.colorBorder,
+  },
+  mainGlass: {
+    backgroundColor: tokens.colorBgSubtle,
+    borderColor: tokens.colorBorder,
+    '@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))':
+      {
+        backgroundColor: tokens.colorBgGlass,
+        borderColor: tokens.colorBorderGlass,
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+      },
   },
 })

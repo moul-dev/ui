@@ -9,6 +9,12 @@ import {
 import { Tooltip, TooltipTrigger } from '../Tooltip'
 import { styles } from './Sidebar.styles'
 
+export type SidebarLayout =
+  | 'sidebar-framed'
+  | 'main-framed'
+  | 'default'
+  | 'inset'
+
 // ── Sidebar Context ───────────────────────────────────────────────────
 
 interface SidebarContextValue {
@@ -16,6 +22,7 @@ interface SidebarContextValue {
   selectedKey?: string
   onSelectionChange?: (key: string) => void
   variant: 'solid' | 'glass'
+  layout: 'sidebar-framed' | 'main-framed'
   onCollapseToggle: () => void
   showCollapseToggle?: boolean
   dense?: boolean
@@ -94,6 +101,7 @@ export interface SidebarProps {
   defaultSelectedKey?: string
   onSelectionChange?: (key: string) => void
   variant?: 'solid' | 'glass'
+  layout?: SidebarLayout
   showCollapseToggle?: boolean
   dense?: boolean
   style?: React.CSSProperties
@@ -111,6 +119,7 @@ export const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
       defaultSelectedKey,
       onSelectionChange,
       variant = 'solid',
+      layout = 'sidebar-framed',
       showCollapseToggle,
       dense = false,
       style,
@@ -149,12 +158,18 @@ export const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
       [onSelectionChange],
     )
 
+    const normalizedLayout: 'sidebar-framed' | 'main-framed' =
+      layout === 'main-framed' || layout === 'inset'
+        ? 'main-framed'
+        : 'sidebar-framed'
+
     const contextValue = React.useMemo(
       () => ({
         isCollapsed,
         selectedKey,
         onSelectionChange: handleSelection,
         variant,
+        layout: normalizedLayout,
         onCollapseToggle: handleCollapseToggle,
         showCollapseToggle,
         dense,
@@ -164,6 +179,7 @@ export const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
         selectedKey,
         handleSelection,
         variant,
+        normalizedLayout,
         handleCollapseToggle,
         showCollapseToggle,
         dense,
@@ -823,6 +839,7 @@ export const SidebarAside = React.forwardRef<HTMLElement, SidebarAsideProps>(
     const {
       isCollapsed,
       variant,
+      layout,
       onCollapseToggle,
       showCollapseToggle: contextShowToggle,
     } = useSidebar()
@@ -831,9 +848,12 @@ export const SidebarAside = React.forwardRef<HTMLElement, SidebarAsideProps>(
         ? propShowCollapseToggle
         : (contextShowToggle ?? true)
 
+    const isMainFramed = layout === 'main-framed'
+
     const { className: stylexClass, style: stylexStyle } = stylex.props(
       styles.sidebar,
-      styles[variant],
+      isMainFramed ? styles.sidebarUnframed : styles.sidebarFramed,
+      !isMainFramed && styles[variant],
       isCollapsed ? styles.collapsed : styles.expanded,
     )
 
@@ -891,8 +911,14 @@ export interface SidebarMainProps {
 
 export const SidebarMain = React.forwardRef<HTMLDivElement, SidebarMainProps>(
   function SidebarMain({ style, className, children }, ref) {
+    const { layout, variant } = useSidebar()
+    const isMainFramed = layout === 'main-framed'
+
     const { className: stylexClass, style: stylexStyle } = stylex.props(
       styles.mainContent,
+      isMainFramed ? styles.mainFramed : styles.mainUnframed,
+      isMainFramed &&
+        (variant === 'glass' ? styles.mainGlass : styles.mainSolid),
       style,
     )
 

@@ -361,4 +361,31 @@ describe('Sidebar Component Suite', () => {
     expect(screen.queryByText('Brand Title')).not.toBeInTheDocument()
     expect(screen.queryByText('User Profile Info')).not.toBeInTheDocument()
   })
+
+  test('supports layout variants ("sidebar-framed" and "main-framed")', () => {
+    const { rerender } = render(
+      <Sidebar layout="sidebar-framed">
+        <SidebarAside data-testid="test-aside">
+          <SidebarHeader>Aside</SidebarHeader>
+        </SidebarAside>
+        <SidebarMain data-testid="test-main">Main Content</SidebarMain>
+      </Sidebar>,
+    )
+
+    expect(screen.getByText('Aside')).toBeInTheDocument()
+    expect(screen.getByText('Main Content')).toBeInTheDocument()
+
+    // Rerender with main-framed / inset layout
+    rerender(
+      <Sidebar layout="main-framed" variant="glass">
+        <SidebarAside data-testid="test-aside">
+          <SidebarHeader>Aside</SidebarHeader>
+        </SidebarAside>
+        <SidebarMain data-testid="test-main">Main Content</SidebarMain>
+      </Sidebar>,
+    )
+
+    expect(screen.getByText('Aside')).toBeInTheDocument()
+    expect(screen.getByText('Main Content')).toBeInTheDocument()
+  })
 })

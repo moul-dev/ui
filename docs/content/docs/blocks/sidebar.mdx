@@ -85,8 +85,12 @@ Enable `dense` on `<Sidebar>` (or individual subcomponents) to render a compact 
 - Group headers and dividers have tighter spacing.
 - Collapsed icons are scaled to 30px square while maintaining consistent alignment.
 
-### Styling Variants
+### Styling & Layout Variants
 Supports both `solid` (flat background) and `glass` (glassmorphic translucent backdrop filter) modes out of the box using the `variant` prop.
+
+Additionally, the `layout` prop controls the spatial hierarchy:
+- `sidebar-framed` (default): Sidebar renders as a floating rounded card, while the main content area inherits the transparent canvas background.
+- `main-framed`: Inverted canvas layout where the sidebar is flush with the screen edge using the body background, and the main workspace is framed as a rounded, elevated card with subtle borders.
 
 ---
 
@@ -96,6 +100,7 @@ Supports both `solid` (flat background) and `glass` (glassmorphic translucent ba
 
 | Prop | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
+| `layout` | `'sidebar-framed' \| 'main-framed' \| 'default' \| 'inset'` | `'sidebar-framed'` | Visual hierarchy mode controlling whether the sidebar or main content area is framed. |
 | `dense` | `boolean` | `false` | Whether to render the sidebar and its child elements in compact dense mode. |
 | `isCollapsed` | `boolean` | `false` | Controlled state for whether the sidebar is collapsed to icon-only. |
 | `defaultCollapsed` | `boolean` | `false` | Uncontrolled default state for the collapse layout. |
@@ -103,7 +108,7 @@ Supports both `solid` (flat background) and `glass` (glassmorphic translucent ba
 | `selectedKey` | `string` | — | The active/selected item ID (controlled). |
 | `defaultSelectedKey`| `string` | — | The initial active item ID (uncontrolled). |
 | `onSelectionChange` | `(key: string) => void` | — | Callback triggered when a new item is selected. |
-| `variant` | `'solid' \| 'glass'` | `'solid'` | Aesthetic variant of the sidebar background. |
+| `variant` | `'solid' \| 'glass'` | `'solid'` | Aesthetic variant of the framed element background. |
 
 ### SidebarAside Props
 

@@ -158,6 +158,9 @@ export function SidebarPreview() {
   const [activeTab, setActiveTab] = useState('dashboard')
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [isDense, setIsDense] = useState(false)
+  const [layout, setLayout] = useState<'sidebar-framed' | 'main-framed'>(
+    'sidebar-framed',
+  )
   const [otpValue, setOtpValue] = useState('')
   const [allowNotifications, setAllowNotifications] = useState(true)
   const [maintenanceMode, setMaintenanceMode] = useState(false)
@@ -170,6 +173,7 @@ export function SidebarPreview() {
 
   return (
     <Sidebar
+      layout={layout}
       isCollapsed={isCollapsed}
       onCollapseChange={setIsCollapsed}
       selectedKey={activeTab}
@@ -268,6 +272,35 @@ export function SidebarPreview() {
           </div>
 
           <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() =>
+                setLayout((prev) =>
+                  prev === 'sidebar-framed' ? 'main-framed' : 'sidebar-framed',
+                )
+              }
+              className="inline-flex items-center justify-center gap-1.5 font-medium cursor-pointer border transition-colors h-8 px-3 text-xs rounded-lg shadow-xs hover:opacity-90"
+              style={{
+                backgroundColor:
+                  layout === 'main-framed'
+                    ? tokens.colorPrimary500
+                    : tokens.colorBgElevated,
+                borderColor:
+                  layout === 'main-framed'
+                    ? tokens.colorPrimary500
+                    : tokens.colorBorderSubtle,
+                color:
+                  layout === 'main-framed'
+                    ? tokens.colorFgOnPrimary
+                    : tokens.colorFg,
+              }}
+            >
+              <span>
+                Layout:{' '}
+                {layout === 'main-framed' ? 'Main Framed' : 'Sidebar Framed'}
+              </span>
+            </button>
+
             <button
               type="button"
               onClick={() => setIsDense((prev) => !prev)}
@@ -611,6 +644,15 @@ export function SidebarPreview() {
                 />
 
                 <div className="space-y-4 pt-2">
+                  <Switch
+                    isSelected={layout === 'main-framed'}
+                    onChange={(checked) =>
+                      setLayout(checked ? 'main-framed' : 'sidebar-framed')
+                    }
+                  >
+                    Reverse Layout (Main Framed)
+                  </Switch>
+
                   <Switch isSelected={isDense} onChange={setIsDense}>
                     Compact / Dense Sidebar Layout
                   </Switch>

@@ -6,6 +6,7 @@ export type {
   SidebarGroupProps,
   SidebarHeaderProps,
   SidebarItemProps,
+  SidebarLayout,
   SidebarMainProps,
   SidebarProps,
   SidebarUserProps,
