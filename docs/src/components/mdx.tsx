@@ -9,7 +9,6 @@ import {
   Calendar,
   CalendarCell,
   CalendarGrid,
-  Card,
   CardBody,
   CardFooter,
   CardHeader,
@@ -47,6 +46,7 @@ import {
   Kbd,
   LineChart,
   Logs,
+  Card as MoulCard,
   Pagination,
   PaginationContent,
   PaginationEllipsis,
@@ -89,13 +89,14 @@ import {
   TypographySpan,
 } from '@moul-dev/ui'
 import { Accordion, Accordions } from 'fumadocs-ui/components/accordion'
-import { Cards } from 'fumadocs-ui/components/card'
+import { Cards, Card as FumadocsCard } from 'fumadocs-ui/components/card'
 import { Step, Steps } from 'fumadocs-ui/components/steps'
 import { Tab, Tabs } from 'fumadocs-ui/components/tabs'
 import { TypeTable } from 'fumadocs-ui/components/type-table'
 import defaultMdxComponents from 'fumadocs-ui/mdx'
 import { ExternalLink } from 'lucide-react'
 import type { MDXComponents } from 'mdx/types'
+import type { ComponentProps } from 'react'
 import { BlockPreview } from './block-preview'
 import { ComponentPlayground } from './component-playground'
 import { ComponentPreview } from './component-preview'
@@ -152,6 +153,21 @@ export function FullPagePreviewLink({ href }: { href: string }) {
       </a>
     </div>
   )
+}
+
+export function Card(
+  props: ComponentProps<typeof FumadocsCard> & ComponentProps<typeof MoulCard>,
+) {
+  if (
+    'title' in props ||
+    'description' in props ||
+    'icon' in props ||
+    'href' in props ||
+    'external' in props
+  ) {
+    return <FumadocsCard {...(props as ComponentProps<typeof FumadocsCard>)} />
+  }
+  return <MoulCard {...(props as ComponentProps<typeof MoulCard>)} />
 }
 
 export function getMDXComponents(components?: MDXComponents) {
