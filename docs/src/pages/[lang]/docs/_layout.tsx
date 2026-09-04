@@ -3,9 +3,15 @@ import type { ReactNode } from 'react'
 import { docsOptions } from '@/lib/layout.shared'
 import { source } from '@/lib/source'
 
-export default function Layout({ children }: { children: ReactNode }) {
+export default function Layout({
+  children,
+  lang = 'km',
+}: {
+  children: ReactNode
+  lang?: string
+}) {
   return (
-    <DocsLayout {...docsOptions('en')} tree={source.getPageTree('en')}>
+    <DocsLayout {...docsOptions(lang)} tree={source.getPageTree(lang)}>
       {children}
     </DocsLayout>
   )

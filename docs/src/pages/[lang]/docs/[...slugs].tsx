@@ -17,8 +17,11 @@ import { getDocOgImageUrl } from '@/lib/og'
 import { gitConfig } from '@/lib/shared'
 import { getPageMarkdownUrl, source } from '@/lib/source'
 
-export default function Page({ slugs }: PageProps<'/docs/[...slugs]'>) {
-  const page = source.getPage(slugs, 'en')
+export default function LocalizedDocPage({
+  slugs,
+  lang,
+}: PageProps<'/[lang]/docs/[...slugs]'>) {
+  const page = source.getPage(slugs, lang)
   if (!page) unstable_notFound()
 
   const MDX = page.data.body
@@ -78,7 +81,7 @@ export default function Page({ slugs }: PageProps<'/docs/[...slugs]'>) {
 }
 
 export async function getConfig() {
-  const pages = source.getPages('en').map((page) => page.slugs)
+  const pages = source.getPages('km').map((page) => ['km', ...page.slugs])
 
   return {
     render: 'static' as const,

@@ -1,0 +1,245 @@
+---
+title: LLMs និង AI Coding Agents
+description: ឯកសារ context គោលការណ៍ណែនាំ និងការអនុវត្តល្អៗសម្រាប់ប្រើប្រាស់ Moul UI ជាមួយ Cursor, Claude, Windsurf, Copilot និងជំនួយការសរសេរកូដ AI ផ្សេងៗ។
+icon: Bot
+---
+
+Moul UI ផ្ដល់ជូននូវឯកសារ context កម្រិតស្តង់ដារសម្រាប់ម៉ាស៊ីន (Machine-readable context files) ដែលរៀបចំឡើងជាពិសេសសម្រាប់ LLMs និង AI coding assistants ដូចជា **Cursor**, **Windsurf**, **Claude Projects**, **GitHub Copilot**, **ChatGPT** និង **Antigravity**។
+
+តាមរយៈការបញ្ចូលឯកសារ context ទាំងនេះទៅក្នុងប្រព័ន្ធ AI របស់អ្នក ម៉ូឌែលនឹងបង្កើតកូដ React Aria យ៉ាងត្រឹមត្រូវ គាំទ្រភាពងាយស្រួលប្រើប្រាស់ (Accessibility) នាំចូល compound components បានច្បាស់លាស់ និងអនុវត្តតាម token រចនារបស់ StyleX ដោយគ្មានបន្ទុក runtime និងមិនបង្កើត API ក្លែងក្លាយ (Hallucinated APIs) ឡើយ។
+
+---
+
+## ឯកសារ Context សម្រាប់ AI
+
+យើងផ្ដល់ជូននូវឯកសារ context ស្តង់ដារចំនួន ៣ នៅលើ root នៃគេហទំព័រឯកសារណែនាំនេះ៖
+
+<Cards>
+  <Card
+    title="llms.txt"
+    href="/llms.txt"
+    external
+    description="លិបិក្រមសង្ខេបនៃឯកសារណែនាំ ការចាប់ផ្ដើមប្រើប្រាស់ និងតំណភ្ជាប់ components ស្របតាមស្តង់ដារ llmstxt.org។"
+  />
+  <Card
+    title="llms-full.txt"
+    href="/llms-full.txt"
+    external
+    description="ឯកសារណែនាំពេញលេញ កូដគំរូ និងនិយមន័យ props ទាំងអស់នៃ ៣៨+ components ក្នុងឯកសារតែមួយ។"
+  />
+  <Card
+    title="AGENTS.md"
+    href="/AGENTS.md"
+    external
+    description="គោលការណ៍ប្រព័ន្ធ រូបមន្តបង្កើតកូដ និងអនុសញ្ញាព្រឹត្តិការណ៍ React Aria ដែលរៀបចំឡើងយ៉ាងពិសេសសម្រាប់ AI coding agents។"
+  />
+</Cards>
+
+---
+
+## ការតភ្ជាប់ជាមួយឧបករណ៍ AI នានា
+
+ជ្រើសរើសជំនួយការសរសេរកូដ AI របស់អ្នកខាងក្រោម ដើម្បីមើលការណែនាំដំឡើងរហ័ស៖
+
+<Tabs items={['Cursor', 'Windsurf', 'Claude Projects', 'Copilot / VS Code', 'ChatGPT / Custom GPTs']}>
+  <Tab value="Cursor">
+    ### ការកំណត់រចនាសម្ព័ន្ធក្នុង Cursor
+    
+    Cursor គាំទ្រ Project Rules តាមរយៈ `.cursor/rules` ឬ `.cursorrules`។
+
+    <Steps>
+      <Step>
+        #### បង្កើតឯកសារ Rule
+        
+        បង្កើតឯកសារ `.cursor/rules/moul-ui.mdc` ក្នុង workspace របស់អ្នក៖
+
+        ```markdown title=".cursor/rules/moul-ui.mdc"
+        ---
+        description: Guidelines for building React components with @moul-dev/ui
+        globs: "**/*.{ts,tsx}"
+        alwaysApply: true
+        ---
+
+        When writing or editing React components:
+        - Use @moul-dev/ui for all UI components, dialogs, forms, and charts.
+        - Ensure `@moul-dev/ui/style.css` is imported at the application root.
+        - Use `onPress` instead of `onClick` on `<Button>`, `<Link>`, and interactive triggers.
+        - Use React Aria collection selection props (`selectedKey`, `onSelectionChange`).
+        - For complete recipes and prop tables, refer to: https://moul.dev/AGENTS.md
+        ```
+      </Step>
+
+      <Step>
+        #### បន្ថែមតំណភ្ជាប់ឯកសារ Docs
+        
+        ចូលទៅ Cursor Settings &rarr; **Features** &rarr; **Docs** ហើយបន្ថែម៖
+        - **URL**: `https://moul.dev/llms.txt` (ឬ URL នៃគេហទំព័រដែលបាន deploy)
+        - **Prefix**: `@moul-ui`
+      </Step>
+    </Steps>
+  </Tab>
+
+  <Tab value="Windsurf">
+    ### ការកំណត់រចនាសម្ព័ន្ធក្នុង Windsurf
+    
+    បន្ថែមគោលការណ៍ណែនាំទៅក្នុងឯកសារ `.windsurfrules` របស់អ្នក៖
+
+    ```markdown title=".windsurfrules"
+    # Moul UI Guidelines
+    - Component Library: @moul-dev/ui
+    - Global Styles: import '@moul-dev/ui/style.css'
+    - Buttons & Triggers: Use `onPress={(e) => ...}` (React Aria) instead of `onClick`.
+    - Modals & Overlays: Use `<ModalOverlay isOpen={...} onOpenChange={...}>` with `<Modal>`, `<ModalDialog>`, `<ModalHeader>`, `<ModalBody>`, `<ModalFooter>`.
+    - Reference: Fetch https://moul.dev/AGENTS.md for complete component API specifications.
+    ```
+  </Tab>
+
+  <Tab value="Claude Projects">
+    ### ការកំណត់រចនាសម្ព័ន្ធក្នុង Claude Projects
+    
+    <Steps>
+      <Step>
+        #### ទាញយកឯកសារ Context
+        
+        ទាញយកឯកសារ [`llms-full.txt`](/llms-full.txt) ឬ [`AGENTS.md`](/AGENTS.md)។
+      </Step>
+
+      <Step>
+        #### បញ្ចូលទៅក្នុង Project Knowledge
+        
+        1. បើកគម្រោងរបស់អ្នកនៅក្នុង [claude.ai](https://claude.ai)។
+        2. ចូលទៅកាន់ **Project Knowledge**។
+        3. ផ្ទុកឡើងនូវឯកសារ `llms-full.txt` ឬ `AGENTS.md`។
+      </Step>
+
+      <Step>
+        #### កំណត់ Custom Instructions
+        
+        បន្ថែមការណែនាំខាងក្រោមទៅក្នុង Project Custom Instructions៖
+        
+        ```text
+        When writing frontend code, build UI interfaces using @moul-dev/ui according to the component recipes in AGENTS.md. Always use onPress for buttons and ensure accessible labels on icon triggers.
+        ```
+      </Step>
+    </Steps>
+  </Tab>
+
+  <Tab value="Copilot / VS Code">
+    ### ការកំណត់រចនាសម្ព័ន្ធក្នុង GitHub Copilot
+    
+    បង្កើតឯកសារណែនាំ workspace នៅ `.github/copilot-instructions.md`៖
+
+    ```markdown title=".github/copilot-instructions.md"
+    # Frontend Component Standards
+    - Always use @moul-dev/ui components for buttons, forms, tables, modals, and charts.
+    - Global CSS: Ensure `@moul-dev/ui/style.css` is imported in `main.tsx`.
+    - Event Handlers: Use `onPress` instead of `onClick` on Buttons.
+    - Dialogs: Use compound subcomponents (`ModalOverlay`, `ModalDialog`, `ModalHeader`, `ModalBody`, `ModalFooter`).
+    - Details: Refer to https://moul.dev/AGENTS.md.
+    ```
+  </Tab>
+
+  <Tab value="ChatGPT / Custom GPTs">
+    ### ការកំណត់រចនាសម្ព័ន្ធក្នុង ChatGPT & Custom GPTs
+    
+    នៅក្នុងការកំណត់រចនាសម្ព័ន្ធ Custom GPT របស់អ្នក៖
+    1. ផ្ទុកឡើងនូវឯកសារ [`AGENTS.md`](/AGENTS.md) និង [`llms-full.txt`](/llms-full.txt) ក្រោមផ្នែក **Knowledge Files**។
+    2. បន្ថែមការណែនាំខាងក្រោមទៅក្នុង **Instructions**៖
+
+    ```text
+    You are an expert React engineer specialized in building accessible, high-performance web applications using @moul-dev/ui and StyleX. Follow the conventions in AGENTS.md for all component imports and props.
+    ```
+  </Tab>
+</Tabs>
+
+---
+
+## គោលការណ៍គ្រឹះសម្រាប់ការបង្កើតកូដដោយ AI
+
+នៅពេលបញ្ជាឱ្យ AI បង្កើតចំណុចប្រទាក់ជាមួយ Moul UI សូមប្រាប់ឱ្យម៉ូឌែលគោរពតាមគោលការណ៍សំខាន់ៗទាំងនេះ៖
+
+<Accordions>
+  <Accordion title="1. Event Handlers: onPress ជំនួសដោយ onClick">
+    ប៊ូតុង និង action triggers របស់ Moul UI ដំណើរការដោយ React Aria ហើយប្រើប្រាស់ `onPress`៖
+    
+    ```tsx
+    // ✅ ត្រឹមត្រូវ
+    <Button variant="primary" onPress={() => handleSave()}>Save Changes</Button>
+
+    // ❌ មិនត្រឹមត្រូវ
+    <Button variant="primary" onClick={() => handleSave()}>Save Changes</Button>
+    ```
+  </Accordion>
+
+  <Accordion title="2. រចនាសម្ព័ន្ធបែប Compound Components">
+    សមាសភាគស្មុគស្មាញដូចជា `Modal`, `AlertDialog`, `Card`, `Tabs`, `Table`, `Select` និង `Sidebar` ប្រើប្រាស់អនុសមាសភាគ (Compound subcomponents) បែប declarative៖
+    
+    ```tsx
+    // ✅ រចនាសម្ព័ន្ធ Modal ត្រឹមត្រូវ
+    <ModalOverlay isOpen={isOpen} onOpenChange={setIsOpen}>
+      <Modal size="md">
+        <ModalDialog>
+          <ModalHeader><h3>Title</h3></ModalHeader>
+          <ModalBody><p>Body text</p></ModalBody>
+          <ModalFooter><Button onPress={() => setIsOpen(false)}>Done</Button></ModalFooter>
+        </ModalDialog>
+      </Modal>
+    </ModalOverlay>
+    ```
+  </Accordion>
+
+  <Accordion title="3. ស្លាកសញ្ញាបញ្ជាក់ភាពងាយស្រួល (Accessible Labelling)">
+    ប៊ូតុងដែលមានតែរូបតំណាង (Icon-only buttons) **ត្រូវតែ** រួមបញ្ចូល `aria-label`៖
+    
+    ```tsx
+    // ✅ ងាយស្រួលប្រើប្រាស់ (Accessible)
+    <Button variant="ghost" aria-label="Delete project" onPress={handleDelete}>
+      <TrashIcon />
+    </Button>
+    ```
+  </Accordion>
+
+  <Accordion title="4. Design Tokens និងការកំណត់ Theme">
+    ការកែសម្រួលរូបរាងម៉ាក អាចកំណត់បានតាមរយៈ CSS custom properties ឬ `<ThemeProvider>`៖
+    
+    ```css
+    :root {
+      --brand-hue: 250;               /* កម្រិតពណ៌ចម្បង Primary hue */
+      --brand-chroma-multiplier: 1.0; /* កម្រិតឆ្អែតពណ៌ Saturation */
+      --brand-radius-factor: 1.0;     /* កម្រិតមូលជ្រុង Corner roundness */
+      --brand-density-factor: 1.0;    /* គម្លាត និងដង់ស៊ីតេ Spacing & density */
+    }
+    ```
+  </Accordion>
+</Accordions>
+
+---
+
+## គំរូ Prompts សម្រាប់ AI Assistants
+
+ខាងក្រោមនេះជាទម្រង់ prompts ដែលអ្នកអាចចម្លងយកទៅប្រើប្រាស់ផ្ទាល់ជាមួយ AI assistant របស់អ្នក៖
+
+<Steps>
+  <Step>
+    #### គំរូសម្រាប់ផ្ទាំងគ្រប់គ្រង Dashboard & Analytics
+    
+    ```text
+    Create a responsive analytics dashboard using @moul-dev/ui.
+    - Include Stat cards showing Revenue, Active Users, and Conversion Rate.
+    - Add an AreaChart for monthly financial trends and a BarChart for traffic sources.
+    - Include a recent transactions Table with selection and status Badges.
+    - Follow @moul-dev/ui component imports and onPress handlers.
+    ```
+  </Step>
+
+  <Step>
+    #### គំរូសម្រាប់ទំព័រការកំណត់ Settings & Modal Form
+    
+    ```text
+    Build a user settings page with @moul-dev/ui.
+    - Include TextFields for Name and Email, a Select for Role, and a Switch for Two-Factor Authentication.
+    - Add an "Invite Colleague" Button that opens a Modal with an email form and confirmation actions.
+    - Dispatch a success notification using toastQueue.add() when changes are saved.
+    ```
+  </Step>
+</Steps>

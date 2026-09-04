@@ -6,8 +6,10 @@ export async function GET(
   _: Request,
   { params }: ApiContext<'/llms.mdx/docs/[...slugs]/content.md'>,
 ) {
-  const slugs = params.slugs
-  const page = source.getPage(slugs)
+  const isKm = params.slugs[0] === 'km'
+  const lang = isKm ? 'km' : 'en'
+  const slugs = isKm ? params.slugs.slice(1) : params.slugs
+  const page = source.getPage(slugs, lang)
   if (!page) unstable_notFound()
 
   return new Response(await getLLMText(page), {
@@ -18,12 +20,11 @@ export async function GET(
 }
 
 export async function getConfig() {
-  const pages = source
-    .generateParams()
-    .map((item) => (item.lang ? [item.lang, ...item.slug] : item.slug))
+  const enPages = source.getPages('en').map((page) => page.slugs)
+  const kmPages = source.getPages('km').map((page) => ['km', ...page.slugs])
 
   return {
     render: 'static' as const,
-    staticPaths: pages,
+    staticPaths: [...enPages, ...kmPages],
   } as const
 }

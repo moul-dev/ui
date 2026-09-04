@@ -1,0 +1,113 @@
+---
+title: ចាប់ផ្ដើម
+description: ស្វែងយល់ពី Moul UI — បណ្ណាល័យសមាសភាគ React ដែលផ្ដល់ភាពងាយស្រួលប្រើប្រាស់ (Accessible) និងគ្មានបន្ទុក runtime (Zero-runtime) បង្កើតឡើងដោយ React Aria និង StyleX។
+icon: Rocket
+---
+
+Moul UI គឺជាបណ្ណាល័យសមាសភាគ (Components) បែបម៉ូឌុល ដែលរចនាឡើងយ៉ាងផ្ចិតផ្ចង់សម្រាប់វិស្វករផលិតផល ដែលស្វែងរកគ្រឹះទំនើប ស៊ីសង្វាក់គ្នា និងមានភាពងាយស្រួលប្រើប្រាស់កម្រិតខ្ពស់ (Accessibility) សម្រាប់កម្មវិធី React។
+
+តាមរយៈការរួមបញ្ចូលគ្នានូវគ្រឹះដ៏រឹងមាំនៃ **React Aria** ជាមួយនឹងសុវត្ថិភាពប្រភេទកូដ (Type safety) និងប្រសិទ្ធភាពពេល compile របស់ **StyleX**, Moul UI ផ្ដល់ជូននូវរចនាប័ទ្មលំនាំដើមដ៏ស្រស់ស្អាត ដោយគ្មានបន្ទុក runtime (Zero-runtime styling) ឡើយ។
+
+---
+
+## ហេតុអ្វីជ្រើសរើស Moul UI?
+
+<Cards>
+  <Card title="ងាយស្រួលប្រើប្រាស់ជាចម្បង (Accessible by Default)" description="គាំទ្រការបញ្ជាតាមក្ដារចុចពេញលេញ កម្មវិធីអានអេក្រង់ (Screen Reader) និង interaction states យ៉ាងរលូនដំណើរការដោយ React Aria។" />
+  <Card title="គ្មានបន្ទុកពេលដំណើរការ (Zero-Runtime Styling)" description="បង្កើតឡើងជាមួយ StyleX។ Atomic CSS ត្រូវបាន compile និងស្រង់ចេញនៅពេល build ដោយគ្មានបន្ទុកបន្ថែមលើ JavaScript ពេលដំណើរការឡើយ។" />
+  <Card title="រចនាស្អាត និងបត់បែនបានខ្ពស់ (Clean & Adaptable)" description="រចនាសម្ព័ន្ធស្អាតបាត និងផ្ដល់ភាពងាយស្រួលក្នុងការកែច្នៃបន្ថែមឱ្យស្របតាមអត្តសញ្ញាណម៉ាករបស់អ្នក។" />
+</Cards>
+
+---
+
+## ការដំឡើង
+
+អនុវត្តតាមជំហានខាងក្រោមដើម្បីភ្ជាប់ `@moul-dev/ui` ទៅក្នុងគម្រោង React របស់អ្នក៖
+
+<Steps>
+  <Step>
+    ### ដំឡើងកញ្ចប់កូដ (Package)
+    
+    បន្ថែមបណ្ណាល័យ និង peer dependencies ទៅក្នុងគម្រោងរបស់អ្នក៖
+    
+    <Tabs items={['bun', 'npm', 'pnpm', 'yarn']}>
+      <Tab value="bun">
+        ```bash
+        bun add @moul-dev/ui
+        ```
+      </Tab>
+      <Tab value="npm">
+        ```bash
+        npm install @moul-dev/ui
+        ```
+      </Tab>
+      <Tab value="pnpm">
+        ```bash
+        pnpm add @moul-dev/ui
+        ```
+      </Tab>
+      <Tab value="yarn">
+        ```bash
+        yarn add @moul-dev/ui
+        ```
+      </Tab>
+    </Tabs>
+  </Step>
+
+  <Step>
+    ### នាំចូលឯកសារស្ទីល CSS (Stylesheet)
+    
+    ដើម្បីដំណើរការស្ទីល Atomic CSS របស់ StyleX សូមនាំចូលឯកសារ stylesheet នៅឯ root នៃកម្មវិធីរបស់អ្នក (ជាទូទៅនៅក្នុង `main.tsx`, `index.tsx`, ឬក្នុងឯកសារ CSS ចម្បង)៖
+    
+    ```ts
+    import '@moul-dev/ui/style.css';
+    ```
+  </Step>
+
+  <Step>
+    ### ស្រោបកម្មវិធីជាមួយ ThemeProvider (ជម្រើសបន្ថែម)
+    
+    អ្នកអាចស្រោបកម្មវិធី ឬផ្នែកណាមួយនៃកម្មវិធីដោយប្រើ `ThemeProvider` ដើម្បីកំណត់ពន្លឺ/ងងឹត (Color scheme) ឬកែសម្រួល token ពណ៌នានា៖
+    
+    ```tsx
+    import { ThemeProvider } from '@moul-dev/ui';
+
+    function App({ children }) {
+      return (
+        <ThemeProvider colorScheme="light dark">
+          {children}
+        </ThemeProvider>
+      );
+    }
+    ```
+  </Step>
+
+  <Step>
+    ### ចាប់ផ្ដើមប្រើប្រាស់សមាសភាគ
+    
+    ពេលនេះ អ្នកអាចនាំចូល និងប្រើប្រាស់សមាសភាគនានារបស់ Moul UI បានភ្លាមៗ៖
+    
+    ```tsx
+    import { Button } from '@moul-dev/ui';
+
+    function HomePage() {
+      return (
+        <div style={{ padding: '2rem', display: 'flex', gap: '1rem' }}>
+          <Button variant="primary" onPress={() => console.log('Primary clicked!')}>
+            Primary Button
+          </Button>
+          <Button variant="secondary" onPress={() => console.log('Secondary clicked!')}>
+            Secondary Button
+          </Button>
+        </div>
+      );
+    }
+    ```
+  </Step>
+</Steps>
+
+---
+
+## ជំហានបន្ទាប់
+
+សូមពិនិត្យមើលរបារចំហៀងផ្នែកសមាសភាគ ដើម្បីស្វែងយល់បន្ថែមអំពីធាតុផ្សំដែលមានស្រាប់ គំរូនានា និងជម្រើសកំណត់រចនាសម្ព័ន្ធផ្សេងៗ៕

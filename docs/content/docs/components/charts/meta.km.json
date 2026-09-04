@@ -1,0 +1,13 @@
+{
+  "title": "គំនូសតាង (Charts)",
+  "defaultOpen": true,
+  "pages": [
+    "linechart",
+    "areachart",
+    "barchart",
+    "doughnutchart",
+    "toplist",
+    "stat",
+    "percentage"
+  ]
+}
