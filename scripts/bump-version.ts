@@ -256,7 +256,25 @@ async function main() {
     'docs/src/pages/_root.tsx',
   )
 
-  // 7. Update docs/src/pages/(home)/index.tsx hero version badge
+  // 7. Update docs/src/components/home-view.tsx & docs/src/pages/(home)/index.tsx hero version badge
+  const homeViewPath = join(
+    rootDir,
+    'docs',
+    'src',
+    'components',
+    'home-view.tsx',
+  )
+  updateFile(
+    homeViewPath,
+    (content) => {
+      return content.replace(
+        /(<span className="font-mono[^"]*">\s*)v[\d.]+(\s*<\/span>)/g,
+        `$1v${nextVersion}$2`,
+      )
+    },
+    'docs/src/components/home-view.tsx',
+  )
+
   const homePagePath = join(
     rootDir,
     'docs',
@@ -325,6 +343,23 @@ async function main() {
       )
     },
     'docs/public/llms-full.txt',
+  )
+
+  // 11. Update ui/src/sandbox/sections/NavigationSection.tsx
+  const navSectionPath = join(
+    rootDir,
+    'ui',
+    'src',
+    'sandbox',
+    'sections',
+    'NavigationSection.tsx',
+  )
+  updateFile(
+    navSectionPath,
+    (content) => {
+      return content.replace(/Release v[\d.]+/g, `Release v${nextVersion}`)
+    },
+    'ui/src/sandbox/sections/NavigationSection.tsx',
   )
 
   // 11. Optionally scaffold changelog file if requested

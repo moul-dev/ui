@@ -1,0 +1,140 @@
+---
+title: v2026.09.07 — Internationalization, Framed Sidebar Layouts, and Dense Navigation
+description: Bilingual documentation with native Khmer typography, framed canvas sidebar architecture, dense navigation modes, and monorepo developer tooling.
+date: 2026-09-07
+author: Phearak S. Tha
+avatar: https://github.com/thasophearak.png
+---
+
+Most design systems treat internationalization as a mechanical string-replacement task, ignoring how distinct typographic scripts alter spatial geometry. When non-Latin scripts—particularly Khmer—are forced into layouts sized strictly for Latin baselines, stacked diacritics clip and vertical line rhythms disintegrate.
+
+Khmer is a syllabic script. It does not stay confined between an arbitrary baseline and cap-height. Consonants stack subscript forms (*cherng akkhar*) below the baseline, while dependent vowels and signs stack above. When a container enforces a tight row height with `overflow: hidden`, the script gets amputated.
+
+It is unreadable. It looks neglected. For a library originating from Cambodia, that was unacceptable.
+
+This release introduces full bilingual documentation with native Khmer typography alongside an architectural overhaul of the `Sidebar` primitive, introducing framed canvas layouts, dense workstation navigation, and automated monorepo developer tooling.
+
+---
+
+## Interactive Sidebar Showcase
+
+Try the live sidebar below. It demonstrates the compound navigation layout with collapsible groups, dense mode toggles, and reactive selection states:
+
+<ComponentPreview>
+  <SidebarDemo />
+</ComponentPreview>
+
+---
+
+## Bilingual Documentation and Khmer Typographic Metrics
+
+Supporting a language properly requires re-evaluating the entire vertical grid of your typography, not just swapping translation keys.
+
+To support Khmer without visual distortion, I integrated Google's **Kantumruy Pro** alongside Google Sans and Inter. Kantumruy Pro provides proportional loop-heights and generous ascender and descender clearances, preventing stacked subscript consonants from colliding with preceding lines or clipping inside buttons:
+
+- **Bilingual Static Routing:** Built with Waku and Fumadocs, the documentation now compiles dedicated static routes under `/[lang]/docs/...` and `/[lang]/index.tsx`. Switching languages incurs zero runtime overhead or client-side layout jumping.
+- **Context-Preserving Language Switcher:** An accessible language switcher in the primary navigation bar allows visitors to toggle between English and ភាសាខ្មែរ (Khmer) while preserving their active page route.
+- **Locale-Aware LLM Specifications:** The `/llms.txt` and raw markdown endpoints (`_api/llms.mdx/docs/...`) now resolve language parameters, allowing AI coding agents to retrieve documentation in either language.
+- **Localized Home Experience:** Extracted the core landing presentation into a shared `HomeView` component with dedicated Khmer copy (*រចនាឡើងសម្រាប់ភាពរលូន — Engineered for flow*).
+
+---
+
+## Framed Canvas Sidebar Architecture
+
+Sidebars in complex software are often treated as simple static columns. In practice, workstation applications demand flexible spatial relationships between the navigation chassis and the primary canvas.
+
+In earlier versions, the sidebar always acted as an elevated card against a continuous background (`layout="sidebar-framed"`). But in dense tools like Xcode, Figma, or Apple Music, the relationship often inverts: the sidebar recedes into the window backdrop, and the main workspace becomes the elevated, framed canvas.
+
+The new `layout` prop on `<Sidebar>` introduces this inverted pattern via `layout="main-framed"` (aliased as `"inset"`):
+
+```tsx
+import {
+  Sidebar,
+  SidebarAside,
+  SidebarMain,
+  SidebarHeader,
+  SidebarBrand,
+  SidebarGroup,
+  SidebarItem,
+  SidebarFooter,
+  SidebarUser,
+} from '@moul-dev/ui';
+
+export function Workspace() {
+  const [activeKey, setActiveKey] = React.useState('overview');
+
+  return (
+    <Sidebar
+      layout="main-framed"
+      dense
+      selectedKey={activeKey}
+      onSelectionChange={setActiveKey}
+    >
+      <SidebarAside>
+        <SidebarHeader>
+          <SidebarBrand
+            title="Telemetry Console"
+            subtitle="v2026.09.07"
+          />
+        </SidebarHeader>
+
+        <SidebarGroup title="Platform">
+          <SidebarItem id="overview">Overview</SidebarItem>
+          <SidebarItem id="deployments">Deployments</SidebarItem>
+          <SidebarItem id="metrics">Metrics</SidebarItem>
+        </SidebarGroup>
+
+        <SidebarFooter>
+          <SidebarUser
+            name="Phearak S. Tha"
+            description="Maintainer"
+          />
+        </SidebarFooter>
+      </SidebarAside>
+
+      <SidebarMain>
+        {/* Elevated workbench card canvas */}
+      </SidebarMain>
+    </Sidebar>
+  );
+}
+```
+
+In `main-framed` mode, `<SidebarAside>` sheds its borders and blends into the background, while `<SidebarMain>` renders as an elevated workbench with crisp borders, rounded radii, and subtle shadows.
+
+---
+
+## Dense Navigation and Smooth Group Transitions
+
+Operational consoles need to display dense hierarchies without forcing engineers to scroll endlessly through navigation panels:
+
+- **Cascading Dense Mode:** Enabling `dense` on `<Sidebar>` automatically propagates down to `<SidebarAside>`, `<SidebarHeader>`, `<SidebarGroup>`, `<SidebarItem>`, `<SidebarDivider>`, `<SidebarFooter>`, and `<SidebarUser>`. Navigation row heights shrink from 36px to 30px, icon containers scale down to 30px square, and vertical gaps tighten.
+- **CSS Grid Row Transitions:** Collapsible groups toggle visibility using CSS `grid-template-rows: 0fr` to `1fr` transitions. This eliminates JavaScript height calculations and layout thrashing[^1].
+- **Accessible Icon Collapse:** When `isCollapsed` is enabled, navigation labels hide smoothly, and each item wraps into a `TooltipTrigger`. Keyboard focus and screen reader semantics remain intact while pointer users get instant label previews on hover.
+
+---
+
+## Developer Tooling and Ecosystem Polish
+
+Sustaining a design system requires keeping the developer experience clean. This cycle includes several quality-of-life additions to the repository:
+
+- **Concurrent Dev Orchestration (`scripts/dev.ts`):** A single `bun dev` command concurrently runs the Vite component sandbox and the Waku documentation site with color-coded log streams.
+- **Interactive Component Generator (`scripts/gen-component.ts`):** A command-line generator scaffolds new React Aria and StyleX components with complete test suites, token bindings, and MDX documentation files (`bun run gen:component <Name>`).
+- **LLM Context Validator (`scripts/sync-llms.ts`):** An automated audit script checks all 59 UI components against the public `llms.txt` and `llms-full.txt` index specifications to guarantee parity.
+- **Toast Close Action & Table Contrast:** Adjusted the touch-target geometry on `<Alert>` close buttons and polished border contrast on high-DPI displays for the semantic `<Table>` suite.
+
+---
+
+## On Heritage and Craftsmanship
+
+I grew up speaking and writing Khmer. For years, I watched digital tools treat Southeast Asian typography as an afterthought—broken baselines, clipped vowel signs, and fallback system fonts that looked completely alienated from the surrounding UI.
+
+Building native Khmer typography into Moul UI was not about hitting an arbitrary accessibility checklist. It was about craft and cultural respect. Good software should feel native to the people using it, not like an awkward translation shoehorned into a foreign container.
+
+When you care for the structural foundations—whether that is font ascender metrics, accessible keyboard contracts, or clean compile-time styles—the rest of the system becomes quiet, reliable, and durable.
+
+Take care of the fundamentals. The rest follows.
+
+---
+
+[^1]: Transitioning CSS `grid-template-rows` from `0fr` to `1fr` allows the browser compositor to animate intrinsic content height directly without requiring manual `scrollHeight` measurements or forced reflows.

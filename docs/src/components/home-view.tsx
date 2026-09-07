@@ -61,7 +61,7 @@ export function HomeView({ lang = 'en' }: { lang?: string }) {
                     aria-hidden="true"
                   />
                   <span className="font-mono text-xs tracking-wide font-medium text-fd-foreground">
-                    v2026.08.27
+                    v2026.09.07
                   </span>
                   <span className="text-fd-muted-foreground/60">—</span>
                   <span>{isKm ? 'អាចប្រើប្រាស់បានហើយ' : 'Now available'}</span>
