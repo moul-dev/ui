@@ -181,7 +181,7 @@ export const NavigationSection: React.FC = () => {
                   opacity: 0.85,
                 }}
               >
-                Active deployment: Release v2026.09.07 (zero-downtime rolling
+                Active deployment: Release v2026.09.10 (zero-downtime rolling
                 rollout complete).
               </div>
             </TabPanel>
