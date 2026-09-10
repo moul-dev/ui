@@ -57,6 +57,28 @@ const styles = stylex.create({
     paddingBottom: tokens.spacing2,
     margin: 0,
   },
+  subsectionHeader: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: tokens.spacing1,
+    marginTop: tokens.spacing2,
+  },
+  subsectionTitle: {
+    fontSize: tokens.fontSizeSm,
+    fontWeight: tokens.fontWeightSemibold,
+    color: tokens.colorFg,
+    margin: 0,
+  },
+  subsectionDescription: {
+    fontSize: tokens.fontSizeXs,
+    color: tokens.colorFgSubtle,
+    margin: 0,
+  },
+  codePanel: {
+    paddingBlock: tokens.spacing3,
+    fontSize: tokens.fontSizeSm,
+    color: tokens.colorFg,
+  },
 })
 
 const sampleNodes = [
@@ -172,6 +194,47 @@ export const NavigationSection: React.FC = () => {
                 }}
               >
                 Log stream initialized with 10,000 tail records.
+              </div>
+            </TabPanel>
+          </TabPanels>
+        </Tabs>
+
+        <div {...stylex.props(styles.subsectionHeader)}>
+          <h4 {...stylex.props(styles.subsectionTitle)}>
+            Tertiary Variant (Sliding Pill with Border)
+          </h4>
+          <p {...stylex.props(styles.subsectionDescription)}>
+            Segmented control style with an enclosed border surrounding the tabs
+            and a sliding elevated pill indicator.
+          </p>
+        </div>
+
+        <Tabs variant="tertiary" defaultSelectedKey="pnpm">
+          <TabList aria-label="Package Manager Execution">
+            <Tab id="pnpm">pnpm</Tab>
+            <Tab id="yarn">yarn</Tab>
+            <Tab id="bun">bun</Tab>
+            <Tab id="npm">npm</Tab>
+          </TabList>
+          <TabPanels>
+            <TabPanel id="pnpm">
+              <div {...stylex.props(styles.codePanel)}>
+                <code>pnpm add @moul-dev/ui</code>
+              </div>
+            </TabPanel>
+            <TabPanel id="yarn">
+              <div {...stylex.props(styles.codePanel)}>
+                <code>yarn add @moul-dev/ui</code>
+              </div>
+            </TabPanel>
+            <TabPanel id="bun">
+              <div {...stylex.props(styles.codePanel)}>
+                <code>bun add @moul-dev/ui</code>
+              </div>
+            </TabPanel>
+            <TabPanel id="npm">
+              <div {...stylex.props(styles.codePanel)}>
+                <code>npm install @moul-dev/ui</code>
               </div>
             </TabPanel>
           </TabPanels>

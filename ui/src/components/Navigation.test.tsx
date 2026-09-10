@@ -144,6 +144,38 @@ describe('Tabs Component Suite', () => {
     )
     expect(selectionIndicator).toBeInTheDocument()
   })
+
+  test('renders horizontal tertiary (sliding pill) tabs with selection indicator and proper selection', () => {
+    const { container } = render(
+      <Tabs variant="tertiary" defaultSelectedKey="pnpm">
+        <TabList aria-label="Package Manager Tabs">
+          <Tab id="pnpm">pnpm</Tab>
+          <Tab id="yarn">yarn</Tab>
+          <Tab id="bun">bun</Tab>
+          <Tab id="npm">npm</Tab>
+        </TabList>
+        <TabPanels>
+          <TabPanel id="pnpm">pnpm command</TabPanel>
+          <TabPanel id="yarn">yarn command</TabPanel>
+          <TabPanel id="bun">bun command</TabPanel>
+          <TabPanel id="npm">npm command</TabPanel>
+        </TabPanels>
+      </Tabs>,
+    )
+
+    const tablist = screen.getByRole('tablist')
+    expect(tablist).toHaveAttribute('aria-orientation', 'horizontal')
+
+    const tabs = screen.getAllByRole('tab')
+    expect(tabs).toHaveLength(4)
+    expect(tabs[0]).toHaveAttribute('aria-selected', 'true')
+    expect(tabs[1]).toHaveAttribute('aria-selected', 'false')
+
+    const selectionIndicator = container.querySelector(
+      '.react-aria-SelectionIndicator',
+    )
+    expect(selectionIndicator).toBeInTheDocument()
+  })
 })
 
 describe('Breadcrumbs Component Suite', () => {

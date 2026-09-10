@@ -146,7 +146,7 @@ html>body[data-scroll-locked] {
   --mouse-x: 0px;
   --mouse-y: 0px;
   --mouse-opacity: 0;
-  
+
   /* Mask out the grid on the bottom/right so it fades out behind the 3D logo */
   mask-image: linear-gradient(to bottom, black 25%, transparent 55%);
   -webkit-mask-image: linear-gradient(to bottom, black 25%, transparent 55%);
@@ -416,8 +416,8 @@ html>body[data-scroll-locked] {
   font-weight: 500;
   color: oklch(0.30 0.01 260);
   transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1),
-              opacity 0.24s cubic-bezier(0.16, 1, 0.3, 1),
-              filter 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+    opacity 0.24s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 0.24s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: transform, opacity, filter;
 }
 
@@ -513,10 +513,12 @@ html>body[data-scroll-locked] {
     transform: scale(0.6) rotate(-15deg);
     opacity: 0;
   }
+
   60% {
     transform: scale(1.18) rotate(3deg);
     opacity: 1;
   }
+
   100% {
     transform: scale(1) rotate(0);
     opacity: 1;
@@ -569,6 +571,7 @@ html>body[data-scroll-locked] {
     opacity: 0;
     transform: translate(50%, 4px) scale(0.92);
   }
+
   to {
     opacity: 1;
     transform: translate(50%, 0) scale(1);

@@ -79,19 +79,21 @@ The secondary variant uses the default foreground text color for the selection i
 
 ### Tertiary (Sliding Pill)
 
-The tertiary variant renders a premium sliding rounded pill background under the selected tab and removes borders from the tab list.
+The tertiary variant renders a premium sliding rounded pill background enclosed in a clean border surrounding the tabs, with subtle container track styling inspired by modern segmented controls and developer CLI interfaces.
 
 <ComponentPreview>
-  <Tabs variant="tertiary" className="w-80" defaultValue="1">
-    <TabList aria-label="Tertiary Tabs">
-      <Tab id="1">Tab 1</Tab>
-      <Tab id="2">Tab 2</Tab>
-      <Tab id="3">Tab 3</Tab>
+  <Tabs variant="tertiary" defaultValue="pnpm">
+    <TabList aria-label="Package Manager Tabs">
+      <Tab id="pnpm">pnpm</Tab>
+      <Tab id="yarn">yarn</Tab>
+      <Tab id="bun">bun</Tab>
+      <Tab id="npm">npm</Tab>
     </TabList>
     <TabPanels>
-      <TabPanel id="1">Pill style layout content 1</TabPanel>
-      <TabPanel id="2">Pill style layout content 2</TabPanel>
-      <TabPanel id="3">Pill style layout content 3</TabPanel>
+      <TabPanel id="pnpm">pnpm add @moul-dev/ui</TabPanel>
+      <TabPanel id="yarn">yarn add @moul-dev/ui</TabPanel>
+      <TabPanel id="bun">bun add @moul-dev/ui</TabPanel>
+      <TabPanel id="npm">npm i @moul-dev/ui</TabPanel>
     </TabPanels>
   </Tabs>
 </ComponentPreview>
