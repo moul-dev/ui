@@ -18,6 +18,7 @@ import {
   InputOTP,
   InputOTPGroup,
   InputOTPSlot,
+  Kbd,
   Radio,
   RadioGroup,
   SearchField,
@@ -104,6 +105,62 @@ const styles = stylex.create({
     paddingInline: tokens.spacing2,
     borderRadius: tokens.radiusSm,
   },
+  emptyStateContainer: {
+    padding: tokens.spacing1,
+  },
+  emptyStateAction: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '100%',
+    paddingBlock: tokens.spacing2,
+    paddingInline: tokens.spacing3,
+    borderRadius: tokens.radiusSm,
+    backgroundColor: {
+      default: 'transparent',
+      ':hover': tokens.colorBgSubtle,
+    },
+    borderWidth: 0,
+    color: tokens.colorFg,
+    fontSize: tokens.fontSizeSm,
+    fontFamily: tokens.fontFamilyBase,
+    cursor: 'pointer',
+    outline: 'none',
+    boxSizing: 'border-box',
+    transitionProperty: 'background-color, color',
+    transitionDuration: '0.12s',
+    transitionTimingFunction: 'ease-in-out',
+    textAlign: 'start',
+  },
+  emptyActionLabel: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: tokens.spacing2,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+  },
+  emptyActionIcon: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '18px',
+    height: '18px',
+    borderRadius: tokens.radiusFull,
+    backgroundColor: tokens.colorPrimary50,
+    color: tokens.colorPrimary700,
+    fontSize: tokens.fontSizeXs,
+    fontWeight: tokens.fontWeightBold,
+    flexShrink: 0,
+  },
+  emptyActionHint: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: tokens.spacing1,
+    fontSize: tokens.fontSizeXs,
+    color: tokens.colorFgSubtle,
+    flexShrink: 0,
+  },
 })
 
 export const FormsSection: React.FC = () => {
@@ -113,6 +170,61 @@ export const FormsSection: React.FC = () => {
   const [popoverOpen, setPopoverOpen] = useState(false)
   const [selectedCommand, setSelectedCommand] = useState<any>(null)
   const [selectedLang, setSelectedLang] = useState<any>(null)
+  const [creatableOpen, setCreatableOpen] = useState(false)
+  const [creatableQuery, setCreatableQuery] = useState('')
+  const [selectedFramework, setSelectedFramework] = useState<string | null>(
+    null,
+  )
+  const [frameworks, setFrameworks] = useState([
+    { id: 'react', name: 'React', description: 'Component-based UI library' },
+    { id: 'vue', name: 'Vue', description: 'Progressive JavaScript framework' },
+    {
+      id: 'svelte',
+      name: 'Svelte',
+      description: 'Cybernetically enhanced web apps',
+    },
+    {
+      id: 'solid',
+      name: 'Solid',
+      description: 'Simple and performant reactivity',
+    },
+    {
+      id: 'angular',
+      name: 'Angular',
+      description: 'Full-featured enterprise platform',
+    },
+  ])
+
+  const trimmedCreatable = creatableQuery.trim()
+  const matchingFrameworks = frameworks.filter((f) =>
+    f.name.toLowerCase().includes(trimmedCreatable.toLowerCase()),
+  )
+  const hasNoMatches =
+    trimmedCreatable.length > 0 && matchingFrameworks.length === 0
+
+  const handleCreateFramework = (name: string) => {
+    const clean = name.trim()
+    if (!clean) return
+    const id = clean.toLowerCase().replace(/\s+/g, '-')
+    const exists = frameworks.find(
+      (f) => f.id === id || f.name.toLowerCase() === clean.toLowerCase(),
+    )
+    if (!exists) {
+      const created = {
+        id,
+        name: clean,
+        description: 'User-created framework',
+      }
+      setFrameworks((prev) => [...prev, created])
+      setSelectedFramework(id)
+    } else {
+      setSelectedFramework(exists.id)
+    }
+    setCreatableQuery('')
+    setCreatableOpen(false)
+  }
+
+  const activeFramework = frameworks.find((f) => f.id === selectedFramework)
 
   return (
     <div {...stylex.props(styles.card)}>
@@ -330,6 +442,89 @@ export const FormsSection: React.FC = () => {
                 <Tag id="nextjs">Next.js</Tag>
               </TagGroup>
             </Autocomplete>
+          </div>
+
+          {/* 4. Creatable Floating Dropdown with Popover */}
+          <div {...stylex.props(styles.demoColumn)}>
+            <span {...stylex.props(styles.demoLabel)}>
+              Creatable with Popover (Empty State & Return Hint)
+            </span>
+            <Autocomplete>
+              <SearchField
+                aria-label="Filter or create framework"
+                placeholder="Search or create framework..."
+                value={creatableQuery}
+                onChange={(val) => {
+                  setCreatableQuery(val)
+                  if (!creatableOpen) setCreatableOpen(true)
+                }}
+                onFocus={() => setCreatableOpen(true)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && hasNoMatches) {
+                    e.preventDefault()
+                    handleCreateFramework(creatableQuery)
+                  }
+                }}
+              />
+              <AutocompletePopover
+                isOpen={creatableOpen}
+                onOpenChange={setCreatableOpen}
+                isNonModal
+              >
+                <AutocompleteList
+                  aria-label="Frameworks"
+                  selectionMode="single"
+                  selectedKeys={selectedFramework ? [selectedFramework] : []}
+                  onSelectionChange={(keys) => {
+                    const [first] = Array.from(keys)
+                    if (first) setSelectedFramework(String(first))
+                    setCreatableOpen(false)
+                  }}
+                  variant="borderless"
+                  renderEmptyState={() => (
+                    <div {...stylex.props(styles.emptyStateContainer)}>
+                      <button
+                        type="button"
+                        onClick={() => handleCreateFramework(creatableQuery)}
+                        {...stylex.props(styles.emptyStateAction)}
+                      >
+                        <span {...stylex.props(styles.emptyActionLabel)}>
+                          <span {...stylex.props(styles.emptyActionIcon)}>
+                            +
+                          </span>
+                          <span>
+                            Create{' '}
+                            <strong>&ldquo;{trimmedCreatable}&rdquo;</strong>
+                          </span>
+                        </span>
+                        <span {...stylex.props(styles.emptyActionHint)}>
+                          <span>Press</span>
+                          <Kbd>↵</Kbd>
+                        </span>
+                      </button>
+                    </div>
+                  )}
+                >
+                  {frameworks.map((fw) => (
+                    <AutocompleteItem
+                      key={fw.id}
+                      id={fw.id}
+                      description={fw.description}
+                    >
+                      {fw.name}
+                    </AutocompleteItem>
+                  ))}
+                </AutocompleteList>
+              </AutocompletePopover>
+            </Autocomplete>
+            {activeFramework && (
+              <span {...stylex.props(styles.demoMeta)}>
+                Selected:{' '}
+                <span {...stylex.props(styles.demoHighlight)}>
+                  {activeFramework.name}
+                </span>
+              </span>
+            )}
           </div>
         </div>
       </section>

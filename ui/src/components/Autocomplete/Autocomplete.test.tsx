@@ -231,4 +231,83 @@ describe('Autocomplete', () => {
       screen.queryByRole('listbox', { name: 'Languages' }),
     ).not.toBeInTheDocument()
   })
+
+  it('supports creatable option in empty state with click and Return key trigger', () => {
+    function CreatableTestComponent() {
+      const [query, setQuery] = React.useState('')
+      const [items, setItems] = React.useState([{ id: 'react', name: 'React' }])
+      const [selected, setSelected] = React.useState<string | null>(null)
+
+      const trimmed = query.trim()
+      const hasNoMatches =
+        trimmed.length > 0 &&
+        !items.some((i) => i.name.toLowerCase().includes(trimmed.toLowerCase()))
+
+      const handleCreate = (name: string) => {
+        const id = name.toLowerCase()
+        setItems((prev) => [...prev, { id, name }])
+        setSelected(id)
+        setQuery('')
+      }
+
+      return (
+        <div>
+          <Autocomplete>
+            <SearchField
+              aria-label="Frameworks"
+              value={query}
+              onChange={setQuery}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && hasNoMatches) {
+                  e.preventDefault()
+                  handleCreate(query)
+                }
+              }}
+            />
+            <AutocompleteList
+              aria-label="Framework list"
+              renderEmptyState={() => (
+                <button
+                  type="button"
+                  data-testid="create-option"
+                  onClick={() => handleCreate(query)}
+                >
+                  Create "{trimmed}"
+                </button>
+              )}
+            >
+              {items.map((item) => (
+                <AutocompleteItem key={item.id} id={item.id}>
+                  {item.name}
+                </AutocompleteItem>
+              ))}
+            </AutocompleteList>
+          </Autocomplete>
+          {selected && <div data-testid="selected-val">{selected}</div>}
+        </div>
+      )
+    }
+
+    render(<CreatableTestComponent />)
+
+    const input = screen.getByRole('searchbox', { name: 'Frameworks' })
+
+    // Type non-matching query
+    fireEvent.change(input, { target: { value: 'Svelte' } })
+
+    // Expect empty state action to render
+    const createBtn = screen.getByTestId('create-option')
+    expect(createBtn).toHaveTextContent('Create "Svelte"')
+
+    // Test clicking create action
+    fireEvent.click(createBtn)
+    expect(screen.getByTestId('selected-val')).toHaveTextContent('svelte')
+    expect(screen.getByText('Svelte')).toBeInTheDocument()
+
+    // Test Return key on another non-matching query
+    fireEvent.change(input, { target: { value: 'Vue' } })
+    fireEvent.keyDown(input, { key: 'Enter', code: 'Enter' })
+    expect(screen.getByTestId('selected-val')).toHaveTextContent('vue')
+    expect(screen.getByText('Vue')).toBeInTheDocument()
+  })
 })

@@ -2787,6 +2787,180 @@ export function AutocompletePopoverDemo() {
   )
 }
 
+export function AutocompleteCreatableDemo() {
+  const [isOpen, setIsOpen] = useState(false)
+  const [query, setQuery] = useState('')
+  const [selectedKey, setSelectedKey] = useState<string | null>(null)
+  const [items, setItems] = useState([
+    { id: 'react', name: 'React', description: 'Component-based UI library' },
+    { id: 'vue', name: 'Vue', description: 'Progressive JavaScript framework' },
+    {
+      id: 'svelte',
+      name: 'Svelte',
+      description: 'Cybernetically enhanced web apps',
+    },
+    {
+      id: 'solid',
+      name: 'Solid',
+      description: 'Simple and performant reactivity',
+    },
+    {
+      id: 'angular',
+      name: 'Angular',
+      description: 'Full-featured enterprise platform',
+    },
+  ])
+
+  const trimmedQuery = query.trim()
+  const matchingItems = items.filter((item) =>
+    item.name.toLowerCase().includes(trimmedQuery.toLowerCase()),
+  )
+  const isNoResults = trimmedQuery.length > 0 && matchingItems.length === 0
+
+  const handleCreate = (name: string) => {
+    const clean = name.trim()
+    if (!clean) return
+
+    const id = clean.toLowerCase().replace(/\s+/g, '-')
+    const existing = items.find(
+      (item) =>
+        item.id === id || item.name.toLowerCase() === clean.toLowerCase(),
+    )
+
+    if (!existing) {
+      const newItem = {
+        id,
+        name: clean,
+        description: 'User-created framework',
+      }
+      setItems((prev) => [...prev, newItem])
+      setSelectedKey(id)
+    } else {
+      setSelectedKey(existing.id)
+    }
+
+    setQuery('')
+    setIsOpen(false)
+  }
+
+  const selectedItem = items.find((item) => item.id === selectedKey)
+
+  return (
+    <div className="w-full max-w-sm flex flex-col gap-3">
+      <Autocomplete>
+        <SearchField
+          aria-label="Filter or create framework"
+          placeholder="Search or create framework..."
+          value={query}
+          onChange={(val) => {
+            setQuery(val)
+            if (!isOpen) setIsOpen(true)
+          }}
+          onFocus={() => setIsOpen(true)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && isNoResults) {
+              e.preventDefault()
+              handleCreate(query)
+            }
+          }}
+        />
+        <AutocompletePopover
+          isOpen={isOpen}
+          onOpenChange={setIsOpen}
+          isNonModal
+        >
+          <AutocompleteList
+            aria-label="Frameworks"
+            selectionMode="single"
+            selectedKeys={selectedKey ? [selectedKey] : []}
+            onSelectionChange={(keys) => {
+              const [first] = Array.from(keys)
+              if (first) {
+                setSelectedKey(String(first))
+              }
+              setIsOpen(false)
+            }}
+            variant="borderless"
+            renderEmptyState={() => (
+              <div className="p-1">
+                <button
+                  type="button"
+                  onClick={() => handleCreate(query)}
+                  className="w-full flex items-center justify-between gap-2 px-3 py-2 text-sm rounded cursor-pointer transition-colors text-left hover:bg-[var(--moul-color-bg-subtle,#f4f4f5)] dark:hover:bg-neutral-800"
+                  style={{ color: tokens.colorFg }}
+                >
+                  <span className="flex items-center gap-2 truncate">
+                    <span
+                      className="w-4 h-4 flex items-center justify-center rounded-full text-xs font-bold shrink-0"
+                      style={{
+                        backgroundColor: tokens.colorPrimary50,
+                        color: tokens.colorPrimary700,
+                      }}
+                    >
+                      +
+                    </span>
+                    <span className="truncate">
+                      Create{' '}
+                      <strong className="font-semibold">
+                        &ldquo;{trimmedQuery}&rdquo;
+                      </strong>
+                    </span>
+                  </span>
+                  <span className="flex items-center gap-1 shrink-0 text-xs text-neutral-400">
+                    <span className="text-[10px]">Press</span>
+                    <Kbd>↵</Kbd>
+                  </span>
+                </button>
+              </div>
+            )}
+          >
+            {items.map((item) => (
+              <AutocompleteItem
+                key={item.id}
+                id={item.id}
+                description={item.description}
+              >
+                {item.name}
+              </AutocompleteItem>
+            ))}
+          </AutocompleteList>
+        </AutocompletePopover>
+      </Autocomplete>
+
+      {selectedItem && (
+        <div
+          className="flex items-center justify-between text-xs px-2.5 py-1.5 rounded border"
+          style={{
+            borderColor: tokens.colorBorderSubtle,
+            backgroundColor: tokens.colorBgSubtle,
+          }}
+        >
+          <div className="flex items-center gap-1.5">
+            <span style={{ color: tokens.colorFgSubtle }}>Selected:</span>
+            <span
+              className="font-medium px-1.5 py-0.5 rounded text-xs"
+              style={{
+                color: tokens.colorPrimary700,
+                backgroundColor: tokens.colorPrimary50,
+              }}
+            >
+              {selectedItem.name}
+            </span>
+          </div>
+          <button
+            type="button"
+            onClick={() => setSelectedKey(null)}
+            className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 cursor-pointer text-xs"
+            aria-label="Clear selection"
+          >
+            Clear
+          </button>
+        </div>
+      )}
+    </div>
+  )
+}
+
 export function AutocompleteTagGroupDemo() {
   return (
     <div className="w-full max-w-md flex flex-col gap-4">

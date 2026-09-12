@@ -109,6 +109,7 @@ import { ComponentPreview } from './component-preview'
 import {
   AlertDemo,
   AlertDialogDemo,
+  AutocompleteCreatableDemo,
   AutocompleteDemo,
   AutocompletePopoverDemo,
   AutocompleteTagGroupDemo,
@@ -254,6 +255,7 @@ export function getMDXComponents(components?: MDXComponents) {
     AutocompleteSection,
     AutocompleteDemo,
     AutocompletePopoverDemo,
+    AutocompleteCreatableDemo,
     AutocompleteTagGroupDemo,
     TagGroupDemo,
     ComboBoxTagGroupDemo,
