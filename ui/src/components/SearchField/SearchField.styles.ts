@@ -17,12 +17,10 @@ export const styles = stylex.create({
     backgroundColor: tokens.colorBg,
     boxShadow: tokens.shadowSm,
     boxSizing: 'border-box',
+    outline: 'none',
     transitionProperty: 'border-color, box-shadow',
     transitionDuration: '0.15s',
     transitionTimingFunction: 'ease-in-out',
-    ':hover': {
-      borderColor: tokens.colorNeutral400,
-    },
     '@media (prefers-reduced-motion: reduce)': {
       transitionProperty: 'none',
     },
@@ -55,15 +53,23 @@ export const styles = stylex.create({
     borderColor: tokens.colorNeutral400,
   },
   groupFocused: {
-    borderColor: tokens.colorBorderFocus,
+    borderColor: {
+      default: tokens.colorBorderFocus,
+      ':hover': tokens.colorBorderFocus,
+    },
     boxShadow: `0 0 0 1px ${tokens.colorBorderFocus}`,
+    outline: 'none',
   },
   groupInvalid: {
     borderColor: tokens.colorError500,
   },
   groupFocusedInvalid: {
-    borderColor: tokens.colorError500,
+    borderColor: {
+      default: tokens.colorError500,
+      ':hover': tokens.colorError500,
+    },
     boxShadow: `0 0 0 1px ${tokens.colorError500}`,
+    outline: 'none',
   },
   groupDisabled: {
     opacity: 0.4,
@@ -93,6 +99,7 @@ export const styles = stylex.create({
     flexGrow: 1,
     width: '100%',
     height: '100%',
+    borderWidth: 0,
     borderStyle: 'none',
     backgroundColor: 'transparent',
     color: tokens.colorFg,

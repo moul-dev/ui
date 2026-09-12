@@ -66,7 +66,9 @@ export const NumberField = React.forwardRef<HTMLInputElement, NumberFieldProps>(
               styles.group,
               groupSizeStyle,
               styles[variant],
-              renderProps.isHovered && styles.groupHover,
+              renderProps.isHovered &&
+                !renderProps.isFocusWithin &&
+                styles.groupHover,
               renderProps.isFocusWithin && styles.groupFocused,
               renderProps.isInvalid && styles.groupInvalid,
               renderProps.isInvalid &&
@@ -82,7 +84,9 @@ export const NumberField = React.forwardRef<HTMLInputElement, NumberFieldProps>(
               styles.group,
               groupSizeStyle,
               styles[variant],
-              renderProps.isHovered && styles.groupHover,
+              renderProps.isHovered &&
+                !renderProps.isFocusWithin &&
+                styles.groupHover,
               renderProps.isFocusWithin && styles.groupFocused,
               renderProps.isInvalid && styles.groupInvalid,
               renderProps.isInvalid &&

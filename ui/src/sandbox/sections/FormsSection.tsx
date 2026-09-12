@@ -2,6 +2,11 @@ import * as stylex from '@stylexjs/stylex'
 import type React from 'react'
 import { useState } from 'react'
 import {
+  Autocomplete,
+  AutocompleteItem,
+  AutocompleteList,
+  AutocompletePopover,
+  AutocompleteSection,
   Calendar,
   Checkbox,
   CheckboxGroup,
@@ -20,6 +25,8 @@ import {
   SelectItem,
   Slider,
   Switch,
+  Tag,
+  TagGroup,
   TextArea,
   TextField,
 } from '../../index'
@@ -66,12 +73,46 @@ const styles = stylex.create({
     gap: tokens.spacing5,
     width: '100%',
   },
+  autocompleteList: {
+    maxHeight: '220px',
+  },
+  tagGroupMargin: {
+    marginTop: tokens.spacing2,
+  },
+  demoColumn: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: tokens.spacing2,
+  },
+  demoLabel: {
+    fontSize: tokens.fontSizeSm,
+    fontWeight: tokens.fontWeightSemibold,
+    color: tokens.colorFg,
+  },
+  demoMeta: {
+    fontSize: tokens.fontSizeXs,
+    color: tokens.colorFgSubtle,
+    display: 'flex',
+    alignItems: 'center',
+    gap: tokens.spacing1,
+  },
+  demoHighlight: {
+    color: tokens.colorPrimary700,
+    backgroundColor: tokens.colorPrimary50,
+    fontWeight: tokens.fontWeightSemibold,
+    paddingBlock: '1px',
+    paddingInline: tokens.spacing2,
+    borderRadius: tokens.radiusSm,
+  },
 })
 
 export const FormsSection: React.FC = () => {
   const [sliderValue, setSliderValue] = useState(42)
   const [isSwitchActive, setIsSwitchActive] = useState(true)
   const [otpValue, setOtpValue] = useState('9421')
+  const [popoverOpen, setPopoverOpen] = useState(false)
+  const [selectedCommand, setSelectedCommand] = useState<any>(null)
+  const [selectedLang, setSelectedLang] = useState<any>(null)
 
   return (
     <div {...stylex.props(styles.card)}>
@@ -121,6 +162,175 @@ export const FormsSection: React.FC = () => {
             <ComboBoxItem id="x86_64">x86_64 (Intel / AMD)</ComboBoxItem>
             <ComboBoxItem id="wasm">Wasm Edge Worker</ComboBoxItem>
           </ComboBox>
+        </div>
+      </section>
+
+      {/* Autocomplete & Collection Filtering */}
+      <section {...stylex.props(styles.section)}>
+        <h3 {...stylex.props(styles.sectionTitle)}>
+          Autocomplete & Collection Filtering
+        </h3>
+        <div {...stylex.props(styles.gridTwoCol)}>
+          {/* 1. Command Suggestions */}
+          <div {...stylex.props(styles.demoColumn)}>
+            <span {...stylex.props(styles.demoLabel)}>
+              Command Suggestions (Rich Items & Shortcuts)
+            </span>
+            <Autocomplete>
+              <SearchField
+                aria-label="Filter commands"
+                placeholder="Search commands or shortcuts..."
+              />
+              <AutocompleteList
+                aria-label="Available commands"
+                style={styles.autocompleteList}
+                selectionMode="single"
+                selectedKeys={selectedCommand ? [selectedCommand] : []}
+                onSelectionChange={(keys) => {
+                  const [first] = Array.from(keys)
+                  setSelectedCommand(first)
+                }}
+              >
+                <AutocompleteSection title="Projects">
+                  <AutocompleteItem
+                    id="new-proj"
+                    description="Scaffold a new Next.js or Vite project"
+                    shortcut="⌘N"
+                  >
+                    Create New Project
+                  </AutocompleteItem>
+                  <AutocompleteItem
+                    id="clone-repo"
+                    description="Clone from GitHub or GitLab"
+                    shortcut="⌘O"
+                  >
+                    Clone Repository
+                  </AutocompleteItem>
+                </AutocompleteSection>
+                <AutocompleteSection title="Preferences">
+                  <AutocompleteItem
+                    id="theme"
+                    description="Switch between light and dark mode"
+                    shortcut="⌘T"
+                  >
+                    Toggle Theme
+                  </AutocompleteItem>
+                  <AutocompleteItem
+                    id="settings"
+                    description="Manage workspace and user configurations"
+                    shortcut="⌘,"
+                  >
+                    Open Settings
+                  </AutocompleteItem>
+                </AutocompleteSection>
+              </AutocompleteList>
+            </Autocomplete>
+            {selectedCommand && (
+              <span {...stylex.props(styles.demoMeta)}>
+                Selected:{' '}
+                <span {...stylex.props(styles.demoHighlight)}>
+                  {String(selectedCommand)}
+                </span>
+              </span>
+            )}
+          </div>
+
+          {/* 2. Floating Dropdown with Popover */}
+          <div {...stylex.props(styles.demoColumn)}>
+            <span {...stylex.props(styles.demoLabel)}>
+              Floating Dropdown with Popover
+            </span>
+            <Autocomplete>
+              <SearchField
+                aria-label="Filter languages"
+                placeholder="Search programming languages..."
+                onFocus={() => setPopoverOpen(true)}
+              />
+              <AutocompletePopover
+                isOpen={popoverOpen}
+                onOpenChange={setPopoverOpen}
+                isNonModal
+              >
+                <AutocompleteList
+                  aria-label="Languages"
+                  selectionMode="single"
+                  selectedKeys={selectedLang ? [selectedLang] : []}
+                  onSelectionChange={(keys) => {
+                    const [first] = Array.from(keys)
+                    setSelectedLang(first)
+                    setPopoverOpen(false)
+                  }}
+                  variant="borderless"
+                >
+                  <AutocompleteItem
+                    id="ts"
+                    description="Typed JavaScript superset"
+                  >
+                    TypeScript
+                  </AutocompleteItem>
+                  <AutocompleteItem
+                    id="js"
+                    description="Standard web scripting"
+                  >
+                    JavaScript
+                  </AutocompleteItem>
+                  <AutocompleteItem
+                    id="rust"
+                    description="High performance systems language"
+                  >
+                    Rust
+                  </AutocompleteItem>
+                  <AutocompleteItem
+                    id="go"
+                    description="Simplicity and concurrency"
+                  >
+                    Go
+                  </AutocompleteItem>
+                  <AutocompleteItem
+                    id="python"
+                    description="Data science and automation"
+                  >
+                    Python
+                  </AutocompleteItem>
+                </AutocompleteList>
+              </AutocompletePopover>
+            </Autocomplete>
+            {selectedLang && (
+              <span {...stylex.props(styles.demoMeta)}>
+                Selected:{' '}
+                <span {...stylex.props(styles.demoHighlight)}>
+                  {String(selectedLang)}
+                </span>
+              </span>
+            )}
+          </div>
+
+          {/* 3. TagGroup Dynamic Filtering */}
+          <div {...stylex.props(styles.demoColumn)}>
+            <span {...stylex.props(styles.demoLabel)}>
+              TagGroup Dynamic Filtering
+            </span>
+            <Autocomplete>
+              <SearchField
+                aria-label="Filter skills"
+                placeholder="Filter technology tags..."
+              />
+              <TagGroup
+                aria-label="Technology skills"
+                selectionMode="multiple"
+                style={styles.tagGroupMargin}
+              >
+                <Tag id="react">React</Tag>
+                <Tag id="typescript">TypeScript</Tag>
+                <Tag id="stylex">StyleX</Tag>
+                <Tag id="react-aria">React Aria</Tag>
+                <Tag id="vite">Vite</Tag>
+                <Tag id="bun">Bun</Tag>
+                <Tag id="tailwind">Tailwind</Tag>
+                <Tag id="nextjs">Next.js</Tag>
+              </TagGroup>
+            </Autocomplete>
+          </div>
         </div>
       </section>
 

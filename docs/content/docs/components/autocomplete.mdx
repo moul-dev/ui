@@ -1,0 +1,397 @@
+---
+title: Autocomplete
+description: Composable collection filter and suggestion coordinator connecting text inputs with menus, lists, tables, and tags.
+reactAria: Autocomplete
+---
+
+import {
+  Autocomplete,
+  AutocompleteList,
+  AutocompleteItem,
+  AutocompleteSection,
+  AutocompleteEmptyState,
+  AutocompletePopover,
+  SearchField,
+  Button,
+  useFilter,
+} from '@moul-dev/ui';
+
+# Autocomplete
+
+An autocomplete enables users to search or filter a collection of items using a text input like `SearchField` or `TextField`. It coordinates filtering, virtual focus management, and keyboard navigation across collections such as lists, menus, tables, and tag groups.
+
+> **Autocomplete vs. ComboBox**
+>
+> Use **ComboBox** to select one or more values from a predefined popup set. Use **Autocomplete** to filter an arbitrary collection (in-place or floating) or provide text suggestions and completions.
+
+## Interactive Preview
+
+<ComponentPreview>
+  <AutocompleteDemo />
+</ComponentPreview>
+
+## Installation
+
+```tsx
+import {
+  Autocomplete,
+  AutocompleteList,
+  AutocompleteItem,
+  AutocompleteSection,
+  AutocompleteEmptyState,
+  AutocompletePopover,
+  useFilter,
+} from '@moul-dev/ui';
+```
+
+## Basic Usage
+
+By default, `<Autocomplete>` provides a styled container and applies a smart case-insensitive `contains` filter across collection items:
+
+```tsx
+import {
+  Autocomplete,
+  AutocompleteList,
+  AutocompleteItem,
+  AutocompleteSection,
+  SearchField,
+} from '@moul-dev/ui';
+
+export function Example() {
+  return (
+    <Autocomplete>
+      <SearchField
+        aria-label="Filter commands"
+        placeholder="Type to filter actions..."
+      />
+      <AutocompleteList aria-label="Actions">
+        <AutocompleteSection title="Projects">
+          <AutocompleteItem
+            id="new"
+            description="Create a new workspace component"
+            shortcut="⌘N"
+          >
+            New Component
+          </AutocompleteItem>
+          <AutocompleteItem
+            id="open"
+            description="Open an existing project folder"
+            shortcut="⌘O"
+          >
+            Open Project
+          </AutocompleteItem>
+        </AutocompleteSection>
+        <AutocompleteSection title="Preferences">
+          <AutocompleteItem
+            id="theme"
+            description="Toggle light or dark color scheme"
+            shortcut="⌘T"
+          >
+            Toggle Theme
+          </AutocompleteItem>
+        </AutocompleteSection>
+      </AutocompleteList>
+    </Autocomplete>
+  );
+}
+```
+
+## Floating Dropdown with Popover
+
+Combine `<Autocomplete>` with `<AutocompletePopover>` to display filterable suggestions beneath an input upon focus:
+
+<ComponentPreview>
+  <AutocompletePopoverDemo />
+</ComponentPreview>
+
+```tsx
+import {
+  Autocomplete,
+  AutocompletePopover,
+  AutocompleteList,
+  AutocompleteItem,
+  SearchField,
+} from '@moul-dev/ui';
+import { useState } from 'react';
+
+export function PopoverExample() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <Autocomplete>
+      <SearchField
+        aria-label="Filter programming languages"
+        placeholder="Search languages..."
+        onFocus={() => setIsOpen(true)}
+      />
+      <AutocompletePopover
+        isOpen={isOpen}
+        onOpenChange={setIsOpen}
+        isNonModal
+      >
+        <AutocompleteList
+          aria-label="Languages"
+          selectionMode="single"
+          onSelectionChange={() => setIsOpen(false)}
+          variant="borderless"
+        >
+          <AutocompleteItem id="ts" description="Typed JavaScript superset">
+            TypeScript
+          </AutocompleteItem>
+          <AutocompleteItem id="js" description="Standard web scripting">
+            JavaScript
+          </AutocompleteItem>
+          <AutocompleteItem id="rust" description="Safe systems programming">
+            Rust
+          </AutocompleteItem>
+          <AutocompleteItem id="go" description="Cloud native concurrency">
+            Go
+          </AutocompleteItem>
+        </AutocompleteList>
+      </AutocompletePopover>
+    </Autocomplete>
+  );
+}
+```
+
+## TagGroup Filtering
+
+`<Autocomplete>` is not restricted to listboxes — it seamlessly coordinates with collections like `<TagGroup>`:
+
+<ComponentPreview>
+  <AutocompleteTagGroupDemo />
+</ComponentPreview>
+
+```tsx
+import { Autocomplete, SearchField, TagGroup, Tag } from '@moul-dev/ui';
+
+export function TagFilteringExample() {
+  return (
+    <Autocomplete>
+      <SearchField
+        aria-label="Filter tags"
+        placeholder="Filter technology tags..."
+      />
+      <TagGroup
+        aria-label="Technologies"
+        selectionMode="multiple"
+        renderEmptyState={() => 'No matching tags found.'}
+      >
+        <Tag id="react">React</Tag>
+        <Tag id="stylex">StyleX</Tag>
+        <Tag id="typescript">TypeScript</Tag>
+        <Tag id="waku">Waku</Tag>
+        <Tag id="vite">Vite</Tag>
+      </TagGroup>
+    </Autocomplete>
+  );
+}
+```
+
+## Asynchronous / Remote Search
+
+For server-side querying or API search, set `mode="async"` (or pass `filter={null}`) to bypass client-side filtering while retaining keyboard coordination:
+
+```tsx
+import {
+  Autocomplete,
+  AutocompleteList,
+  AutocompleteItem,
+  SearchField,
+} from '@moul-dev/ui';
+import { useState, useEffect } from 'react';
+
+export function AsyncExample() {
+  const [query, setQuery] = useState('');
+  const [items, setItems] = useState<{ id: string; name: string }[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    setIsLoading(true);
+    fetch(`/api/search?q=${encodeURIComponent(query)}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (active) setItems(data.items);
+      })
+      .finally(() => {
+        if (active) setIsLoading(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, [query]);
+
+  return (
+    <Autocomplete
+      mode="async"
+      inputValue={query}
+      onInputChange={setQuery}
+    >
+      <SearchField aria-label="Server Search" placeholder="Search database..." />
+      <AutocompleteList aria-label="Results">
+        {items.map((item) => (
+          <AutocompleteItem key={item.id} id={item.id}>
+            {item.name}
+          </AutocompleteItem>
+        ))}
+      </AutocompleteList>
+    </Autocomplete>
+  );
+}
+```
+
+## Custom Styling with StyleX Tokens
+
+Every component in the Autocomplete family accepts compile-time StyleX overrides via the `style` prop. Import `tokens` from `@moul-dev/ui` to build custom variants that respond seamlessly to theme variables and density scales:
+
+```tsx
+import {
+  Autocomplete,
+  AutocompleteList,
+  AutocompleteItem,
+  SearchField,
+  tokens,
+} from '@moul-dev/ui';
+import * as stylex from '@stylexjs/stylex';
+
+const styles = stylex.create({
+  container: {
+    maxWidth: '460px',
+    gap: tokens.spacing3,
+  },
+  list: {
+    maxHeight: '260px',
+    borderRadius: tokens.radiusLg,
+    borderColor: tokens.colorBorderSubtle,
+    boxShadow: tokens.shadowMd,
+  },
+  customItem: {
+    borderRadius: tokens.radiusMd,
+    paddingBlock: tokens.spacing2,
+  },
+});
+
+export function StyledAutocomplete() {
+  return (
+    <Autocomplete style={styles.container}>
+      <SearchField
+        aria-label="Filter options"
+        placeholder="Filter custom list..."
+      />
+      <AutocompleteList aria-label="Options" style={styles.list}>
+        <AutocompleteItem id="1" style={styles.customItem}>
+          First Option
+        </AutocompleteItem>
+        <AutocompleteItem id="2" style={styles.customItem}>
+          Second Option
+        </AutocompleteItem>
+      </AutocompleteList>
+    </Autocomplete>
+  );
+}
+```
+
+## Props
+
+### Autocomplete
+
+<TypeTable
+  type={{
+    mode: {
+      type: "'client' | 'async'",
+      default: "'client'",
+      description: "Operating mode. In 'async' mode, client filtering is bypassed for server searching.",
+    },
+    filter: {
+      type: "((textValue: string, inputValue: string) => boolean) | null",
+      default: "contains",
+      description: "Custom filter function. Defaults to a case-insensitive contains filter. Pass null to disable.",
+    },
+    size: {
+      type: "'sm' | 'md' | 'lg'",
+      default: "'md'",
+      description: "Component scale inherited by child list, items, and popovers.",
+    },
+    headless: {
+      type: "boolean",
+      default: "false",
+      description: "If true, skips rendering the container <div> element and behaves as a pure transparent coordinator.",
+    },
+    disableVirtualFocus: {
+      type: "boolean",
+      default: "false",
+      description: "Whether to disable virtual focus, requiring Tab navigation between input and collection.",
+    },
+    disableAutoFocusFirst: {
+      type: "boolean",
+      default: "false",
+      description: "Whether to avoid focusing the first item after filtering.",
+    },
+  }}
+/>
+
+### AutocompleteList
+
+<TypeTable
+  type={{
+    variant: {
+      type: "'bordered' | 'borderless'",
+      default: "'bordered'",
+      description: "Visual container frame styling.",
+    },
+    selectionMode: {
+      type: "'none' | 'single' | 'multiple'",
+      default: "'none'",
+      description: "The type of selection permitted on the list.",
+    },
+    renderEmptyState: {
+      type: "() => React.ReactNode",
+      description: "Custom content rendered when no items match the active query.",
+    },
+  }}
+/>
+
+### AutocompleteItem
+
+<TypeTable
+  type={{
+    description: {
+      type: "string",
+      description: "Secondary descriptive text displayed beneath the item label.",
+    },
+    icon: {
+      type: "React.ReactNode",
+      description: "Leading icon or visual element.",
+    },
+    shortcut: {
+      type: "string | React.ReactNode",
+      description: "Keyboard shortcut indicator (e.g. '⌘N'). Rendered automatically with <Kbd>.",
+    },
+    showCheckmark: {
+      type: "boolean",
+      default: "true",
+      description: "Whether to render a checkmark when the item is selected.",
+    },
+  }}
+/>
+
+### AutocompletePopover
+
+<TypeTable
+  type={{
+    isOpen: {
+      type: "boolean",
+      description: "Controlled visibility state of the popover dropdown.",
+    },
+    onOpenChange: {
+      type: "(isOpen: boolean) => void",
+      description: "Handler invoked when open state changes.",
+    },
+    isNonModal: {
+      type: "boolean",
+      default: "false",
+      description: "Whether interactions outside the popover are permitted without closing.",
+    },
+  }}
+/>

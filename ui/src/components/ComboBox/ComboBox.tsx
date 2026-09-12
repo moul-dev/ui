@@ -169,7 +169,9 @@ export const ComboBox = React.forwardRef<HTMLInputElement, ComboBoxProps>(
                       `group${sizeSuffix}` as 'groupSm' | 'groupMd' | 'groupLg'
                     ],
                     styles[variant],
-                    groupProps.isHovered && styles.groupHover,
+                    groupProps.isHovered &&
+                      !groupProps.isFocusWithin &&
+                      styles.groupHover,
                     groupProps.isFocusWithin && styles.groupFocused,
                     groupProps.isInvalid && styles.groupInvalid,
                     groupProps.isInvalid &&
@@ -187,7 +189,9 @@ export const ComboBox = React.forwardRef<HTMLInputElement, ComboBoxProps>(
                       `group${sizeSuffix}` as 'groupSm' | 'groupMd' | 'groupLg'
                     ],
                     styles[variant],
-                    groupProps.isHovered && styles.groupHover,
+                    groupProps.isHovered &&
+                      !groupProps.isFocusWithin &&
+                      styles.groupHover,
                     groupProps.isFocusWithin && styles.groupFocused,
                     groupProps.isInvalid && styles.groupInvalid,
                     groupProps.isInvalid &&

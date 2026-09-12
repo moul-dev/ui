@@ -57,6 +57,7 @@ function Root({ children }: { children: React.ReactNode }) {
 - [SearchField](/docs/components/searchfield): Search input with clear button and submit handler.
 - [Select](/docs/components/select): Select dropdown with `SelectItem`, `SelectSection`, `SelectPopover`, and `SelectValue`.
 - [ComboBox](/docs/components/combobox): Searchable autocomplete input with `ComboBoxItem` and `ComboBoxSection`.
+- [Autocomplete](/docs/components/autocomplete): Composable collection filter and suggestion coordinator connecting text inputs with menus, lists, tables, and tags.
 - [Checkbox](/docs/components/checkbox): Accessible checkbox supporting checked, indeterminate, and disabled states.
 - [CheckboxGroup](/docs/components/checkboxgroup): Group of checkboxes with orientation and validation.
 - [RadioGroup](/docs/components/radiogroup): Radio selection group with horizontal/vertical layouts.

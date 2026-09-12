@@ -7,6 +7,12 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AreaChart,
+  Autocomplete,
+  AutocompleteEmptyState,
+  AutocompleteItem,
+  AutocompleteList,
+  AutocompletePopover,
+  AutocompleteSection,
   Avatar,
   AvatarGroup,
   type AvatarShape,
@@ -73,6 +79,7 @@ import {
   ProgressBar,
   RangeCalendar,
   REGEXP_ONLY_DIGITS,
+  SearchField,
   Sidebar,
   SidebarAside,
   SidebarDivider,
@@ -123,6 +130,7 @@ import {
 } from '@tanstack/react-table'
 import { useVirtualizer } from '@tanstack/react-virtual'
 import { Store } from '@tanstack/store'
+import { FileCode, FolderGit2, Keyboard, SunMoon } from 'lucide-react'
 import type React from 'react'
 import { useMemo, useRef, useState } from 'react'
 
@@ -2623,6 +2631,186 @@ export function CommandPaletteDemo() {
         <CommandPaletteEmpty>No matching commands found.</CommandPaletteEmpty>
         <CommandPaletteFooter />
       </CommandPalette>
+    </div>
+  )
+}
+
+export function AutocompleteDemo() {
+  const [selectedKey, setSelectedKey] = useState<any>(null)
+
+  return (
+    <div className="w-full max-w-md flex flex-col gap-4">
+      <Autocomplete>
+        <SearchField
+          aria-label="Search quick actions"
+          placeholder="Type to filter actions or shortcuts..."
+        />
+        <AutocompleteList
+          aria-label="Quick actions"
+          selectionMode="single"
+          selectedKeys={selectedKey ? [selectedKey] : []}
+          onSelectionChange={(keys) => {
+            const [first] = Array.from(keys)
+            setSelectedKey(first)
+          }}
+          className="max-h-60"
+        >
+          <AutocompleteSection title="Projects">
+            <AutocompleteItem
+              id="new-file"
+              icon={<FileCode size={16} />}
+              description="Create a clean typescript or stylex file"
+              shortcut="⌘N"
+            >
+              New Component
+            </AutocompleteItem>
+            <AutocompleteItem
+              id="clone-repo"
+              icon={<FolderGit2 size={16} />}
+              description="Import an existing repository from git"
+              shortcut="⌘O"
+            >
+              Import Repository
+            </AutocompleteItem>
+          </AutocompleteSection>
+          <AutocompleteSection title="Settings">
+            <AutocompleteItem
+              id="theme"
+              icon={<SunMoon size={16} />}
+              description="Toggle between dark and light themes"
+              shortcut="⌘T"
+            >
+              Toggle Color Theme
+            </AutocompleteItem>
+            <AutocompleteItem
+              id="hotkeys"
+              icon={<Keyboard size={16} />}
+              description="Configure keybindings and chords"
+              shortcut="⌘K"
+            >
+              Keyboard Shortcuts
+            </AutocompleteItem>
+          </AutocompleteSection>
+        </AutocompleteList>
+      </Autocomplete>
+      {selectedKey && (
+        <p
+          className="text-xs flex items-center gap-1.5"
+          style={{ color: tokens.colorFgSubtle }}
+        >
+          Selected action:{' '}
+          <span
+            className="font-semibold px-1.5 py-0.5 rounded"
+            style={{
+              color: tokens.colorPrimary700,
+              backgroundColor: tokens.colorPrimary50,
+            }}
+          >
+            {String(selectedKey)}
+          </span>
+        </p>
+      )}
+    </div>
+  )
+}
+
+export function AutocompletePopoverDemo() {
+  const [isOpen, setIsOpen] = useState(false)
+  const [selectedKey, setSelectedKey] = useState<any>(null)
+
+  return (
+    <div className="w-full max-w-sm flex flex-col gap-3">
+      <Autocomplete>
+        <SearchField
+          aria-label="Filter programming languages"
+          placeholder="Search programming languages..."
+          onFocus={() => setIsOpen(true)}
+        />
+        <AutocompletePopover
+          isOpen={isOpen}
+          onOpenChange={setIsOpen}
+          isNonModal
+        >
+          <AutocompleteList
+            aria-label="Languages"
+            selectionMode="single"
+            selectedKeys={selectedKey ? [selectedKey] : []}
+            onSelectionChange={(keys) => {
+              const [first] = Array.from(keys)
+              setSelectedKey(first)
+              setIsOpen(false)
+            }}
+            variant="borderless"
+          >
+            <AutocompleteItem id="ts" description="Typed JavaScript superset">
+              TypeScript
+            </AutocompleteItem>
+            <AutocompleteItem id="js" description="Standard web scripting">
+              JavaScript
+            </AutocompleteItem>
+            <AutocompleteItem
+              id="rust"
+              description="High performance systems language"
+            >
+              Rust
+            </AutocompleteItem>
+            <AutocompleteItem id="go" description="Simplicity and concurrency">
+              Go
+            </AutocompleteItem>
+            <AutocompleteItem
+              id="python"
+              description="Data science and automation"
+            >
+              Python
+            </AutocompleteItem>
+          </AutocompleteList>
+        </AutocompletePopover>
+      </Autocomplete>
+      {selectedKey && (
+        <p
+          className="text-xs flex items-center gap-1.5"
+          style={{ color: tokens.colorFgSubtle }}
+        >
+          Chosen language:{' '}
+          <span
+            className="font-semibold px-1.5 py-0.5 rounded"
+            style={{
+              color: tokens.colorPrimary700,
+              backgroundColor: tokens.colorPrimary50,
+            }}
+          >
+            {String(selectedKey)}
+          </span>
+        </p>
+      )}
+    </div>
+  )
+}
+
+export function AutocompleteTagGroupDemo() {
+  return (
+    <div className="w-full max-w-md flex flex-col gap-4">
+      <Autocomplete>
+        <SearchField
+          aria-label="Filter framework tags"
+          placeholder="Filter framework tags..."
+        />
+        <TagGroup
+          aria-label="Frameworks"
+          selectionMode="multiple"
+          renderEmptyState={() => 'No matching frameworks found.'}
+        >
+          <Tag id="react">React</Tag>
+          <Tag id="vue">Vue</Tag>
+          <Tag id="svelte">Svelte</Tag>
+          <Tag id="solid">Solid</Tag>
+          <Tag id="angular">Angular</Tag>
+          <Tag id="astro">Astro</Tag>
+          <Tag id="next">Next.js</Tag>
+          <Tag id="remix">Remix</Tag>
+          <Tag id="waku">Waku</Tag>
+        </TagGroup>
+      </Autocomplete>
     </div>
   )
 }

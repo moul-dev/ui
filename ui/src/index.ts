@@ -18,6 +18,29 @@ export type {
 export type { AreaChartProps } from './components/AreaChart'
 export { AreaChart } from './components/AreaChart'
 export type {
+  AutocompleteEmptyStateProps,
+  AutocompleteItemProps,
+  AutocompleteListProps,
+  AutocompleteMode,
+  AutocompletePopoverProps,
+  AutocompleteProps,
+  AutocompleteSectionProps,
+  AutocompleteSize,
+  Filter,
+} from './components/Autocomplete'
+export {
+  Autocomplete,
+  AutocompleteContext,
+  AutocompleteEmptyState,
+  AutocompleteItem,
+  AutocompleteList,
+  AutocompletePopover,
+  AutocompleteSection,
+  AutocompleteStateContext,
+  useAutocompleteInnerContext,
+  useFilter,
+} from './components/Autocomplete'
+export type {
   AvatarGroupContextValue,
   AvatarGroupProps,
   AvatarProps,

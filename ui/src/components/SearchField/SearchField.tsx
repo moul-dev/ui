@@ -69,7 +69,9 @@ export const SearchField = React.forwardRef<HTMLInputElement, SearchFieldProps>(
                   styles.group,
                   groupSizeStyle,
                   styles[variant],
-                  groupProps.isHovered && styles.groupHover,
+                  groupProps.isHovered &&
+                    !groupProps.isFocusWithin &&
+                    styles.groupHover,
                   groupProps.isFocusWithin && styles.groupFocused,
                   groupProps.isInvalid && styles.groupInvalid,
                   groupProps.isInvalid &&
@@ -85,7 +87,9 @@ export const SearchField = React.forwardRef<HTMLInputElement, SearchFieldProps>(
                   styles.group,
                   groupSizeStyle,
                   styles[variant],
-                  groupProps.isHovered && styles.groupHover,
+                  groupProps.isHovered &&
+                    !groupProps.isFocusWithin &&
+                    styles.groupHover,
                   groupProps.isFocusWithin && styles.groupFocused,
                   groupProps.isInvalid && styles.groupInvalid,
                   groupProps.isInvalid &&

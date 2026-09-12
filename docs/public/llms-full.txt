@@ -282,6 +282,32 @@ import { ComboBox, ComboBoxItem } from '@moul-dev/ui';
 
 ---
 
+### Autocomplete
+Composable collection filter and suggestion coordinator connecting text inputs with lists, tables, and tags.
+
+```tsx
+import {
+  Autocomplete,
+  AutocompleteItem,
+  AutocompleteList,
+  AutocompleteSection,
+  SearchField,
+} from '@moul-dev/ui';
+
+<Autocomplete>
+  <SearchField aria-label="Search items" placeholder="Type to filter..." />
+  <AutocompleteList aria-label="Suggestions">
+    <AutocompleteSection title="Actions">
+      <AutocompleteItem id="new" description="Create new project" shortcut="⌘N">
+        New Project
+      </AutocompleteItem>
+    </AutocompleteSection>
+  </AutocompleteList>
+</Autocomplete>
+```
+
+---
+
 ### Checkbox & CheckboxGroup
 ```tsx
 import { Checkbox, CheckboxGroup } from '@moul-dev/ui';
