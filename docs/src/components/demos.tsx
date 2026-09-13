@@ -561,6 +561,69 @@ export function ComboBoxTagGroupDemo() {
   )
 }
 
+export function ComboBoxActionDemo() {
+  const [items, setItems] = useState([
+    { id: 'react', name: 'React' },
+    { id: 'vue', name: 'Vue' },
+    { id: 'svelte', name: 'Svelte' },
+    { id: 'angular', name: 'Angular' },
+  ])
+  const [inputValue, setInputValue] = useState('')
+  const [lastAction, setLastAction] = useState<string | null>(null)
+
+  const isExisting = items.some(
+    (item) => item.name.toLowerCase() === inputValue.trim().toLowerCase(),
+  )
+
+  const handleCreate = (name: string) => {
+    const trimmed = name.trim()
+    if (!trimmed) return
+    const id = trimmed.toLowerCase().replace(/\s+/g, '-')
+    const newItem = { id, name: trimmed }
+    setItems((prev) => [...prev, newItem])
+    setLastAction(`Created new option: "${trimmed}"`)
+    setInputValue('')
+  }
+
+  return (
+    <div className="w-full max-w-sm flex flex-col gap-3">
+      <ComboBox
+        label="Frontend Framework"
+        placeholder="Type or select a framework..."
+        allowsEmptyCollection
+        inputValue={inputValue}
+        onInputChange={setInputValue}
+        onAction={(key) => {
+          if (key !== 'create-new') {
+            const selected = items.find((i) => i.id === key)
+            setLastAction(`Activated option: ${selected?.name || key}`)
+          }
+        }}
+      >
+        {inputValue.trim().length > 0 && !isExisting && (
+          <ComboBoxItem
+            id="create-new"
+            onAction={() => handleCreate(inputValue)}
+          >
+            {`Create "${inputValue.trim()}"`}
+          </ComboBoxItem>
+        )}
+        {items.map((item) => (
+          <ComboBoxItem key={item.id} id={item.id}>
+            {item.name}
+          </ComboBoxItem>
+        ))}
+      </ComboBox>
+
+      {lastAction && (
+        <div className="text-xs text-neutral-600 dark:text-neutral-400 bg-neutral-100 dark:bg-neutral-800/60 px-3 py-2 rounded-md border border-neutral-200 dark:border-neutral-700/60 font-mono">
+          {lastAction}
+        </div>
+      )}
+    </div>
+  )
+}
+
 export function InputOTPDemo() {
   const [value1, setValue1] = useState('')
   const [value2, setValue2] = useState('')

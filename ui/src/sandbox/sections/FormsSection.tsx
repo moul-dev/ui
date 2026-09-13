@@ -12,6 +12,7 @@ import {
   CheckboxGroup,
   ComboBox,
   ComboBoxItem,
+  ComboBoxSection,
   DateField,
   DatePicker,
   DateRangePicker,
@@ -226,6 +227,33 @@ export const FormsSection: React.FC = () => {
 
   const activeFramework = frameworks.find((f) => f.id === selectedFramework)
 
+  const [comboboxItems, setComboboxItems] = useState([
+    { id: 'prod', name: 'production' },
+    { id: 'staging', name: 'staging' },
+    { id: 'dev', name: 'development' },
+    { id: 'preview', name: 'preview-pr-42' },
+  ])
+  const [comboboxInput, setComboboxInput] = useState('')
+  const [lastComboboxAction, setLastComboboxAction] = useState<string | null>(
+    null,
+  )
+  const [lastDispatcherAction, setLastDispatcherAction] = useState<
+    string | null
+  >(null)
+
+  const isExistingEnv = comboboxItems.some(
+    (item) => item.name.toLowerCase() === comboboxInput.trim().toLowerCase(),
+  )
+
+  const handleCreateEnv = (name: string) => {
+    const trimmed = name.trim()
+    if (!trimmed) return
+    const id = trimmed.toLowerCase().replace(/\s+/g, '-')
+    setComboboxItems((prev) => [...prev, { id, name: trimmed }])
+    setLastComboboxAction(`Created new environment: "${trimmed}"`)
+    setComboboxInput('')
+  }
+
   return (
     <div {...stylex.props(styles.card)}>
       {/* Text & Search Inputs */}
@@ -267,13 +295,83 @@ export const FormsSection: React.FC = () => {
             <SelectItem id="ap-southeast">AP Southeast (Singapore)</SelectItem>
           </Select>
 
-          <ComboBox label="Compute Architecture" defaultSelectedKey="arm64">
+          <ComboBox
+            label="Compute Architecture (Standard)"
+            defaultSelectedKey="arm64"
+          >
             <ComboBoxItem id="arm64">
               ARM64 (Apple Silicon / Graviton)
             </ComboBoxItem>
             <ComboBoxItem id="x86_64">x86_64 (Intel / AMD)</ComboBoxItem>
             <ComboBoxItem id="wasm">Wasm Edge Worker</ComboBoxItem>
           </ComboBox>
+
+          <div {...stylex.props(styles.demoColumn)}>
+            <ComboBox
+              label="Target Environment (Creatable via onAction)"
+              placeholder="Select or type new environment..."
+              allowsEmptyCollection
+              inputValue={comboboxInput}
+              onInputChange={setComboboxInput}
+              onAction={(key) => {
+                const selected = comboboxItems.find((item) => item.id === key)
+                if (selected) {
+                  setLastComboboxAction(`Selected: ${selected.name} (${key})`)
+                }
+              }}
+            >
+              {comboboxInput.trim().length > 0 && !isExistingEnv && (
+                <ComboBoxItem
+                  id="create-env"
+                  onAction={() => handleCreateEnv(comboboxInput)}
+                >
+                  + Create "{comboboxInput.trim()}"
+                </ComboBoxItem>
+              )}
+              {comboboxItems.map((item) => (
+                <ComboBoxItem key={item.id} id={item.id}>
+                  {item.name}
+                </ComboBoxItem>
+              ))}
+            </ComboBox>
+            {lastComboboxAction && (
+              <span {...stylex.props(styles.demoMeta)}>
+                Last action:{' '}
+                <code {...stylex.props(styles.demoHighlight)}>
+                  {lastComboboxAction}
+                </code>
+              </span>
+            )}
+          </div>
+
+          <div {...stylex.props(styles.demoColumn)}>
+            <ComboBox
+              label="CLI Action Runner (Sections & onAction)"
+              placeholder="Select quick action or tool..."
+              onAction={(key) => {
+                setLastDispatcherAction(`Executed: ${String(key)}`)
+              }}
+            >
+              <ComboBoxSection title="Git Operations">
+                <ComboBoxItem id="git-pull">git pull --rebase</ComboBoxItem>
+                <ComboBoxItem id="git-push">git push origin main</ComboBoxItem>
+                <ComboBoxItem id="git-stash">git stash pop</ComboBoxItem>
+              </ComboBoxSection>
+              <ComboBoxSection title="Package Scripts">
+                <ComboBoxItem id="bun-dev">bun run dev</ComboBoxItem>
+                <ComboBoxItem id="bun-build">bun run build</ComboBoxItem>
+                <ComboBoxItem id="bun-test">bun run test</ComboBoxItem>
+              </ComboBoxSection>
+            </ComboBox>
+            {lastDispatcherAction && (
+              <span {...stylex.props(styles.demoMeta)}>
+                Last action:{' '}
+                <code {...stylex.props(styles.demoHighlight)}>
+                  {lastDispatcherAction}
+                </code>
+              </span>
+            )}
+          </div>
         </div>
       </section>
 

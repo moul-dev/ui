@@ -134,12 +134,88 @@ export default function Example() {
 }
 ```
 
+## Item Actions
+
+Use the `onAction` prop on `<ComboBoxItem>` to perform custom actions when an item is pressed (such as dynamic "Create" actions). Custom action items bypass selection and will not populate the input.
+
+Pair this with `allowsEmptyCollection` so the menu stays open when typing a query with no existing matches.
+
+You can also pass `onAction` to `<ComboBox>` to be notified when any option is activated while preserving normal value selection.
+
+<ComponentPreview>
+  <ComboBoxActionDemo />
+</ComponentPreview>
+
+```tsx
+import { ComboBox, ComboBoxItem } from '@moul-dev/ui';
+import { useState } from 'react';
+
+export default function Example() {
+  const [items, setItems] = useState([
+    { id: 'react', name: 'React' },
+    { id: 'vue', name: 'Vue' },
+    { id: 'svelte', name: 'Svelte' },
+  ]);
+  const [inputValue, setInputValue] = useState('');
+
+  const isExisting = items.some(
+    (item) => item.name.toLowerCase() === inputValue.trim().toLowerCase()
+  );
+
+  const handleCreate = (name: string) => {
+    const trimmed = name.trim();
+    if (!trimmed) return;
+    const id = trimmed.toLowerCase().replace(/\s+/g, '-');
+    setItems((prev) => [...prev, { id, name: trimmed }]);
+    setInputValue('');
+  };
+
+  return (
+    <ComboBox
+      label="Frontend Framework"
+      placeholder="Type or select..."
+      allowsEmptyCollection
+      inputValue={inputValue}
+      onInputChange={setInputValue}
+      onAction={(key) => console.log('Activated item key:', key)}
+    >
+      {inputValue.trim().length > 0 && !isExisting && (
+        <ComboBoxItem
+          id="create-new"
+          onAction={() => handleCreate(inputValue)}
+        >
+          {`Create "${inputValue.trim()}"`}
+        </ComboBoxItem>
+      )}
+      {items.map((item) => (
+        <ComboBoxItem key={item.id} id={item.id}>
+          {item.name}
+        </ComboBoxItem>
+      ))}
+    </ComboBox>
+  );
+}
+```
+
 ## Props
 
 ### ComboBox Props
 
 <TypeTable
   type={{
+    'onAction': {
+      type: "(key: Key) => void",
+      description: "Handler called when any item in the combobox is activated. Value selection is preserved.",
+    },
+    'allowsEmptyCollection': {
+      type: "boolean",
+      default: "false",
+      description: "Whether the menu stays open when no matching items exist in the collection.",
+    },
+    'items': {
+      type: "Iterable<T>",
+      description: "The list of ComboBox items for dynamic collections.",
+    },
     'selectedKey': {
       type: "Key",
       description: "The selected key (controlled).",
@@ -165,9 +241,13 @@ export default function Example() {
 />
 
 <Accordions>
-  <Accordion title="Value">
+  <Accordion title="Value & Events">
     <TypeTable
           type={{
+            'onAction': {
+              type: "(key: Key) => void",
+              description: "Handler invoked when any item is chosen or activated.",
+            },
             'onSelectionChange': {
               type: "(key: Key) => void",
               description: "Handler called when selection changes.",
@@ -182,6 +262,16 @@ export default function Example() {
   <Accordion title="Styling">
     <TypeTable
           type={{
+            'variant': {
+              type: "'primary' | 'secondary'",
+              default: "'primary'",
+              description: "Visual variant of the combobox group.",
+            },
+            'size': {
+              type: "'sm' | 'md' | 'lg'",
+              default: "'md'",
+              description: "Size of the combobox trigger and items.",
+            },
             'className': {
               type: "ClassNameOrFunction<ComboBoxRenderProps>",
               default: "'react-aria-ComboBox'",
@@ -191,6 +281,30 @@ export default function Example() {
         />
   </Accordion>
 </Accordions>
+
+### ComboBoxItem Props
+
+<TypeTable
+  type={{
+    'onAction': {
+      type: "() => void",
+      description: "Handler called when this specific item is activated. When provided, the item behaves as an action item and bypasses selection.",
+    },
+    'id': {
+      type: "Key",
+      description: "Unique identifier for the item.",
+    },
+    'textValue': {
+      type: "string",
+      description: "A string representation of the item contents used for typeahead and filtering.",
+    },
+    'isDisabled': {
+      type: "boolean",
+      default: "false",
+      description: "Whether the item is disabled.",
+    },
+  }}
+/>
 
 Default className: `react-aria-ComboBox`
 
