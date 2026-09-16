@@ -1,7 +1,7 @@
 {
   "name": "moul-ui-workspace",
   "private": true,
-  "version": "2026.09.13",
+  "version": "2026.09.16",
   "workspaces": [
     "ui",
     "docs"
