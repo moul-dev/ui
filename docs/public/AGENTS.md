@@ -66,7 +66,7 @@ Buttons and trigger components use `onPress` from React Aria to handle touch, mo
 
 ### Rule 3: Use Standard React Aria State Props
 - **Selection**: `isSelected`, `defaultSelected`, `onChange` (for single items like `Checkbox`, `Switch`, `ToggleButton`).
-- **Collections**: `selectedKey`, `defaultSelectedKey`, `selectedKeys`, `defaultSelectedKeys`, `onSelectionChange` (for `Select`, `ComboBox`, `Tabs`, `Table`, `TagGroup`, `ToggleButtonGroup`, `Sidebar`).
+- **Collections**: `selectedKey`, `defaultSelectedKey`, `selectedKeys`, `defaultSelectedKeys`, `onSelectionChange` (for `Select`, `ComboBox`, `ListBox`, `Tabs`, `Table`, `TagGroup`, `ToggleButtonGroup`, `Sidebar`).
 - **Dialogs & Overlays**: `isOpen`, `defaultOpen`, `onOpenChange` (for `Modal`, `Popover`, `Tooltip`).
 - **Validation**: `isInvalid`, `isDisabled`, `isRequired`, `isReadOnly`, `isPending`.
 
@@ -223,6 +223,24 @@ import { Select, SelectItem, SelectSection, ComboBox, ComboBoxItem } from '@moul
   <ComboBoxItem id="uk">United Kingdom</ComboBoxItem>
   <ComboBoxItem id="jp">Japan</ComboBoxItem>
 </ComboBox>
+```
+
+#### `ListBox`
+```tsx
+import { ListBox, ListBoxItem, ListBoxSection, DropIndicator, Text } from '@moul-dev/ui';
+
+// Multi-select ListBox with checkmarks & sticky section headers
+<ListBox
+  aria-label="Cluster permissions"
+  selectionMode="multiple"
+  selectedKeys={selectedPermissions}
+  onSelectionChange={setSelectedPermissions}
+>
+  <ListBoxSection title="Compute Access">
+    <ListBoxItem id="read" label="Read Access" description="View runtime containers" showCheckmark />
+    <ListBoxItem id="write" label="Write Access" description="Deploy and restart workloads" showCheckmark />
+  </ListBoxSection>
+</ListBox>
 ```
 
 #### `Checkbox`, `CheckboxGroup`, `RadioGroup`, `Switch`

@@ -214,6 +214,26 @@ export { LineChart } from './components/LineChart'
 export { Link } from './components/Link'
 export type { LinkProps } from './components/Link/Link'
 export type {
+  DropIndicatorProps,
+  ListBoxItemProps,
+  ListBoxLayout,
+  ListBoxLoadMoreItemProps,
+  ListBoxOrientation,
+  ListBoxProps,
+  ListBoxSectionProps,
+  ListBoxSize,
+  ListBoxVariant,
+} from './components/ListBox'
+export {
+  DropIndicator,
+  Header,
+  ListBox,
+  ListBoxItem,
+  ListBoxLoadMoreItem,
+  ListBoxSection,
+  Text,
+} from './components/ListBox'
+export type {
   HighlightTextProps,
   LogAttributeChipProps,
   LogFilterLevel,

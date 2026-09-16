@@ -59,6 +59,10 @@ import {
   InputOTPSlot,
   Kbd,
   LineChart,
+  ListBox,
+  ListBoxItem,
+  ListBoxLoadMoreItem,
+  ListBoxSection,
   Modal,
   ModalBody,
   ModalDialog,
@@ -133,6 +137,7 @@ import { Store } from '@tanstack/store'
 import { FileCode, FolderGit2, Keyboard, SunMoon } from 'lucide-react'
 import type React from 'react'
 import { useMemo, useRef, useState } from 'react'
+import { useDragAndDrop } from 'react-aria-components'
 
 export function AlertDialogDemo() {
   const [isOpen, setIsOpen] = useState(false)
@@ -3048,6 +3053,175 @@ export function AutocompleteTagGroupDemo() {
           <Tag id="waku">Waku</Tag>
         </TagGroup>
       </Autocomplete>
+    </div>
+  )
+}
+
+// ── ListBox Demos ─────────────────────────────────────────────────────
+
+export function ListBoxSelectionDemo() {
+  const [selected, setSelected] = useState<any>(new Set(['cat', 'dog']))
+
+  return (
+    <div className="w-full max-w-sm flex flex-col gap-2">
+      <ListBox
+        aria-label="Select pets"
+        selectionMode="multiple"
+        selectedKeys={selected}
+        onSelectionChange={setSelected}
+        className="w-full"
+      >
+        <ListBoxItem id="cat" showCheckmark>
+          Cat
+        </ListBoxItem>
+        <ListBoxItem id="dog" showCheckmark>
+          Dog
+        </ListBoxItem>
+        <ListBoxItem id="rabbit" showCheckmark>
+          Rabbit
+        </ListBoxItem>
+        <ListBoxItem id="hamster" showCheckmark isDisabled>
+          Hamster (Unavailable)
+        </ListBoxItem>
+      </ListBox>
+      <p className="text-xs text-neutral-500 dark:text-neutral-400">
+        Selected: {Array.from(selected).join(', ') || 'None'}
+      </p>
+    </div>
+  )
+}
+
+export function ListBoxSectionsDemo() {
+  return (
+    <div className="w-full max-w-sm">
+      <ListBox
+        aria-label="Sandwich contents"
+        selectionMode="multiple"
+        className="w-full max-h-56"
+      >
+        <ListBoxSection title="Vegetables">
+          <ListBoxItem id="lettuce">Lettuce</ListBoxItem>
+          <ListBoxItem id="tomato">Tomato</ListBoxItem>
+          <ListBoxItem id="onion">Red Onion</ListBoxItem>
+          <ListBoxItem id="pickles">Pickles</ListBoxItem>
+        </ListBoxSection>
+        <ListBoxSection title="Proteins">
+          <ListBoxItem id="turkey">Smoked Turkey</ListBoxItem>
+          <ListBoxItem id="tofu">Crispy Tofu</ListBoxItem>
+          <ListBoxItem id="ham">Honey Glazed Ham</ListBoxItem>
+        </ListBoxSection>
+        <ListBoxSection title="Condiments">
+          <ListBoxItem id="mustard">Dijon Mustard</ListBoxItem>
+          <ListBoxItem id="mayo">Japanese Mayo</ListBoxItem>
+          <ListBoxItem id="aioli">Garlic Aioli</ListBoxItem>
+        </ListBoxSection>
+      </ListBox>
+    </div>
+  )
+}
+
+export function ListBoxLayoutsDemo() {
+  return (
+    <div className="w-full max-w-md flex flex-col gap-6">
+      <div className="flex flex-col gap-1.5">
+        <span className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
+          Horizontal Stack
+        </span>
+        <ListBox
+          aria-label="Filter chips"
+          selectionMode="single"
+          orientation="horizontal"
+          defaultSelectedKeys={['all']}
+          className="w-full"
+        >
+          <ListBoxItem id="all">All</ListBoxItem>
+          <ListBoxItem id="unread">Unread</ListBoxItem>
+          <ListBoxItem id="starred">Starred</ListBoxItem>
+          <ListBoxItem id="archived">Archived</ListBoxItem>
+        </ListBox>
+      </div>
+
+      <div className="flex flex-col gap-1.5">
+        <span className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
+          Grid Layout
+        </span>
+        <ListBox
+          aria-label="Instance sizing"
+          selectionMode="single"
+          layout="grid"
+          defaultSelectedKeys={['medium']}
+          className="w-full"
+        >
+          <ListBoxItem id="nano" label="t4g.nano" description="0.5 GB RAM" />
+          <ListBoxItem id="micro" label="t4g.micro" description="1 GB RAM" />
+          <ListBoxItem id="small" label="t4g.small" description="2 GB RAM" />
+          <ListBoxItem id="medium" label="c6g.med" description="4 GB RAM" />
+        </ListBox>
+      </div>
+    </div>
+  )
+}
+
+export function ListBoxDndDemo() {
+  const [items, setItems] = useState([
+    { id: '1', name: 'Lint and Format code' },
+    { id: '2', name: 'Execute unit test suite' },
+    { id: '3', name: 'Build production artifacts' },
+    { id: '4', name: 'Deploy to edge network' },
+  ])
+
+  const { dragAndDropHooks } = useDragAndDrop({
+    getItems: (keys) =>
+      Array.from(keys).map((key) => {
+        const item = items.find((i) => i.id === key)
+        return { 'text/plain': item?.name ?? String(key) }
+      }),
+    onReorder(e) {
+      if (e.target.dropPosition === 'before') {
+        const moving = items.filter((i) => e.keys.has(i.id))
+        const remaining = items.filter((i) => !e.keys.has(i.id))
+        const idx = remaining.findIndex((i) => i.id === e.target.key)
+        const updated = [...remaining]
+        updated.splice(idx, 0, ...moving)
+        setItems(updated)
+      } else if (e.target.dropPosition === 'after') {
+        const moving = items.filter((i) => e.keys.has(i.id))
+        const remaining = items.filter((i) => !e.keys.has(i.id))
+        const idx = remaining.findIndex((i) => i.id === e.target.key)
+        const updated = [...remaining]
+        updated.splice(idx + 1, 0, ...moving)
+        setItems(updated)
+      }
+    },
+  })
+
+  return (
+    <div className="w-full max-w-sm flex flex-col gap-2">
+      <ListBox
+        aria-label="Reorderable deployment steps"
+        selectionMode="single"
+        dragAndDropHooks={dragAndDropHooks}
+        items={items}
+        className="w-full"
+      >
+        {(item) => <ListBoxItem id={item.id}>{item.name}</ListBoxItem>}
+      </ListBox>
+      <span className="text-xs text-neutral-500 dark:text-neutral-400">
+        Order: {items.map((i) => i.id).join(' → ')}
+      </span>
+    </div>
+  )
+}
+
+export function ListBoxAsyncDemo() {
+  return (
+    <div className="w-full max-w-xs">
+      <ListBox aria-label="Infinite feed" className="w-full max-h-48">
+        <ListBoxItem id="post-1">First Deployment (v1.0.0)</ListBoxItem>
+        <ListBoxItem id="post-2">Hotfix Patch (v1.0.1)</ListBoxItem>
+        <ListBoxItem id="post-3">Feature Release (v1.1.0)</ListBoxItem>
+        <ListBoxLoadMoreItem isLoading aria-label="Loading more posts..." />
+      </ListBox>
     </div>
   )
 }

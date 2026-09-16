@@ -1,6 +1,7 @@
 import * as stylex from '@stylexjs/stylex'
 import type React from 'react'
 import { useState } from 'react'
+import { useDragAndDrop } from 'react-aria-components'
 import {
   Autocomplete,
   AutocompleteItem,
@@ -20,6 +21,9 @@ import {
   InputOTPGroup,
   InputOTPSlot,
   Kbd,
+  ListBox,
+  ListBoxItem,
+  ListBoxSection,
   Radio,
   RadioGroup,
   SearchField,
@@ -29,6 +33,7 @@ import {
   Switch,
   Tag,
   TagGroup,
+  Text,
   TextArea,
   TextField,
 } from '../../index'
@@ -80,6 +85,10 @@ const styles = stylex.create({
   },
   tagGroupMargin: {
     marginTop: tokens.spacing2,
+  },
+  listboxDemo: {
+    maxHeight: '260px',
+    width: '100%',
   },
   demoColumn: {
     display: 'flex',
@@ -195,6 +204,44 @@ export const FormsSection: React.FC = () => {
       description: 'Full-featured enterprise platform',
     },
   ])
+
+  // ListBox demo state
+  const [listBoxRole, setListBoxRole] = useState<any>(new Set(['developer']))
+  const [listBoxTelemetry, setListBoxTelemetry] = useState<any>(
+    new Set(['cpu', 'error-traces']),
+  )
+  const [pipelineSteps, setPipelineSteps] = useState([
+    { id: 'lint', name: 'Lint & Typecheck (Biome + TSC)' },
+    { id: 'test', name: 'Unit Tests (Vitest + JSDOM)' },
+    { id: 'build', name: 'Container Build & StyleX Extract' },
+    { id: 'deploy', name: 'Zero-Downtime Blue/Green Deploy' },
+  ])
+  const { dragAndDropHooks: listboxDndHooks } = useDragAndDrop({
+    getItems: (keys) =>
+      [...keys].map((key) => {
+        const step = pipelineSteps.find((s) => s.id === key)
+        return { 'text/plain': step?.name ?? String(key) }
+      }),
+    onReorder(e) {
+      if (e.target.dropPosition === 'before') {
+        const key = e.target.key
+        const moving = pipelineSteps.filter((s) => e.keys.has(s.id))
+        const remaining = pipelineSteps.filter((s) => !e.keys.has(s.id))
+        const idx = remaining.findIndex((s) => s.id === key)
+        const updated = [...remaining]
+        updated.splice(idx, 0, ...moving)
+        setPipelineSteps(updated)
+      } else if (e.target.dropPosition === 'after') {
+        const key = e.target.key
+        const moving = pipelineSteps.filter((s) => e.keys.has(s.id))
+        const remaining = pipelineSteps.filter((s) => !e.keys.has(s.id))
+        const idx = remaining.findIndex((s) => s.id === key)
+        const updated = [...remaining]
+        updated.splice(idx + 1, 0, ...moving)
+        setPipelineSteps(updated)
+      }
+    },
+  })
 
   const trimmedCreatable = creatableQuery.trim()
   const matchingFrameworks = frameworks.filter((f) =>
@@ -623,6 +670,189 @@ export const FormsSection: React.FC = () => {
                 </span>
               </span>
             )}
+          </div>
+        </div>
+      </section>
+
+      {/* ListBox Collection Suite */}
+      <section {...stylex.props(styles.section)}>
+        <h3 {...stylex.props(styles.sectionTitle)}>
+          ListBox Collection & Option Selection
+        </h3>
+        <div {...stylex.props(styles.gridTwoCol)}>
+          {/* 1. Single Selection with Checkmarks & Descriptions */}
+          <div {...stylex.props(styles.demoColumn)}>
+            <span {...stylex.props(styles.demoLabel)}>
+              Single Selection with Checkmarks & Descriptions
+            </span>
+            <ListBox
+              aria-label="Cluster Access Role"
+              selectionMode="single"
+              selectedKeys={listBoxRole}
+              onSelectionChange={setListBoxRole}
+              style={styles.listboxDemo}
+            >
+              <ListBoxItem
+                id="admin"
+                label="Administrator"
+                description="Unrestricted cluster access & key rotation"
+                showCheckmark
+              />
+              <ListBoxItem
+                id="developer"
+                label="Developer"
+                description="Read and write staging & development workloads"
+                showCheckmark
+              />
+              <ListBoxItem
+                id="viewer"
+                label="Viewer"
+                description="Read-only access to runtime dashboards and metrics"
+                showCheckmark
+              />
+              <ListBoxItem
+                id="billing"
+                label="Billing Manager"
+                description="Manage payment methods and compute quotas"
+                showCheckmark
+                isDisabled
+              />
+            </ListBox>
+            <span {...stylex.props(styles.demoMeta)}>
+              Selected role:{' '}
+              <code {...stylex.props(styles.demoHighlight)}>
+                {Array.from(listBoxRole).join(', ') || 'None'}
+              </code>
+            </span>
+          </div>
+
+          {/* 2. Multi-Selection with Sticky Section Headers */}
+          <div {...stylex.props(styles.demoColumn)}>
+            <span {...stylex.props(styles.demoLabel)}>
+              Multi-Selection with Sticky Headers
+            </span>
+            <ListBox
+              aria-label="Service Telemetry"
+              selectionMode="multiple"
+              selectedKeys={listBoxTelemetry}
+              onSelectionChange={setListBoxTelemetry}
+              style={styles.listboxDemo}
+            >
+              <ListBoxSection id="metrics" title="System Metrics">
+                <ListBoxItem
+                  id="cpu"
+                  label="CPU Utilization"
+                  description="Core load and throttling rates"
+                  showCheckmark
+                />
+                <ListBoxItem
+                  id="memory"
+                  label="Memory Footprint"
+                  description="Resident RSS and slab allocation"
+                  showCheckmark
+                />
+                <ListBoxItem
+                  id="io"
+                  label="Disk & Network I/O"
+                  description="Bandwidth saturation and packet queue"
+                  showCheckmark
+                />
+              </ListBoxSection>
+              <ListBoxSection id="logs" title="Log Streaming">
+                <ListBoxItem
+                  id="access-logs"
+                  label="HTTP Access Logs"
+                  description="Incoming request headers and status codes"
+                  showCheckmark
+                />
+                <ListBoxItem
+                  id="error-traces"
+                  label="Error Stack Traces"
+                  description="Unhandled exceptions and fatal signals"
+                  showCheckmark
+                />
+                <ListBoxItem
+                  id="audit-trail"
+                  label="Security Audit Trail"
+                  description="Authentication events and privilege escalations"
+                  showCheckmark
+                />
+              </ListBoxSection>
+            </ListBox>
+            <span {...stylex.props(styles.demoMeta)}>
+              Selected telemetry streams:{' '}
+              <code {...stylex.props(styles.demoHighlight)}>
+                {Array.from(listBoxTelemetry).join(', ') || 'None'}
+              </code>
+            </span>
+          </div>
+
+          {/* 3. Drag & Drop Pipeline Reordering */}
+          <div {...stylex.props(styles.demoColumn)}>
+            <span {...stylex.props(styles.demoLabel)}>
+              Drag & Drop Pipeline Reordering (useDragAndDrop)
+            </span>
+            <ListBox
+              aria-label="CI/CD Pipeline Stages"
+              selectionMode="single"
+              dragAndDropHooks={listboxDndHooks}
+              items={pipelineSteps}
+              style={styles.listboxDemo}
+            >
+              {(item) => (
+                <ListBoxItem id={item.id} textValue={item.name}>
+                  <Text slot="label">{item.name}</Text>
+                </ListBoxItem>
+              )}
+            </ListBox>
+            <span {...stylex.props(styles.demoMeta)}>
+              Order: {pipelineSteps.map((s) => s.id).join(' → ')}
+            </span>
+          </div>
+
+          {/* 4. Grid Layout (2-Column Options) */}
+          <div {...stylex.props(styles.demoColumn)}>
+            <span {...stylex.props(styles.demoLabel)}>
+              Grid Layout (2-Column Options)
+            </span>
+            <ListBox
+              aria-label="Compute Instance Type"
+              selectionMode="single"
+              layout="grid"
+              defaultSelectedKeys={['c6g-xlarge']}
+              style={styles.listboxDemo}
+            >
+              <ListBoxItem
+                id="t4g-nano"
+                label="t4g.nano"
+                description="0.5 GB RAM"
+              />
+              <ListBoxItem
+                id="t4g-micro"
+                label="t4g.micro"
+                description="1 GB RAM"
+              />
+              <ListBoxItem
+                id="t4g-small"
+                label="t4g.small"
+                description="2 GB RAM"
+              />
+              <ListBoxItem
+                id="c6g-medium"
+                label="c6g.med"
+                description="4 GB RAM"
+              />
+              <ListBoxItem
+                id="c6g-large"
+                label="c6g.lrg"
+                description="8 GB RAM"
+              />
+              <ListBoxItem
+                id="c6g-xlarge"
+                label="c6g.xlarge"
+                description="16 GB RAM"
+              />
+            </ListBox>
           </div>
         </div>
       </section>

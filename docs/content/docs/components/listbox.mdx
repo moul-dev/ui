@@ -1,0 +1,426 @@
+---
+title: ListBox
+description: A listbox displays a list of options and allows a user to select one or more of them.
+reactAria: ListBox
+---
+
+import { ListBox, ListBoxItem, ListBoxSection, ListBoxLoadMoreItem, Text } from '@moul-dev/ui';
+
+# ListBox
+
+## Preview
+
+<ComponentPlayground component="ListBox" />
+
+A listbox displays a list of options and allows a user to select one or more of them. Built on React Aria Components and styled with StyleX.
+
+## Import
+
+```tsx
+import {
+  ListBox,
+  ListBoxItem,
+  ListBoxSection,
+  ListBoxLoadMoreItem,
+  DropIndicator,
+  Text,
+  Header,
+} from '@moul-dev/ui';
+```
+
+## Basic Usage
+
+A simple listbox allowing users to pick an option.
+
+<ComponentPreview>
+  <div className="w-full max-w-xs">
+    <ListBox aria-label="Favorite animal" selectionMode="single" defaultSelectedKeys={['cat']} className="w-full">
+      <ListBoxItem id="aardvark">Aardvark</ListBoxItem>
+      <ListBoxItem id="cat">Cat</ListBoxItem>
+      <ListBoxItem id="dog">Dog</ListBoxItem>
+      <ListBoxItem id="kangaroo">Kangaroo</ListBoxItem>
+      <ListBoxItem id="panda">Panda</ListBoxItem>
+    </ListBox>
+  </div>
+</ComponentPreview>
+
+```tsx
+import { ListBox, ListBoxItem } from '@moul-dev/ui';
+
+export default function Example() {
+  return (
+    <ListBox aria-label="Favorite animal" selectionMode="single">
+      <ListBoxItem id="aardvark">Aardvark</ListBoxItem>
+      <ListBoxItem id="cat">Cat</ListBoxItem>
+      <ListBoxItem id="dog">Dog</ListBoxItem>
+      <ListBoxItem id="kangaroo">Kangaroo</ListBoxItem>
+      <ListBoxItem id="panda">Panda</ListBoxItem>
+    </ListBox>
+  );
+}
+```
+
+## Selection
+
+Use `selectionMode="single"` or `selectionMode="multiple"` to control item selection. Use `showCheckmark` on items to display a clean checkmark indicator when selected.
+
+<ComponentPreview>
+  <ListBoxSelectionDemo />
+</ComponentPreview>
+
+```tsx
+import { ListBox, ListBoxItem } from '@moul-dev/ui';
+import { useState } from 'react';
+
+export default function SelectionExample() {
+  const [selected, setSelected] = useState(new Set(['cat', 'dog']));
+
+  return (
+    <div className="flex flex-col gap-2">
+      <ListBox
+        aria-label="Select pets"
+        selectionMode="multiple"
+        selectedKeys={selected}
+        onSelectionChange={setSelected}
+      >
+        <ListBoxItem id="cat" showCheckmark>Cat</ListBoxItem>
+        <ListBoxItem id="dog" showCheckmark>Dog</ListBoxItem>
+        <ListBoxItem id="rabbit" showCheckmark>Rabbit</ListBoxItem>
+        <ListBoxItem id="hamster" showCheckmark isDisabled>Hamster (Unavailable)</ListBoxItem>
+      </ListBox>
+      <p className="text-sm text-neutral-500">
+        Selected: {Array.from(selected).join(', ') || 'None'}
+      </p>
+    </div>
+  );
+}
+```
+
+## Labels and Descriptions
+
+You can author labels and descriptions either via `label` and `description` props directly on `ListBoxItem`, or with `<Text slot="label">` and `<Text slot="description">` slots.
+
+<ComponentPreview>
+  <div className="w-full max-w-md">
+    <ListBox aria-label="Cluster Permissions" selectionMode="single" defaultSelectedKeys={['developer']} className="w-full">
+      {/* Via props */}
+      <ListBoxItem
+        id="admin"
+        label="Administrator"
+        description="Full access to infrastructure and secret rotation"
+        showCheckmark
+      />
+      {/* Via slot-based Text */}
+      <ListBoxItem id="developer" showCheckmark textValue="Developer">
+        <Text slot="label">Developer</Text>
+        <Text slot="description">Write access to dev and staging workloads</Text>
+      </ListBoxItem>
+      <ListBoxItem
+        id="viewer"
+        label="Viewer"
+        description="Read-only access to monitoring dashboards"
+        showCheckmark
+      />
+    </ListBox>
+  </div>
+</ComponentPreview>
+
+```tsx
+import { ListBox, ListBoxItem, Text } from '@moul-dev/ui';
+
+export default function TextSlotsExample() {
+  return (
+    <ListBox aria-label="Cluster Permissions" selectionMode="single">
+      {/* Via props */}
+      <ListBoxItem
+        id="admin"
+        label="Administrator"
+        description="Full access to infrastructure and secret rotation"
+        showCheckmark
+      />
+      {/* Via slot-based Text */}
+      <ListBoxItem id="developer" showCheckmark textValue="Developer">
+        <Text slot="label">Developer</Text>
+        <Text slot="description">Write access to dev and staging workloads</Text>
+      </ListBoxItem>
+      <ListBoxItem
+        id="viewer"
+        label="Viewer"
+        description="Read-only access to monitoring dashboards"
+        showCheckmark
+      />
+    </ListBox>
+  );
+}
+```
+
+## Sticky Sections & Headers
+
+Organize items into grouped categories using `ListBoxSection`. Section headers are sticky by default as the user scrolls.
+
+<ComponentPreview>
+  <ListBoxSectionsDemo />
+</ComponentPreview>
+
+```tsx
+import { ListBox, ListBoxItem, ListBoxSection } from '@moul-dev/ui';
+
+export default function SectionsExample() {
+  return (
+    <ListBox aria-label="Sandwich contents" selectionMode="multiple" className="max-h-60">
+      <ListBoxSection title="Vegetables">
+        <ListBoxItem id="lettuce">Lettuce</ListBoxItem>
+        <ListBoxItem id="tomato">Tomato</ListBoxItem>
+        <ListBoxItem id="onion">Red Onion</ListBoxItem>
+        <ListBoxItem id="pickles">Pickles</ListBoxItem>
+      </ListBoxSection>
+      <ListBoxSection title="Proteins">
+        <ListBoxItem id="turkey">Smoked Turkey</ListBoxItem>
+        <ListBoxItem id="tofu">Crispy Tofu</ListBoxItem>
+        <ListBoxItem id="ham">Honey Glazed Ham</ListBoxItem>
+      </ListBoxSection>
+      <ListBoxSection title="Condiments">
+        <ListBoxItem id="mustard">Dijon Mustard</ListBoxItem>
+        <ListBoxItem id="mayo">Japanese Mayo</ListBoxItem>
+        <ListBoxItem id="aioli">Garlic Aioli</ListBoxItem>
+      </ListBoxSection>
+    </ListBox>
+  );
+}
+```
+
+## Layout Modes
+
+ListBox supports both stack (vertical and horizontal) and multi-column grid layouts via the `layout` and `orientation` props:
+
+<ComponentPreview>
+  <ListBoxLayoutsDemo />
+</ComponentPreview>
+
+```tsx
+import { ListBox, ListBoxItem } from '@moul-dev/ui';
+
+export default function LayoutsExample() {
+  return (
+    <div className="flex flex-col gap-6">
+      {/* Horizontal Stack */}
+      <ListBox
+        aria-label="Filter chips"
+        selectionMode="single"
+        orientation="horizontal"
+      >
+        <ListBoxItem id="all">All</ListBoxItem>
+        <ListBoxItem id="unread">Unread</ListBoxItem>
+        <ListBoxItem id="starred">Starred</ListBoxItem>
+        <ListBoxItem id="archived">Archived</ListBoxItem>
+      </ListBox>
+
+      {/* Grid Layout */}
+      <ListBox
+        aria-label="Instance sizing"
+        selectionMode="single"
+        layout="grid"
+      >
+        <ListBoxItem id="nano" label="t4g.nano" description="0.5 GB RAM" />
+        <ListBoxItem id="micro" label="t4g.micro" description="1 GB RAM" />
+        <ListBoxItem id="small" label="t4g.small" description="2 GB RAM" />
+        <ListBoxItem id="medium" label="c6g.med" description="4 GB RAM" />
+      </ListBox>
+    </div>
+  );
+}
+```
+
+## Drag and Drop Reordering
+
+ListBox integrates natively with React Aria's `useDragAndDrop` hook. Item reordering, dragging opacity, drop target outlines, and insertion line indicators (`DropIndicator`) are handled automatically.
+
+<ComponentPreview>
+  <ListBoxDndDemo />
+</ComponentPreview>
+
+```tsx
+import { ListBox, ListBoxItem } from '@moul-dev/ui';
+import { useDragAndDrop } from 'react-aria-components';
+import { useState } from 'react';
+
+export default function ReorderableList() {
+  const [items, setItems] = useState([
+    { id: '1', name: 'Lint and Format code' },
+    { id: '2', name: 'Execute unit test suite' },
+    { id: '3', name: 'Build production artifacts' },
+    { id: '4', name: 'Deploy to edge network' },
+  ]);
+
+  const { dragAndDropHooks } = useDragAndDrop({
+    getItems: (keys) =>
+      Array.from(keys).map((key) => {
+        const item = items.find((i) => i.id === key);
+        return { 'text/plain': item?.name ?? String(key) };
+      }),
+    onReorder(e) {
+      if (e.target.dropPosition === 'before') {
+        const moving = items.filter((i) => e.keys.has(i.id));
+        const remaining = items.filter((i) => !e.keys.has(i.id));
+        const idx = remaining.findIndex((i) => i.id === e.target.key);
+        const updated = [...remaining];
+        updated.splice(idx, 0, ...moving);
+        setItems(updated);
+      } else if (e.target.dropPosition === 'after') {
+        const moving = items.filter((i) => e.keys.has(i.id));
+        const remaining = items.filter((i) => !e.keys.has(i.id));
+        const idx = remaining.findIndex((i) => i.id === e.target.key);
+        const updated = [...remaining];
+        updated.splice(idx + 1, 0, ...moving);
+        setItems(updated);
+      }
+    },
+  });
+
+  return (
+    <ListBox
+      aria-label="Reorderable deployment steps"
+      selectionMode="single"
+      dragAndDropHooks={dragAndDropHooks}
+      items={items}
+    >
+      {(item) => <ListBoxItem id={item.id}>{item.name}</ListBoxItem>}
+    </ListBox>
+  );
+}
+```
+
+## Asynchronous Loading
+
+Use `renderEmptyState` for initial load states, and `ListBoxLoadMoreItem` for infinite scrolling lists. `ListBoxLoadMoreItem` renders `@moul-dev/ui`'s `Spinner` automatically when loading.
+
+<ComponentPreview>
+  <ListBoxAsyncDemo />
+</ComponentPreview>
+
+```tsx
+import { ListBox, ListBoxItem, ListBoxLoadMoreItem, Spinner } from '@moul-dev/ui';
+
+export default function AsyncLoadingExample() {
+  return (
+    <ListBox
+      aria-label="Infinite feed"
+      renderEmptyState={() => (
+        <div className="flex justify-center p-4">
+          <Spinner size="md" aria-label="Loading feed..." />
+        </div>
+      )}
+    >
+      <ListBoxItem id="post-1">First Post</ListBoxItem>
+      <ListBoxItem id="post-2">Second Post</ListBoxItem>
+      <ListBoxLoadMoreItem isLoading aria-label="Loading more posts..." />
+    </ListBox>
+  );
+}
+```
+
+## Props
+
+### ListBox Props
+
+<TypeTable
+  type={{
+    'size': {
+      type: "'sm' | 'md' | 'lg'",
+      default: "'md'",
+      description: "Controls the size, padding, and typography scaling of the ListBox and its items.",
+    },
+    'variant': {
+      type: "'bordered' | 'flat' | 'plain'",
+      default: "'bordered'",
+      description: "Visual container frame style of the ListBox.",
+    },
+    'layout': {
+      type: "'stack' | 'grid'",
+      default: "'stack'",
+      description: "Arrangement of items within the collection.",
+    },
+    'orientation': {
+      type: "'vertical' | 'horizontal'",
+      default: "'vertical'",
+      description: "Scroll and keyboard direction orientation.",
+    },
+    'selectionMode': {
+      type: "'single' | 'multiple' | 'none'",
+      description: "The type of item selection allowed.",
+    },
+    'selectedKeys': {
+      type: "'all' | Iterable<Key>",
+      description: "Currently selected item keys (controlled).",
+    },
+    'defaultSelectedKeys': {
+      type: "'all' | Iterable<Key>",
+      description: "Initial selected item keys (uncontrolled).",
+    },
+    'onSelectionChange': {
+      type: "(keys: Selection) => void",
+      description: "Handler invoked when selection changes.",
+    },
+    'disabledKeys': {
+      type: "Iterable<Key>",
+      description: "Keys of disabled items that cannot be selected.",
+    },
+    'dragAndDropHooks': {
+      type: "DragAndDropHooks",
+      description: "Hooks returned by useDragAndDrop to enable drag and drop behavior.",
+    },
+    'renderEmptyState': {
+      type: "(props: ListBoxRenderProps) => ReactNode",
+      description: "Content displayed when no items are present in the collection.",
+    },
+  }}
+/>
+
+### ListBoxItem Props
+
+<TypeTable
+  type={{
+    'id': {
+      type: "Key",
+      description: "Unique identifier for the item.",
+    },
+    'label': {
+      type: "ReactNode",
+      description: "Primary item title or label.",
+    },
+    'description': {
+      type: "ReactNode",
+      description: "Secondary helper or subtitle text.",
+    },
+    'showCheckmark': {
+      type: "boolean",
+      default: "false",
+      description: "Whether to display a trailing checkmark icon when the item is selected.",
+    },
+    'isDisabled': {
+      type: "boolean",
+      default: "false",
+      description: "Whether the item is disabled.",
+    },
+    'href': {
+      type: "string",
+      description: "URL to navigate to when the item is activated as a link.",
+    },
+  }}
+/>
+
+### ListBoxSection Props
+
+<TypeTable
+  type={{
+    'title': {
+      type: "string",
+      description: "Section header title displayed above grouped items.",
+    },
+    'isSticky': {
+      type: "boolean",
+      default: "true",
+      description: "Whether the section header remains sticky while scrolling.",
+    },
+  }}
+/>

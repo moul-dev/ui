@@ -282,6 +282,27 @@ import { ComboBox, ComboBoxItem } from '@moul-dev/ui';
 
 ---
 
+### ListBox
+Accessible multi-item selection list supporting single or multiple selection, sticky section headers, and drag-and-drop.
+
+```tsx
+import { ListBox, ListBoxItem, ListBoxSection, DropIndicator, Text } from '@moul-dev/ui';
+
+<ListBox
+  aria-label="Permissions"
+  selectionMode="multiple"
+  selectedKeys={selected}
+  onSelectionChange={setSelected}
+>
+  <ListBoxSection title="System">
+    <ListBoxItem id="read" label="Read" description="Read-only access" showCheckmark />
+    <ListBoxItem id="write" label="Write" description="Write access" showCheckmark />
+  </ListBoxSection>
+</ListBox>
+```
+
+---
+
 ### Autocomplete
 Composable collection filter and suggestion coordinator connecting text inputs with lists, tables, and tags.
 

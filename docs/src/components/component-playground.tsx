@@ -18,6 +18,8 @@ import {
   InputOTPGroup,
   InputOTPSeparator,
   InputOTPSlot,
+  ListBox,
+  ListBoxItem,
   Pagination,
   ProgressBar,
   RangeCalendar,
@@ -341,6 +343,60 @@ const REGISTRY: Record<string, ComponentConfig> = {
         type: 'boolean',
         label: 'Disabled',
         defaultValue: false,
+      },
+    ],
+  },
+  ListBox: {
+    name: 'ListBox',
+    defaultProps: {
+      selectionMode: 'single',
+      size: 'md',
+      variant: 'bordered',
+      showCheckmark: true,
+      layout: 'stack',
+      orientation: 'vertical',
+    },
+    props: [
+      {
+        name: 'selectionMode',
+        type: 'select',
+        label: 'Selection Mode',
+        options: ['single', 'multiple'],
+        defaultValue: 'single',
+      },
+      {
+        name: 'size',
+        type: 'select',
+        label: 'Size',
+        options: ['sm', 'md', 'lg'],
+        defaultValue: 'md',
+      },
+      {
+        name: 'variant',
+        type: 'select',
+        label: 'Variant',
+        options: ['bordered', 'flat', 'plain'],
+        defaultValue: 'bordered',
+      },
+      {
+        name: 'showCheckmark',
+        type: 'boolean',
+        label: 'Show Checkmark',
+        defaultValue: true,
+      },
+      {
+        name: 'layout',
+        type: 'select',
+        label: 'Layout',
+        options: ['stack', 'grid'],
+        defaultValue: 'stack',
+      },
+      {
+        name: 'orientation',
+        type: 'select',
+        label: 'Orientation',
+        options: ['vertical', 'horizontal'],
+        defaultValue: 'vertical',
       },
     ],
   },
@@ -1963,6 +2019,47 @@ export default function Example() {
   );
 }`
       }
+      case 'ListBox': {
+        const {
+          selectionMode,
+          size,
+          variant,
+          showCheckmark,
+          layout,
+          orientation,
+        } = activeProps
+        let propsStr = ''
+        if (selectionMode && selectionMode !== 'single')
+          propsStr += ` selectionMode="${selectionMode}"`
+        if (size && size !== 'md') propsStr += ` size="${size}"`
+        if (variant && variant !== 'bordered')
+          propsStr += ` variant="${variant}"`
+        if (layout && layout !== 'stack') propsStr += ` layout="${layout}"`
+        if (orientation && orientation !== 'vertical')
+          propsStr += ` orientation="${orientation}"`
+        const checkmarkAttr = showCheckmark ? ' showCheckmark' : ''
+
+        return `import { ListBox, ListBoxItem } from '@moul-dev/ui';
+import { useState } from 'react';
+import type { Selection } from 'react-aria-components';
+
+export default function Example() {
+  const [selected, setSelected] = useState<Selection>(new Set(['read']));
+
+  return (
+    <ListBox
+      aria-label="Permissions"${propsStr}
+      selectedKeys={selected}
+      onSelectionChange={setSelected}
+      className="w-full max-w-sm"
+    >
+      <ListBoxItem id="read" label="Read" description="Read-only access"${checkmarkAttr} />
+      <ListBoxItem id="write" label="Write" description="Read and write access"${checkmarkAttr} />
+      <ListBoxItem id="admin" label="Admin" description="Full administrative access"${checkmarkAttr} />
+    </ListBox>
+  );
+}`
+      }
       case 'ToggleButton': {
         const { variant, size, isDisabled, isIcon, children } = activeProps
         let propsStr = ''
@@ -2525,6 +2622,49 @@ export default function Example() {
             <SelectItem id="viewer">Viewer</SelectItem>
           </Select>
         )
+      case 'ListBox': {
+        const {
+          selectionMode,
+          size,
+          variant,
+          showCheckmark,
+          layout,
+          orientation,
+        } = activeProps
+        return (
+          <div className="w-full max-w-sm py-4 flex justify-center">
+            <ListBox
+              aria-label="Permissions"
+              selectionMode={selectionMode}
+              size={size}
+              variant={variant}
+              layout={layout}
+              orientation={orientation}
+              defaultSelectedKeys={['read']}
+              className="w-full"
+            >
+              <ListBoxItem
+                id="read"
+                label="Read Access"
+                description="Read-only access to files and logs"
+                showCheckmark={showCheckmark}
+              />
+              <ListBoxItem
+                id="write"
+                label="Write Access"
+                description="Create and modify resources"
+                showCheckmark={showCheckmark}
+              />
+              <ListBoxItem
+                id="admin"
+                label="Administrator"
+                description="Full access to cluster and secret keys"
+                showCheckmark={showCheckmark}
+              />
+            </ListBox>
+          </div>
+        )
+      }
       case 'ToggleButton':
         return (
           <ToggleButton {...activeProps}>{activeProps.children}</ToggleButton>
