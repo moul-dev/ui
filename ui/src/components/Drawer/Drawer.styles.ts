@@ -160,6 +160,8 @@ export const styles = stylex.create({
   modalReset: {
     outline: 'none',
     borderWidth: 0,
+    borderStyle: 'none',
+    borderColor: 'transparent',
     backgroundColor: 'transparent',
     boxShadow: 'none',
     display: 'flex',
@@ -169,31 +171,26 @@ export const styles = stylex.create({
     margin: 0,
     padding: 0,
   },
+  modalWrapperReset: {
+    borderWidth: 0,
+    borderStyle: 'none',
+    borderColor: 'transparent',
+    backgroundColor: 'transparent',
+    boxShadow: 'none',
+  },
   placementBottom: {
-    width: {
-      default: `calc(100vw - ${tokens.spacing2} * 2)`,
-      '@media (max-width: 640px)': '100vw',
-    },
-    maxWidth: {
-      default: `calc(100vw - ${tokens.spacing2} * 2)`,
-      '@media (max-width: 640px)': '100vw',
-    },
-    marginBlockEnd: {
-      default: tokens.spacing2,
-      '@media (max-width: 640px)': 0,
-    },
+    width: '100vw',
+    maxWidth: '100vw',
+    marginBlockEnd: 0,
     marginBlockStart: 0,
-    marginInline: {
-      default: tokens.spacing2,
-      '@media (max-width: 640px)': 0,
-    },
+    marginInline: 0,
     borderTopLeftRadius: tokens.radiusLg,
     borderTopRightRadius: tokens.radiusLg,
     borderBottomLeftRadius: 0,
     borderBottomRightRadius: 0,
-    borderWidth: '1px',
-    borderStyle: 'solid',
-    borderColor: tokens.colorBorderSubtle,
+    borderWidth: 0,
+    borderStyle: 'none',
+    borderColor: 'transparent',
   },
   handleWrapper: {
     display: 'flex',
@@ -298,6 +295,8 @@ export const styles = stylex.create({
   },
   dialog: {
     outline: 'none',
+    borderWidth: 0,
+    borderStyle: 'none',
     display: 'flex',
     flexDirection: 'column',
     flexGrow: 1,
@@ -331,6 +330,8 @@ export const styles = stylex.create({
     paddingBlockEnd: tokens.spacing3,
     paddingInline: tokens.spacing4,
     gap: tokens.spacing1,
+    borderBlockEndWidth: 0,
+    borderBlockEndStyle: 'none',
   },
   title: {
     fontSize: tokens.fontSizeLg,

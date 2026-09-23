@@ -223,6 +223,7 @@ export const Drawer = React.forwardRef<HTMLDivElement, DrawerProps>(
             styles.modalReset,
             placementStyle,
             sizeStyle,
+            styles.modalWrapperReset,
           )
           return [wrapperClass, className].filter(Boolean).join(' ')
         }}
