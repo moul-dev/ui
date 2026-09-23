@@ -23,13 +23,17 @@ interface BumpOptions {
 }
 
 /**
- * Format a Date object into CalVer YYYY.MM.DD
+ * Format a Date object into CalVer prefix YYYY.M (e.g. 2026.9 or 2026.10)
+ * Note: MINOR is non-zero-padded single digit for months 1-9 to strictly adhere to SemVer 2.0.0
  */
-function formatCalVerDate(d: Date): string {
+function formatCalVerPrefix(d: Date): {
+  year: number
+  month: number
+  prefix: string
+} {
   const year = d.getFullYear()
-  const month = String(d.getMonth() + 1).padStart(2, '0')
-  const day = String(d.getDate()).padStart(2, '0')
-  return `${year}.${month}.${day}`
+  const month = d.getMonth() + 1 // 1-12, no leading zero
+  return { year, month, prefix: `${year}.${month}` }
 }
 
 /**
@@ -54,23 +58,23 @@ function parseArgs(args: string[]): BumpOptions {
   for (const arg of args) {
     if (arg === '--help' || arg === '-h') {
       console.log(`
-${colors.bright}Moul UI CalVer Bump Script${colors.reset}
+${colors.bright}Moul UI CalVer (SemVer-compatible) Bump Script${colors.reset}
 
 ${colors.yellow}Usage:${colors.reset}
   bun run bump [options] [version]
 
 ${colors.yellow}Options:${colors.reset}
-  [version]               Explicit version to set (e.g. 2026.08.18 or 2026.08.18.1)
-  --date=<YYYY-MM-DD>     Specify custom date to base the CalVer on
+  [version]               Explicit version to set (e.g. 2026.9.24)
+  --date=<YYYY-MM-DD>     Specify custom date to base the CalVer on (year & month)
   --changelog, -c         Scaffold a new changelog file in docs/content/changelog/
   --dry-run, -d           Preview changes without modifying any files
   --help, -h              Show this help message
 
 ${colors.yellow}Examples:${colors.reset}
-  bun run bump                    # Bumps to today's CalVer (e.g. 2026.08.18)
+  bun run bump                    # Increments patch or rolls to new month (e.g. 2026.9.24 -> 2026.9.25)
   bun run bump --changelog        # Bumps version and scaffolds changelog entry
   bun run bump --dry-run          # Preview changes
-  bun run bump 2026.08.20         # Sets version explicitly to 2026.08.20
+  bun run bump 2026.9.24          # Sets version explicitly to 2026.9.24
 `)
       process.exit(0)
     } else if (arg === '--dry-run' || arg === '-d') {
@@ -88,17 +92,39 @@ ${colors.yellow}Examples:${colors.reset}
 }
 
 /**
- * Compute the next version based on current version and target date
+ * Compute the next SemVer-compatible CalVer version based on current version and target date.
+ * Format: YYYY.M.PATCH (e.g. 2026.9.24)
+ * - MAJOR: Full Year (YYYY)
+ * - MINOR: Month without leading zeroes (1-12, e.g. 9 for September, 10 for October)
+ * - PATCH: Micro/patch counter that increments within that month (e.g. 24, 25...)
  */
 function computeNextVersion(
   currentVersion: string,
   options: BumpOptions,
 ): string {
   if (options.explicitVersion) {
+    const semverMatch = options.explicitVersion.match(
+      /^(\d{2,4})\.(\d{1,2})\.(\d+)$/,
+    )
+    if (!semverMatch) {
+      console.error(
+        `${colors.red}Error:${colors.reset} Explicit version "${options.explicitVersion}" does not follow SemVer format (MAJOR.MINOR.PATCH, e.g. 2026.9.24)`,
+      )
+      process.exit(1)
+    }
+    // Normalize leading zero in month if provided (e.g. 2026.09.24 -> 2026.9.24)
+    if (semverMatch[2].length > 1 && semverMatch[2].startsWith('0')) {
+      const normalizedMinor = Number.parseInt(semverMatch[2], 10)
+      const normalizedVersion = `${semverMatch[1]}.${normalizedMinor}.${semverMatch[3]}`
+      console.warn(
+        `  ${colors.yellow}Notice:${colors.reset} Normalized leading zero in month: ${options.explicitVersion} -> ${normalizedVersion}`,
+      )
+      return normalizedVersion
+    }
     return options.explicitVersion
   }
 
-  let baseDateCalVer: string
+  let targetDate: Date
   if (options.explicitDate) {
     const sanitized = options.explicitDate.replace(/\./g, '-')
     const parsed = new Date(sanitized)
@@ -108,28 +134,35 @@ function computeNextVersion(
       )
       process.exit(1)
     }
-    baseDateCalVer = formatCalVerDate(parsed)
+    targetDate = parsed
   } else {
-    baseDateCalVer = formatCalVerDate(new Date())
+    targetDate = new Date()
   }
 
-  // Check if current version starts with today's base CalVer
-  if (currentVersion === baseDateCalVer) {
-    // Second release today -> append .1
-    return `${baseDateCalVer}.1`
+  const {
+    year: targetYear,
+    month: targetMonth,
+    prefix: targetPrefix,
+  } = formatCalVerPrefix(targetDate)
+
+  // Parse currentVersion: matches both YYYY.M.PATCH (e.g. 2026.9.24) and YYYY.MM.PATCH
+  const match = currentVersion.match(/^(\d{4})\.(0?[1-9]|1[0-2])\.(\d+)$/)
+
+  if (match) {
+    const curYear = match[1]
+    const curMonth = Number.parseInt(match[2], 10)
+    const curPatch = Number.parseInt(match[3], 10)
+
+    if (curYear === String(targetYear) && curMonth === targetMonth) {
+      // Same year and month -> increment patch
+      return `${targetPrefix}.${curPatch + 1}`
+    }
+    // New month or year -> start at patch 1
+    return `${targetPrefix}.1`
   }
 
-  const patchMatch = currentVersion.match(
-    new RegExp(`^${baseDateCalVer.replace(/\./g, '\\.')}\\.(\\d+)$`),
-  )
-  if (patchMatch) {
-    // Third+ release today -> increment patch
-    const patchNum = Number.parseInt(patchMatch[1], 10) + 1
-    return `${baseDateCalVer}.${patchNum}`
-  }
-
-  // New day or different base
-  return baseDateCalVer
+  // If current version is legacy 4-part (e.g. 2026.09.23.1) or unrecognized, start at patch 1
+  return `${targetPrefix}.1`
 }
 
 /**
