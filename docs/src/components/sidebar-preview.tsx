@@ -154,27 +154,10 @@ const recentActivity = [
   { label: 'api.moul.dev/v1/health', value: 450 },
 ]
 
-const SmartphoneIcon = () => (
-  <svg
-    viewBox="0 0 24 24"
-    width="14"
-    height="14"
-    stroke="currentColor"
-    strokeWidth="2"
-    fill="none"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
-    <line x1="12" y1="18" x2="12.01" y2="18" />
-  </svg>
-)
-
 export function SidebarPreview() {
   const [activeTab, setActiveTab] = useState('dashboard')
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [isDense, setIsDense] = useState(false)
-  const [isMobileSimulation, setIsMobileSimulation] = useState(false)
   const [layout, setLayout] = useState<'sidebar-framed' | 'main-framed'>(
     'sidebar-framed',
   )
@@ -196,7 +179,6 @@ export function SidebarPreview() {
       selectedKey={activeTab}
       onSelectionChange={setActiveTab}
       dense={isDense}
-      isMobile={isMobileSimulation ? true : undefined}
       variant="solid"
       className="h-screen w-screen transition-colors duration-300"
       style={{ height: '100vh', width: '100vw' }}
@@ -290,27 +272,6 @@ export function SidebarPreview() {
           </div>
 
           <div className="flex items-center gap-3">
-            <button
-              type="button"
-              onClick={() => setIsMobileSimulation((prev) => !prev)}
-              className="inline-flex items-center justify-center gap-1.5 font-medium cursor-pointer border transition-colors h-8 px-3 text-xs rounded-lg shadow-xs hover:opacity-90"
-              style={{
-                backgroundColor: isMobileSimulation
-                  ? tokens.colorPrimary500
-                  : tokens.colorBgElevated,
-                borderColor: isMobileSimulation
-                  ? tokens.colorPrimary500
-                  : tokens.colorBorderSubtle,
-                color: isMobileSimulation
-                  ? tokens.colorFgOnPrimary
-                  : tokens.colorFg,
-              }}
-              title="Toggle mobile floating bottom navigation dock simulation"
-            >
-              <SmartphoneIcon />
-              <span>Mobile: {isMobileSimulation ? 'ON' : 'OFF'}</span>
-            </button>
-
             <button
               type="button"
               onClick={() =>
@@ -755,26 +716,20 @@ export function SidebarPreview() {
 
       {/* ── Subtitle Floating Navigation Overlay ── */}
       <div
-        className={`fixed z-50 flex items-center gap-2 md:gap-3 px-3.5 py-2 md:px-4 md:py-2.5 rounded-full shadow-2xl border backdrop-blur-md select-none transition-all duration-200 ${
-          isMobileSimulation
-            ? 'top-4 right-4 scale-95'
-            : 'bottom-6 right-6 scale-100 hover:scale-105'
-        }`}
+        className="fixed z-50 flex items-center gap-2 md:gap-3 px-3.5 py-2 md:px-4 md:py-2.5 rounded-full shadow-2xl border backdrop-blur-md select-none transition-all duration-200 bottom-6 right-6 scale-100 hover:scale-105"
         style={{
           backgroundColor: tokens.colorBgElevated,
           borderColor: tokens.colorBorder,
           color: tokens.colorFg,
         }}
       >
-        <button
-          type="button"
-          onClick={() => setIsMobileSimulation((prev) => !prev)}
-          className="flex items-center gap-1.5 cursor-pointer border-none bg-transparent p-0 text-xs font-semibold tracking-wide hover:opacity-80"
+        <div
+          className="flex items-center gap-1.5 text-xs font-semibold tracking-wide"
           style={{ color: tokens.colorFg }}
         >
           <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-          <span>{isMobileSimulation ? 'Mobile Mode' : 'Desktop Mode'}</span>
-        </button>
+          <span>Live Preview</span>
+        </div>
         <div
           className="h-4 w-[1px]"
           style={{ backgroundColor: tokens.colorBorderSubtle }}

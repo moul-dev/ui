@@ -1,5 +1,5 @@
 import * as stylex from '@stylexjs/stylex'
-import { fireEvent, render, screen } from '@testing-library/react'
+import { fireEvent, render, screen, within } from '@testing-library/react'
 import * as React from 'react'
 import { describe, expect, test, vi } from 'vitest'
 import {
@@ -51,9 +51,9 @@ describe('Sidebar Component Suite', () => {
     const aside = screen.getByRole('complementary', { name: 'Main Navigation' })
     expect(aside).toBeInTheDocument()
     expect(asideRef.current).toBe(aside)
-    expect(screen.getByText('App Header')).toBeInTheDocument()
-    expect(screen.getByText('Home')).toBeInTheDocument()
-    expect(screen.getByText('User Profile')).toBeInTheDocument()
+    expect(within(aside).getByText('App Header')).toBeInTheDocument()
+    expect(within(aside).getByText('Home')).toBeInTheDocument()
+    expect(within(aside).getByText('User Profile')).toBeInTheDocument()
     expect(screen.getByText('Main Dashboard')).toBeInTheDocument()
     expect(screen.getByRole('separator')).toHaveAttribute(
       'aria-orientation',
@@ -82,9 +82,10 @@ describe('Sidebar Component Suite', () => {
       </Sidebar>,
     )
 
-    const dashItem = screen.getByText('Dashboard').closest('a')
-    const settingsItem = screen.getByText('Settings').closest('a')
-    const emptyItem = screen.getByText('Empty ID').closest('a')
+    const aside = screen.getByRole('complementary')
+    const dashItem = within(aside).getByText('Dashboard').closest('a')
+    const settingsItem = within(aside).getByText('Settings').closest('a')
+    const emptyItem = within(aside).getByText('Empty ID').closest('a')
 
     expect(dashItem).toHaveAttribute('aria-current', 'page')
     expect(settingsItem).not.toHaveAttribute('aria-current')
@@ -298,11 +299,12 @@ describe('Sidebar Component Suite', () => {
       </Sidebar>,
     )
 
-    expect(screen.getByTestId('brand-logo')).toBeInTheDocument()
-    expect(screen.getByText('Moul UI')).toBeInTheDocument()
-    expect(screen.getByText('v2026.08.26')).toBeInTheDocument()
+    const aside = screen.getByRole('complementary')
+    expect(within(aside).getByTestId('brand-logo')).toBeInTheDocument()
+    expect(within(aside).getByText('Moul UI')).toBeInTheDocument()
+    expect(within(aside).getByText('v2026.08.26')).toBeInTheDocument()
 
-    // When collapsed, title and subtitle are hidden
+    // When collapsed, title and subtitle are hidden in aside
     rerender(
       <Sidebar isCollapsed={true}>
         <SidebarAside>
@@ -317,9 +319,14 @@ describe('Sidebar Component Suite', () => {
       </Sidebar>,
     )
 
-    expect(screen.getByTestId('brand-logo')).toBeInTheDocument()
-    expect(screen.queryByText('Moul UI')).not.toBeInTheDocument()
-    expect(screen.queryByText('v2026.08.26')).not.toBeInTheDocument()
+    const collapsedAside = screen.getByRole('complementary')
+    expect(within(collapsedAside).getByTestId('brand-logo')).toBeInTheDocument()
+    expect(
+      within(collapsedAside).queryByText('Moul UI'),
+    ).not.toBeInTheDocument()
+    expect(
+      within(collapsedAside).queryByText('v2026.08.26'),
+    ).not.toBeInTheDocument()
   })
 
   test('SidebarFooter and SidebarHeader automatically isolate primary child when collapsed with raw children', () => {
@@ -338,8 +345,9 @@ describe('Sidebar Component Suite', () => {
       </Sidebar>,
     )
 
-    expect(screen.getByText('Brand Title')).toBeInTheDocument()
-    expect(screen.getByText('User Profile Info')).toBeInTheDocument()
+    const aside = screen.getByRole('complementary')
+    expect(within(aside).getByText('Brand Title')).toBeInTheDocument()
+    expect(within(aside).getByText('User Profile Info')).toBeInTheDocument()
 
     rerender(
       <Sidebar isCollapsed={true}>
@@ -356,10 +364,15 @@ describe('Sidebar Component Suite', () => {
       </Sidebar>,
     )
 
-    expect(screen.getByTestId('raw-logo')).toBeInTheDocument()
-    expect(screen.getByTestId('raw-avatar')).toBeInTheDocument()
-    expect(screen.queryByText('Brand Title')).not.toBeInTheDocument()
-    expect(screen.queryByText('User Profile Info')).not.toBeInTheDocument()
+    const collapsedAside = screen.getByRole('complementary')
+    expect(within(collapsedAside).getByTestId('raw-logo')).toBeInTheDocument()
+    expect(within(collapsedAside).getByTestId('raw-avatar')).toBeInTheDocument()
+    expect(
+      within(collapsedAside).queryByText('Brand Title'),
+    ).not.toBeInTheDocument()
+    expect(
+      within(collapsedAside).queryByText('User Profile Info'),
+    ).not.toBeInTheDocument()
   })
 
   test('supports layout variants ("sidebar-framed" and "main-framed")', () => {
@@ -372,7 +385,8 @@ describe('Sidebar Component Suite', () => {
       </Sidebar>,
     )
 
-    expect(screen.getByText('Aside')).toBeInTheDocument()
+    const aside = screen.getByRole('complementary')
+    expect(within(aside).getByText('Aside')).toBeInTheDocument()
     expect(screen.getByText('Main Content')).toBeInTheDocument()
 
     // Rerender with main-framed / inset layout
@@ -385,16 +399,16 @@ describe('Sidebar Component Suite', () => {
       </Sidebar>,
     )
 
-    expect(screen.getByText('Aside')).toBeInTheDocument()
+    const rerenderedAside = screen.getByRole('complementary')
+    expect(within(rerenderedAside).getByText('Aside')).toBeInTheDocument()
     expect(screen.getByText('Main Content')).toBeInTheDocument()
   })
 
-  test('renders mobile top bar and bottom nav dock when isMobile is true', () => {
+  test('renders responsive mobile top bar and bottom nav dock alongside desktop aside for SSR', () => {
     const onSelectionChange = vi.fn()
 
     render(
       <Sidebar
-        isMobile={true}
         selectedKey="home"
         onSelectionChange={onSelectionChange}
         maxMobileItems={3}
@@ -430,9 +444,16 @@ describe('Sidebar Component Suite', () => {
       </Sidebar>,
     )
 
+    // Desktop aside is present for SSR
+    const aside = screen.getByRole('complementary')
+    expect(aside).toBeInTheDocument()
+
     // Mobile Brand in top header
-    expect(screen.getByTestId('mobile-brand-logo')).toBeInTheDocument()
-    expect(screen.getByText('Mobile Brand')).toBeInTheDocument()
+    const mobileHeader = screen.getByRole('banner')
+    expect(
+      within(mobileHeader).getByTestId('mobile-brand-logo'),
+    ).toBeInTheDocument()
+    expect(within(mobileHeader).getByText('Mobile Brand')).toBeInTheDocument()
 
     // Mobile Bottom Navigation Dock
     const mobileNav = screen.getByRole('navigation', {
@@ -441,16 +462,16 @@ describe('Sidebar Component Suite', () => {
     expect(mobileNav).toBeInTheDocument()
 
     // 3 primary items displayed (maxMobileItems=3)
-    expect(screen.getByText('Home')).toBeInTheDocument()
-    expect(screen.getByText('Search')).toBeInTheDocument()
-    expect(screen.getByText('Explore')).toBeInTheDocument()
+    expect(within(mobileNav).getByText('Home')).toBeInTheDocument()
+    expect(within(mobileNav).getByText('Search')).toBeInTheDocument()
+    expect(within(mobileNav).getByText('Explore')).toBeInTheDocument()
 
     // Home item is currently selected
-    const homeBtn = screen.getByText('Home').closest('button')
+    const homeBtn = within(mobileNav).getByText('Home').closest('button')
     expect(homeBtn).toHaveAttribute('aria-current', 'page')
 
     // Click search item
-    const searchBtn = screen.getByText('Search').closest('button')
+    const searchBtn = within(mobileNav).getByText('Search').closest('button')
     expect(searchBtn).toBeInTheDocument()
     if (searchBtn) {
       fireEvent.click(searchBtn)
@@ -467,14 +488,15 @@ describe('Sidebar Component Suite', () => {
     fireEvent.click(moreBtn)
 
     // Drawer opens displaying full navigation, remaining items & user profile
-    expect(screen.getByRole('dialog')).toBeInTheDocument()
-    expect(screen.getByText('Navigation')).toBeInTheDocument()
-    expect(screen.getByText('John Doe')).toBeInTheDocument()
+    const dialog = screen.getByRole('dialog')
+    expect(dialog).toBeInTheDocument()
+    expect(within(dialog).getByText('Navigation')).toBeInTheDocument()
+    expect(within(dialog).getByText('John Doe')).toBeInTheDocument()
   })
 
   test('disables mobile layout transformation when enableMobileNav is false', () => {
     render(
-      <Sidebar isMobile={true} enableMobileNav={false}>
+      <Sidebar enableMobileNav={false}>
         <SidebarAside aria-label="Desktop Only Aside">
           <SidebarHeader>Desktop Brand</SidebarHeader>
           <SidebarItem id="desktop-item">Desktop Link</SidebarItem>
@@ -485,6 +507,7 @@ describe('Sidebar Component Suite', () => {
     expect(
       screen.getByRole('complementary', { name: 'Desktop Only Aside' }),
     ).toBeInTheDocument()
+    expect(screen.queryByRole('banner')).not.toBeInTheDocument()
     expect(
       screen.queryByRole('navigation', { name: 'Mobile Bottom Navigation' }),
     ).not.toBeInTheDocument()

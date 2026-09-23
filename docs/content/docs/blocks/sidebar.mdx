@@ -86,7 +86,7 @@ Enable `dense` on `<Sidebar>` (or individual subcomponents) to render a compact 
 - Collapsed icons are scaled to 30px square while maintaining consistent alignment.
 
 ### Mobile Floating Bottom Navigation
-On mobile devices (or when `isMobile` is enabled), the sidebar transforms into an app-like floating bottom dock with native-feeling spring physics powered by `motion` (`motion.dev`):
+On mobile devices (`@media (max-width: 768px)`), the sidebar automatically transforms into an app-like floating bottom dock with native-feeling spring physics powered by `motion` (`motion.dev`). The architecture uses a compile-time CSS-first dual-DOM approach that renders cleanly in Server-Side Rendering (SSR) environments with zero layout shift (CLS) and zero hydration mismatch:
 - **Sticky Floating Dock**: Positioned centrally above the bottom safe area with glassmorphic blur and subtle elevation.
 - **Scroll & Swipe Reactivity**: When scrolling down or swiping upwards, the dock smoothly scales down to a compact icon bar (~0.90x) and the top bar slides out of view to maximize reading estate. Scrolling up or swiping down restores full size and labels with spring animation.
 - **Active Pill Animation**: Switching between items animates a smooth sliding pill background using `motion`'s shared layout transitions (`layoutId`).
@@ -116,9 +116,7 @@ Additionally, the `layout` prop controls the spatial hierarchy:
 | `defaultSelectedKey`| `string` | — | The initial active item ID (uncontrolled). |
 | `onSelectionChange` | `(key: string) => void` | — | Callback triggered when a new item is selected. |
 | `variant` | `'solid' \| 'glass'` | `'solid'` | Aesthetic variant of the framed element background. |
-| `enableMobileNav` | `boolean` | `true` | Whether to automatically transform to a floating sticky bottom dock on mobile viewports. |
-| `isMobile` | `boolean` | — | Explicit control over mobile navigation rendering mode (overrides viewport detection). |
-| `mobileBreakpoint` | `number` | `768` | Screen width breakpoint (in px) below which mobile navigation activates. |
+| `enableMobileNav` | `boolean` | `true` | Whether to automatically transform to a floating sticky bottom dock on mobile viewports (`<= 768px`). |
 | `mobileNavScaleOnScroll` | `boolean` | `true` | Whether the floating bottom dock scales down and top bar hides during downward scroll/swipe. |
 | `maxMobileItems` | `number` | `4` | Maximum number of primary items rendered directly on the bottom dock before consolidating into the More drawer. |
 

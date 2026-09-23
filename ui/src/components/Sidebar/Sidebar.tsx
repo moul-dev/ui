@@ -36,9 +36,7 @@ interface SidebarContextValue {
   onCollapseToggle: () => void
   showCollapseToggle?: boolean
   dense?: boolean
-  isMobile: boolean
   enableMobileNav: boolean
-  mobileBreakpoint?: number
   mobileNavScaleOnScroll: boolean
   maxMobileItems: number
   isScrolledDown: boolean
@@ -60,24 +58,6 @@ export function useSidebar() {
     throw new Error('Sidebar components must be rendered within a <Sidebar>')
   }
   return context
-}
-
-export function useIsMobile(breakpoint = 768) {
-  const [isMobile, setIsMobile] = React.useState(false)
-
-  React.useEffect(() => {
-    if (typeof window === 'undefined' || !window.matchMedia) return
-    const mq = window.matchMedia(`(max-width: ${breakpoint}px)`)
-    setIsMobile(mq.matches)
-
-    const handler = (e: MediaQueryListEvent) => {
-      setIsMobile(e.matches)
-    }
-    mq.addEventListener('change', handler)
-    return () => mq.removeEventListener('change', handler)
-  }, [breakpoint])
-
-  return isMobile
 }
 
 // ── Icons ────────────────────────────────────────────────────────────
@@ -162,9 +142,7 @@ export interface SidebarProps {
   layout?: SidebarLayout
   showCollapseToggle?: boolean
   dense?: boolean
-  isMobile?: boolean
   enableMobileNav?: boolean
-  mobileBreakpoint?: number
   mobileNavScaleOnScroll?: boolean
   maxMobileItems?: number
   style?: React.CSSProperties
@@ -185,9 +163,7 @@ export const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
       layout = 'sidebar-framed',
       showCollapseToggle,
       dense = false,
-      isMobile: controlledIsMobile,
       enableMobileNav = true,
-      mobileBreakpoint = 768,
       mobileNavScaleOnScroll = true,
       maxMobileItems = 4,
       style,
@@ -207,10 +183,6 @@ export const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
         ? controlledSelectedKey
         : localSelectedKey
 
-    const detectedIsMobile = useIsMobile(mobileBreakpoint)
-    const isMobile =
-      controlledIsMobile !== undefined ? controlledIsMobile : detectedIsMobile
-
     const [isScrolledDown, setIsScrolledDown] = React.useState(false)
     const [isMoreOpen, setIsMoreOpen] = React.useState(false)
     const [hasMobileHeader, setHasMobileHeader] = React.useState(true)
@@ -228,6 +200,7 @@ export const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
       if (!enableMobileNav || !mobileNavScaleOnScroll) return
 
       const handleScroll = (scrollTop: number) => {
+        if (typeof window !== 'undefined' && window.innerWidth > 768) return
         const lastY = lastScrollYRef.current
         const delta = scrollTop - lastY
         if (scrollTop <= 15) {
@@ -262,6 +235,7 @@ export const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
         touchStartY = e.touches[0]?.clientY ?? 0
       }
       const onTouchMove = (e: TouchEvent) => {
+        if (typeof window !== 'undefined' && window.innerWidth > 768) return
         const currentY = e.touches[0]?.clientY ?? 0
         const delta = touchStartY - currentY
         if (delta > 15) {
@@ -319,9 +293,7 @@ export const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
         onCollapseToggle: handleCollapseToggle,
         showCollapseToggle,
         dense,
-        isMobile,
         enableMobileNav,
-        mobileBreakpoint,
         mobileNavScaleOnScroll,
         maxMobileItems,
         isScrolledDown,
@@ -341,9 +313,7 @@ export const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
         handleCollapseToggle,
         showCollapseToggle,
         dense,
-        isMobile,
         enableMobileNav,
-        mobileBreakpoint,
         mobileNavScaleOnScroll,
         maxMobileItems,
         isScrolledDown,
@@ -355,7 +325,7 @@ export const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
 
     const { className: stylexClass, style: stylexStyle } = stylex.props(
       styles.layout,
-      isMobile && enableMobileNav ? styles.layoutMobile : styles.layoutStatic,
+      !enableMobileNav && styles.layoutStatic,
     )
 
     return (
@@ -1095,7 +1065,6 @@ export const SidebarAside = React.forwardRef<HTMLElement, SidebarAsideProps>(
       layout,
       onCollapseToggle,
       showCollapseToggle: contextShowToggle,
-      isMobile,
       enableMobileNav,
       mobileNavScaleOnScroll,
       maxMobileItems,
@@ -1115,12 +1084,11 @@ export const SidebarAside = React.forwardRef<HTMLElement, SidebarAsideProps>(
 
     const { className: stylexClass, style: stylexStyle } = stylex.props(
       styles.sidebar,
+      enableMobileNav && styles.sidebarResponsive,
       isMainFramed ? styles.sidebarUnframed : styles.sidebarFramed,
       !isMainFramed && styles[variant],
       isCollapsed ? styles.collapsed : styles.expanded,
     )
-
-    const shouldRenderMobile = enableMobileNav && isMobile
 
     const {
       headerElements,
@@ -1149,57 +1117,61 @@ export const SidebarAside = React.forwardRef<HTMLElement, SidebarAsideProps>(
       setHasMobileHeader?.(headerElements.length > 0)
     }, [headerElements.length, setHasMobileHeader])
 
-    if (!shouldRenderMobile) {
-      return (
-        <aside
-          ref={ref}
-          aria-label={ariaLabel}
-          className={[stylexClass, className].filter(Boolean).join(' ')}
-          style={{
-            ...stylexStyle,
-            ...style,
-          }}
-        >
-          {children}
-          {shouldShowToggle &&
-            (isCollapsed ? (
-              <TooltipTrigger delay={200}>
-                <button
-                  type="button"
-                  aria-label="Expand sidebar"
-                  {...stylex.props(
-                    styles.toggleButton,
-                    styles.toggleButtonCollapsed,
-                  )}
-                  onClick={onCollapseToggle}
-                >
-                  <ChevronRightIcon />
-                </button>
-                <Tooltip placement="right" offset={12}>
-                  Expand sidebar
-                </Tooltip>
-              </TooltipTrigger>
-            ) : (
+    const desktopAside = (
+      <aside
+        ref={ref}
+        aria-label={ariaLabel}
+        className={[stylexClass, className].filter(Boolean).join(' ')}
+        style={{
+          ...stylexStyle,
+          ...style,
+        }}
+      >
+        {children}
+        {shouldShowToggle &&
+          (isCollapsed ? (
+            <TooltipTrigger delay={200}>
               <button
                 type="button"
-                aria-label="Collapse sidebar"
-                {...stylex.props(styles.toggleButton)}
+                aria-label="Expand sidebar"
+                {...stylex.props(
+                  styles.toggleButton,
+                  styles.toggleButtonCollapsed,
+                )}
                 onClick={onCollapseToggle}
               >
-                <ChevronLeftIcon />
+                <ChevronRightIcon />
               </button>
-            ))}
-        </aside>
-      )
+              <Tooltip placement="right" offset={12}>
+                Expand sidebar
+              </Tooltip>
+            </TooltipTrigger>
+          ) : (
+            <button
+              type="button"
+              aria-label="Collapse sidebar"
+              {...stylex.props(styles.toggleButton)}
+              onClick={onCollapseToggle}
+            >
+              <ChevronLeftIcon />
+            </button>
+          ))}
+      </aside>
+    )
+
+    if (!enableMobileNav) {
+      return desktopAside
     }
 
     return (
       <>
+        {desktopAside}
         {headerElements.length > 0 && (
           <SidebarContext.Provider
             value={{ ...sidebarContext, isCollapsed: false }}
           >
             <motion.header
+              initial={false}
               animate={{
                 y: isScrolledDown && mobileNavScaleOnScroll ? '-100%' : '0%',
                 opacity: isScrolledDown && mobileNavScaleOnScroll ? 0 : 1,
@@ -1224,6 +1196,7 @@ export const SidebarAside = React.forwardRef<HTMLElement, SidebarAsideProps>(
         {dockItems.length > 0 && (
           <div {...stylex.props(styles.mobileBottomNavContainer)}>
             <motion.nav
+              initial={false}
               aria-label="Mobile Bottom Navigation"
               animate={{
                 scale: isScrolledDown && mobileNavScaleOnScroll ? 0.9 : 1,
@@ -1332,7 +1305,7 @@ export const SidebarAside = React.forwardRef<HTMLElement, SidebarAsideProps>(
           </div>
         )}
 
-        {hasMore && (
+        {hasMore && isMoreOpen && (
           <DrawerOverlay
             isOpen={isMoreOpen}
             onOpenChange={setIsMoreOpen}
@@ -1424,7 +1397,6 @@ export const SidebarMain = React.forwardRef<HTMLDivElement, SidebarMainProps>(
     const {
       layout,
       variant,
-      isMobile,
       enableMobileNav,
       hasMobileHeader,
       registerScrollContainer,
@@ -1455,11 +1427,8 @@ export const SidebarMain = React.forwardRef<HTMLDivElement, SidebarMainProps>(
       isMainFramed &&
         (variant === 'glass' ? styles.mainGlass : styles.mainSolid),
       style,
-      isMobile && enableMobileNav && styles.mainContentMobileNav,
-      isMobile &&
-        enableMobileNav &&
-        hasMobileHeader &&
-        styles.mainContentMobileWithHeader,
+      enableMobileNav && styles.mainContentMobileNav,
+      enableMobileNav && hasMobileHeader && styles.mainContentMobileWithHeader,
     )
 
     return (

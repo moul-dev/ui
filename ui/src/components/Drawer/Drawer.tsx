@@ -310,7 +310,6 @@ export const DrawerHandle = React.forwardRef<HTMLDivElement, DrawerHandleProps>(
         style={{
           ...stylexStyle,
           touchAction: 'none',
-          cursor: 'grab',
         }}
         onPointerDown={(e) => {
           ctx.dragControls?.start(e)

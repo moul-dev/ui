@@ -15,6 +15,12 @@ export const styles = stylex.create({
     fontFamily: tokens.fontFamilyBase,
     color: tokens.colorFg,
   },
+  sidebarResponsive: {
+    display: {
+      default: 'flex',
+      '@media (max-width: 768px)': 'none',
+    },
+  },
 
   // Sidebar Layout variants (framed vs flush/unframed)
   sidebarFramed: {
@@ -605,10 +611,16 @@ export const styles = stylex.create({
     minWidth: 0,
   },
   mainContentMobileNav: {
-    paddingBlockEnd: `calc(env(safe-area-inset-bottom, 0px) + ${tokens.spacing8} * 2.5)`,
+    paddingBlockEnd: {
+      default: 0,
+      '@media (max-width: 768px)': `calc(env(safe-area-inset-bottom, 0px) + ${tokens.spacing8} * 2.5)`,
+    },
   },
   mainContentMobileWithHeader: {
-    paddingBlockStart: `calc(${tokens.spacing7} * 2)`,
+    paddingBlockStart: {
+      default: 0,
+      '@media (max-width: 768px)': `calc(${tokens.spacing7} * 2)`,
+    },
   },
   mainUnframed: {
     height: '100%',
@@ -666,7 +678,10 @@ export const styles = stylex.create({
 
   // ── Mobile Top Bar ──────────────────────────────────────────────────
   mobileTopBar: {
-    display: 'flex',
+    display: {
+      default: 'none',
+      '@media (max-width: 768px)': 'flex',
+    },
     position: 'absolute',
     insetBlockStart: 0,
     insetInline: 0,
@@ -699,7 +714,10 @@ export const styles = stylex.create({
 
   // ── Mobile Bottom Navigation Dock ───────────────────────────────────
   mobileBottomNavContainer: {
-    display: 'flex',
+    display: {
+      default: 'none',
+      '@media (max-width: 768px)': 'flex',
+    },
     position: 'fixed',
     insetBlockEnd: `calc(env(safe-area-inset-bottom, 0px) + ${tokens.spacing3})`,
     insetInline: 0,
