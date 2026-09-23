@@ -21,11 +21,6 @@ const slideInTop = stylex.keyframes({
   to: { transform: 'translateY(0)' },
 })
 
-const slideInBottom = stylex.keyframes({
-  from: { transform: 'translateY(100%)' },
-  to: { transform: 'translateY(0)' },
-})
-
 export const styles = stylex.create({
   overlay: {
     position: 'fixed',
@@ -162,6 +157,18 @@ export const styles = stylex.create({
     borderColor: tokens.colorBorderSubtle,
     animationName: slideInTop,
   },
+  modalReset: {
+    outline: 'none',
+    borderWidth: 0,
+    backgroundColor: 'transparent',
+    boxShadow: 'none',
+    display: 'flex',
+    flexDirection: 'column',
+    boxSizing: 'border-box',
+    overflow: 'visible',
+    margin: 0,
+    padding: 0,
+  },
   placementBottom: {
     width: {
       default: `calc(100vw - ${tokens.spacing2} * 2)`,
@@ -180,17 +187,32 @@ export const styles = stylex.create({
       default: tokens.spacing2,
       '@media (max-width: 640px)': 0,
     },
-    borderRadius: {
-      default: tokens.radiusLg,
-      '@media (max-width: 640px)': tokens.radiusNone,
-    },
-    borderWidth: {
-      default: '1px',
-      '@media (max-width: 640px)': 0,
-    },
+    borderTopLeftRadius: tokens.radiusLg,
+    borderTopRightRadius: tokens.radiusLg,
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
+    borderWidth: '1px',
     borderStyle: 'solid',
     borderColor: tokens.colorBorderSubtle,
-    animationName: slideInBottom,
+  },
+  handleWrapper: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    paddingBlock: tokens.spacing2,
+    backgroundColor: 'transparent',
+    borderWidth: 0,
+    outline: 'none',
+    boxSizing: 'border-box',
+    userSelect: 'none',
+    touchAction: 'none',
+  },
+  handleBar: {
+    width: '36px',
+    height: '4px',
+    borderRadius: tokens.radiusFull,
+    backgroundColor: tokens.colorBorder,
   },
   // Horizontal (Side: Left / Right) Sizes
   sideSm: {
@@ -287,7 +309,7 @@ export const styles = stylex.create({
   },
   header: {
     position: 'sticky',
-    top: 0,
+    insetBlockStart: 0,
     zIndex: 10,
     backgroundColor: tokens.colorBgElevated,
     paddingBlock: tokens.spacing4,
@@ -301,6 +323,14 @@ export const styles = stylex.create({
     borderBlockEndColor: tokens.colorBorderSubtle,
     flexShrink: 0,
     boxSizing: 'border-box',
+  },
+  headerBottom: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    paddingBlockStart: tokens.spacing1,
+    paddingBlockEnd: tokens.spacing3,
+    paddingInline: tokens.spacing4,
+    gap: tokens.spacing1,
   },
   title: {
     fontSize: tokens.fontSizeLg,
@@ -322,7 +352,7 @@ export const styles = stylex.create({
   },
   footer: {
     position: 'sticky',
-    bottom: 0,
+    insetBlockEnd: 0,
     zIndex: 10,
     backgroundColor: tokens.colorBgElevated,
     paddingBlock: tokens.spacing4,

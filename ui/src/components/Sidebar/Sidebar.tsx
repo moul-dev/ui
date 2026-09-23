@@ -1,11 +1,21 @@
 'use client'
 import type { StyleXStyles } from '@stylexjs/stylex'
 import * as stylex from '@stylexjs/stylex'
+import { AnimatePresence, motion } from 'motion/react'
 import * as React from 'react'
 import {
   Link as AriaLink,
   type LinkProps as AriaLinkProps,
 } from 'react-aria-components'
+import {
+  Drawer,
+  DrawerBody,
+  DrawerDialog,
+  DrawerHandle,
+  DrawerHeader,
+  DrawerOverlay,
+  DrawerTitle,
+} from '../Drawer'
 import { Tooltip, TooltipTrigger } from '../Tooltip'
 import { styles } from './Sidebar.styles'
 
@@ -26,6 +36,18 @@ interface SidebarContextValue {
   onCollapseToggle: () => void
   showCollapseToggle?: boolean
   dense?: boolean
+  isMobile: boolean
+  enableMobileNav: boolean
+  mobileBreakpoint?: number
+  mobileNavScaleOnScroll: boolean
+  maxMobileItems: number
+  isScrolledDown: boolean
+  setIsScrolledDown: React.Dispatch<React.SetStateAction<boolean>>
+  isMoreOpen: boolean
+  setIsMoreOpen: React.Dispatch<React.SetStateAction<boolean>>
+  hasMobileHeader: boolean
+  setHasMobileHeader: React.Dispatch<React.SetStateAction<boolean>>
+  registerScrollContainer?: (node: HTMLElement | null) => void
 }
 
 const SidebarContext = React.createContext<SidebarContextValue | undefined>(
@@ -38,6 +60,24 @@ export function useSidebar() {
     throw new Error('Sidebar components must be rendered within a <Sidebar>')
   }
   return context
+}
+
+export function useIsMobile(breakpoint = 768) {
+  const [isMobile, setIsMobile] = React.useState(false)
+
+  React.useEffect(() => {
+    if (typeof window === 'undefined' || !window.matchMedia) return
+    const mq = window.matchMedia(`(max-width: ${breakpoint}px)`)
+    setIsMobile(mq.matches)
+
+    const handler = (e: MediaQueryListEvent) => {
+      setIsMobile(e.matches)
+    }
+    mq.addEventListener('change', handler)
+    return () => mq.removeEventListener('change', handler)
+  }, [breakpoint])
+
+  return isMobile
 }
 
 // ── Icons ────────────────────────────────────────────────────────────
@@ -91,6 +131,24 @@ const ChevronDownIcon = ({ className }: { className?: string }) => (
   </svg>
 )
 
+const MoreHorizontalIcon = () => (
+  <svg
+    viewBox="0 0 24 24"
+    width="18"
+    height="18"
+    stroke="currentColor"
+    strokeWidth="2"
+    fill="none"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden="true"
+  >
+    <circle cx="12" cy="12" r="1.5" fill="currentColor" />
+    <circle cx="19" cy="12" r="1.5" fill="currentColor" />
+    <circle cx="5" cy="12" r="1.5" fill="currentColor" />
+  </svg>
+)
+
 // ── Sidebar Component ────────────────────────────────────────────────
 
 export interface SidebarProps {
@@ -104,6 +162,11 @@ export interface SidebarProps {
   layout?: SidebarLayout
   showCollapseToggle?: boolean
   dense?: boolean
+  isMobile?: boolean
+  enableMobileNav?: boolean
+  mobileBreakpoint?: number
+  mobileNavScaleOnScroll?: boolean
+  maxMobileItems?: number
   style?: React.CSSProperties
   className?: string
   children?: React.ReactNode
@@ -122,6 +185,11 @@ export const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
       layout = 'sidebar-framed',
       showCollapseToggle,
       dense = false,
+      isMobile: controlledIsMobile,
+      enableMobileNav = true,
+      mobileBreakpoint = 768,
+      mobileNavScaleOnScroll = true,
+      maxMobileItems = 4,
       style,
       className,
       children,
@@ -139,6 +207,83 @@ export const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
         ? controlledSelectedKey
         : localSelectedKey
 
+    const detectedIsMobile = useIsMobile(mobileBreakpoint)
+    const isMobile =
+      controlledIsMobile !== undefined ? controlledIsMobile : detectedIsMobile
+
+    const [isScrolledDown, setIsScrolledDown] = React.useState(false)
+    const [isMoreOpen, setIsMoreOpen] = React.useState(false)
+    const [hasMobileHeader, setHasMobileHeader] = React.useState(true)
+    const scrollContainerRef = React.useRef<HTMLElement | null>(null)
+    const lastScrollYRef = React.useRef(0)
+
+    const registerScrollContainer = React.useCallback(
+      (node: HTMLElement | null) => {
+        scrollContainerRef.current = node
+      },
+      [],
+    )
+
+    React.useEffect(() => {
+      if (!enableMobileNav || !mobileNavScaleOnScroll) return
+
+      const handleScroll = (scrollTop: number) => {
+        const lastY = lastScrollYRef.current
+        const delta = scrollTop - lastY
+        if (scrollTop <= 15) {
+          setIsScrolledDown(false)
+        } else if (delta > 8) {
+          setIsScrolledDown(true)
+        } else if (delta < -6) {
+          setIsScrolledDown(false)
+        }
+        lastScrollYRef.current = scrollTop
+      }
+
+      const onContainerScroll = (e: Event) => {
+        const target = e.currentTarget as HTMLElement
+        handleScroll(target.scrollTop)
+      }
+
+      const onWindowScroll = () => {
+        handleScroll(window.scrollY || document.documentElement.scrollTop)
+      }
+
+      const container = scrollContainerRef.current
+      if (container) {
+        container.addEventListener('scroll', onContainerScroll, {
+          passive: true,
+        })
+      }
+      window.addEventListener('scroll', onWindowScroll, { passive: true })
+
+      let touchStartY = 0
+      const onTouchStart = (e: TouchEvent) => {
+        touchStartY = e.touches[0]?.clientY ?? 0
+      }
+      const onTouchMove = (e: TouchEvent) => {
+        const currentY = e.touches[0]?.clientY ?? 0
+        const delta = touchStartY - currentY
+        if (delta > 15) {
+          setIsScrolledDown(true)
+        } else if (delta < -15) {
+          setIsScrolledDown(false)
+        }
+      }
+
+      window.addEventListener('touchstart', onTouchStart, { passive: true })
+      window.addEventListener('touchmove', onTouchMove, { passive: true })
+
+      return () => {
+        if (container) {
+          container.removeEventListener('scroll', onContainerScroll)
+        }
+        window.removeEventListener('scroll', onWindowScroll)
+        window.removeEventListener('touchstart', onTouchStart)
+        window.removeEventListener('touchmove', onTouchMove)
+      }
+    }, [enableMobileNav, mobileNavScaleOnScroll])
+
     const handleCollapseToggle = React.useCallback(() => {
       if (onCollapseChange) {
         onCollapseChange(!isCollapsed)
@@ -149,6 +294,7 @@ export const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
 
     const handleSelection = React.useCallback(
       (key: string) => {
+        setIsMoreOpen(false)
         if (onSelectionChange) {
           onSelectionChange(key)
         } else {
@@ -173,6 +319,18 @@ export const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
         onCollapseToggle: handleCollapseToggle,
         showCollapseToggle,
         dense,
+        isMobile,
+        enableMobileNav,
+        mobileBreakpoint,
+        mobileNavScaleOnScroll,
+        maxMobileItems,
+        isScrolledDown,
+        setIsScrolledDown,
+        isMoreOpen,
+        setIsMoreOpen,
+        hasMobileHeader,
+        setHasMobileHeader,
+        registerScrollContainer,
       }),
       [
         isCollapsed,
@@ -183,11 +341,21 @@ export const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
         handleCollapseToggle,
         showCollapseToggle,
         dense,
+        isMobile,
+        enableMobileNav,
+        mobileBreakpoint,
+        mobileNavScaleOnScroll,
+        maxMobileItems,
+        isScrolledDown,
+        isMoreOpen,
+        hasMobileHeader,
+        registerScrollContainer,
       ],
     )
 
     const { className: stylexClass, style: stylexStyle } = stylex.props(
       styles.layout,
+      isMobile && enableMobileNav ? styles.layoutMobile : styles.layoutStatic,
     )
 
     return (
@@ -325,24 +493,19 @@ export const SidebarBrand = React.forwardRef<HTMLDivElement, SidebarBrandProps>(
         style={stylexStyle}
       >
         {logo && <div {...stylex.props(styles.brandLogoWrapper)}>{logo}</div>}
-        {!isCollapsed && (
-          <>
-            {title || subtitle ? (
-              <div {...stylex.props(styles.brandInfo)}>
-                {title && (
-                  <span {...stylex.props(styles.brandTitle)}>{title}</span>
-                )}
-                {subtitle && (
-                  <span {...stylex.props(styles.brandSubtitle)}>
-                    {subtitle}
-                  </span>
-                )}
-              </div>
-            ) : (
-              children
-            )}
-          </>
-        )}
+        {!isCollapsed &&
+          (title || subtitle ? (
+            <div {...stylex.props(styles.brandInfo)}>
+              {title && (
+                <span {...stylex.props(styles.brandTitle)}>{title}</span>
+              )}
+              {subtitle && (
+                <span {...stylex.props(styles.brandSubtitle)}>{subtitle}</span>
+              )}
+            </div>
+          ) : (
+            children
+          ))}
       </div>
     )
 
@@ -815,6 +978,93 @@ export const SidebarDivider = React.forwardRef<
   )
 })
 
+// ── Sidebar Extraction Helpers ────────────────────────────────────────
+
+interface ExtractedItem {
+  id?: string
+  icon?: React.ReactNode
+  label?: React.ReactNode
+  href?: string
+  onPress?: AriaLinkProps['onPress']
+  element: React.ReactElement
+}
+
+interface ExtractedGroup {
+  title?: string
+  items: ExtractedItem[]
+  element: React.ReactElement
+}
+
+function getDisplayName(element: unknown): string {
+  if (!React.isValidElement(element)) return ''
+  const type = element.type as { displayName?: string; name?: string }
+  return type.displayName || type.name || ''
+}
+
+function extractSidebarElements(children: React.ReactNode) {
+  const headerElements: React.ReactNode[] = []
+  const footerElements: React.ReactNode[] = []
+  const extractedGroups: ExtractedGroup[] = []
+  const standaloneItems: ExtractedItem[] = []
+  const allItems: ExtractedItem[] = []
+
+  React.Children.forEach(children, (child) => {
+    if (!React.isValidElement(child)) return
+    const dName = getDisplayName(child)
+
+    if (child.type === SidebarHeader || dName === 'SidebarHeader') {
+      headerElements.push(child)
+    } else if (child.type === SidebarFooter || dName === 'SidebarFooter') {
+      footerElements.push(child)
+    } else if (child.type === SidebarGroup || dName === 'SidebarGroup') {
+      const groupItems: ExtractedItem[] = []
+      const groupProps = child.props as SidebarGroupProps
+      React.Children.forEach(groupProps.children, (groupChild) => {
+        if (!React.isValidElement(groupChild)) return
+        const itemDName = getDisplayName(groupChild)
+        if (groupChild.type === SidebarItem || itemDName === 'SidebarItem') {
+          const itemProps = groupChild.props as SidebarItemProps
+          const item: ExtractedItem = {
+            id: itemProps.id,
+            icon: itemProps.icon,
+            label: itemProps.children,
+            href: itemProps.href,
+            onPress: itemProps.onPress,
+            element: groupChild,
+          }
+          groupItems.push(item)
+          allItems.push(item)
+        }
+      })
+      extractedGroups.push({
+        title: groupProps.title,
+        items: groupItems,
+        element: child,
+      })
+    } else if (child.type === SidebarItem || dName === 'SidebarItem') {
+      const itemProps = child.props as SidebarItemProps
+      const item: ExtractedItem = {
+        id: itemProps.id,
+        icon: itemProps.icon,
+        label: itemProps.children,
+        href: itemProps.href,
+        onPress: itemProps.onPress,
+        element: child,
+      }
+      standaloneItems.push(item)
+      allItems.push(item)
+    }
+  })
+
+  return {
+    headerElements,
+    footerElements,
+    extractedGroups,
+    standaloneItems,
+    allItems,
+  }
+}
+
 // ── SidebarAside Component ───────────────────────────────────────────
 
 export interface SidebarAsideProps {
@@ -836,13 +1086,26 @@ export const SidebarAside = React.forwardRef<HTMLElement, SidebarAsideProps>(
     },
     ref,
   ) {
+    const sidebarContext = useSidebar()
     const {
       isCollapsed,
+      selectedKey,
+      onSelectionChange,
       variant,
       layout,
       onCollapseToggle,
       showCollapseToggle: contextShowToggle,
-    } = useSidebar()
+      isMobile,
+      enableMobileNav,
+      mobileNavScaleOnScroll,
+      maxMobileItems,
+      isScrolledDown,
+      setIsScrolledDown,
+      isMoreOpen,
+      setIsMoreOpen,
+      setHasMobileHeader,
+    } = sidebarContext
+
     const shouldShowToggle =
       propShowCollapseToggle !== undefined
         ? propShowCollapseToggle
@@ -857,46 +1120,293 @@ export const SidebarAside = React.forwardRef<HTMLElement, SidebarAsideProps>(
       isCollapsed ? styles.collapsed : styles.expanded,
     )
 
-    return (
-      <aside
-        ref={ref}
-        aria-label={ariaLabel}
-        className={[stylexClass, className].filter(Boolean).join(' ')}
-        style={{
-          ...stylexStyle,
-          ...style,
-        }}
-      >
-        {children}
-        {shouldShowToggle &&
-          (isCollapsed ? (
-            <TooltipTrigger delay={200}>
+    const shouldRenderMobile = enableMobileNav && isMobile
+
+    const {
+      headerElements,
+      footerElements,
+      extractedGroups,
+      overflowItemsList,
+      dockItems,
+      hasMore,
+    } = React.useMemo(() => {
+      const extracted = extractSidebarElements(children)
+      const dock = extracted.allItems.slice(0, maxMobileItems)
+      const overflow = extracted.allItems.slice(maxMobileItems)
+      const more =
+        overflow.length > 0 ||
+        extracted.footerElements.length > 0 ||
+        extracted.extractedGroups.length > 1
+      return {
+        ...extracted,
+        dockItems: dock,
+        overflowItemsList: overflow,
+        hasMore: more,
+      }
+    }, [children, maxMobileItems])
+
+    React.useEffect(() => {
+      setHasMobileHeader?.(headerElements.length > 0)
+    }, [headerElements.length, setHasMobileHeader])
+
+    if (!shouldRenderMobile) {
+      return (
+        <aside
+          ref={ref}
+          aria-label={ariaLabel}
+          className={[stylexClass, className].filter(Boolean).join(' ')}
+          style={{
+            ...stylexStyle,
+            ...style,
+          }}
+        >
+          {children}
+          {shouldShowToggle &&
+            (isCollapsed ? (
+              <TooltipTrigger delay={200}>
+                <button
+                  type="button"
+                  aria-label="Expand sidebar"
+                  {...stylex.props(
+                    styles.toggleButton,
+                    styles.toggleButtonCollapsed,
+                  )}
+                  onClick={onCollapseToggle}
+                >
+                  <ChevronRightIcon />
+                </button>
+                <Tooltip placement="right" offset={12}>
+                  Expand sidebar
+                </Tooltip>
+              </TooltipTrigger>
+            ) : (
               <button
                 type="button"
-                aria-label="Expand sidebar"
-                {...stylex.props(
-                  styles.toggleButton,
-                  styles.toggleButtonCollapsed,
-                )}
+                aria-label="Collapse sidebar"
+                {...stylex.props(styles.toggleButton)}
                 onClick={onCollapseToggle}
               >
-                <ChevronRightIcon />
+                <ChevronLeftIcon />
               </button>
-              <Tooltip placement="right" offset={12}>
-                Expand sidebar
-              </Tooltip>
-            </TooltipTrigger>
-          ) : (
-            <button
-              type="button"
-              aria-label="Collapse sidebar"
-              {...stylex.props(styles.toggleButton)}
-              onClick={onCollapseToggle}
+            ))}
+        </aside>
+      )
+    }
+
+    return (
+      <>
+        {headerElements.length > 0 && (
+          <SidebarContext.Provider
+            value={{ ...sidebarContext, isCollapsed: false }}
+          >
+            <motion.header
+              animate={{
+                y: isScrolledDown && mobileNavScaleOnScroll ? '-100%' : '0%',
+                opacity: isScrolledDown && mobileNavScaleOnScroll ? 0 : 1,
+              }}
+              transition={{
+                ease: [0.32, 0.72, 0, 1],
+                duration: 0.28,
+              }}
+              style={{
+                pointerEvents:
+                  isScrolledDown && mobileNavScaleOnScroll ? 'none' : 'auto',
+              }}
+              {...stylex.props(styles.mobileTopBar)}
             >
-              <ChevronLeftIcon />
-            </button>
-          ))}
-      </aside>
+              <div {...stylex.props(styles.mobileTopBarContent)}>
+                {headerElements}
+              </div>
+            </motion.header>
+          </SidebarContext.Provider>
+        )}
+
+        {dockItems.length > 0 && (
+          <div {...stylex.props(styles.mobileBottomNavContainer)}>
+            <motion.nav
+              aria-label="Mobile Bottom Navigation"
+              animate={{
+                scale: isScrolledDown && mobileNavScaleOnScroll ? 0.9 : 1,
+                opacity: isScrolledDown && mobileNavScaleOnScroll ? 0.85 : 1,
+              }}
+              transition={{
+                type: 'spring',
+                stiffness: 400,
+                damping: 30,
+              }}
+              {...stylex.props(styles.mobileBottomNav)}
+            >
+              {dockItems.map((item, idx) => {
+                const isSelected =
+                  typeof item.id === 'string' && item.id.length > 0
+                    ? selectedKey === item.id
+                    : false
+
+                const Component = item.href ? motion.a : motion.button
+
+                return (
+                  <Component
+                    key={item.id ?? idx}
+                    href={item.href}
+                    type={item.href ? undefined : 'button'}
+                    aria-current={isSelected ? 'page' : undefined}
+                    whileTap={{ scale: 0.92 }}
+                    whileHover={{ scale: 1.04 }}
+                    onClick={(e) => {
+                      setIsScrolledDown(false)
+                      ;(item.onPress as any)?.(e)
+                      if (item.id) {
+                        onSelectionChange?.(item.id)
+                      }
+                    }}
+                    {...stylex.props(
+                      styles.mobileNavItem,
+                      isSelected && styles.mobileNavItemActive,
+                    )}
+                  >
+                    {isSelected && (
+                      <motion.div
+                        layoutId="sidebar-mobile-active-pill"
+                        transition={{
+                          type: 'spring',
+                          stiffness: 500,
+                          damping: 35,
+                        }}
+                        {...stylex.props(styles.mobileNavActivePill)}
+                      />
+                    )}
+                    {item.icon && (
+                      <span {...stylex.props(styles.mobileNavIcon)}>
+                        {item.icon}
+                      </span>
+                    )}
+                    <AnimatePresence>
+                      {(!isScrolledDown || !mobileNavScaleOnScroll) &&
+                        item.label && (
+                          <motion.span
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            transition={{ duration: 0.15 }}
+                            {...stylex.props(styles.mobileNavLabel)}
+                          >
+                            {item.label}
+                          </motion.span>
+                        )}
+                    </AnimatePresence>
+                  </Component>
+                )
+              })}
+
+              {hasMore && (
+                <motion.button
+                  type="button"
+                  aria-label="More navigation options"
+                  whileTap={{ scale: 0.92 }}
+                  whileHover={{ scale: 1.04 }}
+                  onClick={() => {
+                    setIsScrolledDown(false)
+                    setIsMoreOpen(true)
+                  }}
+                  {...stylex.props(styles.mobileNavMoreButton)}
+                >
+                  <span {...stylex.props(styles.mobileNavIcon)}>
+                    <MoreHorizontalIcon />
+                  </span>
+                  <AnimatePresence>
+                    {(!isScrolledDown || !mobileNavScaleOnScroll) && (
+                      <motion.span
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.15 }}
+                        {...stylex.props(styles.mobileNavLabel)}
+                      >
+                        More
+                      </motion.span>
+                    )}
+                  </AnimatePresence>
+                </motion.button>
+              )}
+            </motion.nav>
+          </div>
+        )}
+
+        {hasMore && (
+          <DrawerOverlay
+            isOpen={isMoreOpen}
+            onOpenChange={setIsMoreOpen}
+            placement="bottom"
+            style={styles.mobileDrawerOverlay}
+          >
+            <Drawer placement="bottom" style={styles.mobileDrawerModal}>
+              <DrawerDialog style={styles.mobileDrawerDialog}>
+                <DrawerHeader style={styles.mobileDrawerHeader}>
+                  <DrawerHandle />
+                  <div {...stylex.props(styles.mobileDrawerHeaderRow)}>
+                    <DrawerTitle style={styles.mobileDrawerTitle}>
+                      Navigation
+                    </DrawerTitle>
+                  </div>
+                </DrawerHeader>
+                <DrawerBody style={styles.mobileDrawerBody}>
+                  <SidebarContext.Provider
+                    value={{ ...sidebarContext, isCollapsed: false }}
+                  >
+                    <div {...stylex.props(styles.mobileDrawerContent)}>
+                      {extractedGroups.length > 0
+                        ? extractedGroups.map((group, gIdx) => (
+                            <div
+                              key={group.title ?? gIdx}
+                              {...stylex.props(styles.mobileDrawerGroup)}
+                            >
+                              {group.title && (
+                                <div
+                                  {...stylex.props(
+                                    styles.mobileDrawerGroupTitle,
+                                  )}
+                                >
+                                  {group.title}
+                                </div>
+                              )}
+                              {group.items.map((it, itIdx) => (
+                                <div
+                                  key={it.id ?? itIdx}
+                                  onClick={() => {
+                                    if (it.id) onSelectionChange?.(it.id)
+                                    setIsMoreOpen(false)
+                                  }}
+                                >
+                                  {it.element}
+                                </div>
+                              ))}
+                            </div>
+                          ))
+                        : overflowItemsList.map((it, itIdx) => (
+                            <div
+                              key={it.id ?? itIdx}
+                              onClick={() => {
+                                if (it.id) onSelectionChange?.(it.id)
+                                setIsMoreOpen(false)
+                              }}
+                            >
+                              {it.element}
+                            </div>
+                          ))}
+
+                      {footerElements.length > 0 && (
+                        <div {...stylex.props(styles.mobileDrawerFooter)}>
+                          {footerElements}
+                        </div>
+                      )}
+                    </div>
+                  </SidebarContext.Provider>
+                </DrawerBody>
+              </DrawerDialog>
+            </Drawer>
+          </DrawerOverlay>
+        )}
+      </>
     )
   },
 )
@@ -911,8 +1421,33 @@ export interface SidebarMainProps {
 
 export const SidebarMain = React.forwardRef<HTMLDivElement, SidebarMainProps>(
   function SidebarMain({ style, className, children }, ref) {
-    const { layout, variant } = useSidebar()
+    const {
+      layout,
+      variant,
+      isMobile,
+      enableMobileNav,
+      hasMobileHeader,
+      registerScrollContainer,
+    } = useSidebar()
     const isMainFramed = layout === 'main-framed'
+    const innerRef = React.useRef<HTMLDivElement | null>(null)
+
+    React.useEffect(() => {
+      registerScrollContainer?.(innerRef.current)
+      return () => registerScrollContainer?.(null)
+    }, [registerScrollContainer])
+
+    const setMergedRef = React.useCallback(
+      (node: HTMLDivElement | null) => {
+        innerRef.current = node
+        if (typeof ref === 'function') {
+          ref(node)
+        } else if (ref) {
+          ;(ref as React.MutableRefObject<HTMLDivElement | null>).current = node
+        }
+      },
+      [ref],
+    )
 
     const { className: stylexClass, style: stylexStyle } = stylex.props(
       styles.mainContent,
@@ -920,11 +1455,16 @@ export const SidebarMain = React.forwardRef<HTMLDivElement, SidebarMainProps>(
       isMainFramed &&
         (variant === 'glass' ? styles.mainGlass : styles.mainSolid),
       style,
+      isMobile && enableMobileNav && styles.mainContentMobileNav,
+      isMobile &&
+        enableMobileNav &&
+        hasMobileHeader &&
+        styles.mainContentMobileWithHeader,
     )
 
     return (
       <div
-        ref={ref}
+        ref={setMergedRef}
         className={[stylexClass, className].filter(Boolean).join(' ')}
         style={stylexStyle}
       >
@@ -933,3 +1473,14 @@ export const SidebarMain = React.forwardRef<HTMLDivElement, SidebarMainProps>(
     )
   },
 )
+
+Sidebar.displayName = 'Sidebar'
+SidebarHeader.displayName = 'SidebarHeader'
+SidebarBrand.displayName = 'SidebarBrand'
+SidebarGroup.displayName = 'SidebarGroup'
+SidebarItem.displayName = 'SidebarItem'
+SidebarFooter.displayName = 'SidebarFooter'
+SidebarUser.displayName = 'SidebarUser'
+SidebarDivider.displayName = 'SidebarDivider'
+SidebarAside.displayName = 'SidebarAside'
+SidebarMain.displayName = 'SidebarMain'

@@ -151,6 +151,7 @@ export type {
   DrawerCloseButtonProps,
   DrawerDialogProps,
   DrawerFooterProps,
+  DrawerHandleProps,
   DrawerHeaderProps,
   DrawerOverlayProps,
   DrawerPlacement,
@@ -164,9 +165,12 @@ export {
   DrawerCloseButton,
   DrawerDialog,
   DrawerFooter,
+  DrawerGrabHandle,
+  DrawerHandle,
   DrawerHeader,
   DrawerOverlay,
   DrawerTitle,
+  useDrawer,
 } from './components/Drawer'
 export type {
   EmptyStateActionsProps,

@@ -388,4 +388,105 @@ describe('Sidebar Component Suite', () => {
     expect(screen.getByText('Aside')).toBeInTheDocument()
     expect(screen.getByText('Main Content')).toBeInTheDocument()
   })
+
+  test('renders mobile top bar and bottom nav dock when isMobile is true', () => {
+    const onSelectionChange = vi.fn()
+
+    render(
+      <Sidebar
+        isMobile={true}
+        selectedKey="home"
+        onSelectionChange={onSelectionChange}
+        maxMobileItems={3}
+      >
+        <SidebarAside>
+          <SidebarHeader>
+            <SidebarBrand
+              logo={<span data-testid="mobile-brand-logo">Logo</span>}
+              title="Mobile Brand"
+            />
+          </SidebarHeader>
+          <SidebarGroup title="Core">
+            <SidebarItem id="home" icon={<span>🏠</span>}>
+              Home
+            </SidebarItem>
+            <SidebarItem id="search" icon={<span>🔍</span>}>
+              Search
+            </SidebarItem>
+            <SidebarItem id="explore" icon={<span>🧭</span>}>
+              Explore
+            </SidebarItem>
+            <SidebarItem id="settings" icon={<span>⚙️</span>}>
+              Settings
+            </SidebarItem>
+          </SidebarGroup>
+          <SidebarFooter>
+            <SidebarUser name="John Doe" description="Admin" />
+          </SidebarFooter>
+        </SidebarAside>
+        <SidebarMain>
+          <div>Mobile Dashboard Content</div>
+        </SidebarMain>
+      </Sidebar>,
+    )
+
+    // Mobile Brand in top header
+    expect(screen.getByTestId('mobile-brand-logo')).toBeInTheDocument()
+    expect(screen.getByText('Mobile Brand')).toBeInTheDocument()
+
+    // Mobile Bottom Navigation Dock
+    const mobileNav = screen.getByRole('navigation', {
+      name: 'Mobile Bottom Navigation',
+    })
+    expect(mobileNav).toBeInTheDocument()
+
+    // 3 primary items displayed (maxMobileItems=3)
+    expect(screen.getByText('Home')).toBeInTheDocument()
+    expect(screen.getByText('Search')).toBeInTheDocument()
+    expect(screen.getByText('Explore')).toBeInTheDocument()
+
+    // Home item is currently selected
+    const homeBtn = screen.getByText('Home').closest('button')
+    expect(homeBtn).toHaveAttribute('aria-current', 'page')
+
+    // Click search item
+    const searchBtn = screen.getByText('Search').closest('button')
+    expect(searchBtn).toBeInTheDocument()
+    if (searchBtn) {
+      fireEvent.click(searchBtn)
+    }
+    expect(onSelectionChange).toHaveBeenCalledWith('search')
+
+    // 4th item ('Settings') is overflow, so 'More' button is rendered
+    const moreBtn = screen.getByRole('button', {
+      name: 'More navigation options',
+    })
+    expect(moreBtn).toBeInTheDocument()
+
+    // Click More to open drawer sheet
+    fireEvent.click(moreBtn)
+
+    // Drawer opens displaying full navigation, remaining items & user profile
+    expect(screen.getByRole('dialog')).toBeInTheDocument()
+    expect(screen.getByText('Navigation')).toBeInTheDocument()
+    expect(screen.getByText('John Doe')).toBeInTheDocument()
+  })
+
+  test('disables mobile layout transformation when enableMobileNav is false', () => {
+    render(
+      <Sidebar isMobile={true} enableMobileNav={false}>
+        <SidebarAside aria-label="Desktop Only Aside">
+          <SidebarHeader>Desktop Brand</SidebarHeader>
+          <SidebarItem id="desktop-item">Desktop Link</SidebarItem>
+        </SidebarAside>
+      </Sidebar>,
+    )
+
+    expect(
+      screen.getByRole('complementary', { name: 'Desktop Only Aside' }),
+    ).toBeInTheDocument()
+    expect(
+      screen.queryByRole('navigation', { name: 'Mobile Bottom Navigation' }),
+    ).not.toBeInTheDocument()
+  })
 })

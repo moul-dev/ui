@@ -12,6 +12,8 @@ import {
   DrawerCloseButton,
   DrawerDialog,
   DrawerFooter,
+  DrawerGrabHandle,
+  DrawerHandle,
   DrawerHeader,
   DrawerOverlay,
   DrawerTitle,
@@ -173,6 +175,77 @@ describe('Drawer Component', () => {
       expect(screen.getByText(`Size ${size}`)).toBeInTheDocument()
       unmount()
     }
+  })
+
+  test('DrawerHandle renders accessible handle, responds to click and keyboard trigger to close', () => {
+    const onOpenChange = vi.fn()
+    render(
+      <DrawerOverlay
+        isOpen={true}
+        onOpenChange={onOpenChange}
+        placement="bottom"
+      >
+        <Drawer placement="bottom">
+          <DrawerDialog>
+            <DrawerHeader>
+              <DrawerHandle data-testid="drawer-handle" />
+              <DrawerTitle>Bottom Sheet</DrawerTitle>
+            </DrawerHeader>
+            <DrawerBody>Content</DrawerBody>
+          </DrawerDialog>
+        </Drawer>
+      </DrawerOverlay>,
+    )
+
+    const handle = screen.getByTestId('drawer-handle')
+    expect(handle).toBeInTheDocument()
+    expect(handle).toHaveAttribute('role', 'button')
+    expect(handle).toHaveAttribute('tabIndex', '0')
+    expect(handle).toHaveAttribute(
+      'aria-label',
+      'Drag down or press to close drawer',
+    )
+
+    // Click closes drawer
+    fireEvent.click(handle)
+    expect(onOpenChange).toHaveBeenCalledWith(false)
+
+    // Space/Enter key closes drawer
+    fireEvent.keyDown(handle, { key: 'Enter', code: 'Enter' })
+    expect(onOpenChange).toHaveBeenCalledTimes(2)
+
+    fireEvent.keyDown(handle, { key: ' ', code: 'Space' })
+    expect(onOpenChange).toHaveBeenCalledTimes(3)
+  })
+
+  test('DrawerGrabHandle is exported as alias to DrawerHandle', () => {
+    expect(DrawerGrabHandle).toBe(DrawerHandle)
+  })
+
+  test('DrawerHeader automatically renders DrawerHandle and DrawerCloseButton renders null on bottom drawer', () => {
+    render(
+      <DrawerOverlay isOpen={true} placement="bottom">
+        <Drawer placement="bottom">
+          <DrawerDialog>
+            <DrawerHeader>
+              <DrawerTitle>Auto Bottom Sheet</DrawerTitle>
+              <DrawerCloseButton data-testid="drawer-close" />
+            </DrawerHeader>
+            <DrawerBody>Content</DrawerBody>
+          </DrawerDialog>
+        </Drawer>
+      </DrawerOverlay>,
+    )
+
+    // DrawerHandle is automatically injected
+    expect(
+      screen.getByRole('button', {
+        name: 'Drag down or press to close drawer',
+      }),
+    ).toBeInTheDocument()
+
+    // DrawerCloseButton is hidden on bottom placement
+    expect(screen.queryByTestId('drawer-close')).not.toBeInTheDocument()
   })
 })
 
