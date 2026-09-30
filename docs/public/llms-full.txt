@@ -769,7 +769,7 @@ import {
     </SidebarGroup>
     <SidebarDivider />
     <SidebarFooter>
-      <span>v2026.9.27</span>
+      <span>v2026.9.28</span>
     </SidebarFooter>
   </SidebarAside>
   <SidebarMain>
