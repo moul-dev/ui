@@ -862,6 +862,7 @@ import { Stat, TopList, PercentageBar, PercentageCircle } from '@moul-dev/ui';
   --brand-density-factor: 1.0;      /* 0.8 (compact) to 1.25 (spacious) */
   --brand-radius-factor: 1.0;       /* 0 (sharp) to 2.0 (round) */
   --brand-font-scale: 1.0;          /* 0.9 to 1.1 */
+  --brand-font-family: inherit;     /* font family override */
 }
 ```
 

@@ -135,7 +135,7 @@ export const tokens = stylex.defineVars({
   fontWeightMedium: '500',
   fontWeightSemibold: '600',
   fontWeightBold: '700',
-  fontFamilyBase: "'Google Sans', 'Inter', system-ui, sans-serif",
+  fontFamilyBase: 'var(--brand-font-family, inherit)',
 
   // ── Spacing (8 steps, 4px base) ───────────────────────────────────
   spacing1: 'calc(0.25rem * var(--brand-density-factor, 1))', // 4px * density

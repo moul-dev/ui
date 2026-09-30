@@ -697,6 +697,9 @@ Moul UI tokens are driven by StyleX and OKLCH color spaces. You can customize th
 
   /* Typography Font Scale */
   --brand-font-scale: 1.0;
+
+  /* Base Font Family (defaults to inherit) */
+  --brand-font-family: inherit;
 }
 ```
 
