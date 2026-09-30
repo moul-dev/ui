@@ -104,6 +104,49 @@ Follow these steps to integrate `@moul-dev/ui` into your React project:
     }
     ```
   </Step>
+
+  <Step>
+    ### Using Design Tokens with StyleX (Optional)
+    
+    If your application authors custom styles using StyleX, you can import tokens directly:
+    
+    ```tsx
+    import { tokens } from '@moul-dev/ui/tokens.stylex';
+    import * as stylex from '@stylexjs/stylex';
+
+    const styles = stylex.create({
+      card: {
+        backgroundColor: tokens.colorBg,
+        color: tokens.colorFg,
+        padding: tokens.spacing4,
+        borderRadius: tokens.radiusMd,
+      },
+    });
+    ```
+
+    #### Bundler Configuration (Vite)
+    
+    When configuring `@stylexjs/unplugin` in your bundler (such as Vite), configure `lightningcssOptions` to preserve `light-dark()` color tokens:
+    
+    ```ts title="vite.config.ts"
+    import { defineConfig } from 'vite';
+    import stylex from '@stylexjs/unplugin';
+    import { Features } from 'lightningcss';
+
+    export default defineConfig({
+      plugins: [
+        stylex.vite({
+          useCSSLayers: true,
+          lightningcssOptions: {
+            exclude: Features.LightDark,
+          },
+        }),
+      ],
+    });
+    ```
+    
+    Because `@moul-dev/ui` is packaged as an official StyleX package exporting intact `stylex.defineVars()`, your bundler automatically discovers the tokens, hashes them consistently, and injects matching CSS variables into your virtual StyleX bundle out-of-the-box.
+  </Step>
 </Steps>
 
 ---

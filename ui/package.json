@@ -47,6 +47,10 @@
       "types": "./dist/src/tokens/tokens.stylex.d.ts",
       "import": "./dist/tokens.stylex.js"
     },
+    "./theme.css": {
+      "style": "./dist/theme.css",
+      "default": "./dist/theme.css"
+    },
     "./style": {
       "style": "./dist/assets/stylex.css",
       "default": "./dist/assets/stylex.css"
@@ -67,6 +71,7 @@
     "test": "vitest run"
   },
   "peerDependencies": {
+    "@stylexjs/stylex": "^0.19.0",
     "react": "^18.0.0 || ^19.0.0",
     "react-dom": "^18.0.0 || ^19.0.0"
   },
@@ -91,6 +96,7 @@
     "fast-check": "^3.23.2",
     "glob": "^11.0.0",
     "jsdom": "^25.0.1",
+    "lightningcss": "^1.33.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "typescript": "~6.0.2",

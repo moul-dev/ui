@@ -704,11 +704,11 @@ Moul UI tokens are driven by StyleX and OKLCH color spaces. You can customize th
 ```
 
 ### Using Tokens in StyleX
-Design tokens can be imported directly from `@moul-dev/ui` or `@moul-dev/ui/tokens` in your custom components:
+Design tokens can be imported directly from `@moul-dev/ui/tokens.stylex` (or `@moul-dev/ui`) in your custom components:
 
 ```tsx
 import * as stylex from '@stylexjs/stylex';
-import { tokens, type Tokens } from '@moul-dev/ui'; // or from '@moul-dev/ui/tokens'
+import { tokens, type Tokens } from '@moul-dev/ui/tokens.stylex';
 
 const styles = stylex.create({
   card: {

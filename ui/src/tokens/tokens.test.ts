@@ -140,16 +140,43 @@ describe('Design Tokens Export and StyleX Compatibility', () => {
     expect(lib.tokens.colorPrimary500).toBeDefined()
   })
 
-  test('built dist/tokens.stylex.js contains actual token values instead of internal var hashes', () => {
+  test('built dist/tokens.stylex.js contains stylex.defineVars and token definitions', () => {
     const distPath = 'dist/tokens.stylex.js'
     if (fs.existsSync(distPath)) {
       const content = fs.readFileSync(distPath, 'utf-8')
+      // Ensure stylex.defineVars macro is preserved intact for consumer apps
+      expect(content).toContain("import * as stylex from '@stylexjs/stylex'")
+      expect(content).toContain('export const tokens = stylex.defineVars({')
       // Ensure actual color definitions are preserved
       expect(content).toContain('light-dark(oklch(')
       expect(content).toContain('colorAlertBorderAccent')
       expect(content).toContain('colorBg')
-      // Ensure it does not contain compiled internal var hashes like "var(--xtwqyzw)"
+      // Ensure it does not contain precompiled internal var hashes like "var(--xtwqyzw)"
       expect(content).not.toMatch(/:\s*['"]var\(--x[a-z0-9]+\)['"]/)
+    }
+  })
+
+  test('built dist/assets/stylex.css contains root theme and color-scheme switching', () => {
+    const cssPath = 'dist/assets/stylex.css'
+    if (fs.existsSync(cssPath)) {
+      const css = fs.readFileSync(cssPath, 'utf-8')
+      expect(css).toContain('color-scheme: light dark')
+      expect(css).toContain('--brand-hue: 250;')
+      expect(css).toContain('[data-theme="dark"]')
+      expect(css).toContain('color-scheme: dark')
+      expect(css).toContain('[data-theme="light"]')
+      expect(css).toContain('color-scheme: light')
+    }
+  })
+
+  test('built dist/theme.css provides standalone theme variables and color-scheme switching', () => {
+    const themePath = 'dist/theme.css'
+    if (fs.existsSync(themePath)) {
+      const css = fs.readFileSync(themePath, 'utf-8')
+      expect(css).toContain('color-scheme: light dark')
+      expect(css).toContain('--brand-hue: 250;')
+      expect(css).toContain('color-scheme: dark')
+      expect(css).toContain('color-scheme: light')
     }
   })
 })

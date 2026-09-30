@@ -748,10 +748,8 @@ export function TableSkeleton({
   return (
     <>
       {Array.from({ length: rows }).map((_, rIdx) => (
-        // biome-ignore lint/suspicious/noArrayIndexKey: deterministic placeholder keys
         <TableRow key={`skeleton-row-${rIdx}`} hoverable={false} style={style}>
           {Array.from({ length: columns }).map((_, cIdx) => (
-            // biome-ignore lint/suspicious/noArrayIndexKey: deterministic placeholder keys
             <TableCell key={`skeleton-cell-${rIdx}-${cIdx}`}>
               <div {...stylex.props(styles.skeletonBar)} />
             </TableCell>

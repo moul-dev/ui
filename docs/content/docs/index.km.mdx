@@ -104,6 +104,49 @@ Moul UI គឺជាបណ្ណាល័យសមាសភាគ (Components) �
     }
     ```
   </Step>
+
+  <Step>
+    ### ការប្រើប្រាស់ Design Tokens ជាមួយ StyleX (ជម្រើសបន្ថែម)
+    
+    ប្រសិនបើកម្មវិធីរបស់អ្នកបង្កើតស្ទីលផ្ទាល់ខ្លួនដោយប្រើ StyleX អ្នកអាចនាំចូល tokens ដោយផ្ទាល់៖
+    
+    ```tsx
+    import { tokens } from '@moul-dev/ui/tokens.stylex';
+    import * as stylex from '@stylexjs/stylex';
+
+    const styles = stylex.create({
+      card: {
+        backgroundColor: tokens.colorBg,
+        color: tokens.colorFg,
+        padding: tokens.spacing4,
+        borderRadius: tokens.radiusMd,
+      },
+    });
+    ```
+
+    #### ការកំណត់ Bundler (Vite)
+    
+    នៅពេលកំណត់រចនាសម្ព័ន្ធ `@stylexjs/unplugin` ក្នុង bundler (ដូចជា Vite) សូមកំណត់ `lightningcssOptions` ដើម្បីរក្សា token ពណ៌ `light-dark()`៖
+    
+    ```ts title="vite.config.ts"
+    import { defineConfig } from 'vite';
+    import stylex from '@stylexjs/unplugin';
+    import { Features } from 'lightningcss';
+
+    export default defineConfig({
+      plugins: [
+        stylex.vite({
+          useCSSLayers: true,
+          lightningcssOptions: {
+            exclude: Features.LightDark,
+          },
+        }),
+      ],
+    });
+    ```
+    
+    ដោយសារ `@moul-dev/ui` ត្រូវបានរៀបចំជាកញ្ចប់ StyleX ផ្លូវការដែលនាំចេញ `stylex.defineVars()` ពេញលេញ bundler របស់អ្នកនឹងស្វែងរក tokens ដោយស្វ័យប្រវត្តិ គណនា hash បានត្រឹមត្រូវ និងបញ្ចូល CSS variables ទៅក្នុងកញ្ចប់ StyleX នៃកម្មវិធីរបស់អ្នកដោយផ្ទាល់។
+  </Step>
 </Steps>
 
 ---
