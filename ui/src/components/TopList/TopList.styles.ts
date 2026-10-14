@@ -1,45 +1,42 @@
-import * as stylex from '@stylexjs/stylex'
-import { tokens } from '../../tokens/tokens.stylex'
+import { css } from 'lit'
 
-export const styles = stylex.create({
-  container: {
-    width: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: tokens.spacing4,
-    fontFamily: tokens.fontFamilyBase,
-    color: tokens.colorFg,
-  },
-  row: {
-    display: 'grid',
-    gridTemplateColumns: 'minmax(100px, 1.5fr) 2fr minmax(60px, auto)',
-    alignItems: 'center',
-    gap: tokens.spacing4,
-  },
-  label: {
-    fontSize: tokens.fontSizeSm,
-    fontWeight: tokens.fontWeightMedium,
-    color: tokens.colorFg,
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap',
-  },
-  track: {
-    height: '6px',
-    backgroundColor: tokens.colorNeutral200,
-    borderRadius: tokens.radiusFull,
-    width: '100%',
-    overflow: 'hidden',
-  },
-  bar: {
-    height: '100%',
-    borderRadius: tokens.radiusFull,
-    transition: 'width 0.3s ease-in-out',
-  },
-  value: {
-    fontSize: tokens.fontSizeSm,
-    fontWeight: tokens.fontWeightSemibold,
-    color: tokens.colorFg,
-    textAlign: 'end',
-  },
-})
+export const topListStyles = css`
+  :host {
+    display: block;
+  }
+  .list-group {
+    display: flex;
+    flex-direction: column;
+    padding-left: 0;
+    margin-bottom: 0;
+    border-radius: var(--bs-border-radius, 0.375rem);
+    border: var(--bs-border-width, 1px) solid var(--bs-border-color, #dee2e6);
+    overflow: hidden;
+  }
+  .list-group-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    color: var(--bs-body-color, #212529);
+    background-color: var(--bs-body-bg, #fff);
+    border-bottom: var(--bs-border-width, 1px) solid var(--bs-border-color, #dee2e6);
+  }
+  .list-group-item:last-child {
+    border-bottom: 0;
+  }
+  .rank {
+    font-weight: 700;
+    width: 2rem;
+    color: var(--bs-secondary-color, #6c757d);
+  }
+  .title {
+    flex: 1 1 auto;
+    font-weight: 500;
+  }
+  .value {
+    font-weight: 600;
+    color: var(--bs-emphasis-color, inherit);
+  }
+`

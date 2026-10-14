@@ -1,2 +1,1 @@
-export type { LinkProps } from './Link'
-export { Link } from './Link'
+export { MoulLink } from './Link.js'

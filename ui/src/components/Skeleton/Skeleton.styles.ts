@@ -1,45 +1,26 @@
-import * as stylex from '@stylexjs/stylex'
-import { tokens } from '../../tokens/tokens.stylex'
+import { css } from 'lit'
 
-const pulse = stylex.keyframes({
-  '0%, 100%': { opacity: 1 },
-  '50%': { opacity: 0.4 },
-})
-
-export const styles = stylex.create({
-  base: {
-    '@media (prefers-reduced-motion: reduce)': {
-      animationPlayState: 'paused',
-    },
-    animationDuration: '1.5s',
-    animationIterationCount: 'infinite',
-    animationName: pulse,
-    animationTimingFunction: 'cubic-bezier(0.4, 0, 0.6, 1)',
-    backgroundColor: tokens.colorNeutral200,
-  },
-  block: {
-    borderRadius: tokens.radiusMd,
-    display: 'block',
-    height: tokens.spacing5,
-    width: '100%',
-  },
-  text: {
-    borderRadius: tokens.radiusSm,
-    display: 'block',
-    height: tokens.spacing3,
-    width: '100%',
-  },
-  circle: {
-    borderRadius: tokens.radiusFull,
-    display: 'inline-block',
-    width: tokens.spacing8,
-    height: tokens.spacing8,
-    flexShrink: 0,
-  },
-  container: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: tokens.spacing2,
-    width: '100%',
-  },
-})
+export const skeletonStyles = css`
+  :host {
+    display: block;
+  }
+  .placeholder {
+    display: inline-block;
+    min-height: 1em;
+    vertical-align: middle;
+    cursor: wait;
+    background-color: currentColor;
+    opacity: 0.15;
+    border-radius: var(--bs-border-radius, 0.375rem);
+    width: 100%;
+  }
+  .placeholder-glow .placeholder {
+    animation: placeholder-glow 2s ease-in-out infinite;
+  }
+  @keyframes placeholder-glow {
+    50% { opacity: 0.3; }
+  }
+  .circular {
+    border-radius: 50%;
+  }
+`

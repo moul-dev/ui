@@ -1,180 +1,55 @@
-import * as stylex from '@stylexjs/stylex'
-import { tokens } from '../../tokens/tokens.stylex'
+import { css } from 'lit'
 
-export const styles = stylex.create({
-  container: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: tokens.spacing1,
-    width: '100%',
-  },
-  group: {
-    display: 'flex',
-    alignItems: 'center',
-    borderWidth: '1px',
-    borderStyle: 'solid',
-    borderColor: tokens.colorBorder,
-    backgroundColor: tokens.colorBg,
-    boxShadow: tokens.shadowSm,
-    boxSizing: 'border-box',
-    outline: 'none',
-    transitionProperty: 'border-color, box-shadow',
-    transitionDuration: '0.15s',
-    transitionTimingFunction: 'ease-in-out',
-    '@media (prefers-reduced-motion: reduce)': {
-      transitionProperty: 'none',
-    },
-  },
-  groupSm: {
-    height: `calc(${tokens.spacing1} * 2 + ${tokens.lineHeightXs})`,
-    borderRadius: tokens.radiusSm,
-    paddingInline: tokens.spacing2,
-  },
-  groupMd: {
-    height: `calc(${tokens.spacing2} * 2 + ${tokens.lineHeightSm})`,
-    borderRadius: tokens.radiusMd,
-    paddingInline: tokens.spacing3,
-  },
-  groupLg: {
-    height: `calc(${tokens.spacing2} * 2 + ${tokens.lineHeightMd})`,
-    borderRadius: tokens.radiusMd,
-    paddingInline: tokens.spacing4,
-  },
-  primary: {
-    backgroundColor: tokens.colorBg,
-    borderColor: tokens.colorBorder,
-  },
-  secondary: {
-    backgroundColor: tokens.colorBgSubtle,
-    borderColor: tokens.colorBorderSubtle,
-  },
-
-  groupHover: {
-    borderColor: tokens.colorNeutral400,
-  },
-  groupFocused: {
-    borderColor: {
-      default: tokens.colorBorderFocus,
-      ':hover': tokens.colorBorderFocus,
-    },
-    boxShadow: `0 0 0 1px ${tokens.colorBorderFocus}`,
-    outline: 'none',
-  },
-  groupInvalid: {
-    borderColor: tokens.colorError500,
-  },
-  groupFocusedInvalid: {
-    borderColor: {
-      default: tokens.colorError500,
-      ':hover': tokens.colorError500,
-    },
-    boxShadow: `0 0 0 1px ${tokens.colorError500}`,
-    outline: 'none',
-  },
-  groupDisabled: {
-    opacity: 0.4,
-    backgroundColor: tokens.colorBgSubtle,
-    cursor: 'not-allowed',
-    ':hover': {
-      borderColor: tokens.colorBorder,
-    },
-  },
-  icon: {
-    color: tokens.colorFgSubtle,
-    flexShrink: 0,
-  },
-  iconSm: {
-    width: tokens.spacing3,
-    height: tokens.spacing3,
-  },
-  iconMd: {
-    width: tokens.spacing4,
-    height: tokens.spacing4,
-  },
-  iconLg: {
-    width: tokens.spacing4,
-    height: tokens.spacing4,
-  },
-  input: {
-    flexGrow: 1,
-    width: '100%',
-    height: '100%',
-    borderWidth: 0,
-    borderStyle: 'none',
-    backgroundColor: 'transparent',
-    color: tokens.colorFg,
-    fontFamily: tokens.fontFamilyBase,
-    outline: 'none',
-    boxSizing: 'border-box',
-    '::-webkit-search-cancel-button': {
-      display: 'none',
-      WebkitAppearance: 'none',
-    },
-    '::-webkit-search-decoration': {
-      display: 'none',
-      WebkitAppearance: 'none',
-    },
-    '::-webkit-search-results-button': {
-      display: 'none',
-    },
-    '::-webkit-search-results-decoration': {
-      display: 'none',
-    },
-  },
-  inputSm: {
-    paddingBlock: 0,
-    paddingInline: tokens.spacing1,
-    fontSize: tokens.fontSizeXs,
-    lineHeight: tokens.lineHeightXs,
-  },
-  inputMd: {
-    paddingBlock: 0,
-    paddingInline: tokens.spacing2,
-    fontSize: tokens.fontSizeSm,
-    lineHeight: tokens.lineHeightSm,
-  },
-  inputLg: {
-    paddingBlock: 0,
-    paddingInline: tokens.spacing2,
-    fontSize: tokens.fontSizeMd,
-    lineHeight: tokens.lineHeightMd,
-  },
-  clearButton: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderStyle: 'none',
-    backgroundColor: 'transparent',
-    color: tokens.colorFgSubtle,
-    cursor: 'pointer',
-    padding: 0,
-    borderRadius: tokens.radiusFull,
-    flexShrink: 0,
-    transitionProperty: 'background-color, color',
-    transitionDuration: '0.1s',
-    transitionTimingFunction: 'ease-in-out',
-    ':hover': {
-      backgroundColor: tokens.colorBgSubtle,
-      color: tokens.colorFg,
-    },
-  },
-  clearButtonSm: {
-    width: tokens.spacing3,
-    height: tokens.spacing3,
-    fontSize: tokens.fontSizeXs,
-  },
-  clearButtonMd: {
-    width: tokens.spacing4,
-    height: tokens.spacing4,
-    fontSize: tokens.fontSizeSm,
-  },
-  clearButtonLg: {
-    width: tokens.spacing4,
-    height: tokens.spacing4,
-    fontSize: tokens.fontSizeSm,
-  },
-  clearButtonHidden: {
-    visibility: 'hidden',
-    pointerEvents: 'none',
-  },
-})
+export const searchFieldStyles = css`
+  :host {
+    display: block;
+    width: 100%;
+  }
+  .search-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .search-icon {
+    position: absolute;
+    left: 0.75rem;
+    color: var(--bs-secondary-color, #6c757d);
+    pointer-events: none;
+    display: inline-flex;
+    align-items: center;
+  }
+  .form-control {
+    display: block;
+    width: 100%;
+    padding: 0.375rem 2.25rem 0.375rem 2.25rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: var(--bs-body-color, #212529);
+    background-color: var(--bs-body-bg, #fff);
+    border: var(--bs-border-width, 1px) solid var(--bs-border-color, #dee2e6);
+    border-radius: var(--bs-border-radius, 0.375rem);
+    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+  }
+  .form-control:focus {
+    color: var(--bs-body-color, #212529);
+    background-color: var(--bs-body-bg, #fff);
+    border-color: #86b7fe;
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  }
+  .clear-btn {
+    position: absolute;
+    right: 0.5rem;
+    background: transparent;
+    border: 0;
+    padding: 0.25rem;
+    color: var(--bs-secondary-color, #6c757d);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    border-radius: 50%;
+  }
+  .clear-btn:hover {
+    color: var(--bs-body-color, #212529);
+  }
+`

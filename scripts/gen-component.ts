@@ -22,19 +22,12 @@ function toKebabCase(str: string): string {
     .toLowerCase()
 }
 
-function toPascalCase(str: string): string {
-  return str
-    .replace(/(?:^\w|[A-Z]|\b\w)/g, (letter) => letter.toUpperCase())
-    .replace(/[\s-_]+/g, '')
-}
-
 interface GeneratorOptions {
   componentName: string
   kebabName: string
   description: string
   category: string
   dryRun: boolean
-  isAria: boolean
 }
 
 function parseArgs(args: string[]): GeneratorOptions {
@@ -42,7 +35,6 @@ function parseArgs(args: string[]): GeneratorOptions {
   let description = ''
   let category = 'general'
   let dryRun = false
-  let isAria = true
 
   for (let i = 0; i < args.length; i++) {
     const arg = args[i]
@@ -55,22 +47,13 @@ ${colors.yellow}Usage:${colors.reset}
 
 ${colors.yellow}Options:${colors.reset}
   --description, -d <text>   Component description for docs and JSDoc
-  --category, -c <name>      Category (actions, forms, overlays, feedback, navigation, layout, charts)
-  --no-aria                  Generate simple HTML element component instead of React Aria primitive
+  --category, -c <name>      Category
   --dry-run                  Preview generated files without writing to disk
   --help, -h                 Show this help message
-
-${colors.yellow}Examples:${colors.reset}
-  bun run gen:component Timeline
-  bun run gen:component SegmentedControl -d "Segmented toggle picker" -c actions
 `)
       process.exit(0)
-    }
-
-    if (arg === '--dry-run') {
+    } else if (arg === '--dry-run') {
       dryRun = true
-    } else if (arg === '--no-aria') {
-      isAria = false
     } else if (arg === '--description' || arg === '-d') {
       description = args[++i] || ''
     } else if (arg === '--category' || arg === '-c') {
@@ -82,303 +65,124 @@ ${colors.yellow}Examples:${colors.reset}
 
   if (!name) {
     console.error(
-      `${colors.red}Error:${colors.reset} Component name is required.`,
-    )
-    console.error(
-      `Example: ${colors.cyan}bun run gen:component SegmentedControl${colors.reset}`,
+      `${colors.red}Error:${colors.reset} Please provide a component name (e.g. bun run gen:component Badge)`,
     )
     process.exit(1)
   }
 
-  const pascalName = toPascalCase(name)
-  const kebabName = toKebabCase(pascalName)
-  const defaultDesc = `${pascalName} component built with React Aria and StyleX.`
-
+  const kebabName = toKebabCase(name)
   return {
-    componentName: pascalName,
+    componentName: name,
     kebabName,
-    description: description || defaultDesc,
+    description:
+      description || `${name} component built with Lit and Bootstrap 6.`,
     category,
     dryRun,
-    isAria,
   }
 }
 
 function generateComponentFile(opts: GeneratorOptions): string {
-  const { componentName, description, isAria } = opts
+  const { componentName, kebabName } = opts
+  return `import { html } from 'lit'
+import { property } from 'lit/decorators.js'
+import { MoulBase } from '../../shared/base.js'
+import { ${toKebabCase(componentName).replace(/-([a-z])/g, (_, c) => c.toUpperCase())}Styles } from './${componentName}.styles.js'
 
-  if (isAria) {
-    return `'use client'
-import type { StyleXStyles } from '@stylexjs/stylex'
-import * as stylex from '@stylexjs/stylex'
-import * as React from 'react'
-import { styles } from './${componentName}.styles'
-
-export type ${componentName}Variant = 'neutral' | 'primary' | 'subtle'
-export type ${componentName}Size = 'sm' | 'md' | 'lg'
-
-export interface ${componentName}Props extends Omit<React.HTMLAttributes<HTMLDivElement>, 'style'> {
-  /** Visual variant style */
-  variant?: ${componentName}Variant
-  /** Component size */
-  size?: ${componentName}Size
-  /** StyleX override styles */
-  style?: StyleXStyles
-  /** Custom CSS class names */
-  className?: string
-  /** Children elements */
-  children?: React.ReactNode
-}
+export type ${componentName}Variant = 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info'
 
 /**
- * ${description}
+ * \`<moul-${kebabName}>\` component.
+ * ${opts.description}
  */
-export const ${componentName} = React.forwardRef<HTMLDivElement, ${componentName}Props>(
-  function ${componentName}(
-    {
-      variant = 'neutral',
-      size = 'md',
-      style,
-      className,
-      children,
-      ...rest
-    },
-    ref,
-  ) {
-    const { className: stylexClass, style: stylexStyle } = stylex.props(
-      styles.base,
-      styles[variant],
-      styles[size],
-      style,
-    )
+export class ${componentName} extends MoulBase {
+  static override styles = [
+    ...MoulBase.styles,
+    ${toKebabCase(componentName).replace(/-([a-z])/g, (_, c) => c.toUpperCase())}Styles,
+  ]
 
-    return (
-      <div
-        {...rest}
-        ref={ref}
-        className={[stylexClass, className].filter(Boolean).join(' ')}
-        style={stylexStyle}
-      >
-        {children}
+  @property({ type: String, reflect: true })
+  variant: ${componentName}Variant = 'primary'
+
+  override render() {
+    return html\`
+      <div class="moul-${kebabName} alert-\${this.variant}" role="region">
+        <slot></slot>
       </div>
-    )
-  },
-)
-`
+    \`
   }
-
-  return `import type { StyleXStyles } from '@stylexjs/stylex'
-import * as stylex from '@stylexjs/stylex'
-import * as React from 'react'
-import { styles } from './${componentName}.styles'
-
-export interface ${componentName}Props extends Omit<React.HTMLAttributes<HTMLDivElement>, 'style'> {
-  /** StyleX override styles */
-  style?: StyleXStyles
-  /** Custom CSS class names */
-  className?: string
-  /** Children elements */
-  children?: React.ReactNode
 }
-
-/**
- * ${description}
- */
-export const ${componentName} = React.forwardRef<HTMLDivElement, ${componentName}Props>(
-  function ${componentName}({ style, className, children, ...rest }, ref) {
-    const { className: stylexClass, style: stylexStyle } = stylex.props(
-      styles.base,
-      style,
-    )
-
-    return (
-      <div
-        {...rest}
-        ref={ref}
-        className={[stylexClass, className].filter(Boolean).join(' ')}
-        style={stylexStyle}
-      >
-        {children}
-      </div>
-    )
-  },
-)
 `
 }
 
-function generateStylesFile(_opts: GeneratorOptions): string {
-  return `import * as stylex from '@stylexjs/stylex'
-import { tokens } from '../../tokens/tokens.stylex'
+function generateStylesFile(opts: GeneratorOptions): string {
+  const { componentName, kebabName } = opts
+  const fnName = toKebabCase(componentName).replace(/-([a-z])/g, (_, c) =>
+    c.toUpperCase(),
+  )
+  return `import { css } from 'lit'
 
-export const styles = stylex.create({
-  base: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    boxSizing: 'border-box',
-    fontFamily: tokens.fontFamilySans,
-    color: tokens.colorNeutral900,
-    borderRadius: tokens.radiusMd,
-    transitionProperty: 'background-color, border-color, color, box-shadow',
-    transitionDuration: '150ms',
-    transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
-  },
-  sm: {
-    paddingBlock: tokens.spacing1,
-    paddingInline: tokens.spacing2,
-    fontSize: tokens.fontSizeSm,
-    lineHeight: tokens.lineHeightSm,
-  },
-  md: {
-    paddingBlock: tokens.spacing2,
-    paddingInline: tokens.spacing3,
-    fontSize: tokens.fontSizeMd,
-    lineHeight: tokens.lineHeightMd,
-  },
-  lg: {
-    paddingBlock: tokens.spacing3,
-    paddingInline: tokens.spacing4,
-    fontSize: tokens.fontSizeLg,
-    lineHeight: tokens.lineHeightLg,
-  },
-  neutral: {
-    backgroundColor: tokens.colorNeutral100,
-    borderColor: tokens.colorBorderSubtle,
-    borderWidth: '1px',
-    borderStyle: 'solid',
-  },
-  primary: {
-    backgroundColor: tokens.colorPrimary100,
-    color: tokens.colorPrimary700,
-    borderColor: tokens.colorPrimary300,
-    borderWidth: '1px',
-    borderStyle: 'solid',
-  },
-  subtle: {
-    backgroundColor: 'transparent',
-    color: tokens.colorNeutral700,
-  },
-})
+export const ${fnName}Styles = css\`
+  :host {
+    display: block;
+    box-sizing: border-box;
+  }
+  .moul-${kebabName} {
+    box-sizing: border-box;
+    font-family: inherit;
+  }
+\`
 `
 }
 
 function generateIndexFile(opts: GeneratorOptions): string {
-  const { componentName } = opts
-  return `export { ${componentName} } from './${componentName}'
-export type {
-  ${componentName}Props,
-  ${componentName}Size,
-  ${componentName}Variant,
-} from './${componentName}'
-`
+  const { componentName, kebabName } = opts
+  return `import { ${componentName} } from './${componentName}.js'
+
+export { ${componentName} } from './${componentName}.js'
+export type { ${componentName}Variant } from './${componentName}.js'
+
+if (!customElements.get('moul-${kebabName}')) {
+  customElements.define('moul-${kebabName}', ${componentName})
 }
 
-function generateTestFile(opts: GeneratorOptions): string {
-  const { componentName } = opts
-  return `import { render, screen } from '@testing-library/react'
-import * as React from 'react'
-import { describe, expect, it } from 'vitest'
-import { ${componentName} } from './${componentName}'
-
-describe('${componentName}', () => {
-  it('renders children correctly', () => {
-    render(<${componentName}>Test Content</${componentName}>)
-    expect(screen.getByText('Test Content')).toBeInTheDocument()
-  })
-
-  it('supports custom className and ref forwarding', () => {
-    const ref = React.createRef<HTMLDivElement>()
-    render(
-      <${componentName} ref={ref} className="custom-test-class" data-testid="${opts.kebabName}">
-        Hello
-      </${componentName}>,
-    )
-    const element = screen.getByTestId('${opts.kebabName}')
-    expect(element).toHaveClass('custom-test-class')
-    expect(ref.current).toBe(element)
-  })
-
-  it('renders variants and sizes without throwing', () => {
-    const { container } = render(
-      <div>
-        <${componentName} variant="primary" size="sm">Small Primary</${componentName}>
-        <${componentName} variant="neutral" size="md">Medium Neutral</${componentName}>
-        <${componentName} variant="subtle" size="lg">Large Subtle</${componentName}>
-      </div>,
-    )
-    expect(container).toBeInTheDocument()
-  })
-})
+declare global {
+  interface HTMLElementTagNameMap {
+    'moul-${kebabName}': ${componentName}
+  }
+}
 `
 }
 
 function generateMdxDoc(opts: GeneratorOptions): string {
-  const { componentName, description } = opts
+  const { componentName, kebabName, description } = opts
   return `---
 title: ${componentName}
 description: ${description}
 ---
 
-import { ${componentName} } from '@moul-dev/ui';
+import ComponentPreview from '../../../components/ComponentPreview.astro'
+import PropsTable from '../../../components/PropsTable.astro'
 
-# ${componentName}
+## Default
 
-${description}
+<ComponentPreview>
+  <moul-${kebabName} variant="primary">${componentName} content</moul-${kebabName}>
+</ComponentPreview>
 
-## Preview
-
-<ComponentPlayground component="${componentName}" />
-
-## Import
-
-\`\`\`tsx
-import { ${componentName} } from '@moul-dev/ui';
-\`\`\`
-
-## Usage
-
-\`\`\`tsx
-<${componentName} variant="neutral" size="md">
-  ${componentName} Content
-</${componentName}>
-\`\`\`
-
-## Sizes
-
-\`\`\`tsx
-<div className="flex items-center gap-3">
-  <${componentName} size="sm">Small</${componentName}>
-  <${componentName} size="md">Medium</${componentName}>
-  <${componentName} size="lg">Large</${componentName}>
-</div>
-\`\`\`
-
-## Variants
-
-\`\`\`tsx
-<div className="flex items-center gap-3">
-  <${componentName} variant="neutral">Neutral</${componentName}>
-  <${componentName} variant="primary">Primary</${componentName}>
-  <${componentName} variant="subtle">Subtle</${componentName}>
-</div>
+\`\`\`html
+<moul-${kebabName} variant="primary">
+  ${componentName} content
+</moul-${kebabName}>
 \`\`\`
 
 ## Props
 
-<TypeTable
+<PropsTable
   type={{
-    size: {
-      type: "'sm' | 'md' | 'lg'",
-      default: "'md'",
-      description: 'The size scaling of the component.',
-    },
     variant: {
-      type: "'neutral' | 'primary' | 'subtle'",
-      default: "'neutral'",
-      description: 'The visual variant style.',
-    },
-    className: {
-      type: 'string',
-      description: 'Custom CSS class name.',
+      type: "'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info'",
+      default: "'primary'",
+      description: 'Visual color variant.',
     },
   }}
 />
@@ -390,7 +194,7 @@ async function main() {
   const opts = parseArgs(process.argv.slice(2))
 
   console.log(
-    `\\n${colors.bright}${colors.cyan}Moul UI Scaffolding:${colors.reset} Generating ${colors.green}${opts.componentName}${colors.reset}\\n`,
+    `\n${colors.bright}${colors.cyan}Moul UI Scaffolding:${colors.reset} Generating ${colors.green}${opts.componentName}${colors.reset}\n`,
   )
 
   const componentDir = join(
@@ -400,14 +204,12 @@ async function main() {
     'components',
     opts.componentName,
   )
-  const docPath = join(
-    rootDir,
-    'docs',
-    'content',
-    'docs',
-    'components',
-    `${opts.kebabName}.mdx`,
+  const docDir = existsSync(
+    join(rootDir, 'docs', 'src', 'content', 'docs', 'components'),
   )
+    ? join(rootDir, 'docs', 'src', 'content', 'docs', 'components')
+    : join(rootDir, 'docs', 'content', 'docs', 'components')
+  const docPath = join(docDir, `${opts.kebabName}.mdx`)
   const indexTsPath = join(rootDir, 'ui', 'src', 'index.ts')
 
   if (existsSync(componentDir)) {
@@ -419,35 +221,30 @@ async function main() {
 
   const files = [
     {
-      path: join(componentDir, `${opts.componentName}.tsx`),
+      path: join(componentDir, `${opts.componentName}.ts`),
       content: generateComponentFile(opts),
-      desc: 'Component implementation',
+      desc: 'Lit component implementation',
     },
     {
       path: join(componentDir, `${opts.componentName}.styles.ts`),
       content: generateStylesFile(opts),
-      desc: 'StyleX style declarations',
+      desc: 'Lit CSS stylesheet',
     },
     {
       path: join(componentDir, 'index.ts'),
       content: generateIndexFile(opts),
-      desc: 'Barrel export',
-    },
-    {
-      path: join(componentDir, `${opts.componentName}.test.tsx`),
-      content: generateTestFile(opts),
-      desc: 'Vitest unit tests',
+      desc: 'Barrel export and custom element registration',
     },
     {
       path: docPath,
       content: generateMdxDoc(opts),
-      desc: 'Fumadocs MDX documentation',
+      desc: 'Astro Starlight MDX documentation',
     },
   ]
 
   if (opts.dryRun) {
     console.log(
-      `${colors.yellow}[DRY RUN]${colors.reset} The following files would be created:\\n`,
+      `${colors.yellow}[DRY RUN]${colors.reset} The following files would be created:\n`,
     )
     for (const file of files) {
       console.log(
@@ -455,7 +252,7 @@ async function main() {
       )
     }
     console.log(
-      `\\n  ${colors.cyan}~${colors.reset} Append export to ${indexTsPath}`,
+      `\n  ${colors.cyan}~${colors.reset} Append export to ${indexTsPath}`,
     )
     return
   }
@@ -472,7 +269,7 @@ async function main() {
   // Append export to ui/src/index.ts
   if (existsSync(indexTsPath)) {
     const indexContent = readFileSync(indexTsPath, 'utf-8')
-    const exportStatement = `\\nexport { ${opts.componentName} } from './components/${opts.componentName}'\\nexport type {\\n  ${opts.componentName}Props,\\n  ${opts.componentName}Size,\\n  ${opts.componentName}Variant,\\n} from './components/${opts.componentName}'\\n`
+    const exportStatement = `\nexport * from './components/${opts.componentName}/index.js'\n`
     writeFileSync(
       indexTsPath,
       indexContent.trimEnd() + exportStatement,
@@ -482,16 +279,8 @@ async function main() {
   }
 
   console.log(
-    `\\n${colors.bright}${colors.green}Success!${colors.reset} Component ${colors.cyan}${opts.componentName}${colors.reset} has been generated.\\n`,
+    `\n${colors.bright}${colors.green}Success!${colors.reset} Component ${colors.cyan}${opts.componentName}${colors.reset} has been generated.\n`,
   )
-  console.log('Next steps:')
-  console.log(
-    `  1. Customize styles in: ${colors.dim}ui/src/components/${opts.componentName}/${opts.componentName}.styles.ts${colors.reset}`,
-  )
-  console.log(
-    `  2. Add showcase in: ${colors.dim}ui/src/sandbox/sections/...${colors.reset}`,
-  )
-  console.log(`  3. Run tests: ${colors.dim}bun test${colors.reset}`)
 }
 
 main().catch((err) => {

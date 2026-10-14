@@ -399,13 +399,10 @@ async function main() {
   if (options.scaffoldChangelog) {
     const todayIso = formatIsoDate(new Date())
     const changelogFilename = `v${todayIso}.mdx`
-    const changelogPath = join(
-      rootDir,
-      'docs',
-      'content',
-      'changelog',
-      changelogFilename,
-    )
+    const changelogDir = existsSync(join(rootDir, 'docs', 'src', 'changelog'))
+      ? join(rootDir, 'docs', 'src', 'changelog')
+      : join(rootDir, 'docs', 'content', 'changelog')
+    const changelogPath = join(changelogDir, changelogFilename)
 
     if (!existsSync(changelogPath)) {
       const changelogTemplate = `---

@@ -1,0 +1,26 @@
+---
+title: Introduction
+description: Meet Moul UI. Accessible, zero-runtime Web Components built on Lit and Bootstrap 6 Shadow DOM.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro'
+
+Moul UI is a modular Web Component library designed for product engineers who want a modern, consistent, and highly accessible baseline for web applications across any framework.
+
+By merging the lightweight reactivity and encapsulation of **Lit** with the rich responsive design system of **Bootstrap 6** inside **Shadow DOM**, Moul UI delivers complete style isolation with zero runtime CSS-in-JS overhead.
+
+## Key Features
+
+- **Universal Web Components**: Works natively in HTML, React, Vue, Svelte, Angular, Astro, and Solid with standard custom element markup (`<moul-button>`, `<moul-modal>`, etc.).
+- **Complete Style Encapsulation**: Bootstrap 6 styles are adopted into each element's shadow root via constructable stylesheets (`CSSStyleSheet`). No style leakage into or out of your components.
+- **WAI-ARIA Compliant**: Built with comprehensive keyboard navigation, focus trap management, floating positioning, and screen reader announcements.
+- **Customizable Theming**: Dynamically theme components using CSS Custom Properties (`--moul-brand-hue`, `--moul-brand-radius-factor`, etc.).
+
+## Quick Preview
+
+<ComponentPreview>
+  <moul-button variant="primary">Primary Button</moul-button>
+  <moul-button variant="secondary">Secondary</moul-button>
+  <moul-button variant="success">Success</moul-button>
+  <moul-badge variant="info">New</moul-badge>
+</ComponentPreview>

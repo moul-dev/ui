@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-bs-theme="dark">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -7,10 +7,965 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap" rel="stylesheet">
-    <title>ui</title>
+    <link rel="stylesheet" href="/src/shared/tokens.css">
+    <title>Moul UI - Component Sandbox</title>
+    <style>
+      :root {
+        --sb-bg: #121417;
+        --sb-surface: #1a1d21;
+        --sb-border: #2c3238;
+        --sb-text: #f0f2f5;
+        --sb-muted: #9ba1a8;
+      }
+      [data-bs-theme="light"] {
+        --sb-bg: #f8f9fa;
+        --sb-surface: #ffffff;
+        --sb-border: #dee2e6;
+        --sb-text: #212529;
+        --sb-muted: #6c757d;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Google Sans', system-ui, -apple-system, sans-serif;
+        background-color: var(--sb-bg);
+        color: var(--sb-text);
+        line-height: 1.5;
+        transition: background-color 0.2s ease, color 0.2s ease;
+      }
+      .sandbox-header {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background-color: var(--sb-surface);
+        border-bottom: 1px solid var(--sb-border);
+        padding: 1rem 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      }
+      .sandbox-brand {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+      .sandbox-brand h1 {
+        margin: 0;
+        font-size: 1.25rem;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+      }
+      .sandbox-brand span {
+        font-size: 0.8125rem;
+        color: var(--sb-muted);
+        background: color-mix(in oklch, currentColor 10%, transparent);
+        padding: 0.2rem 0.5rem;
+        border-radius: 4px;
+      }
+      .sandbox-controls {
+        display: flex;
+        align-items: center;
+        gap: 1.25rem;
+        flex-wrap: wrap;
+      }
+      .control-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.8125rem;
+      }
+      .control-item label {
+        font-weight: 500;
+        color: var(--sb-muted);
+      }
+      .control-item select,
+      .control-item input[type="range"] {
+        background-color: var(--sb-bg);
+        color: var(--sb-text);
+        border: 1px solid var(--sb-border);
+        border-radius: 6px;
+        padding: 0.25rem 0.5rem;
+        font-family: inherit;
+        font-size: 0.8125rem;
+      }
+      .theme-btn {
+        background-color: var(--sb-bg);
+        color: var(--sb-text);
+        border: 1px solid var(--sb-border);
+        border-radius: 6px;
+        padding: 0.4rem 0.75rem;
+        font-family: inherit;
+        font-size: 0.8125rem;
+        font-weight: 500;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        transition: background-color 0.15s;
+      }
+      .theme-btn:hover {
+        border-color: var(--bs-primary-base, #4f46e5);
+      }
+      .sandbox-nav {
+        background-color: var(--sb-bg);
+        border-bottom: 1px solid var(--sb-border);
+        padding: 0.6rem 2rem;
+        display: flex;
+        gap: 0.75rem;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+      .sandbox-nav a {
+        color: var(--sb-muted);
+        text-decoration: none;
+        font-size: 0.8125rem;
+        font-weight: 500;
+        padding: 0.25rem 0.6rem;
+        border-radius: 4px;
+        transition: all 0.15s;
+      }
+      .sandbox-nav a:hover {
+        color: var(--sb-text);
+        background-color: var(--sb-surface);
+      }
+      .sandbox-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2.5rem 1.5rem 6rem;
+        display: flex;
+        flex-direction: column;
+        gap: 3rem;
+      }
+      .section-card {
+        background-color: var(--sb-surface);
+        border: 1px solid var(--sb-border);
+        border-radius: 12px;
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1.75rem;
+      }
+      .section-header {
+        border-bottom: 1px solid var(--sb-border);
+        padding-bottom: 1rem;
+      }
+      .section-header h2 {
+        margin: 0 0 0.25rem 0;
+        font-size: 1.35rem;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+      }
+      .section-header p {
+        margin: 0;
+        font-size: 0.875rem;
+        color: var(--sb-muted);
+      }
+      .group-block {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+      .group-title {
+        font-size: 0.8125rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--sb-muted);
+      }
+      .row-items {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        align-items: center;
+      }
+      .grid-2 {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 1.5rem;
+      }
+      .grid-3 {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 1.5rem;
+      }
+      /* Slotted table helper */
+      .table {
+        width: 100%;
+        margin-bottom: 1rem;
+        vertical-align: top;
+        border-collapse: collapse;
+        color: inherit;
+        border-color: var(--sb-border);
+      }
+      .table th, .table td {
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid var(--sb-border);
+        text-align: left;
+      }
+      .table th { font-weight: 600; }
+      .table-striped tbody tr:nth-of-type(odd) {
+        background-color: color-mix(in oklch, currentColor 4%, transparent);
+      }
+      .table-hover tbody tr:hover {
+        background-color: color-mix(in oklch, currentColor 8%, transparent);
+      }
+      .table-bordered th, .table-bordered td {
+        border: 1px solid var(--sb-border);
+      }
+      .otp-wrap {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <!-- Top Fixed Header -->
+    <header class="sandbox-header">
+      <div class="sandbox-brand">
+        <h1>Moul UI Sandbox</h1>
+        <span>Lit + Bootstrap 6</span>
+      </div>
+
+      <div class="sandbox-controls">
+        <div class="control-item">
+          <label for="brand-hue">Brand Hue</label>
+          <input type="range" id="brand-hue" min="0" max="360" value="250" />
+          <span id="hue-val" style="min-width: 2.5rem; font-variant-numeric: tabular-nums;">250°</span>
+        </div>
+
+        <div class="control-item">
+          <label for="brand-radius">Radius</label>
+          <select id="brand-radius">
+            <option value="0">Sharp (0)</option>
+            <option value="0.5">Subtle (0.5)</option>
+            <option value="1" selected>Default (1.0)</option>
+            <option value="1.5">Round (1.5)</option>
+            <option value="2">Pill (2.0)</option>
+          </select>
+        </div>
+
+        <div class="control-item">
+          <label for="brand-density">Density</label>
+          <select id="brand-density">
+            <option value="0.8">Compact</option>
+            <option value="1" selected>Comfortable</option>
+            <option value="1.2">Spacious</option>
+          </select>
+        </div>
+
+        <button type="button" class="theme-btn" id="theme-toggle">
+          <span id="theme-icon">☀️</span> <span id="theme-label">Light Mode</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Quick Navigation Anchor Bar -->
+    <nav class="sandbox-nav">
+      <a href="#sec-actions">Actions & Buttons</a>
+      <a href="#sec-forms">Forms & Inputs</a>
+      <a href="#sec-display">Data Display</a>
+      <a href="#sec-feedback">Feedback & Status</a>
+      <a href="#sec-navigation">Navigation</a>
+      <a href="#sec-overlays">Overlays & Dialogs</a>
+      <a href="#sec-date">Date & Calendar</a>
+      <a href="#sec-blocks">Blocks & System</a>
+    </nav>
+
+    <!-- Main Container -->
+    <main class="sandbox-container">
+
+      <!-- SECTION 1: Actions & Buttons -->
+      <section class="section-card" id="sec-actions">
+        <div class="section-header">
+          <h2>1. Actions & Triggers</h2>
+          <p>Buttons, button groups, toggle buttons, and interactive links.</p>
+        </div>
+
+        <div class="group-block">
+          <div class="group-title">Button Variants</div>
+          <div class="row-items">
+            <moul-button variant="primary">Primary</moul-button>
+            <moul-button variant="secondary">Secondary</moul-button>
+            <moul-button variant="success">Success</moul-button>
+            <moul-button variant="danger">Danger</moul-button>
+            <moul-button variant="warning">Warning</moul-button>
+            <moul-button variant="info">Info</moul-button>
+            <moul-button variant="outline-primary">Outline Primary</moul-button>
+            <moul-button variant="outline-secondary">Outline Secondary</moul-button>
+            <moul-button variant="ghost">Ghost</moul-button>
+            <moul-button variant="link">Link Style</moul-button>
+          </div>
+        </div>
+
+        <div class="group-block">
+          <div class="group-title">Button Sizes & States</div>
+          <div class="row-items">
+            <moul-button size="sm" variant="primary">Small</moul-button>
+            <moul-button size="md" variant="primary">Medium</moul-button>
+            <moul-button size="lg" variant="primary">Large</moul-button>
+            <moul-button variant="primary" is-pending>Processing</moul-button>
+            <moul-button variant="primary" is-disabled>Disabled</moul-button>
+            <moul-button variant="outline-primary" is-icon aria-label="Favorite">
+              <span slot="icon-start">★</span>
+            </moul-button>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="group-block">
+            <div class="group-title">Button Group</div>
+            <div class="row-items">
+              <moul-button-group>
+                <moul-button variant="outline-primary">Left</moul-button>
+                <moul-button variant="outline-primary">Middle</moul-button>
+                <moul-button variant="outline-primary">Right</moul-button>
+              </moul-button-group>
+            </div>
+          </div>
+
+          <div class="group-block">
+            <div class="group-title">Toggle Buttons & Group</div>
+            <div class="row-items">
+              <moul-toggle-button-group value="grid">
+                <moul-toggle-button value="list">List</moul-toggle-button>
+                <moul-toggle-button value="grid">Grid</moul-toggle-button>
+                <moul-toggle-button value="table">Table</moul-toggle-button>
+              </moul-toggle-button-group>
+            </div>
+          </div>
+        </div>
+
+        <div class="group-block">
+          <div class="group-title">Link Component</div>
+          <div class="row-items">
+            <moul-link href="https://github.com/moul-dev/ui" target="_blank">Documentation Link &rarr;</moul-link>
+            <moul-link href="#sec-forms" variant="secondary">Jump to Forms</moul-link>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 2: Forms & Inputs -->
+      <section class="section-card" id="sec-forms">
+        <div class="section-header">
+          <h2>2. Forms & Inputs</h2>
+          <p>Text inputs, select menus, comboboxes, checkboxes, switches, sliders, and form helpers.</p>
+        </div>
+
+        <moul-form>
+          <div class="grid-2">
+            <moul-text-field label="Full Name" placeholder="e.g. Phearak S. Tha" description="Your legal name."></moul-text-field>
+            <moul-search-field label="Search Directory" placeholder="Search team members..."></moul-search-field>
+          </div>
+
+          <div class="grid-3" style="margin-top: 1rem;">
+            <moul-number-field label="Quantity" value="3" min="1" max="20"></moul-number-field>
+
+            <moul-select label="Role" placeholder="Select your role...">
+              <moul-select-item value="developer">Full-stack Engineer</moul-select-item>
+              <moul-select-item value="designer">UI/UX Designer</moul-select-item>
+              <moul-select-item value="manager">Engineering Manager</moul-select-item>
+            </moul-select>
+
+            <moul-combobox label="Framework" placeholder="Pick framework...">
+              <moul-combobox-item value="lit">Lit</moul-combobox-item>
+              <moul-combobox-item value="react">React</moul-combobox-item>
+              <moul-combobox-item value="astro">Astro</moul-combobox-item>
+              <moul-combobox-item value="vue">Vue</moul-combobox-item>
+            </moul-combobox>
+          </div>
+
+          <div style="margin-top: 1rem;">
+            <moul-autocomplete label="Search Library Components" placeholder="Type component name...">
+              <moul-autocomplete-item value="button">Button</moul-autocomplete-item>
+              <moul-autocomplete-item value="modal">Modal</moul-autocomplete-item>
+              <moul-autocomplete-item value="table">Table</moul-autocomplete-item>
+              <moul-autocomplete-item value="toast">Toast</moul-autocomplete-item>
+            </moul-autocomplete>
+          </div>
+
+          <div style="margin-top: 1rem;">
+            <moul-text-area label="Biography" placeholder="Tell us about your open source contributions..." rows="3"></moul-text-area>
+          </div>
+
+          <div style="margin-top: 1.25rem;">
+            <moul-input-otp length="6" label="Verification Code" description="Enter the 6-digit OTP code sent to your device."></moul-input-otp>
+          </div>
+
+          <div class="grid-3" style="margin-top: 1.5rem;">
+            <div class="group-block">
+              <div class="group-title">Checkboxes & Switch</div>
+              <moul-checkbox label="Subscribe to release updates" is-checked></moul-checkbox>
+              <moul-checkbox label="Allow telemetry analytics"></moul-checkbox>
+              <moul-switch label="Dark Mode Sync" is-checked></moul-switch>
+            </div>
+
+            <div class="group-block">
+              <div class="group-title">Checkbox Group</div>
+              <moul-checkbox-group label="Preferred Notifications">
+                <moul-checkbox label="Email notifications" is-checked></moul-checkbox>
+                <moul-checkbox label="SMS alerts"></moul-checkbox>
+                <moul-checkbox label="Desktop push"></moul-checkbox>
+              </moul-checkbox-group>
+            </div>
+
+            <div class="group-block">
+              <div class="group-title">Radio Group & Slider</div>
+              <moul-radio-group label="Plan Tier" value="team">
+                <moul-radio value="hobby" label="Hobby"></moul-radio>
+                <moul-radio value="team" label="Team"></moul-radio>
+                <moul-radio value="enterprise" label="Enterprise"></moul-radio>
+              </moul-radio-group>
+              <div style="margin-top: 0.5rem;">
+                <moul-slider label="Bandwidth Limit (GB)" value="65" min="0" max="100"></moul-slider>
+              </div>
+            </div>
+          </div>
+
+          <div class="group-block" style="margin-top: 1.5rem;">
+            <div class="group-title">Labels, Description & FieldError Helpers</div>
+            <div style="max-width: 400px; display: flex; flex-direction: column; gap: 0.25rem;">
+              <moul-label for="example-input">Custom Isolated Label</moul-label>
+              <input type="text" id="example-input" class="form-control" style="padding: 0.4rem; border: 1px solid var(--sb-border); border-radius: 6px; background: var(--sb-bg); color: var(--sb-text);" value="invalid@domain" />
+              <moul-description>Enter your organizational email address.</moul-description>
+              <moul-field-error>Domain name cannot be empty or invalid.</moul-field-error>
+            </div>
+          </div>
+        </moul-form>
+      </section>
+
+      <!-- SECTION 3: Data Display -->
+      <section class="section-card" id="sec-display">
+        <div class="section-header">
+          <h2>3. Data Display</h2>
+          <p>Badges, avatars, cards, tables, stats, typography, tags, and keyboard keys.</p>
+        </div>
+
+        <div class="group-block">
+          <div class="group-title">Badges</div>
+          <div class="row-items">
+            <moul-badge variant="primary">Primary</moul-badge>
+            <moul-badge variant="secondary">Secondary</moul-badge>
+            <moul-badge variant="success" is-pill>Success Pill</moul-badge>
+            <moul-badge variant="danger" dot>Danger Dot</moul-badge>
+            <moul-badge variant="warning">Warning</moul-badge>
+            <moul-badge variant="info">Info</moul-badge>
+            <moul-badge size="sm" variant="primary">Small</moul-badge>
+            <moul-badge size="lg" variant="primary">Large</moul-badge>
+          </div>
+        </div>
+
+        <div class="group-block">
+          <div class="group-title">Avatars & Avatar Group</div>
+          <div class="row-items">
+            <moul-avatar name="Phearak Tha" size="sm"></moul-avatar>
+            <moul-avatar name="Phearak Tha" size="md"></moul-avatar>
+            <moul-avatar name="Phearak Tha" size="lg"></moul-avatar>
+            <moul-avatar-group>
+              <moul-avatar name="Alice Walker"></moul-avatar>
+              <moul-avatar name="Bob Chen"></moul-avatar>
+              <moul-avatar name="Carol Danvers"></moul-avatar>
+              <moul-avatar name="David Kim"></moul-avatar>
+            </moul-avatar-group>
+          </div>
+        </div>
+
+        <div class="grid-3">
+          <moul-stat label="Monthly Active Users" value="128,420" trend="+14.2%" trend-direction="up"></moul-stat>
+          <moul-stat label="API Latency (p99)" value="42ms" trend="-8.5%" trend-direction="down"></moul-stat>
+          <moul-stat label="Error Rate" value="0.012%" trend="0.0%" trend-direction="neutral"></moul-stat>
+        </div>
+
+        <div class="grid-2">
+          <moul-card>
+            <span slot="header">Card Container</span>
+            <div slot="body">
+              <moul-typography variant="body">
+                Cards support slot-based composition with clean borders, isolated typography, and dark-mode styling.
+              </moul-typography>
+            </div>
+            <span slot="footer">
+              <moul-button size="sm" variant="primary">Learn More</moul-button>
+            </span>
+          </moul-card>
+
+          <moul-card is-interactive>
+            <span slot="header">Interactive Card</span>
+            <div slot="body">
+              <moul-typography variant="body">
+                Hover over this card to observe subtle elevation lifts and smooth transition physics.
+              </moul-typography>
+            </div>
+            <span slot="footer">
+              <moul-badge variant="success">Active</moul-badge>
+            </span>
+          </moul-card>
+        </div>
+
+        <div class="group-block">
+          <div class="group-title">Table Component</div>
+          <moul-table striped hover bordered>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Service</th>
+                  <th>Region</th>
+                  <th>Uptime</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Edge CDN Gateway</td>
+                  <td>us-east-1</td>
+                  <td>99.99%</td>
+                  <td><moul-badge variant="success" is-pill>Healthy</moul-badge></td>
+                </tr>
+                <tr>
+                  <td>Auth Identity Provider</td>
+                  <td>eu-west-1</td>
+                  <td>99.95%</td>
+                  <td><moul-badge variant="success" is-pill>Healthy</moul-badge></td>
+                </tr>
+                <tr>
+                  <td>Primary Database Cluster</td>
+                  <td>ap-southeast-1</td>
+                  <td>99.89%</td>
+                  <td><moul-badge variant="warning" is-pill>Maintenance</moul-badge></td>
+                </tr>
+              </tbody>
+            </table>
+          </moul-table>
+        </div>
+
+        <div class="grid-2">
+          <div class="group-block">
+            <div class="group-title">Top List</div>
+            <moul-top-list id="sandbox-top-list"></moul-top-list>
+          </div>
+
+          <div class="group-block">
+            <div class="group-title">Tags, Kbd & Typography</div>
+            <moul-tag-group label="Active Filters">
+              <moul-tag value="web-components">Web Components</moul-tag>
+              <moul-tag value="lit">Lit</moul-tag>
+              <moul-tag value="bootstrap">Bootstrap 6</moul-tag>
+            </moul-tag-group>
+            <div class="row-items" style="margin-top: 1rem;">
+              <span>Shortcut:</span>
+              <moul-kbd>⌘</moul-kbd> + <moul-kbd>K</moul-kbd>
+              <span>or</span>
+              <moul-kbd>Ctrl</moul-kbd> + <moul-kbd>P</moul-kbd>
+            </div>
+          </div>
+        </div>
+
+        <moul-separator></moul-separator>
+      </section>
+
+      <!-- SECTION 4: Feedback & Status -->
+      <section class="section-card" id="sec-feedback">
+        <div class="section-header">
+          <h2>4. Feedback & Status</h2>
+          <p>Alerts, progress indicators, percentage metrics, spinners, skeletons, and toasts.</p>
+        </div>
+
+        <div class="group-block">
+          <div class="group-title">Alerts</div>
+          <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <moul-alert variant="info" title="System Notice" is-dismissable>
+              Maintenance window scheduled for tomorrow at 02:00 UTC.
+            </moul-alert>
+            <moul-alert variant="success" title="Deployment Complete">
+              Build succeeded and has been propagated to all edge locations.
+            </moul-alert>
+            <moul-alert variant="warning" title="Memory Pressure Warning">
+              Redis cluster memory usage has surpassed 85%.
+            </moul-alert>
+            <moul-alert variant="danger" title="Connection Dropped">
+              Unable to reach websocket gateway. Reconnecting automatically.
+            </moul-alert>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="group-block">
+            <div class="group-title">Progress & Percentage Bars</div>
+            <moul-progress-bar value="65" label="Database Migration"></moul-progress-bar>
+            <moul-percentage-bar value="85" variant="success"></moul-percentage-bar>
+            <moul-percentage-bar value="45" variant="warning"></moul-percentage-bar>
+          </div>
+
+          <div class="group-block">
+            <div class="group-title">Percentage Circles & Spinners</div>
+            <div class="row-items">
+              <moul-percentage-circle value="75" size="72"></moul-percentage-circle>
+              <moul-percentage-circle value="92" size="72"></moul-percentage-circle>
+              <div class="row-items" style="gap: 1.5rem; margin-left: 1rem;">
+                <moul-spinner size="sm"></moul-spinner>
+                <moul-spinner size="md"></moul-spinner>
+                <moul-spinner size="lg"></moul-spinner>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="group-block">
+            <div class="group-title">Skeleton Placeholders</div>
+            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+              <div class="row-items">
+                <moul-skeleton variant="circle" width="48px" height="48px"></moul-skeleton>
+                <div style="flex: 1; display: flex; flex-direction: column; gap: 0.5rem;">
+                  <moul-skeleton variant="text" width="60%"></moul-skeleton>
+                  <moul-skeleton variant="text" width="40%"></moul-skeleton>
+                </div>
+              </div>
+              <moul-skeleton variant="block" height="80px"></moul-skeleton>
+            </div>
+          </div>
+
+          <div class="group-block">
+            <div class="group-title">Toasts & Notifications</div>
+            <div class="row-items">
+              <moul-button variant="primary" id="btn-toast-success">Trigger Success Toast</moul-button>
+              <moul-button variant="danger" id="btn-toast-error">Trigger Error Toast</moul-button>
+            </div>
+          </div>
+        </div>
+
+        <moul-empty-state title="No Repositories Synced" description="Connect your GitHub organization to automatically sync documentation and design tokens.">
+          <span slot="actions">
+            <moul-button variant="primary">Connect GitHub</moul-button>
+          </span>
+        </moul-empty-state>
+      </section>
+
+      <!-- SECTION 5: Navigation -->
+      <section class="section-card" id="sec-navigation">
+        <div class="section-header">
+          <h2>5. Navigation</h2>
+          <p>Breadcrumbs, tab panels, pagination, listboxes, and sidebar navigation.</p>
+        </div>
+
+        <div class="group-block">
+          <div class="group-title">Breadcrumbs</div>
+          <moul-breadcrumbs>
+            <moul-breadcrumb-item href="#">Organization</moul-breadcrumb-item>
+            <moul-breadcrumb-item href="#">Projects</moul-breadcrumb-item>
+            <moul-breadcrumb-item href="#">Moul UI</moul-breadcrumb-item>
+            <moul-breadcrumb-item is-current>Sandbox</moul-breadcrumb-item>
+          </moul-breadcrumbs>
+        </div>
+
+        <div class="group-block">
+          <div class="group-title">Tabs & Panels</div>
+          <moul-tabs selected-key="overview">
+            <moul-tab value="overview">Overview</moul-tab>
+            <moul-tab value="api">API Specification</moul-tab>
+            <moul-tab value="examples">Examples</moul-tab>
+
+            <moul-tab-panel value="overview">
+              <div style="padding: 1rem 0;">
+                <moul-typography variant="body">Moul UI elements are framework-agnostic native custom elements adopting Bootstrap 6 via CSSStyleSheet.</moul-typography>
+              </div>
+            </moul-tab-panel>
+
+            <moul-tab-panel value="api">
+              <div style="padding: 1rem 0;">
+                <moul-typography variant="body">Events are prefixed with <code>moul-</code> and dispatch standard CustomEvent objects with composed bubbling.</moul-typography>
+              </div>
+            </moul-tab-panel>
+
+            <moul-tab-panel value="examples">
+              <div style="padding: 1rem 0;">
+                <moul-typography variant="body">Browse live code examples in the documentation website or experiment in this sandbox.</moul-typography>
+              </div>
+            </moul-tab-panel>
+          </moul-tabs>
+        </div>
+
+        <div class="grid-2">
+          <div class="group-block">
+            <div class="group-title">ListBox</div>
+            <moul-listbox>
+              <moul-listbox-item value="us-east">US East (N. Virginia)</moul-listbox-item>
+              <moul-listbox-item value="us-west" is-selected>US West (Oregon)</moul-listbox-item>
+              <moul-listbox-item value="eu-central">EU Central (Frankfurt)</moul-listbox-item>
+              <moul-listbox-item value="ap-south">AP South (Mumbai)</moul-listbox-item>
+            </moul-listbox>
+          </div>
+
+          <div class="group-block">
+            <div class="group-title">Pagination</div>
+            <moul-pagination total-pages="10" current-page="3"></moul-pagination>
+          </div>
+        </div>
+
+        <div class="group-block">
+          <div class="group-title">Sidebar Component</div>
+          <div style="height: 280px; border: 1px solid var(--sb-border); border-radius: 8px; overflow: hidden; display: flex;">
+            <moul-sidebar selected-key="dashboard" show-collapse-toggle>
+              <span slot="header" style="font-weight: 700; font-size: 0.9rem; padding: 0.5rem 1rem;">Workspace</span>
+              <moul-sidebar-group label="Core">
+                <moul-sidebar-item value="dashboard">Dashboard</moul-sidebar-item>
+                <moul-sidebar-item value="analytics">Analytics</moul-sidebar-item>
+                <moul-sidebar-item value="deployments">Deployments</moul-sidebar-item>
+              </moul-sidebar-group>
+              <moul-sidebar-divider></moul-sidebar-divider>
+              <moul-sidebar-group label="Settings">
+                <moul-sidebar-item value="tokens">API Tokens</moul-sidebar-item>
+                <moul-sidebar-item value="team">Team Access</moul-sidebar-item>
+              </moul-sidebar-group>
+            </moul-sidebar>
+            <div style="flex: 1; padding: 1.5rem; background: var(--sb-bg);">
+              <moul-typography variant="h4">Main Workspace View</moul-typography>
+              <p style="color: var(--sb-muted); font-size: 0.875rem;">The sidebar supports collapsing, roving tabindex, active item tracking, and slot customization.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 6: Overlays & Dialogs -->
+      <section class="section-card" id="sec-overlays">
+        <div class="section-header">
+          <h2>6. Overlays & Dialogs</h2>
+          <p>Modals, alert dialogs, slide-out drawers, command palette, popovers, and tooltips.</p>
+        </div>
+
+        <div class="group-block">
+          <div class="group-title">Modal, Alert Dialog & Drawer Triggers</div>
+          <div class="row-items">
+            <moul-button variant="primary" id="open-modal-btn">Open Modal</moul-button>
+            <moul-button variant="danger" id="open-alert-dialog-btn">Open Alert Dialog</moul-button>
+            <moul-button variant="secondary" id="open-drawer-btn">Open Slide-out Drawer</moul-button>
+            <moul-button variant="outline-primary" id="open-palette-btn">Open Command Palette (Cmd+K)</moul-button>
+          </div>
+        </div>
+
+        <div class="group-block">
+          <div class="group-title">Popover & Tooltip</div>
+          <div class="row-items">
+            <moul-popover placement="bottom">
+              <moul-button slot="trigger" variant="outline-secondary">Open Popover</moul-button>
+              <div slot="content" style="padding: 1rem; width: 220px; font-size: 0.875rem;">
+                <strong>Popover Content</strong>
+                <p style="margin: 0.5rem 0 0 0; color: var(--sb-muted);">Positioned dynamically via Floating UI with automatic collision detection.</p>
+              </div>
+            </moul-popover>
+
+            <moul-tooltip content="Calculated dynamically with Floating UI" placement="top">
+              <moul-button variant="ghost">Hover for Tooltip</moul-button>
+            </moul-tooltip>
+          </div>
+        </div>
+
+        <!-- Hidden overlay elements controlled via JS -->
+        <moul-modal id="sandbox-modal" size="md">
+          <span slot="header">Confirm Workspace Configuration</span>
+          <div slot="body">
+            <moul-typography variant="body">
+              This modal operates with a built-in focus trap, scroll lock controller, and Escape key dismissal handling.
+            </moul-typography>
+          </div>
+          <span slot="footer">
+            <moul-button variant="ghost" id="close-modal-cancel">Cancel</moul-button>
+            <moul-button variant="primary" id="close-modal-confirm">Confirm Changes</moul-button>
+          </span>
+        </moul-modal>
+
+        <moul-alert-dialog id="sandbox-alert-dialog">
+          <span slot="header">Delete Cluster Instance?</span>
+          <div slot="body">
+            <moul-typography variant="body">
+              This action cannot be undone. All database snapshots and provisioned volumes will be permanently decommissioned.
+            </moul-typography>
+          </div>
+          <span slot="footer">
+            <moul-button variant="ghost" id="close-alert-cancel">Cancel</moul-button>
+            <moul-button variant="danger" id="close-alert-confirm">Delete Instance</moul-button>
+          </span>
+        </moul-alert-dialog>
+
+        <moul-drawer id="sandbox-drawer" placement="end">
+          <span slot="header">Project Configuration Drawer</span>
+          <div slot="body">
+            <moul-typography variant="body">
+              Drawers slide smoothly from viewport edges, locking background scroll and trapping keyboard focus.
+            </moul-typography>
+          </div>
+          <span slot="footer">
+            <moul-button variant="primary" id="close-drawer-btn">Done</moul-button>
+          </span>
+        </moul-drawer>
+
+        <moul-command-palette id="sandbox-palette" placeholder="Search commands or files...">
+          <moul-command-palette-section heading="Actions">
+            <moul-command-palette-item value="new-component">Create New Web Component</moul-command-palette-item>
+            <moul-command-palette-item value="toggle-theme">Toggle Dark/Light Mode</moul-command-palette-item>
+            <moul-command-palette-item value="sync-tokens">Synchronize Design Tokens</moul-command-palette-item>
+          </moul-command-palette-section>
+          <moul-command-palette-section heading="Navigation">
+            <moul-command-palette-item value="goto-docs">Go to Documentation Site</moul-command-palette-item>
+            <moul-command-palette-item value="goto-github">View GitHub Repository</moul-command-palette-item>
+          </moul-command-palette-section>
+        </moul-command-palette>
+      </section>
+
+      <!-- SECTION 7: Date & Calendar -->
+      <section class="section-card" id="sec-date">
+        <div class="section-header">
+          <h2>7. Date & Calendar</h2>
+          <p>Bootstrap Datepicker components wrapped cleanly in Lit shadow roots.</p>
+        </div>
+
+        <div class="grid-2">
+          <div class="group-block">
+            <div class="group-title">Inline Calendar</div>
+            <moul-calendar></moul-calendar>
+          </div>
+
+          <div class="group-block">
+            <div class="group-title">Inline Range Calendar</div>
+            <moul-range-calendar></moul-range-calendar>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <moul-date-picker label="Scheduled Launch Date" placeholder="Select launch date"></moul-date-picker>
+          <moul-date-range-picker label="Billing Period" placeholder="Select billing duration"></moul-date-range-picker>
+        </div>
+      </section>
+
+      <!-- SECTION 8: Systems & Blocks -->
+      <section class="section-card" id="sec-blocks">
+        <div class="section-header">
+          <h2>8. Systems & Blocks</h2>
+          <p>Logs viewer, terminal streams, and specialized developer components.</p>
+        </div>
+
+        <div class="group-block">
+          <div class="group-title">Logs Viewer</div>
+          <moul-logs-viewer id="sandbox-logs-viewer"></moul-logs-viewer>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Global Toast Container -->
+    <moul-toast-container id="sandbox-toast-container"></moul-toast-container>
+
+    <!-- Interactive Logic -->
+    <script type="module">
+      import '/src/index.ts';
+
+      // 1. Theme toggle
+      const themeToggle = document.getElementById('theme-toggle');
+      const themeIcon = document.getElementById('theme-icon');
+      const themeLabel = document.getElementById('theme-label');
+
+      function updateTheme(theme) {
+        document.documentElement.setAttribute('data-bs-theme', theme);
+        localStorage.setItem('moul-sandbox-theme', theme);
+        if (theme === 'dark') {
+          themeIcon.textContent = '☀️';
+          themeLabel.textContent = 'Light Mode';
+        } else {
+          themeIcon.textContent = '🌙';
+          themeLabel.textContent = 'Dark Mode';
+        }
+      }
+
+      const savedTheme = localStorage.getItem('moul-sandbox-theme') || 'dark';
+      updateTheme(savedTheme);
+
+      themeToggle?.addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-bs-theme') || 'dark';
+        updateTheme(current === 'dark' ? 'light' : 'dark');
+      });
+
+      // 2. Brand token controls
+      const hueSlider = document.getElementById('brand-hue');
+      const hueVal = document.getElementById('hue-val');
+      const radiusSelect = document.getElementById('brand-radius');
+      const densitySelect = document.getElementById('brand-density');
+
+      hueSlider?.addEventListener('input', (e) => {
+        const val = e.target.value;
+        hueVal.textContent = `${val}°`;
+        document.documentElement.style.setProperty('--moul-brand-hue', val);
+      });
+
+      radiusSelect?.addEventListener('change', (e) => {
+        document.documentElement.style.setProperty('--moul-brand-radius-factor', e.target.value);
+      });
+
+      densitySelect?.addEventListener('change', (e) => {
+        document.documentElement.style.setProperty('--moul-brand-density-factor', e.target.value);
+      });
+
+      // 3. Overlay interactions
+      const modal = document.getElementById('sandbox-modal');
+      document.getElementById('open-modal-btn')?.addEventListener('click', () => { modal.isOpen = true; });
+      document.getElementById('close-modal-cancel')?.addEventListener('click', () => { modal.isOpen = false; });
+      document.getElementById('close-modal-confirm')?.addEventListener('click', () => { modal.isOpen = false; });
+
+      const alertDialog = document.getElementById('sandbox-alert-dialog');
+      document.getElementById('open-alert-dialog-btn')?.addEventListener('click', () => { alertDialog.isOpen = true; });
+      document.getElementById('close-alert-cancel')?.addEventListener('click', () => { alertDialog.isOpen = false; });
+      document.getElementById('close-alert-confirm')?.addEventListener('click', () => { alertDialog.isOpen = false; });
+
+      const drawer = document.getElementById('sandbox-drawer');
+      document.getElementById('open-drawer-btn')?.addEventListener('click', () => { drawer.isOpen = true; });
+      document.getElementById('close-drawer-btn')?.addEventListener('click', () => { drawer.isOpen = false; });
+
+      const palette = document.getElementById('sandbox-palette');
+      document.getElementById('open-palette-btn')?.addEventListener('click', () => { palette.isOpen = true; });
+
+      // 4. Toast triggers
+      const toastContainer = document.getElementById('sandbox-toast-container');
+      document.getElementById('btn-toast-success')?.addEventListener('click', () => {
+        toastContainer?.addToast({
+          title: 'Deployment Successful',
+          message: 'Workspace configurations were deployed to production.',
+          duration: 4000,
+        });
+      });
+
+      document.getElementById('btn-toast-error')?.addEventListener('click', () => {
+        toastContainer?.addToast({
+          title: 'Database Timeout',
+          message: 'Replica lag exceeded 500ms threshold.',
+          duration: 4000,
+        });
+      });
+
+      // 5. Complex data initialization
+      const topList = document.getElementById('sandbox-top-list');
+      if (topList) {
+        topList.items = [
+          { title: 'Tokyo Datacenter', value: '45.2 TB' },
+          { title: 'Frankfurt Core', value: '38.7 TB' },
+          { title: 'Oregon Edge', value: '29.1 TB' },
+        ];
+      }
+
+      const logsViewer = document.getElementById('sandbox-logs-viewer');
+      if (logsViewer) {
+        logsViewer.logs = [
+          { timestamp: '14:02:12', level: 'info', message: 'Initialized Bootstrap 6 CSSStyleSheet singleton in MoulBase' },
+          { timestamp: '14:02:13', level: 'info', message: 'Registered all 53 custom elements in customElements registry' },
+          { timestamp: '14:02:15', level: 'warn', message: 'Brand hue dynamic CSS variable changed to 250deg' },
+          { timestamp: '14:02:18', level: 'debug', message: 'Floating UI computePosition resolved placement: bottom' },
+          { timestamp: '14:02:22', level: 'info', message: 'Hot Module Replacement (HMR) connection established' },
+        ];
+      }
+    </script>
   </body>
 </html>

@@ -1,0 +1,625 @@
+---
+title: Table
+description: Zero-runtime semantic HTML data table primitives styled with StyleX, tailored for TanStack Table, TanStack Virtual, TanStack Query, TanStack Store, and TanStack Pacer.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro'
+import PropsTable from '@/components/PropsTable.astro'
+
+
+
+
+# Table
+
+The `Table` component is a collection of composable, zero-runtime semantic HTML table primitives styled with **StyleX**. Built to pair seamlessly with headless data engines like **TanStack Table**, it provides accessible table markup, customizable visual variants (`dense`, `striped`, `hoverable`, `stickyHeader`), column pinning, sort indicators, numeric alignment, and built-in loading and empty states.
+
+## Preview
+
+
+
+## Import
+
+```tsx
+
+```
+
+---
+
+## Interactive TanStack Table Showcase
+
+Experience a full-featured data table powered by **TanStack Table**, **TanStack Store** (reactive view preferences), and **TanStack Pacer** (debounced search filtering):
+
+<ComponentPreview>
+  <moul-table striped hover><table class="table"><thead><tr><th>User</th><th>Role</th></tr></thead><tbody><tr><td>Alice</td><td>Admin</td></tr><tr><td>Bob</td><td>Member</td></tr></tbody></table></moul-table>
+</ComponentPreview>
+
+---
+
+## Basic Semantic Usage
+
+Construct a table declaratively with standard semantic primitives without any external state dependencies:
+
+<ComponentPreview>
+  <moul-table aria-label="Cluster Services Table" class="w-full max-w-2xl">
+    <caption>Active production services across clusters</caption>
+    <thead>
+      <tr>
+        <th>Service Name</th>
+        <th>Region</th>
+        <th>Status</th>
+        <th align="numeric">Throughput</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="font-semibold">Auth Gateway</td>
+        <td>us-east-1</td>
+        <td><moul-badge variant="success" dot>Operational</moul-badge></td>
+        <td align="numeric">1.2M req/s</td>
+      </tr>
+      <tr>
+        <td class="font-semibold">PostgreSQL Primary</td>
+        <td>us-west-2</td>
+        <td><moul-badge variant="success" dot>Operational</moul-badge></td>
+        <td align="numeric">450k req/s</td>
+      </tr>
+      <tr>
+        <td class="font-semibold">Edge CDN Gateway</td>
+        <td>global</td>
+        <td><moul-badge variant="warning" dot>Degraded</moul-badge></td>
+        <td align="numeric">3.8M req/s</td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colSpan={3}>Cluster Summary</td>
+        <td align="numeric">3 Nodes Active</td>
+      </tr>
+    </tfoot>
+  </moul-table>
+</ComponentPreview>
+
+```tsx
+
+
+export default function BasicTableExample() {
+  return (
+    <moul-table aria-label="Cluster Services Table">
+      <caption>Active production services across clusters</caption>
+      <thead>
+        <tr>
+          <th>Service Name</th>
+          <th>Region</th>
+          <th>Status</th>
+          <th align="numeric">Throughput</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="font-semibold">Auth Gateway</td>
+          <td>us-east-1</td>
+          <td><moul-badge variant="success" size="sm" dot>Operational</moul-badge></td>
+          <td align="numeric">1.2M req/s</td>
+        </tr>
+        <tr>
+          <td class="font-semibold">PostgreSQL Primary</td>
+          <td>us-west-2</td>
+          <td><moul-badge variant="success" size="sm" dot>Operational</moul-badge></td>
+          <td align="numeric">450k req/s</td>
+        </tr>
+        <tr>
+          <td class="font-semibold">Edge CDN Gateway</td>
+          <td>global</td>
+          <td><moul-badge variant="warning" size="sm" dot>Degraded</moul-badge></td>
+          <td align="numeric">3.8M req/s</td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colSpan={3}>Cluster Summary</td>
+          <td align="numeric">3 Nodes Active</td>
+        </tr>
+      </tfoot>
+    </moul-table>
+  );
+}
+```
+
+---
+
+## Visual Variants
+
+The `Table` component provides built-in visual variants for dense layouts, zebra striping, borders, and sticky headers:
+
+```tsx
+// Compact / Dense layout for data-dense dashboards
+<moul-table dense>...</moul-table>
+
+// Zebra striping for alternating row backgrounds
+<moul-table striped>...</moul-table>
+
+// Sticky pinned thead while scrolling
+<moul-table stickyHeader>...</moul-table>
+
+// Fixed table column layout
+<moul-table layout="fixed">...</moul-table>
+
+// Sticky column pinning (left / right / start / end)
+<th pinned="left" pinOffset={0}>Pinned Service</th>
+<td pinned="left" pinOffset={0}>Auth Service</td>
+```
+
+---
+
+## TanStack Table Integration
+
+Connect `@moul-dev/ui` table primitives with `@tanstack/react-table` for multi-column sorting, row selection, filtering, and pagination:
+
+```tsx
+
+
+
+
+interface Service {
+  id: string;
+  name: string;
+  region: string;
+  status: string;
+  latency: string;
+}
+
+const columnHelper = createColumnHelper<code>&lt;Service&gt;</code>();
+
+export default function TanStackTableExample({ data }: { data: Service[] }) {
+  const [sorting, setSorting] = useState<code>&lt;SortingState&gt;</code>([]);
+  const [rowSelection, setRowSelection] = useState<code>&lt;RowSelectionState&gt;</code>({});
+
+  const columns = useMemo(
+    () => [
+      columnHelper.display({
+        id: 'select',
+        header: ({ table }) => (
+          <moul-checkbox
+            aria-label="Select all"
+            isSelected={table.getIsAllPageRowsSelected()}
+            isIndeterminate={table.getIsSomePageRowsSelected()}
+            onChange={(val) => table.toggleAllPageRowsSelected(val)}
+          />
+        ),
+        cell: ({ row }) => (
+          <moul-checkbox
+            aria-label="Select row"
+            isSelected={row.getIsSelected()}
+            onChange={(val) => row.toggleSelected(val)}
+          />
+        ),
+      }),
+      columnHelper.accessor('name', {
+        header: 'Service Name',
+        cell: (info) => info.getValue(),
+      }),
+      columnHelper.accessor('region', {
+        header: 'Region',
+        cell: (info) => info.getValue(),
+      }),
+      columnHelper.accessor('status', {
+        header: 'Status',
+        cell: (info) => info.getValue(),
+      }),
+      columnHelper.accessor('latency', {
+        header: 'Latency',
+        cell: (info) => info.getValue(),
+      }),
+    ],
+    []
+  );
+
+  const table = useTable({
+    data,
+    columns,
+    state: { sorting, rowSelection },
+    onSortingChange: setSorting,
+    onRowSelectionChange: setRowSelection,
+    getCoreRowModel: createCoreRowModel(),
+    getSortedRowModel: createSortedRowModel(),
+    getFilteredRowModel: createFilteredRowModel(),
+    getPaginationRowModel: createPaginatedRowModel(),
+  });
+
+  return (
+    <moul-table stickyHeader>
+      <thead>
+        {table.getHeaderGroups().map((headerGroup) => (
+          <tr key={headerGroup.id}>
+            {headerGroup.headers.map((header) => (
+              <th
+                key={header.id}
+                sortDirection={header.column.getIsSorted()}
+                onSort={
+                  header.column.getCanSort()
+                    ? header.column.getToggleSortingHandler()
+                    : undefined
+                }
+              >
+                {header.isPlaceholder
+                  ? null
+                  : flexRender(
+                      header.column.columnDef.header,
+                      header.getContext()
+                    )}
+              </th>
+            ))}
+          </tr>
+        ))}
+      </thead>
+      <tbody>
+        {table.getRowModel().rows.map((row) => (
+          <tr key={row.id} selected={row.getIsSelected()}>
+            {row.getVisibleCells().map((cell) => (
+              <td key={cell.id}>
+                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+              </td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </moul-table>
+  );
+}
+```
+
+---
+
+## Large Dataset Virtualization (TanStack Virtual)
+
+Render thousands of table rows with smooth 60fps windowing using `@tanstack/react-virtual`:
+
+<ComponentPreview>
+  <moul-table striped><table class="table"><thead><tr><th>ID</th><th>Status</th></tr></thead><tbody><tr><td>1</td><td>Active</td></tr></tbody></table></moul-table>
+</ComponentPreview>
+
+```tsx
+
+
+
+
+export function VirtualTableExample({ data }: { data: any[] }) {
+  const parentRef = useRef<code>&lt;HTMLDivElement&gt;</code>(null);
+
+  const rowVirtualizer = useVirtualizer({
+    count: data.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 40,
+    overscan: 10,
+  });
+
+  const virtualRows = rowVirtualizer.getVirtualItems();
+  const totalSize = rowVirtualizer.getTotalSize();
+  const paddingTop = virtualRows.length > 0 ? virtualRows[0].start || 0 : 0;
+  const paddingBottom =
+    virtualRows.length > 0
+      ? totalSize - (virtualRows[virtualRows.length - 1].end || 0)
+      : 0;
+
+  return (
+    <div ref={parentRef} style={{ maxHeight: '360px', overflowY: 'auto' }}>
+      <moul-table stickyHeader dense wrapInContainer={false}>
+        <thead>
+          <tr>
+            <th>Hostname</th>
+            <th>IP Address</th>
+            <th align="numeric">CPU</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {paddingTop > 0 && (
+            <tr>
+              <td style={{ height: `${paddingTop}px` }} colSpan={4} />
+            </tr>
+          )}
+          {virtualRows.map((virtualRow) => {
+            const item = data[virtualRow.index];
+            return (
+              <tr key={item.id}>
+                <td>{item.hostname}</td>
+                <td>{item.ip}</td>
+                <td align="numeric">{item.cpu}</td>
+                <td>{item.status}</td>
+              </tr>
+            );
+          })}
+          {paddingBottom > 0 && (
+            <tr>
+              <td style={{ height: `${paddingBottom}px` }} colSpan={4} />
+            </tr>
+          )}
+        </tbody>
+      </moul-table>
+    </div>
+  );
+}
+```
+
+---
+
+## Server-Side Pagination with TanStack Query & Pacer
+
+Handle asynchronous server data fetching with cached background refetches and loading skeletons:
+
+<ComponentPreview>
+  <moul-table bordered><table class="table"><thead><tr><th>Metric</th><th>Value</th></tr></thead><tbody><tr><td>CPU</td><td>28%</td></tr></tbody></table></moul-table>
+</ComponentPreview>
+
+```tsx
+
+
+
+
+
+export function QueryTableExample() {
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState('');
+  const [debouncedSearch] = useDebouncedValue(search, 300);
+
+  const { data, isFetching } = useQuery({
+    queryKey: ['cluster-nodes', page, debouncedSearch],
+    queryFn: () => fetchNodes({ page, search: debouncedSearch }),
+  });
+
+  return (
+    <moul-table dense>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Node Name</th>
+          <th>Cluster</th>
+          <th align="numeric">Health Score</th>
+        </tr>
+      </thead>
+      <tbody>
+        {isFetching && !data ? (
+          <tr><td colspan="100%">Loading...</td></tr>
+        ) : (
+          data?.records.map((node: any) => (
+            <tr key={node.id}>
+              <td>{node.id}</td>
+              <td>{node.name}</td>
+              <td>{node.cluster}</td>
+              <td align="numeric">{node.score}</td>
+            </tr>
+          ))
+        )}
+      </tbody>
+    </moul-table>
+  );
+}
+```
+
+---
+
+## Loading and Empty State Components
+
+Display animated skeleton pulse rows while data is fetching, or render custom empty states when queries return 0 results:
+
+```tsx
+// 1. Loading Skeleton Rows
+<tbody>
+  <tr><td colspan="100%">Loading...</td></tr>
+</tbody>
+
+// 2. Empty State Row
+<tbody>
+  <TableEmpty colSpan={4}>
+    <moul-empty-state
+      title="No cluster nodes found"
+      description="Try clearing active query filters."
+    ></moul-empty-state>
+  </TableEmpty>
+</tbody>
+```
+
+---
+
+## Props Reference
+
+### Table Props
+
+<PropsTable
+  type={{
+    dense: {
+      type: 'boolean',
+      default: 'false',
+      description: 'Enables compact padding for high-density data tables.',
+    },
+    striped: {
+      type: 'boolean',
+      default: 'false',
+      description: 'Applies alternating zebra background colors to even rows.',
+    },
+    hoverable: {
+      type: 'boolean',
+      default: 'true',
+      description: 'Enables subtle hover background highlighting on rows.',
+    },
+    stickyHeader: {
+      type: 'boolean',
+      default: 'false',
+      description: 'Keeps the thead header pinned to the top on vertical scroll.',
+    },
+    bordered: {
+      type: 'boolean',
+      default: 'false',
+      description: 'Draws vertical column borders between cells.',
+    },
+    layout: {
+      type: "'auto' | 'fixed'",
+      default: "'auto'",
+      description: 'Controls the CSS table-layout algorithm.',
+    },
+    wrapInContainer: {
+      type: 'boolean',
+      default: 'true',
+      description: 'Wraps the table element in a responsive horizontal scroll container.',
+    },
+    containerStyle: {
+      type: 'StyleXStyles',
+      description: 'StyleX styles applied to the responsive container wrapper.',
+    },
+    containerClassName: {
+      type: 'string',
+      description: 'CSS class name applied to the responsive container wrapper.',
+    },
+    style: {
+      type: 'StyleXStyles',
+      description: 'StyleX styles applied to the table element.',
+    },
+  }}
+/>
+
+### TableHeader Props
+
+<PropsTable
+  type={{
+    sticky: {
+      type: 'boolean',
+      description: 'Overrides table-level stickyHeader setting for this thead.',
+    },
+    style: {
+      type: 'StyleXStyles',
+      description: 'StyleX styles applied to the thead element.',
+    },
+  }}
+/>
+
+### TableRow Props
+
+<PropsTable
+  type={{
+    selected: {
+      type: 'boolean',
+      default: 'false',
+      description: 'Applies primary selected highlight background and aria-selected="true".',
+    },
+    hoverable: {
+      type: 'boolean',
+      description: 'Overrides table-level hoverable setting for this specific row.',
+    },
+    interactive: {
+      type: 'boolean',
+      default: 'false',
+      description: 'Sets cursor: pointer for clickable rows.',
+    },
+    style: {
+      type: 'StyleXStyles',
+      description: 'StyleX styles applied to the tr element.',
+    },
+  }}
+/>
+
+### TableHead Props
+
+<PropsTable
+  type={{
+    align: {
+      type: "'left' | 'center' | 'right' | 'numeric'",
+      default: "'left'",
+      description: 'Header text alignment. "numeric" aligns right and enables tabular figures.',
+    },
+    sortDirection: {
+      type: "'asc' | 'desc' | 'ascending' | 'descending' | false | null",
+      description: 'Sort direction indicator state (displays directional chevron icon).',
+    },
+    onSort: {
+      type: '() => void',
+      description: 'Callback fired when sortable column header is clicked or activated via Enter/Space.',
+    },
+    showSortIndicator: {
+      type: 'boolean',
+      default: 'true',
+      description: 'Whether to render the directional sorting indicator icon.',
+    },
+    pinned: {
+      type: "'left' | 'right' | 'start' | 'end'",
+      description: 'Pins the column header to the left (start) or right (end) edge on horizontal scroll.',
+    },
+    pinOffset: {
+      type: 'number | string',
+      description: 'Sticky pinning offset (e.g. 0, "120px"). Uses CSS logical properties.',
+    },
+    style: {
+      type: 'StyleXStyles',
+      description: 'StyleX styles applied to the th element.',
+    },
+  }}
+/>
+
+### TableCell Props
+
+<PropsTable
+  type={{
+    align: {
+      type: "'left' | 'center' | 'right' | 'numeric'",
+      default: "'left'",
+      description: 'Cell text alignment. "numeric" aligns right and enables tabular numbers.',
+    },
+    tabular: {
+      type: 'boolean',
+      default: 'false',
+      description: 'Forces font-variant-numeric: tabular-nums for consistent monospace number alignment.',
+    },
+    pinned: {
+      type: "'left' | 'right' | 'start' | 'end'",
+      description: 'Pins the cell to the left (start) or right (end) edge on horizontal scroll.',
+    },
+    pinOffset: {
+      type: 'number | string',
+      description: 'Sticky pinning offset (e.g. 0, "120px"). Uses CSS logical properties.',
+    },
+    style: {
+      type: 'StyleXStyles',
+      description: 'StyleX styles applied to the td element.',
+    },
+  }}
+/>
+
+### TableEmpty Props
+
+<PropsTable
+  type={{
+    colSpan: {
+      type: 'number',
+      default: '1',
+      description: 'Number of columns the empty state cell should span.',
+    },
+    cellStyle: {
+      type: 'StyleXStyles',
+      description: 'StyleX styles applied to the inner td cell.',
+    },
+    style: {
+      type: 'StyleXStyles',
+      description: 'StyleX styles applied to the outer tr element.',
+    },
+  }}
+/>
+
+### TableSkeleton Props
+
+<PropsTable
+  type={{
+    rows: {
+      type: 'number',
+      default: '5',
+      description: 'Number of skeleton placeholder rows to render.',
+    },
+    columns: {
+      type: 'number',
+      default: '4',
+      description: 'Number of skeleton placeholder columns per row.',
+    },
+    style: {
+      type: 'StyleXStyles',
+      description: 'StyleX styles applied to each skeleton tr element.',
+    },
+  }}
+/>

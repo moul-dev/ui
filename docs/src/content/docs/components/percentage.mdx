@@ -1,0 +1,43 @@
+---
+title: Percentage
+description: Visual ratio indicators in circular and linear bar formats.
+---
+
+import ComponentPreview from '../../../components/ComponentPreview.astro'
+import PropsTable from '../../../components/PropsTable.astro'
+
+## Default
+
+<ComponentPreview>
+  <div class="d-flex flex-column gap-3">
+    <moul-percentage-bar value="68" variant="primary"></moul-percentage-bar>
+    <moul-percentage-circle value="75" size="md"></moul-percentage-circle>
+  </div>
+</ComponentPreview>
+
+```html
+<moul-percentage-bar value="68" variant="primary"></moul-percentage-bar>
+<moul-percentage-circle value="75" size="md"></moul-percentage-circle>
+```
+
+## Props
+
+<PropsTable
+  type={{
+    value: {
+      type: 'number | string',
+      default: '0',
+      description: 'Completion percentage value (0-100).',
+    },
+    variant: {
+      type: "'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'info'",
+      default: "'primary'",
+      description: 'Color theme variant.',
+    },
+    size: {
+      type: "'sm' | 'md' | 'lg'",
+      default: "'md'",
+      description: 'Size of percentage circle indicator.',
+    },
+  }}
+/>

@@ -1,11 +1,12 @@
-import * as stylex from '@stylexjs/stylex'
-import { tokens } from '../../tokens/tokens.stylex'
+import { css } from 'lit'
 
-export const styles = stylex.create({
-  base: {
-    color: tokens.colorFgSubtle,
-    fontSize: tokens.fontSizeSm,
-    lineHeight: tokens.lineHeightSm,
-    marginBlockEnd: 0,
-  },
-})
+export const descriptionStyles = css`
+  :host {
+    display: block;
+    margin-top: 0.25rem;
+  }
+  .form-text {
+    font-size: 0.875em;
+    color: var(--bs-secondary-color, #6c757d);
+  }
+`

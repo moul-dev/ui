@@ -1,12 +1,12 @@
 {
   "name": "@moul-dev/ui",
-  "version": "2026.9.28",
-  "description": "Accessible, zero-runtime React component library built on React Aria and StyleX",
+  "version": "2026.10.1",
+  "description": "Accessible, zero-runtime Web Component library built with Lit and Bootstrap 6 Shadow DOM",
   "license": "MIT",
   "type": "module",
-  "main": "./dist/moul-ui.js",
-  "module": "./dist/moul-ui.js",
-  "types": "./dist/src/index.d.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "files": [
     "dist",
     "README.md",
@@ -25,80 +25,241 @@
     "url": "https://github.com/moul-dev/ui/issues"
   },
   "keywords": [
-    "react",
-    "react-aria",
-    "stylex",
+    "web-components",
+    "lit",
+    "bootstrap",
+    "bootstrap-6",
+    "shadow-dom",
     "components",
     "accessible",
     "design-system",
-    "zero-runtime",
     "ui"
   ],
   "exports": {
     ".": {
-      "types": "./dist/src/index.d.ts",
-      "import": "./dist/moul-ui.js"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
     },
-    "./tokens": {
-      "types": "./dist/src/tokens/tokens.stylex.d.ts",
-      "import": "./dist/tokens.stylex.js"
+    "./button": {
+      "types": "./dist/components/Button/index.d.ts",
+      "import": "./dist/components/Button/index.js"
     },
-    "./tokens.stylex": {
-      "types": "./dist/src/tokens/tokens.stylex.d.ts",
-      "import": "./dist/tokens.stylex.js"
+    "./alert": {
+      "types": "./dist/components/Alert/index.d.ts",
+      "import": "./dist/components/Alert/index.js"
     },
-    "./theme.css": {
-      "style": "./dist/theme.css",
-      "default": "./dist/theme.css"
+    "./badge": {
+      "types": "./dist/components/Badge/index.d.ts",
+      "import": "./dist/components/Badge/index.js"
     },
-    "./style": {
-      "style": "./dist/assets/stylex.css",
-      "default": "./dist/assets/stylex.css"
+    "./avatar": {
+      "types": "./dist/components/Avatar/index.d.ts",
+      "import": "./dist/components/Avatar/index.js"
+    },
+    "./breadcrumbs": {
+      "types": "./dist/components/Breadcrumbs/index.d.ts",
+      "import": "./dist/components/Breadcrumbs/index.js"
+    },
+    "./card": {
+      "types": "./dist/components/Card/index.d.ts",
+      "import": "./dist/components/Card/index.js"
+    },
+    "./modal": {
+      "types": "./dist/components/Modal/index.d.ts",
+      "import": "./dist/components/Modal/index.js"
+    },
+    "./drawer": {
+      "types": "./dist/components/Drawer/index.d.ts",
+      "import": "./dist/components/Drawer/index.js"
+    },
+    "./alert-dialog": {
+      "types": "./dist/components/AlertDialog/index.d.ts",
+      "import": "./dist/components/AlertDialog/index.js"
+    },
+    "./popover": {
+      "types": "./dist/components/Popover/index.d.ts",
+      "import": "./dist/components/Popover/index.js"
+    },
+    "./tooltip": {
+      "types": "./dist/components/Tooltip/index.d.ts",
+      "import": "./dist/components/Tooltip/index.js"
+    },
+    "./toast": {
+      "types": "./dist/components/Toast/index.d.ts",
+      "import": "./dist/components/Toast/index.js"
+    },
+    "./text-field": {
+      "types": "./dist/components/TextField/index.d.ts",
+      "import": "./dist/components/TextField/index.js"
+    },
+    "./text-area": {
+      "types": "./dist/components/TextArea/index.d.ts",
+      "import": "./dist/components/TextArea/index.js"
+    },
+    "./number-field": {
+      "types": "./dist/components/NumberField/index.d.ts",
+      "import": "./dist/components/NumberField/index.js"
+    },
+    "./search-field": {
+      "types": "./dist/components/SearchField/index.d.ts",
+      "import": "./dist/components/SearchField/index.js"
+    },
+    "./checkbox": {
+      "types": "./dist/components/Checkbox/index.d.ts",
+      "import": "./dist/components/Checkbox/index.js"
+    },
+    "./checkbox-group": {
+      "types": "./dist/components/CheckboxGroup/index.d.ts",
+      "import": "./dist/components/CheckboxGroup/index.js"
+    },
+    "./radio-group": {
+      "types": "./dist/components/RadioGroup/index.d.ts",
+      "import": "./dist/components/RadioGroup/index.js"
+    },
+    "./switch": {
+      "types": "./dist/components/Switch/index.d.ts",
+      "import": "./dist/components/Switch/index.js"
+    },
+    "./slider": {
+      "types": "./dist/components/Slider/index.d.ts",
+      "import": "./dist/components/Slider/index.js"
+    },
+    "./toggle-button": {
+      "types": "./dist/components/ToggleButton/index.d.ts",
+      "import": "./dist/components/ToggleButton/index.js"
+    },
+    "./select": {
+      "types": "./dist/components/Select/index.d.ts",
+      "import": "./dist/components/Select/index.js"
+    },
+    "./combobox": {
+      "types": "./dist/components/ComboBox/index.d.ts",
+      "import": "./dist/components/ComboBox/index.js"
+    },
+    "./autocomplete": {
+      "types": "./dist/components/Autocomplete/index.d.ts",
+      "import": "./dist/components/Autocomplete/index.js"
+    },
+    "./listbox": {
+      "types": "./dist/components/ListBox/index.d.ts",
+      "import": "./dist/components/ListBox/index.js"
+    },
+    "./tag-group": {
+      "types": "./dist/components/TagGroup/index.d.ts",
+      "import": "./dist/components/TagGroup/index.js"
+    },
+    "./tabs": {
+      "types": "./dist/components/Tabs/index.d.ts",
+      "import": "./dist/components/Tabs/index.js"
+    },
+    "./pagination": {
+      "types": "./dist/components/Pagination/index.d.ts",
+      "import": "./dist/components/Pagination/index.js"
+    },
+    "./sidebar": {
+      "types": "./dist/components/Sidebar/index.d.ts",
+      "import": "./dist/components/Sidebar/index.js"
+    },
+    "./form": {
+      "types": "./dist/components/Form/index.d.ts",
+      "import": "./dist/components/Form/index.js"
+    },
+    "./input-otp": {
+      "types": "./dist/components/InputOTP/index.d.ts",
+      "import": "./dist/components/InputOTP/index.js"
+    },
+    "./date-picker": {
+      "types": "./dist/components/DatePicker/index.d.ts",
+      "import": "./dist/components/DatePicker/index.js"
+    },
+    "./calendar": {
+      "types": "./dist/components/Calendar/index.d.ts",
+      "import": "./dist/components/Calendar/index.js"
+    },
+    "./command-palette": {
+      "types": "./dist/components/CommandPalette/index.d.ts",
+      "import": "./dist/components/CommandPalette/index.js"
+    },
+    "./progress-bar": {
+      "types": "./dist/components/ProgressBar/index.d.ts",
+      "import": "./dist/components/ProgressBar/index.js"
+    },
+    "./skeleton": {
+      "types": "./dist/components/Skeleton/index.d.ts",
+      "import": "./dist/components/Skeleton/index.js"
+    },
+    "./spinner": {
+      "types": "./dist/components/Spinner/index.d.ts",
+      "import": "./dist/components/Spinner/index.js"
+    },
+    "./separator": {
+      "types": "./dist/components/Separator/index.d.ts",
+      "import": "./dist/components/Separator/index.js"
+    },
+    "./kbd": {
+      "types": "./dist/components/Kbd/index.d.ts",
+      "import": "./dist/components/Kbd/index.js"
+    },
+    "./empty-state": {
+      "types": "./dist/components/EmptyState/index.d.ts",
+      "import": "./dist/components/EmptyState/index.js"
+    },
+    "./stat": {
+      "types": "./dist/components/Stat/index.d.ts",
+      "import": "./dist/components/Stat/index.js"
+    },
+    "./top-list": {
+      "types": "./dist/components/TopList/index.d.ts",
+      "import": "./dist/components/TopList/index.js"
+    },
+    "./logs-viewer": {
+      "types": "./dist/components/LogsViewer/index.d.ts",
+      "import": "./dist/components/LogsViewer/index.js"
+    },
+    "./typography": {
+      "types": "./dist/components/Typography/index.d.ts",
+      "import": "./dist/components/Typography/index.js"
+    },
+    "./button-group": {
+      "types": "./dist/components/ButtonGroup/index.d.ts",
+      "import": "./dist/components/ButtonGroup/index.js"
+    },
+    "./percentage": {
+      "types": "./dist/components/Percentage/index.d.ts",
+      "import": "./dist/components/Percentage/index.js"
+    },
+    "./link": {
+      "types": "./dist/components/Link/index.d.ts",
+      "import": "./dist/components/Link/index.js"
+    },
+    "./tokens.css": {
+      "style": "./dist/assets/tokens.css",
+      "default": "./dist/assets/tokens.css"
     },
     "./style.css": {
-      "style": "./dist/assets/stylex.css",
-      "default": "./dist/assets/stylex.css"
+      "style": "./dist/assets/tokens.css",
+      "default": "./dist/assets/tokens.css"
     }
   },
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "vite build",
     "build:watch": "vite build --watch",
     "lint": "biome check",
     "format": "biome format --write",
-    "gen:component": "bun ../scripts/gen-component.ts",
     "preview": "vite preview",
     "test": "vitest run"
   },
-  "peerDependencies": {
-    "@stylexjs/stylex": "^0.19.0",
-    "react": "^18.0.0 || ^19.0.0",
-    "react-dom": "^18.0.0 || ^19.0.0"
-  },
   "dependencies": {
-    "@phosphor-icons/react": "^2.1.10",
-    "@stylexjs/stylex": "^0.19.0",
-    "input-otp": "^1.4.2",
-    "motion": "^13.4.1",
-    "react-aria": "^3.50.0",
-    "react-aria-components": "^1.19.0",
-    "recharts": "^3.9.2"
+    "@floating-ui/dom": "^1.6.13",
+    "bootstrap": "6.0.0-alpha.1",
+    "lit": "^3.3.3"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.0",
-    "@stylexjs/unplugin": "^0.19.0",
-    "@testing-library/jest-dom": "^6.6.3",
-    "@testing-library/react": "^16.1.0",
     "@types/node": "^24.12.3",
-    "@types/react": "^19.2.14",
-    "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react": "^6.0.1",
-    "fast-check": "^3.23.2",
     "glob": "^11.0.0",
     "jsdom": "^25.0.1",
-    "lightningcss": "^1.33.0",
-    "react": "^19.2.6",
-    "react-dom": "^19.2.6",
     "typescript": "~6.0.2",
     "vite": "^8.0.12",
     "vite-plugin-dts": "^5.0.2",

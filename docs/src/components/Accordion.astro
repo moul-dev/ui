@@ -1,0 +1,31 @@
+---
+interface Props {
+  title: string
+}
+const { title } = Astro.props
+---
+
+<details class="docs-accordion">
+  <summary>{title}</summary>
+  <div class="accordion-content">
+    <slot />
+  </div>
+</details>
+
+<style>
+  .docs-accordion {
+    margin: 0.75rem 0;
+    border: 1px solid var(--sl-color-gray-5, #343a40);
+    border-radius: 0.375rem;
+    padding: 0.5rem 1rem;
+    background-color: var(--sl-color-gray-6, #212529);
+  }
+  summary {
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--sl-color-white, #fff);
+  }
+  .accordion-content {
+    margin-top: 0.75rem;
+  }
+</style>

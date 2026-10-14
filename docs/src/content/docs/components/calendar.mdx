@@ -1,0 +1,77 @@
+---
+title: Calendar
+description: Accessible monthly calendar views for single date and date range selection.
+---
+
+
+
+# Calendar
+
+Calendars display a monthly grid view with accessible month navigation, keyboard date stepping, and single or range date selection powered by React Aria and StyleX.
+
+## Preview
+
+
+
+## Installation
+
+```tsx
+
+```
+
+## Basic Calendar
+
+```tsx
+<moul-calendar aria-label="Appointment date" ></moul-calendar>
+```
+
+## Range Calendar
+
+Use `RangeCalendar` when selecting a range between a start date and an end date:
+
+```tsx
+<moul-range-calendar aria-label="Trip booking dates" ></moul-range-calendar>
+```
+
+## Controlled State
+
+You can control the calendar's value using internationalized dates:
+
+```tsx
+
+
+
+export function Example() {
+  const [selectedDate, setSelectedDate] = useState(null);
+
+  return (
+    <div class="flex flex-col gap-3 items-center">
+      <moul-calendar
+        value={selectedDate}
+        onChange={setSelectedDate}
+        aria-label="Event date"
+      ></moul-calendar>
+      {selectedDate && (
+        <p class="text-xs text-neutral-500">
+          Selected: {selectedDate.toString()}
+        </p>
+      )}
+    </div>
+  );
+}
+```
+
+## Props
+
+### Calendar
+
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `value` | `DateValue` | — | Controlled date value |
+| `defaultValue` | `DateValue` | — | Default date value |
+| `onChange` | `(value: DateValue) => void` | — | Handler called when date selection changes |
+| `minValue` | `DateValue` | — | Minimum selectable date |
+| `maxValue` | `DateValue` | — | Maximum selectable date |
+| `isDisabled` | `boolean` | `false` | Whether the calendar is disabled |
+| `isReadOnly` | `boolean` | `false` | Whether the calendar is read-only |
+| `isDateUnavailable` | `(date: DateValue) => boolean` | — | Callback to mark specific dates as unavailable |

@@ -1,0 +1,115 @@
+---
+title: InputOTP
+description: An accessible, customizable, and composable One-Time Password input component.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro'
+
+
+
+
+<div style="display: none;">
+  OTP, InputOTP, One-Time Passcode, Verification Code, Caret, Separator, input-otp
+</div>
+
+# InputOTP
+
+## Preview
+
+
+
+The `InputOTP` component is a flexible, highly accessible one-time password input component. It is built on top of the headless `input-otp` library by `@guilhermerodz` and styled using StyleX.
+
+## Import
+
+```tsx
+
+```
+
+## Features
+
+### Basic Layout (6-digit)
+A standard 6-digit passcode layout utilizing a separator in the middle.
+
+<ComponentPreview>
+  <moul-input-otp length="6"></moul-input-otp>
+</ComponentPreview>
+
+```tsx
+
+
+
+export default function Example() {
+  const [value, setValue] = useState('');
+
+  return (
+    <moul-input-otp maxLength={6} value={value} onChange={setValue}>
+      <div class="otp-group">
+        <moul-input-otp-slot index={0} ></moul-input-otp-slot>
+        <moul-input-otp-slot index={1} ></moul-input-otp-slot>
+        <moul-input-otp-slot index={2} ></moul-input-otp-slot>
+      </div>
+      <moul-input-otp-separator ></moul-input-otp-separator>
+      <div class="otp-group">
+        <moul-input-otp-slot index={3} ></moul-input-otp-slot>
+        <moul-input-otp-slot index={4} ></moul-input-otp-slot>
+        <moul-input-otp-slot index={5} ></moul-input-otp-slot>
+      </div>
+    </moul-input-otp>
+  );
+}
+```
+
+### Label & Helper Text
+The component supports standard form control label and description props.
+
+```tsx
+<moul-input-otp
+  maxLength={4}
+  label="Security Code"
+  description="Enter the 4-digit code sent to your email."
+>
+  <div class="otp-group">
+    <moul-input-otp-slot index={0} ></moul-input-otp-slot>
+    <moul-input-otp-slot index={1} ></moul-input-otp-slot>
+    <moul-input-otp-slot index={2} ></moul-input-otp-slot>
+    <moul-input-otp-slot index={3} ></moul-input-otp-slot>
+  </div>
+</moul-input-otp>
+```
+
+### Validation State
+Marking the input as invalid highlights the slot borders and renders a custom error message.
+
+```tsx
+<moul-input-otp
+  maxLength={4}
+  label="Verification Code"
+  is-invalid={true}
+  error-message="The verification code you entered is incorrect."
+>
+  <div class="otp-group">
+    <moul-input-otp-slot index={0} ></moul-input-otp-slot>
+    <moul-input-otp-slot index={1} ></moul-input-otp-slot>
+    <moul-input-otp-slot index={2} ></moul-input-otp-slot>
+    <moul-input-otp-slot index={3} ></moul-input-otp-slot>
+  </div>
+</moul-input-otp>
+```
+
+### Custom Separator
+You can provide any React node inside `InputOTPSeparator` to customize the visual divider.
+
+```tsx
+<moul-input-otp maxLength={4}>
+  <div class="otp-group">
+    <moul-input-otp-slot index={0} ></moul-input-otp-slot>
+    <moul-input-otp-slot index={1} ></moul-input-otp-slot>
+  </div>
+  <moul-input-otp-separator>-</moul-input-otp-separator>
+  <div class="otp-group">
+    <moul-input-otp-slot index={2} ></moul-input-otp-slot>
+    <moul-input-otp-slot index={3} ></moul-input-otp-slot>
+  </div>
+</moul-input-otp>
+```

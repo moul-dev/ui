@@ -1,93 +1,80 @@
-import * as stylex from '@stylexjs/stylex'
-import { tokens } from '../../tokens/tokens.stylex'
+import { css } from 'lit'
 
-export const styles = stylex.create({
-  base: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: tokens.radiusFull,
-    fontWeight: tokens.fontWeightMedium,
-    whiteSpace: 'nowrap',
-  },
-  sm: {
-    paddingBlock: 0,
-    paddingInline: tokens.spacing1,
-    fontSize: tokens.fontSizeXs,
-    lineHeight: tokens.lineHeightXs,
-  },
-  md: {
-    paddingBlock: tokens.spacing1,
-    paddingInline: tokens.spacing2,
-    fontSize: tokens.fontSizeXs,
-    lineHeight: tokens.lineHeightXs,
-  },
-  lg: {
-    paddingBlock: tokens.spacing1,
-    paddingInline: tokens.spacing3,
-    fontSize: tokens.fontSizeSm,
-    lineHeight: tokens.lineHeightSm,
-  },
-  neutral: {
-    backgroundColor: tokens.colorNeutral200,
-    color: tokens.colorNeutral700,
-  },
-  primary: {
-    backgroundColor: tokens.colorPrimary100,
-    color: tokens.colorPrimary700,
-  },
-  success: {
-    backgroundColor: tokens.colorSuccess300,
-    color: tokens.colorSuccess700,
-  },
-  warning: {
-    backgroundColor: tokens.colorWarning300,
-    color: tokens.colorWarning700,
-  },
-  error: {
-    backgroundColor: tokens.colorError300,
-    color: tokens.colorError700,
-  },
-  dot: {
-    backgroundColor: tokens.colorNeutral100,
-    color: tokens.colorNeutral700,
-    borderWidth: '1px',
-    borderStyle: 'solid',
-    borderColor: tokens.colorBorderSubtle,
-  },
-  hasDot: {
-    gap: tokens.spacing1,
-  },
-  dotIndicator: {
-    display: 'inline-block',
-    borderRadius: tokens.radiusFull,
-    flexShrink: 0,
-  },
-  dot_sm: {
-    width: tokens.spacing1,
-    height: tokens.spacing1,
-  },
-  dot_md: {
-    width: tokens.spacing2,
-    height: tokens.spacing2,
-  },
-  dot_lg: {
-    width: tokens.spacing2,
-    height: tokens.spacing2,
-  },
-  dot_neutral: {
-    backgroundColor: tokens.colorNeutral600,
-  },
-  dot_primary: {
-    backgroundColor: tokens.colorPrimary500,
-  },
-  dot_success: {
-    backgroundColor: tokens.colorSuccess500,
-  },
-  dot_warning: {
-    backgroundColor: tokens.colorWarning500,
-  },
-  dot_error: {
-    backgroundColor: tokens.colorError500,
-  },
-})
+export const badgeStyles = css`
+  :host {
+    display: inline-block;
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    font-weight: 600;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: var(--bs-border-radius, 0.375rem);
+    padding: 0.35em 0.65em;
+    font-size: 0.75em;
+  }
+  .badge.sm {
+    font-size: 0.65em;
+    padding: 0.25em 0.5em;
+  }
+  .badge.md {
+    font-size: 0.75em;
+    padding: 0.35em 0.65em;
+  }
+  .badge.lg {
+    font-size: 0.875em;
+    padding: 0.45em 0.8em;
+  }
+  .rounded-pill {
+    border-radius: var(--bs-border-radius-pill, 50rem);
+  }
+  .badge-dot {
+    display: inline-block;
+    width: 0.45em;
+    height: 0.45em;
+    border-radius: 50%;
+    background-color: currentColor;
+    opacity: 0.85;
+  }
+  .badge.theme-primary, .badge.text-bg-primary {
+    --bs-badge-bg: var(--bs-primary-bg, var(--bs-primary-base, #0d6efd));
+    --bs-badge-color: var(--bs-primary-contrast, #fff);
+    background-color: var(--bs-badge-bg);
+    color: var(--bs-badge-color);
+  }
+  .badge.theme-secondary, .badge.text-bg-secondary {
+    --bs-badge-bg: var(--bs-secondary-bg, #6c757d);
+    --bs-badge-color: var(--bs-secondary-contrast, #fff);
+    background-color: var(--bs-badge-bg);
+    color: var(--bs-badge-color);
+  }
+  .badge.theme-success, .badge.text-bg-success {
+    --bs-badge-bg: var(--bs-success-bg, #198754);
+    --bs-badge-color: var(--bs-success-contrast, #fff);
+    background-color: var(--bs-badge-bg);
+    color: var(--bs-badge-color);
+  }
+  .badge.theme-danger, .badge.text-bg-danger {
+    --bs-badge-bg: var(--bs-danger-bg, #dc3545);
+    --bs-badge-color: var(--bs-danger-contrast, #fff);
+    background-color: var(--bs-badge-bg);
+    color: var(--bs-badge-color);
+  }
+  .badge.theme-warning, .badge.text-bg-warning {
+    --bs-badge-bg: var(--bs-warning-bg, #ffc107);
+    --bs-badge-color: var(--bs-warning-contrast, #000);
+    background-color: var(--bs-badge-bg);
+    color: var(--bs-badge-color);
+  }
+  .badge.theme-info, .badge.text-bg-info {
+    --bs-badge-bg: var(--bs-info-bg, #0dcaf0);
+    --bs-badge-color: var(--bs-info-contrast, #000);
+    background-color: var(--bs-badge-bg);
+    color: var(--bs-badge-color);
+  }
+`

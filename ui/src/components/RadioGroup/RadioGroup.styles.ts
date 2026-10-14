@@ -1,77 +1,58 @@
-import * as stylex from '@stylexjs/stylex'
-import { tokens } from '../../tokens/tokens.stylex'
+import { css } from 'lit'
 
-export const styles = stylex.create({
-  groupBase: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: tokens.spacing1,
-  },
-  group: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: tokens.spacing2,
-  },
-  radioBase: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: tokens.spacing2,
-    cursor: 'pointer',
-    fontSize: tokens.fontSizeMd,
-    lineHeight: tokens.lineHeightMd,
-    color: tokens.colorFg,
-    userSelect: 'none',
-  },
-  radioDisabled: {
-    opacity: 0.4,
-    cursor: 'not-allowed',
-  },
-  radioReadOnly: {
-    cursor: 'default',
-  },
-  indicator: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: tokens.spacing4,
-    height: tokens.spacing4,
-    flexShrink: 0,
-    borderRadius: tokens.radiusFull,
-    borderWidth: '1px',
-    borderStyle: 'solid',
-    borderColor: tokens.colorBorder,
-    backgroundColor: tokens.colorBg,
-    transitionProperty: 'background-color, border-color, box-shadow',
-    transitionDuration: '0.15s',
-    transitionTimingFunction: 'ease-in-out',
-  },
-  indicatorHover: {
-    borderColor: tokens.colorNeutral400,
-  },
-  indicatorChecked: {
-    backgroundColor: tokens.colorPrimary500,
-    borderColor: tokens.colorPrimary500,
-  },
-  indicatorFocusVisible: {
-    outlineStyle: 'solid',
-    outlineWidth: '2px',
-    outlineOffset: '2px',
-    outlineColor: tokens.colorBorderFocus,
-  },
-  indicatorInvalid: {
-    borderColor: tokens.colorError500,
-  },
-  dot: {
-    width: tokens.spacing2,
-    height: tokens.spacing2,
-    borderRadius: tokens.radiusFull,
-    backgroundColor: tokens.colorFgOnPrimary,
-    transitionProperty: 'transform',
-    transitionDuration: '0.15s',
-    transitionTimingFunction: 'ease-in-out',
-    transform: 'scale(1)',
-  },
-  label: {
-    paddingInlineStart: tokens.spacing1,
-  },
-})
+export const radioGroupStyles = css`
+  :host {
+    display: block;
+  }
+  .radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  :host([orientation="horizontal"]) .radio-group {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+`
+
+export const radioStyles = css`
+  :host {
+    display: inline-block;
+  }
+  .form-check {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 1.5rem;
+    margin-bottom: 0.125rem;
+    cursor: pointer;
+  }
+  .form-check-input {
+    width: 1.15em;
+    height: 1.15em;
+    margin-top: 0;
+    vertical-align: top;
+    background-color: var(--bs-body-bg, #fff);
+    border: var(--bs-border-width, 1px) solid var(--bs-border-color, rgba(0, 0, 0, 0.25));
+    border-radius: 50%;
+    appearance: none;
+    cursor: pointer;
+    transition: background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+  }
+  .form-check-input:checked {
+    background-color: var(--bs-primary, #0d6efd);
+    border-color: var(--bs-primary, #0d6efd);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='2' fill='%23fff'/%3e%3c/svg%3e");
+  }
+  .form-check-input:disabled {
+    pointer-events: none;
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .form-check-label {
+    user-select: none;
+    font-size: 0.9375rem;
+    color: var(--bs-body-color, #212529);
+  }
+`

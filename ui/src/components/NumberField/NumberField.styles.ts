@@ -1,164 +1,64 @@
-import * as stylex from '@stylexjs/stylex'
-import { tokens } from '../../tokens/tokens.stylex'
+import { css } from 'lit'
 
-export const styles = stylex.create({
-  container: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: tokens.spacing1,
-    width: '100%',
-  },
-  group: {
-    display: 'flex',
-    alignItems: 'stretch',
-    borderWidth: '1px',
-    borderStyle: 'solid',
-    borderColor: tokens.colorBorder,
-    backgroundColor: tokens.colorBg,
-    boxShadow: tokens.shadowSm,
-    overflow: 'hidden',
-    boxSizing: 'border-box',
-    outline: 'none',
-    transitionProperty: 'border-color, box-shadow',
-    transitionDuration: '0.15s',
-    transitionTimingFunction: 'ease-in-out',
-    '@media (prefers-reduced-motion: reduce)': {
-      transitionProperty: 'none',
-    },
-  },
-  groupSm: {
-    height: `calc(${tokens.spacing1} * 2 + ${tokens.lineHeightXs})`,
-    borderRadius: tokens.radiusSm,
-  },
-  groupMd: {
-    height: `calc(${tokens.spacing2} * 2 + ${tokens.lineHeightSm})`,
-    borderRadius: tokens.radiusMd,
-  },
-  groupLg: {
-    height: `calc(${tokens.spacing2} * 2 + ${tokens.lineHeightMd})`,
-    borderRadius: tokens.radiusMd,
-  },
-  primary: {
-    backgroundColor: tokens.colorBg,
-    borderColor: tokens.colorBorder,
-  },
-  secondary: {
-    backgroundColor: tokens.colorBgSubtle,
-    borderColor: tokens.colorBorderSubtle,
-  },
-  groupHover: {
-    borderColor: tokens.colorNeutral400,
-  },
-  groupFocused: {
-    borderColor: {
-      default: tokens.colorBorderFocus,
-      ':hover': tokens.colorBorderFocus,
-    },
-    boxShadow: `0 0 0 1px ${tokens.colorBorderFocus}`,
-    outline: 'none',
-  },
-  groupInvalid: {
-    borderColor: tokens.colorError500,
-  },
-  groupFocusedInvalid: {
-    borderColor: {
-      default: tokens.colorError500,
-      ':hover': tokens.colorError500,
-    },
-    boxShadow: `0 0 0 1px ${tokens.colorError500}`,
-    outline: 'none',
-  },
-  groupDisabled: {
-    opacity: 0.4,
-    backgroundColor: tokens.colorBgSubtle,
-    cursor: 'not-allowed',
-    ':hover': {
-      borderColor: tokens.colorBorder,
-    },
-  },
-  input: {
-    flexGrow: 1,
-    width: '100%',
-    height: '100%',
-    borderStyle: 'none',
-    backgroundColor: 'transparent',
-    color: tokens.colorFg,
-    fontFamily: tokens.fontFamilyBase,
-    outline: 'none',
-  },
-  inputSm: {
-    paddingBlock: 0,
-    paddingInlineStart: tokens.spacing2,
-    paddingInlineEnd: tokens.spacing1,
-    fontSize: tokens.fontSizeXs,
-    lineHeight: tokens.lineHeightXs,
-  },
-  inputMd: {
-    paddingBlock: 0,
-    paddingInlineStart: tokens.spacing3,
-    paddingInlineEnd: tokens.spacing1,
-    fontSize: tokens.fontSizeSm,
-    lineHeight: tokens.lineHeightSm,
-  },
-  inputLg: {
-    paddingBlock: 0,
-    paddingInlineStart: tokens.spacing4,
-    paddingInlineEnd: tokens.spacing1,
-    fontSize: tokens.fontSizeMd,
-    lineHeight: tokens.lineHeightMd,
-  },
-  stepperContainer: {
-    display: 'flex',
-    flexDirection: 'column',
-    borderInlineStartWidth: '1px',
-    borderInlineStartStyle: 'solid',
-    flexShrink: 0,
-  },
-  stepperContainerSm: {
-    width: tokens.spacing5,
-  },
-  stepperContainerMd: {
-    width: tokens.spacing6,
-  },
-  stepperContainerLg: {
-    width: tokens.spacing7,
-  },
-  stepperContainerPrimary: {
-    borderInlineStartColor: tokens.colorBorder,
-  },
-  stepperContainerSecondary: {
-    borderInlineStartColor: tokens.colorBorderSubtle,
-  },
-
-  stepperButton: {
-    flexGrow: 1,
-    height: '50%',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderStyle: 'none',
-    backgroundColor: 'transparent',
-    color: tokens.colorFgSubtle,
-    cursor: 'pointer',
-    padding: 0,
-    fontSize: '0.625rem',
-    transitionProperty: 'background-color, color',
-    transitionDuration: '0.1s',
-    transitionTimingFunction: 'ease-in-out',
-    ':hover': {
-      backgroundColor: tokens.colorBgSubtle,
-      color: tokens.colorFg,
-    },
-    ':active': {
-      backgroundColor: tokens.colorBorderSubtle,
-    },
-  },
-  stepperButtonDisabled: {
-    cursor: 'not-allowed',
-    opacity: 0.5,
-    ':hover': {
-      backgroundColor: 'transparent',
-      color: tokens.colorFgSubtle,
-    },
-  },
-})
+export const numberFieldStyles = css`
+  :host {
+    display: block;
+    width: 100%;
+  }
+  .input-group {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    width: 100%;
+  }
+  .form-control {
+    position: relative;
+    flex: 1 1 auto;
+    width: 1%;
+    min-width: 0;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    text-align: center;
+    color: var(--bs-body-color, #212529);
+    background-color: var(--bs-body-bg, #fff);
+    border: var(--bs-border-width, 1px) solid var(--bs-border-color, #dee2e6);
+  }
+  .form-control:focus {
+    z-index: 3;
+    outline: 0;
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  }
+  .btn-step {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--bs-body-color, #212529);
+    background-color: var(--bs-tertiary-bg, #f8f9fa);
+    border: 1px solid var(--bs-border-color, #dee2e6);
+    cursor: pointer;
+    user-select: none;
+    transition: background-color .15s ease-in-out;
+  }
+  .btn-step:hover:not(:disabled) {
+    background-color: var(--bs-secondary-bg, #e9ecef);
+  }
+  .btn-step:first-child {
+    border-top-left-radius: var(--bs-border-radius, 0.375rem);
+    border-bottom-left-radius: var(--bs-border-radius, 0.375rem);
+    border-right: 0;
+  }
+  .btn-step:last-child {
+    border-top-right-radius: var(--bs-border-radius, 0.375rem);
+    border-bottom-right-radius: var(--bs-border-radius, 0.375rem);
+    border-left: 0;
+  }
+  .btn-step:disabled {
+    pointer-events: none;
+    opacity: 0.5;
+  }
+`

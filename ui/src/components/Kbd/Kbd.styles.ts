@@ -1,22 +1,22 @@
-import * as stylex from '@stylexjs/stylex'
-import { tokens } from '../../tokens/tokens.stylex'
+import { css } from 'lit'
 
-export const styles = stylex.create({
-  base: {
-    fontFamily: tokens.fontFamilyBase, // or monospace, but using base as default per design doc, or we can use code font if needed
-    fontSize: tokens.fontSizeXs,
-    lineHeight: tokens.lineHeightXs,
-    paddingBlock: tokens.spacing1,
-    paddingInline: tokens.spacing2,
-    backgroundColor: tokens.colorBgSubtle,
-    borderStyle: 'solid',
-    borderWidth: '1px',
-    borderColor: tokens.colorBorder,
-    borderRadius: tokens.radiusSm,
-    color: tokens.colorFg,
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    boxShadow: '0 1px 0 var(--colorShadow)',
-  },
-})
+export const kbdStyles = css`
+  :host {
+    display: inline-block;
+  }
+  kbd {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.15em 0.4em;
+    font-family: var(--bs-font-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace);
+    font-size: 0.85em;
+    font-weight: 500;
+    line-height: 1;
+    color: var(--bs-body-color, #212529);
+    background-color: var(--bs-tertiary-bg, #f8f9fa);
+    border: 1px solid var(--bs-border-color, #dee2e6);
+    border-radius: var(--bs-border-radius-sm, 0.25rem);
+    box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+  }
+`

@@ -1,173 +1,99 @@
-import * as stylex from '@stylexjs/stylex'
-import { tokens } from '../../tokens/tokens.stylex'
+import { css } from 'lit'
 
-export const styles = stylex.create({
-  container: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: tokens.spacing1,
-    width: '100%',
-  },
-  trigger: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    width: '100%',
-    borderWidth: '1px',
-    borderStyle: 'solid',
-    borderColor: tokens.colorBorder,
-    backgroundColor: tokens.colorBg,
-    color: tokens.colorFg,
-    fontFamily: tokens.fontFamilyBase,
-    outline: 'none',
-    cursor: 'pointer',
-    boxShadow: tokens.shadowSm,
-    transitionProperty: 'border-color, box-shadow, background-color',
-    transitionDuration: '0.15s',
-    transitionTimingFunction: 'ease-in-out',
-    ':hover': {
-      borderColor: tokens.colorNeutral400,
-    },
-    ':focus-visible': {
-      borderColor: tokens.colorBorderFocus,
-      boxShadow: `0 0 0 1px ${tokens.colorBorderFocus}`,
-    },
-  },
-  sm: {
-    height: `calc(${tokens.spacing1} * 2 + ${tokens.lineHeightXs})`,
-    paddingBlock: 0,
-    paddingInline: tokens.spacing2,
-    borderRadius: tokens.radiusSm,
-    fontSize: tokens.fontSizeXs,
-    lineHeight: tokens.lineHeightXs,
-  },
-  md: {
-    height: `calc(${tokens.spacing2} * 2 + ${tokens.lineHeightSm})`,
-    paddingBlock: 0,
-    paddingInline: tokens.spacing3,
-    borderRadius: tokens.radiusMd,
-    fontSize: tokens.fontSizeSm,
-    lineHeight: tokens.lineHeightSm,
-  },
-  lg: {
-    height: `calc(${tokens.spacing2} * 2 + ${tokens.lineHeightMd})`,
-    paddingBlock: 0,
-    paddingInline: tokens.spacing4,
-    borderRadius: tokens.radiusMd,
-    fontSize: tokens.fontSizeMd,
-    lineHeight: tokens.lineHeightMd,
-  },
-  triggerInvalid: {
-    borderColor: tokens.colorError500,
-    ':focus-visible': {
-      borderColor: tokens.colorError500,
-      boxShadow: `0 0 0 1px ${tokens.colorError500}`,
-    },
-  },
-  triggerDisabled: {
-    opacity: 0.4,
-    backgroundColor: tokens.colorBgSubtle,
-    cursor: 'not-allowed',
-    boxShadow: 'none',
-    ':hover': {
-      borderColor: tokens.colorBorder,
-    },
-  },
-  chevron: {
-    width: tokens.spacing3,
-    height: tokens.spacing3,
-    color: tokens.colorFgSubtle,
-    flexShrink: 0,
-    marginInlineStart: tokens.spacing2,
-  },
-  popover: {
-    borderWidth: '1px',
-    borderStyle: 'solid',
-    borderColor: tokens.colorBorder,
-    backgroundColor: tokens.colorBgElevated,
-    boxShadow: tokens.shadowMd,
-    zIndex: tokens.zIndexDropdown,
-    minWidth: 'var(--trigger-width)',
-    maxHeight: '300px',
-    overflowY: 'auto',
-  },
-  popoverSm: {
-    borderRadius: tokens.radiusSm,
-  },
-  popoverMd: {
-    borderRadius: tokens.radiusMd,
-  },
-  popoverLg: {
-    borderRadius: tokens.radiusMd,
-  },
-  listbox: {
-    padding: tokens.spacing1,
-    outline: 'none',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '2px',
-  },
-  item: {
-    display: 'flex',
-    alignItems: 'center',
-    cursor: 'pointer',
-    outline: 'none',
-    userSelect: 'none',
-    backgroundColor: 'transparent',
-    transitionProperty: 'background-color, color',
-    transitionDuration: '0.1s',
-    transitionTimingFunction: 'ease-in-out',
-    color: tokens.colorFg,
-  },
-  itemSm: {
-    paddingBlock: tokens.spacing1,
-    paddingInline: tokens.spacing2,
-    borderRadius: `calc(${tokens.radiusSm} - ${tokens.spacing1})`,
-    fontSize: tokens.fontSizeXs,
-    lineHeight: tokens.lineHeightXs,
-  },
-  itemMd: {
-    paddingBlock: tokens.spacing2,
-    paddingInline: tokens.spacing3,
-    borderRadius: `calc(${tokens.radiusMd} - ${tokens.spacing1})`,
-    fontSize: tokens.fontSizeSm,
-    lineHeight: tokens.lineHeightSm,
-  },
-  itemLg: {
-    paddingBlock: tokens.spacing2,
-    paddingInline: tokens.spacing4,
-    borderRadius: `calc(${tokens.radiusMd} - ${tokens.spacing1})`,
-    fontSize: tokens.fontSizeMd,
-    lineHeight: tokens.lineHeightMd,
-  },
-  itemHovered: {
-    backgroundColor: tokens.colorBgSubtle,
-  },
-  itemFocused: {
-    backgroundColor: tokens.colorBgSubtle,
-  },
-  itemSelected: {
-    backgroundColor: tokens.colorPrimary50,
-    color: tokens.colorPrimary700,
-    fontWeight: tokens.fontWeightMedium,
-  },
-  itemDisabled: {
-    opacity: 0.4,
-    cursor: 'not-allowed',
-  },
-  section: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '2px',
-    paddingBlock: tokens.spacing1,
-  },
-  sectionHeader: {
-    fontSize: tokens.fontSizeXs,
-    fontWeight: tokens.fontWeightBold,
-    color: tokens.colorFgSubtle,
-    paddingBlock: tokens.spacing1,
-    paddingInline: tokens.spacing3,
-    textTransform: 'uppercase',
-    letterSpacing: '0.05em',
-  },
-})
+export const selectStyles = css`
+  :host {
+    display: block;
+    width: 100%;
+    position: relative;
+  }
+  .form-select {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0.375rem 2.25rem 0.375rem 0.75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--bs-body-color, #212529);
+    background-color: var(--bs-body-bg, #fff);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 16px 12px;
+    border: var(--bs-border-width, 1px) solid var(--bs-border-color, #dee2e6);
+    border-radius: var(--bs-border-radius, 0.375rem);
+    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+    cursor: pointer;
+    user-select: none;
+    text-align: left;
+  }
+  .form-select:focus {
+    border-color: #86b7fe;
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  }
+  .form-select:disabled {
+    background-color: var(--bs-secondary-bg, #e9ecef);
+    opacity: 1;
+    cursor: not-allowed;
+  }
+  .popover-menu {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1050;
+    background-color: var(--bs-body-bg, #fff);
+    border: 1px solid var(--bs-border-color, #dee2e6);
+    border-radius: var(--bs-border-radius, 0.375rem);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    max-height: 16rem;
+    overflow-y: auto;
+    display: none;
+  }
+  .popover-menu.show {
+    display: block;
+  }
+`
+
+export const selectItemStyles = css`
+  :host {
+    display: block;
+  }
+  .select-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.375rem 0.75rem;
+    font-size: 0.9375rem;
+    color: var(--bs-body-color, #212529);
+    cursor: pointer;
+    user-select: none;
+  }
+  .select-item:hover,
+  .select-item.active {
+    background-color: var(--bs-tertiary-bg, #f8f9fa);
+  }
+  .select-item.selected {
+    background-color: rgba(13, 110, 253, 0.1);
+    color: var(--bs-primary, #0d6efd);
+    font-weight: 500;
+  }
+  .select-item.disabled {
+    pointer-events: none;
+    opacity: 0.5;
+  }
+`
+
+export const selectSectionStyles = css`
+  :host {
+    display: block;
+  }
+  .section-title {
+    padding: 0.5rem 0.75rem 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--bs-secondary-color, #6c757d);
+  }
+`

@@ -1,0 +1,46 @@
+---
+title: Installation
+description: Install and setup @moul-dev/ui in your project.
+---
+
+## Package Installation
+
+Add the `@moul-dev/ui` package to your workspace using your preferred package manager:
+
+```bash
+bun add @moul-dev/ui
+# or
+npm install @moul-dev/ui
+# or
+pnpm add @moul-dev/ui
+# or
+yarn add @moul-dev/ui
+```
+
+## Setup & Registration
+
+### Option 1: Global Import
+
+To register all `<moul-*>` custom elements globally in your app entrypoint:
+
+```typescript
+import '@moul-dev/ui'
+```
+
+### Option 2: Individual Component Imports
+
+For granular or tree-shaken imports, you can import only the specific components you use:
+
+```typescript
+import '@moul-dev/ui/button'
+import '@moul-dev/ui/modal'
+import '@moul-dev/ui/card'
+```
+
+## Basic Usage
+
+Once imported, components can be used anywhere in your HTML or templates:
+
+```html
+<moul-button variant="primary">Click Me</moul-button>
+```

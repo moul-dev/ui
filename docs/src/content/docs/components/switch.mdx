@@ -1,0 +1,108 @@
+---
+title: Switch
+description: Documentation for the Switch component.
+reactAria: Switch
+---
+
+import Accordion from '@/components/Accordion.astro'
+import Accordions from '@/components/Accordions.astro'
+
+
+import PropsTable from '@/components/PropsTable.astro'
+
+
+
+
+
+# Switch
+
+## Preview
+
+
+
+The `Switch` component is built with React Aria and styled using StyleX.
+
+## Import
+
+```tsx
+
+```
+
+## Usage
+
+Here is a basic example of how to use the `Switch` component:
+
+```tsx
+
+
+export default function Example() {
+  return (
+    <moul-switch>
+      {/* Component content */}
+    </moul-switch>
+  );
+}
+```
+
+## Props
+
+### Switch Props
+
+<PropsTable
+  type={{
+    'isSelected': {
+      type: "boolean",
+      description: "Whether the switch is selected (controlled).",
+    },
+    'defaultSelected': {
+      type: "boolean",
+      description: "Whether the switch is selected by default (uncontrolled).",
+    },
+    'isDisabled': {
+      type: "boolean",
+      default: "false",
+      description: "Whether the switch is disabled.",
+    },
+    'isReadOnly': {
+      type: "boolean",
+      description: "Whether the switch is read-only.",
+    },
+  }}
+/>
+
+<Accordions>
+  <Accordion title="Value">
+    <PropsTable
+          type={{
+            'onChange': {
+              type: "(isSelected: boolean) => void",
+              description: "Handler called when the selection state changes.",
+            },
+          }}
+        />
+  </Accordion>
+  <Accordion title="Styling">
+    <PropsTable
+          type={{
+            'className': {
+              type: "ClassNameOrFunction",
+              default: "'react-aria-Switch'",
+              description: "The CSS className for the element.",
+            },
+          }}
+        />
+  </Accordion>
+</Accordions>
+
+Default className: `react-aria-Switch`
+
+| Render Prop | CSS Selector |
+| :--- | :--- |
+| `isSelected` <br/> Whether the switch is checked. | `[data-selected]` |
+| `isHovered` <br/> Whether the switch is hovered. | `[data-hovered]` |
+| `isPressed` <br/> Whether the switch is pressed. | `[data-pressed]` |
+| `isFocused` <br/> Whether the switch is focused. | `[data-focused]` |
+| `isFocusVisible` <br/> Whether the switch is keyboard focused. | `[data-focus-visible]` |
+| `isDisabled` <br/> Whether the switch is disabled. | `[data-disabled]` |
+| `isReadOnly` <br/> Whether the switch is read-only. | `[data-readonly]` |
+

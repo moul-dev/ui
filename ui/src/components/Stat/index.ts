@@ -1,2 +1,1 @@
-export type { StatProps } from './Stat'
-export { Stat } from './Stat'
+export { MoulStat, type StatTrendDirection } from './Stat.js'

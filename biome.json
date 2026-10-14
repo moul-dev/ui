@@ -15,6 +15,7 @@
       "!**/.wrangler",
       "!**/dist",
       "!**/*.svg",
+      "!docs/.astro",
       "!docs/src/styles/globals.css"
     ]
   },
@@ -56,13 +57,9 @@
         "noGlobalIsNan": "off"
       },
       "correctness": {
-        "useExhaustiveDependencies": "warn",
         "noUnusedImports": "warn",
         "noUnusedVariables": "warn"
       }
-    },
-    "domains": {
-      "react": "recommended"
     }
   },
   "assist": {
@@ -71,5 +68,17 @@
         "organizeImports": "on"
       }
     }
-  }
+  },
+  "overrides": [
+    {
+      "includes": ["**/*.astro"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noUnusedVariables": "off"
+          }
+        }
+      }
+    }
+  ]
 }

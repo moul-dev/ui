@@ -1,33 +1,31 @@
-import * as stylex from '@stylexjs/stylex'
-import { tokens } from '../../tokens/tokens.stylex'
+import { css } from 'lit'
 
-const slideUp = stylex.keyframes({
-  from: { transform: 'translateY(4px)', opacity: 0 },
-  to: { transform: 'translateY(0)', opacity: 1 },
-})
-
-export const styles = stylex.create({
-  tooltip: {
-    backgroundColor: tokens.colorBg,
-    color: tokens.colorFg,
-    paddingBlock: tokens.spacing1,
-    paddingInline: tokens.spacing2,
-    borderRadius: tokens.radiusMd,
-    borderWidth: '1px',
-    borderStyle: 'solid',
-    borderColor: tokens.colorBorder,
-    fontSize: tokens.fontSizeSm,
-    lineHeight: tokens.lineHeightSm,
-    boxShadow: tokens.shadowMd,
-    zIndex: tokens.zIndexTooltip,
-    pointerEvents: 'none',
-    outline: 'none',
-    animationName: slideUp,
-    animationDuration: '0.15s',
-    animationTimingFunction: 'ease-out',
-    '@media (prefers-reduced-motion: reduce)': {
-      animationPlayState: 'paused',
-      animationDuration: '0s',
-    },
-  },
-})
+export const tooltipStyles = css`
+  :host {
+    display: inline-block;
+    position: relative;
+  }
+  .tooltip {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1080;
+    display: block;
+    font-size: 0.8125rem;
+    word-wrap: break-word;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s linear;
+  }
+  .tooltip.show {
+    opacity: 0.9;
+  }
+  .tooltip-inner {
+    max-width: 200px;
+    padding: 0.25rem 0.5rem;
+    color: var(--bs-tooltip-color, #fff);
+    text-align: center;
+    background-color: var(--bs-tooltip-bg, #000);
+    border-radius: var(--bs-tooltip-border-radius, 0.375rem);
+  }
+`

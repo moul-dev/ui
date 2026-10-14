@@ -1,0 +1,119 @@
+---
+title: SearchField
+description: Documentation for the SearchField component.
+reactAria: SearchField
+---
+
+import Accordion from '@/components/Accordion.astro'
+import Accordions from '@/components/Accordions.astro'
+
+
+import ComponentPreview from '@/components/ComponentPreview.astro'
+import PropsTable from '@/components/PropsTable.astro'
+
+
+
+
+
+# SearchField
+
+## Preview
+
+<ComponentPreview>
+  <moul-search-field label="Search" placeholder="Type to search..." ></moul-search-field>
+</ComponentPreview>
+
+The `SearchField` component is built with React Aria and styled using StyleX.
+
+## Import
+
+```tsx
+
+```
+
+## Usage
+
+Here is a basic example of how to use the `SearchField` component:
+
+```tsx
+
+
+export default function Example() {
+  return (
+    <moul-search-field>
+      {/* Component content */}
+    </moul-search-field>
+  );
+}
+```
+
+## Props
+
+### SearchField Props
+
+<PropsTable
+  type={{
+    'variant': {
+      type: "'primary' | 'secondary'",
+      default: "'primary'",
+      description: "The visual style variant of the search field.",
+    },
+    'value': {
+      type: "string",
+      description: "The current value (controlled).",
+    },
+    'defaultValue': {
+      type: "string",
+      description: "The default value (uncontrolled).",
+    },
+    'placeholder': {
+      type: "string",
+      description: "Placeholder text inside the input.",
+    },
+    'isDisabled': {
+      type: "boolean",
+      default: "false",
+      description: "Whether the field is disabled.",
+    },
+  }}
+/>
+
+<Accordions>
+  <Accordion title="Value">
+    <PropsTable
+          type={{
+            'onChange': {
+              type: "(value: string) => void",
+              description: "Handler called when the value changes.",
+            },
+            'onSubmit': {
+              type: "(value: string) => void",
+              description: "Handler called when the user submits the search query.",
+            },
+            'onClear': {
+              type: "() => void",
+              description: "Handler called when the user clears the search field.",
+            },
+          }}
+        />
+  </Accordion>
+  <Accordion title="Styling">
+    <PropsTable
+          type={{
+            'className': {
+              type: "ClassNameOrFunction",
+              default: "'react-aria-SearchField'",
+              description: "The CSS className.",
+            },
+          }}
+        />
+  </Accordion>
+</Accordions>
+
+Default className: `react-aria-SearchField`
+
+| Render Prop | CSS Selector |
+| :--- | :--- |
+| `isDisabled` <br/> Whether the search field is disabled. | `[data-disabled]` |
+| `isInvalid` <br/> Whether the search field is invalid. | `[data-invalid]` |
+

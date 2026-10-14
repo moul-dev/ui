@@ -1,104 +1,50 @@
-/* eslint-disable @stylexjs/valid-styles */
-import * as stylex from '@stylexjs/stylex'
-import { tokens } from '../../tokens/tokens.stylex'
+import { css } from 'lit'
 
-export const styles = stylex.create({
-  base: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: tokens.spacing2,
-    cursor: 'pointer',
-    fontSize: tokens.fontSizeSm,
-    lineHeight: tokens.lineHeightSm,
-    color: tokens.colorFg,
-    userSelect: 'none',
-  },
-  isDisabled: {
-    opacity: 0.4,
-    cursor: 'not-allowed',
-  },
-  isReadOnly: {
-    cursor: 'default',
-  },
-  indicator: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: tokens.spacing4,
-    height: tokens.spacing4,
-    flexShrink: 0,
-    borderRadius: tokens.radiusSm,
-    borderWidth: '1px',
-    borderStyle: 'solid',
-    borderColor: tokens.colorBorder,
-    backgroundColor: tokens.colorBg,
-    transitionProperty: 'background-color, border-color, box-shadow',
-    transitionDuration: '0.15s',
-    transitionTimingFunction: 'ease-in-out',
-  },
-  indicatorHover: {
-    borderColor: tokens.colorNeutral400,
-  },
-
-  // Primary variant styles
-  checkedPrimary: {
-    backgroundColor: tokens.colorPrimary500,
-    borderColor: tokens.colorPrimary500,
-  },
-  checkedHoverPrimary: {
-    backgroundColor: tokens.colorPrimary600,
-    borderColor: tokens.colorPrimary600,
-  },
-  iconPrimary: {
-    color: tokens.colorFgOnPrimary,
-  },
-  focusPrimary: {
-    outlineColor: tokens.colorBorderFocus,
-  },
-
-  // Secondary variant styles
-  checkedSecondary: {
-    backgroundColor: tokens.colorNeutral800,
-    borderColor: tokens.colorNeutral800,
-  },
-  checkedHoverSecondary: {
-    backgroundColor: tokens.colorNeutral900,
-    borderColor: tokens.colorNeutral900,
-  },
-  iconSecondary: {
-    color: tokens.colorBg,
-  },
-  focusSecondary: {
-    outlineColor: tokens.colorNeutral800,
-  },
-
-  // Tertiary variant styles
-  checkedTertiary: {
-    backgroundColor: tokens.colorBg,
-    borderColor: tokens.colorPrimary500,
-  },
-  checkedHoverTertiary: {
-    backgroundColor: tokens.colorPrimary50,
-    borderColor: tokens.colorPrimary600,
-  },
-  iconTertiary: {
-    color: tokens.colorPrimary500,
-  },
-  focusTertiary: {
-    outlineColor: tokens.colorPrimary500,
-  },
-
-  indicatorFocusVisible: {
-    outlineStyle: 'solid',
-    outlineWidth: '2px',
-    outlineOffset: '2px',
-  },
-  indicatorInvalid: {
-    borderColor: tokens.colorError500,
-  },
-  icon: {
-    width: '100%',
-    height: '100%',
-  },
-  label: {},
-})
+export const checkboxStyles = css`
+  :host {
+    display: inline-block;
+  }
+  .form-check {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 1.5rem;
+    margin-bottom: 0.125rem;
+    cursor: pointer;
+  }
+  .form-check-input {
+    width: 1.15em;
+    height: 1.15em;
+    margin-top: 0;
+    vertical-align: top;
+    background-color: var(--bs-body-bg, #fff);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    border: var(--bs-border-width, 1px) solid var(--bs-border-color, rgba(0, 0, 0, 0.25));
+    border-radius: 0.25em;
+    appearance: none;
+    cursor: pointer;
+    transition: background-color .15s ease-in-out, background-position .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+  }
+  .form-check-input:checked {
+    background-color: var(--bs-primary, #0d6efd);
+    border-color: var(--bs-primary, #0d6efd);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e");
+  }
+  .form-check-input:indeterminate {
+    background-color: var(--bs-primary, #0d6efd);
+    border-color: var(--bs-primary, #0d6efd);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M6 10h8'/%3e%3c/svg%3e");
+  }
+  .form-check-input:disabled {
+    pointer-events: none;
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .form-check-label {
+    user-select: none;
+    font-size: 0.9375rem;
+    color: var(--bs-body-color, #212529);
+  }
+`

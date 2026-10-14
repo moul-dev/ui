@@ -1,0 +1,91 @@
+---
+title: Spinner
+description: Accessible loading indicator supporting multiple size scales.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro'
+import PropsTable from '@/components/PropsTable.astro'
+
+
+
+
+# Spinner
+
+The `Spinner` component is an accessible animated indicator informing users of ongoing asynchronous processes and loading states.
+
+## Preview
+
+<ComponentPreview>
+  <div class="flex items-center gap-6">
+    <moul-spinner size="sm" aria-label="Loading small" ></moul-spinner>
+    <moul-spinner size="md" aria-label="Loading medium" ></moul-spinner>
+    <moul-spinner size="lg" aria-label="Loading large" ></moul-spinner>
+    <moul-spinner size="xl" aria-label="Loading extra large" ></moul-spinner>
+  </div>
+</ComponentPreview>
+
+## Import
+
+```tsx
+
+```
+
+## Sizes
+
+`Spinner` supports four standardized sizes: `sm`, `md` (default), `lg`, and `xl`.
+
+<ComponentPreview>
+  <div class="flex items-center gap-6">
+    <div class="flex flex-col items-center gap-2">
+      <moul-spinner size="sm" aria-label="Small" ></moul-spinner>
+      <span class="text-xs text-neutral-400">sm (16px)</span>
+    </div>
+    <div class="flex flex-col items-center gap-2">
+      <moul-spinner size="md" aria-label="Medium" ></moul-spinner>
+      <span class="text-xs text-neutral-400">md (20px)</span>
+    </div>
+    <div class="flex flex-col items-center gap-2">
+      <moul-spinner size="lg" aria-label="Large" ></moul-spinner>
+      <span class="text-xs text-neutral-400">lg (28px)</span>
+    </div>
+    <div class="flex flex-col items-center gap-2">
+      <moul-spinner size="xl" aria-label="Extra Large" ></moul-spinner>
+      <span class="text-xs text-neutral-400">xl (32px)</span>
+    </div>
+  </div>
+</ComponentPreview>
+
+```tsx
+<moul-spinner size="sm" aria-label="Loading" ></moul-spinner>
+<moul-spinner size="md" aria-label="Loading" ></moul-spinner>
+<moul-spinner size="lg" aria-label="Loading" ></moul-spinner>
+<moul-spinner size="xl" aria-label="Loading" ></moul-spinner>
+```
+
+## Accessibility
+
+When using `Spinner`, always supply an `aria-label` or `aria-labelledby` attribute so screen readers announce the loading progress.
+
+```tsx
+<moul-spinner aria-label="Fetching dashboard telemetry..." ></moul-spinner>
+```
+
+## Props
+
+<PropsTable
+  type={{
+    size: {
+      type: "'sm' | 'md' | 'lg' | 'xl'",
+      default: "'md'",
+      description: 'The dimensions of the spinner.',
+    },
+    'aria-label': {
+      type: 'string',
+      description: 'Accessible label announcing the loading operation.',
+    },
+    className: {
+      type: 'string',
+      description: 'Custom CSS class name for the spinner element.',
+    },
+  }}
+/>

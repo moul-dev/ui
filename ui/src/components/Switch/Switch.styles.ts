@@ -1,68 +1,46 @@
-import * as stylex from '@stylexjs/stylex'
-import { tokens } from '../../tokens/tokens.stylex'
+import { css } from 'lit'
 
-export const styles = stylex.create({
-  base: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: tokens.spacing2,
-    cursor: 'pointer',
-    fontSize: tokens.fontSizeMd,
-    lineHeight: tokens.lineHeightMd,
-    color: tokens.colorFg,
-    userSelect: 'none',
-  },
-  isDisabled: {
-    opacity: 0.4,
-    cursor: 'not-allowed',
-  },
-  isReadOnly: {
-    cursor: 'default',
-  },
-  track: {
-    position: 'relative',
-    display: 'inline-flex',
-    alignItems: 'center',
-    width: tokens.spacing8,
-    height: tokens.spacing5,
-    padding: '2px',
-    borderRadius: tokens.radiusFull,
-    backgroundColor: tokens.colorBorder,
-    boxSizing: 'border-box',
-    transitionProperty: 'background-color, box-shadow',
-    transitionDuration: '0.15s',
-    transitionTimingFunction: 'ease-in-out',
-    flexShrink: 0,
-  },
-  trackChecked: {
-    backgroundColor: tokens.colorPrimary500,
-  },
-  trackHover: {
-    filter: 'brightness(0.95)',
-  },
-  trackFocusVisible: {
-    outlineStyle: 'solid',
-    outlineWidth: '2px',
-    outlineOffset: '2px',
-    outlineColor: tokens.colorBorderFocus,
-  },
-  thumb: {
-    display: 'block',
-    height: '100%',
-    aspectRatio: '1 / 1',
-    borderRadius: tokens.radiusFull,
-    backgroundColor: tokens.colorBg,
-    boxShadow: tokens.shadowSm,
-    transform: 'translateX(0)',
-    transitionProperty: 'transform',
-    transitionDuration: '0.15s',
-    transitionTimingFunction: 'ease-in-out',
-    pointerEvents: 'none',
-  },
-  thumbChecked: {
-    transform: `translateX(calc(${tokens.spacing8} - ${tokens.spacing5}))`,
-  },
-  label: {
-    paddingInlineStart: tokens.spacing1,
-  },
-})
+export const switchStyles = css`
+  :host {
+    display: inline-block;
+  }
+  .form-check {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 1.5rem;
+    margin-bottom: 0.125rem;
+    cursor: pointer;
+  }
+  .form-switch .form-check-input {
+    width: 2em;
+    height: 1.15em;
+    margin-top: 0;
+    vertical-align: top;
+    background-color: var(--bs-secondary-bg, #dee2e6);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='rgba%280, 0, 0, 0.25%29'/%3e%3c/svg%3e");
+    background-position: left center;
+    background-repeat: no-repeat;
+    border: var(--bs-border-width, 1px) solid var(--bs-border-color, rgba(0, 0, 0, 0.25));
+    border-radius: 2em;
+    appearance: none;
+    cursor: pointer;
+    transition: background-position .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out;
+  }
+  .form-switch .form-check-input:checked {
+    background-position: right center;
+    background-color: var(--bs-primary, #0d6efd);
+    border-color: var(--bs-primary, #0d6efd);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23fff'/%3e%3c/svg%3e");
+  }
+  .form-switch .form-check-input:disabled {
+    pointer-events: none;
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .form-check-label {
+    user-select: none;
+    font-size: 0.9375rem;
+    color: var(--bs-body-color, #212529);
+  }
+`

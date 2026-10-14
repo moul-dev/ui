@@ -1,0 +1,141 @@
+---
+title: Card
+description: A container component to group related content, actions, and information.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro'
+
+
+
+
+# Card
+
+The `Card` component is a flexible container built with React Aria and styled using StyleX. It supports multiple design variants, sizing presets, and section borders.
+
+## Import
+
+```tsx
+
+```
+
+## Preview
+
+
+
+---
+
+## Variants
+
+Cards support three distinct aesthetic styles to match your design requirements:
+
+### Default (Elevated)
+Standard surface card featuring clean elevated shadows.
+
+<ComponentPreview>
+  <moul-card class="w-80" variant="default" elevation={1}>
+    <div slot="header">Elevated Card</div>
+    <div slot="body">Standard elevated container with shadow.</div>
+  </moul-card>
+</ComponentPreview>
+
+```tsx
+<moul-card variant="default" elevation={1}>
+  <div slot="header">Elevated Card</div>
+  <div slot="body">Standard elevated container with shadow.</div>
+</moul-card>
+```
+
+### Flat
+Clean card with no shadow and a subtle background fill.
+
+<ComponentPreview>
+  <moul-card class="w-80" variant="flat">
+    <div slot="header">Flat Card</div>
+    <div slot="body">Flat container with subtle solid background.</div>
+  </moul-card>
+</ComponentPreview>
+
+```tsx
+<moul-card variant="flat">
+  <div slot="header">Flat Card</div>
+  <div slot="body">Flat container with subtle solid background.</div>
+</moul-card>
+```
+
+### Glass
+Premium translucent glassmorphic look using backdrop blur and opacity.
+
+<ComponentPreview>
+  <moul-card class="w-80" variant="glass">
+    <div slot="header">Glass Card</div>
+    <div slot="body">Translucent glass card with elegant backdrop filters.</div>
+  </moul-card>
+</ComponentPreview>
+
+```tsx
+<moul-card variant="glass">
+  <div slot="header">Glass Card</div>
+  <div slot="body">Translucent glass card with elegant backdrop filters.</div>
+</moul-card>
+```
+
+---
+
+## Divided Layout
+
+By default, card headers, bodies, and footers flow continuously without separation lines. Passing the `divided` boolean prop adds subtle separator lines between sections.
+
+<ComponentPreview>
+  <moul-card class="w-80" divided>
+    <div slot="header">Divided Card</div>
+    <div slot="body">Borders separate the header, body, and footer sections.</div>
+    <div slot="footer">
+      <moul-button size="sm">Action</moul-button>
+    </div>
+  </moul-card>
+</ComponentPreview>
+
+```tsx
+<moul-card divided>
+  <div slot="header">Divided Card</div>
+  <div slot="body">Borders separate the header, body, and footer sections.</div>
+  <div slot="footer"><moul-button size="sm">Action</moul-button></div>
+</moul-card>
+```
+
+---
+
+## Sizes
+
+Choose between different sizing presets to customize block and inline paddings:
+
+### Small (`sm`)
+Compact spacing suitable for dense layouts or list grids.
+```tsx
+<moul-card size="sm">...</moul-card>
+```
+
+### Medium (`md`)
+Balanced standard spacing (default).
+```tsx
+<moul-card size="md">...</moul-card>
+```
+
+### Large (`lg`)
+Generous breathing spacing ideal for hero sections or details views.
+```tsx
+<moul-card size="lg">...</moul-card>
+```
+
+---
+
+## API Reference
+
+### Card Props
+
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `variant` | `'default' \| 'flat' \| 'glass'` | `'default'` | The visual style variation of the card. |
+| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Padding sizes applied to the card sections. |
+| `divided` | `boolean` | `false` | When true, renders borders between header, body, and footer. |
+| `elevation` | `0 \| 1 \| 2 \| 3 \| 'none' \| 'sm' \| 'md' \| 'lg'` | `1` | Shadow elevation level (applies to `'default'` variant only). |

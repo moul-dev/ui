@@ -1,202 +1,49 @@
-import * as stylex from '@stylexjs/stylex'
-import { tokens } from '../../tokens/tokens.stylex'
+import { css } from 'lit'
 
-export const styles = stylex.create({
-  root: {
-    display: 'flex',
-    flexDirection: 'column',
-    overflow: 'hidden',
-    borderRadius: tokens.radiusLg,
-    borderStyle: 'solid',
-    borderWidth: '1px',
-    boxSizing: 'border-box',
-  },
-
-  // Elevation Styles
-  el0: {
-    backgroundColor: tokens.colorBg,
-    borderColor: tokens.colorBorder,
-    boxShadow: 'none',
-  },
-  el1: {
-    backgroundColor: tokens.colorBgElevated,
-    borderColor: tokens.colorBorderSubtle,
-    boxShadow: tokens.shadowSm,
-  },
-  el2: {
-    backgroundColor: tokens.colorBgElevated,
-    borderColor: tokens.colorBorderSubtle,
-    boxShadow: tokens.shadowMd,
-  },
-  el3: {
-    backgroundColor: tokens.colorBgElevated,
-    borderColor: tokens.colorBorderSubtle,
-    boxShadow: tokens.shadowLg,
-  },
-
-  // Card Variants
-  default: {},
-  flat: {
-    backgroundColor: tokens.colorBgSubtle,
-    borderColor: 'transparent',
-    boxShadow: 'none',
-  },
-
-  glass: {
-    backgroundColor: tokens.colorBgGlass,
-    borderColor: tokens.colorBorderGlass,
-    backdropFilter: 'blur(24px)',
-    WebkitBackdropFilter: 'blur(24px)',
-    boxShadow: tokens.shadowSm,
-  },
-
-  // Layout structures
-  header: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: tokens.spacing1,
-    color: tokens.colorFg,
-    fontSize: tokens.fontSizeLg,
-    fontWeight: tokens.fontWeightSemibold,
-  },
-  headerDivided: {
-    borderBlockEndStyle: 'solid',
-    borderBlockEndWidth: '1px',
-    borderBlockEndColor: tokens.colorBorderSubtle,
-  },
-
-  body: {
-    flexGrow: 1,
-    display: 'flex',
-    flexDirection: 'column',
-    color: tokens.colorFgSubtle,
-    fontSize: tokens.fontSizeSm,
-    lineHeight: tokens.lineHeightSm,
-  },
-
-  footer: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    gap: tokens.spacing3,
-  },
-  footerDivided: {
-    borderBlockStartStyle: 'solid',
-    borderBlockStartWidth: '1px',
-    borderBlockStartColor: tokens.colorBorderSubtle,
-  },
-
-  // Spacing presets for Header
-  header_sm: {
-    paddingInline: tokens.spacing4,
-    paddingBlockStart: tokens.spacing4,
-    paddingBlockEnd: tokens.spacing1,
-  },
-  header_sm_divided: {
-    paddingInline: tokens.spacing4,
-    paddingBlockStart: tokens.spacing3,
-    paddingBlockEnd: tokens.spacing3,
-  },
-  header_md: {
-    paddingInline: tokens.spacing6,
-    paddingBlockStart: tokens.spacing6,
-    paddingBlockEnd: tokens.spacing2,
-  },
-  header_md_divided: {
-    paddingInline: tokens.spacing5,
-    paddingBlockStart: tokens.spacing4,
-    paddingBlockEnd: tokens.spacing4,
-  },
-  header_lg: {
-    paddingInline: tokens.spacing8,
-    paddingBlockStart: tokens.spacing8,
-    paddingBlockEnd: tokens.spacing3,
-  },
-  header_lg_divided: {
-    paddingInline: tokens.spacing6,
-    paddingBlockStart: tokens.spacing6,
-    paddingBlockEnd: tokens.spacing6,
-  },
-
-  // Spacing presets for Body
-  body_sm: {
-    paddingInline: tokens.spacing4,
-    paddingBlockStart: tokens.spacing1,
-    paddingBlockEnd: tokens.spacing3,
-    ':first-child': {
-      paddingBlockStart: tokens.spacing4,
-    },
-    ':last-child': {
-      paddingBlockEnd: tokens.spacing4,
-    },
-  },
-  body_sm_divided: {
-    paddingInline: tokens.spacing4,
-    paddingBlockStart: tokens.spacing3,
-    paddingBlockEnd: tokens.spacing3,
-  },
-  body_md: {
-    paddingInline: tokens.spacing6,
-    paddingBlockStart: tokens.spacing2,
-    paddingBlockEnd: tokens.spacing4,
-    ':first-child': {
-      paddingBlockStart: tokens.spacing6,
-    },
-    ':last-child': {
-      paddingBlockEnd: tokens.spacing6,
-    },
-  },
-  body_md_divided: {
-    paddingInline: tokens.spacing5,
-    paddingBlockStart: tokens.spacing4,
-    paddingBlockEnd: tokens.spacing4,
-  },
-  body_lg: {
-    paddingInline: tokens.spacing8,
-    paddingBlockStart: tokens.spacing3,
-    paddingBlockEnd: tokens.spacing5,
-    ':first-child': {
-      paddingBlockStart: tokens.spacing8,
-    },
-    ':last-child': {
-      paddingBlockEnd: tokens.spacing8,
-    },
-  },
-  body_lg_divided: {
-    paddingInline: tokens.spacing6,
-    paddingBlockStart: tokens.spacing6,
-    paddingBlockEnd: tokens.spacing6,
-  },
-
-  // Spacing presets for Footer
-  footer_sm: {
-    paddingInline: tokens.spacing4,
-    paddingBlockStart: tokens.spacing1,
-    paddingBlockEnd: tokens.spacing4,
-  },
-  footer_sm_divided: {
-    paddingInline: tokens.spacing4,
-    paddingBlockStart: tokens.spacing3,
-    paddingBlockEnd: tokens.spacing3,
-  },
-  footer_md: {
-    paddingInline: tokens.spacing6,
-    paddingBlockStart: tokens.spacing2,
-    paddingBlockEnd: tokens.spacing6,
-  },
-  footer_md_divided: {
-    paddingInline: tokens.spacing5,
-    paddingBlockStart: tokens.spacing4,
-    paddingBlockEnd: tokens.spacing4,
-  },
-  footer_lg: {
-    paddingInline: tokens.spacing8,
-    paddingBlockStart: tokens.spacing3,
-    paddingBlockEnd: tokens.spacing8,
-  },
-  footer_lg_divided: {
-    paddingInline: tokens.spacing6,
-    paddingBlockStart: tokens.spacing6,
-    paddingBlockEnd: tokens.spacing6,
-  },
-})
+export const cardStyles = css`
+  :host {
+    display: block;
+  }
+  .card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: var(--bs-card-bg, var(--bs-bg-body, #fff));
+    background-clip: border-box;
+    border: var(--bs-card-border-width, 1px) solid var(--bs-card-border-color, var(--bs-border-color, rgba(0, 0, 0, 0.175)));
+    border-radius: var(--bs-card-border-radius, var(--bs-border-radius, 0.375rem));
+    overflow: hidden;
+  }
+  .card.interactive {
+    cursor: pointer;
+    transition: transform 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  }
+  .card.interactive:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--bs-box-shadow, 0 0.5rem 1rem rgba(0, 0, 0, 0.15));
+  }
+  .card-header {
+    padding: var(--bs-card-cap-padding-y, 0.75rem) var(--bs-card-cap-padding-x, 1rem);
+    margin-bottom: 0;
+    color: var(--bs-card-cap-color, inherit);
+    background-color: var(--bs-card-cap-bg, var(--bs-bg-2, rgba(0, 0, 0, 0.03)));
+    border-bottom: var(--bs-card-border-width, 1px) solid var(--bs-card-border-color, var(--bs-border-color, rgba(0, 0, 0, 0.175)));
+    font-weight: 600;
+  }
+  .card-body {
+    flex: 1 1 auto;
+    padding: var(--bs-card-spacer-y, 1rem) var(--bs-card-spacer-x, 1rem);
+    color: var(--bs-card-color, inherit);
+  }
+  .card-footer {
+    padding: var(--bs-card-cap-padding-y, 0.75rem) var(--bs-card-cap-padding-x, 1rem);
+    color: var(--bs-card-cap-color, inherit);
+    background-color: var(--bs-card-cap-bg, var(--bs-bg-2, rgba(0, 0, 0, 0.03)));
+    border-top: var(--bs-card-border-width, 1px) solid var(--bs-card-border-color, var(--bs-border-color, rgba(0, 0, 0, 0.175)));
+  }
+  .d-none {
+    display: none !important;
+  }
+`

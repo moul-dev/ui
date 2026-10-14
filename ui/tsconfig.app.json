@@ -1,28 +1,38 @@
 {
   "compilerOptions": {
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
-    "target": "es2023",
-    "lib": ["ES2023", "DOM"],
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM"],
     "module": "esnext",
     "types": ["vite/client", "node"],
     "skipLibCheck": true,
 
-    /* Bundler mode */
+    /* Lit & Bundler configuration */
+    "useDefineForClassFields": false,
+    "experimentalDecorators": false,
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,
     "moduleDetection": "force",
     "noEmit": true,
-    "jsx": "react-jsx",
 
-    /* Linting */
+    /* Linting & Strictness */
+    "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "erasableSyntaxOnly": true,
+    "erasableSyntaxOnly": false,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"],
+  "include": [
+    "src/index.ts",
+    "src/shared/**/*",
+    "src/controllers/**/*",
+    "src/components/**/*"
+  ],
   "exclude": [
+    "src/**/*.tsx",
+    "src/sandbox/**/*",
+    "src/theme/**/*",
     "src/**/*.test.ts",
     "src/**/*.test.tsx",
     "src/test-setup.ts",

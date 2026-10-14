@@ -1,0 +1,108 @@
+---
+title: CommandPalette
+description: Fast, keyboard-first modal command center with search filtering, sections, action shortcuts, and global hotkeys.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro'
+
+
+
+
+# CommandPalette
+
+A modal search and quick-action menu inspired by tools like Linear and Raycast, providing global shortcut binding, compound sub-components, and auto-filtering.
+
+## Interactive Preview
+
+<ComponentPreview>
+  <moul-button variant="primary">Press Cmd+K to open</moul-button>
+</ComponentPreview>
+
+## Installation
+
+```tsx
+
+```
+
+## Basic Usage
+
+You can manage the palette state with the `useCommandPalette` hook, which automatically binds the `⌘K` / `Ctrl+K` global keyboard shortcut:
+
+```tsx
+
+
+
+export function Example() {
+  const { isOpen, setIsOpen, open } = useCommandPalette();
+
+  return (
+    <>
+      <moul-button onPress={open}>
+        Open Command Palette (⌘K)
+      </moul-button>
+
+      <moul-command-palette is-open={is-open} onOpenChange={setIsOpen}>
+        <div slot="input" placeholder="Search commands..." />
+        <div>
+          <moul-command-palette-section heading="Navigation">
+            <moul-command-palette-item
+              shortcut={['G', 'H']}
+              onAction={() => console.log('Home')}
+            >
+              Home
+            </moul-command-palette-item>
+            <moul-command-palette-item
+              shortcut={['G', 'D']}
+              onAction={() => console.log('Dashboard')}
+            >
+              Dashboard
+            </moul-command-palette-item>
+          </moul-command-palette-section>
+
+          <moul-command-palette-section heading="Actions">
+            <moul-command-palette-item
+              shortcut={['⌘', 'N']}
+              description="Create a new document"
+              onAction={() => console.log('New Document')}
+            >
+              New Document
+            </moul-command-palette-item>
+          </moul-command-palette-section>
+        </div>
+        <div class="empty-state">No matching commands found.</div>
+        <div slot="footer" />
+      </moul-command-palette>
+    </>
+  );
+}
+```
+
+## Keyboard Navigation
+
+- <moul-kbd>↑</moul-kbd> / <moul-kbd>↓</moul-kbd> : Navigate highlighted items
+- <moul-kbd>↵</moul-kbd> : Execute highlighted command and close palette
+- <moul-kbd>ESC</moul-kbd> : Dismiss palette
+- <moul-kbd>⌘K</moul-kbd> / <moul-kbd>Ctrl+K</moul-kbd> : Global toggle
+
+## Props
+
+### CommandPalette
+
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `isOpen` | `boolean` | — | Controlled open state |
+| `defaultOpen` | `boolean` | `false` | Uncontrolled default open state |
+| `onOpenChange` | `(open: boolean) => void` | — | Handler called when open state changes |
+| `shortcut` | `string \| string[]` | `['Meta+k', 'Ctrl+k']` | Global shortcut key combinations |
+| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Maximum width size variant |
+
+### CommandPaletteItem
+
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `icon` | `React.ReactNode` | — | Left icon adornment |
+| `description` | `React.ReactNode` | — | Secondary subtitle text |
+| `shortcut` | `string \| string[]` | — | Keyboard shortcut keycaps rendered on the right |
+| `keywords` | `string[]` | — | Additional terms to match against during search filtering |
+| `onAction` | `() => void` | — | Callback invoked when item is selected |
+| `isDisabled` | `boolean` | `false` | Disables item interaction |

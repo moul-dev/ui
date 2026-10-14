@@ -1,0 +1,192 @@
+---
+title: Sidebar
+description: A premium collapsible navigation sidebar block styled with StyleX and built with React Aria.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro'
+
+# Sidebar
+
+The `Sidebar` is a complete navigation block component designed in the style of Apple Music and Podcasts. It features collapsible groups, custom item selections, active/hover styles, glassmorphic layout options, profile/branding sections, and a responsive toggle to collapse to an icon-only view.
+
+## Preview
+
+<ComponentPreview title="Sidebar Preview">
+  <div style="height: 300px; display: flex; border: 1px solid var(--bs-border-color);">
+    <moul-sidebar>
+      <div slot="header" style="font-weight: 600;">Acme Dashboard</div>
+      <moul-sidebar-item href="#overview" is-selected>Overview</moul-sidebar-item>
+      <moul-sidebar-item href="#analytics">Analytics</moul-sidebar-item>
+      <moul-sidebar-divider></moul-sidebar-divider>
+      <moul-sidebar-item href="#settings">Settings</moul-sidebar-item>
+    </moul-sidebar>
+    <div style="flex: 1; padding: 1.5rem;">Main Content</div>
+  </div>
+</ComponentPreview>
+
+---
+
+## Import
+
+```tsx
+
+```
+
+---
+
+## Layout Structure
+
+The Sidebar is built as a set of compound components for complete flexibility:
+
+```html
+<moul-sidebar>
+  <div slot="aside">
+    <div slot="header">
+      <!-- Branding or logo -->
+    </div>
+
+    <moul-sidebar-group title="Navigation">
+      <moul-sidebar-item id="home">
+        <span slot="icon">🏠</span>
+        Home
+      </moul-sidebar-item>
+      <moul-sidebar-item id="settings">
+        <span slot="icon">⚙️</span>
+        Settings
+      </moul-sidebar-item>
+    </moul-sidebar-group>
+
+    <moul-sidebar-divider></moul-sidebar-divider>
+  </div>
+
+  <main>
+    <!-- Main dashboard or route content -->
+  </main>
+</moul-sidebar>
+```
+
+---
+
+## Features
+
+### Collapsible Groups
+Wrapping navigation links in `SidebarGroup` automatically supports group collapsibility. When `collapsible` is enabled, clicking the group title toggles item visibility with a smooth grid-based transition.
+
+### Icon-Only Collapse Mode
+Setting the `isCollapsed` prop shrinks the sidebar to a slim icon-only strip. When collapsed:
+- Text labels in `SidebarItem` are hidden.
+- Hovering over a collapsed item displays a premium `Tooltip` showing the item's label.
+- Group headers and sub-content are collapsed/hidden.
+
+### Dense Mode
+Enable `dense` on `<moul-sidebar>` (or individual subcomponents) to render a compact navigation layout. In dense mode:
+- Item heights are reduced from 36px to 30px with tighter padding and gaps.
+- Header and footer minimum heights are reduced to 48px.
+- Group headers and dividers have tighter spacing.
+- Collapsed icons are scaled to 30px square while maintaining consistent alignment.
+
+### Mobile Floating Bottom Navigation
+On mobile devices (`@media (max-width: 768px)`), the sidebar automatically transforms into an app-like floating bottom dock with native-feeling spring physics powered by `motion` (`motion.dev`). The architecture uses a compile-time CSS-first dual-DOM approach that renders cleanly in Server-Side Rendering (SSR) environments with zero layout shift (CLS) and zero hydration mismatch:
+- **Sticky Floating Dock**: Positioned centrally above the bottom safe area with glassmorphic blur and subtle elevation.
+- **Scroll & Swipe Reactivity**: When scrolling down or swiping upwards, the dock smoothly scales down to a compact icon bar (~0.90x) and the top bar slides out of view to maximize reading estate. Scrolling up or swiping down restores full size and labels with spring animation.
+- **Active Pill Animation**: Switching between items animates a smooth sliding pill background using `motion`'s shared layout transitions (`layoutId`).
+- **Collection Overflow & "More" Drawer**: The primary items (up to `maxMobileItems`, default 4) are presented directly on the dock. Additional items, secondary groups, and user account profiles are consolidated into a "More" (`...`) trigger that opens an accessible bottom sheet `<moul-drawer>`.
+
+### Styling & Layout Variants
+Supports both `solid` (flat background) and `glass` (glassmorphic translucent backdrop filter) modes out of the box using the `variant` prop.
+
+Additionally, the `layout` prop controls the spatial hierarchy:
+- `sidebar-framed` (default): Sidebar renders as a floating rounded card, while the main content area inherits the transparent canvas background.
+- `main-framed`: Inverted canvas layout where the sidebar is flush with the screen edge using the body background, and the main workspace is framed as a rounded, elevated card with subtle borders.
+
+---
+
+## API Reference
+
+### Sidebar Props
+
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `layout` | `'sidebar-framed' \| 'main-framed' \| 'default' \| 'inset'` | `'sidebar-framed'` | Visual hierarchy mode controlling whether the sidebar or main content area is framed. |
+| `dense` | `boolean` | `false` | Whether to render the sidebar and its child elements in compact dense mode. |
+| `isCollapsed` | `boolean` | `false` | Controlled state for whether the sidebar is collapsed to icon-only. |
+| `defaultCollapsed` | `boolean` | `false` | Uncontrolled default state for the collapse layout. |
+| `onCollapseChange` | `(collapsed: boolean) => void` | — | Callback triggered when the collapse state changes. |
+| `selectedKey` | `string` | — | The active/selected item ID (controlled). |
+| `defaultSelectedKey`| `string` | — | The initial active item ID (uncontrolled). |
+| `onSelectionChange` | `(key: string) => void` | — | Callback triggered when a new item is selected. |
+| `variant` | `'solid' \| 'glass'` | `'solid'` | Aesthetic variant of the framed element background. |
+| `enableMobileNav` | `boolean` | `true` | Whether to automatically transform to a floating sticky bottom dock on mobile viewports (`<= 768px`). |
+| `mobileNavScaleOnScroll` | `boolean` | `true` | Whether the floating bottom dock scales down and top bar hides during downward scroll/swipe. |
+| `maxMobileItems` | `number` | `4` | Maximum number of primary items rendered directly on the bottom dock before consolidating into the More drawer. |
+
+### SidebarAside Props
+
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `showCollapseToggle`| `boolean` | `true` | Renders a built-in floating chevron toggle at the bottom edge. |
+
+### SidebarMain Props
+
+Accepts standard JSX children and compile-time StyleX layout overrides via the `style` prop.
+
+### SidebarHeader Props
+
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `dense` | `boolean` | `false` | Optional override for compact dense styling. Inherits from `<moul-sidebar>`. |
+
+### SidebarBrand Props
+
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `logo` | `ReactNode` | — | Logo icon or badge rendered on the leading edge. |
+| `title` | `ReactNode` | — | Primary brand title text. |
+| `subtitle` | `ReactNode` | — | Secondary subtitle or version text. |
+| `dense` | `boolean` | `false` | Compact styling override. |
+| `onPress` | `() => void` | — | Optional callback making the brand trigger interactive. |
+
+### SidebarGroup Props
+
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `title` | `string` | — | The label text displayed at the top of the group. |
+| `collapsible` | `boolean` | `true` | Whether the group can be expanded/collapsed. |
+| `defaultExpanded` | `boolean` | `true` | The initial expansion state of the group. |
+| `isExpanded` | `boolean` | — | Controlled expansion state. |
+| `onExpandedChange` | `(expanded: boolean) => void` | — | Callback triggered when group expansion state toggles. |
+| `dense` | `boolean` | `false` | Optional override for compact dense styling. Cascades to child items. |
+
+### SidebarItem Props
+
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `id` | `string` | — | Unique key representing the item (used for selection modeling). |
+| `href` | `string` | — | Render as a link using React Aria's Link capabilities. |
+| `icon` | `ReactNode` | — | The SVG or custom react component rendered on the left of the label. |
+| `isSelected` | `boolean` | — | Manual override to mark the item as selected. |
+| `dense` | `boolean` | `false` | Optional override for compact dense styling. Inherits from group/sidebar. |
+
+### SidebarDivider Props
+
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `dense` | `boolean` | `false` | Optional override for compact margin spacing. Inherits from `<moul-sidebar>`. |
+
+### SidebarFooter Props
+
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `showBorder` | `boolean` | `true` | Whether to display a divider border above the footer content. |
+| `dense` | `boolean` | `false` | Optional override for compact dense styling. Inherits from `<moul-sidebar>`. |
+
+### SidebarUser Props
+
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `avatar` | `ReactNode` | — | The `Avatar` component or custom node rendered on the leading edge. |
+| `name` | `ReactNode` | — | User's display name. |
+| `description` | `ReactNode` | — | User's email, handle, or subtitle. |
+| `action` | `ReactNode` | — | Optional trailing action (e.g. icon button or menu trigger). |
+| `dense` | `boolean` | `false` | Compact styling override. |
+| `onPress` | `() => void` | — | Optional callback making the user profile item interactive. |

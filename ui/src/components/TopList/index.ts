@@ -1,2 +1,1 @@
-export type { TopListItem, TopListProps } from './TopList'
-export { TopList } from './TopList'
+export { MoulTopList, type TopListItemData } from './TopList.js'

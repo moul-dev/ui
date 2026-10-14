@@ -1,38 +1,21 @@
-import * as stylex from '@stylexjs/stylex'
-import { tokens } from '../../tokens/tokens.stylex'
+import { css } from 'lit'
 
-export const styles = stylex.create({
-  base: {
-    display: 'inline-flex',
-    flexDirection: 'row',
-    alignItems: 'stretch',
-    boxSizing: 'border-box',
-  },
-  vertical: {
-    flexDirection: 'column',
-  },
-  animatedTrack: {
-    backgroundColor: tokens.colorBgSubtle,
-    borderRadius: tokens.radiusMd,
-    padding: '2px',
-    borderWidth: '1px',
-    borderStyle: 'solid',
-    borderColor: tokens.colorBorderSubtle,
-    gap: '2px',
-  },
-  trackSm: {
-    borderRadius: tokens.radiusSm,
-  },
-  trackMd: {
-    borderRadius: tokens.radiusMd,
-  },
-  trackLg: {
-    borderRadius: tokens.radiusMd,
-  },
-  animatedTrackHorizontal: {
-    flexDirection: 'row',
-  },
-  animatedTrackVertical: {
-    flexDirection: 'column',
-  },
-})
+export const toggleButtonGroupStyles = css`
+  :host {
+    display: inline-flex;
+  }
+  .btn-group {
+    position: relative;
+    display: inline-flex;
+    vertical-align: middle;
+  }
+  ::slotted(moul-toggle-button:not(:first-child)) {
+    margin-left: -1px;
+    --bs-border-top-left-radius: 0;
+    --bs-border-bottom-left-radius: 0;
+  }
+  ::slotted(moul-toggle-button:not(:last-child)) {
+    --bs-border-top-right-radius: 0;
+    --bs-border-bottom-right-radius: 0;
+  }
+`

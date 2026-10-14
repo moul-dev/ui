@@ -1,216 +1,141 @@
-import * as stylex from '@stylexjs/stylex'
-import { tokens } from '../../tokens/tokens.stylex'
+import { css } from 'lit'
 
-export const styles = stylex.create({
-  container: {
-    display: 'flex',
-    flexDirection: 'column',
-    fontFamily: tokens.fontFamilyBase,
-    gap: tokens.spacing2,
-  },
-  list: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    gap: tokens.spacing2,
-  },
-  tag: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: tokens.spacing1,
-    borderRadius: tokens.radiusFull,
-    fontFamily: tokens.fontFamilyBase,
-    cursor: 'default',
-    userSelect: 'none',
-    outline: 'none',
-    borderWidth: '1px',
-    borderStyle: 'solid',
-    transition: 'all 0.2s ease',
-    textDecoration: 'none',
-  },
-  tagLink: {
-    cursor: 'pointer',
-  },
-  tagFocused: {
-    // base focused style
-  },
-  tagFocusVisible: {
-    outlineWidth: '2px',
-    outlineStyle: 'solid',
-    outlineColor: tokens.colorBorderFocus,
-    outlineOffset: '1px',
-  },
-  tagPressed: {
-    transform: 'scale(0.96)',
-  },
-  tagDisabled: {
-    opacity: 0.5,
-    pointerEvents: 'none',
-  },
+export const tagGroupStyles = css`
+  :host {
+    display: block;
+  }
 
-  // ── Sizing — Padding & Typography ─────────────────────────────────
-  sm: {
-    paddingBlock: '2px',
-    paddingInline: tokens.spacing2,
-    fontSize: tokens.fontSizeXs,
-    lineHeight: tokens.lineHeightXs,
-  },
-  md: {
-    paddingBlock: tokens.spacing1,
-    paddingInline: tokens.spacing3,
-    fontSize: tokens.fontSizeSm,
-    lineHeight: tokens.lineHeightSm,
-  },
-  lg: {
-    paddingBlock: tokens.spacing2,
-    paddingInline: tokens.spacing4,
-    fontSize: tokens.fontSizeMd,
-    lineHeight: tokens.lineHeightMd,
-  },
+  .tag-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
 
-  // ── Sizing with Close Button ──────────────────────────────────────
-  tagWithRemoveSm: {
-    paddingInlineStart: tokens.spacing2,
-    paddingInlineEnd: '2px',
-  },
-  tagWithRemoveMd: {
-    paddingInlineStart: tokens.spacing3,
-    paddingInlineEnd: tokens.spacing1,
-  },
-  tagWithRemoveLg: {
-    paddingInlineStart: tokens.spacing4,
-    paddingInlineEnd: tokens.spacing2,
-  },
+  .tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+  }
 
-  // ── Variants — Colors ─────────────────────────────────────────────
-  // 1. Primary Variant
-  variantPrimary: {
-    backgroundColor: tokens.colorPrimary100,
-    borderColor: tokens.colorPrimary200,
-    color: tokens.colorPrimary700,
-  },
-  variantPrimaryHovered: {
-    backgroundColor: tokens.colorPrimary200,
-    borderColor: tokens.colorPrimary300,
-    color: tokens.colorPrimary800,
-  },
-  variantPrimarySelected: {
-    backgroundColor: tokens.colorPrimary500,
-    borderColor: tokens.colorPrimary500,
-    color: tokens.colorBg,
-  },
-  variantPrimarySelectedHovered: {
-    backgroundColor: tokens.colorPrimary600,
-    borderColor: tokens.colorPrimary600,
-    color: tokens.colorBg,
-  },
+  .label {
+    font-size: var(--bs-body-font-size, 1rem);
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+  }
 
-  // 2. Secondary Variant
-  variantSecondary: {
-    backgroundColor: tokens.colorNeutral200,
-    borderColor: tokens.colorBorder,
-    color: tokens.colorNeutral800,
-  },
-  variantSecondaryHovered: {
-    backgroundColor: tokens.colorNeutral300,
-    borderColor: tokens.colorNeutral400,
-    color: tokens.colorNeutral900,
-  },
-  variantSecondarySelected: {
-    backgroundColor: tokens.colorPrimary500,
-    borderColor: tokens.colorPrimary500,
-    color: tokens.colorBg,
-  },
-  variantSecondarySelectedHovered: {
-    backgroundColor: tokens.colorPrimary600,
-    borderColor: tokens.colorPrimary600,
-    color: tokens.colorBg,
-  },
+  .description {
+    font-size: 0.875rem;
+    color: var(--bs-secondary-color, #6c757d);
+  }
 
-  // 3. Tertiary Variant
-  variantTertiary: {
-    backgroundColor: 'transparent',
-    borderColor: tokens.colorBorderSubtle,
-    color: tokens.colorNeutral600,
-  },
-  variantTertiaryHovered: {
-    backgroundColor: tokens.colorNeutral100,
-    borderColor: tokens.colorNeutral300,
-    color: tokens.colorNeutral800,
-  },
-  variantTertiarySelected: {
-    backgroundColor: tokens.colorNeutral700,
-    borderColor: tokens.colorNeutral700,
-    color: tokens.colorBg,
-  },
-  variantTertiarySelectedHovered: {
-    backgroundColor: tokens.colorNeutral800,
-    borderColor: tokens.colorNeutral800,
-    color: tokens.colorBg,
-  },
+  .error-message {
+    font-size: 0.875rem;
+    color: var(--bs-danger, #dc3545);
+  }
+`
 
-  // ── Close / Remove Buttons ────────────────────────────────────────
-  removeButton: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: tokens.radiusFull,
-    borderWidth: 0,
-    backgroundColor: 'transparent',
-    color: 'inherit',
-    cursor: 'pointer',
-    transition: 'all 0.15s ease',
-    padding: 0,
-    lineHeight: 1,
-    outline: 'none',
-  },
-  removeButtonSm: {
-    width: '14px',
-    height: '14px',
-    fontSize: '8px',
-  },
-  removeButtonMd: {
-    width: '18px',
-    height: '18px',
-    fontSize: '9px',
-  },
-  removeButtonLg: {
-    width: '22px',
-    height: '22px',
-    fontSize: tokens.fontSizeXs,
-  },
-  removeButtonHovered: {
-    backgroundColor: tokens.colorNeutral300,
-  },
-  removeHoverPrimary: {
-    backgroundColor: tokens.colorPrimary200,
-  },
-  removeHoverSecondary: {
-    backgroundColor: tokens.colorNeutral300,
-  },
-  removeHoverTertiary: {
-    backgroundColor: tokens.colorNeutral200,
-  },
-  removeHoverPrimarySelected: {
-    backgroundColor: tokens.colorPrimary600,
-  },
-  removeHoverSecondarySelected: {
-    backgroundColor: tokens.colorPrimary600,
-  },
-  removeHoverTertiarySelected: {
-    backgroundColor: tokens.colorNeutral800,
-  },
-  removeButtonPressed: {
-    transform: 'scale(0.85)',
-  },
-  removeButtonFocused: {
-    outlineWidth: '1px',
-    outlineStyle: 'solid',
-    outlineColor: tokens.colorBorderFocus,
-  },
-  errorMessage: {
-    color: tokens.colorError500,
-    fontSize: tokens.fontSizeSm,
-    lineHeight: tokens.lineHeightSm,
-    marginBlockStart: tokens.spacing1,
-  },
-})
+export const tagStyles = css`
+  :host {
+    display: inline-block;
+  }
+
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    border-radius: var(--bs-border-radius-pill, 50rem);
+    font-weight: 500;
+    line-height: 1;
+    text-decoration: none;
+    cursor: default;
+    user-select: none;
+    transition: all 0.15s ease-in-out;
+    border: 1px solid transparent;
+  }
+
+  /* Sizes */
+  .tag.sm {
+    padding: 0.2rem 0.5rem;
+    font-size: 0.75rem;
+  }
+
+  .tag.md {
+    padding: 0.35rem 0.75rem;
+    font-size: 0.875rem;
+  }
+
+  .tag.lg {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+  }
+
+  /* Variants */
+  .tag.secondary {
+    background-color: var(--bs-secondary-bg, #e9ecef);
+    color: var(--bs-body-color, #212529);
+    border-color: var(--bs-border-color, #dee2e6);
+  }
+
+  .tag.primary {
+    background-color: rgba(var(--bs-primary-rgb, 13, 110, 253), 0.12);
+    color: var(--bs-primary, #0d6efd);
+    border-color: rgba(var(--bs-primary-rgb, 13, 110, 253), 0.25);
+  }
+
+  .tag.tertiary {
+    background-color: transparent;
+    color: var(--bs-secondary-color, #6c757d);
+    border-color: var(--bs-border-color, #dee2e6);
+  }
+
+  /* Interactive / Selectable */
+  :host([selectable]) .tag,
+  :host([is-selected]) .tag {
+    cursor: pointer;
+  }
+
+  :host([is-selected]) .tag.secondary {
+    background-color: var(--bs-secondary, #6c757d);
+    color: #fff;
+    border-color: var(--bs-secondary, #6c757d);
+  }
+
+  :host([is-selected]) .tag.primary {
+    background-color: var(--bs-primary, #0d6efd);
+    color: #fff;
+    border-color: var(--bs-primary, #0d6efd);
+  }
+
+  :host([is-selected]) .tag.tertiary {
+    background-color: var(--bs-body-color, #212529);
+    color: #fff;
+    border-color: var(--bs-body-color, #212529);
+  }
+
+  :host([is-disabled]) {
+    pointer-events: none;
+    opacity: 0.65;
+  }
+
+  .btn-remove {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font-size: 1em;
+    line-height: 1;
+    color: inherit;
+    cursor: pointer;
+    opacity: 0.7;
+    border-radius: 50%;
+    transition: opacity 0.15s ease-in-out;
+  }
+
+  .btn-remove:hover {
+    opacity: 1;
+  }
+`

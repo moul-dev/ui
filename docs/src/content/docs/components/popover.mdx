@@ -1,0 +1,114 @@
+---
+title: Popover
+description: Documentation for the Popover component.
+reactAria: Popover
+---
+
+import Accordion from '@/components/Accordion.astro'
+import Accordions from '@/components/Accordions.astro'
+
+
+import ComponentPreview from '@/components/ComponentPreview.astro'
+import PropsTable from '@/components/PropsTable.astro'
+
+
+
+
+
+# Popover
+
+## Preview
+
+<ComponentPreview>
+  <div slot="trigger">
+    <moul-button>Trigger Popover</moul-button>
+    <moul-popover>
+      <div slot="content">
+        <div class="p-4 text-sm">This is the content inside the popover.</div>
+      </div>
+    </moul-popover>
+  </div>
+</ComponentPreview>
+
+The `Popover` component is built with React Aria and styled using StyleX.
+
+## Import
+
+```tsx
+
+```
+
+## Usage
+
+Here is a basic example of how to use the `Popover` component:
+
+```tsx
+
+
+export default function Example() {
+  return (
+    <moul-popover>
+      {/* Component content */}
+    </moul-popover>
+  );
+}
+```
+
+## Props
+
+### Popover Props
+
+<PropsTable
+  type={{
+    'showArrow': {
+      type: "boolean",
+      default: "true",
+      description: "Whether to render a dynamic pointer arrow triangle extending to the trigger.",
+    },
+    'placement': {
+      type: "string",
+      default: "'bottom'",
+      description: "The placement axis of the popover relative to the trigger.",
+    },
+    'isOpen': {
+      type: "boolean",
+      description: "Whether the popover is currently open (controlled).",
+    },
+    'defaultOpen': {
+      type: "boolean",
+      description: "Whether the popover is initially open (uncontrolled).",
+    },
+  }}
+/>
+
+<Accordions>
+  <Accordion title="Value">
+    <PropsTable
+          type={{
+            'onOpenChange': {
+              type: "(isOpen: boolean) => void",
+              description: "Handler called when open state changes.",
+            },
+          }}
+        />
+  </Accordion>
+  <Accordion title="Styling">
+    <PropsTable
+          type={{
+            'className': {
+              type: "ClassNameOrFunction",
+              default: "'react-aria-Popover'",
+              description: "The CSS className.",
+            },
+          }}
+        />
+  </Accordion>
+</Accordions>
+
+Default className: `react-aria-Popover`
+
+| Render Prop | CSS Selector |
+| :--- | :--- |
+| `isOpen` <br/> Whether the popover is open. | `[data-open]` |
+| `placement` <br/> The current placement. | `[data-placement]` |
+

@@ -1,0 +1,82 @@
+---
+title: v2026.10.14 — Web Components, Shadow DOM Style Isolation, and Framework Agnosticism
+description: Rebuilding Moul UI on standard Lit custom elements with Bootstrap 6 inside Shadow DOM and migrating documentation to Astro and Starlight.
+date: 2026-10-14
+author: Phearak S. Tha
+avatar: https://github.com/thasophearak.png
+---
+
+Binding a design system to a single client-side runtime is a short-sighted architecture. When UI primitives are married to React and compile-time CSS-in-JS abstractions, they become inert in non-React applications and create unnecessary lock-in.
+
+Browsers now offer native primitives that solve component encapsulation directly. Web Components and Shadow DOM provide durable component isolation that survives JavaScript framework transitions[^1].
+
+This release completely rebuilds `@moul-dev/ui` as a native Custom Element library powered by Lit and Bootstrap 6 (`6.0.0-alpha.1`) inside Shadow DOM, and migrates the documentation site to Astro and Starlight.
+
+---
+
+## Shadow DOM Style Isolation via Adopted StyleSheets
+
+The core architectural challenge with Web Components has always been sharing a design system stylesheet across shadow roots without duplicating megabytes of CSS text in memory.
+
+Bootstrap 6 resolves this cleanly. We compile the Bootstrap stylesheet once into a singleton `CSSStyleSheet` instance and attach it across all component instances via `adoptedStyleSheets`:
+
+```ts
+import bootstrapCssText from 'bootstrap/dist/css/bootstrap.min.css?inline'
+
+export const bootstrapSheet = new CSSStyleSheet()
+bootstrapSheet.replaceSync(bootstrapCssText)
+```
+
+Every component extends `MoulBase`, which adopts `bootstrapSheet` by default alongside component-specific styles:
+
+```ts
+export class MoulBase extends LitElement {
+  static override styles = [
+    bootstrapSheet,
+  ]
+}
+```
+
+This guarantees zero global style leakage. Bootstrap classes like `.btn`, `.modal`, `.alert`, and `.form-control` apply strictly within the component boundary, without polluting the host application's global cascading context.
+
+---
+
+## Headless Reactive Controllers
+
+React Aria provided exceptional accessibility primitives, but its hooks cannot run inside custom elements. Rather than sacrificing accessibility or re-inventing ad-hoc listeners, I ported all complex behaviors into reusable Lit Reactive Controllers:
+
+- **`FocusTrapController`:** Traps keyboard navigation inside active modal and drawer dialogs, restoring focus to the initiator element on dismissal.
+- **`FloatingUIController`:** Manages anchored overlay positioning for Tooltips, Popovers, ComboBoxes, and Dropdowns using `@floating-ui/dom`.
+- **`RovingTabindexController`:** APG-compliant arrow-key focus management across Tabs, RadioGroups, and Toolbar items.
+- **`ScrollLockController`:** Suppresses background viewport scrolling during overlay presentation.
+- **`LiveRegionController`:** Programmatically announces asynchronous state transitions and validation feedback to assistive technologies.
+- **`KeyboardListController`:** Unified listbox selection with active-descendant keyboard navigation.
+
+---
+
+## Astro and Starlight Documentation
+
+With Moul UI components now operating as native custom elements, our documentation stack no longer needed a React Server Components (RSC) runtime.
+
+I replaced the previous Waku and Fumadocs stack with Astro 5 and Starlight. The new site renders static HTML and allows custom elements to be consumed directly in MDX without wrapper layers or client hydration shims:
+
+```html
+<moul-button variant="primary">
+  Native Button
+</moul-button>
+```
+
+Pagefind delivers fast client-side full-text search across all 53 component documentation pages with zero cloud dependencies.
+
+---
+
+## On Craft and Durability
+
+Frameworks come and go. Standards remain.
+
+By grounding Moul UI in native custom elements and standard CSS custom properties, these components can be embedded in vanilla HTML, React, Vue, Svelte, or Astro without friction or dependency rot[^2].
+
+Writing code that lasts requires humility toward our tools and respect for the platform.
+
+[^1]: Custom elements have been supported across all modern evergreen browsers since 2020.
+[^2]: Theme variables cascade through shadow roots naturally, preserving runtime customizability via standard CSS inheritance.

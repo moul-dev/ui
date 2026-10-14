@@ -1,2 +1,1 @@
-export type { DescriptionProps } from './Description'
-export { Description } from './Description'
+export { MoulDescription } from './Description.js'

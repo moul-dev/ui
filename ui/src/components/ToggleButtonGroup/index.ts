@@ -1,2 +1,1 @@
-export type { ToggleButtonGroupProps } from './ToggleButtonGroup'
-export { ToggleButtonGroup } from './ToggleButtonGroup'
+export { MoulToggleButtonGroup } from './ToggleButtonGroup.js'

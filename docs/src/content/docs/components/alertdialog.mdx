@@ -1,0 +1,85 @@
+---
+title: AlertDialog
+description: Documentation for the AlertDialog component.
+reactAria: Dialog
+---
+
+import Accordion from '@/components/Accordion.astro'
+import Accordions from '@/components/Accordions.astro'
+
+
+import ComponentPreview from '@/components/ComponentPreview.astro'
+import PropsTable from '@/components/PropsTable.astro'
+
+
+
+
+
+# AlertDialog
+
+## Preview
+
+<ComponentPreview>
+  <moul-button variant="danger">Open Dialog</moul-button>
+</ComponentPreview>
+
+The `AlertDialog` component is built with React Aria and styled using StyleX.
+
+## Import
+
+```tsx
+
+```
+
+## Usage
+
+Here is a basic example of how to use the `AlertDialog` component:
+
+```tsx
+
+
+export default function Example() {
+  return (
+    <moul-alert-dialog>
+      <div slot="header">Deactivate Account</div>
+      <div slot="body">
+        Are you sure you want to deactivate your account? This action cannot be undone.
+      </div>
+      <div slot="footer">
+        <moul-button variant="outline" onPress={() => {}}>Cancel</moul-button>
+        <moul-button variant="danger" onPress={() => {}}>Confirm</moul-button>
+      </div>
+    </moul-alert-dialog>
+  );
+}
+```
+
+## Props
+
+### AlertDialog Props
+
+<PropsTable
+  type={{
+    'role': {
+      type: "'dialog' | 'alertdialog'",
+      default: "'alertdialog'",
+      description: "The accessibility role matching the content dialog behavior.",
+    },
+  }}
+/>
+
+<Accordions>
+  <Accordion title="Styling">
+    <PropsTable
+          type={{
+            'className': {
+              type: "string",
+              description: "The CSS className.",
+            },
+          }}
+        />
+  </Accordion>
+</Accordions>
+
+Default className: `react-aria-Dialog`
+

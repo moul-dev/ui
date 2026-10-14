@@ -1,0 +1,82 @@
+---
+title: Breadcrumbs
+description: Documentation for the Breadcrumbs component.
+reactAria: Breadcrumbs
+---
+
+import Accordion from '@/components/Accordion.astro'
+import Accordions from '@/components/Accordions.astro'
+
+
+import ComponentPreview from '@/components/ComponentPreview.astro'
+import PropsTable from '@/components/PropsTable.astro'
+
+
+
+
+
+# Breadcrumbs
+
+## Preview
+
+<ComponentPreview>
+  <moul-breadcrumbs>
+    <moul-breadcrumb-item>Home</moul-breadcrumb-item>
+    <moul-breadcrumb-item>Components</moul-breadcrumb-item>
+    <moul-breadcrumb-item isCurrent>Breadcrumbs</moul-breadcrumb-item>
+  </moul-breadcrumbs>
+</ComponentPreview>
+
+The `Breadcrumbs` component is built with React Aria and styled using StyleX.
+
+## Import
+
+```tsx
+
+```
+
+## Usage
+
+Here is a basic example of how to use the `Breadcrumbs` component:
+
+```tsx
+
+
+export default function Example() {
+  return (
+    <moul-breadcrumbs>
+      {/* Component content */}
+    </moul-breadcrumbs>
+  );
+}
+```
+
+## Props
+
+### Breadcrumbs Props
+
+<PropsTable
+  type={{
+    'isDisabled': {
+      type: "boolean",
+      default: "false",
+      description: "Whether navigation within the breadcrumbs is disabled.",
+    },
+  }}
+/>
+
+<Accordions>
+  <Accordion title="Styling">
+    <PropsTable
+          type={{
+            'className': {
+              type: "string",
+              description: "The CSS className.",
+            },
+          }}
+        />
+  </Accordion>
+</Accordions>
+
+Default className: `react-aria-Breadcrumbs`
+

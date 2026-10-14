@@ -1,0 +1,119 @@
+---
+title: Toast
+description: Documentation for the Toast component.
+reactAria: Toast
+---
+
+import Accordion from '@/components/Accordion.astro'
+import Accordions from '@/components/Accordions.astro'
+
+
+import PropsTable from '@/components/PropsTable.astro'
+
+
+
+
+
+# Toast
+
+## Preview
+
+
+
+The `Toast` component is built with React Aria and styled using StyleX. Multiple active toasts are stacked vertically with elegant y-spacing.
+
+## Import
+
+To use toast notifications in your application, you need to 
+```
+
+## Usage
+
+Place the `ToastContainer` at the root of your application (or near the layout root), and call the `useToast` hook to trigger notifications:
+
+```tsx
+
+
+export default function Example() {
+  const toast = useToast();
+
+  return (
+    <div>
+      <moul-button onPress={() => toast.show('Hello World!')}>
+        Show Toast
+      </moul-button>
+      
+      {/* ToastContainer must be rendered to display the active toasts */}
+      <moul-toast-container></moul-toast-container>
+    </div>
+  );
+}
+```
+
+## Options & Variants
+
+The `toast.show` function accepts a title string as the first argument, and an optional options object as the second:
+
+```typescript
+toast.show(title: string, options?: {
+  description?: string;
+  variant?: 'info' | 'success' | 'warning' | 'error';
+  timeout?: number; // duration in ms, default is 5000
+});
+```
+
+### Examples
+
+#### Success Notification
+```typescript
+toast.show('Action Completed', {
+  description: 'Your changes have been saved.',
+  variant: 'success',
+});
+```
+
+#### Error Notification
+```typescript
+toast.show('Request Failed', {
+  description: 'Could not connect to server.',
+  variant: 'error',
+  timeout: 8000,
+});
+```
+
+#### Warning Notification
+```typescript
+toast.show('Unsaved Changes', {
+  description: 'Please review your updates.',
+  variant: 'warning',
+});
+```
+
+## Props
+
+### Toast Props
+
+<PropsTable
+  type={{
+    'toast': {
+      type: "ToastState",
+      description: "The active single toast queue item reference.",
+    },
+  }}
+/>
+
+<Accordions>
+  <Accordion title="Styling">
+    <PropsTable
+          type={{
+            'className': {
+              type: "string",
+              description: "The CSS className.",
+            },
+          }}
+        />
+  </Accordion>
+</Accordions>
+
+Default className: `react-aria-Toast`
+

@@ -1,45 +1,55 @@
-import * as stylex from '@stylexjs/stylex'
-import { tokens } from '../../tokens/tokens.stylex'
+import { css } from 'lit'
 
-const spin = stylex.keyframes({
-  from: { transform: 'rotate(0deg)' },
-  to: { transform: 'rotate(360deg)' },
-})
-
-export const styles = stylex.create({
-  base: {
-    '@media (prefers-reduced-motion: reduce)': {
-      animationPlayState: 'paused',
-    },
-    borderColor: tokens.colorBorderSubtle,
-    borderRadius: tokens.radiusFull,
-    borderStyle: 'solid',
-    animationDuration: '0.8s',
-    animationIterationCount: 'infinite',
-    animationName: spin,
-    animationTimingFunction: 'linear',
-    borderBlockStartColor: tokens.colorPrimary500,
-    display: 'inline-block',
-    boxSizing: 'border-box',
-  },
-  sm: {
-    height: tokens.spacing4,
-    width: tokens.spacing4,
-    borderWidth: '2px',
-  },
-  md: {
-    height: tokens.spacing5,
-    width: tokens.spacing5,
-    borderWidth: tokens.spacing1,
-  },
-  lg: {
-    height: tokens.spacing7,
-    width: tokens.spacing7,
-    borderWidth: tokens.spacing1,
-  },
-  xl: {
-    height: tokens.spacing8,
-    width: tokens.spacing8,
-    borderWidth: tokens.spacing1,
-  },
-})
+export const spinnerStyles = css`
+  :host {
+    display: inline-flex;
+    vertical-align: -0.125em;
+  }
+  .spinner-border {
+    display: inline-block;
+    width: 2rem;
+    height: 2rem;
+    vertical-align: -0.125em;
+    border: 0.25em solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: 0.75s linear infinite spinner-border;
+  }
+  .spinner-border-sm {
+    width: 1rem;
+    height: 1rem;
+    border-width: 0.2em;
+  }
+  .spinner-grow {
+    display: inline-block;
+    width: 2rem;
+    height: 2rem;
+    vertical-align: -0.125em;
+    background-color: currentColor;
+    border-radius: 50%;
+    opacity: 0;
+    animation: 0.75s linear infinite spinner-grow;
+  }
+  .spinner-grow-sm {
+    width: 1rem;
+    height: 1rem;
+  }
+  @keyframes spinner-border {
+    to { transform: rotate(360deg); }
+  }
+  @keyframes spinner-grow {
+    0% { transform: scale(0); }
+    50% { opacity: 1; transform: none; }
+  }
+  .visually-hidden {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+  }
+`

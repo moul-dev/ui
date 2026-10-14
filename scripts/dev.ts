@@ -41,7 +41,7 @@ const services: Service[] = [
     cwd: rootDir,
   },
   {
-    name: 'docs:waku',
+    name: 'docs:astro',
     color: colors.magenta,
     command: 'bun',
     args: ['--cwd', 'docs', 'dev'],
@@ -105,9 +105,9 @@ ${colors.bright}${colors.cyan}========================================${colors.r
 ${colors.bright}  Moul UI Dev Environment Supervisor${colors.reset}
 ${colors.cyan}========================================${colors.reset}
 
-  ${colors.blue}● ui:build${colors.reset}  Watch library StyleX/TS changes
+  ${colors.blue}● ui:build${colors.reset}  Watch library TS/Lit changes
   ${colors.cyan}● ui:vite${colors.reset}   Sandbox server (Vite)
-  ${colors.magenta}● docs:waku${colors.reset} Documentation server (Waku)
+  ${colors.magenta}● docs:astro${colors.reset} Documentation server (Astro + Starlight)
 
 ${colors.dim}Press Ctrl+C to terminate all services cleanly.${colors.reset}
 `)

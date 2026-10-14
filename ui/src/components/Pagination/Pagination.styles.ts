@@ -1,172 +1,86 @@
-import * as stylex from '@stylexjs/stylex'
-import { tokens } from '../../tokens/tokens.stylex'
+import { css } from 'lit'
 
-export const styles = stylex.create({
-  root: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: tokens.spacing3,
-    width: '100%',
-    boxSizing: 'border-box',
-    fontFamily: tokens.fontFamilyBase,
-    fontSize: tokens.fontSizeSm,
-    flexWrap: 'wrap',
-  },
-  content: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: tokens.spacing1,
-    listStyle: 'none',
-    margin: 0,
-    padding: 0,
-  },
-  item: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    margin: 0,
-    padding: 0,
-  },
+export const paginationStyles = css`
+  :host {
+    display: inline-block;
+  }
 
-  // Button / Link Base
-  link: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontFamily: tokens.fontFamilyBase,
-    fontWeight: tokens.fontWeightMedium,
-    cursor: 'pointer',
-    userSelect: 'none',
-    outline: 'none',
-    borderWidth: '1px',
-    borderStyle: 'solid',
-    borderColor: 'transparent',
-    transitionProperty: 'background-color, border-color, color, box-shadow',
-    transitionDuration: '0.15s',
-    transitionTimingFunction: 'ease-in-out',
-    textDecoration: 'none',
-    color: tokens.colorFg,
-    backgroundColor: 'transparent',
-  },
-  linkHover: {
-    backgroundColor: tokens.colorNeutral100,
-  },
-  linkFocus: {
-    boxShadow: `0 0 0 2px ${tokens.colorBg}, 0 0 0 4px ${tokens.colorBorderFocus}`,
-  },
-  linkDisabled: {
-    opacity: 0.35,
-    cursor: 'not-allowed',
-    pointerEvents: 'none',
-  },
+  .pagination {
+    display: flex;
+    padding-left: 0;
+    list-style: none;
+    margin: 0;
+    gap: 0.25rem;
+  }
 
-  // Sizes
-  linkSm: {
-    minWidth: '28px',
-    height: '28px',
-    paddingInline: tokens.spacing1,
-    fontSize: tokens.fontSizeXs,
-  },
-  linkMd: {
-    minWidth: '36px',
-    height: '36px',
-    paddingInline: tokens.spacing2,
-    fontSize: tokens.fontSizeSm,
-  },
-  linkLg: {
-    minWidth: '44px',
-    height: '44px',
-    paddingInline: tokens.spacing3,
-    fontSize: tokens.fontSizeMd,
-  },
+  .page-item {
+    display: inline-block;
+  }
 
-  // Shapes
-  shapeRounded: {
-    borderRadius: tokens.radiusMd,
-  },
-  shapeCircle: {
-    borderRadius: tokens.radiusFull,
-  },
-  shapeSquare: {
-    borderRadius: tokens.radiusNone,
-  },
+  .page-link {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.25rem;
+    height: 2.25rem;
+    padding: 0.375rem 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--bs-body-color, #212529);
+    text-decoration: none;
+    background-color: var(--bs-body-bg, #fff);
+    border: 1px solid var(--bs-border-color, #dee2e6);
+    border-radius: var(--bs-border-radius, 0.375rem);
+    cursor: pointer;
+    user-select: none;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+  }
 
-  // Variants
-  variantGhost: {
-    backgroundColor: 'transparent',
-    borderColor: 'transparent',
-  },
-  variantOutline: {
-    backgroundColor: 'transparent',
-    borderColor: tokens.colorBorder,
-  },
-  variantSubtle: {
-    backgroundColor: tokens.colorBgSubtle,
-    borderColor: 'transparent',
-  },
+  .page-link:hover:not(:disabled) {
+    background-color: var(--bs-tertiary-bg, #f8f9fa);
+    border-color: var(--bs-border-color, #dee2e6);
+  }
 
-  // Active / Selected page
-  linkActive: {
-    backgroundColor: tokens.colorPrimary500,
-    borderColor: tokens.colorPrimary500,
-    color: tokens.colorFgOnPrimary,
-    fontWeight: tokens.fontWeightBold,
-  },
-  linkActiveOutline: {
-    backgroundColor: tokens.colorPrimary50,
-    borderColor: tokens.colorPrimary500,
-    color: tokens.colorPrimary600,
-    fontWeight: tokens.fontWeightBold,
-  },
+  .page-item.active .page-link {
+    z-index: 3;
+    color: #fff;
+    background-color: var(--bs-primary, #0d6efd);
+    border-color: var(--bs-primary, #0d6efd);
+  }
 
-  // Ellipsis
-  ellipsis: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    minWidth: '28px',
-    height: '28px',
-    color: tokens.colorFgSubtle,
-    fontSize: tokens.fontSizeSm,
-    userSelect: 'none',
-  },
+  .page-item.disabled .page-link {
+    color: var(--bs-secondary-color, #6c757d);
+    pointer-events: none;
+    background-color: var(--bs-secondary-bg, #e9ecef);
+    border-color: var(--bs-border-color, #dee2e6);
+    opacity: 0.65;
+  }
 
-  // Navigation Arrows
-  navButtonText: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: tokens.spacing1,
-  },
+  .pagination.sm .page-link {
+    min-width: 1.75rem;
+    height: 1.75rem;
+    padding: 0.2rem 0.5rem;
+    font-size: 0.75rem;
+  }
 
-  // Summary
-  summary: {
-    color: tokens.colorFgSubtle,
-    fontSize: tokens.fontSizeSm,
-    whiteSpace: 'nowrap',
-  },
+  .pagination.lg .page-link {
+    min-width: 2.75rem;
+    height: 2.75rem;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+  }
 
-  // Page Size Selector Container
-  pageSizeContainer: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: tokens.spacing2,
-    color: tokens.colorFgSubtle,
-    fontSize: tokens.fontSizeSm,
-    whiteSpace: 'nowrap',
-  },
-  pageSizeSelect: {
-    fontFamily: tokens.fontFamilyBase,
-    fontSize: tokens.fontSizeSm,
-    color: tokens.colorFg,
-    backgroundColor: tokens.colorBgElevated,
-    borderColor: tokens.colorBorder,
-    borderWidth: '1px',
-    borderStyle: 'solid',
-    borderRadius: tokens.radiusMd,
-    paddingBlock: tokens.spacing1,
-    paddingInline: tokens.spacing2,
-    outline: 'none',
-    cursor: 'pointer',
-  },
-})
+  .pagination.circle .page-link {
+    border-radius: 50%;
+  }
+
+  .ellipsis {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.25rem;
+    height: 2.25rem;
+    color: var(--bs-secondary-color, #6c757d);
+  }
+`

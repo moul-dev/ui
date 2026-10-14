@@ -1,37 +1,46 @@
-/* eslint-disable @stylexjs/valid-styles */
-import * as stylex from '@stylexjs/stylex'
-import { tokens } from '../../tokens/tokens.stylex'
+import { css } from 'lit'
 
-export const styles = stylex.create({
-  nav: {
-    display: 'flex',
-    padding: 0,
-    margin: 0,
-  },
-  breadcrumbs: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    listStyleType: 'none',
-    padding: 0,
-    margin: 0,
-    gap: tokens.spacing1,
-  },
-  breadcrumbItem: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    color: tokens.colorFgSubtle,
-    fontFamily: tokens.fontFamilyBase,
-    fontSize: tokens.fontSizeMd,
-    lineHeight: tokens.lineHeightMd,
-    ':not(:last-child)::after': {
-      content: '"/"',
-      marginInlineStart: tokens.spacing2,
-      marginInlineEnd: tokens.spacing2,
-      color: tokens.colorFgSubtle,
-      pointerEvents: 'none',
-    },
-  },
-  breadcrumbItemCurrent: {
-    color: tokens.colorFg,
-  },
-})
+export const breadcrumbsStyles = css`
+  :host {
+    display: block;
+  }
+  .breadcrumb {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    gap: 0.5rem;
+    align-items: center;
+  }
+`
+
+export const breadcrumbItemStyles = css`
+  :host {
+    display: inline-flex;
+    align-items: center;
+  }
+  .breadcrumb-item {
+    display: inline-flex;
+    align-items: center;
+    color: var(--bs-secondary-color, #6c757d);
+    font-size: 0.875rem;
+  }
+  .breadcrumb-item.active {
+    color: var(--bs-emphasis-color, #000);
+    font-weight: 500;
+  }
+  a {
+    color: var(--bs-link-color, #0d6efd);
+    text-decoration: none;
+  }
+  a:hover {
+    color: var(--bs-link-hover-color, #0a58ca);
+    text-decoration: underline;
+  }
+  .separator {
+    margin-inline-start: 0.5rem;
+    color: var(--bs-secondary-color, #6c757d);
+    user-select: none;
+  }
+`

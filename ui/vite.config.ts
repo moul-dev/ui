@@ -1,105 +1,112 @@
-/// <reference types="vitest" />
-import fs from 'node:fs'
+import { copyFileSync, mkdirSync } from 'node:fs'
 import { resolve } from 'node:path'
-import stylex from '@stylexjs/unplugin'
-import react from '@vitejs/plugin-react'
-import { Features } from 'lightningcss'
+import { glob } from 'glob'
 import ts from 'typescript'
 import dts from 'vite-plugin-dts'
 import { defineConfig, type Plugin } from 'vitest/config'
 
-function preserveTokensStylexPlugin(): Plugin {
+function copyTokensPlugin(): Plugin {
   return {
-    name: 'preserve-tokens-stylex',
-    apply: 'build',
-    enforce: 'post',
-    async closeBundle() {
-      const outDir = resolve(__dirname, 'dist')
-      const stylexCssPath = resolve(outDir, 'assets/stylex.css')
-      const themeCssPath = resolve(__dirname, 'src/styles/theme.css')
-      const tokensTsPath = resolve(__dirname, 'src/tokens/tokens.stylex.ts')
+    name: 'copy-tokens-plugin',
+    closeBundle() {
+      mkdirSync(resolve(__dirname, 'dist/assets'), { recursive: true })
+      copyFileSync(
+        resolve(__dirname, 'src/shared/tokens.css'),
+        resolve(__dirname, 'dist/assets/tokens.css'),
+      )
+      copyFileSync(
+        resolve(__dirname, 'src/shared/tokens.css'),
+        resolve(__dirname, 'dist/tokens.css'),
+      )
+    },
+  }
+}
 
-      // Emit dist/tokens.stylex.js with stylex.defineVars() intact for consumer apps
-      if (fs.existsSync(tokensTsPath)) {
-        const tokensTsCode = fs.readFileSync(tokensTsPath, 'utf-8')
-        const transpiled = ts.transpileModule(tokensTsCode, {
-          compilerOptions: {
-            module: ts.ModuleKind.ESNext,
-            target: ts.ScriptTarget.ESNext,
-          },
-        })
-        fs.writeFileSync(
-          resolve(outDir, 'tokens.stylex.js'),
-          `'use client';\n${transpiled.outputText}`,
-          'utf-8',
-        )
-      }
-
-      if (fs.existsSync(themeCssPath)) {
-        const themeCss = fs.readFileSync(themeCssPath, 'utf-8').trim()
-
-        // Also write standalone dist/theme.css
-        fs.writeFileSync(resolve(outDir, 'theme.css'), `${themeCss}\n`, 'utf-8')
-
-        // Prepend theme.css into dist/assets/stylex.css
-        if (fs.existsSync(stylexCssPath)) {
-          const currentStylexCss = fs.readFileSync(stylexCssPath, 'utf-8')
-          if (!currentStylexCss.includes('[data-theme="light"]')) {
-            fs.writeFileSync(
-              stylexCssPath,
-              `${themeCss}\n\n${currentStylexCss}`,
-              'utf-8',
-            )
-          }
+function cleanBootstrapCssPlugin(): Plugin {
+  return {
+    name: 'clean-bootstrap-css',
+    enforce: 'pre',
+    transform(code, id) {
+      if (id.includes('bootstrap') && id.includes('.css')) {
+        let cleaned = code.replace(/\/\*# sourceMappingURL=.*?\*\//g, '')
+        // Replace ':root,\n:host' and ':root,\n  :host' with ':root'
+        cleaned = cleaned.replace(/:root,\s*:host/g, ':root')
+        return {
+          code: cleaned,
+          map: null,
         }
       }
     },
   }
 }
 
-// https://vite.dev/config/
+function tsDecoratorsPlugin(): Plugin {
+  return {
+    name: 'ts-decorators-plugin',
+    enforce: 'pre',
+    transform(code, id) {
+      if (id.endsWith('.ts') && !id.includes('node_modules')) {
+        const result = ts.transpileModule(code, {
+          compilerOptions: {
+            target: ts.ScriptTarget.ES2022,
+            module: ts.ModuleKind.ESNext,
+            useDefineForClassFields: false,
+            experimentalDecorators: false,
+          },
+          fileName: id,
+        })
+        return {
+          code: result.outputText,
+          map: result.sourceMapText ? JSON.parse(result.sourceMapText) : null,
+        }
+      }
+    },
+  }
+}
+
+const componentEntries = Object.fromEntries(
+  glob
+    .sync('src/components/*/index.ts', { cwd: __dirname })
+    .map((file) => [
+      file.replace(/^src\//, '').replace(/\.ts$/, ''),
+      resolve(__dirname, file),
+    ]),
+)
+
 export default defineConfig({
-  test: {
-    environment: 'jsdom',
-    globals: true,
-    setupFiles: ['./src/test-setup.ts'],
-  },
   plugins: [
-    stylex.vite({
-      useCSSLayers: true,
-      lightningcssOptions: {
-        exclude: Features.LightDark, // Prevents lowering to --lightningcss-light/dark
-      },
-      dev: process.env.NODE_ENV === 'development',
-      runtimeInjection: false,
-    }),
-    react(),
-    dts({ tsconfigPath: './tsconfig.app.json' }),
-    preserveTokensStylexPlugin(),
+    cleanBootstrapCssPlugin(),
+    tsDecoratorsPlugin(),
+    dts({ tsconfigPath: './tsconfig.app.json' }) as unknown as Plugin,
+    copyTokensPlugin(),
   ],
   build: {
-    target: 'esnext',
+    target: 'es2022',
+    cssMinify: 'esbuild',
     lib: {
       entry: {
-        'moul-ui': resolve(__dirname, 'src/index.ts'),
+        index: resolve(__dirname, 'src/index.ts'),
+        ...componentEntries,
       },
       formats: ['es'],
     },
     rollupOptions: {
-      external: [
-        'react',
-        'react-dom',
-        'react/jsx-runtime',
-        'react/jsx-dev-runtime',
-        'react-aria-components',
-        '@stylexjs/stylex',
-        'recharts',
-        'react-aria',
-        'input-otp',
-      ],
+      external: (id) => {
+        if (id.includes('.css') || id.includes('?inline')) return false
+        if (id === 'lit' || id.startsWith('lit/')) return true
+        if (id === '@floating-ui/dom' || id.startsWith('@floating-ui/dom/'))
+          return true
+        if (id === 'bootstrap' || id.startsWith('bootstrap/')) return true
+        return false
+      },
       output: {
-        banner: "'use client';",
+        chunkFileNames: 'shared/[name]-[hash].js',
       },
     },
+  },
+  test: {
+    environment: 'jsdom',
+    globals: true,
+    setupFiles: ['./src/test-setup.ts'],
   },
 })

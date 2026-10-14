@@ -1,0 +1,81 @@
+---
+export interface PropRow {
+  name: string
+  type: string
+  default?: string
+  description?: string
+}
+
+interface Props {
+  props?: PropRow[]
+  type?: Record<
+    string,
+    { type: string; default?: string; description?: string }
+  >
+}
+
+const { props: propList, type: typeMap } = Astro.props
+
+const rows: PropRow[] =
+  propList ||
+  (typeMap
+    ? Object.entries(typeMap).map(([name, data]) => ({
+        name,
+        type: data.type,
+        default: data.default,
+        description: data.description,
+      }))
+    : [])
+---
+
+<div class="props-table-wrapper">
+  <table class="props-table">
+    <thead>
+      <tr>
+        <th>Prop</th>
+        <th>Type</th>
+        <th>Default</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      {rows.map((row) => (
+        <tr>
+          <td><code>{row.name}</code></td>
+          <td><code>{row.type}</code></td>
+          <td>{row.default ? <code>{row.default}</code> : '—'}</td>
+          <td>{row.description || '—'}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+
+<style>
+  .props-table-wrapper {
+    overflow-x: auto;
+    margin: 1.5rem 0;
+  }
+  .props-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+  }
+  .props-table th,
+  .props-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--sl-color-gray-5, #343a40);
+    text-align: left;
+  }
+  .props-table th {
+    font-weight: 600;
+    color: var(--sl-color-gray-2, #adb5bd);
+    background-color: var(--sl-color-gray-6, #212529);
+  }
+  .props-table code {
+    font-size: 0.8em;
+    padding: 0.15rem 0.35rem;
+    border-radius: 0.25rem;
+    background-color: var(--sl-color-gray-5, #343a40);
+  }
+</style>

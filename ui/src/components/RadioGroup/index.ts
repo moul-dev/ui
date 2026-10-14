@@ -1,2 +1,1 @@
-export type { RadioGroupProps, RadioProps } from './RadioGroup'
-export { Radio, RadioGroup } from './RadioGroup'
+export { MoulRadio, MoulRadioGroup } from './RadioGroup.js'

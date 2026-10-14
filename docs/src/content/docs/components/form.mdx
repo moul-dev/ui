@@ -1,0 +1,92 @@
+---
+title: Form
+description: Documentation for the Form component.
+reactAria: Form
+---
+
+import Accordion from '@/components/Accordion.astro'
+import Accordions from '@/components/Accordions.astro'
+
+
+import ComponentPreview from '@/components/ComponentPreview.astro'
+import PropsTable from '@/components/PropsTable.astro'
+
+
+
+
+
+# Form
+
+## Preview
+
+<ComponentPreview>
+  <moul-form><moul-text-field label="Username" placeholder="Enter username"></moul-text-field><moul-button type="submit" variant="primary">Submit</moul-button></moul-form>
+</ComponentPreview>
+
+The `Form` component is built with React Aria and styled using StyleX.
+
+## Import
+
+```tsx
+
+```
+
+## Usage
+
+Here is a basic example of how to use the `Form` component:
+
+```tsx
+
+
+export default function Example() {
+  return (
+    <moul-form>
+      {/* Component content */}
+    </moul-form>
+  );
+}
+```
+
+## Props
+
+### Form Props
+
+<PropsTable
+  type={{
+    'validationBehavior': {
+      type: "'native' | 'aria'",
+      default: "'native'",
+      description: "Validation behavior settings.",
+    },
+  }}
+/>
+
+<Accordions>
+  <Accordion title="Events">
+    <PropsTable
+          type={{
+            'onSubmit': {
+              type: "(e: FormEvent) => void",
+              description: "Fires when submitting the form successfully.",
+            },
+            'onReset': {
+              type: "(e: FormEvent) => void",
+              description: "Fires when resetting form values.",
+            },
+          }}
+        />
+  </Accordion>
+  <Accordion title="Styling">
+    <PropsTable
+          type={{
+            'className': {
+              type: "string",
+              description: "The CSS className.",
+            },
+          }}
+        />
+  </Accordion>
+</Accordions>
+
+Default className: `react-aria-Form`
+

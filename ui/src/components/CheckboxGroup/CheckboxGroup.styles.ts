@@ -1,20 +1,17 @@
-import * as stylex from '@stylexjs/stylex'
-import { tokens } from '../../tokens/tokens.stylex'
+import { css } from 'lit'
 
-export const styles = stylex.create({
-  base: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: tokens.spacing1,
-  },
-  group: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: tokens.spacing2,
-  },
-  groupHorizontal: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: tokens.spacing4,
-  },
-})
+export const checkboxGroupStyles = css`
+  :host {
+    display: block;
+  }
+  .checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  :host([orientation="horizontal"]) .checkbox-group {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+`

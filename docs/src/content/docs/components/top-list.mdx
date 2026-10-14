@@ -1,0 +1,28 @@
+---
+title: TopList
+description: Ordered ranking or leaderboards list with metrics and progress ratios.
+---
+
+import ComponentPreview from '../../../components/ComponentPreview.astro'
+import PropsTable from '../../../components/PropsTable.astro'
+
+## Default
+
+<ComponentPreview>
+  <moul-top-list></moul-top-list>
+</ComponentPreview>
+
+```html
+<moul-top-list></moul-top-list>
+```
+
+## Props
+
+<PropsTable
+  type={{
+    items: {
+      type: 'Array<{ label: string, value: number, formattedValue?: string }>',
+      description: 'Ranked list items to display.',
+    },
+  }}
+/>

@@ -1,0 +1,125 @@
+---
+title: Modal
+description: Documentation for the Modal component.
+reactAria: Modal
+---
+
+import Accordion from '@/components/Accordion.astro'
+import Accordions from '@/components/Accordions.astro'
+
+
+import ComponentPreview from '@/components/ComponentPreview.astro'
+import PropsTable from '@/components/PropsTable.astro'
+
+
+
+
+
+# Modal
+
+## Preview
+
+<ComponentPreview>
+  <moul-button variant="primary">Open Modal</moul-button>
+</ComponentPreview>
+
+The `Modal` component is built with React Aria and styled using StyleX.
+
+## Import
+
+```tsx
+
+```
+
+## Usage
+
+Here is a basic example of how to use the `Modal` component:
+
+```tsx
+
+
+export default function Example() {
+  return (
+    <moul-modal>
+      {/* Component content */}
+    </moul-modal>
+  );
+}
+```
+
+## Sizing and Variants
+
+The `Modal` component supports size variants via the `size` prop:
+
+- `sm`: Max width of `400px` on desktop.
+- `md`: Max width of `500px` on desktop (default).
+- `lg`: Max width of `640px` on desktop.
+
+```tsx
+<moul-modal size="sm">
+  {/* Small Modal */}
+</moul-modal>
+```
+
+## Mobile Responsive Layout
+
+On mobile viewports (`<= 640px`), the modal is optimized to behave like a bottom drawer/sheet:
+- Aligned to the bottom of the screen.
+- Extends to `100%` viewport width.
+- Bottom corner radiuses are set to `0` for seamless edge-to-edge styling.
+- Renders with a smooth, subtle fade-in and slide-up animation from the bottom of the viewport.
+
+## Props
+
+### Modal Props
+
+<PropsTable
+  type={{
+    'isOpen': {
+      type: "boolean",
+      description: "Whether the modal overlay wrapper is open (controlled).",
+    },
+    'defaultOpen': {
+      type: "boolean",
+      description: "Whether the modal is initially open (uncontrolled).",
+    },
+    'isDismissable': {
+      type: "boolean",
+      default: "false",
+      description: "Whether clicking outside or pressing Escape closes the modal overlay.",
+    },
+  }}
+/>
+
+<Accordions>
+  <Accordion title="Value">
+    <PropsTable
+          type={{
+            'onOpenChange': {
+              type: "(isOpen: boolean) => void",
+              description: "Handler called when open state changes.",
+            },
+          }}
+        />
+  </Accordion>
+  <Accordion title="Styling">
+    <PropsTable
+          type={{
+            'className': {
+              type: "ClassNameOrFunction",
+              default: "'react-aria-Modal'",
+              description: "The CSS className.",
+            },
+          }}
+        />
+  </Accordion>
+</Accordions>
+
+Default className: `react-aria-Modal`
+
+| Render Prop | CSS Selector |
+| :--- | :--- |
+| `isOpen` <br/> Whether the modal is open. | `[data-open]` |
+| `isEntering` <br/> Whether the entrance transition is animating. | `[data-entering]` |
+| `isExiting` <br/> Whether the exit transition is animating. | `[data-exiting]` |
+

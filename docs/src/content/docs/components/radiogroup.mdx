@@ -1,0 +1,115 @@
+---
+title: RadioGroup
+description: Documentation for the RadioGroup component.
+reactAria: RadioGroup
+---
+
+import Accordion from '@/components/Accordion.astro'
+import Accordions from '@/components/Accordions.astro'
+
+
+import ComponentPreview from '@/components/ComponentPreview.astro'
+import PropsTable from '@/components/PropsTable.astro'
+
+
+
+
+
+# RadioGroup
+
+## Preview
+
+<ComponentPreview>
+  <moul-radio-group label="Subscription Type">
+    <moul-radio value="free">Free</moul-radio>
+    <moul-radio value="pro">Pro</moul-radio>
+    <moul-radio value="enterprise">Enterprise</moul-radio>
+  </moul-radio-group>
+</ComponentPreview>
+
+The `RadioGroup` component is built with React Aria and styled using StyleX.
+
+## Import
+
+```tsx
+
+```
+
+## Usage
+
+Here is a basic example of how to use the `RadioGroup` component:
+
+```tsx
+
+
+export default function Example() {
+  return (
+    <moul-radio-group>
+      {/* Component content */}
+    </moul-radio-group>
+  );
+}
+```
+
+## Props
+
+### RadioGroup Props
+
+<PropsTable
+  type={{
+    'orientation': {
+      type: "'horizontal' | 'vertical'",
+      default: "'vertical'",
+      description: "The layout orientation of the radio elements.",
+    },
+    'value': {
+      type: "string",
+      description: "The value of the selected radio button (controlled).",
+    },
+    'defaultValue': {
+      type: "string",
+      description: "The value of the initially selected radio button (uncontrolled).",
+    },
+    'isDisabled': {
+      type: "boolean",
+      default: "false",
+      description: "Whether the entire radio group is disabled.",
+    },
+    'isInvalid': {
+      type: "boolean",
+      description: "Whether the radio group value is invalid.",
+    },
+  }}
+/>
+
+<Accordions>
+  <Accordion title="Value">
+    <PropsTable
+          type={{
+            'onChange': {
+              type: "(value: string) => void",
+              description: "Handler called when the selected value changes.",
+            },
+          }}
+        />
+  </Accordion>
+  <Accordion title="Styling">
+    <PropsTable
+          type={{
+            'className': {
+              type: "ClassNameOrFunction",
+              default: "'react-aria-RadioGroup'",
+              description: "The CSS className for the group.",
+            },
+          }}
+        />
+  </Accordion>
+</Accordions>
+
+Default className: `react-aria-RadioGroup`
+
+| Render Prop | CSS Selector |
+| :--- | :--- |
+| `isDisabled` <br/> Whether the group is disabled. | `[data-disabled]` |
+| `isInvalid` <br/> Whether the group value is invalid. | `[data-invalid]` |
+

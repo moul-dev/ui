@@ -1,2 +1,1 @@
-export type { SeparatorProps } from './Separator'
-export { Separator } from './Separator'
+export { MoulSeparator } from './Separator.js'

@@ -1,0 +1,35 @@
+---
+title: Moul UI
+description: Accessible, zero-runtime Web Components built with Lit and Bootstrap 6 Shadow DOM.
+template: splash
+hero:
+  tagline: Encapsulated, accessible Web Components styled with Bootstrap 6 inside Shadow DOM.
+  image:
+    file: ../../../public/favicon.svg
+  actions:
+    - text: Get Started
+      link: /getting-started/
+      icon: right-arrow
+      variant: primary
+    - text: View on GitHub
+      link: https://github.com/moul-dev/ui
+      icon: external
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components'
+
+<CardGrid stagger>
+  <moul-card title="Native Web Components" icon="puzzle">
+    Built with Lit. Works out of the box in HTML, React, Vue, Svelte, Angular, Astro, and Solid.
+  </moul-card>
+  <moul-card title="Bootstrap 6 Shadow DOM" icon="open-book">
+    Adopted via constructable stylesheets into shadow roots for zero style leakage.
+  </moul-card>
+  <moul-card title="WAI-ARIA APG Compliant" icon="approve-check">
+    Full keyboard navigation, roving tabindex, floating overlays, and accessible live regions.
+  </moul-card>
+  <moul-card title="Tokens & Theming" icon="setting">
+    CSS Custom Properties that cascade through shadow boundaries for instant dynamic theming.
+  </moul-card>
+</CardGrid>

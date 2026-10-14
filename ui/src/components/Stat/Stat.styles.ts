@@ -1,117 +1,37 @@
-import * as stylex from '@stylexjs/stylex'
-import { tokens } from '../../tokens/tokens.stylex'
+import { css } from 'lit'
 
-export const styles = stylex.create({
-  container: {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    gap: tokens.spacing3,
-    padding: tokens.spacing5,
-    borderRadius: tokens.radiusLg,
-    fontFamily: tokens.fontFamilyBase,
-    color: tokens.colorFg,
-    minWidth: '160px',
-    flex: 1,
-    height: '100%',
-    boxSizing: 'border-box',
-    transitionProperty: 'background-color, border-color, box-shadow',
-    transitionDuration: '0.15s',
-  },
-  variantDefault: {
-    backgroundColor: tokens.colorBg,
-    borderColor: tokens.colorBorderSubtle,
-    borderWidth: '1px',
-    borderStyle: 'solid',
-  },
-  variantFlat: {
-    backgroundColor: tokens.colorBgSubtle,
-    borderColor: 'transparent',
-    borderWidth: '1px',
-    borderStyle: 'solid',
-  },
-  variantGlass: {
-    backgroundColor: tokens.colorBgGlass,
-    borderColor: tokens.colorBorderGlass,
-    borderWidth: '1px',
-    borderStyle: 'solid',
-    backdropFilter: 'blur(24px)',
-    WebkitBackdropFilter: 'blur(24px)',
-    boxShadow: tokens.shadowSm,
-  },
-  variantElevated: {
-    backgroundColor: tokens.colorBgElevated,
-    borderColor: tokens.colorBorderSubtle,
-    borderWidth: '1px',
-    borderStyle: 'solid',
-    boxShadow: tokens.shadowSm,
-  },
-  header: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: tokens.spacing2,
-  },
-  label: {
-    fontSize: tokens.fontSizeXs,
-    fontWeight: tokens.fontWeightMedium,
-    color: tokens.colorFgSubtle,
-    letterSpacing: '0.02em',
-  },
-  icon: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    color: tokens.colorFgSubtle,
-    flexShrink: 0,
-  },
-  body: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: tokens.spacing1,
-    flexGrow: 1,
-  },
-  value: {
-    fontSize: tokens.fontSize3xl,
-    fontWeight: tokens.fontWeightBold,
-    lineHeight: tokens.lineHeight3xl,
-    color: tokens.colorFg,
-  },
-  description: {
-    fontSize: tokens.fontSizeXs,
-    color: tokens.colorFgSubtle,
-  },
-  footer: {
-    display: 'flex',
-    alignItems: 'center',
-    flexWrap: 'wrap',
-    gap: tokens.spacing2,
-    fontSize: tokens.fontSizeXs,
-  },
-  trendBadge: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: tokens.spacing1,
-    fontWeight: tokens.fontWeightSemibold,
-    paddingBlock: '2px',
-    paddingInline: tokens.spacing2,
-    borderRadius: tokens.radiusFull,
-    fontSize: tokens.fontSizeXs,
-    lineHeight: tokens.lineHeightXs,
-  },
-  trendUp: {
-    backgroundColor: tokens.colorSuccess300,
-    color: tokens.colorSuccess700,
-  },
-  trendDown: {
-    backgroundColor: tokens.colorError300,
-    color: tokens.colorError700,
-  },
-  trendNeutral: {
-    backgroundColor: tokens.colorNeutral200,
-    color: tokens.colorNeutral700,
-  },
-  trendText: {
-    color: tokens.colorFgSubtle,
-  },
-})
+export const statStyles = css`
+  :host {
+    display: block;
+  }
+  .stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 1rem;
+    background-color: var(--bs-card-bg, #fff);
+    border: var(--bs-card-border-width, 1px) solid var(--bs-card-border-color, rgba(0, 0, 0, 0.175));
+    border-radius: var(--bs-card-border-radius, 0.375rem);
+  }
+  .stat-label {
+    font-size: 0.875rem;
+    color: var(--bs-secondary-color, #6c757d);
+    font-weight: 500;
+  }
+  .stat-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--bs-emphasis-color, #000);
+  }
+  .stat-trend {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+  .trend-up { color: var(--bs-success, #198754); }
+  .trend-down { color: var(--bs-danger, #dc3545); }
+  .trend-neutral { color: var(--bs-secondary-color, #6c757d); }
+`

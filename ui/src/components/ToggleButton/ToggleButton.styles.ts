@@ -1,234 +1,42 @@
-/* eslint-disable @stylexjs/valid-styles */
-import * as stylex from '@stylexjs/stylex'
-import { tokens } from '../../tokens/tokens.stylex'
+import { css } from 'lit'
 
-export const styles = stylex.create({
-  base: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: tokens.spacing2,
-    fontWeight: tokens.fontWeightMedium,
-    cursor: 'pointer',
-    boxSizing: 'border-box',
-    transitionProperty: 'background-color, border-color, color, transform',
-    transitionDuration: '0.15s',
-    transitionTimingFunction: 'ease-in-out',
-    ':active': {
-      transform: {
-        default: 'scale(0.98)',
-        '@media (prefers-reduced-motion: reduce)': 'none',
-      },
-    },
-    ':focus-visible': {
-      outlineStyle: 'solid',
-      outlineWidth: '2px',
-      outlineOffset: '2px',
-      outlineColor: tokens.colorBorderFocus,
-    },
-    '@media (prefers-reduced-motion: reduce)': {
-      transitionProperty: 'none',
-    },
-  },
-  sm: {
-    height: `calc(${tokens.spacing1} * 2 + ${tokens.lineHeightXs})`,
-    paddingBlock: 0,
-    paddingInline: tokens.spacing2,
-    borderRadius: tokens.radiusSm,
-    fontSize: tokens.fontSizeXs,
-    lineHeight: tokens.lineHeightXs,
-  },
-  md: {
-    height: `calc(${tokens.spacing2} * 2 + ${tokens.lineHeightSm})`,
-    paddingBlock: 0,
-    paddingInline: tokens.spacing3,
-    borderRadius: tokens.radiusMd,
-    fontSize: tokens.fontSizeSm,
-    lineHeight: tokens.lineHeightSm,
-  },
-  lg: {
-    height: `calc(${tokens.spacing2} * 2 + ${tokens.lineHeightMd})`,
-    paddingBlock: 0,
-    paddingInline: tokens.spacing4,
-    borderRadius: tokens.radiusMd,
-    fontSize: tokens.fontSizeMd,
-    lineHeight: tokens.lineHeightMd,
-  },
-  primary: {
-    backgroundColor: tokens.colorBg,
-    color: tokens.colorFg,
-    borderStyle: 'solid',
-    borderWidth: '1px',
-    borderColor: tokens.colorBorder,
-    boxShadow: 'none',
-    ':hover': {
-      backgroundColor: tokens.colorNeutral50,
-      borderColor: tokens.colorNeutral400,
-    },
-    ':active': {
-      backgroundColor: tokens.colorNeutral100,
-    },
-  },
-  primarySelected: {
-    backgroundColor: tokens.colorFg,
-    color: tokens.colorBg,
-    borderStyle: 'solid',
-    borderWidth: '1px',
-    borderColor: tokens.colorFg,
-    ':hover': {
-      backgroundColor: tokens.colorNeutral800,
-      borderColor: tokens.colorNeutral800,
-    },
-    ':active': {
-      backgroundColor: tokens.colorNeutral700,
-      borderColor: tokens.colorNeutral700,
-    },
-  },
-  secondary: {
-    backgroundColor: 'transparent',
-    color: tokens.colorFg,
-    borderStyle: 'none',
-    boxShadow: 'none',
-    ':hover': {
-      backgroundColor: tokens.colorNeutral100,
-    },
-    ':active': {
-      backgroundColor: tokens.colorNeutral200,
-    },
-  },
-  secondarySelected: {
-    backgroundColor: tokens.colorNeutral200,
-    color: tokens.colorFg,
-    borderStyle: 'none',
-    ':hover': {
-      backgroundColor: tokens.colorNeutral300,
-    },
-    ':active': {
-      backgroundColor: tokens.colorNeutral400,
-    },
-  },
-  isDisabled: {
-    opacity: 0.4,
-    cursor: 'not-allowed',
-    boxShadow: 'none',
-    pointerEvents: 'none',
-  },
-  groupItem: {
-    position: 'relative',
-    zIndex: 1,
-  },
-  groupItemActive: {
-    zIndex: 2,
-  },
-  groupItemDisabled: {
-    zIndex: 0,
-  },
-  groupHorizontal: {
-    borderRadius: 0,
-    marginInlineStart: '-1px',
-    ':first-child': {
-      borderTopLeftRadius: tokens.radiusMd,
-      borderBottomLeftRadius: tokens.radiusMd,
-      marginInlineStart: 0,
-    },
-    ':last-child': {
-      borderTopRightRadius: tokens.radiusMd,
-      borderBottomRightRadius: tokens.radiusMd,
-    },
-  },
-  groupVertical: {
-    borderRadius: 0,
-    marginBlockStart: '-1px',
-    ':first-child': {
-      borderTopLeftRadius: tokens.radiusMd,
-      borderTopRightRadius: tokens.radiusMd,
-      marginBlockStart: 0,
-    },
-    ':last-child': {
-      borderBottomLeftRadius: tokens.radiusMd,
-      borderBottomRightRadius: tokens.radiusMd,
-    },
-  },
-  animatedItem: {
-    backgroundColor: 'transparent',
-    borderStyle: 'none',
-    boxShadow: 'none',
-    color: tokens.colorFgSubtle,
-    transitionProperty: 'color',
-    ':hover': {
-      backgroundColor: 'transparent',
-      color: tokens.colorFg,
-    },
-    ':active': {
-      transform: 'none',
-    },
-  },
-  animatedItemSm: {
-    borderRadius: `calc(${tokens.radiusSm} - 3px)`,
-  },
-  animatedItemMd: {
-    borderRadius: `calc(${tokens.radiusMd} - 3px)`,
-  },
-  animatedItemLg: {
-    borderRadius: `calc(${tokens.radiusMd} - 3px)`,
-  },
-  animatedItemSelectedPrimary: {
-    color: tokens.colorFg,
-    backgroundColor: 'transparent',
-    ':hover': {
-      backgroundColor: 'transparent',
-      color: tokens.colorFg,
-    },
-  },
-  animatedItemSelectedSecondary: {
-    color: tokens.colorFg,
-    backgroundColor: 'transparent',
-    ':hover': {
-      backgroundColor: 'transparent',
-      color: tokens.colorFg,
-    },
-  },
-  selectionIndicator: {
-    position: 'absolute',
-    inset: 0,
-    zIndex: -1,
-    transitionProperty: 'translate, width, height',
-    transitionDuration: '0.2s',
-    transitionTimingFunction: 'ease-in-out',
-    pointerEvents: 'none',
-    '@media (prefers-reduced-motion: reduce)': {
-      transitionProperty: 'none',
-    },
-  },
-  selectionIndicatorSm: {
-    borderRadius: `calc(${tokens.radiusSm} - 3px)`,
-  },
-  selectionIndicatorMd: {
-    borderRadius: `calc(${tokens.radiusMd} - 3px)`,
-  },
-  selectionIndicatorLg: {
-    borderRadius: `calc(${tokens.radiusMd} - 3px)`,
-  },
-  selectionIndicatorPrimary: {
-    backgroundColor: tokens.colorBg,
-    boxShadow: tokens.shadowSm,
-  },
-  selectionIndicatorSecondary: {
-    backgroundColor: tokens.colorNeutral200,
-  },
-  iconSm: {
-    width: `calc(${tokens.spacing1} * 2 + ${tokens.lineHeightXs})`,
-    paddingInline: 0,
-    paddingBlock: 0,
-  },
-  iconMd: {
-    width: `calc(${tokens.spacing2} * 2 + ${tokens.lineHeightSm})`,
-    paddingInline: 0,
-    paddingBlock: 0,
-  },
-  iconLg: {
-    width: `calc(${tokens.spacing2} * 2 + ${tokens.lineHeightMd})`,
-    paddingInline: 0,
-    paddingBlock: 0,
-  },
-})
+export const toggleButtonStyles = css`
+  :host {
+    display: inline-block;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.5;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+    user-select: none;
+    border: 1px solid var(--bs-border-color, #dee2e6);
+    background-color: var(--bs-bg-body, transparent);
+    color: var(--bs-fg-body, inherit);
+    border-top-left-radius: var(--bs-border-top-left-radius, var(--bs-border-radius, 0.375rem));
+    border-bottom-left-radius: var(--bs-border-bottom-left-radius, var(--bs-border-radius, 0.375rem));
+    border-top-right-radius: var(--bs-border-top-right-radius, var(--bs-border-radius, 0.375rem));
+    border-bottom-right-radius: var(--bs-border-bottom-right-radius, var(--bs-border-radius, 0.375rem));
+    transition: all .15s ease-in-out;
+  }
+  .btn:hover:not(:disabled) {
+    background-color: var(--bs-bg-subtle, rgba(255, 255, 255, 0.05));
+  }
+  .btn.active {
+    background-color: var(--bs-primary-bg, var(--bs-primary-base, #0d6efd));
+    border-color: var(--bs-primary-border, var(--bs-primary-base, #0d6efd));
+    color: var(--bs-primary-contrast, #fff);
+  }
+  .btn:disabled {
+    pointer-events: none;
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+`

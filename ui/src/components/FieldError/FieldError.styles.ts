@@ -1,11 +1,14 @@
-import * as stylex from '@stylexjs/stylex'
-import { tokens } from '../../tokens/tokens.stylex'
+import { css } from 'lit'
 
-export const styles = stylex.create({
-  base: {
-    color: tokens.colorError500,
-    fontSize: tokens.fontSizeSm,
-    lineHeight: tokens.lineHeightSm,
-    marginBlockStart: 0,
-  },
-})
+export const fieldErrorStyles = css`
+  :host {
+    display: block;
+    margin-top: 0.25rem;
+  }
+  .invalid-feedback {
+    display: block;
+    width: 100%;
+    font-size: 0.875em;
+    color: var(--bs-form-invalid-color, #dc3545);
+  }
+`

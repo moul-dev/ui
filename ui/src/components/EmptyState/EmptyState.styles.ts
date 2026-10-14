@@ -1,150 +1,48 @@
-import * as stylex from '@stylexjs/stylex'
-import { tokens } from '../../tokens/tokens.stylex'
+import { css } from 'lit'
 
-export const styles = stylex.create({
-  container: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    textAlign: 'center',
-    width: '100%',
-    boxSizing: 'border-box',
-    fontFamily: tokens.fontFamilyBase,
-  },
-  alignStart: {
-    alignItems: 'flex-start',
-    textAlign: 'start',
-  },
-  alignCenter: {
-    alignItems: 'center',
-    textAlign: 'center',
-  },
-
-  // Sizes (padding & gap)
-  sizeSm: {
-    padding: `${tokens.spacing4} ${tokens.spacing3}`,
-    gap: tokens.spacing2,
-  },
-  sizeMd: {
-    padding: `${tokens.spacing6} ${tokens.spacing4}`,
-    gap: tokens.spacing3,
-  },
-  sizeLg: {
-    padding: `${tokens.spacing8} ${tokens.spacing6}`,
-    gap: tokens.spacing4,
-  },
-
-  // Variants
-  variantDefault: {
-    backgroundColor: 'transparent',
-  },
-  variantDashed: {
-    backgroundColor: tokens.colorBgSubtle,
-    borderWidth: '1px',
-    borderStyle: 'dashed',
-    borderColor: tokens.colorBorder,
-    borderRadius: tokens.radiusLg,
-  },
-  variantCard: {
-    backgroundColor: tokens.colorBgElevated,
-    borderWidth: '1px',
-    borderStyle: 'solid',
-    borderColor: tokens.colorBorderSubtle,
-    borderRadius: tokens.radiusLg,
-    boxShadow: tokens.shadowSm,
-  },
-
-  // Icon Wrapper
-  iconWrapper: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: tokens.radiusFull,
-    backgroundColor: tokens.colorNeutral100,
-    color: tokens.colorFgSubtle,
-    flexShrink: 0,
-    borderWidth: '1px',
-    borderStyle: 'solid',
-    borderColor: tokens.colorBorderSubtle,
-  },
-  iconPrimary: {
-    backgroundColor: tokens.colorPrimary50,
-    color: tokens.colorPrimary600,
-    borderColor: tokens.colorPrimary100,
-  },
-  iconSm: {
-    width: '36px',
-    height: '36px',
-    fontSize: '18px',
-  },
-  iconMd: {
-    width: '48px',
-    height: '48px',
-    fontSize: '24px',
-  },
-  iconLg: {
-    width: '64px',
-    height: '64px',
-    fontSize: '32px',
-  },
-
-  // Content stack
-  content: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: tokens.spacing1,
-    alignItems: 'inherit',
-    maxWidth: '440px',
-  },
-
-  // Title
-  title: {
-    margin: 0,
-    fontWeight: tokens.fontWeightSemibold,
-    color: tokens.colorFg,
-    lineHeight: tokens.lineHeightSm,
-  },
-  titleSm: {
-    fontSize: tokens.fontSizeSm,
-  },
-  titleMd: {
-    fontSize: tokens.fontSizeMd,
-  },
-  titleLg: {
-    fontSize: tokens.fontSizeLg,
-  },
-
-  // Description
-  description: {
-    margin: 0,
-    fontWeight: tokens.fontWeightNormal,
-    color: tokens.colorFgSubtle,
-    lineHeight: tokens.lineHeightSm,
-  },
-  descriptionSm: {
-    fontSize: tokens.fontSizeXs,
-  },
-  descriptionMd: {
-    fontSize: tokens.fontSizeSm,
-  },
-  descriptionLg: {
-    fontSize: tokens.fontSizeMd,
-  },
-
-  // Actions row
-  actions: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: tokens.spacing2,
-    flexWrap: 'wrap',
-    marginBlockStart: tokens.spacing1,
-  },
-  actionsStart: {
-    justifyContent: 'flex-start',
-  },
-  actionsCenter: {
-    justifyContent: 'center',
-  },
-})
+export const emptyStateStyles = css`
+  :host {
+    display: block;
+  }
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 3rem 1.5rem;
+    gap: 1rem;
+    color: var(--bs-secondary-color, #6c757d);
+  }
+  .empty-state-icon {
+    font-size: 3rem;
+    line-height: 1;
+    color: var(--bs-secondary-color, #6c757d);
+  }
+  .empty-state-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--bs-emphasis-color, #000);
+    margin: 0;
+  }
+  .empty-state-description {
+    font-size: 0.875rem;
+    max-width: 28rem;
+    margin: 0;
+  }
+  .empty-state-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+  :host([variant='card']) .empty-state {
+    background-color: var(--bs-card-bg, var(--bs-body-bg, #fff));
+    border: 1px solid var(--bs-border-color, #dee2e6);
+    border-radius: var(--bs-border-radius-lg, 0.5rem);
+  }
+  :host([variant='dashed']) .empty-state {
+    border: 2px dashed var(--bs-border-color, #dee2e6);
+    border-radius: var(--bs-border-radius-lg, 0.5rem);
+    background-color: color-mix(in oklch, currentColor 2%, transparent);
+  }
+`

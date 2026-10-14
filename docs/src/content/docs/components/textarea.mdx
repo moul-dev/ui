@@ -1,0 +1,181 @@
+---
+title: TextArea
+description: Documentation for the TextArea component.
+reactAria: TextField
+---
+
+import Accordion from '@/components/Accordion.astro'
+import Accordions from '@/components/Accordions.astro'
+
+
+import ComponentPreview from '@/components/ComponentPreview.astro'
+import PropsTable from '@/components/PropsTable.astro'
+
+
+
+
+<div style="display: none;">
+  Label, Description, FieldError, ErrorMessage, Helper Text, Validation, Error Message, Input Label
+</div>
+
+# TextArea
+
+## Preview
+
+<ComponentPreview>
+  <moul-text-area label="Bio" placeholder="Tell us about yourself..." description="Must be under 200 words." class="w-80" ></moul-text-area>
+</ComponentPreview>
+
+The `TextArea` component is built with React Aria and styled using StyleX. It automatically handles layout composition for label, description, and validation error messages.
+
+## Import
+
+```tsx
+
+```
+
+## Features
+
+### Label
+The text area automatically renders an accessible `<moul-label>` element above the text area input when the `label` prop is provided.
+
+<ComponentPreview>
+  <moul-text-area label="Bio" placeholder="Tell us about yourself..." class="w-80" ></moul-text-area>
+</ComponentPreview>
+
+```tsx
+<moul-text-area label="Bio" placeholder="Tell us about yourself..." ></moul-text-area>
+```
+
+### Description
+Use the `description` prop to display help text or guidelines below the text area input. This automatically wires up accessibility relationships so assistive technologies can read it.
+
+<ComponentPreview>
+  <moul-text-area
+    label="Comments"
+    description="Please do not include sensitive personal information."
+    class="w-80"
+  ></moul-text-area>
+</ComponentPreview>
+
+```tsx
+<moul-text-area
+  label="Comments"
+  description="Please do not include sensitive personal information."
+></moul-text-area>
+```
+
+### Validation & FieldError
+If the input is invalid, you can provide an error message using the `errorMessage` prop. This renders a `<moul-field-error>` component automatically when the field validation fails.
+
+<ComponentPreview>
+  <moul-text-area
+    label="Message"
+    isRequired
+    is-invalid
+    error-message="Please enter your message."
+    class="w-80"
+  ></moul-text-area>
+</ComponentPreview>
+
+```tsx
+<moul-text-area
+  label="Message"
+  isRequired
+  is-invalid
+  error-message="Please enter your message."
+></moul-text-area>
+```
+
+#### Standalone ErrorMessage
+For manual or custom validation outside of the built-in `errorMessage` prop, you can use `FieldError`:
+
+```html
+<moul-field-error>Invalid input description.</moul-field-error>
+```
+
+## Usage
+
+Here is a basic example of a configured `TextArea`:
+
+```tsx
+
+
+export default function Example() {
+  return (
+    <moul-text-area
+      label="Description"
+      placeholder="Briefly describe your project..."
+      description="Max 500 characters."
+      isRequired
+      error-message="A description is required."
+    ></moul-text-area>
+  );
+}
+```
+
+## Props
+
+### TextArea Props
+
+<PropsTable
+  type={{
+    'variant': {
+      type: "'primary' | 'secondary'",
+      default: "'primary'",
+      description: "The visual style variant of the textarea.",
+    },
+    'rows': {
+      type: "number",
+      default: "3",
+      description: "The number of visible text lines.",
+    },
+    'value': {
+      type: "string",
+      description: "The current value of the textarea (controlled).",
+    },
+    'defaultValue': {
+      type: "string",
+      description: "The default value of the textarea (uncontrolled).",
+    },
+    'placeholder': {
+      type: "string",
+      description: "Temporary placeholder text.",
+    },
+    'isDisabled': {
+      type: "boolean",
+      default: "false",
+      description: "Whether the textarea is disabled.",
+    },
+    'isReadOnly': {
+      type: "boolean",
+      description: "Whether the textarea is read-only.",
+    },
+  }}
+/>
+
+<Accordions>
+  <Accordion title="Value">
+    <PropsTable
+          type={{
+            'onChange': {
+              type: "(value: string) => void",
+              description: "Handler called when the value changes.",
+            },
+          }}
+        />
+  </Accordion>
+  <Accordion title="Styling">
+    <PropsTable
+          type={{
+            'className': {
+              type: "string",
+              description: "The CSS className for the container.",
+            },
+          }}
+        />
+  </Accordion>
+</Accordions>
+
+Default className: `react-aria-TextField`
+

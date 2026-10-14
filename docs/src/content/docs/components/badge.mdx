@@ -1,0 +1,115 @@
+---
+title: Badge
+description: Status badge indicators in multiple color variants, size scalings, and dot status indicators.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro'
+import PropsTable from '@/components/PropsTable.astro'
+
+
+
+
+# Badge
+
+The `Badge` component displays compact status metadata, labels, counts, and live system status indicators.
+
+## Preview
+
+
+
+## Import
+
+```tsx
+
+```
+
+## Sizes
+
+`Badge` provides three standardized sizes: `sm`, `md` (default), and `lg`.
+
+<ComponentPreview>
+  <div class="flex items-center gap-3">
+    <moul-badge size="sm" variant="primary">Small (sm)</moul-badge>
+    <moul-badge size="md" variant="primary">Medium (md)</moul-badge>
+    <moul-badge size="lg" variant="primary">Large (lg)</moul-badge>
+  </div>
+</ComponentPreview>
+
+```tsx
+<moul-badge size="sm" variant="primary">Small (sm)</moul-badge>
+<moul-badge size="md" variant="primary">Medium (md)</moul-badge>
+<moul-badge size="lg" variant="primary">Large (lg)</moul-badge>
+```
+
+## Color Variants
+
+Choose from standard semantic color variants:
+
+<ComponentPreview>
+  <div class="flex items-center gap-3 flex-wrap">
+    <moul-badge variant="neutral">Neutral</moul-badge>
+    <moul-badge variant="primary">Primary</moul-badge>
+    <moul-badge variant="success">Success</moul-badge>
+    <moul-badge variant="warning">Warning</moul-badge>
+    <moul-badge variant="error">Error</moul-badge>
+  </div>
+</ComponentPreview>
+
+```tsx
+<moul-badge variant="neutral">Neutral</moul-badge>
+<moul-badge variant="primary">Primary</moul-badge>
+<moul-badge variant="success">Success</moul-badge>
+<moul-badge variant="warning">Warning</moul-badge>
+<moul-badge variant="error">Error</moul-badge>
+```
+
+## Dot Status Indicators
+
+Enable the `dot` prop or use `variant="dot"` to display a circular status indicator alongside your label:
+
+<ComponentPreview>
+  <div class="flex items-center gap-3 flex-wrap">
+    <moul-badge variant="dot">Status Dot</moul-badge>
+    <moul-badge variant="success" dot>Operational</moul-badge>
+    <moul-badge variant="warning" dot>Degraded</moul-badge>
+    <moul-badge variant="error" dot>Incident</moul-badge>
+    <moul-badge variant="primary" dot>Deploying</moul-badge>
+  </div>
+</ComponentPreview>
+
+```tsx
+// Standalone status dot
+<moul-badge variant="dot">Status Dot</moul-badge>
+
+// Semantic color dots
+<moul-badge variant="success" dot>Operational</moul-badge>
+<moul-badge variant="warning" dot>Degraded</moul-badge>
+<moul-badge variant="error" dot>Incident</moul-badge>
+<moul-badge variant="primary" dot>Deploying</moul-badge>
+```
+
+## Props
+
+<PropsTable
+  type={{
+    size: {
+      type: "'sm' | 'md' | 'lg'",
+      default: "'md'",
+      description: 'The size scaling of the badge.',
+    },
+    variant: {
+      type: "'neutral' | 'primary' | 'success' | 'warning' | 'error' | 'dot'",
+      default: "'neutral'",
+      description: 'The semantic color style or status dot variant.',
+    },
+    dot: {
+      type: 'boolean',
+      default: 'false',
+      description: 'Whether to render a status dot indicator before children.',
+    },
+    className: {
+      type: 'string',
+      description: 'Custom CSS class name for the badge container.',
+    },
+  }}
+/>

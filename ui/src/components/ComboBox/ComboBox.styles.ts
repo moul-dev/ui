@@ -1,240 +1,103 @@
-import * as stylex from '@stylexjs/stylex'
-import { tokens } from '../../tokens/tokens.stylex'
+import { css } from 'lit'
 
-export const styles = stylex.create({
-  container: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: tokens.spacing1,
-    width: '100%',
-  },
-  group: {
-    display: 'flex',
-    alignItems: 'stretch',
-    borderWidth: '1px',
-    borderStyle: 'solid',
-    borderColor: tokens.colorBorder,
-    backgroundColor: tokens.colorBg,
-    boxShadow: tokens.shadowSm,
-    overflow: 'hidden',
-    outline: 'none',
-    transitionProperty: 'border-color, box-shadow',
-    transitionDuration: '0.15s',
-    transitionTimingFunction: 'ease-in-out',
-    '@media (prefers-reduced-motion: reduce)': {
-      transitionProperty: 'none',
-    },
-  },
-  groupSm: {
-    height: `calc(${tokens.spacing1} * 2 + ${tokens.lineHeightXs})`,
-    borderRadius: tokens.radiusSm,
-  },
-  groupMd: {
-    height: `calc(${tokens.spacing2} * 2 + ${tokens.lineHeightSm})`,
-    borderRadius: tokens.radiusMd,
-  },
-  groupLg: {
-    height: `calc(${tokens.spacing2} * 2 + ${tokens.lineHeightMd})`,
-    borderRadius: tokens.radiusMd,
-  },
-  primary: {
-    backgroundColor: tokens.colorBg,
-    borderColor: tokens.colorBorder,
-  },
-  secondary: {
-    backgroundColor: tokens.colorBgSubtle,
-    borderColor: tokens.colorBorderSubtle,
-  },
+export const comboboxStyles = css`
+  :host {
+    display: block;
+    width: 100%;
+    position: relative;
+  }
+  .input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .form-control {
+    display: block;
+    width: 100%;
+    padding: 0.375rem 2.25rem 0.375rem 0.75rem;
+    font-size: 1rem;
+    color: var(--bs-body-color, #212529);
+    background-color: var(--bs-body-bg, #fff);
+    border: var(--bs-border-width, 1px) solid var(--bs-border-color, #dee2e6);
+    border-radius: var(--bs-border-radius, 0.375rem);
+    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+  }
+  .form-control:focus {
+    border-color: #86b7fe;
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  }
+  .toggle-btn {
+    position: absolute;
+    right: 0.75rem;
+    background: transparent;
+    border: 0;
+    padding: 0;
+    color: var(--bs-secondary-color, #6c757d);
+    cursor: pointer;
+    font-size: 0.75rem;
+  }
+  .popover-menu {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1050;
+    background-color: var(--bs-body-bg, #fff);
+    border: 1px solid var(--bs-border-color, #dee2e6);
+    border-radius: var(--bs-border-radius, 0.375rem);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    max-height: 16rem;
+    overflow-y: auto;
+    display: none;
+  }
+  .popover-menu.show {
+    display: block;
+  }
+  .empty-state {
+    padding: 0.75rem;
+    color: var(--bs-secondary-color, #6c757d);
+    text-align: center;
+    font-size: 0.875rem;
+  }
+`
 
-  groupHover: {
-    borderColor: tokens.colorNeutral400,
-  },
-  groupFocused: {
-    borderColor: {
-      default: tokens.colorBorderFocus,
-      ':hover': tokens.colorBorderFocus,
-    },
-    boxShadow: `0 0 0 1px ${tokens.colorBorderFocus}`,
-    outline: 'none',
-  },
-  groupInvalid: {
-    borderColor: tokens.colorError500,
-  },
-  groupFocusedInvalid: {
-    borderColor: {
-      default: tokens.colorError500,
-      ':hover': tokens.colorError500,
-    },
-    boxShadow: `0 0 0 1px ${tokens.colorError500}`,
-    outline: 'none',
-  },
-  groupDisabled: {
-    opacity: 0.4,
-    backgroundColor: tokens.colorBgSubtle,
-    cursor: 'not-allowed',
-    ':hover': {
-      borderColor: tokens.colorBorder,
-    },
-  },
-  input: {
-    flexGrow: 1,
-    width: '100%',
-    borderStyle: 'none',
-    backgroundColor: 'transparent',
-    color: tokens.colorFg,
-    fontFamily: tokens.fontFamilyBase,
-    outline: 'none',
-  },
-  inputSm: {
-    paddingBlock: 0,
-    paddingInlineStart: tokens.spacing2,
-    paddingInlineEnd: tokens.spacing1,
-    fontSize: tokens.fontSizeXs,
-    lineHeight: tokens.lineHeightXs,
-  },
-  inputMd: {
-    paddingBlock: 0,
-    paddingInlineStart: tokens.spacing3,
-    paddingInlineEnd: tokens.spacing1,
-    fontSize: tokens.fontSizeSm,
-    lineHeight: tokens.lineHeightSm,
-  },
-  inputLg: {
-    paddingBlock: 0,
-    paddingInlineStart: tokens.spacing4,
-    paddingInlineEnd: tokens.spacing1,
-    fontSize: tokens.fontSizeMd,
-    lineHeight: tokens.lineHeightMd,
-  },
-  trigger: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderStyle: 'none',
-    backgroundColor: 'transparent',
-    color: tokens.colorFgSubtle,
-    cursor: 'pointer',
-    transitionProperty: 'background-color, color',
-    transitionDuration: '0.1s',
-    transitionTimingFunction: 'ease-in-out',
-    ':hover': {
-      backgroundColor: tokens.colorBgSubtle,
-      color: tokens.colorFg,
-    },
-    ':active': {
-      backgroundColor: tokens.colorBorderSubtle,
-    },
-  },
-  triggerSm: {
-    paddingInline: tokens.spacing2,
-  },
-  triggerMd: {
-    paddingInline: tokens.spacing3,
-  },
-  triggerLg: {
-    paddingInline: tokens.spacing4,
-  },
-  triggerDisabled: {
-    cursor: 'not-allowed',
-    opacity: 0.5,
-    ':hover': {
-      backgroundColor: 'transparent',
-      color: tokens.colorFgSubtle,
-    },
-  },
-  chevron: {
-    width: tokens.spacing3,
-    height: tokens.spacing3,
-    color: 'currentColor',
-  },
-  popover: {
-    borderWidth: '1px',
-    borderStyle: 'solid',
-    borderColor: tokens.colorBorder,
-    backgroundColor: tokens.colorBgElevated,
-    boxShadow: tokens.shadowMd,
-    zIndex: tokens.zIndexDropdown,
-    minWidth: 'var(--trigger-width)',
-    maxHeight: '300px',
-    overflowY: 'auto',
-  },
-  popoverSm: {
-    borderRadius: tokens.radiusSm,
-  },
-  popoverMd: {
-    borderRadius: tokens.radiusMd,
-  },
-  popoverLg: {
-    borderRadius: tokens.radiusMd,
-  },
-  listbox: {
-    padding: tokens.spacing1,
-    outline: 'none',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '2px',
-  },
-  item: {
-    display: 'flex',
-    alignItems: 'center',
-    color: tokens.colorFg,
-    cursor: 'pointer',
-    outline: 'none',
-    userSelect: 'none',
-    backgroundColor: 'transparent',
-    transitionProperty: 'background-color, color',
-    transitionDuration: '0.1s',
-    transitionTimingFunction: 'ease-in-out',
-  },
-  itemSm: {
-    paddingBlock: tokens.spacing1,
-    paddingInline: tokens.spacing2,
-    borderRadius: `calc(${tokens.radiusSm} - ${tokens.spacing1})`,
-    fontSize: tokens.fontSizeXs,
-    lineHeight: tokens.lineHeightXs,
-  },
-  itemMd: {
-    paddingBlock: tokens.spacing2,
-    paddingInline: tokens.spacing3,
-    borderRadius: `calc(${tokens.radiusMd} - ${tokens.spacing1})`,
-    fontSize: tokens.fontSizeSm,
-    lineHeight: tokens.lineHeightSm,
-  },
-  itemLg: {
-    paddingBlock: tokens.spacing2,
-    paddingInline: tokens.spacing4,
-    borderRadius: `calc(${tokens.radiusMd} - ${tokens.spacing1})`,
-    fontSize: tokens.fontSizeMd,
-    lineHeight: tokens.lineHeightMd,
-  },
-  itemHovered: {
-    backgroundColor: tokens.colorBgSubtle,
-  },
-  itemFocused: {
-    backgroundColor: tokens.colorBgSubtle,
-  },
-  itemSelected: {
-    backgroundColor: tokens.colorPrimary50,
-    color: tokens.colorPrimary700,
-    fontWeight: tokens.fontWeightMedium,
-  },
-  itemDisabled: {
-    opacity: 0.4,
-    cursor: 'not-allowed',
-  },
-  section: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '2px',
-    paddingBlock: tokens.spacing1,
-  },
-  sectionHeader: {
-    fontSize: tokens.fontSizeXs,
-    fontWeight: tokens.fontWeightBold,
-    color: tokens.colorFgSubtle,
-    paddingBlock: tokens.spacing1,
-    paddingInline: tokens.spacing3,
-    textTransform: 'uppercase',
-    letterSpacing: '0.05em',
-  },
-})
+export const comboboxItemStyles = css`
+  :host {
+    display: block;
+  }
+  .combobox-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.375rem 0.75rem;
+    font-size: 0.9375rem;
+    color: var(--bs-body-color, #212529);
+    cursor: pointer;
+    user-select: none;
+  }
+  .combobox-item:hover,
+  .combobox-item.active {
+    background-color: var(--bs-tertiary-bg, #f8f9fa);
+  }
+  .combobox-item.selected {
+    background-color: rgba(13, 110, 253, 0.1);
+    color: var(--bs-primary, #0d6efd);
+    font-weight: 500;
+  }
+  .combobox-item.hidden {
+    display: none !important;
+  }
+`
+
+export const comboboxSectionStyles = css`
+  :host {
+    display: block;
+  }
+  .section-title {
+    padding: 0.5rem 0.75rem 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--bs-secondary-color, #6c757d);
+  }
+`

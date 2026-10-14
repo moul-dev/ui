@@ -1,0 +1,58 @@
+---
+interface Props {
+  title?: string
+}
+const { title } = Astro.props
+---
+
+<div class="component-preview">
+  {title && <div class="preview-title">{title}</div>}
+  <div class="preview-area">
+    <slot />
+  </div>
+</div>
+
+<script>
+  import '@moul-dev/ui'
+
+  function syncBsTheme() {
+    const isDark =
+      document.documentElement.dataset.theme === 'dark' ||
+      (!document.documentElement.dataset.theme &&
+        window.matchMedia('(prefers-color-scheme: dark)').matches)
+    const theme = isDark ? 'dark' : 'light'
+    document.documentElement.setAttribute('data-bs-theme', theme)
+  }
+
+  syncBsTheme()
+
+  if (!(window as any).__moulThemeObserverAttached) {
+    ;(window as any).__moulThemeObserverAttached = true
+    const observer = new MutationObserver(() => syncBsTheme())
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-theme'],
+    })
+  }
+</script>
+
+<style>
+  .component-preview {
+    border: 1px solid var(--sl-color-gray-5, #343a40);
+    border-radius: 0.5rem;
+    padding: 1.75rem;
+    margin: 1.5rem 0;
+  }
+  .preview-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--sl-color-gray-2, #adb5bd);
+  }
+  .preview-area {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+  }
+</style>

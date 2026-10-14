@@ -1,206 +1,105 @@
-/* eslint-disable @stylexjs/valid-styles */
-import * as stylex from '@stylexjs/stylex'
-import { tokens } from '../../tokens/tokens.stylex'
+import { css } from 'lit'
 
-const rotate = stylex.keyframes({
-  from: { transform: 'rotate(0deg)' },
-  to: { transform: 'rotate(360deg)' },
-})
-
-export const styles = stylex.create({
-  container: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: tokens.spacing3,
-    paddingBlock: tokens.spacing4,
-    paddingInline: tokens.spacing4,
-    borderRadius: tokens.radiusLg,
-    borderWidth: '1px',
-    borderStyle: 'solid',
-    borderColor: tokens.colorBorderSubtle,
-    backgroundColor: tokens.colorBgSubtle,
-    color: tokens.colorFg,
-    width: '100%',
-    boxSizing: 'border-box',
-    boxShadow: tokens.shadowSm,
-  },
-
-  // Layout components
-  iconContainer: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexShrink: 0,
-    height: tokens.lineHeightSm,
-  },
-  icon: {
-    width: '20px',
-    height: '20px',
-  },
-
-  content: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: tokens.spacing1,
-    flexGrow: 1,
-  },
-  title: {
-    fontWeight: tokens.fontWeightNormal,
-    fontSize: tokens.fontSizeSm,
-    lineHeight: tokens.lineHeightSm,
-  },
-  description: {
-    fontSize: tokens.fontSizeSm,
-    lineHeight: tokens.lineHeightSm,
-    color: tokens.colorFgSubtle,
-  },
-
-  actionContainer: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: tokens.spacing2,
-    flexShrink: 0,
-    marginInlineStart: tokens.spacing3,
-    height: tokens.lineHeightSm,
-  },
-
-  closeButtonContainer: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexShrink: 0,
-    height: tokens.lineHeightSm,
-    marginInlineStart: tokens.spacing3,
-  },
-
-  closeButton_info: {
-    color: tokens.colorFgSubtle,
-    ':hover': {
-      color: tokens.colorFg,
-      backgroundColor: tokens.colorAlertHoverInfo,
-    },
-    ':active': {
-      backgroundColor: tokens.colorAlertActiveInfo,
-    },
-  },
-  closeButton_loading: {
-    color: tokens.colorFgSubtle,
-    ':hover': {
-      color: tokens.colorFg,
-      backgroundColor: tokens.colorAlertHoverInfo,
-    },
-    ':active': {
-      backgroundColor: tokens.colorAlertActiveInfo,
-    },
-  },
-  closeButton_accent: {
-    color: tokens.colorFgSubtle,
-    ':hover': {
-      color: tokens.colorFg,
-      backgroundColor: tokens.colorAlertHoverAccent,
-    },
-    ':active': {
-      backgroundColor: tokens.colorAlertActiveAccent,
-    },
-  },
-  closeButton_success: {
-    color: tokens.colorFgSubtle,
-    ':hover': {
-      color: tokens.colorFg,
-      backgroundColor: tokens.colorAlertHoverSuccess,
-    },
-    ':active': {
-      backgroundColor: tokens.colorAlertActiveSuccess,
-    },
-  },
-  closeButton_warning: {
-    color: tokens.colorFgSubtle,
-    ':hover': {
-      color: tokens.colorFg,
-      backgroundColor: tokens.colorAlertHoverWarning,
-    },
-    ':active': {
-      backgroundColor: tokens.colorAlertActiveWarning,
-    },
-  },
-  closeButton_error: {
-    color: tokens.colorFgSubtle,
-    ':hover': {
-      color: tokens.colorFg,
-      backgroundColor: tokens.colorAlertHoverError,
-    },
-    ':active': {
-      backgroundColor: tokens.colorAlertActiveError,
-    },
-  },
-
-  closeIcon: {
-    width: '16px',
-    height: '16px',
-  },
-
-  // Color Status Overrides
-  info: {},
-  accent: {
-    backgroundColor: tokens.colorAlertBgAccent,
-    borderColor: tokens.colorAlertBorderAccent,
-  },
-  success: {
-    backgroundColor: tokens.colorAlertBgSuccess,
-    borderColor: tokens.colorAlertBorderSuccess,
-  },
-  warning: {
-    backgroundColor: tokens.colorAlertBgWarning,
-    borderColor: tokens.colorAlertBorderWarning,
-  },
-  error: {
-    backgroundColor: tokens.colorAlertBgError,
-    borderColor: tokens.colorAlertBorderError,
-  },
-  loading: {},
-
-  // Icon Color Variants
-  icon_info: {
-    color: tokens.colorFg,
-  },
-  icon_accent: {
-    color: tokens.colorPrimary500,
-  },
-  icon_success: {
-    color: tokens.colorSuccess500,
-  },
-  icon_warning: {
-    color: tokens.colorWarning500,
-  },
-  icon_error: {
-    color: tokens.colorError500,
-  },
-  icon_loading: {
-    color: tokens.colorPrimary500,
-    animationName: rotate,
-    animationDuration: '1s',
-    animationTimingFunction: 'linear',
-    animationIterationCount: 'infinite',
-  },
-
-  // Title Color Variants
-  title_info: {
-    color: tokens.colorFg,
-  },
-  title_accent: {
-    color: tokens.colorPrimary500,
-  },
-  title_success: {
-    color: tokens.colorSuccess500,
-  },
-  title_warning: {
-    color: tokens.colorWarning500,
-  },
-  title_error: {
-    color: tokens.colorError500,
-  },
-  title_loading: {
-    color: tokens.colorPrimary500,
-  },
-})
+export const alertStyles = css`
+  :host {
+    display: block;
+  }
+  .alert {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    position: relative;
+    padding: 1rem;
+    border-radius: var(--bs-border-radius, 0.375rem);
+    margin-bottom: 1rem;
+  }
+  .alert-content {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .alert-heading {
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+  }
+  .alert-description {
+    font-size: 0.875rem;
+    opacity: 0.9;
+  }
+  .alert-icon {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    font-size: 1.25rem;
+    line-height: 1;
+  }
+  .alert-actions {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .btn-close {
+    box-sizing: content-box;
+    width: 1em;
+    height: 1em;
+    padding: 0.25em;
+    color: currentColor;
+    background: transparent;
+    border: 0;
+    border-radius: 0.375rem;
+    opacity: 0.5;
+    cursor: pointer;
+  }
+  .btn-close:hover {
+    opacity: 0.75;
+  }
+  .alert.theme-primary, .alert.alert-primary {
+    --bs-alert-bg: var(--bs-primary-bg-subtle, rgba(13, 110, 253, 0.12));
+    --bs-alert-color: var(--bs-primary-fg, #0d6efd);
+    --bs-alert-border-color: var(--bs-primary-border, rgba(13, 110, 253, 0.25));
+    background-color: var(--bs-alert-bg);
+    color: var(--bs-alert-color);
+    border: 1px solid var(--bs-alert-border-color);
+  }
+  .alert.theme-secondary, .alert.alert-secondary {
+    --bs-alert-bg: var(--bs-secondary-bg-subtle, rgba(108, 117, 125, 0.12));
+    --bs-alert-color: var(--bs-secondary-fg, #6c757d);
+    --bs-alert-border-color: var(--bs-secondary-border, rgba(108, 117, 125, 0.25));
+    background-color: var(--bs-alert-bg);
+    color: var(--bs-alert-color);
+    border: 1px solid var(--bs-alert-border-color);
+  }
+  .alert.theme-success, .alert.alert-success {
+    --bs-alert-bg: var(--bs-success-bg-subtle, rgba(25, 135, 84, 0.12));
+    --bs-alert-color: var(--bs-success-fg, #198754);
+    --bs-alert-border-color: var(--bs-success-border, rgba(25, 135, 84, 0.25));
+    background-color: var(--bs-alert-bg);
+    color: var(--bs-alert-color);
+    border: 1px solid var(--bs-alert-border-color);
+  }
+  .alert.theme-danger, .alert.alert-danger {
+    --bs-alert-bg: var(--bs-danger-bg-subtle, rgba(220, 53, 69, 0.12));
+    --bs-alert-color: var(--bs-danger-fg, #dc3545);
+    --bs-alert-border-color: var(--bs-danger-border, rgba(220, 53, 69, 0.25));
+    background-color: var(--bs-alert-bg);
+    color: var(--bs-alert-color);
+    border: 1px solid var(--bs-alert-border-color);
+  }
+  .alert.theme-warning, .alert.alert-warning {
+    --bs-alert-bg: var(--bs-warning-bg-subtle, rgba(255, 193, 7, 0.12));
+    --bs-alert-color: var(--bs-warning-fg, #ffc107);
+    --bs-alert-border-color: var(--bs-warning-border, rgba(255, 193, 7, 0.25));
+    background-color: var(--bs-alert-bg);
+    color: var(--bs-alert-color);
+    border: 1px solid var(--bs-alert-border-color);
+  }
+  .alert.theme-info, .alert.alert-info {
+    --bs-alert-bg: var(--bs-info-bg-subtle, rgba(13, 202, 240, 0.12));
+    --bs-alert-color: var(--bs-info-fg, #0dcaf0);
+    --bs-alert-border-color: var(--bs-info-border, rgba(13, 202, 240, 0.25));
+    background-color: var(--bs-alert-bg);
+    color: var(--bs-alert-color);
+    border: 1px solid var(--bs-alert-border-color);
+  }
+`

@@ -1,0 +1,325 @@
+---
+title: ComboBox
+description: Documentation for the ComboBox component.
+reactAria: ComboBox
+---
+
+import Accordion from '@/components/Accordion.astro'
+import Accordions from '@/components/Accordions.astro'
+
+
+import ComponentPreview from '@/components/ComponentPreview.astro'
+import PropsTable from '@/components/PropsTable.astro'
+
+
+
+
+
+# ComboBox
+
+## Preview
+
+<ComponentPreview>
+  <moul-combobox label="Favorite Animal" placeholder="Search...">
+    <moul-combobox-item id="cat">Cat</moul-combobox-item>
+    <moul-combobox-item id="dog">Dog</moul-combobox-item>
+    <moul-combobox-item id="panda">Panda</moul-combobox-item>
+  </moul-combobox>
+</ComponentPreview>
+
+The `ComboBox` component is built with React Aria and styled using StyleX.
+
+## Import
+
+```tsx
+
+```
+
+## Usage
+
+Here is a basic example of how to use the `ComboBox` component:
+
+```tsx
+
+
+export default function Example() {
+  return (
+    <moul-combobox>
+      {/* Component content */}
+    </moul-combobox>
+  );
+}
+```
+
+## Multi-select with TagGroup
+
+You can build a multi-select ComboBox by managing the selection state in a list/set, filtering out the selected items from the dropdown, and rendering them as a `TagGroup` below the ComboBox.
+
+<ComponentPreview>
+  <moul-combobox placeholder="Select items..."><moul-combobox-item value="one">Item 1</moul-combobox-item></moul-combobox>
+</ComponentPreview>
+
+```tsx
+
+
+
+export default function Example() {
+  const provinces = [
+    { id: 'phnom-penh', name: 'Phnom Penh' },
+    { id: 'siem-reap', name: 'Siem Reap' },
+    { id: 'battambang', name: 'Battambang' },
+    { id: 'sihanoukville', name: 'Sihanoukville' },
+    { id: 'kampot', name: 'Kampot' },
+    { id: 'kandal', name: 'Kandal' },
+    { id: 'kampong-cham', name: 'Kampong Cham' },
+    { id: 'koh-kong', name: 'Koh Kong' },
+    { id: 'kep', name: 'Kep' },
+  ];
+
+  const [selectedKeys, setSelectedKeys] = useState<Set<any>>(new Set());
+  const [inputValue, setInputValue] = useState('');
+
+  const availableProvinces = provinces.filter(
+    (p) => !selectedKeys.has(p.id)
+  );
+
+  const handleSelectionChange = (key: any) => {
+    if (key) {
+      setSelectedKeys((prev) => {
+        const next = new Set(prev);
+        next.add(key);
+        return next;
+      });
+      setInputValue('');
+    }
+  };
+
+  const handleRemove = (keys: Set<any>) => {
+    setSelectedKeys((prev) => {
+      const next = new Set(prev);
+      for (const k of keys) {
+        next.delete(k);
+      }
+      return next;
+    });
+  };
+
+  return (
+    <div class="w-full max-w-sm flex flex-col gap-4">
+      <moul-combobox
+        label="Cambodian Provinces"
+        placeholder="Select a province"
+        inputValue={inputValue}
+        onInputChange={setInputValue}
+        onSelectionChange={handleSelectionChange}
+        selected-key={null}
+      >
+        {availableProvinces.map((province) => (
+          <moul-combobox-item key={province.id} id={province.id}>
+            {province.name}
+          </moul-combobox-item>
+        ))}
+      </moul-combobox>
+
+      {selectedKeys.size > 0 && (
+        <moul-tag-group
+          label="Selected Provinces"
+          onRemove={handleRemove}
+          variant="primary"
+        >
+          {[...selectedKeys].map((key) => {
+            const province = provinces.find((p) => p.id === key);
+            return (
+              <moul-tag key={key} id={key}>
+                {province?.name || key}
+              </moul-tag>
+            );
+          })}
+        </moul-tag-group>
+      )}
+    </div>
+  );
+}
+```
+
+## Item Actions
+
+Use the `onAction` prop on `<moul-combobox-item>` to perform custom actions when an item is pressed (such as dynamic "Create" actions). Custom action items bypass selection and will not populate the input.
+
+Pair this with `allowsEmptyCollection` so the menu stays open when typing a query with no existing matches.
+
+You can also pass `onAction` to `<moul-combobox>` to be notified when any option is activated while preserving normal value selection.
+
+<ComponentPreview>
+  <moul-combobox placeholder="Action search..."><moul-combobox-item value="save">Save</moul-combobox-item></moul-combobox>
+</ComponentPreview>
+
+```tsx
+
+
+
+export default function Example() {
+  const [items, setItems] = useState([
+    { id: 'react', name: 'React' },
+    { id: 'vue', name: 'Vue' },
+    { id: 'svelte', name: 'Svelte' },
+  ]);
+  const [inputValue, setInputValue] = useState('');
+
+  const isExisting = items.some(
+    (item) => item.name.toLowerCase() === inputValue.trim().toLowerCase()
+  );
+
+  const handleCreate = (name: string) => {
+    const trimmed = name.trim();
+    if (!trimmed) return;
+    const id = trimmed.toLowerCase().replace(/\s+/g, '-');
+    setItems((prev) => [...prev, { id, name: trimmed }]);
+    setInputValue('');
+  };
+
+  return (
+    <moul-combobox
+      label="Frontend Framework"
+      placeholder="Type or select..."
+      allowsEmptyCollection
+      inputValue={inputValue}
+      onInputChange={setInputValue}
+      onAction={(key) => console.log('Activated item key:', key)}
+    >
+      {inputValue.trim().length > 0 && !isExisting && (
+        <moul-combobox-item
+          id="create-new"
+          onAction={() => handleCreate(inputValue)}
+        >
+          {`Create "${inputValue.trim()}"`}
+        </moul-combobox-item>
+      )}
+      {items.map((item) => (
+        <moul-combobox-item key={item.id} id={item.id}>
+          {item.name}
+        </moul-combobox-item>
+      ))}
+    </moul-combobox>
+  );
+}
+```
+
+## Props
+
+### ComboBox Props
+
+<PropsTable
+  type={{
+    'onAction': {
+      type: "(key: Key) => void",
+      description: "Handler called when any item in the combobox is activated. Value selection is preserved.",
+    },
+    'allowsEmptyCollection': {
+      type: "boolean",
+      default: "false",
+      description: "Whether the menu stays open when no matching items exist in the collection.",
+    },
+    'items': {
+      type: "Iterable<code>&lt;T&gt;</code>",
+      description: "The list of ComboBox items for dynamic collections.",
+    },
+    'selectedKey': {
+      type: "Key",
+      description: "The selected key (controlled).",
+    },
+    'defaultSelectedKey': {
+      type: "Key",
+      description: "The default selected key (uncontrolled).",
+    },
+    'inputValue': {
+      type: "string",
+      description: "The input field value (controlled).",
+    },
+    'defaultInputValue': {
+      type: "string",
+      description: "The default input field value (uncontrolled).",
+    },
+    'isDisabled': {
+      type: "boolean",
+      default: "false",
+      description: "Whether the combobox is disabled.",
+    },
+  }}
+/>
+
+<Accordions>
+  <Accordion title="Value & Events">
+    <PropsTable
+          type={{
+            'onAction': {
+              type: "(key: Key) => void",
+              description: "Handler invoked when any item is chosen or activated.",
+            },
+            'onSelectionChange': {
+              type: "(key: Key) => void",
+              description: "Handler called when selection changes.",
+            },
+            'onInputChange': {
+              type: "(value: string) => void",
+              description: "Handler called when input value changes.",
+            },
+          }}
+        />
+  </Accordion>
+  <Accordion title="Styling">
+    <PropsTable
+          type={{
+            'variant': {
+              type: "'primary' | 'secondary'",
+              default: "'primary'",
+              description: "Visual variant of the combobox group.",
+            },
+            'size': {
+              type: "'sm' | 'md' | 'lg'",
+              default: "'md'",
+              description: "Size of the combobox trigger and items.",
+            },
+            'className': {
+              type: "ClassNameOrFunction",
+              default: "'react-aria-ComboBox'",
+              description: "The CSS className.",
+            },
+          }}
+        />
+  </Accordion>
+</Accordions>
+
+### ComboBoxItem Props
+
+<PropsTable
+  type={{
+    'onAction': {
+      type: "() => void",
+      description: "Handler called when this specific item is activated. When provided, the item behaves as an action item and bypasses selection.",
+    },
+    'id': {
+      type: "Key",
+      description: "Unique identifier for the item.",
+    },
+    'textValue': {
+      type: "string",
+      description: "A string representation of the item contents used for typeahead and filtering.",
+    },
+    'isDisabled': {
+      type: "boolean",
+      default: "false",
+      description: "Whether the item is disabled.",
+    },
+  }}
+/>
+
+Default className: `react-aria-ComboBox`
+
+| Render Prop | CSS Selector |
+| :--- | :--- |
+| `isOpen` <br/> Whether the combobox list popover is open. | `[data-open]` |
+| `isFocused` <br/> Whether the combobox is focused. | `[data-focused]` |
+| `isFocusVisible` <br/> Whether the combobox is keyboard focused. | `[data-focus-visible]` |
+| `isDisabled` <br/> Whether the combobox is disabled. | `[data-disabled]` |
+

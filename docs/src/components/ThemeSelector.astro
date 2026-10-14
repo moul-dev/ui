@@ -1,0 +1,102 @@
+---
+---
+
+<div class="theme-selector">
+  <div class="theme-control">
+    <label for="brand-hue">Hue</label>
+    <input type="range" id="brand-hue" min="0" max="360" value="250" />
+  </div>
+  <div class="theme-control">
+    <label for="brand-radius">Radius</label>
+    <select id="brand-radius">
+      <option value="0">Sharp (0)</option>
+      <option value="0.5">Subtle (0.5)</option>
+      <option value="1" selected>Default (1.0)</option>
+      <option value="1.5">Round (1.5)</option>
+      <option value="2">Pill (2.0)</option>
+    </select>
+  </div>
+  <div class="theme-control">
+    <label for="brand-density">Density</label>
+    <select id="brand-density">
+      <option value="0.8">Compact</option>
+      <option value="1" selected>Comfortable</option>
+      <option value="1.2">Spacious</option>
+    </select>
+  </div>
+</div>
+
+<script>
+  function applyTheme() {
+    const hue = localStorage.getItem('moul-theme-hue') || '250'
+    const radius = localStorage.getItem('moul-theme-radius') || '1'
+    const density = localStorage.getItem('moul-theme-density') || '1'
+
+    document.documentElement.style.setProperty('--moul-brand-hue', hue)
+    document.documentElement.style.setProperty('--moul-brand-radius-factor', radius)
+    document.documentElement.style.setProperty('--moul-brand-density-factor', density)
+
+    const hueInput = document.getElementById('brand-hue') as HTMLInputElement | null
+    const radiusSelect = document.getElementById('brand-radius') as HTMLSelectElement | null
+    const densitySelect = document.getElementById('brand-density') as HTMLSelectElement | null
+
+    if (hueInput) hueInput.value = hue
+    if (radiusSelect) radiusSelect.value = radius
+    if (densitySelect) densitySelect.value = density
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    applyTheme()
+
+    const hueInput = document.getElementById('brand-hue')
+    hueInput?.addEventListener('input', (e) => {
+      const val = (e.target as HTMLInputElement).value
+      localStorage.setItem('moul-theme-hue', val)
+      document.documentElement.style.setProperty('--moul-brand-hue', val)
+    })
+
+    const radiusSelect = document.getElementById('brand-radius')
+    radiusSelect?.addEventListener('change', (e) => {
+      const val = (e.target as HTMLSelectElement).value
+      localStorage.setItem('moul-theme-radius', val)
+      document.documentElement.style.setProperty('--moul-brand-radius-factor', val)
+    })
+
+    const densitySelect = document.getElementById('brand-density')
+    densitySelect?.addEventListener('change', (e) => {
+      const val = (e.target as HTMLSelectElement).value
+      localStorage.setItem('moul-theme-density', val)
+      document.documentElement.style.setProperty('--moul-brand-density-factor', val)
+    })
+  })
+</script>
+
+<style>
+  .theme-selector {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    padding: 1rem;
+    background-color: var(--sl-color-gray-6, #212529);
+    border: 1px solid var(--sl-color-gray-5, #343a40);
+    border-radius: 0.5rem;
+    margin: 1.5rem 0;
+  }
+  .theme-control {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+  }
+  .theme-control label {
+    font-weight: 500;
+  }
+  .theme-control select,
+  .theme-control input {
+    background-color: var(--sl-color-gray-5, #343a40);
+    color: var(--sl-color-white, #fff);
+    border: 1px solid var(--sl-color-gray-4, #495057);
+    border-radius: 0.25rem;
+    padding: 0.25rem 0.5rem;
+  }
+</style>

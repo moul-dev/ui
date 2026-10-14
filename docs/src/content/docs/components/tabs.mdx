@@ -1,0 +1,196 @@
+---
+title: Tabs
+description: Documentation for the Tabs component.
+reactAria: Tabs
+---
+
+import Accordion from '@/components/Accordion.astro'
+import Accordions from '@/components/Accordions.astro'
+
+
+import ComponentPreview from '@/components/ComponentPreview.astro'
+import PropsTable from '@/components/PropsTable.astro'
+
+
+
+
+# Tabs
+
+Tabs organize content into multiple sections and allow users to navigate between them. It is built using React Aria Components and styled compile-time using StyleX, featuring smooth selection sliding indicator animations.
+
+## Preview
+
+<ComponentPreview>
+  <moul-tabs class="w-80" defaultValue="profile">
+    <div slot="tab" aria-label="Settings Tabs">
+      <moul-tab id="profile">Profile</moul-tab>
+      <moul-tab id="notifications">Notifications</moul-tab>
+      <moul-tab id="security">Security</moul-tab>
+    </div>
+    <div slot="panel">
+      <moul-tab-panel id="profile">
+        Profile settings and account parameters.
+      </moul-tab-panel>
+      <moul-tab-panel id="notifications">
+        Configure email and push notification preferences.
+      </moul-tab-panel>
+      <moul-tab-panel id="security">
+        Manage password, two-factor authentication, and active sessions.
+      </moul-tab-panel>
+    </div>
+  </moul-tabs>
+</ComponentPreview>
+
+## Import
+
+```tsx
+
+```
+
+## Variants
+
+The `Tabs` component supports three visual variants through the `variant` prop: `primary` (default brand indicator), `secondary` (foreground indicator), and `tertiary` (sliding pill background bubble).
+
+### Primary (Default)
+
+The primary variant uses the brand accent color for the selection indicator underline.
+
+```tsx
+<moul-tabs variant="primary">
+  <div slot="tab" aria-label="Primary Tabs">
+    <moul-tab id="1">Tab 1</moul-tab>
+    <moul-tab id="2">Tab 2</moul-tab>
+  </div>
+  <div slot="panel">
+    <moul-tab-panel id="1">Content 1</moul-tab-panel>
+    <moul-tab-panel id="2">Content 2</moul-tab-panel>
+  </div>
+</moul-tabs>
+```
+
+### Secondary
+
+The secondary variant uses the default foreground text color for the selection indicator underline.
+
+<ComponentPreview>
+  <moul-tabs variant="secondary" class="w-80" defaultValue="1">
+    <div slot="tab" aria-label="Secondary Tabs">
+      <moul-tab id="1">Tab 1</moul-tab>
+      <moul-tab id="2">Tab 2</moul-tab>
+    </div>
+    <div slot="panel">
+      <moul-tab-panel id="1">Secondary variant content 1</moul-tab-panel>
+      <moul-tab-panel id="2">Secondary variant content 2</moul-tab-panel>
+    </div>
+  </moul-tabs>
+</ComponentPreview>
+
+### Tertiary (Sliding Pill)
+
+The tertiary variant renders a premium sliding rounded pill background enclosed in a clean border surrounding the tabs, with subtle container track styling inspired by modern segmented controls and developer CLI interfaces.
+
+<ComponentPreview>
+  <moul-tabs variant="tertiary" defaultValue="pnpm">
+    <div slot="tab" aria-label="Package Manager Tabs">
+      <moul-tab id="pnpm">pnpm</moul-tab>
+      <moul-tab id="yarn">yarn</moul-tab>
+      <moul-tab id="bun">bun</moul-tab>
+      <moul-tab id="npm">npm</moul-tab>
+    </div>
+    <div slot="panel">
+      <moul-tab-panel id="pnpm">pnpm add @moul-dev/ui</moul-tab-panel>
+      <moul-tab-panel id="yarn">yarn add @moul-dev/ui</moul-tab-panel>
+      <moul-tab-panel id="bun">bun add @moul-dev/ui</moul-tab-panel>
+      <moul-tab-panel id="npm">npm i @moul-dev/ui</moul-tab-panel>
+    </div>
+  </moul-tabs>
+</ComponentPreview>
+
+## Vertical Orientation
+
+Tabs can be stacked vertically using the `orientation="vertical"` prop. The selection indicator animates along the vertical axis, and the tab panels are laid out inline to the right.
+
+<ComponentPreview>
+  <moul-tabs orientation="vertical" variant="primary" class="w-full max-w-md" defaultValue="general">
+    <div slot="tab" aria-label="Settings categories">
+      <moul-tab id="general">General</moul-tab>
+      <moul-tab id="appearance">Appearance</moul-tab>
+      <moul-tab id="security">Security</moul-tab>
+    </div>
+    <div slot="panel">
+      <moul-tab-panel id="general">
+        General account settings configuration.
+      </moul-tab-panel>
+      <moul-tab-panel id="appearance">
+        Customize themes, dark mode, font sizes, and layout choices.
+      </moul-tab-panel>
+      <moul-tab-panel id="security">
+        Manage active authentication keys and access logs.
+      </moul-tab-panel>
+    </div>
+  </moul-tabs>
+</ComponentPreview>
+
+## Props
+
+### Tabs Props
+
+<PropsTable
+  type={{
+    'variant': {
+      type: "'primary' | 'secondary' | 'tertiary'",
+      default: "'primary'",
+      description: "The visual style design of the active tab indicator.",
+    },
+    'orientation': {
+      type: "'horizontal' | 'vertical'",
+      default: "'horizontal'",
+      description: "The layout axis direction of the tabs.",
+    },
+    'selectedKey': {
+      type: "Key",
+      description: "The selected tab key (controlled).",
+    },
+    'defaultSelectedKey': {
+      type: "Key",
+      description: "The default selected tab key (uncontrolled).",
+    },
+    'isDisabled': {
+      type: "boolean",
+      default: "false",
+      description: "Whether all tabs are disabled.",
+    },
+  }}
+/>
+
+<Accordions>
+  <Accordion title="Value">
+    <PropsTable
+          type={{
+            'onSelectionChange': {
+              type: "(key: Key) => void",
+              description: "Handler called when active tab selection changes.",
+            },
+          }}
+        />
+  </Accordion>
+  <Accordion title="Styling">
+    <PropsTable
+          type={{
+            'className': {
+              type: "ClassNameOrFunction",
+              default: "'react-aria-Tabs'",
+              description: "The CSS className.",
+            },
+          }}
+        />
+  </Accordion>
+</Accordions>
+
+Default className: `react-aria-Tabs`
+
+| Render Prop | CSS Selector |
+| :--- | :--- |
+| `orientation` <br/> The layout orientation. | `[data-orientation]` |
+| `isDisabled` <br/> Whether the component is disabled. | `[data-disabled]` |
+

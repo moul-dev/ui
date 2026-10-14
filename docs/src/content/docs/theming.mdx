@@ -1,0 +1,42 @@
+---
+title: Theming
+description: Customize brand color, corner radius, and density with CSS custom properties.
+---
+
+import ThemeSelector from '@/components/ThemeSelector.astro'
+import ComponentPreview from '@/components/ComponentPreview.astro'
+
+Moul UI exposes CSS custom properties on `:root` that cascade into all component shadow trees.
+
+## Interactive Theme Selector
+
+<ThemeSelector />
+
+## Preview Theme Effects
+
+<ComponentPreview>
+  <moul-button variant="primary">Themed Button</moul-button>
+  <moul-badge variant="primary">Badge</moul-badge>
+  <moul-alert variant="primary">
+    <span>Alert matching current brand configuration</span>
+  </moul-alert>
+</ComponentPreview>
+
+## Custom Properties Reference
+
+| Variable | Default | Description |
+|---|---|---|
+| `--moul-brand-hue` | `250` | Base brand hue (0 - 360) |
+| `--moul-brand-radius-factor` | `1` | Multiplier for border radius scaling |
+| `--moul-brand-density-factor` | `1` | Multiplier for padding and component sizing |
+| `--moul-brand-font-scale` | `1` | Multiplier for typography scaling |
+
+## Dark Mode Support
+
+Moul UI components inherit Bootstrap 6 dark mode styling seamlessly. Set `data-bs-theme="dark"` on any ancestor element or `<html>`:
+
+```html
+<html data-bs-theme="dark">
+  ...
+</html>
+```

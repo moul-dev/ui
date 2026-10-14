@@ -1,0 +1,120 @@
+---
+title: NumberField
+description: Documentation for the NumberField component.
+reactAria: NumberField
+---
+
+import Accordion from '@/components/Accordion.astro'
+import Accordions from '@/components/Accordions.astro'
+
+
+import ComponentPreview from '@/components/ComponentPreview.astro'
+import PropsTable from '@/components/PropsTable.astro'
+
+
+
+
+
+# NumberField
+
+## Preview
+
+<ComponentPreview>
+  <moul-number-field label="Quantity" defaultValue={5} ></moul-number-field>
+</ComponentPreview>
+
+The `NumberField` component is built with React Aria and styled using StyleX.
+
+## Import
+
+```tsx
+
+```
+
+## Usage
+
+Here is a basic example of how to use the `NumberField` component:
+
+```tsx
+
+
+export default function Example() {
+  return (
+    <moul-number-field>
+      {/* Component content */}
+    </moul-number-field>
+  );
+}
+```
+
+## Props
+
+### NumberField Props
+
+<PropsTable
+  type={{
+    'variant': {
+      type: "'primary' | 'secondary'",
+      default: "'primary'",
+      description: "The visual style variant of the number field.",
+    },
+    'value': {
+      type: "number",
+      description: "The current value (controlled).",
+    },
+    'defaultValue': {
+      type: "number",
+      description: "The default value (uncontrolled).",
+    },
+    'minValue': {
+      type: "number",
+      description: "The minimum allowed value.",
+    },
+    'maxValue': {
+      type: "number",
+      description: "The maximum allowed value.",
+    },
+    'step': {
+      type: "number",
+      default: "1",
+      description: "The amount to increment or decrement the value on interaction.",
+    },
+    'isDisabled': {
+      type: "boolean",
+      default: "false",
+      description: "Whether the field is disabled.",
+    },
+  }}
+/>
+
+<Accordions>
+  <Accordion title="Value">
+    <PropsTable
+          type={{
+            'onChange': {
+              type: "(value: number) => void",
+              description: "Handler called when the value changes.",
+            },
+          }}
+        />
+  </Accordion>
+  <Accordion title="Styling">
+    <PropsTable
+          type={{
+            'className': {
+              type: "ClassNameOrFunction",
+              default: "'react-aria-NumberField'",
+              description: "The CSS className for the element.",
+            },
+          }}
+        />
+  </Accordion>
+</Accordions>
+
+Default className: `react-aria-NumberField`
+
+| Render Prop | CSS Selector |
+| :--- | :--- |
+| `isDisabled` <br/> Whether the number field is disabled. | `[data-disabled]` |
+| `isInvalid` <br/> Whether the value is invalid. | `[data-invalid]` |
+

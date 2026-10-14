@@ -1,0 +1,168 @@
+---
+title: Checkbox
+description: Documentation for the Checkbox component.
+reactAria: Checkbox
+---
+
+import Accordion from '@/components/Accordion.astro'
+import Accordions from '@/components/Accordions.astro'
+
+
+import ComponentPreview from '@/components/ComponentPreview.astro'
+import PropsTable from '@/components/PropsTable.astro'
+
+
+
+
+
+# Checkbox
+
+## Preview
+
+<ComponentPreview>
+  <div class="flex flex-col gap-2">
+    <moul-checkbox>Unchecked</moul-checkbox>
+    <moul-checkbox defaultSelected>Checked</moul-checkbox>
+    <moul-checkbox is-disabled>Disabled</moul-checkbox>
+  </div>
+</ComponentPreview>
+
+The `Checkbox` component is built with React Aria and styled using StyleX.
+
+## Import
+
+```tsx
+
+```
+
+## Usage
+
+Here is a basic example of how to use the `Checkbox` component:
+
+```tsx
+
+
+export default function Example() {
+  return (
+    <moul-checkbox>
+      Checkbox Label
+    </moul-checkbox>
+  );
+}
+```
+
+## Variants
+
+The `Checkbox` component supports three visual variants: `primary` (default), `secondary`, and `tertiary`.
+
+<ComponentPreview>
+  <div class="flex flex-col gap-4">
+    <div class="flex flex-col gap-2">
+      <span class="text-sm font-medium text-neutral-500">Primary (default)</span>
+      <div class="flex gap-4">
+        <moul-checkbox variant="primary">Unchecked</moul-checkbox>
+        <moul-checkbox variant="primary" defaultSelected>Checked</moul-checkbox>
+      </div>
+    </div>
+    <div class="flex flex-col gap-2">
+      <span class="text-sm font-medium text-neutral-500">Secondary</span>
+      <div class="flex gap-4">
+        <moul-checkbox variant="secondary">Unchecked</moul-checkbox>
+        <moul-checkbox variant="secondary" defaultSelected>Checked</moul-checkbox>
+      </div>
+    </div>
+    <div class="flex flex-col gap-2">
+      <span class="text-sm font-medium text-neutral-500">Tertiary</span>
+      <div class="flex gap-4">
+        <moul-checkbox variant="tertiary">Unchecked</moul-checkbox>
+        <moul-checkbox variant="tertiary" defaultSelected>Checked</moul-checkbox>
+      </div>
+    </div>
+  </div>
+</ComponentPreview>
+
+### Primary Variant
+The primary variant uses the primary accent brand colors, suited for main user actions.
+```tsx
+<moul-checkbox variant="primary" defaultSelected>Primary</moul-checkbox>
+```
+
+### Secondary Variant
+The secondary variant uses monochrome neutral styling, providing a clean alternative for lists and tables.
+```tsx
+<moul-checkbox variant="secondary" defaultSelected>Secondary</moul-checkbox>
+```
+
+### Tertiary Variant
+The tertiary variant is a hollow outline checkbox style that stays transparent and applies primary colors to the border and checkmark itself.
+```tsx
+<moul-checkbox variant="tertiary" defaultSelected>Tertiary</moul-checkbox>
+```
+
+## Props
+
+### Checkbox Props
+
+<PropsTable
+  type={{
+    'variant': {
+      type: "'primary' | 'secondary' | 'tertiary'",
+      default: "'primary'",
+      description: "The visual style variant of the checkbox.",
+    },
+    'isSelected': {
+      type: "boolean",
+      description: "Whether the checkbox is checked (controlled).",
+    },
+    'defaultSelected': {
+      type: "boolean",
+      description: "Whether the checkbox is checked by default (uncontrolled).",
+    },
+    'isIndeterminate': {
+      type: "boolean",
+      description: "Whether the checkbox is indeterminate.",
+    },
+    'isDisabled': {
+      type: "boolean",
+      default: "false",
+      description: "Whether the checkbox is disabled.",
+    },
+  }}
+/>
+
+<Accordions>
+  <Accordion title="Value">
+    <PropsTable
+          type={{
+            'onChange': {
+              type: "(isSelected: boolean) => void",
+              description: "Handler called when the checked state changes.",
+            },
+          }}
+        />
+  </Accordion>
+  <Accordion title="Styling">
+    <PropsTable
+          type={{
+            'className': {
+              type: "ClassNameOrFunction",
+              default: "'react-aria-Checkbox'",
+              description: "The CSS className for the element.",
+            },
+          }}
+        />
+  </Accordion>
+</Accordions>
+
+Default className: `react-aria-Checkbox`
+
+| Render Prop | CSS Selector |
+| :--- | :--- |
+| `isSelected` <br/> Whether the checkbox is selected. | `[data-selected]` |
+| `isIndeterminate` <br/> Whether the checkbox is indeterminate. | `[data-indeterminate]` |
+| `isHovered` <br/> Whether the checkbox is hovered. | `[data-hovered]` |
+| `isPressed` <br/> Whether the checkbox is pressed. | `[data-pressed]` |
+| `isFocused` <br/> Whether the checkbox is focused. | `[data-focused]` |
+| `isFocusVisible` <br/> Whether the checkbox is keyboard focused. | `[data-focus-visible]` |
+| `isDisabled` <br/> Whether the checkbox is disabled. | `[data-disabled]` |
+

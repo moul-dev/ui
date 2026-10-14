@@ -1,5 +1,1 @@
-export type {
-  DatePickerProps,
-  DateRangePickerProps,
-} from './DatePicker'
-export { DatePicker, DateRangePicker } from './DatePicker'
+export { MoulDatePicker, MoulDateRangePicker } from './DatePicker.js'

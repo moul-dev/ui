@@ -1,6 +1,5 @@
-export type {
-  ComboBoxItemProps,
-  ComboBoxProps,
-  ComboBoxSectionProps,
-} from './ComboBox'
-export { ComboBox, ComboBoxItem, ComboBoxSection } from './ComboBox'
+export {
+  MoulComboBox,
+  MoulComboBoxItem,
+  MoulComboBoxSection,
+} from './ComboBox.js'

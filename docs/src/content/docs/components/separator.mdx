@@ -1,0 +1,84 @@
+---
+title: Separator
+description: Documentation for the Separator component.
+reactAria: Separator
+---
+
+import Accordion from '@/components/Accordion.astro'
+import Accordions from '@/components/Accordions.astro'
+
+
+import ComponentPreview from '@/components/ComponentPreview.astro'
+import PropsTable from '@/components/PropsTable.astro'
+
+
+
+
+
+# Separator
+
+## Preview
+
+<ComponentPreview>
+  <div class="flex h-5 items-center space-x-4 text-sm">
+    <div>Blog</div>
+    <moul-separator orientation="vertical" ></moul-separator>
+    <div>Docs</div>
+    <moul-separator orientation="vertical" ></moul-separator>
+    <div>Source</div>
+  </div>
+</ComponentPreview>
+
+The `Separator` component is built with React Aria and styled using StyleX.
+
+## Import
+
+```tsx
+
+```
+
+## Usage
+
+Here is a basic example of how to use the `Separator` component:
+
+```tsx
+
+
+export default function Example() {
+  return (
+    <moul-separator>
+      {/* Component content */}
+    </moul-separator>
+  );
+}
+```
+
+## Props
+
+### Separator Props
+
+<PropsTable
+  type={{
+    'orientation': {
+      type: "'horizontal' | 'vertical'",
+      default: "'horizontal'",
+      description: "The layout orientation axis of the separator line.",
+    },
+  }}
+/>
+
+<Accordions>
+  <Accordion title="Styling">
+    <PropsTable
+          type={{
+            'className': {
+              type: "string",
+              description: "The CSS className.",
+            },
+          }}
+        />
+  </Accordion>
+</Accordions>
+
+Default className: `react-aria-Separator`
+

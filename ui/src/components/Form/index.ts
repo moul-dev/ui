@@ -1,2 +1,1 @@
-export type { FormProps } from './Form'
-export { Form } from './Form'
+export { MoulForm } from './Form.js'

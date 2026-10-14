@@ -1,393 +1,111 @@
-import * as stylex from '@stylexjs/stylex'
-import { tokens } from '../../tokens/tokens.stylex'
+import { css } from 'lit'
 
-const fadeIn = stylex.keyframes({
-  from: { opacity: 0 },
-  to: { opacity: 1 },
-})
-
-const slideInRight = stylex.keyframes({
-  from: { transform: 'translateX(100%)' },
-  to: { transform: 'translateX(0)' },
-})
-
-const slideInLeft = stylex.keyframes({
-  from: { transform: 'translateX(-100%)' },
-  to: { transform: 'translateX(0)' },
-})
-
-const slideInTop = stylex.keyframes({
-  from: { transform: 'translateY(-100%)' },
-  to: { transform: 'translateY(0)' },
-})
-
-export const styles = stylex.create({
-  overlay: {
-    position: 'fixed',
-    inset: 0,
-    zIndex: tokens.zIndexModal,
-    backgroundColor: tokens.colorOverlay,
-    display: 'flex',
-    animationName: fadeIn,
-    animationDuration: '0.35s',
-    animationTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
-    '@media (prefers-reduced-motion: reduce)': {
-      animationPlayState: 'paused',
-      animationDuration: '0s',
-    },
-  },
-  overlayRight: {
-    justifyContent: 'flex-end',
-    alignItems: 'stretch',
-  },
-  overlayLeft: {
-    justifyContent: 'flex-start',
-    alignItems: 'stretch',
-  },
-  overlayTop: {
-    justifyContent: 'center',
-    alignItems: 'flex-start',
-  },
-  overlayBottom: {
-    justifyContent: 'center',
-    alignItems: 'flex-end',
-  },
-  drawer: {
-    backgroundColor: tokens.colorBgElevated,
-    boxShadow: tokens.shadowLg,
-    overflow: 'hidden',
-    display: 'flex',
-    flexDirection: 'column',
-    outline: 'none',
-    boxSizing: 'border-box',
-    animationDuration: '0.35s',
-    animationTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
-    '@media (prefers-reduced-motion: reduce)': {
-      animationPlayState: 'paused',
-      animationDuration: '0s',
-    },
-  },
-  placementRight: {
-    height: {
-      default: `calc(100dvh - ${tokens.spacing2} * 2)`,
-      '@media (max-width: 640px)': '100dvh',
-    },
-    maxHeight: {
-      default: `calc(100dvh - ${tokens.spacing2} * 2)`,
-      '@media (max-width: 640px)': '100dvh',
-    },
-    marginBlock: {
-      default: tokens.spacing2,
-      '@media (max-width: 640px)': 0,
-    },
-    marginInlineEnd: {
-      default: tokens.spacing2,
-      '@media (max-width: 640px)': 0,
-    },
-    marginInlineStart: 0,
-    borderRadius: {
-      default: tokens.radiusLg,
-      '@media (max-width: 640px)': tokens.radiusNone,
-    },
-    borderWidth: {
-      default: '1px',
-      '@media (max-width: 640px)': 0,
-    },
-    borderStyle: 'solid',
-    borderColor: tokens.colorBorderSubtle,
-    animationName: slideInRight,
-  },
-  placementLeft: {
-    height: {
-      default: `calc(100dvh - ${tokens.spacing2} * 2)`,
-      '@media (max-width: 640px)': '100dvh',
-    },
-    maxHeight: {
-      default: `calc(100dvh - ${tokens.spacing2} * 2)`,
-      '@media (max-width: 640px)': '100dvh',
-    },
-    marginBlock: {
-      default: tokens.spacing2,
-      '@media (max-width: 640px)': 0,
-    },
-    marginInlineStart: {
-      default: tokens.spacing2,
-      '@media (max-width: 640px)': 0,
-    },
-    marginInlineEnd: 0,
-    borderRadius: {
-      default: tokens.radiusLg,
-      '@media (max-width: 640px)': tokens.radiusNone,
-    },
-    borderWidth: {
-      default: '1px',
-      '@media (max-width: 640px)': 0,
-    },
-    borderStyle: 'solid',
-    borderColor: tokens.colorBorderSubtle,
-    animationName: slideInLeft,
-  },
-  placementTop: {
-    width: {
-      default: `calc(100vw - ${tokens.spacing2} * 2)`,
-      '@media (max-width: 640px)': '100vw',
-    },
-    maxWidth: {
-      default: `calc(100vw - ${tokens.spacing2} * 2)`,
-      '@media (max-width: 640px)': '100vw',
-    },
-    marginBlockStart: {
-      default: tokens.spacing2,
-      '@media (max-width: 640px)': 0,
-    },
-    marginBlockEnd: 0,
-    marginInline: {
-      default: tokens.spacing2,
-      '@media (max-width: 640px)': 0,
-    },
-    borderRadius: {
-      default: tokens.radiusLg,
-      '@media (max-width: 640px)': tokens.radiusNone,
-    },
-    borderWidth: {
-      default: '1px',
-      '@media (max-width: 640px)': 0,
-    },
-    borderStyle: 'solid',
-    borderColor: tokens.colorBorderSubtle,
-    animationName: slideInTop,
-  },
-  modalReset: {
-    outline: 'none',
-    borderWidth: 0,
-    borderStyle: 'none',
-    borderColor: 'transparent',
-    backgroundColor: 'transparent',
-    boxShadow: 'none',
-    display: 'flex',
-    flexDirection: 'column',
-    boxSizing: 'border-box',
-    overflow: 'visible',
-    margin: 0,
-    padding: 0,
-  },
-  modalWrapperReset: {
-    borderWidth: 0,
-    borderStyle: 'none',
-    borderColor: 'transparent',
-    backgroundColor: 'transparent',
-    boxShadow: 'none',
-  },
-  placementBottom: {
-    width: '100vw',
-    maxWidth: '100vw',
-    marginBlockEnd: 0,
-    marginBlockStart: 0,
-    marginInline: 0,
-    borderTopLeftRadius: tokens.radiusLg,
-    borderTopRightRadius: tokens.radiusLg,
-    borderBottomLeftRadius: 0,
-    borderBottomRightRadius: 0,
-    borderWidth: 0,
-    borderStyle: 'none',
-    borderColor: 'transparent',
-  },
-  handleWrapper: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '100%',
-    paddingBlock: tokens.spacing2,
-    backgroundColor: 'transparent',
-    borderWidth: 0,
-    outline: 'none',
-    boxSizing: 'border-box',
-    userSelect: 'none',
-    touchAction: 'none',
-  },
-  handleBar: {
-    width: '36px',
-    height: '4px',
-    borderRadius: tokens.radiusFull,
-    backgroundColor: tokens.colorBorder,
-  },
-  // Horizontal (Side: Left / Right) Sizes
-  sideSm: {
-    width: {
-      default: '400px',
-      '@media (max-width: 640px)': '100vw',
-    },
-    maxWidth: {
-      default: `calc(100vw - ${tokens.spacing2} * 2)`,
-      '@media (max-width: 640px)': '100vw',
-    },
-  },
-  sideMd: {
-    width: {
-      default: '600px',
-      '@media (max-width: 640px)': '100vw',
-    },
-    maxWidth: {
-      default: `calc(100vw - ${tokens.spacing2} * 2)`,
-      '@media (max-width: 640px)': '100vw',
-    },
-  },
-  sideLg: {
-    width: {
-      default: '800px',
-      '@media (max-width: 640px)': '100vw',
-    },
-    maxWidth: {
-      default: `calc(100vw - ${tokens.spacing2} * 2)`,
-      '@media (max-width: 640px)': '100vw',
-    },
-  },
-  sideFull: {
-    width: {
-      default: `calc(100vw - ${tokens.spacing2} * 2)`,
-      '@media (max-width: 640px)': '100vw',
-    },
-    maxWidth: {
-      default: `calc(100vw - ${tokens.spacing2} * 2)`,
-      '@media (max-width: 640px)': '100vw',
-    },
-  },
-  // Vertical (Top / Bottom) Sizes
-  verticalSm: {
-    height: {
-      default: '400px',
-      '@media (max-width: 640px)': '60vh',
-    },
-    maxHeight: {
-      default: `calc(100dvh - ${tokens.spacing2} * 2)`,
-      '@media (max-width: 640px)': '90dvh',
-    },
-  },
-  verticalMd: {
-    height: {
-      default: '600px',
-      '@media (max-width: 640px)': '80vh',
-    },
-    maxHeight: {
-      default: `calc(100dvh - ${tokens.spacing2} * 2)`,
-      '@media (max-width: 640px)': '90dvh',
-    },
-  },
-  verticalLg: {
-    height: {
-      default: '800px',
-      '@media (max-width: 640px)': '90vh',
-    },
-    maxHeight: {
-      default: `calc(100dvh - ${tokens.spacing2} * 2)`,
-      '@media (max-width: 640px)': '95dvh',
-    },
-  },
-  verticalFull: {
-    height: {
-      default: `calc(100dvh - ${tokens.spacing2} * 2)`,
-      '@media (max-width: 640px)': '100dvh',
-    },
-    maxHeight: {
-      default: `calc(100dvh - ${tokens.spacing2} * 2)`,
-      '@media (max-width: 640px)': '100dvh',
-    },
-  },
-  dialog: {
-    outline: 'none',
-    borderWidth: 0,
-    borderStyle: 'none',
-    display: 'flex',
-    flexDirection: 'column',
-    flexGrow: 1,
-    width: '100%',
-    height: '100%',
-    overflow: 'hidden',
-    position: 'relative',
-    boxSizing: 'border-box',
-  },
-  header: {
-    position: 'sticky',
-    insetBlockStart: 0,
-    zIndex: 10,
-    backgroundColor: tokens.colorBgElevated,
-    paddingBlock: tokens.spacing4,
-    paddingInline: tokens.spacing5,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: tokens.spacing3,
-    borderBlockEndStyle: 'solid',
-    borderBlockEndWidth: '1px',
-    borderBlockEndColor: tokens.colorBorderSubtle,
-    flexShrink: 0,
-    boxSizing: 'border-box',
-  },
-  headerBottom: {
-    flexDirection: 'column',
-    alignItems: 'center',
-    paddingBlockStart: tokens.spacing1,
-    paddingBlockEnd: tokens.spacing3,
-    paddingInline: tokens.spacing4,
-    gap: tokens.spacing1,
-    borderBlockEndWidth: 0,
-    borderBlockEndStyle: 'none',
-  },
-  title: {
-    fontSize: tokens.fontSizeLg,
-    fontWeight: tokens.fontWeightBold,
-    color: tokens.colorFg,
-    margin: 0,
-    lineHeight: tokens.lineHeightLg,
-    flexGrow: 1,
-  },
-  body: {
-    paddingBlock: tokens.spacing5,
-    paddingInline: tokens.spacing5,
-    color: tokens.colorFg,
-    fontSize: tokens.fontSizeMd,
-    lineHeight: tokens.lineHeightMd,
-    flexGrow: 1,
-    overflowY: 'auto',
-    boxSizing: 'border-box',
-  },
-  footer: {
-    position: 'sticky',
-    insetBlockEnd: 0,
-    zIndex: 10,
-    backgroundColor: tokens.colorBgElevated,
-    paddingBlock: tokens.spacing4,
-    paddingInline: tokens.spacing5,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    gap: tokens.spacing3,
-    borderBlockStartStyle: 'solid',
-    borderBlockStartWidth: '1px',
-    borderBlockStartColor: tokens.colorBorderSubtle,
-    flexShrink: 0,
-    boxSizing: 'border-box',
-  },
-  closeButton: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: tokens.spacing2,
-    borderRadius: tokens.radiusMd,
-    color: tokens.colorFgSubtle,
-    backgroundColor: 'transparent',
-    borderWidth: 0,
-    cursor: 'pointer',
-    outline: 'none',
-    transitionProperty: 'color, background-color',
-    transitionDuration: '0.15s',
-    ':hover': {
-      color: tokens.colorFg,
-      backgroundColor: tokens.colorBgSubtle,
-    },
-    ':focus-visible': {
-      outline: `2px solid ${tokens.colorBorderFocus}`,
-      outlineOffset: '2px',
-    },
-  },
-})
+export const drawerStyles = css`
+  :host {
+    display: contents;
+  }
+  .offcanvas-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1040;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: none;
+  }
+  .offcanvas-backdrop.show {
+    display: block;
+  }
+  .offcanvas {
+    position: fixed;
+    bottom: 0;
+    z-index: 1045;
+    display: flex;
+    flex-direction: column;
+    max-width: 100%;
+    color: var(--bs-offcanvas-color, inherit);
+    visibility: hidden;
+    background-color: var(--bs-offcanvas-bg, #fff);
+    background-clip: padding-box;
+    outline: 0;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s ease-in-out;
+  }
+  .offcanvas.show {
+    visibility: visible;
+    transform: none !important;
+  }
+  .offcanvas-start {
+    top: 0;
+    left: 0;
+    width: var(--bs-offcanvas-width, 400px);
+    border-right: var(--bs-offcanvas-border-width, 1px) solid var(--bs-offcanvas-border-color, rgba(0, 0, 0, 0.175));
+    transform: translateX(-100%);
+  }
+  .offcanvas-end {
+    top: 0;
+    right: 0;
+    width: var(--bs-offcanvas-width, 400px);
+    border-left: var(--bs-offcanvas-border-width, 1px) solid var(--bs-offcanvas-border-color, rgba(0, 0, 0, 0.175));
+    transform: translateX(100%);
+  }
+  .offcanvas-top {
+    top: 0;
+    right: 0;
+    left: 0;
+    height: var(--bs-offcanvas-height, 30vh);
+    max-height: 100%;
+    border-bottom: var(--bs-offcanvas-border-width, 1px) solid var(--bs-offcanvas-border-color, rgba(0, 0, 0, 0.175));
+    transform: translateY(-100%);
+  }
+  .offcanvas-bottom {
+    right: 0;
+    left: 0;
+    height: var(--bs-offcanvas-height, 30vh);
+    max-height: 100%;
+    border-top: var(--bs-offcanvas-border-width, 1px) solid var(--bs-offcanvas-border-color, rgba(0, 0, 0, 0.175));
+    transform: translateY(100%);
+  }
+  .offcanvas-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--bs-offcanvas-padding-y, 1rem) var(--bs-offcanvas-padding-x, 1rem);
+    border-bottom: 1px solid var(--bs-border-color, #dee2e6);
+  }
+  .offcanvas-title {
+    margin-bottom: 0;
+    line-height: 1.5;
+    font-size: 1.25rem;
+    font-weight: 500;
+  }
+  .offcanvas-body {
+    flex-grow: 1;
+    padding: var(--bs-offcanvas-padding-y, 1rem) var(--bs-offcanvas-padding-x, 1rem);
+    overflow-y: auto;
+  }
+  .offcanvas-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    padding: var(--bs-offcanvas-padding-y, 1rem) var(--bs-offcanvas-padding-x, 1rem);
+    border-top: 1px solid var(--bs-border-color, #dee2e6);
+  }
+  .btn-close {
+    box-sizing: content-box;
+    width: 1em;
+    height: 1em;
+    padding: 0.25em;
+    color: inherit;
+    background: transparent;
+    border: 0;
+    border-radius: 0.375rem;
+    opacity: 0.5;
+    cursor: pointer;
+  }
+  .btn-close:hover {
+    opacity: 0.75;
+  }
+`

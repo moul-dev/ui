@@ -1,2 +1,1 @@
-export type { SwitchProps } from './Switch'
-export { Switch } from './Switch'
+export { MoulSwitch } from './Switch.js'

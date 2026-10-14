@@ -1,5 +1,10 @@
-import * as stylex from '@stylexjs/stylex'
+import { css } from 'lit'
 
-export const styles = stylex.create({
-  base: {},
-})
+export const formStyles = css`
+  :host {
+    display: block;
+  }
+  form {
+    display: block;
+  }
+`

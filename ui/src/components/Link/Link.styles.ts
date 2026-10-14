@@ -1,94 +1,29 @@
-import * as stylex from '@stylexjs/stylex'
-import { tokens } from '../../tokens/tokens.stylex'
+import { css } from 'lit'
 
-export const styles = stylex.create({
-  base: {
-    textDecoration: 'none',
-    cursor: 'pointer',
-    transitionProperty: 'color',
-    transitionDuration: '0.15s',
-    transitionTimingFunction: 'ease-in-out',
-    ':hover': {
-      textDecoration: 'underline',
-    },
-    ':focus-visible': {
-      outlineStyle: 'solid',
-      outlineWidth: '2px',
-      outlineOffset: '2px',
-      outlineColor: tokens.colorBorderFocus,
-    },
-    '@media (prefers-reduced-motion: reduce)': {
-      transitionProperty: 'none',
-    },
-  },
-  primary: {
-    color: tokens.colorPrimary500,
-    ':hover': {
-      color: tokens.colorPrimary600,
-    },
-    ':active': {
-      color: tokens.colorPrimary700,
-    },
-  },
-  secondary: {
-    color: tokens.colorNeutral600,
-    ':hover': {
-      color: tokens.colorNeutral700,
-    },
-    ':active': {
-      color: tokens.colorNeutral800,
-    },
-  },
-  tertiary: {
-    color: tokens.colorFg,
-    ':hover': {
-      color: tokens.colorNeutral600,
-    },
-    ':active': {
-      color: tokens.colorNeutral700,
-    },
-  },
-  outline: {
-    color: tokens.colorFg,
-    textDecoration: 'underline',
-    ':hover': {
-      color: tokens.colorNeutral600,
-    },
-    ':active': {
-      color: tokens.colorNeutral700,
-    },
-  },
-  ghost: {
-    color: tokens.colorNeutral500,
-    ':hover': {
-      color: tokens.colorNeutral600,
-    },
-    ':active': {
-      color: tokens.colorNeutral700,
-    },
-  },
-  danger: {
-    color: tokens.colorError500,
-    ':hover': {
-      color: tokens.colorError600,
-    },
-    ':active': {
-      color: tokens.colorError700,
-    },
-  },
-  'danger-soft': {
-    color: tokens.colorError300,
-    ':hover': {
-      color: tokens.colorError400,
-    },
-    ':active': {
-      color: tokens.colorError500,
-    },
-  },
-  isDisabled: {
-    opacity: 0.4,
-    cursor: 'not-allowed',
-    pointerEvents: 'none',
-    textDecoration: 'none',
-  },
-})
+export const linkStyles = css`
+  :host {
+    display: inline;
+  }
+  a {
+    color: var(--bs-link-color, #0d6efd);
+    text-decoration: underline;
+    transition: color 0.15s ease-in-out;
+    cursor: pointer;
+  }
+  a:hover {
+    color: var(--bs-link-hover-color, #0a58ca);
+  }
+  :host([is-quiet]) a {
+    text-decoration: none;
+  }
+  :host([is-quiet]) a:hover {
+    text-decoration: underline;
+  }
+  .link-secondary { color: var(--bs-secondary, #6c757d); }
+  .link-success { color: var(--bs-success, #198754); }
+  .link-danger { color: var(--bs-danger, #dc3545); }
+  .link-warning { color: var(--bs-warning, #ffc107); }
+  .link-info { color: var(--bs-info, #0dcaf0); }
+  .link-light { color: var(--bs-light, #f8f9fa); }
+  .link-dark { color: var(--bs-dark, #212529); }
+`

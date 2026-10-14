@@ -1,2 +1,1 @@
-export type { CheckboxGroupProps } from './CheckboxGroup'
-export { CheckboxGroup } from './CheckboxGroup'
+export { MoulCheckboxGroup } from './CheckboxGroup.js'

@@ -1,0 +1,60 @@
+---
+title: Stat
+description: Display a single metric, KPI, or statistic with optional trend indicators.
+---
+
+import ComponentPreview from '../../../components/ComponentPreview.astro'
+import PropsTable from '../../../components/PropsTable.astro'
+
+## Default
+
+<ComponentPreview>
+  <div class="row g-3">
+    <div class="col-sm-6">
+      <moul-stat label="Monthly Recurring Revenue" value="$48,250" trend="+12.4% vs last month" trend-direction="up"></moul-stat>
+    </div>
+    <div class="col-sm-6">
+      <moul-stat label="Churn Rate" value="1.8%" trend="-0.3% vs last month" trend-direction="down"></moul-stat>
+    </div>
+  </div>
+</ComponentPreview>
+
+```html
+<moul-stat
+  label="Monthly Recurring Revenue"
+  value="$48,250"
+  trend="+12.4% vs last month"
+  trend-direction="up"
+></moul-stat>
+
+<moul-stat
+  label="Churn Rate"
+  value="1.8%"
+  trend="-0.3% vs last month"
+  trend-direction="down"
+></moul-stat>
+```
+
+## Props
+
+<PropsTable
+  type={{
+    label: {
+      type: 'string',
+      description: 'Metric description or title label.',
+    },
+    value: {
+      type: 'string',
+      description: 'Primary metric value or numeric measurement.',
+    },
+    trend: {
+      type: 'string',
+      description: 'Secondary trend text or comparison delta.',
+    },
+    'trend-direction': {
+      type: "'up' | 'down' | 'neutral'",
+      default: "'neutral'",
+      description: 'Direction of the trend indicator.',
+    },
+  }}
+/>

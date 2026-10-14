@@ -1,234 +1,131 @@
-import * as stylex from '@stylexjs/stylex'
-import { tokens } from '../../tokens/tokens.stylex'
+import { css } from 'lit'
 
-const fadeIn = stylex.keyframes({
-  from: { opacity: 0 },
-  to: { opacity: 1 },
-})
+export const commandPaletteStyles = css`
+  :host {
+    display: none;
+  }
 
-const scaleIn = stylex.keyframes({
-  from: { transform: 'scale(0.96) translateY(-8px)', opacity: 0 },
-  to: { transform: 'scale(1) translateY(0)', opacity: 1 },
-})
+  :host([is-open]) {
+    display: block;
+  }
 
-export const styles = stylex.create({
-  overlay: {
-    position: 'fixed',
-    inset: 0,
-    zIndex: tokens.zIndexModal,
-    backgroundColor: tokens.colorOverlay,
-    backdropFilter: 'blur(4px)',
-    display: 'flex',
-    alignItems: {
-      default: 'flex-start',
-      '@media (max-width: 640px)': 'center',
-    },
-    justifyContent: 'center',
-    paddingBlockStart: {
-      default: '12vh',
-      '@media (max-width: 640px)': 0,
-    },
-    paddingInline: tokens.spacing4,
-    animationName: fadeIn,
-    animationDuration: '0.2s',
-    animationTimingFunction: 'ease-out',
-  },
-  dialog: {
-    backgroundColor: tokens.colorBgElevated,
-    boxShadow: tokens.shadowLg,
-    borderRadius: tokens.radiusLg,
-    borderWidth: '1px',
-    borderStyle: 'solid',
-    borderColor: tokens.colorBorder,
-    overflow: 'hidden',
-    display: 'flex',
-    flexDirection: 'column',
-    width: '100%',
-    outline: 'none',
-    boxSizing: 'border-box',
-    animationName: scaleIn,
-    animationDuration: '0.2s',
-    animationTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
-  },
-  sm: {
-    maxWidth: '460px',
-  },
-  md: {
-    maxWidth: '580px',
-  },
-  lg: {
-    maxWidth: '700px',
-  },
-  inputWrapper: {
-    display: 'flex',
-    alignItems: 'center',
-    paddingInline: tokens.spacing4,
-    borderBlockEndWidth: '1px',
-    borderBlockEndStyle: 'solid',
-    borderBlockEndColor: tokens.colorBorderSubtle,
-    gap: tokens.spacing3,
-    minHeight: '52px',
-    boxSizing: 'border-box',
-  },
-  searchIcon: {
-    width: '20px',
-    height: '20px',
-    color: tokens.colorFgSubtle,
-    flexShrink: 0,
-  },
-  input: {
-    flex: 1,
-    borderWidth: 0,
-    outline: 'none',
-    backgroundColor: 'transparent',
-    color: tokens.colorFg,
-    fontSize: tokens.fontSizeMd,
-    lineHeight: tokens.lineHeightMd,
-    paddingBlock: tokens.spacing3,
-    '::placeholder': {
-      color: tokens.colorFgSubtle,
-    },
-  },
-  clearButton: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'transparent',
-    borderWidth: 0,
-    color: tokens.colorFgSubtle,
-    cursor: 'pointer',
-    padding: tokens.spacing1,
-    borderRadius: tokens.radiusSm,
-    ':hover': {
-      color: tokens.colorFg,
-      backgroundColor: tokens.colorNeutral100,
-    },
-  },
-  kbdEsc: {
-    cursor: 'pointer',
-  },
-  list: {
-    maxHeight: '340px',
-    overflowY: 'auto',
-    padding: tokens.spacing2,
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '2px',
-    boxSizing: 'border-box',
-    outline: 'none',
-  },
-  section: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '2px',
-  },
-  sectionHeader: {
-    fontSize: tokens.fontSizeXs,
-    fontWeight: tokens.fontWeightSemibold,
-    color: tokens.colorFgSubtle,
-    paddingBlock: tokens.spacing2,
-    paddingInline: tokens.spacing3,
-    textTransform: 'uppercase',
-    letterSpacing: '0.05em',
-    userSelect: 'none',
-  },
-  item: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingBlock: tokens.spacing2,
-    paddingInline: tokens.spacing3,
-    borderRadius: tokens.radiusSm,
-    color: tokens.colorFg,
-    fontSize: tokens.fontSizeSm,
-    cursor: 'pointer',
-    userSelect: 'none',
-    outline: 'none',
-    textDecoration: 'none',
-    transition: 'background-color 0.12s ease, color 0.12s ease',
-    gap: tokens.spacing3,
-  },
-  itemContent: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: tokens.spacing3,
-    flex: 1,
-    minWidth: 0,
-  },
-  itemIcon: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    color: tokens.colorFgSubtle,
-    flexShrink: 0,
-    width: '18px',
-    height: '18px',
-  },
-  itemTextWrapper: {
-    display: 'flex',
-    flexDirection: 'column',
-    minWidth: 0,
-  },
-  itemLabel: {
-    fontWeight: tokens.fontWeightMedium,
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap',
-  },
-  itemDescription: {
-    fontSize: tokens.fontSizeXs,
-    color: tokens.colorFgSubtle,
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap',
-  },
-  itemMeta: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: tokens.spacing2,
-    flexShrink: 0,
-  },
-  itemHovered: {
-    backgroundColor: tokens.colorNeutral100,
-  },
-  itemActive: {
-    backgroundColor: tokens.colorPrimary100,
-    color: tokens.colorPrimary800,
-  },
-  itemDisabled: {
-    opacity: 0.4,
-    cursor: 'not-allowed',
-    pointerEvents: 'none',
-  },
-  empty: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingBlock: tokens.spacing8,
-    paddingInline: tokens.spacing4,
-    color: tokens.colorFgSubtle,
-    fontSize: tokens.fontSizeSm,
-    textAlign: 'center',
-    gap: tokens.spacing2,
-  },
-  footer: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    gap: tokens.spacing4,
-    paddingBlock: tokens.spacing2,
-    paddingInline: tokens.spacing4,
-    borderBlockStartWidth: '1px',
-    borderBlockStartStyle: 'solid',
-    borderBlockStartColor: tokens.colorBorderSubtle,
-    backgroundColor: tokens.colorBgSubtle,
-    fontSize: tokens.fontSizeXs,
-    color: tokens.colorFgSubtle,
-  },
-  footerKeyGroup: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: tokens.spacing1,
-  },
-})
+  .backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1055;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 15vh;
+    backdrop-filter: blur(2px);
+  }
+
+  .palette-dialog {
+    width: 100%;
+    max-width: 640px;
+    background-color: var(--bs-body-bg, #fff);
+    border: 1px solid var(--bs-border-color, #dee2e6);
+    border-radius: var(--bs-border-radius-lg, 0.5rem);
+    box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .palette-header {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--bs-border-color, #dee2e6);
+    gap: 0.75rem;
+  }
+
+  .palette-search-icon {
+    color: var(--bs-secondary-color, #6c757d);
+    display: flex;
+    align-items: center;
+  }
+
+  .palette-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 1.125rem;
+    background: transparent;
+    color: var(--bs-body-color, #212529);
+  }
+
+  .palette-body {
+    max-height: 380px;
+    overflow-y: auto;
+    padding: 0.5rem;
+  }
+
+  .palette-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 1rem;
+    font-size: 0.75rem;
+    color: var(--bs-secondary-color, #6c757d);
+    border-top: 1px solid var(--bs-border-color, #dee2e6);
+    background-color: var(--bs-tertiary-bg, #f8f9fa);
+  }
+
+  .empty-state {
+    padding: 2rem 1rem;
+    text-align: center;
+    color: var(--bs-secondary-color, #6c757d);
+    font-size: 0.875rem;
+  }
+`
+
+export const commandPaletteItemStyles = css`
+  :host {
+    display: block;
+  }
+
+  .palette-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.625rem 0.75rem;
+    border-radius: var(--bs-border-radius, 0.375rem);
+    font-size: 0.875rem;
+    color: var(--bs-body-color, #212529);
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.1s ease-in-out;
+  }
+
+  .palette-item:hover,
+  :host([is-active]) .palette-item {
+    background-color: var(--bs-tertiary-bg, #f8f9fa);
+    color: var(--bs-primary, #0d6efd);
+  }
+
+  :host([is-disabled]) .palette-item {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+`
+
+export const commandPaletteSectionStyles = css`
+  :host {
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  .section-heading {
+    padding: 0.25rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--bs-secondary-color, #6c757d);
+  }
+`

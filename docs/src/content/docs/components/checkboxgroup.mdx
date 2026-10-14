@@ -1,0 +1,170 @@
+---
+title: CheckboxGroup
+description: Documentation for the CheckboxGroup component.
+reactAria: CheckboxGroup
+---
+
+import Accordion from '@/components/Accordion.astro'
+import Accordions from '@/components/Accordions.astro'
+
+
+import ComponentPreview from '@/components/ComponentPreview.astro'
+import PropsTable from '@/components/PropsTable.astro'
+
+
+
+
+
+# CheckboxGroup
+
+## Preview
+
+<ComponentPreview>
+  <moul-checkbox-group label="Notifications" description="Choose how you want to be notified.">
+    <moul-checkbox value="email">Email</moul-checkbox>
+    <moul-checkbox value="sms">SMS</moul-checkbox>
+  </moul-checkbox-group>
+</ComponentPreview>
+
+The `CheckboxGroup` component is built with React Aria and styled using StyleX.
+
+## Import
+
+```tsx
+
+```
+
+## Usage
+
+Here is a basic example of how to use the `CheckboxGroup` component:
+
+```tsx
+
+
+export default function Example() {
+  return (
+    <moul-checkbox-group label="Settings" description="Configure your preferences">
+      <moul-checkbox value="cookies">Accept cookies</moul-checkbox>
+      <moul-checkbox value="marketing">Receive marketing</moul-checkbox>
+    </moul-checkbox-group>
+  );
+}
+```
+
+## Features
+
+### Group Variants
+Setting `variant` on `CheckboxGroup` propagates the variant style (`primary`, `secondary`, or `tertiary`) to all nested `Checkbox` components automatically.
+
+<ComponentPreview>
+  <div class="flex flex-col gap-6">
+    <moul-checkbox-group label="Primary Group" variant="primary">
+      <moul-checkbox value="1" defaultSelected>Checkbox A</moul-checkbox>
+      <moul-checkbox value="2">Checkbox B</moul-checkbox>
+    </moul-checkbox-group>
+    
+    <moul-checkbox-group label="Secondary Group" variant="secondary">
+      <moul-checkbox value="1" defaultSelected>Checkbox A</moul-checkbox>
+      <moul-checkbox value="2">Checkbox B</moul-checkbox>
+    </moul-checkbox-group>
+
+    <moul-checkbox-group label="Tertiary Group" variant="tertiary">
+      <moul-checkbox value="1" defaultSelected>Checkbox A</moul-checkbox>
+      <moul-checkbox value="2">Checkbox B</moul-checkbox>
+    </moul-checkbox-group>
+  </div>
+</ComponentPreview>
+
+```tsx
+// Nested checkboxes inherit the group's secondary variant
+<moul-checkbox-group label="Roles" variant="secondary">
+  <moul-checkbox value="admin">Admin</moul-checkbox>
+  <moul-checkbox value="user">User</moul-checkbox>
+</moul-checkbox-group>
+```
+
+### Orientation
+Lays out checkboxes vertically (default) or horizontally using the `orientation` prop.
+
+<ComponentPreview>
+  <moul-checkbox-group label="Horizontal Layout" orientation="horizontal" variant="primary">
+    <moul-checkbox value="vertical">Vertical option</moul-checkbox>
+    <moul-checkbox value="horizontal" defaultSelected>Horizontal option</moul-checkbox>
+    <moul-checkbox value="grid">Grid option</moul-checkbox>
+  </moul-checkbox-group>
+</ComponentPreview>
+
+```tsx
+<moul-checkbox-group label="Horizontal Layout" orientation="horizontal">
+  <moul-checkbox value="1">Option 1</moul-checkbox>
+  <moul-checkbox value="2">Option 2</moul-checkbox>
+</moul-checkbox-group>
+```
+
+## Props
+
+### CheckboxGroup Props
+
+<PropsTable
+  type={{
+    'variant': {
+      type: "'primary' | 'secondary' | 'tertiary'",
+      default: "'primary'",
+      description: "The visual style variant applied to checkboxes inside the group.",
+    },
+    'orientation': {
+      type: "'horizontal' | 'vertical'",
+      default: "'vertical'",
+      description: "The orientation of the checkboxes within the group.",
+    },
+    'value': {
+      type: "string[]",
+      description: "The values of the selected checkboxes (controlled).",
+    },
+    'defaultValue': {
+      type: "string[]",
+      description: "The values of the initially selected checkboxes (uncontrolled).",
+    },
+    'isDisabled': {
+      type: "boolean",
+      default: "false",
+      description: "Whether all checkboxes within the group are disabled.",
+    },
+    'isInvalid': {
+      type: "boolean",
+      description: "Whether the input value is invalid.",
+    },
+  }}
+/>
+
+<Accordions>
+  <Accordion title="Value">
+    <PropsTable
+          type={{
+            'onChange': {
+              type: "(value: string[]) => void",
+              description: "Handler called when the selection changes.",
+            },
+          }}
+        />
+  </Accordion>
+  <Accordion title="Styling">
+    <PropsTable
+          type={{
+            'className': {
+              type: "ClassNameOrFunction",
+              default: "'react-aria-CheckboxGroup'",
+              description: "The CSS className for the group.",
+            },
+          }}
+        />
+  </Accordion>
+</Accordions>
+
+Default className: `react-aria-CheckboxGroup`
+
+| Render Prop | CSS Selector |
+| :--- | :--- |
+| `isDisabled` <br/> Whether the group is disabled. | `[data-disabled]` |
+| `isInvalid` <br/> Whether the group value is invalid. | `[data-invalid]` |
+

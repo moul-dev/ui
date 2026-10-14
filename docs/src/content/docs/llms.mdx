@@ -1,0 +1,116 @@
+---
+title: LLMs & AI Agents
+description: Context files, rules, and best practices for using Moul UI with Cursor, Claude, Windsurf, Copilot, and AI coding assistants.
+---
+
+import { Card, CardGrid, Tabs, TabItem } from '@astrojs/starlight/components'
+
+Moul UI provides dedicated machine-readable context files optimized for LLMs and AI coding assistants such as **Cursor**, **Windsurf**, **Claude Projects**, **GitHub Copilot**, **ChatGPT**, and **Antigravity**.
+
+By providing your AI assistant with the curated context files below, the model will accurately generate Web Component custom elements, correctly configure Bootstrap 6 styling, and adhere to design tokens without inventing hallucinated APIs.
+
+## Machine-Readable Context Files
+
+We host three standardized AI context files at the root of the documentation site:
+
+<CardGrid>
+  <Card title="llms.txt" icon="document">
+    Concise documentation index, package quickstart, and component URLs following the llmstxt.org specification. [Open /llms.txt](/llms.txt)
+  </Card>
+  <Card title="llms-full.txt" icon="open-book">
+    Complete documentation, API signatures, prop definitions, and code examples for all components in a single file. [Open /llms-full.txt](/llms-full.txt)
+  </Card>
+  <Card title="AGENTS.md" icon="seti:markdown">
+    System rules, code generation recipes, event conventions, and anti-patterns specifically formatted for coding agents. [Open /AGENTS.md](/AGENTS.md)
+  </Card>
+</CardGrid>
+
+## Tool Integration Guides
+
+Choose your AI coding assistant below for quick setup instructions:
+
+<Tabs>
+  <TabItem label="Cursor">
+    ### Setting Up Cursor
+    
+    Cursor supports Project Rules via `.cursor/rules` or `.cursorrules`. Create `.cursor/rules/moul-ui.mdc`:
+
+    ```markdown
+    ---
+    description: Guidelines for building components with @moul-dev/ui
+    globs: "**/*.{ts,tsx,html,astro}"
+    alwaysApply: true
+    ---
+
+    When generating UI:
+    - Use @moul-dev/ui Web Components (<moul-button>, <moul-modal>, etc.).
+    - Use standard custom element properties and events (e.g. moul-press, moul-change).
+    - For complete recipes, refer to: https://moul.dev/AGENTS.md
+    ```
+  </TabItem>
+
+  <TabItem label="Windsurf">
+    ### Setting Up Windsurf
+    
+    Add instructions to your `.windsurfrules` file:
+
+    ```markdown
+    # Moul UI Guidelines
+    - Component Library: @moul-dev/ui
+    - Standard Web Components: <moul-button>, <moul-card>, <moul-modal>, etc.
+    - Reference: Fetch https://moul.dev/AGENTS.md for complete component API specifications.
+    ```
+  </TabItem>
+
+  <TabItem label="Claude Projects">
+    ### Setting Up Claude Projects
+    
+    1. Open your **Claude Project** settings.
+    2. Under **Project Knowledge**, upload `docs/public/llms-full.txt`.
+    3. In **Custom Instructions**, paste the contents of `docs/public/AGENTS.md`.
+  </TabItem>
+
+  <TabItem label="Copilot / VS Code">
+    ### Setting Up GitHub Copilot
+    
+    Create `.github/copilot-instructions.md` with instructions pointing to `AGENTS.md`.
+  </TabItem>
+</Tabs>
+
+## Core Rules for AI Assistants
+
+### 1. Element Tag Convention
+All components use the `moul-` prefix:
+```html
+<moul-button variant="primary">Submit</moul-button>
+<moul-alert variant="info" title="Info">Notice</moul-alert>
+```
+
+### 2. Events & Keyboard Interaction
+Buttons and interactive elements dispatch composed custom events:
+```html
+<moul-button id="btn" variant="primary">Click</moul-button>
+<script>
+  document.getElementById('btn').addEventListener('moul-press', (e) => {
+    console.log('Pressed');
+  });
+</script>
+```
+
+### 3. Accessible Labelling
+All icon-only buttons **must** include an `aria-label`:
+```html
+<moul-button variant="ghost" is-icon aria-label="Delete item">
+  <svg slot="icon-start"><use href="#trash"/></svg>
+</moul-button>
+```
+
+### 4. Design Tokens & Theming
+Custom branding is configured via CSS custom properties on `:root`:
+```css
+:root {
+  --moul-brand-hue: 250;
+  --moul-brand-radius-factor: 1.0;
+  --moul-brand-density-factor: 1.0;
+}
+```

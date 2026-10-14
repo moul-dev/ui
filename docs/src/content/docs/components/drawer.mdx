@@ -1,0 +1,209 @@
+---
+title: Drawer
+description: An accessible sliding panel overlay anchored to any screen edge, featuring sticky action headers and footers.
+reactAria: Modal
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro'
+import PropsTable from '@/components/PropsTable.astro'
+
+
+
+
+# Drawer
+
+The `Drawer` component is an accessible sliding panel overlay anchored to any edge of the screen (`right`, `left`, `top`, or `bottom`). Built upon React Aria's `Modal` and `Dialog` primitives and styled with zero-runtime StyleX, it is ideal for side sheets, configuration panels, bottom sheets, and detail inspectors.
+
+## Preview
+
+<ComponentPreview>
+  <moul-button variant="primary">Open Drawer</moul-button>
+</ComponentPreview>
+
+## Import
+
+```tsx
+
+```
+
+## Basic Usage
+
+Drawers can be controlled using `isOpen` and `onOpenChange` on `<div>`:
+
+```tsx
+
+
+
+export default function Example() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <>
+      <moul-button onPress={() => setIsOpen(true)}>Open Drawer</moul-button>
+
+      <div isOpen={isOpen} onOpenChange={setIsOpen}>
+        <moul-drawer placement="right" size="md">
+          <div>
+            <div slot="header">
+              <h4>Drawer Title</h4>
+              <button type="button" class="btn-close" />
+            </div>
+
+            <div slot="body">
+              <p>Your drawer body content goes here.</p>
+            </div>
+
+            <div slot="footer">
+              <moul-button variant="outline" onPress={() => setIsOpen(false)}>
+                Cancel
+              </moul-button>
+              <moul-button onPress={() => setIsOpen(false)}>
+                Save Changes
+              </moul-button>
+            </div>
+          </div>
+        </moul-drawer>
+      </div>
+    </>
+  );
+}
+```
+
+## Placements
+
+The `placement` prop sets the edge of the viewport where the drawer anchors and slides in from:
+
+- `right` *(default)*: Slides in from the right edge, full viewport height.
+- `left`: Slides in from the left edge, full viewport height.
+- `bottom`: Slides in from the bottom (bottom sheet pattern), full viewport width.
+- `top`: Slides in from the top edge, full viewport width.
+
+```tsx
+<div placement="left">
+  <moul-drawer placement="left">
+    <div>
+      <div slot="header">
+        <h4>Left Sidebar Drawer</h4>
+        <button type="button" class="btn-close" />
+      </div>
+      <div slot="body">Content...</div>
+    </div>
+  </moul-drawer>
+</div>
+```
+
+## Sizes & Sizing
+
+The `size` prop controls the drawer dimension:
+
+| Size | Side Drawers (`right`, `left`) | Vertical Drawers (`top`, `bottom`) |
+| :--- | :--- | :--- |
+| `sm` | `400px` width | `400px` height |
+| `md` *(default)* | `600px` width | `600px` height |
+| `lg` | `800px` width | `800px` height |
+| `full` | `100vw` width | `100dvh` height |
+
+```tsx
+<moul-drawer size="lg">
+  {/* 800px wide drawer on desktop */}
+</moul-drawer>
+```
+
+## Sticky Top & Bottom Action Sections
+
+The `DrawerHeader` and `DrawerFooter` components use sticky positioning with elevated surface background colors (`tokens.colorBgElevated`) and subtle divider borders:
+
+- **`DrawerHeader`**: Stays pinned at `top: 0`, housing the title (`DrawerTitle`) on the start side and action buttons or the close button (`DrawerCloseButton`) on the end side.
+- **`DrawerBody`**: Expands and scrolls vertically with `overflow-y: auto`.
+- **`DrawerFooter`**: Stays pinned at `bottom: 0`, housing primary and secondary action triggers.
+
+```tsx
+<div>
+  <div slot="header">
+    <h4>Edit Account Settings</h4>
+    <button type="button" class="btn-close" />
+  </div>
+
+  <div slot="body">
+    {/* Long scrollable content */}
+  </div>
+
+  <div slot="footer">
+    <moul-button variant="outline" onPress={close}>Cancel</moul-button>
+    <moul-button onPress={save}>Save</moul-button>
+  </div>
+</div>
+```
+
+## Mobile Responsive Layout
+
+On mobile viewports (`<= 640px`):
+- Side drawers (`right`, `left`) automatically expand to `100vw` full-width.
+- Top and bottom drawers adapt their maximum height gracefully to mobile viewports while retaining full width.
+- Slide transitions smoothly animate into view while preventing background body scroll.
+
+## Props
+
+### DrawerOverlay Props
+
+<PropsTable
+  type={{
+    'isOpen': {
+      type: "boolean",
+      description: "Whether the drawer overlay is open (controlled).",
+    },
+    'defaultOpen': {
+      type: "boolean",
+      description: "Whether the drawer is initially open (uncontrolled).",
+    },
+    'onOpenChange': {
+      type: "(isOpen: boolean) => void",
+      description: "Handler called when the open state changes.",
+    },
+    'isDismissable': {
+      type: "boolean",
+      default: "false",
+      description: "Whether clicking the backdrop or pressing Escape closes the drawer.",
+    },
+    'isKeyboardDismissDisabled': {
+      type: "boolean",
+      default: "false",
+      description: "Whether pressing Escape is disabled.",
+    },
+    'placement': {
+      type: "'right' | 'left' | 'top' | 'bottom'",
+      default: "'right'",
+      description: "Edge of the screen where the drawer anchors.",
+    },
+    'size': {
+      type: "'sm' | 'md' | 'lg' | 'full'",
+      default: "'md'",
+      description: "Dimension preset (default md = ~600px).",
+    },
+  }}
+/>
+
+### Drawer Props
+
+<PropsTable
+  type={{
+    'placement': {
+      type: "'right' | 'left' | 'top' | 'bottom'",
+      default: "'right'",
+      description: "Drawer placement edge (inherits from DrawerOverlay if omitted).",
+    },
+    'size': {
+      type: "'sm' | 'md' | 'lg' | 'full'",
+      default: "'md'",
+      description: "Drawer size preset (inherits from DrawerOverlay if omitted).",
+    },
+    'className': {
+      type: "string",
+      description: "Optional custom CSS class name.",
+    },
+    'style': {
+      type: "StyleXStyles",
+      description: "Optional StyleX style overrides.",
+    },
+  }}
+/>

@@ -1,85 +1,52 @@
-import * as stylex from '@stylexjs/stylex'
-import { tokens } from '../../tokens/tokens.stylex'
+import { css } from 'lit'
 
-export const styles = stylex.create({
-  container: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: tokens.spacing1,
-    width: '100%',
-  },
-  input: {
-    display: 'block',
-    width: '100%',
-    borderWidth: '1px',
-    borderStyle: 'solid',
-    borderColor: tokens.colorBorder,
-    backgroundColor: tokens.colorBg,
-    color: tokens.colorFg,
-    fontFamily: tokens.fontFamilyBase,
-    outline: 'none',
-    boxShadow: tokens.shadowSm,
-    transitionProperty: 'border-color, box-shadow',
-    transitionDuration: '0.15s',
-    transitionTimingFunction: 'ease-in-out',
-    ':hover': {
-      borderColor: tokens.colorNeutral400,
-    },
-    ':focus': {
-      borderColor: tokens.colorBorderFocus,
-      boxShadow: `0 0 0 1px ${tokens.colorBorderFocus}`,
-    },
-    '@media (prefers-reduced-motion: reduce)': {
-      transitionProperty: 'none',
-    },
-  },
-  sm: {
-    height: `calc(${tokens.spacing1} * 2 + ${tokens.lineHeightXs})`,
-    paddingBlock: 0,
-    paddingInline: tokens.spacing2,
-    borderRadius: tokens.radiusSm,
-    fontSize: tokens.fontSizeXs,
-    lineHeight: tokens.lineHeightXs,
-  },
-  md: {
-    height: `calc(${tokens.spacing2} * 2 + ${tokens.lineHeightSm})`,
-    paddingBlock: 0,
-    paddingInline: tokens.spacing3,
-    borderRadius: tokens.radiusMd,
-    fontSize: tokens.fontSizeSm,
-    lineHeight: tokens.lineHeightSm,
-  },
-  lg: {
-    height: `calc(${tokens.spacing2} * 2 + ${tokens.lineHeightMd})`,
-    paddingBlock: 0,
-    paddingInline: tokens.spacing4,
-    borderRadius: tokens.radiusMd,
-    fontSize: tokens.fontSizeMd,
-    lineHeight: tokens.lineHeightMd,
-  },
-  primary: {
-    backgroundColor: tokens.colorBg,
-    borderColor: tokens.colorBorder,
-  },
-  secondary: {
-    backgroundColor: tokens.colorBgSubtle,
-    borderColor: tokens.colorBorderSubtle,
-  },
-
-  inputInvalid: {
-    borderColor: tokens.colorError500,
-    ':focus': {
-      borderColor: tokens.colorError500,
-      boxShadow: `0 0 0 1px ${tokens.colorError500}`,
-    },
-  },
-  inputDisabled: {
-    opacity: 0.4,
-    backgroundColor: tokens.colorBgSubtle,
-    cursor: 'not-allowed',
-    boxShadow: 'none',
-    ':hover': {
-      borderColor: tokens.colorBorder,
-    },
-  },
-})
+export const textFieldStyles = css`
+  :host {
+    display: block;
+    width: 100%;
+  }
+  .form-control {
+    display: block;
+    width: 100%;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--bs-body-color, #212529);
+    background-color: var(--bs-body-bg, #fff);
+    background-clip: padding-box;
+    border: var(--bs-border-width, 1px) solid var(--bs-border-color, #dee2e6);
+    border-radius: var(--bs-border-radius, 0.375rem);
+    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+  }
+  .form-control:focus {
+    color: var(--bs-body-color, #212529);
+    background-color: var(--bs-body-bg, #fff);
+    border-color: #86b7fe;
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  }
+  .form-control:disabled {
+    background-color: var(--bs-secondary-bg, #e9ecef);
+    opacity: 1;
+    cursor: not-allowed;
+  }
+  .form-control.is-invalid {
+    border-color: var(--bs-form-invalid-border-color, #dc3545);
+  }
+  .form-control.is-invalid:focus {
+    box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
+  }
+  .form-control-sm {
+    min-height: calc(1.5em + 0.5rem + 2px);
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    border-radius: var(--bs-border-radius-sm, 0.25rem);
+  }
+  .form-control-lg {
+    min-height: calc(1.5em + 1rem + 2px);
+    padding: 0.5rem 1rem;
+    font-size: 1.25rem;
+    border-radius: var(--bs-border-radius-lg, 0.5rem);
+  }
+`

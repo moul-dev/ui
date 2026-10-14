@@ -1,0 +1,199 @@
+---
+title: ToggleButtonGroup
+description: A toggle button group allows a user to toggle multiple options, with single or multiple selection.
+reactAria: ToggleButtonGroup
+---
+
+import Accordion from '@/components/Accordion.astro'
+import Accordions from '@/components/Accordions.astro'
+
+
+import ComponentPreview from '@/components/ComponentPreview.astro'
+import PropsTable from '@/components/PropsTable.astro'
+
+
+
+
+
+
+# ToggleButtonGroup
+
+A toggle button group represents a set of related buttons that can be toggled on or off, supporting both single and multiple selection.
+
+## Preview
+
+<ComponentPreview>
+  <div class="flex flex-col gap-6 w-full max-w-md">
+    <div class="flex flex-col gap-2">
+      <span class="text-sm font-medium text-muted-foreground">Standard Group</span>
+      <moul-toggle-button-group defaultValue={['center']}>
+        <moul-toggle-button id="left">Left</moul-toggle-button>
+        <moul-toggle-button id="center">Center</moul-toggle-button>
+        <moul-toggle-button id="right">Right</moul-toggle-button>
+      </moul-toggle-button-group>
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <span class="text-sm font-medium text-muted-foreground">Icon Toolbar (Multiple Selection)</span>
+      <moul-toggle-button-group selectionMode="multiple" defaultValue={['bold', 'underline']}>
+        <moul-toggle-button id="bold" aria-label="Bold">
+          <strong>B</strong>
+        </moul-toggle-button>
+        <moul-toggle-button id="italic" aria-label="Italic">
+          <em>I</em>
+        </moul-toggle-button>
+        <moul-toggle-button id="underline" aria-label="Underline">
+          <u>U</u>
+        </moul-toggle-button>
+      </moul-toggle-button-group>
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <span class="text-sm font-medium text-muted-foreground">Animated (Segmented Control)</span>
+      <moul-toggle-button-group animated defaultValue="week">
+        <moul-toggle-button id="day">Day</moul-toggle-button>
+        <moul-toggle-button id="week">Week</moul-toggle-button>
+        <moul-toggle-button id="month">Month</moul-toggle-button>
+        <moul-toggle-button id="year">Year</moul-toggle-button>
+      </moul-toggle-button-group>
+    </div>
+  </div>
+</ComponentPreview>
+
+## Import
+
+```tsx
+
+```
+
+## Examples
+
+### Classic adjacent group
+
+By default, the buttons in a `ToggleButtonGroup` touch and share border radiuses, showing a unified toolbar appearance:
+
+```tsx
+<moul-toggle-button-group defaultValue={['left']}>
+  <moul-toggle-button id="left">Left</moul-toggle-button>
+  <moul-toggle-button id="center">Center</moul-toggle-button>
+  <moul-toggle-button id="right">Right</moul-toggle-button>
+</moul-toggle-button-group>
+```
+
+### Icon Toolbar
+
+You can render icons inside the `<moul-toggle-button>` components. When rendering icon-only buttons, make sure to add an `aria-label` to each button for accessibility:
+
+```tsx
+
+
+
+export default function Example() {
+  return (
+    <moul-toggle-button-group selectionMode="multiple" defaultValue={['bold', 'underline']}>
+      <moul-toggle-button id="bold" aria-label="Bold">
+        <strong>B</strong>
+      </moul-toggle-button>
+      <moul-toggle-button id="italic" aria-label="Italic">
+        <em>I</em>
+      </moul-toggle-button>
+      <moul-toggle-button id="underline" aria-label="Underline">
+        <u>U</u>
+      </moul-toggle-button>
+    </moul-toggle-button-group>
+  );
+}
+```
+
+### Animated Segmented Control
+
+Use the `animated` prop to style the group as a modern segmented control with a sliding selection indicator.
+
+```tsx
+<moul-toggle-button-group animated defaultValue="day">
+  <moul-toggle-button id="day">Day</moul-toggle-button>
+  <moul-toggle-button id="week">Week</moul-toggle-button>
+  <moul-toggle-button id="month">Month</moul-toggle-button>
+</moul-toggle-button-group>
+```
+
+### Vertical orientation
+
+Use the `orientation` prop to align the group vertically:
+
+<ComponentPreview>
+  <div class="flex gap-8">
+    <moul-toggle-button-group orientation="vertical" defaultValue="b">
+      <moul-toggle-button id="a">Option A</moul-toggle-button>
+      <moul-toggle-button id="b">Option B</moul-toggle-button>
+      <moul-toggle-button id="c">Option C</moul-toggle-button>
+    </moul-toggle-button-group>
+
+    <moul-toggle-button-group animated orientation="vertical" defaultValue="b">
+      <moul-toggle-button id="a">Option A</moul-toggle-button>
+      <moul-toggle-button id="b">Option B</moul-toggle-button>
+      <moul-toggle-button id="c">Option C</moul-toggle-button>
+    </moul-toggle-button-group>
+  </div>
+</ComponentPreview>
+
+## Props
+
+### ToggleButtonGroup Props
+
+<PropsTable
+  type={{
+    'size': {
+      type: "'sm' | 'md' | 'lg'",
+      default: "'md'",
+      description: "The size variant height applied to toggle buttons inside the group.",
+    },
+    'animated': {
+      type: "boolean",
+      default: "false",
+      description: "Enables smooth slide and size selection indicators overlay track animations.",
+    },
+    'orientation': {
+      type: "'horizontal' | 'vertical'",
+      default: "'horizontal'",
+      description: "The layout alignment axis orientation.",
+    },
+    'selectionMode': {
+      type: "'single' | 'multiple'",
+      default: "'single'",
+      description: "The selection behavior constraint.",
+    },
+  }}
+/>
+
+<Accordions>
+  <Accordion title="Value">
+    <PropsTable
+          type={{
+            'onSelectionChange': {
+              type: "(keys: 'all' | Set<code>&lt;Key&gt;</code>) => void",
+              description: "Handler called when selection changes.",
+            },
+          }}
+        />
+  </Accordion>
+  <Accordion title="Styling">
+    <PropsTable
+          type={{
+            'className': {
+              type: "ClassNameOrFunction",
+              default: "'react-aria-ToggleButtonGroup'",
+              description: "The CSS className.",
+            },
+          }}
+        />
+  </Accordion>
+</Accordions>
+
+Default className: `react-aria-ToggleButtonGroup`
+
+| Render Prop | CSS Selector |
+| :--- | :--- |
+| `orientation` <br/> The orientation of the group. | `[data-orientation]` |
+| `isDisabled` <br/> Whether the group is disabled. | `[data-disabled]` |
+

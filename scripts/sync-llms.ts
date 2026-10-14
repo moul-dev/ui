@@ -74,8 +74,12 @@ async function main() {
     return statSync(full).isDirectory()
   })
 
-  // 2. Discover all MDX doc files recursively in docs/content/docs/
-  const contentDocsDir = join(rootDir, 'docs', 'content', 'docs')
+  // 2. Discover all MDX doc files recursively in docs/src/content/docs/
+  const contentDocsDir = existsSync(
+    join(rootDir, 'docs', 'src', 'content', 'docs'),
+  )
+    ? join(rootDir, 'docs', 'src', 'content', 'docs')
+    : join(rootDir, 'docs', 'content', 'docs')
   function getMdxFiles(dir: string): string[] {
     if (!existsSync(dir)) return []
     const results: string[] = []

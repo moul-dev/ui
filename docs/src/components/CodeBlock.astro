@@ -1,0 +1,20 @@
+---
+interface Props {
+  code?: string
+  lang?: string
+}
+
+const { code = '', lang = 'bash' } = Astro.props
+---
+
+<div class="code-block-container">
+  <pre><code class={`language-${lang}`}>{code || <slot />}</code></pre>
+</div>
+
+<style>
+  .code-block-container {
+    margin: 1rem 0;
+    border-radius: 0.5rem;
+    overflow: hidden;
+  }
+</style>
