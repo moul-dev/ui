@@ -15,7 +15,8 @@
       "!**/.wrangler",
       "!**/dist",
       "!**/*.svg",
-      "!docs/src/styles/globals.css"
+      "!docs/src/styles/globals.css",
+      "!**/.agents"
     ]
   },
   "formatter": {

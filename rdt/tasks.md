@@ -9,20 +9,20 @@
 ## Phase 1: Workspace Purge, Package Contracts & Test Harness
 _Covers: Requirement 1, Requirement 2, Requirement 15, Requirement 16_
 
-- [ ] **1.1 Create disallowed dependency guard (`scripts/verify-no-react.ts`)**
+- [x] **1.1 Create disallowed dependency guard (`scripts/verify-no-react.ts`)**
   - Inspect `dependencies`, `devDependencies`, and `peerDependencies` in `ui/package.json` and `docs/package.json`.
   - Exit with non-zero status code and list offending package names if any banned React, React Aria, StyleX, Recharts, Waku, Fumadocs, or `lucide-react` dependency is present (_Req 1.1, 1.2, 1.7_).
-- [ ] **1.2 Update `ui/package.json` and `docs/package.json` manifests**
+- [x] **1.2 Update `ui/package.json` and `docs/package.json` manifests**
   - Remove all React, StyleX, Recharts, `input-otp`, Waku, Fumadocs, and `@tanstack/react-*` packages (_Req 1.1, 1.2, 13.11_).
   - Add `lit`, `@lit/context`, `@lit-labs/virtualizer`, `d3-scale`, `d3-shape`, `motion` to `ui/package.json` `dependencies` and `@custom-elements-manifest/analyzer`, `@open-wc/testing-helpers`, `happy-dom`, `@types/d3-scale`, `@types/d3-shape` to `devDependencies` (_Req 1.3, 1.4_).
   - Configure `ui/package.json` `exports` to expose strictly `.` (`./dist/moul-ui.js` + `./dist/src/index.d.ts`) and `./style.css` (`./dist/assets/style.css`), removing `./react`, `./tokens`, and `./tokens.stylex` (_Req 16.1–16.3, 16.6_).
   - Configure `docs/package.json` with `astro`, `@astrojs/starlight`, `@moul-dev/ui` (`workspace:*`), and `@phosphor-icons/web` (_Req 13.1, 13.11_).
-- [ ] **1.3 Reconfigure `ui/vite.config.ts` and `ui/custom-elements-manifest.config.mjs`**
+- [x] **1.3 Reconfigure `ui/vite.config.ts` and `ui/custom-elements-manifest.config.mjs`**
   - Configure Vite library mode outputting `dist/moul-ui.js` with `"use client";` Rollup banner and `dist/src/index.d.ts` via `vite-plugin-dts` (_Req 15.12, 15.13_).
   - Add `banReactImportsPlugin()` to fail builds if any specifier starts with `react`, `react-dom`, `react-aria`, `react-aria-components`, `@stylexjs/stylex`, `@lit/react`, or `motion/react` (_Req 1.5_).
   - Add build step copying `ui/src/styles/style.css` to `ui/dist/assets/style.css` (_Req 3.12_).
   - Add `ui/custom-elements-manifest.config.mjs` to emit `ui/dist/custom-elements.json` (schema v2) after `vite build` (_Req 2.7, 15.7, 15.8_).
-- [ ] **1.4 Configure Vitest + `happy-dom` test harness (`ui/src/test-setup.ts`)**
+- [x] **1.4 Configure Vitest + `happy-dom` test harness (`ui/src/test-setup.ts`)**
   - Set Vitest environment to `happy-dom`.
   - Implement shims for `ElementInternals` (`attachInternals`), `<dialog>.showModal()` / `close()` (including disconnected `DOMException` behavior), Popover API (`showPopover`, `hidePopover`, `togglePopover`), and deterministic `ResizeObserver` triggers.
 
@@ -31,22 +31,22 @@ _Covers: Requirement 1, Requirement 2, Requirement 15, Requirement 16_
 ## Phase 2: CSS Design Token Layer, Semantic Tones & Core Utilities
 _Covers: Requirement 2, Requirement 3, Requirement 4, Requirement 6_
 
-- [ ] **2.1 Author CSS Design Token Layer (`ui/src/styles/style.css`)**
+- [x] **2.1 Author CSS Design Token Layer (`ui/src/styles/style.css`)**
   - Define `:root` `color-scheme: light dark` and `[data-theme="light"]` / `[data-theme="dark"]` / `.dark` selectors.
   - Define brand customization hooks (`--brand-hue: 250`, `--brand-chroma-multiplier: 1`, `--brand-font-family: inherit`, `--brand-font-scale: 1`, `--brand-density-factor: 1`, `--brand-radius-factor: 1`) (_Req 3.2_).
   - Port Neutral (`50–900`), Primary (`50–900`), Error (`300–700`), Warning (`300–700`), and Success (`300–700`) scales using `light-dark(oklch(...), oklch(...))` (_Req 3.1, 3.3_).
   - Port semantic surface/text/border/glass/overlay aliases, 20 alert status tokens, typography scale (`xs`–`4xl`), spacing (`--spacing-1`–`--spacing-8`), radius tokens, shadows (`--shadow-sm/md/lg` referencing `var(--color-shadow)`), z-index tokens, and `--color-chart-1`–`--color-chart-8` (_Req 3.4–3.11_).
-- [ ] **2.2 Implement `semanticToneStyles` (`ui/src/styles/semantic-tones.ts`) & Shadow DOM Reset (`ui/src/styles/reset.styles.ts`)**
+- [x] **2.2 Implement `semanticToneStyles` (`ui/src/styles/semantic-tones.ts`) & Shadow DOM Reset (`ui/src/styles/reset.styles.ts`)**
   - Implement all 25 combinations of `SemanticTone` (`primary`, `accent`, `success`, `warning`, `error`) × `VisualVariant` (`solid`, `flat`, `shadow`, `bordered`, `glass`) (_Req 4.1–4.3, 4.7_).
   - Implement `@supports (backdrop-filter: blur(12px))` progressive enhancement and non-blur `--color-bg-glass` fallback for `variant="glass"`, plus `--shadow-md` for `variant="shadow"` (_Req 4.4–4.6_).
   - Implement `normalizeTone()` and `normalizeVariant()` to fall back to component defaults on unrecognized values (_Req 4.8_).
-- [ ] **2.3 Implement Core Web Component & `motion.dev` Utilities (`ui/src/utils/`)**
+- [x] **2.3 Implement Core Web Component & `motion.dev` Utilities (`ui/src/utils/`)**
   - `define-element.ts`: Idempotent `defineElement(tagName, ctor)` that checks `customElements.get(tagName)` and logs `console.warn` instead of overriding (_Req 2.9, 16.5_).
   - `warn-missing-label.ts`: Dev-only `warnMissingLabel(host, description)` logging `console.warn` with tag name when `aria-label` / `aria-labelledby` is missing (_Req 2.8, 8.3_).
   - `focus-trap.ts`: `safeShowModal()` (catching disconnected `DOMException` with `console.warn`), `<100ms` initial focus, keyboard `Tab` focus loop, focus restoration on close, and `supportsNativePopoverAndAnchor()` fallback helper (_Req 6.3, 6.4, 6.8–6.10_).
   - `motion.ts`: Export `SPRING_SNAPPY`, `SPRING_GENTLE`, `IOS_SHEET_CURVE`, `CHART_EASE`, `prefersReducedMotion()`, `subtleAnimate()`, and FLIP `animateActiveIndicator()` using vanilla `motion` (`animate`, `spring`, `stagger`).
   - `icons.ts`: Zero-dependency Lit `svg` templates for internal component chrome.
-- [ ] **2.4 Write Token, Tone & Utility Verification Tests (`ui/src/tokens/Tokens.test.ts`)**
+- [x] **2.4 Write Token, Tone & Utility Verification Tests (`ui/src/tokens/Tokens.test.ts`)**
   - Verify all `:root` CSS custom properties in `style.css` and run `fast-check` property tests across all 25 tone × variant pairs and arbitrary invalid inputs.
 
 ---
