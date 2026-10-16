@@ -57,3 +57,76 @@ Author the native CSS design token layer (`ui/src/styles/style.css`) using `:roo
 - [ ] Fast-check property tests in `ui/src/tokens/Tokens.test.ts` verify all 25 tone × variant combinations and resilience to invalid string inputs.
 - [ ] `bun ./scripts/verify-no-react.ts all` passes with exit code 0.
 - [ ] `bun run lint` passes without errors.
+
+
+## 2026-10-16T08:00:27Z
+
+Implement Phase 3 of the `@moul-dev/ui` Lit Web Components rebuild: build and export all five reusable Reactive Controllers (`PressController`, `LayoutIndicatorController`, `OverlayPresenceController`, `NumberSpringController`, `FormInternalsController`) and their comprehensive test suites as specified in `rdt/requirements.md`, `rdt/design.md`, and `rdt/tasks.md`.
+
+Working directory: /Users/phearak/github/orgs/moul-dev/ui
+Integrity mode: development
+
+References:
+- Requirements: `rdt/requirements.md` (Requirement 5: Five Reactive Controllers, Requirement 6: Native Browser API Integration)
+- Technical Specification: `rdt/design.md` (Section 6: Reactive Controllers Specification)
+- Tasks Breakdown: `rdt/tasks.md` (Phase 3: Tasks 3.1–3.6)
+
+## Requirements
+
+### R1. Implement Five Reusable Lit Reactive Controllers
+Author five standalone Lit `ReactiveController` classes in `ui/src/controllers/`:
+1. `PressController` (`press.controller.ts`): Tracks `isPressed`, `isHovered`, and `isFocusVisible` across pointer and keyboard events; synchronizes `aria-pressed` on the host element when `type="button"`, `type="checkbox"`, or initial `aria-pressed` attribute is present; provides optional tactile press scaling (`scale: 0.97`) and hover elevation lift via vanilla `motion` respecting `prefers-reduced-motion` and host disabled state; triggers `host.requestUpdate()` on state changes.
+2. `LayoutIndicatorController` (`layout-indicator.controller.ts`): Observes host dimensions via `ResizeObserver`; maps width to breakpoints (`xs`: `0–479px`, `sm`: `480–767px`, `md`: `768–1023px`, `lg`: `1024–1279px`, `xl`: `>=1280px`); triggers `host.requestUpdate()` on breakpoint or dimension changes; disconnects observer on `hostDisconnected`.
+3. `OverlayPresenceController` (`overlay-presence.controller.ts`): Manages `isOpen` (default `false`) and `isMounted` boolean states across overlay presets (`modal`, `popover`, `tooltip`, `drawer-left`, `drawer-right`, `drawer-top`, `drawer-bottom`, `toast`); triggers preset-specific enter animations via vanilla `motion`; manages clean exit animations before unmounting or closing the native `<dialog>` / `[popover]` without clipping top-layer elements.
+4. `NumberSpringController` (`number-spring.controller.ts`): Accepts target numeric values clamped to `[-999_999_999, 999_999_999]`; animates `displayValue` toward the target using `motion`'s spring engine; requests host updates on each frame until values settle within `0.5` of target and then snaps to target; cleans up active animations on disconnect.
+5. `FormInternalsController` (`form-internals.controller.ts`): Attaches `ElementInternals` on `hostConnected` for custom elements with `static formAssociated = true`; emits a warning without throwing if `attachInternals` is unsupported; emits a warning when a form-associated element with a `name` is connected outside a `<form>`; synchronously invokes `internals.setFormValue()` before browser repaint; clamps `setValidity` messages to `<= 200` characters and calls `reportValidity()`.
+
+### R2. Barrel Exports & Public API Contract
+Export all five controllers and their associated options/state TypeScript interfaces from `ui/src/controllers/index.ts` so they can be consumed cleanly across upcoming component phases.
+
+### R3. Comprehensive Verification & Adversarial Test Suite
+Author a complete test suite in `ui/src/controllers/Controllers.test.ts` (using Vitest + `happy-dom`) verifying all controller behaviors, boundary values, event handlers, animation lifecycle, and error handling edge cases.
+
+## Acceptance Criteria
+
+### PressController
+- [ ] Exposes `isPressed`, `isHovered`, and `isFocusVisible` booleans initialized to `false`.
+- [ ] Updates state and calls `host.requestUpdate()` on pointerdown, pointerup, pointercancel, pointerenter, pointerleave, focusin, and focusout.
+- [ ] Sets host `aria-pressed` to `"true"` or `"false"` when host has `type="button"`, `type="checkbox"`, or initial `aria-pressed`.
+- [ ] Does not modify `aria-pressed` on hosts without button/checkbox semantics or pre-existing `aria-pressed`.
+- [ ] Suppresses press/hover state and animations when host has `is-disabled` or `disabled` attribute/property.
+- [ ] Respects `prefersReducedMotion()` when executing tactile press scaling or hover lift.
+
+### LayoutIndicatorController
+- [ ] Maps observed width to correct breakpoints: `xs` (0–479), `sm` (480–767), `md` (768–1023), `lg` (1024–1279), and `xl` (>=1280).
+- [ ] Calls `host.requestUpdate()` whenever the computed breakpoint changes.
+- [ ] Tracks `width` and `height` dimensions and updates host when dimension observation is enabled.
+- [ ] Cleans up `ResizeObserver` on `hostDisconnected`.
+
+### OverlayPresenceController
+- [ ] Exposes `isOpen` defaulting to `false` and `isMounted` defaulting to `false`.
+- [ ] When `setOpen(true)` is called: sets `isMounted = true`, requests host update, and executes preset-specific enter motion animation.
+- [ ] Supports presets: `modal`, `popover`, `tooltip`, `drawer-left`, `drawer-right`, `drawer-top`, `drawer-bottom`, and `toast`.
+- [ ] When `setOpen(false)` is called: requests host update, awaits exit animation completion, then closes dialog/popover and sets `isMounted = false`.
+- [ ] Prevents rapid toggle race conditions where exit animations conflict with re-opening.
+
+### NumberSpringController
+- [ ] Clamps input values outside `[-999_999_999, 999_999_999]` to the boundary limits.
+- [ ] Animate `displayValue` toward `targetValue` on each frame, requesting host update per step.
+- [ ] Snaps `displayValue` to `targetValue` and halts animation once within `0.5` delta.
+- [ ] Cancels active animation loop on `hostDisconnected` to prevent leaks.
+
+### FormInternalsController
+- [ ] Calls `host.attachInternals()` on `hostConnected` when available.
+- [ ] Emits `console.warn` without throwing when `attachInternals` is unsupported, setting `internals = null`.
+- [ ] Emits `console.warn` when host element has `name` attribute and is not connected inside a `<form>`.
+- [ ] `setValue` calls `internals.setFormValue` synchronously before next repaint.
+- [ ] `setValidity` truncates message to `<= 200` characters and calls `reportValidity()`.
+
+### Exports & Code Quality
+- [ ] `ui/src/controllers/index.ts` exports `PressController`, `LayoutIndicatorController`, `OverlayPresenceController`, `NumberSpringController`, `FormInternalsController`, and their types.
+- [ ] Zero banned React dependencies or imports (`node -e "require('child_process').execSync('bun ./scripts/verify-no-react.ts all', {stdio: 'inherit'})"` passes).
+- [ ] `node ui/node_modules/.bin/vitest run --root ui src/controllers/Controllers.test.ts` passes 100%.
+- [ ] `node ui/node_modules/.bin/vitest run --root ui src/tokens/tokens.test.ts` and `src/utils/utils-challenge.test.ts` continue to pass without regression.
+- [ ] `node_modules/.bin/biome check ui/src/controllers` passes with 0 errors.
+- [ ] `rdt/tasks.md` Phase 3 items (3.1 through 3.6) are marked `[x]` upon successful completion.

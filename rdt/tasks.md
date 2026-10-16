@@ -54,21 +54,21 @@ _Covers: Requirement 2, Requirement 3, Requirement 4, Requirement 6_
 ## Phase 3: Five Reactive Controllers
 _Covers: Requirement 5, Requirement 6_
 
-- [ ] **3.1 Implement `PressController` (`ui/src/controllers/press.controller.ts`)**
+- [x] **3.1 Implement `PressController` (`ui/src/controllers/press.controller.ts`)**
   - Track `isPressed`, `isHovered`, `isFocusVisible` across pointer and focus events and call `host.requestUpdate()` (_Req 5.1_).
   - Synchronize `aria-pressed` on the host when `type="button"`, `type="checkbox"`, or initial `aria-pressed` is present (_Req 5.2_).
   - Integrate optional `motion.dev` tactile press scaling (`scale: 0.97` with `SPRING_SNAPPY`) and hover elevation lift (`y: -2`).
-- [ ] **3.2 Implement `LayoutIndicatorController` (`ui/src/controllers/layout-indicator.controller.ts`)**
+- [x] **3.2 Implement `LayoutIndicatorController` (`ui/src/controllers/layout-indicator.controller.ts`)**
   - Observe host dimensions via `ResizeObserver`, compute `breakpoint` (`xs`: `0–479`, `sm`: `480–767`, `md`: `768–1023`, `lg`: `1024–1279`, `xl`: `>=1280`), and call `host.requestUpdate()` on change (_Req 5.3_).
-- [ ] **3.3 Implement `OverlayPresenceController` (`ui/src/controllers/overlay-presence.controller.ts`)**
+- [x] **3.3 Implement `OverlayPresenceController` (`ui/src/controllers/overlay-presence.controller.ts`)**
   - Manage `isOpen` (default `false`) and `isMounted`, trigger preset-specific enter/exit animations via `motion`, and request host updates before closing `<dialog>` / `[popover]` (_Req 5.4, 5.5_).
-- [ ] **3.4 Implement `NumberSpringController` (`ui/src/controllers/number-spring.controller.ts`)**
+- [x] **3.4 Implement `NumberSpringController` (`ui/src/controllers/number-spring.controller.ts`)**
   - Clamp target values to `[-999_999_999, 999_999_999]` and animate `displayValue` via `motion`'s spring engine on each frame until settling within `0.5` of target (_Req 5.6_).
-- [ ] **3.5 Implement `FormInternalsController` (`ui/src/controllers/form-internals.controller.ts`)**
+- [x] **3.5 Implement `FormInternalsController` (`ui/src/controllers/form-internals.controller.ts`)**
   - Attach `ElementInternals` on `hostConnected()` (or warn and set `internals = null` when unsupported) (_Req 5.7, 5.9_).
   - Synchronously call `setFormValue()` before repaint, `setValidity()` with message truncated to `<= 200` chars, and `reportValidity()` (_Req 5.8, 6.7_).
   - Emit `console.warn` when a form-associated element with `name` (or explicit form requirement) is connected outside a `<form>` (_Req 9.12_).
-- [ ] **3.6 Export Controllers (`ui/src/controllers/index.ts`) & Write Controller Tests (`ui/src/controllers/Controllers.test.ts`)**
+- [x] **3.6 Export Controllers (`ui/src/controllers/index.ts`) & Write Controller Tests (`ui/src/controllers/Controllers.test.ts`)**
   - Export all 5 controllers from `ui/src/controllers/index.ts` (_Req 5.10_) and verify behavior with unit and `fast-check` property tests.
 
 ---
