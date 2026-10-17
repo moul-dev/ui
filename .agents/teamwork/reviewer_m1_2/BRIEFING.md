@@ -1,64 +1,65 @@
-# BRIEFING — 2026-10-16T03:50:00Z
+# BRIEFING — 2026-10-17T03:40:00Z
 
 ## Mission
-Independently review and adversarial-stress-test Milestone 1 work products (Phase 1: Workspace Purge, Package Contracts & Test Harness) and issue a verifiable verdict.
+Perform independent quality review and adversarial critique of Milestone 1 Chart foundation components (`ChartCommon.ts`, `ChartContainer`, `ChartTooltip`, and `Charts.test.ts`).
 
 ## 🔒 My Identity
-- Archetype: reviewer_critic
+- Archetype: reviewer_and_critic
 - Roles: reviewer, critic
 - Working directory: /Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/reviewer_m1_2
-- Original parent: d61b067a-65c4-48c0-9937-01779e27afa2
-- Milestone: M1 (Phase 1)
+- Original parent: 5d04df52-77dd-4159-8972-455e52835bdb
+- Milestone: Milestone 1
 - Instance: 1 of 1
 
 ## 🔒 Key Constraints
 - Review-only — do NOT modify implementation code
-- Check for integrity violations (hardcoded test results, facade implementations, shortcuts, fabricated verification, self-certification)
-- Output review report to /Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/reviewer_m1_2/handoff.md
-- Send message back to orchestrator (conversation ID: d61b067a-65c4-48c0-9937-01779e27afa2)
+- Actively check for integrity violations (hardcoded test results, facade logic, bypassed requirements)
+- Deliver clear verdict: APPROVE or REQUEST_CHANGES
 
 ## Current Parent
-- Conversation ID: d61b067a-65c4-48c0-9937-01779e27afa2
-- Updated: 2026-10-16T03:50:00Z
+- Conversation ID: 5d04df52-77dd-4159-8972-455e52835bdb
+- Updated: 2026-10-17T03:34:19Z
 
 ## Review Scope
 - **Files to review**:
-  - `scripts/verify-no-react.ts`
-  - `ui/package.json`
-  - `docs/package.json`
-  - `ui/vite.config.ts`
-  - `ui/custom-elements-manifest.config.mjs`
-  - `ui/src/test-setup.ts`
-- **Interface contracts**: PROJECT.md, ORIGINAL_REQUEST.md, rdt/{requirements.md,design.md,tasks.md}
-- **Review criteria**: correctness, robustness, edge cases, integrity, build/test passes
+  - `ui/src/components/ChartCommon.ts`
+  - `ui/src/components/ChartContainer/ChartContainer.ts`
+  - `ui/src/components/ChartContainer/ChartContainer.styles.ts`
+  - `ui/src/components/ChartTooltip/ChartTooltip.ts`
+  - `ui/src/components/ChartTooltip/ChartTooltip.styles.ts`
+  - `ui/src/components/Charts.test.ts`
+- **Interface contracts**: `/Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/orchestrator_phase8_1/PROJECT.md`
+- **Review criteria**: Token & StyleX adherence, glassmorphism fallback, elevated shadows, resetStyles inclusion, empty state gating, DOM disconnect / leak cleanup, vitest & biome clean pass, adversarial failure modes.
 
 ## Review Checklist
 - **Items reviewed**:
-  - [x] `scripts/verify-no-react.ts`: Verified CLI (`all`, `ui`, `docs`, `invalid`), banned patterns/exact sets, exit codes (0/1).
-  - [x] `ui/package.json`: Verified purged React/StyleX/Recharts dependencies, strict exports (`.` and `./style.css`), sideEffects, CEM metadata.
-  - [x] `docs/package.json`: Verified Astro/Starlight dependencies, purged React/Waku/Fumadocs.
-  - [x] `ui/vite.config.ts`: Verified `banReactImportsPlugin`, Rollup `"use client";` banner, `copyCssTokensPlugin`, Happy-DOM configuration.
-  - [x] `ui/custom-elements-manifest.config.mjs`: Verified analyzer configuration and execution producing `dist/custom-elements.json`.
-  - [x] `ui/src/test-setup.ts`: Verified all 4 shims (ElementInternals, native dialog disconnected DOMException, Popover API, ResizeObserver).
-- **Verdict**: APPROVE
-- **Unverified claims**: None. All worker claims independently reproduced and verified.
+  - `ChartCommon.ts` (palette wrapping, modulo 8, fast-check, interfaces)
+  - `ChartContainer.ts` and `ChartContainer.styles.ts` (slots, LayoutIndicatorController, empty state, resetStyles)
+  - `ChartTooltip.ts` and `ChartTooltip.styles.ts` (popover API, coordinates, styles, presence)
+  - `Charts.test.ts` (17 tests executed and verified)
+- **Verdict**: REQUEST_CHANGES
+- **Unverified claims**: None. All commands and claims independently executed and verified.
 
 ## Attack Surface
 - **Hypotheses tested**:
-  - Guard script fails on prohibited packages in `dependencies`, `devDependencies`, `peerDependencies`? Confirmed pass (exits 1).
-  - Guard script handles invalid target arguments gracefully? Confirmed pass (exits 1 with usage).
-  - `banReactImportsPlugin` halts Rollup build when prohibited imports are referenced? Confirmed pass (threw error during real Vite build on legacy files).
-  - `test-setup.ts` handles edge cases (e.g. double attachInternals, disconnected dialog, cancelable beforetoggle, element.matches(':popover-open'), unobserve)? Confirmed pass.
-- **Vulnerabilities found**: None. Minor Biome `useOptionalChain` warnings noted.
+  - Coordinates calculation in `ChartTooltip.updatePosition()`: Confirmed double translation bug (`left/top` + `translate3d`).
+  - Glass backdrop-filter progressive enhancement: Confirmed omitted from `ChartTooltip.styles.ts`.
+  - Multi-series `payload`: Confirmed unrendered in default template.
+  - DOM detachment of `LayoutIndicatorController`: Cleanly disconnects and halts resize dispatch.
+  - Empty state gating on `ChartContainer`: Successfully isolates `<slot name="empty">` when `is-empty` is present.
+- **Vulnerabilities found**:
+  - Finding 1 [Major]: Doubled coordinate displacement in `ChartTooltip.ts`.
+  - Finding 2 [Major]: Missing glass fallback and backdrop blur in `ChartTooltip.styles.ts`.
+  - Finding 3 [Minor]: Unrendered multi-series payload in `ChartTooltip.ts`.
 - **Untested angles**: None within Milestone 1 scope.
 
 ## Key Decisions Made
-- Confirmed that build failures on existing React components are the expected result of `banReactImportsPlugin` doing its job before Milestone 2 migration.
-- Cleaned up any temporary test files outside agent directory constraints.
-- Issued verdict: APPROVE.
+- Executed Vitest, Biome, and verify-no-react independently.
+- Checked integrity: zero integrity violations found.
+- Issued verdict: REQUEST_CHANGES with actionable mitigations in `handoff.md`.
 
 ## Artifact Index
-- `.agents/teamwork/reviewer_m1_2/DISPATCH.md` — Dispatch log
+- `.agents/teamwork/reviewer_m1_2/DISPATCH.md` — Incoming dispatch record
+- `.agents/teamwork/reviewer_m1_2/progress.md` — Heartbeat / liveness tracking
 - `.agents/teamwork/reviewer_m1_2/BRIEFING.md` — Situational awareness
-- `.agents/teamwork/reviewer_m1_2/progress.md` — Liveness & progress tracker
-- `.agents/teamwork/reviewer_m1_2/handoff.md` — Final review report & verdict
+- `.agents/teamwork/reviewer_m1_2/handoff.md` — Final review and challenge report

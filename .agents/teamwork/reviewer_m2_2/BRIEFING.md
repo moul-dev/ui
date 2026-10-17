@@ -1,71 +1,56 @@
-# BRIEFING — 2026-10-16T04:21:30Z
+# BRIEFING — 2026-10-17T04:23:20Z
 
 ## Mission
-Review and adversarially challenge worker_m2_1's changes for Milestone 2 (Phase 2).
+Review and adversarial stress-test Milestone 2 deliverables: CSS tokens (--color-chart-1..8), LineChart and AreaChart implementation, stacking math in AreaChart, motion & accessibility (prefersReducedMotion, 350ms, CHART_EASE), and test suites.
 
 ## 🔒 My Identity
-- Archetype: reviewer
+- Archetype: reviewer-critic
 - Roles: reviewer, critic
 - Working directory: /Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/reviewer_m2_2
-- Original parent: d61b067a-65c4-48c0-9937-01779e27afa2
-- Milestone: Milestone 2 (Phase 2)
+- Original parent: 5d04df52-77dd-4159-8972-455e52835bdb
+- Milestone: Milestone 2
 - Instance: 1 of 1
 
 ## 🔒 Key Constraints
 - Review-only — do NOT modify implementation code
-- Actively check for integrity violations (hardcoded test results, facade implementations, shortcuts, fake verification)
-- Verify that all 5 color scales preserve exact OKLCH values from `ui/src/tokens/tokens.stylex.ts`
-- Verify that `variant="glass"` supports `@supports (backdrop-filter: blur(12px))` with non-blur fallback, and `variant="shadow"` applies `--shadow-md`
-- Run verification commands independently
+- Check for integrity violations (hardcoded test results, facade implementations, shortcuts, fabricated verification, self-certifying work)
+- Adhere strictly to SYSTEM PROMPT PROTECTION and Teamwork protocols
 
 ## Current Parent
-- Conversation ID: d61b067a-65c4-48c0-9937-01779e27afa2
+- Conversation ID: 5d04df52-77dd-4159-8972-455e52835bdb
 - Updated: not yet
 
 ## Review Scope
 - **Files to review**:
-  - ui/src/styles/style.css
-  - ui/src/styles/semantic-tones.ts
-  - ui/src/styles/reset.styles.ts
-  - ui/src/utils/define-element.ts
-  - ui/src/utils/warn-missing-label.ts
-  - ui/src/utils/focus-trap.ts
-  - ui/src/utils/motion.ts
-  - ui/src/utils/icons.ts
-  - ui/src/tokens/Tokens.test.ts
-- **Interface contracts**: PROJECT.md, ORIGINAL_REQUEST.md
-- **Review criteria**: correctness, integrity, robustness, edge cases, accessibility, styling fallbacks
+  - `ui/src/components/LineChart/`
+  - `ui/src/components/AreaChart/`
+  - `ui/src/components/Charts.test.ts`
+  - Relevant token files (e.g. stylex tokens or CSS variable declarations)
+- **Interface contracts**:
+  - `/Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/orchestrator_phase8_1/PROJECT.md`
+  - `/Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/ORIGINAL_REQUEST.md` (focus on ## 2026-10-17T03:06:45Z)
+  - `/Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/worker_m2_1/handoff.md`
+- **Review criteria**:
+  - CSS tokens: `--color-chart-1` through `--color-chart-8` properly resolved and styled
+  - Stacking Math: In AreaChart, cumulative positive and negative baseline accumulation mathematically sound when `stacked` is true
+  - Motion & Accessibility: Transitions (350ms, `CHART_EASE`), `prefersReducedMotion()` handling
+  - Code Quality & Conformance: Biome check, Vitest tests passing, no integrity violations
 
 ## Review Checklist
-- **Items reviewed**:
-  - `ui/src/styles/style.css` (tokens, OKLCH scales, light-dark resolution, brand hooks, shadows)
-  - `ui/src/styles/semantic-tones.ts` (25 tone × variant combinations, glass fallback + blur, normalizers)
-  - `ui/src/styles/reset.styles.ts` (Lit CSS reset, focus-visible ring, box-sizing, typography inheritance)
-  - `ui/src/utils/define-element.ts` (idempotent registration, SSR guard, duplicate warning)
-  - `ui/src/utils/warn-missing-label.ts` (dev-only warning, aria-label/aria-labelledby trim checks)
-  - `ui/src/utils/focus-trap.ts` (safeShowModal disconnected DOMException handling, trapFocus, restoreFocus, feature detection)
-  - `ui/src/utils/motion.ts` (vanilla motion, animation presets, prefersReducedMotion duration collapse, FLIP indicator)
-  - `ui/src/utils/icons.ts` (11 Lit SVG chrome icons, aria-hidden, focusable=false, viewBox)
-  - `ui/src/tokens/Tokens.test.ts` (35 unit and fast-check property tests)
-- **Verdict**: APPROVE
-- **Unverified claims**: None remaining. All claims verified and independently confirmed via test execution and adversarial script.
+- **Items reviewed**: [TBD]
+- **Verdict**: pending
+- **Unverified claims**: [TBD]
 
 ## Attack Surface
-- **Hypotheses tested**:
-  - OKLCH numeric drift vs `tokens.stylex.ts`: Tested via AST/regex programmatic extraction script. (Pass)
-  - Glass variant fallback behavior without `@supports`: Verified both rules present in Lit cssText. (Pass)
-  - Shadow variant box-shadow application: Verified `--shadow-md` reference. (Pass)
-  - Extreme input normalization (uppercase, untrimmed, symbols, objects, null): Verified fallback resilience. (Pass)
-  - Disconnected `<dialog>` DOMException handling: Verified caught and does not invoke focusFirstElement. (Pass)
-  - FLIP active indicator division by zero with 0px width/height rect: Handled via `Math.max(width, 1)`. (Pass)
-  - Reduced motion disabling FLIP transform and collapsing duration to 0: Verified. (Pass)
-- **Vulnerabilities found**: No blocker or critical vulnerabilities found. Noted minor considerations for APFS test filename casing and non-bundler ESM `process.env.NODE_ENV` handling.
-- **Untested angles**: None within Milestone 2 scope.
+- **Hypotheses tested**: [TBD]
+- **Vulnerabilities found**: [TBD]
+- **Untested angles**: [TBD]
 
 ## Key Decisions Made
-- Confirmed zero integrity violations across all deliverables.
-- Issued APPROVE verdict for Milestone 2.
+- Initialized briefing and review workflow.
 
 ## Artifact Index
-- `.agents/teamwork/reviewer_m2_2/stress-test.ts` — Adversarial stress test script
-- `.agents/teamwork/reviewer_m2_2/handoff.md` — Final Review & Adversarial Challenge Report
+- `/Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/reviewer_m2_2/DISPATCH.md` — Dispatch message
+- `/Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/reviewer_m2_2/BRIEFING.md` — Situational awareness
+- `/Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/reviewer_m2_2/progress.md` — Liveness and progress
+- `/Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/reviewer_m2_2/handoff.md` — Final handoff report

@@ -1,566 +1,794 @@
-# Handoff Report: Milestone 2 Task 2.2 — Semantic Tones & Shadow DOM Reset
+# Handoff Report: Complete Implementation Blueprint for `moul-area-chart`
+
+**Agent**: `explorer_m2_2`  
+**Working Directory**: `/Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/explorer_m2_2`  
+**Milestone**: Phase 8 Milestone 2 (Continuous Coordinate Charts: Area Chart)  
+**Date**: 2026-10-17  
+
+---
 
 ## 1. Observation
 
-### 1.1 Source Documents Examined
-- **`rdt/design.md`** (lines 325–392, Section 5): Technical specification for `semantic-tones.ts`, type definitions, normalization functions, and the 25-combination CSS matrix.
-- **`rdt/requirements.md`** (lines 92–107, Requirement 4): Functional requirements for semantic tone overrides, visual variants, progressive enhancement for `glass`, elevated `--shadow-md` for `shadow`, and default fallbacks for invalid inputs.
-- **`rdt/tasks.md`** (lines 39–42, Task 2.2): Specific deliverables for Milestone 2 Task 2.2.
-- **`spec_miner_survey_3/handoff.md`** (lines 296–334): Detailed specification mining for `semantic-tones.ts` and `reset.styles.ts`.
-- **`explorer_m2_1/handoff.md`** (lines 1–388): Design token layer specification and exact CSS token definitions for `ui/src/styles/style.css`.
-- **`ui/src/tokens/tokens.stylex.ts`** (lines 1–183): Reference token source for color scales, semantic aliases, alert status tokens, and shadow tokens.
-- **`ui/src/components/Button/Button.styles.ts`**, **`ui/src/components/Card/Card.styles.ts`**, **`ui/src/components/Badge/Badge.styles.ts`**, **`ui/src/components/Alert/Alert.styles.ts`**: Legacy StyleX styles demonstrating previous variant treatments and tone mappings.
+### 1.1 Authoritative Requirement Sources
+1. **`ORIGINAL_REQUEST.md` (Lines 221–266, Phase 8 Requirements)**:
+   - "Implement `moul-chart-container`, `moul-chart-tooltip`, `moul-line-chart`, `moul-area-chart`, `moul-bar-chart`, `moul-doughnut-chart`, `moul-top-list`, `moul-stat`, `moul-percentage-bar`, and `moul-percentage-circle` as Lit Web Components, registered via idempotent `defineElement` under the `moul-` prefix, with zero React/Recharts dependencies." (Line 231)
+   - "Generate SVG geometries using `d3-scale` and `d3-shape` without third-party chart wrappers, styling chart series with `--color-chart-1` through `--color-chart-8` CSS design tokens." (Line 234)
+   - "When data is null, undefined, or empty `[]`, `<slot name="empty">` is rendered instead of chart geometries." (Line 260)
+   - "Line and Area charts render valid SVG `<path>` elements using D3 curves and project coordinates with D3 scales." (Line 253)
 
-### 1.2 Verbatim Specifications
-1. **Design Document Section 5.1 (`rdt/design.md:329-367`)**:
-   ```ts
-   import { type CSSResultGroup, css } from 'lit'
+2. **`orchestrator_phase8_1/PROJECT.md` (Lines 23, 44–72, 92–95)**:
+   - Line 23: "`moul-area-chart`: D3 area generator, linearGradient fills, stacked/unstacked support, stroke path, point-hover dispatch".
+   - Line 45–50: `ChartSeries` interface: `{ key: string; name?: string; color?: string; strokeWidth?: number }`.
+   - Line 63–70: `PointHoverDetail` interface: `{ point?: Record<string, unknown>; series?: ChartSeries | string; value: unknown; label: string; x: number; y: number }`.
+   - Line 76: "`moul-line-chart`, `moul-area-chart`, `moul-bar-chart`, `moul-doughnut-chart` emit `point-hover`: `{ detail: PointHoverDetail }`".
+   - Line 92–95: File structure: `ui/src/components/AreaChart/AreaChart.ts` and `AreaChart.styles.ts`.
 
-   export const SEMANTIC_TONES = [
-     'primary',
-     'accent',
-     'success',
-     'warning',
-     'error',
-   ] as const
-   export type SemanticTone = (typeof SEMANTIC_TONES)[number]
+3. **`spec_miner_survey_1/handoff.md` (Section 2.2 #4, Lines 239–256)**:
+   - Tag: `moul-area-chart`, Class: `MoulAreaChart`.
+   - Properties:
+     - `data`: `Record<string, unknown>[] = []` (`attribute: false`)
+     - `xKey`: `string = 'name'` (attribute `x-key`)
+     - `series`: `ChartSeries[] = []` (`attribute: false`)
+     - `height`: `number = 300` (attribute `height`, type `Number`)
+     - `stacked`: `boolean = false` (attribute `stacked`, type `Boolean`)
+     - `showGrid`: `boolean = true` (attribute `show-grid`, type `Boolean`)
+     - `valueFormatter`: `((value: any) => string) | undefined` (`attribute: false`)
+   - D3 Pipeline:
+     - When `stacked` is true: Computes cumulative baseline offsets per category across series.
+     - `areaGenerator = area<Record<string, unknown>>().x(d => xScale(...)).y0(d => yScale(y0)).y1(d => yScale(y1)).curve(curveMonotoneX)`.
+     - SVG `<defs><linearGradient id="..."><stop offset="0%" stop-opacity="0.25" /><stop offset="100%" stop-opacity="0" /></linearGradient></defs>`.
+     - Top boundary stroke generated via `line<Record<string, unknown>>()`.
+   - Motion: Area `<path>` + fill opacity animated `[0, 1]` over `350ms` with `CHART_EASE` via `subtleAnimate`.
 
-   export const VISUAL_VARIANTS = [
-     'solid',
-     'flat',
-     'shadow',
-     'bordered',
-     'glass',
-   ] as const
-   export type VisualVariant = (typeof VISUAL_VARIANTS)[number]
+4. **Legacy Component Audit (`ui/src/components/AreaChart/`)**:
+   - `AreaChart.tsx` (lines 1–159): Legacy React component importing `react`, `recharts`, and `@stylexjs/stylex`. Violates zero-React dependency rule.
+   - `AreaChart.styles.ts` (lines 1–9): Legacy StyleX stylesheet using `stylex.create({ wrapper: { width: '100%', position: 'relative' } })`.
+   - `index.ts` (lines 1–3): Exports `AreaChartProps` and `AreaChart`.
 
-   export function normalizeTone(
-     value: unknown,
-     fallback: SemanticTone = 'primary',
-   ): SemanticTone {
-     return SEMANTIC_TONES.includes(value as SemanticTone)
-       ? (value as SemanticTone)
-       : fallback
-   }
-
-   export function normalizeVariant(
-     value: unknown,
-     fallback: VisualVariant = 'flat',
-   ): VisualVariant {
-     return VISUAL_VARIANTS.includes(value as VisualVariant)
-       ? (value as VisualVariant)
-       : fallback
-   }
-   ```
-2. **25-Combination CSS Matrix (`rdt/design.md:371-389`)**:
-   - `semanticToneStyles` defines tone-scoped CSS custom properties:
-     - `--_tone-solid-bg`
-     - `--_tone-solid-fg`
-     - `--_tone-soft-bg`
-     - `--_tone-soft-fg`
-     - `--_tone-border`
-   - Rules for 5 visual variants:
-     - `solid`: `background-color: var(--_tone-solid-bg); color: var(--_tone-solid-fg); border: 1px solid transparent;`
-     - `flat`: `background-color: var(--_tone-soft-bg); color: var(--_tone-soft-fg); border: 1px solid transparent;`
-     - `bordered`: `background-color: transparent; color: var(--_tone-soft-fg); border: 1px solid var(--_tone-border);`
-     - `shadow`: `background-color: var(--_tone-solid-bg); color: var(--_tone-solid-fg); box-shadow: var(--shadow-md); border: 1px solid transparent;`
-     - `glass`:
-       - Base fallback: `background-color: var(--color-bg-glass); border: 1px solid var(--color-border-glass); color: var(--_tone-soft-fg);`
-       - Progressive enhancement:
-         ```css
-         @supports (backdrop-filter: blur(12px)) or (-webkit-backdrop-filter: blur(12px)) {
-           :host([variant="glass"]), [data-variant="glass"] {
-             background-color: var(--color-bg-glass);
-             border: 1px solid var(--color-border-glass);
-             -webkit-backdrop-filter: blur(12px);
-             backdrop-filter: blur(12px);
-           }
-         }
-         ```
-3. **Invalid Attribute Handling (`rdt/design.md:390`)**:
-   - Components apply `data-tone=${normalizeTone(this.tone, defaultTone)}` and `data-variant=${normalizeVariant(this.variant, defaultVariant)}` on their inner surface wrapper (or normalize `:host` selectors) so unrecognized `tone` or `variant` attributes automatically render with the component's default tone and variant.
-4. **Shadow DOM Reset (`rdt/design.md:75`, `spec_miner_survey_3/handoff.md:325-333`)**:
-   - `ui/src/styles/reset.styles.ts` exports `resetStyles: CSSResultGroup` providing `box-sizing: border-box`, font inheritance, margin/padding resets, and `:focus-visible { outline: 2px solid var(--color-border-focus); outline-offset: 2px; }`.
+5. **Monorepo Shared Foundations**:
+   - `ui/src/components/ChartCommon.ts`: Exports `ChartSeries`, `PointHoverDetail`, `getChartColor(index: number): string`.
+   - `ui/src/styles/reset.styles.ts`: Exports shared Lit CSS `resetStyles`.
+   - `ui/src/utils/motion.ts`: Exports `CHART_EASE`, `prefersReducedMotion()`, `subtleAnimate()`.
+   - `ui/src/utils/define-element.ts`: Exports idempotent `defineElement(tagName, ctor)`.
+   - `ui/src/controllers/layout-indicator.controller.ts`: Exports `LayoutIndicatorController` observing host width and height with `observeDimensions: true`.
 
 ---
 
 ## 2. Logic Chain
 
-1. **Combinatorial Efficiency via Scoped Custom Properties**:
-   - *Observation*: The specification requires supporting 25 visual permutations (5 tones × 5 variants).
-   - *Reasoning*: Writing 25 individual compound selectors (e.g. `:host([tone="primary"][variant="solid"])`, `:host([tone="primary"][variant="flat"])`, etc.) leads to high code duplication, increased CSS bundle size, and maintenance hazards.
-   - *Conclusion*: Factoring the system into **5 tone rules** (that set 5 scoped `--_tone-*` properties) and **5 variant rules** (that consume the `--_tone-*` properties) cleanly and mathematically produces all 25 combinations in $5 + 5 = 10$ rules while allowing seamless runtime overriding.
+1. **Element Lifecycle & Custom Element Registration**:
+   - `MoulAreaChart` extends `LitElement`.
+   - It is registered via `defineElement('moul-area-chart', MoulAreaChart)` in `ui/src/components/AreaChart/AreaChart.ts`.
+   - The TypeScript global declaration augments `HTMLElementTagNameMap`:
+     ```ts
+     declare global {
+       interface HTMLElementTagNameMap {
+         'moul-area-chart': MoulAreaChart
+       }
+     }
+     ```
+   - For backwards compatibility and barrel export convenience, `export { MoulAreaChart, MoulAreaChart as AreaChart }` is exported from `index.ts`.
 
-2. **Dual Selector Architecture (`:host([attr])` and `[data-attr]`)**:
-   - *Observation*: Lit custom elements can apply attributes on their host element (e.g. `<moul-badge tone="success" variant="flat">`), but components may also render inner wrapper surfaces (e.g. `<div class="surface" data-tone="..." data-variant="...">`).
-   - *Reasoning*: Supporting `:host([tone="..."]), [data-tone="..."]` and `:host([variant="..."]), [data-variant="..."]` ensures styles apply regardless of whether the element reflects attributes to `:host` or renders an internal surface element. Furthermore, setting default `--_tone-*` values on `:host` guarantees valid visual defaults even when no tone attribute is supplied.
+2. **Responsive Viewport Integration**:
+   - In fluid dashboards and layouts, chart width depends on parent containers (such as `moul-chart-container` or flexbox grids).
+   - `MoulAreaChart` instantiates `new LayoutIndicatorController(this, { observeDimensions: true })`.
+   - It falls back gracefully to `this.layout.width || 500` and `this.height || 300` when rendered in non-layout DOM environments (e.g., Happy-DOM unit tests before `triggerResize`), avoiding `NaN` or divide-by-zero errors.
 
-3. **Color Token Alignment with `ui/src/styles/style.css`**:
-   - *Observation*: Task 2.1 defines 124 design tokens in `ui/src/styles/style.css`, including scales for Primary (50–900), Error (300–700), Warning (300–700), Success (300–700), and 20 Alert tokens (`--color-alert-bg-*`, `--color-alert-border-*`).
-   - *Reasoning*:
-     - Solid background requires an accessible, prominent hue: `--color-primary-600` for `primary`, `--color-primary-500` for `accent`, `--color-success-500` for `success`, `--color-warning-500` for `warning`, and `--color-error-500` for `error`.
-     - Solid foreground uses the high-contrast token `--color-fg-on-primary` (`light-dark(oklch(1 0 0), oklch(0.10 0 0))`), which automatically switches between white in light mode and dark in dark mode.
-     - Soft background uses soft-tinted surfaces: `--color-primary-100` for `primary`, and `--color-alert-bg-{accent,success,warning,error}` for the alert-derived tones.
-     - Soft foreground uses high-legibility dark/contrast scales: `--color-primary-700` for `primary`, `--color-primary-600` for `accent`, `--color-success-700` for `success`, `--color-warning-700` for `warning`, and `--color-error-700` for `error`.
-     - Border uses `--color-primary-300` for `primary`, and `--color-alert-border-{accent,success,warning,error}` for the rest.
-   - *Conclusion*: This mapping preserves 100% WCAG contrast across all combinations in both light and dark color schemes.
+3. **D3 Mathematical Pipeline & Stacking Algorithm**:
+   - **X Domain & Scale**:
+     - Categories are extracted from `data.map(d => String(d[xKey] ?? ''))`.
+     - `xScale = scalePoint<string>().domain(categories).range([padding.left, width - padding.right])`.
+     - When single data point exists (`categories.length === 1`), `scalePoint` projects the coordinate to the midpoint of the range.
+   - **Y Domain & Scale**:
+     - Unstacked mode (`stacked = false`):
+       - Each series starts from baseline 0: `y0 = 0`, `y1 = val`.
+       - Min/Max scanned across all individual series values: `domainMin = minY < 0 ? minY : 0`, `domainMax = maxY > 0 ? maxY : 1`.
+     - Stacked mode (`stacked = true`):
+       - For each category index `i` across data items, cumulative baseline accumulators track running sums:
+         - Positive values: `posBaselines[i]` accumulates upwards: `y0 = posBaselines[i]`, `y1 = posBaselines[i] + val`, `posBaselines[i] += val`.
+         - Negative values: `negBaselines[i]` accumulates downwards: `y0 = negBaselines[i]`, `y1 = negBaselines[i] + val`, `negBaselines[i] += val`.
+       - Min/Max scanned across cumulative baselines: `domainMin = min(0, ...negBaselines)`, `domainMax = max(1, ...posBaselines)`.
+     - Safeguard: If `domainMin === domainMax`, `domainMax = domainMin + 1` to prevent divide-by-zero in `scaleLinear`.
+     - `yScale = scaleLinear().domain([domainMin, domainMax]).range([height - padding.bottom, padding.top]).nice()`.
+   - **D3 Shape Area and Boundary Stroke**:
+     - `areaGen = area<Point>().x(p => xScale(p.xVal) ?? padding.left).y0(p => yScale(p.y0)).y1(p => yScale(p.y1)).curve(curveMonotoneX)`.
+     - `lineGen = line<Point>().x(p => xScale(p.xVal) ?? padding.left).y(p => yScale(p.y1)).curve(curveMonotoneX)`.
+     - Fallback for single data point (`points.length === 1`): constructs valid deterministic SVG path starting with `'M'` without failing.
 
-4. **Progressive Enhancement for Glass Variant**:
-   - *Observation*: Requirement 4.4 and 4.5 state that when `backdrop-filter` is supported, blur must be rendered without fallback; when unsupported, a solid `--color-bg-glass` background must be used without blur.
-   - *Reasoning*: CSS `@supports (backdrop-filter: blur(12px)) or (-webkit-backdrop-filter: blur(12px))` natively achieves this: the un-nested rule declares `--color-bg-glass`, `--color-border-glass`, and `--_tone-soft-fg`. Browsers supporting `backdrop-filter` execute the `@supports` block, which layers the blur effect on top.
-   - *Conclusion*: This progressive enhancement ensures zero visual regression on legacy runtimes while providing the modern translucent glass effect on capable browsers.
+4. **SVG Defs & Linear Gradient Fills**:
+   - For each series `s` at index `idx`:
+     - Series color is determined by `s.color ?? getChartColor(idx)`.
+     - Instance-unique gradient ID: `area-grad-${this.chartId}-${s.key.replace(/[^a-zA-Z0-9_-]/g, '-')}`.
+     - SVG `<defs>` block defines `<linearGradient id="..." x1="0" y1="0" x2="0" y2="1">` with `<stop offset="0%" stop-color="${color}" stop-opacity="0.25" />` and `<stop offset="100%" stop-color="${color}" stop-opacity="0" />`.
+     - Area `<path>` references `fill="url(#${gradId})"`.
+     - Upper boundary stroke `<path>` renders `stroke="${color}" stroke-width="${s.strokeWidth ?? 2}" fill="none"`.
 
-5. **Shadow DOM Isolation & Reset**:
-   - *Observation*: Shadow DOM protects components from external global CSS, but user-agent stylesheet defaults (e.g. default button borders, input fonts, heading/paragraph margins) still leak into Shadow Roots.
-   - *Reasoning*: Every custom element requires a consistent baseline: `box-sizing: border-box` across all elements, font inheritance from `--font-family-base`, removal of default margins on text elements, and a standardized accessible `:focus-visible` ring referencing `--color-border-focus`.
-   - *Conclusion*: Exporting `resetStyles: CSSResultGroup` allows LitElement subclasses to include `resetStyles` in their `static override styles` array alongside component-specific CSS.
+5. **Interactive Data Point Hover**:
+   - Each data point renders a visual `<circle class="point-marker">` and an enlarged interactive hit area `<circle class="point-hit-target">` with `cursor="pointer"`.
+   - On `pointerenter`, dispatches `CustomEvent<PointHoverDetail>('point-hover', { bubbles: true, composed: true, detail: { point: rawData, series: s, value: rawVal, label: xVal, x: cx, y: cy } })`.
+   - On `pointerleave`, dispatches `CustomEvent('point-leave', { bubbles: true, composed: true })`.
+
+6. **Empty State Gating**:
+   - If `!data || !Array.isArray(data) || data.length === 0`:
+     - Component renders `<div part="empty" class="empty-state"><slot name="empty"></slot></div>`.
+     - Bypasses SVG rendering, D3 generator calls, and scale calculations completely.
+
+7. **Motion & Accessibility**:
+   - On initial render and updates to `data`, `series`, or `stacked`, calls `animateAreaPaths()`.
+   - Animates area and stroke paths with `subtleAnimate(paths, { opacity: [0, 1] }, { duration: 0.35, ease: CHART_EASE })`.
+   - If `prefersReducedMotion()` is true, `subtleAnimate` automatically collapses duration to 0, immediately rendering static geometry.
+
+8. **Shadow DOM Styles**:
+   - `AreaChart.styles.ts` exports `areaChartStyles: CSSResultGroup = [resetStyles, css`...`]` composing `resetStyles`.
+   - Styles use CSS custom properties (`--color-border-subtle`, `--color-fg-subtle`, `--color-bg`, `--font-size-xs`, `--font-family-base`).
+   - Zero React or StyleX imports.
 
 ---
 
 ## 3. Caveats
 
-1. **Read-Only Investigation**:
-   - No source files outside the working directory were modified during this investigation. Implementation must be carried out by a worker agent.
-2. **Dependency on Task 2.1 (`style.css`)**:
-   - The CSS variables referenced in `semanticToneStyles` (`--color-primary-*`, `--color-alert-bg-*`, `--color-border-focus`, `--shadow-md`, etc.) are defined in `ui/src/styles/style.css`. While `semanticToneStyles` compiles independently into Lit `CSSResult` objects, the browser will only resolve the computed colors when `style.css` is loaded in the document.
-3. **Vitest `happy-dom` Environment**:
-   - `happy-dom` does not compute CSS layout or `@supports` queries. Unit tests for `semantic-tones.ts` and `reset.styles.ts` must assert on the AST / `cssText` structure of the generated `CSSResultGroup` and test normalization functions using `fast-check`.
+1. **Legacy React File Deletion**:
+   - `ui/src/components/AreaChart/AreaChart.tsx` must be removed when the worker implements the new Lit files, or else `scripts/verify-no-react.ts` will fail on the existing `recharts` and `@stylexjs/stylex` imports.
+2. **Happy-DOM Element Dimensions**:
+   - In Happy-DOM test environments, `host.getBoundingClientRect()` defaults to zero until `triggerResize` is invoked. The component's fallback width `this.layout.width || 500` ensures initial renders produce valid SVG viewBox and path geometries during tests prior to resize triggers.
+3. **Stacked Mode with Negative Values**:
+   - The algorithm splits positive and negative cumulative baselines (`posBaselines` and `negBaselines`). This prevents negative values from canceling positive stacks, correctly matching D3 stack semantics.
 
 ---
 
-## 4. Conclusion & Complete Code Plan
+## 4. Conclusion & Complete Implementation Blueprint
 
-### 4.1 Token Mapping Matrix
-
-| Semantic Tone | Solid Background (`--_tone-solid-bg`) | Solid Foreground (`--_tone-solid-fg`) | Soft Background (`--_tone-soft-bg`) | Soft Foreground (`--_tone-soft-fg`) | Border (`--_tone-border`) |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **`primary`** | `var(--color-primary-600)` | `var(--color-fg-on-primary)` | `var(--color-primary-100)` | `var(--color-primary-700)` | `var(--color-primary-300)` |
-| **`accent`** | `var(--color-primary-500)` | `var(--color-fg-on-primary)` | `var(--color-alert-bg-accent)` | `var(--color-primary-600)` | `var(--color-alert-border-accent)` |
-| **`success`** | `var(--color-success-500)` | `var(--color-fg-on-primary)` | `var(--color-alert-bg-success)` | `var(--color-success-700)` | `var(--color-alert-border-success)` |
-| **`warning`** | `var(--color-warning-500)` | `var(--color-fg-on-primary)` | `var(--color-alert-bg-warning)` | `var(--color-warning-700)` | `var(--color-alert-border-warning)` |
-| **`error`** | `var(--color-error-500)` | `var(--color-fg-on-primary)` | `var(--color-alert-bg-error)` | `var(--color-error-700)` | `var(--color-alert-border-error)` |
-
-### 4.2 Complete Code for `ui/src/styles/semantic-tones.ts`
+### 4.1 Target File 1: `ui/src/components/AreaChart/AreaChart.styles.ts`
 
 ```ts
-/**
- * Moul UI - Semantic Tone & Visual Variant System
- * Implements 25 combinations of 5 Semantic Tones × 5 Visual Variants for Lit Web Components.
- */
+import { css, type CSSResultGroup } from 'lit'
+import { resetStyles } from '../../styles/reset.styles'
 
-import { type CSSResultGroup, css } from 'lit'
+export const areaChartStyles: CSSResultGroup = [
+  resetStyles,
+  css`
+    :host {
+      display: block;
+      width: 100%;
+      position: relative;
+      user-select: none;
+    }
 
-export const SEMANTIC_TONES = [
-  'primary',
-  'accent',
-  'success',
-  'warning',
-  'error',
-] as const
+    .chart-container {
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
 
-export type SemanticTone = (typeof SEMANTIC_TONES)[number]
+    .chart-svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
 
-export const VISUAL_VARIANTS = [
-  'solid',
-  'flat',
-  'shadow',
-  'bordered',
-  'glass',
-] as const
+    .grid-line {
+      stroke: var(--color-border-subtle, oklch(0.84 0 0));
+      stroke-dasharray: 3 3;
+      stroke-width: 1;
+    }
 
-export type VisualVariant = (typeof VISUAL_VARIANTS)[number]
+    .axis-label {
+      fill: var(--color-fg-subtle, oklch(0.42 0 0));
+      font-size: var(--font-size-xs, 0.75rem);
+      font-family: var(--font-family-base, inherit);
+    }
 
-/**
- * Normalizes an unknown tone value to a valid SemanticTone.
- * Falls back to the provided fallback (default: 'primary') if unrecognized.
- */
-export function normalizeTone(
-  value: unknown,
-  fallback: SemanticTone = 'primary',
-): SemanticTone {
-  return typeof value === 'string' &&
-    (SEMANTIC_TONES as readonly string[]).includes(value)
-    ? (value as SemanticTone)
-    : fallback
+    .axis-label-x {
+      text-anchor: middle;
+      dominant-baseline: hanging;
+    }
+
+    .axis-label-y {
+      text-anchor: end;
+      dominant-baseline: central;
+    }
+
+    .area-path {
+      pointer-events: none;
+    }
+
+    .stroke-path {
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      pointer-events: none;
+    }
+
+    .point-marker {
+      stroke: var(--color-bg, #ffffff);
+      stroke-width: 2;
+      transition: r 150ms ease, transform 150ms ease;
+    }
+
+    .point-hit-target {
+      fill: transparent;
+      cursor: pointer;
+    }
+
+    .point-hit-target:hover + .point-marker,
+    .point-marker:hover {
+      r: 6;
+    }
+
+    .empty-state {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      min-height: 200px;
+    }
+  `,
+]
+
+export default areaChartStyles
+```
+
+---
+
+### 4.2 Target File 2: `ui/src/components/AreaChart/AreaChart.ts`
+
+```ts
+import { scaleLinear, scalePoint } from 'd3-scale'
+import { area, curveMonotoneX, line } from 'd3-shape'
+import { html, LitElement, type PropertyValues } from 'lit'
+
+import { LayoutIndicatorController } from '../../controllers/layout-indicator.controller'
+import { defineElement } from '../../utils/define-element'
+import { CHART_EASE, prefersReducedMotion, subtleAnimate } from '../../utils/motion'
+import { type ChartSeries, getChartColor, type PointHoverDetail } from '../ChartCommon'
+import { areaChartStyles } from './AreaChart.styles'
+
+export interface AreaChartPointData {
+  xVal: string
+  rawVal: number
+  y0: number
+  y1: number
+  rawData: Record<string, unknown>
 }
 
-/**
- * Normalizes an unknown variant value to a valid VisualVariant.
- * Falls back to the provided fallback (default: 'flat') if unrecognized.
- */
-export function normalizeVariant(
-  value: unknown,
-  fallback: VisualVariant = 'flat',
-): VisualVariant {
-  return typeof value === 'string' &&
-    (VISUAL_VARIANTS as readonly string[]).includes(value)
-    ? (value as VisualVariant)
-    : fallback
+export class MoulAreaChart extends LitElement {
+  static override styles = areaChartStyles
+
+  static override properties = {
+    data: { attribute: false },
+    xKey: { type: String, attribute: 'x-key' },
+    series: { attribute: false },
+    height: { type: Number },
+    stacked: { type: Boolean },
+    showGrid: { type: Boolean, attribute: 'show-grid' },
+    valueFormatter: { attribute: false },
+  }
+
+  declare data: Record<string, unknown>[]
+  declare xKey: string
+  declare series: ChartSeries[]
+  declare height: number
+  declare stacked: boolean
+  declare showGrid: boolean
+  declare valueFormatter?: (value: any) => string
+
+  public layout: LayoutIndicatorController
+
+  private chartId = Math.random().toString(36).slice(2, 9)
+
+  constructor() {
+    super()
+    this.data = []
+    this.xKey = 'name'
+    this.series = []
+    this.height = 300
+    this.stacked = false
+    this.showGrid = true
+    this.valueFormatter = undefined
+
+    this.layout = new LayoutIndicatorController(this, {
+      observeDimensions: true,
+    })
+  }
+
+  public get hasData(): boolean {
+    return Array.isArray(this.data) && this.data.length > 0
+  }
+
+  public get effectiveSeries(): ChartSeries[] {
+    if (Array.isArray(this.series) && this.series.length > 0) {
+      return this.series
+    }
+    if (!this.hasData) {
+      return []
+    }
+    const first = this.data[0]
+    if (!first) return []
+    return Object.keys(first)
+      .filter((k) => k !== this.xKey && typeof first[k] === 'number')
+      .map((k, idx) => ({
+        key: k,
+        name: k,
+        color: getChartColor(idx),
+      }))
+  }
+
+  protected override updated(changedProps: PropertyValues): void {
+    super.updated(changedProps)
+
+    if (
+      changedProps.has('data') ||
+      changedProps.has('series') ||
+      changedProps.has('stacked')
+    ) {
+      this.animateAreaPaths()
+    }
+  }
+
+  private animateAreaPaths(): void {
+    if (prefersReducedMotion()) return
+
+    const areaPaths = this.renderRoot.querySelectorAll('.area-path')
+    const strokePaths = this.renderRoot.querySelectorAll('.stroke-path')
+
+    if (areaPaths.length > 0) {
+      subtleAnimate(
+        areaPaths,
+        { opacity: [0, 1] },
+        { duration: 0.35, ease: CHART_EASE },
+      )
+    }
+    if (strokePaths.length > 0) {
+      subtleAnimate(
+        strokePaths,
+        { opacity: [0, 1] },
+        { duration: 0.35, ease: CHART_EASE },
+      )
+    }
+  }
+
+  private handlePointHover(
+    point: AreaChartPointData,
+    s: ChartSeries,
+    x: number,
+    y: number,
+    _event: PointerEvent,
+  ): void {
+    const detail: PointHoverDetail = {
+      point: point.rawData,
+      series: s,
+      value: point.rawVal,
+      label: point.xVal,
+      x,
+      y,
+    }
+
+    this.dispatchEvent(
+      new CustomEvent<PointHoverDetail>('point-hover', {
+        bubbles: true,
+        composed: true,
+        detail,
+      }),
+    )
+  }
+
+  private handlePointLeave(): void {
+    this.dispatchEvent(
+      new CustomEvent('point-leave', {
+        bubbles: true,
+        composed: true,
+      }),
+    )
+  }
+
+  protected override render() {
+    if (!this.hasData) {
+      return html`
+        <div part="empty" class="empty-state">
+          <slot name="empty"></slot>
+        </div>
+      `
+    }
+
+    const seriesList = this.effectiveSeries
+    if (seriesList.length === 0) {
+      return html`
+        <div part="empty" class="empty-state">
+          <slot name="empty"></slot>
+        </div>
+      `
+    }
+
+    const width = this.layout.width > 0 ? this.layout.width : 500
+    const height = this.height > 0 ? this.height : 300
+
+    const padding = {
+      top: 16,
+      right: 16,
+      bottom: 28,
+      left: 40,
+    }
+
+    // X Scale
+    const xCategories = this.data.map((d) => String(d[this.xKey] ?? ''))
+    const xScale = scalePoint<string>()
+      .domain(xCategories)
+      .range([padding.left, width - padding.right])
+
+    // Accumulators for stacked mode
+    const posBaselines = new Array(this.data.length).fill(0)
+    const negBaselines = new Array(this.data.length).fill(0)
+
+    // Build series points
+    const seriesPointsList: {
+      series: ChartSeries
+      color: string
+      gradId: string
+      points: AreaChartPointData[]
+    }[] = []
+
+    let minY = 0
+    let maxY = 0
+
+    seriesList.forEach((s, sIdx) => {
+      const color = s.color ?? getChartColor(sIdx)
+      const gradId = `area-grad-${this.chartId}-${s.key.replace(/[^a-zA-Z0-9_-]/g, '-')}`
+      const points: AreaChartPointData[] = []
+
+      this.data.forEach((d, i) => {
+        const xVal = String(d[this.xKey] ?? '')
+        const raw = d[s.key]
+        const val =
+          typeof raw === 'number' && Number.isFinite(raw)
+            ? raw
+            : Number(raw) || 0
+
+        let y0 = 0
+        let y1 = 0
+
+        if (this.stacked) {
+          if (val >= 0) {
+            y0 = posBaselines[i]
+            y1 = posBaselines[i] + val
+            posBaselines[i] += val
+          } else {
+            y0 = negBaselines[i]
+            y1 = negBaselines[i] + val
+            negBaselines[i] += val
+          }
+        } else {
+          y0 = 0
+          y1 = val
+        }
+
+        minY = Math.min(minY, y0, y1)
+        maxY = Math.max(maxY, y0, y1)
+
+        points.push({
+          xVal,
+          rawVal: val,
+          y0,
+          y1,
+          rawData: d,
+        })
+      })
+
+      seriesPointsList.push({
+        series: s,
+        color,
+        gradId,
+        points,
+      })
+    })
+
+    // Y Scale domain bounds
+    let domainMin = minY < 0 ? minY : 0
+    let domainMax = maxY > 0 ? maxY : 1
+    if (domainMin === domainMax) {
+      domainMax = domainMin + 1
+    }
+
+    const yScale = scaleLinear()
+      .domain([domainMin, domainMax])
+      .range([height - padding.bottom, padding.top])
+      .nice()
+
+    // Area & Line Generators
+    const areaGen = area<AreaChartPointData>()
+      .x((p) => xScale(p.xVal) ?? padding.left)
+      .y0((p) => yScale(p.y0))
+      .y1((p) => yScale(p.y1))
+      .curve(curveMonotoneX)
+
+    const lineGen = line<AreaChartPointData>()
+      .x((p) => xScale(p.xVal) ?? padding.left)
+      .y((p) => yScale(p.y1))
+      .curve(curveMonotoneX)
+
+    const yTicks = yScale.ticks(5)
+
+    return html`
+      <div
+        part="container"
+        class="chart-container"
+        style="height: ${height}px;"
+        @pointerleave=${this.handlePointLeave}
+      >
+        <svg
+          part="svg"
+          class="chart-svg"
+          viewBox="0 0 ${width} ${height}"
+          preserveAspectRatio="none"
+        >
+          <defs>
+            ${seriesPointsList.map(
+              (item) => html`
+                <linearGradient
+                  id="${item.gradId}"
+                  x1="0"
+                  y1="0"
+                  x2="0"
+                  y2="1"
+                >
+                  <stop
+                    offset="0%"
+                    stop-color="${item.color}"
+                    stop-opacity="0.25"
+                  ></stop>
+                  <stop
+                    offset="100%"
+                    stop-color="${item.color}"
+                    stop-opacity="0"
+                  ></stop>
+                </linearGradient>
+              `,
+            )}
+          </defs>
+
+          <!-- Grid Lines and Y-Axis Labels -->
+          ${
+            this.showGrid
+              ? html`
+                <g part="grid" class="grid-group">
+                  ${yTicks.map(
+                    (tick) => html`
+                      <line
+                        class="grid-line"
+                        x1="${padding.left}"
+                        y1="${yScale(tick)}"
+                        x2="${width - padding.right}"
+                        y2="${yScale(tick)}"
+                      ></line>
+                      <text
+                        class="axis-label axis-label-y"
+                        x="${padding.left - 8}"
+                        y="${yScale(tick)}"
+                      >
+                        ${
+                          this.valueFormatter
+                            ? this.valueFormatter(tick)
+                            : String(tick)
+                        }
+                      </text>
+                    `,
+                  )}
+                </g>
+              `
+              : ''
+          }
+
+          <!-- X-Axis Labels -->
+          <g part="x-axis" class="axis-group-x">
+            ${xCategories.map(
+              (cat) => html`
+                <text
+                  class="axis-label axis-label-x"
+                  x="${xScale(cat) ?? padding.left}"
+                  y="${height - padding.bottom + 8}"
+                >
+                  ${cat}
+                </text>
+              `,
+            )}
+          </g>
+
+          <!-- Area Paths and Boundary Lines -->
+          <g part="series" class="series-group">
+            ${seriesPointsList.map((item) => {
+              let areaPathD = areaGen(item.points) ?? ''
+              let strokePathD = lineGen(item.points) ?? ''
+
+              // Single point fallback: deterministic M path
+              if (item.points.length === 1) {
+                const pt = item.points[0]
+                const px = xScale(pt.xVal) ?? padding.left
+                const pyTop = yScale(pt.y1)
+                const pyBot = yScale(pt.y0)
+                areaPathD = `M ${px - 2} ${pyBot} L ${px - 2} ${pyTop} L ${px + 2} ${pyTop} L ${px + 2} ${pyBot} Z`
+                strokePathD = `M ${px - 2} ${pyTop} L ${px + 2} ${pyTop}`
+              }
+
+              return html`
+                <g class="series-layer" data-series="${item.series.key}">
+                  <path
+                    class="area-path"
+                    part="area"
+                    d="${areaPathD}"
+                    fill="url(#${item.gradId})"
+                  ></path>
+                  <path
+                    class="stroke-path"
+                    part="stroke"
+                    d="${strokePathD}"
+                    stroke="${item.color}"
+                    stroke-width="${item.series.strokeWidth ?? 2}"
+                    fill="none"
+                  ></path>
+                </g>
+              `
+            })}
+          </g>
+
+          <!-- Interactive Data Points -->
+          <g part="points" class="points-group">
+            ${seriesPointsList.map((item) =>
+              item.points.map((pt) => {
+                const cx = xScale(pt.xVal) ?? padding.left
+                const cy = yScale(pt.y1)
+                return html`
+                  <g class="point-group">
+                    <circle
+                      class="point-marker"
+                      part="point"
+                      cx="${cx}"
+                      cy="${cy}"
+                      r="4"
+                      fill="${item.color}"
+                    ></circle>
+                    <circle
+                      class="point-hit-target"
+                      cx="${cx}"
+                      cy="${cy}"
+                      r="14"
+                      @pointerenter=${(e: PointerEvent) =>
+                        this.handlePointHover(
+                          pt,
+                          item.series,
+                          cx,
+                          cy,
+                          e,
+                        )}
+                      @pointerleave=${this.handlePointLeave}
+                    ></circle>
+                  </g>
+                `
+              }),
+            )}
+          </g>
+        </svg>
+      </div>
+    `
+  }
 }
 
-/**
- * Generates Lit CSS styles for all 25 combinations of 5 tones × 5 variants.
- * Defines tone-scoped properties (--_tone-solid-bg, --_tone-solid-fg, --_tone-soft-bg, --_tone-soft-fg, --_tone-border)
- * and combines them with variant rules (solid, flat, bordered, shadow, glass).
- */
-export const semanticToneStyles: CSSResultGroup = css`
-  /* ── Tone-Scoped CSS Custom Properties ─────────────────────────── */
+defineElement('moul-area-chart', MoulAreaChart)
 
-  /* Default / Primary Tone */
-  :host,
-  :host([tone="primary"]),
-  [data-tone="primary"] {
-    --_tone-solid-bg: var(--color-primary-600);
-    --_tone-solid-fg: var(--color-fg-on-primary);
-    --_tone-soft-bg: var(--color-primary-100);
-    --_tone-soft-fg: var(--color-primary-700);
-    --_tone-border: var(--color-primary-300);
+export { MoulAreaChart as AreaChart }
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'moul-area-chart': MoulAreaChart
   }
-
-  /* Accent Tone */
-  :host([tone="accent"]),
-  [data-tone="accent"] {
-    --_tone-solid-bg: var(--color-primary-500);
-    --_tone-solid-fg: var(--color-fg-on-primary);
-    --_tone-soft-bg: var(--color-alert-bg-accent);
-    --_tone-soft-fg: var(--color-primary-600);
-    --_tone-border: var(--color-alert-border-accent);
-  }
-
-  /* Success Tone */
-  :host([tone="success"]),
-  [data-tone="success"] {
-    --_tone-solid-bg: var(--color-success-500);
-    --_tone-solid-fg: var(--color-fg-on-primary);
-    --_tone-soft-bg: var(--color-alert-bg-success);
-    --_tone-soft-fg: var(--color-success-700);
-    --_tone-border: var(--color-alert-border-success);
-  }
-
-  /* Warning Tone */
-  :host([tone="warning"]),
-  [data-tone="warning"] {
-    --_tone-solid-bg: var(--color-warning-500);
-    --_tone-solid-fg: var(--color-fg-on-primary);
-    --_tone-soft-bg: var(--color-alert-bg-warning);
-    --_tone-soft-fg: var(--color-warning-700);
-    --_tone-border: var(--color-alert-border-warning);
-  }
-
-  /* Error Tone */
-  :host([tone="error"]),
-  [data-tone="error"] {
-    --_tone-solid-bg: var(--color-error-500);
-    --_tone-solid-fg: var(--color-fg-on-primary);
-    --_tone-soft-bg: var(--color-alert-bg-error);
-    --_tone-soft-fg: var(--color-error-700);
-    --_tone-border: var(--color-alert-border-error);
-  }
-
-  /* ── Visual Variant Rules ────────────────────────────────────────── */
-
-  /* Solid Variant */
-  :host([variant="solid"]),
-  [data-variant="solid"] {
-    background-color: var(--_tone-solid-bg);
-    color: var(--_tone-solid-fg);
-    border: 1px solid transparent;
-  }
-
-  /* Flat Variant */
-  :host([variant="flat"]),
-  [data-variant="flat"] {
-    background-color: var(--_tone-soft-bg);
-    color: var(--_tone-soft-fg);
-    border: 1px solid transparent;
-  }
-
-  /* Bordered Variant */
-  :host([variant="bordered"]),
-  [data-variant="bordered"] {
-    background-color: transparent;
-    color: var(--_tone-soft-fg);
-    border: 1px solid var(--_tone-border);
-  }
-
-  /* Shadow Variant */
-  :host([variant="shadow"]),
-  [data-variant="shadow"] {
-    background-color: var(--_tone-solid-bg);
-    color: var(--_tone-solid-fg);
-    box-shadow: var(--shadow-md);
-    border: 1px solid transparent;
-  }
-
-  /* Glass Variant - Base fallback when backdrop-filter is unsupported */
-  :host([variant="glass"]),
-  [data-variant="glass"] {
-    background-color: var(--color-bg-glass);
-    border: 1px solid var(--color-border-glass);
-    color: var(--_tone-soft-fg);
-  }
-
-  /* Glass Variant - Progressive enhancement with blur */
-  @supports (backdrop-filter: blur(12px)) or (-webkit-backdrop-filter: blur(12px)) {
-    :host([variant="glass"]),
-    [data-variant="glass"] {
-      background-color: var(--color-bg-glass);
-      border: 1px solid var(--color-border-glass);
-      color: var(--_tone-soft-fg);
-      -webkit-backdrop-filter: blur(12px);
-      backdrop-filter: blur(12px);
-    }
-  }
-`
+}
 ```
 
-### 4.3 Complete Code for `ui/src/styles/reset.styles.ts`
+---
+
+### 4.3 Target File 3: `ui/src/components/AreaChart/index.ts`
 
 ```ts
-/**
- * Moul UI - Shared Shadow DOM Reset
- * Scoped Lit CSS reset providing box-sizing: border-box, font inheritance,
- * margin/padding resets, and accessible :focus-visible ring for Custom Elements.
- */
-
-import { type CSSResultGroup, css } from 'lit'
-
-export const resetStyles: CSSResultGroup = css`
-  *,
-  *::before,
-  *::after {
-    box-sizing: border-box;
-  }
-
-  :host {
-    box-sizing: border-box;
-    font-family: var(--font-family-base, inherit);
-    font-size: var(--font-size-md, 1rem);
-    line-height: var(--line-height-md, 1.5rem);
-    color: var(--color-fg, inherit);
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-
-  :host([hidden]),
-  [hidden] {
-    display: none !important;
-  }
-
-  /* Standard margin/padding resets for commonly used slotted or shadow elements */
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6,
-  p,
-  ul,
-  ol,
-  figure,
-  blockquote,
-  dl,
-  dd {
-    margin: 0;
-  }
-
-  /* Form control resets */
-  button,
-  input,
-  optgroup,
-  select,
-  textarea {
-    font-family: inherit;
-    font-size: 100%;
-    line-height: 1.15;
-    margin: 0;
-  }
-
-  button,
-  select {
-    text-transform: none;
-  }
-
-  button,
-  [type="button"],
-  [type="reset"],
-  [type="submit"] {
-    -webkit-appearance: button;
-  }
-
-  /* Shared accessible focus-visible indicator */
-  :focus-visible {
-    outline: 2px solid var(--color-border-focus);
-    outline-offset: 2px;
-  }
-
-  :focus:not(:focus-visible) {
-    outline: none;
-  }
-`
-
-export default resetStyles
-```
-
-### 4.4 Complete Code for `ui/src/styles/index.ts` (Style Exports)
-
-```ts
-export * from './semantic-tones'
-export { resetStyles, default as reset } from './reset.styles'
-```
-
-### 4.5 Fast-Check Property Test Implementation (`ui/src/styles/semantic-tones.test.ts`)
-
-```ts
-import { describe, expect, it } from 'vitest'
-import fc from 'fast-check'
-import type { CSSResult } from 'lit'
-import {
-  SEMANTIC_TONES,
-  VISUAL_VARIANTS,
-  normalizeTone,
-  normalizeVariant,
-  semanticToneStyles,
-} from './semantic-tones'
-import { resetStyles } from './reset.styles'
-
-describe('Semantic Tones & Visual Variants System', () => {
-  it('defines 5 semantic tones and 5 visual variants (25 combinations)', () => {
-    expect(SEMANTIC_TONES).toEqual(['primary', 'accent', 'success', 'warning', 'error'])
-    expect(VISUAL_VARIANTS).toEqual(['solid', 'flat', 'shadow', 'bordered', 'glass'])
-    expect(SEMANTIC_TONES.length * VISUAL_VARIANTS.length).toBe(25)
-  })
-
-  it('normalizes valid tones correctly', () => {
-    for (const tone of SEMANTIC_TONES) {
-      expect(normalizeTone(tone)).toBe(tone)
-    }
-  })
-
-  it('normalizes valid variants correctly', () => {
-    for (const variant of VISUAL_VARIANTS) {
-      expect(normalizeVariant(variant)).toBe(variant)
-    }
-  })
-
-  it('fast-check: normalizeTone returns a valid SemanticTone for any input', () => {
-    fc.assert(
-      fc.property(fc.anything(), (input) => {
-        const tone = normalizeTone(input)
-        expect(SEMANTIC_TONES).toContain(tone)
-        if (!SEMANTIC_TONES.includes(input as any)) {
-          expect(tone).toBe('primary')
-        }
-      }),
-      { numRuns: 1000 },
-    )
-  })
-
-  it('fast-check: normalizeVariant returns a valid VisualVariant for any input', () => {
-    fc.assert(
-      fc.property(fc.anything(), (input) => {
-        const variant = normalizeVariant(input)
-        expect(VISUAL_VARIANTS).toContain(variant)
-        if (!VISUAL_VARIANTS.includes(input as any)) {
-          expect(variant).toBe('flat')
-        }
-      }),
-      { numRuns: 1000 },
-    )
-  })
-
-  it('fast-check: custom fallbacks are respected for invalid inputs', () => {
-    fc.assert(
-      fc.property(
-        fc.string().filter((s) => !SEMANTIC_TONES.includes(s as any)),
-        fc.constantFrom(...SEMANTIC_TONES),
-        (invalidInput, fallback) => {
-          expect(normalizeTone(invalidInput, fallback)).toBe(fallback)
-        },
-      ),
-      { numRuns: 500 },
-    )
-
-    fc.assert(
-      fc.property(
-        fc.string().filter((s) => !VISUAL_VARIANTS.includes(s as any)),
-        fc.constantFrom(...VISUAL_VARIANTS),
-        (invalidInput, fallback) => {
-          expect(normalizeVariant(invalidInput, fallback)).toBe(fallback)
-        },
-      ),
-      { numRuns: 500 },
-    )
-  })
-
-  it('semanticToneStyles contains scoped variables for all 5 tones', () => {
-    const css = (semanticToneStyles as CSSResult).cssText
-    for (const tone of SEMANTIC_TONES) {
-      expect(css).toContain(`[data-tone="${tone}"]`)
-    }
-    expect(css).toContain('--_tone-solid-bg')
-    expect(css).toContain('--_tone-solid-fg')
-    expect(css).toContain('--_tone-soft-bg')
-    expect(css).toContain('--_tone-soft-fg')
-    expect(css).toContain('--_tone-border')
-  })
-
-  it('semanticToneStyles contains rules for all 5 visual variants', () => {
-    const css = (semanticToneStyles as CSSResult).cssText
-    for (const variant of VISUAL_VARIANTS) {
-      expect(css).toContain(`[data-variant="${variant}"]`)
-    }
-    expect(css).toContain('var(--shadow-md)')
-    expect(css).toContain('@supports (backdrop-filter: blur(12px))')
-    expect(css).toContain('-webkit-backdrop-filter: blur(12px)')
-    expect(css).toContain('var(--color-bg-glass)')
-    expect(css).toContain('var(--color-border-glass)')
-  })
-})
-
-describe('Shadow DOM Reset Styles', () => {
-  it('exports valid CSSResult with box-sizing, focus-visible ring, and font inheritance', () => {
-    const css = (resetStyles as CSSResult).cssText
-    expect(css).toContain('box-sizing: border-box')
-    expect(css).toContain(':focus-visible')
-    expect(css).toContain('var(--color-border-focus)')
-    expect(css).toContain('var(--font-family-base')
-  })
-})
+export type { AreaChartPointData } from './AreaChart'
+export { MoulAreaChart, MoulAreaChart as AreaChart } from './AreaChart'
 ```
 
 ---
 
 ## 5. Verification Method
 
-To independently verify the strategy and implementation:
+Once implemented by the worker agent, verify the implementation via the following independent checks:
 
-1. **Unit & Property Test Execution**:
-   - Run Vitest inside `ui/`:
-     ```bash
-     bun run --cwd ui test src/styles/semantic-tones.test.ts
-     ```
-     Must pass all test cases (25 combinations, 1,000 fast-check runs, CSS text assertions).
-2. **Scratch Verification Re-run**:
-   - Run the pre-verified scratch script:
-     ```bash
-     bun run .agents/teamwork/explorer_m2_2/scratch/test-semantic-tones.ts
-     ```
-     Expected output:
-     ```text
-     Testing semantic-tones and reset.styles...
-     ALL TESTS PASSED! 25 combinations verified, fast-check passed, CSS rules confirmed.
-     ```
-3. **Biome Formatting & Lint Check**:
-   - Run Biome check:
-     ```bash
-     bun run lint
-     ```
-     Must exit with code `0` and 0 errors.
-4. **Invalidation Conditions**:
-   - If `SEMANTIC_TONES` contains any value other than `'primary'`, `'accent'`, `'success'`, `'warning'`, `'error'`.
-   - If `VISUAL_VARIANTS` contains any value other than `'solid'`, `'flat'`, `'shadow'`, `'bordered'`, `'glass'`.
-   - If `normalizeTone` throws on `null` or `undefined`.
-   - If `variant="glass"` fails to provide the non-blur `--color-bg-glass` fallback outside `@supports`.
-   - If `variant="shadow"` fails to use `--shadow-md`.
-   - If `resetStyles` omits `:focus-visible` or `box-sizing: border-box`.
+1. **Verify Registration & HTMLElementTagNameMap**:
+   ```ts
+   import './components/AreaChart/AreaChart'
+   import { MoulAreaChart } from './components/AreaChart/AreaChart'
+
+   expect(customElements.get('moul-area-chart')).toBe(MoulAreaChart)
+   const el = document.createElement('moul-area-chart')
+   expect(el instanceof MoulAreaChart).toBe(true)
+   ```
+
+2. **Verify SVG Area and Boundary Stroke Path Generation**:
+   Mount `<moul-area-chart>` with test data:
+   ```ts
+   const chart = await mount<MoulAreaChart>(html`
+     <moul-area-chart
+       .data=${[
+         { month: 'Jan', desktop: 100, mobile: 50 },
+         { month: 'Feb', desktop: 150, mobile: 80 },
+       ]}
+       .series=${[
+         { key: 'desktop', name: 'Desktop' },
+         { key: 'mobile', name: 'Mobile' },
+       ]}
+     ></moul-area-chart>
+   `)
+   const areaPaths = chart.shadowRoot?.querySelectorAll('.area-path')
+   expect(areaPaths?.length).toBe(2)
+   expect(areaPaths?.[0].getAttribute('d')?.startsWith('M')).toBe(true)
+   ```
+
+3. **Verify Gradient Defs and Opacity**:
+   ```ts
+   const gradients = chart.shadowRoot?.querySelectorAll('linearGradient')
+   expect(gradients?.length).toBe(2)
+   const stops = gradients?.[0].querySelectorAll('stop')
+   expect(stops?.[0].getAttribute('stop-opacity')).toBe('0.25')
+   expect(stops?.[1].getAttribute('stop-opacity')).toBe('0')
+   ```
+
+4. **Verify Stacked Mode Calculation**:
+   Mount with `stacked = true` vs `stacked = false`:
+   ```ts
+   const unstacked = await mount<MoulAreaChart>(html`
+     <moul-area-chart
+       .data=${[{ month: 'Jan', a: 10, b: 20 }]}
+       .series=${[{ key: 'a' }, { key: 'b' }]}
+     ></moul-area-chart>
+   `)
+   const stacked = await mount<MoulAreaChart>(html`
+     <moul-area-chart
+       .data=${[{ month: 'Jan', a: 10, b: 20 }]}
+       .series=${[{ key: 'a' }, { key: 'b' }]}
+       .stacked=${true}
+     ></moul-area-chart>
+   `)
+   ```
+   Inspect marker `cy` coordinates: In stacked mode, series `b`'s `cy` must be shifted upward (smaller `cy` value in SVG space) compared to unstacked mode.
+
+5. **Verify Point Hover Custom Event**:
+   ```ts
+   let hoverDetail: PointHoverDetail | null = null
+   chart.addEventListener('point-hover', ((e: CustomEvent<PointHoverDetail>) => {
+     hoverDetail = e.detail
+   }) as EventListener)
+
+   const hitTarget = chart.shadowRoot?.querySelector<SVGCircleElement>('.point-hit-target')
+   hitTarget?.dispatchEvent(new PointerEvent('pointerenter', { bubbles: true, composed: true }))
+   expect(hoverDetail).not.toBeNull()
+   expect(hoverDetail?.label).toBe('Jan')
+   ```
+
+6. **Verify Empty State Gating**:
+   ```ts
+   const emptyChart = await mount<MoulAreaChart>(html`
+     <moul-area-chart .data=${[]}>
+       <div slot="empty">No Data</div>
+     </moul-area-chart>
+   `)
+   expect(emptyChart.shadowRoot?.querySelector('svg')).toBeNull()
+   expect(emptyChart.shadowRoot?.querySelector('slot[name="empty"]')).not.toBeNull()
+   ```
+
+7. **Verify Zero React & Package Cleanliness**:
+   ```bash
+   bun ./scripts/verify-no-react.ts all
+   ```
+   *Expected outcome*: Exit code 0, 0 banned React packages.
+
+8. **Verify Linter**:
+   ```bash
+   bun run lint
+   ```
+   *Expected outcome*: 0 errors.

@@ -1,29 +1,31 @@
-## 2026-10-16T03:50:45Z
-Scope: Milestone 2 Task 2.1 - CSS Design Token Layer (`ui/src/styles/style.css`)
-Formulate a concrete, complete implementation strategy and code plan for `ui/src/styles/style.css`:
-- `:root` `color-scheme: light dark;`
-- Theme selectors: `[data-theme="light"] { color-scheme: light; }`, `[data-theme="dark"], .dark { color-scheme: dark; }`
-- 6 Brand customization hooks with exact defaults:
-  - `--brand-hue: 250`
-  - `--brand-chroma-multiplier: 1`
-  - `--brand-font-family: inherit`
-  - `--brand-font-scale: 1`
-  - `--brand-density-factor: 1`
-  - `--brand-radius-factor: 1`
-- Port all color scales preserving exact OKLCH values from `ui/src/tokens/tokens.stylex.ts`:
-  - Neutral scale (50–900)
-  - Primary scale (50–900) using dynamic `var(--brand-hue, 250)` and `var(--brand-chroma-multiplier, 1)`
-  - Error scale (300–700, hue 27)
-  - Warning scale (300–700, hue 85)
-  - Success scale (300–700, hue 145)
-- Semantic aliases: `--color-bg`, `--color-bg-subtle`, `--color-bg-elevated`, `--color-fg`, `--color-fg-subtle`, `--color-fg-on-primary`, `--color-border`, `--color-border-subtle`, `--color-border-focus`, `--color-bg-glass`, `--color-border-glass`, `--color-shadow`, `--color-overlay`
-- 20 alert status tokens (info, accent, success, warning, error x bg, border, hover, active)
-- Typography scale (`xs` through `4xl`), font weights, `--font-family-base`
-- Spacing scale (`--spacing-1` through `--spacing-8`) scaled by `--brand-density-factor`
-- Radius scale (`--radius-none` through `--radius-full`) scaled by `--brand-radius-factor`
-- Shadows: `--shadow-sm`, `--shadow-md`, `--shadow-lg` strictly referencing `var(--color-shadow)`
-- Z-index scale (`--z-base`, `--z-dropdown: 1000`, `--z-modal: 1300`, `--z-tooltip: 1500`, `--z-toast: 1700`)
-- Chart tokens: `--color-chart-1` through `--color-chart-8`
+## 2026-10-17T04:08:01Z
 
-Do NOT modify files outside your working directory. Write your report to `/Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/explorer_m2_1/handoff.md`.
-When done, send a message back to the orchestrator (conversation ID: d61b067a-65c4-48c0-9937-01779e27afa2).
+You are explorer_m2_1.
+Working directory: /Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/explorer_m2_1
+
+MANDATORY: Read /Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/ORIGINAL_REQUEST.md before starting work (focus on ## 2026-10-17T03:06:45Z).
+Also read /Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/orchestrator_phase8_1/PROJECT.md and /Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/spec_miner_survey_1/handoff.md (Section 2.2 #3).
+Do NOT write code or modify source code files. You are a read-only investigation agent.
+
+Formulate the complete implementation blueprint for `moul-line-chart` (`ui/src/components/LineChart/LineChart.ts` & `LineChart.styles.ts`):
+- Extends `LitElement`, registered via idempotent `defineElement` as `moul-line-chart`.
+- Augments `HTMLElementTagNameMap`: `'moul-line-chart': MoulLineChart`.
+- Properties:
+  - `data: Record<string, unknown>[] = []` (`attribute: false`)
+  - `xKey: string = 'name'` (attribute `x-key`)
+  - `series: ChartSeries[] = []` (`attribute: false`)
+  - `height: number = 300` (type `Number`)
+  - `showGrid: boolean = true` (type `Boolean`, attribute `show-grid`)
+  - `curve: string = 'monotoneX'`
+  - `valueFormatter?: (value: any) => string`
+- D3 pipeline using `d3-scale` (`scalePoint`, `scaleLinear`) and `d3-shape` (`line`, `curveMonotoneX`).
+  - Calculate domain safeguards: handle empty data (`!data || data.length === 0`), single data point, all-identical Y values, and negative values.
+- Multi-series SVG rendering: `<svg>` viewport with viewBox based on container width & height, grid lines, series `<path>` strokes referencing `getChartColor(index)` or `s.color`, hover marker `<circle>`s.
+- Interactive hover: `pointerenter` on points dispatches custom event `point-hover` (`bubbles: true, composed: true, detail: PointHoverDetail`).
+- Empty state: When data is null, undefined, or empty `[]`, render `<slot name="empty"></slot>`.
+- Motion: SVG path transition animated over 350ms using `CHART_EASE` via `subtleAnimate` from `../../utils/motion`, respecting `prefersReducedMotion()`.
+- Pure Lit CSS styles in `LineChart.styles.ts` composed with `resetStyles`.
+- Zero React or StyleX imports.
+
+Write your complete blueprint to `/Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/explorer_m2_1/handoff.md`.
+Send a message back when done.

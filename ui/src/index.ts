@@ -8,7 +8,10 @@ export {
   MoulAlertDialog as AlertDialog,
 } from './components/AlertDialog'
 export type { AreaChartProps } from './components/AreaChart'
-export { AreaChart } from './components/AreaChart'
+export {
+  MoulAreaChart,
+  MoulAreaChart as AreaChart,
+} from './components/AreaChart'
 export type {
   AutocompleteEmptyStateProps,
   AutocompleteItemProps,
@@ -46,7 +49,7 @@ export {
 export type { BadgeSize } from './components/Badge'
 export { MoulBadge, MoulBadge as Badge } from './components/Badge'
 export type { BarChartProps } from './components/BarChart'
-export { BarChart } from './components/BarChart'
+export { MoulBarChart, MoulBarChart as BarChart } from './components/BarChart'
 export {
   MoulBreadcrumbItem,
   MoulBreadcrumbItem as BreadcrumbItem,
@@ -83,9 +86,15 @@ export type {
   LegendItem,
 } from './components/ChartContainer'
 // Charts and Analytics Components
-export { ChartContainer } from './components/ChartContainer'
+export {
+  MoulChartContainer,
+  MoulChartContainer as ChartContainer,
+} from './components/ChartContainer'
 export type { CustomTooltipProps } from './components/ChartTooltip'
-export { ChartTooltip } from './components/ChartTooltip'
+export {
+  MoulChartTooltip,
+  MoulChartTooltip as ChartTooltip,
+} from './components/ChartTooltip'
 export {
   type CheckboxGroupOrientation,
   MoulCheckbox,
@@ -120,8 +129,14 @@ export {
 } from './components/DatePicker'
 export { Description } from './components/Description'
 export type { DescriptionProps } from './components/Description/Description'
-export type { DoughnutChartProps } from './components/DoughnutChart'
-export { DoughnutChart } from './components/DoughnutChart'
+export type {
+  DoughnutChartProps,
+  DoughnutDataItem,
+} from './components/DoughnutChart'
+export {
+  MoulDoughnutChart,
+  MoulDoughnutChart as DoughnutChart,
+} from './components/DoughnutChart'
 export {
   type DrawerPlacement,
   type DrawerSize,
@@ -153,7 +168,10 @@ export { MoulKbd, MoulKbd as Kbd } from './components/Kbd'
 export { Label } from './components/Label'
 export type { LabelProps } from './components/Label/Label'
 export type { LineChartProps } from './components/LineChart'
-export { LineChart } from './components/LineChart'
+export {
+  MoulLineChart,
+  MoulLineChart as LineChart,
+} from './components/LineChart'
 export { type LinkVariant, MoulLink, MoulLink as Link } from './components/Link'
 export type {
   DropIndicatorProps,
@@ -218,9 +236,16 @@ export {
 } from './components/Pagination'
 export type {
   PercentageBarProps,
+  PercentageBarSize,
   PercentageCircleProps,
+  PercentageCircleSize,
 } from './components/Percentage'
-export { PercentageBar, PercentageCircle } from './components/Percentage'
+export {
+  MoulPercentageBar,
+  MoulPercentageBar as PercentageBar,
+  MoulPercentageCircle,
+  MoulPercentageCircle as PercentageCircle,
+} from './components/Percentage'
 export {
   MoulPopover,
   MoulPopover as Popover,
@@ -294,8 +319,8 @@ export {
 } from './components/Slider'
 export { MoulSpinner, MoulSpinner as Spinner } from './components/Spinner'
 export type { SpinnerSize } from './components/Spinner/Spinner'
-export type { StatProps } from './components/Stat'
-export { Stat } from './components/Stat'
+export type { StatProps, StatTrend } from './components/Stat'
+export { MoulStat, MoulStat as Stat } from './components/Stat'
 export {
   MoulSwitch,
   MoulSwitch as Switch,
@@ -356,7 +381,7 @@ export {
   type TooltipPlacement,
 } from './components/Tooltip'
 export type { TopListItem, TopListProps } from './components/TopList'
-export { TopList } from './components/TopList'
+export { MoulTopList, MoulTopList as TopList } from './components/TopList'
 export type { TypographyVariant } from './components/Typography'
 export {
   MoulTypography,
@@ -512,5 +537,17 @@ declare global {
     'moul-combobox-item': MoulComboBoxItem
     'moul-calendar': MoulCalendar
     'moul-date-picker': MoulDatePicker
+
+    // Phase 8: Charts & Data Visualization
+    'moul-chart-container': MoulChartContainer
+    'moul-chart-tooltip': MoulChartTooltip
+    'moul-line-chart': MoulLineChart
+    'moul-area-chart': MoulAreaChart
+    'moul-bar-chart': MoulBarChart
+    'moul-doughnut-chart': MoulDoughnutChart
+    'moul-top-list': MoulTopList
+    'moul-stat': MoulStat
+    'moul-percentage-bar': MoulPercentageBar
+    'moul-percentage-circle': MoulPercentageCircle
   }
 }

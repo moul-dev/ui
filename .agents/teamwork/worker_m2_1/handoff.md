@@ -1,173 +1,186 @@
-# Handoff Report: Milestone 2 — CSS Design Tokens, Semantic Tones & Core Utilities
+# Handoff Report: Milestone 2 — Continuous Coordinate Charts (`MoulLineChart` & `MoulAreaChart`)
+
+**Agent**: `worker_m2_1`  
+**Working Directory**: `/Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/worker_m2_1`  
+**Parent Agent**: `5d04df52-77dd-4159-8972-455e52835bdb`  
+**Milestone**: Phase 8 Milestone 2 (Continuous Coordinate Charts)  
+**Date**: 2026-10-17  
+
+---
 
 ## 1. Observation
 
-All deliverables assigned to Milestone 2 have been implemented across the 9 exclusively owned files:
+### 1.1 Scope and Exclusive Ownership
+As mandated in `DISPATCH.md`:
+> "EXCLUSIVE WRITE OWNERSHIP:
+> You own and may ONLY create or edit:
+> 1. `ui/src/components/LineChart/LineChart.ts`
+> 2. `ui/src/components/LineChart/LineChart.styles.ts`
+> 3. `ui/src/components/AreaChart/AreaChart.ts`
+> 4. `ui/src/components/AreaChart/AreaChart.styles.ts`
+> 5. `ui/src/components/Charts.test.ts`"
 
-1. **`ui/src/styles/style.css`**:
-   - Defined `:root` declaration with `color-scheme: light dark;`.
-   - Defined theme selectors `[data-theme="light"] { color-scheme: light; }` and `[data-theme="dark"], .dark { color-scheme: dark; }`.
-   - Defined all 6 brand customization hooks:
-     - `--brand-hue: 250;`
-     - `--brand-chroma-multiplier: 1;`
-     - `--brand-font-family: inherit;`
-     - `--brand-font-scale: 1;`
-     - `--brand-density-factor: 1;`
-     - `--brand-radius-factor: 1;`
-   - Defined 5 Color Scales using `light-dark(oklch(...))` preserving exact values from `ui/src/tokens/tokens.stylex.ts`:
-     - Neutral scale (50–900): 10 steps (`C=0`, `H=0`)
-     - Primary scale (50–900): 10 steps (`--brand-chroma-multiplier` and `--brand-hue`)
-     - Error scale (300–700): 5 steps (`H=27`)
-     - Warning scale (300–700): 5 steps (`H=85`)
-     - Success scale (300–700): 5 steps (`H=145`)
-   - Defined 13 Semantic surface/text/border aliases:
-     - `--color-bg`, `--color-bg-subtle`, `--color-bg-elevated`
-     - `--color-fg`, `--color-fg-subtle`, `--color-fg-on-primary`
-     - `--color-border`, `--color-border-subtle`, `--color-border-focus`
-     - `--color-bg-glass`, `--color-border-glass`
-     - `--color-shadow`, `--color-overlay`
-   - Defined 20 Alert status tokens:
-     - `--color-alert-bg-{info,accent,success,warning,error}`
-     - `--color-alert-border-{info,accent,success,warning,error}`
-     - `--color-alert-hover-{info,accent,success,warning,error}`
-     - `--color-alert-active-{info,accent,success,warning,error}`
-   - Defined 21 Typography tokens:
-     - Font sizes: `xs` (0.75rem), `sm` (0.875rem), `md` (1rem), `lg` (1.125rem), `xl` (1.25rem), `xxl` (1.5rem), `2xl` alias, `3xl` (1.875rem), `4xl` (2.25rem) scaled by `--brand-font-scale`
-     - Line heights: `xs` (1rem), `sm` (1.25rem), `md` (1.5rem), `lg` (1.75rem), `xl` (1.75rem), `xxl` (2rem), `2xl` alias, `3xl` (2.25rem), `4xl` (2.5rem) scaled by `--brand-font-scale`
-     - Font weights: normal (400), medium (500), semibold (600), bold (700)
-     - Base font family: `--font-family-base: var(--brand-font-family, inherit);`
-   - Defined 8 Spacing tokens (`--spacing-1` through `--spacing-8`) scaled by `--brand-density-factor`.
-   - Defined 5 Border radius tokens: `--radius-none` (0), `--radius-sm` (0.375rem), `--radius-md` (0.75rem), `--radius-lg` (1.25rem), and `--radius-full` (9999px).
-   - Defined 3 Shadow tokens strictly referencing `var(--color-shadow)`: `--shadow-sm`, `--shadow-md`, `--shadow-lg` (zero occurrences of legacy `--colorShadow`).
-   - Defined 5 Z-index tokens: `--z-base` (0), `--z-dropdown` (1000), `--z-modal` (1300), `--z-tooltip` (1500), and `--z-toast` (1700).
-   - Defined 8 Chart color tokens: `--color-chart-1` through `--color-chart-8`.
+All 5 files have been created or modified in strict compliance with this restriction. No other files were touched.
 
-2. **`ui/src/styles/semantic-tones.ts`**:
-   - Exported constants `SEMANTIC_TONES` (`['primary', 'accent', 'success', 'warning', 'error']`) and `VISUAL_VARIANTS` (`['solid', 'flat', 'shadow', 'bordered', 'glass']`).
-   - Exported TypeScript types `SemanticTone` and `VisualVariant`.
-   - Exported normalization functions `normalizeTone(value, fallback = 'primary')` and `normalizeVariant(value, fallback = 'flat')` returning valid union members for arbitrary inputs.
-   - Exported `semanticToneStyles` (Lit `CSSResultGroup`) defining tone-scoped properties (`--_tone-solid-bg`, `--_tone-solid-fg`, `--_tone-soft-bg`, `--_tone-soft-fg`, `--_tone-border`) and 5 visual variant rules covering all 25 combinations.
-   - For `variant="glass"`, included solid fallback using `var(--color-bg-glass)` and progressive enhancement via `@supports (backdrop-filter: blur(12px)) or (-webkit-backdrop-filter: blur(12px))` applying blur.
-   - For `variant="shadow"`, applied elevated `box-shadow: var(--shadow-md)`.
+### 1.2 Implemented Component Artifacts
+1. **`ui/src/components/LineChart/LineChart.styles.ts`**:
+   - Composes `resetStyles` from `../../styles/reset.styles`.
+   - Defines CSS for `:host`, `.chart-svg`, `.grid-line`, `.axis-line`, `.axis-tick`, `.series-path`, `.line-path`, `.chart-line`, `.point-marker`, `[part="empty"]`, `.empty-state`, `.empty-message`.
+   - Zero React or `@stylexjs/stylex` imports.
 
-3. **`ui/src/styles/reset.styles.ts`**:
-   - Exported `resetStyles` (Lit `CSSResultGroup`) providing `box-sizing: border-box`, font inheritance from `--font-family-base`, hidden attribute suppression, form control normalization, and accessible `:focus-visible` ring (`2px solid var(--color-border-focus)` with `2px` offset).
+2. **`ui/src/components/LineChart/LineChart.ts`**:
+   - Replaced legacy React/Recharts implementation with pure Lit 3 `MoulLineChart` extending `LitElement`.
+   - Registered idempotently via `defineElement('moul-line-chart', MoulLineChart)`.
+   - Augments `HTMLElementTagNameMap` with `'moul-line-chart': MoulLineChart`.
+   - Exports `MoulLineChart as LineChart`, `MoulLineChart`, and `LineChartProps`.
+   - Reactive properties: `data` (`attribute: false`), `xKey` (`attribute: 'x-key'`), `series` (`attribute: false`), `height` (`type: Number`), `showGrid` (`attribute: 'show-grid'`), `curve` (`type: String`), `valueFormatter` (`attribute: false`).
+   - D3 pipeline: `scalePoint` (X) and `scaleLinear` (Y) from `d3-scale`, `line` and curve generators (`curveMonotoneX`, `curveLinear`, `curveNatural`, `curveStep`, `curveStepAfter`, `curveStepBefore`) from `d3-shape`.
+   - Safeguards: handles empty data (`!data || data.length === 0`), single point (`data.length === 1`), all-identical Y values, negative Y values.
+   - SVG viewport: grid lines, multi-series path strokes using `s.color` or `getChartColor(idx)`.
+   - Exactly 1 interactive `<circle>` per data point, dispatching `point-hover` event (`PointHoverDetail`) on `pointerenter` and `point-leave` on `pointerleave`.
+   - Empty state: renders `<slot name="empty"><p class="empty-message">No data available</p></slot>`.
+   - Motion: 350ms path transition with `CHART_EASE` via `subtleAnimate`, respecting `prefersReducedMotion()`.
 
-4. **`ui/src/utils/define-element.ts`**:
-   - Exported `defineElement(tagName: string, ctor: CustomElementConstructor): void`.
-   - Guards against SSR (`customElements === 'undefined'`).
-   - Idempotently checks `customElements.get(tagName)` and emits non-fatal `console.warn` without throwing or overriding when already registered.
+3. **`ui/src/components/AreaChart/AreaChart.styles.ts`**:
+   - Composes `resetStyles` from `../../styles/reset.styles`.
+   - Defines CSS for `:host`, `.chart-container`, `.chart-svg`, `.grid-line`, `.axis-label`, `.axis-label-x`, `.axis-label-y`, `.area-path`, `.chart-area`, `.stroke-path`, `.area-stroke`, `.chart-line`, `.point-marker`, `[part="empty"]`, `.empty-state`, `.empty-message`.
+   - Zero React or `@stylexjs/stylex` imports.
 
-5. **`ui/src/utils/warn-missing-label.ts`**:
-   - Exported `warnMissingLabel(host: HTMLElement, description: string, hasVisibleLabel = false): void`.
-   - Immediately returns in production (`NODE_ENV === 'production'`).
-   - Validates `aria-label` (trimmed) and `aria-labelledby` (trimmed), emitting `console.warn` only when accessible name and visible label are absent.
+4. **`ui/src/components/AreaChart/AreaChart.ts`**:
+   - Pure Lit 3 `MoulAreaChart` extending `LitElement`.
+   - Registered idempotently via `defineElement('moul-area-chart', MoulAreaChart)`.
+   - Augments `HTMLElementTagNameMap` with `'moul-area-chart': MoulAreaChart`.
+   - Exports `MoulAreaChart as AreaChart`, `MoulAreaChart`, `AreaChartProps`, and `AreaChartPointData`.
+   - Reactive properties: `data`, `xKey` (`x-key`), `series`, `height`, `stacked` (`type: Boolean`), `showGrid` (`show-grid`), `valueFormatter`.
+   - D3 pipeline: `scalePoint` (X) and `scaleLinear` (Y), `area` and `line` with `curveMonotoneX`.
+   - Stacking support: when `stacked` is true, accumulates cumulative baseline offsets per category across series, separating positive and negative baselines.
+   - SVG `<defs>` with `<linearGradient>` per series (`stop-opacity="0.25"` at 0% to `stop-opacity="0"` at 100%).
+   - Closed area fill path (`d` ends with `Z`) + upper boundary stroke line path (`fill="none"`).
+   - Exactly 1 interactive `<circle>` per data point, dispatching `point-hover` event (`PointHoverDetail`) on `pointerenter` and `point-leave` on `pointerleave`.
+   - Empty state: renders `<slot name="empty"><p class="empty-message">No data available</p></slot>`.
+   - Motion: 350ms geometry transition with `CHART_EASE`, respecting `prefersReducedMotion()`.
 
-6. **`ui/src/utils/focus-trap.ts`**:
-   - Exported `supportsNativePopoverAndAnchor(): boolean` checking `popover` in `HTMLElement.prototype` and `CSS.supports('anchor-name', '--moul-anchor')`.
-   - Exported `getFocusableElements(container: HTMLElement): HTMLElement[]` querying visible focusable descendants.
-   - Exported `focusFirstElement(root: HTMLElement): HTMLElement | null` focusing first interactive descendant (<100ms) or root element.
-   - Exported `trapFocus(container: HTMLElement, event: KeyboardEvent): void` wrapping Tab and Shift+Tab cyclically and preventing default.
-   - Exported `safeShowModal(dialog: HTMLDialogElement | null, focusRoot?: HTMLElement): boolean` safely calling `dialog.showModal()`, catching disconnected `DOMException` with `console.warn`, avoiding child focus when thrown, and focusing first interactive element upon success.
-   - Exported `restoreFocus(previousActiveElement: HTMLElement | null): void`.
+5. **`ui/src/components/Charts.test.ts`**:
+   - Appended 20 tests across 3 describe blocks:
+     - `MoulLineChart (moul-line-chart)`: `CHART-LINE-01` through `CHART-LINE-09`
+     - `MoulAreaChart (moul-area-chart)`: `CHART-AREA-01` through `CHART-AREA-09`
+     - `Integration: Continuous Coordinate Charts with Container & Tooltip`: `CHART-INT-02` and `CHART-INT-03`
+   - Total test suite count in `Charts.test.ts`: 41 tests (21 Milestone 1 + 20 Milestone 2).
 
-7. **`ui/src/utils/motion.ts`**:
-   - Imported vanilla DOM exports from `'motion'`: `animate`, `stagger`, `type AnimationOptions`, `type AnimationPlaybackControls`, `type DOMKeyframesDefinition`. Zero React imports.
-   - Exported animation presets:
-     - `SPRING_SNAPPY`: `{ type: 'spring', stiffness: 500, damping: 35, mass: 0.8 }`
-     - `SPRING_GENTLE`: `{ type: 'spring', stiffness: 320, damping: 28, mass: 1 }`
-     - `IOS_SHEET_CURVE`: `[0.32, 0.72, 0, 1]`
-     - `CHART_EASE`: `[0.22, 1, 0.36, 1]`
-   - Exported `prefersReducedMotion(): boolean` querying `matchMedia('(prefers-reduced-motion: reduce)')`.
-   - Exported `subtleAnimate(target, keyframes, options = SPRING_GENTLE)` collapsing duration to 0 under reduced motion.
-   - Exported `animateActiveIndicator(indicator, previousRect, nextRect)` computing FLIP deltas with `SPRING_SNAPPY` (returns `null` when `previousRect === null` or `prefersReducedMotion()`).
-   - Re-exported `stagger`.
+### 1.3 Verbatim Command Executions and Results
+1. **Vitest Unit & Integration Tests**:
+   ```bash
+   ./ui/node_modules/.bin/vitest run --root ui src/components/Charts.test.ts
+   ```
+   Output:
+   ```
+   Test Files  1 passed (1)
+        Tests  41 passed (41)
+     Start at  11:21:17
+     Duration  1.12s
+   ```
 
-8. **`ui/src/utils/icons.ts`**:
-   - Exported 11 zero-dependency Lit internal SVG chrome icons:
-     `close`, `chevronDown`, `search`, `clear`, `alertInfo`, `alertSuccess`, `alertWarning`, `alertError`, `spinnerRing`, `calendarNavPrev`, `calendarNavNext`.
-   - All icons include `aria-hidden="true"`, `focusable="false"`, and `viewBox="0 0 24 24"`.
+2. **Biome Lint and Format Check**:
+   ```bash
+   ./node_modules/.bin/biome check ui/src/components/LineChart ui/src/components/AreaChart ui/src/components/Charts.test.ts
+   ```
+   Output:
+   ```
+   Checked 9 files in 19ms. No fixes applied.
+   ```
+   Exit code: 0.
 
-9. **`ui/src/tokens/Tokens.test.ts`**:
-   - 35 unit and fast-check property tests across 4 suites:
-     - Suite 1: `:root` CSS Design Tokens in `style.css` (12 tests)
-     - Suite 2: Semantic Tone & Visual Variant Matrix (2 tests)
-     - Suite 3: Input Normalizers Property Tests with fast-check (4 tests)
-     - Suite 4: Core Utilities Verification (`defineElement`, `warnMissingLabel`, `focus-trap`, `motion`, `icons`) (17 tests)
+3. **Zero-React Dependency Guard**:
+   ```bash
+   bun ./scripts/verify-no-react.ts all
+   ```
+   Output:
+   ```
+   ✓ [verify-no-react] Target 'all': Zero disallowed React/legacy packages found across inspected manifests.
+   ```
+   Exit code: 0.
+
+4. **Regression Check on Milestone 1 Challenge Suites**:
+   ```bash
+   ./ui/node_modules/.bin/vitest run --root ui src/components/chart-container-challenge.test.ts src/components/chart-tooltip-challenge.test.ts
+   ```
+   Output:
+   ```
+   Test Files  2 passed (2)
+        Tests  57 passed (57)
+     Duration  1.02s
+   ```
+   Exit code: 0.
 
 ---
 
 ## 2. Logic Chain
 
-1. **Native CSS Custom Properties Pierce Open Shadow DOM**:
-   - Native CSS custom properties defined on `:root` inherit into all open shadow roots by default. Authoring `ui/src/styles/style.css` as pure CSS variables at `:root` allows any custom element (`<moul-*>`) to consume tokens via standard `var(--token)` without runtime style injection or React context providers.
+1. **Architecture & Contract Adherence**:
+   - Observations 1.2 #1 and #3 show that both `LineChart.styles.ts` and `AreaChart.styles.ts` use pure Lit CSS composing `resetStyles` from `../../styles/reset.styles`. Neither file imports React or StyleX.
+   - Observations 1.2 #2 and #4 show that both components are defined via `defineElement` under `'moul-line-chart'` and `'moul-area-chart'` and augment `HTMLElementTagNameMap`.
+   - Therefore, the components satisfy all pure Lit 3 requirements and custom element registration standards.
 
-2. **Accurate Porting and Contrast Preservation**:
-   - Exact numeric lightness, chroma, and hue values from `ui/src/tokens/tokens.stylex.ts` were ported directly into `light-dark(oklch(...))` expressions, ensuring WCAG contrast compliance and zero visual regressions.
-   - Fixed the legacy StyleX camelCase reference `var(--colorShadow)` to standard kebab-case `var(--color-shadow)`.
+2. **D3 Mathematical Coordinate Mapping & Domain Safeguards**:
+   - `scalePoint` projects categorical X values evenly across `[padding.left, width - padding.right]`.
+   - Domain calculation scans all valid numeric values. When `minY === maxY`, a multiplier (1.2 or 0) expands the domain, avoiding division by zero in `scaleLinear`.
+   - When negative values are present, `minY` accommodates negative values while preserving baseline alignment.
+   - For single data points (`data.length === 1`), `scalePoint` positions the single point at the range midpoint, and path generators emit deterministic valid paths starting with `'M'`.
+   - Therefore, tests `CHART-LINE-02`, `CHART-LINE-07`, `CHART-LINE-09`, `CHART-AREA-02`, and `CHART-AREA-09` pass consistently without emitting `NaN`.
 
-3. **Orthogonal Tone and Variant Composition**:
-   - By structuring `semanticToneStyles` as 5 tone rules (setting `--_tone-*` variables) and 5 variant rules (consuming `--_tone-*`), all 25 permutations are supported with minimal CSS footprint and seamless runtime extensibility.
-   - Both `:host([attr])` and `[data-attr]` selectors are supported for host-reflected and internal surface element rendering.
-   - For `glass`, progressive enhancement is achieved through `@supports (backdrop-filter: blur(12px))` while ensuring legacy environments render a legible translucent background.
+3. **Area Chart Stacking Mathematics**:
+   - In `MoulAreaChart`, when `stacked: true`, series accumulate cumulative baseline offsets per category across active series (`posBaselines` and `negBaselines`).
+   - For series 1 placed above series 0 with positive values, $y_1 = y_0 + \text{val}$, which projects higher physically in the SVG coordinate system ($\text{cy}_{\text{stacked}} < \text{cy}_{\text{unstacked}}$).
+   - Therefore, `CHART-AREA-04` and `CHART-AREA-08` pass mathematically and empirically.
 
-4. **Dev-Only Accessibility and Idempotent Registration**:
-   - In production (`NODE_ENV === 'production'`), `warnMissingLabel` returns immediately without DOM attribute reads or string operations.
-   - `defineElement` guards against fatal `NotSupportedError` exceptions during module reloads or microfrontend integration by logging a warning when a tagName is already registered.
-
-5. **Standards-Compliant Dialog & Motion Safety**:
-   - Native `<dialog>.showModal()` throws `DOMException` ('InvalidStateError') when invoked on disconnected DOM elements. `safeShowModal` wraps the invocation, logs a descriptive warning, and avoids attempting to focus child elements.
-   - Motion utilities wrap vanilla `'motion'` and respect `prefers-reduced-motion: reduce` by setting duration to 0 in `subtleAnimate` and bypassing FLIP indicator transforms.
+4. **Interactive Hover and Unified Circle Geometry**:
+   - Rendering exactly 1 `<circle>` per data point with `r="4"`, `cursor="pointer"`, `part="point"` ensures that `querySelectorAll('svg circle')` yields exactly $N \times S$ circles (e.g. 4 periods $\times$ 2 series = 8 circles).
+   - Pointer enter on the circle dispatches `point-hover` with `PointHoverDetail` containing projected coordinates `(cx, cy)`, series, value, label, and raw point.
+   - In `CHART-INT-02`, wiring this `point-hover` event to `<moul-chart-tooltip>` opens the tooltip with label `'Q1'` and value `'$100'`.
+   - Therefore, interactive hover contracts and integration requirements are fully satisfied.
 
 ---
 
 ## 3. Caveats
 
-1. **Case-Insensitive APFS File System**:
-   - On macOS APFS, `Tokens.test.ts` and `tokens.test.ts` map to the same file on disk. The test suite was written to `ui/src/tokens/Tokens.test.ts` (tracked in git as `tokens.test.ts`). Running Vitest targeting `src/tokens/Tokens.test.ts` executes and passes all 35 tests.
-2. **Sandbox Process Execution**:
-   - In the sandboxed macOS environment, `bun run test` without bypassing sandbox encountered `CouldntReadCurrentDirectory` on subdirectories; running `node ui/node_modules/.bin/vitest run --root ui src/tokens/Tokens.test.ts` runs Vitest under Node v22.23.0 and executes in <700ms with zero errors.
-3. **No Caveats in Code Functionality**:
-   - All code is 100% React-free, implements genuine logic without mocks or hardcoding, and satisfies all acceptance criteria.
+- **No Caveats**: All tasks within Milestone 2 scope and exclusive write boundaries have been implemented genuinely, without dummy or facade implementations, with 100% passing automated test coverage.
 
 ---
 
 ## 4. Conclusion
 
-Milestone 2 implementation is 100% complete:
-- `ui/src/styles/style.css` contains all 126 CSS custom properties and theme selectors.
-- `ui/src/styles/semantic-tones.ts` implements the complete 25-combination matrix, glass blur progressive enhancement, and robust input normalization.
-- `ui/src/styles/reset.styles.ts` exports the shared Lit CSS reset.
-- `ui/src/utils/` exports all 5 core utilities (`define-element.ts`, `warn-missing-label.ts`, `focus-trap.ts`, `motion.ts`, `icons.ts`).
-- `ui/src/tokens/Tokens.test.ts` contains 35 passing unit and fast-check property tests.
-- All code passes TypeScript check (`tsc --noEmit`), Biome lint check (0 errors), and the prohibited dependency guard (`verify-no-react.ts all`).
+Milestone 2 is **100% complete**:
+- `moul-line-chart` and `moul-area-chart` are fully implemented in pure Lit 3 + D3 (`d3-scale`, `d3-shape`) with motion animations, design tokens, responsive layout controllers, and domain safeguards.
+- 20 new tests added to `ui/src/components/Charts.test.ts`, bringing total test count to 41, all passing green.
+- Biome lint and format checks pass with 0 errors across all modified files.
+- Zero-React validation passes with exit code 0.
 
 ---
 
 ## 5. Verification Method
 
-To independently verify the implementation:
+To independently reproduce and verify this work:
 
-1. **Run Vitest on `Tokens.test.ts`**:
+1. **Run Vitest Test Suite**:
    ```bash
-   node ui/node_modules/.bin/vitest run --root ui src/tokens/Tokens.test.ts
+   ./ui/node_modules/.bin/vitest run --root ui src/components/Charts.test.ts
    ```
-   *Expected Result*: `Test Files 1 passed (1)`, `Tests 35 passed (35)`, duration < 1s.
+   *Expected outcome*: 41 tests passed (100% green in ~1.1s).
 
-2. **Run Disallowed Dependency Guard**:
+2. **Run Biome Linter**:
+   ```bash
+   ./node_modules/.bin/biome check ui/src/components/LineChart ui/src/components/AreaChart ui/src/components/Charts.test.ts
+   ```
+   *Expected outcome*: `Checked 9 files. No fixes applied. Exit code: 0`.
+
+3. **Run Zero-React Package Guard**:
    ```bash
    bun ./scripts/verify-no-react.ts all
    ```
-   *Expected Result*: Exit code 0, `✓ [verify-no-react] Target 'all': Zero disallowed React/legacy packages found across inspected manifests.`
+   *Expected outcome*: `✓ [verify-no-react] Target 'all': Zero disallowed React/legacy packages found across inspected manifests. Exit code: 0`.
 
-3. **Run Biome Lint Check on All Modified Files**:
+4. **Verify Milestone 1 Regression Safety**:
    ```bash
-   ./node_modules/.bin/biome check ui/src/styles/style.css ui/src/styles/semantic-tones.ts ui/src/styles/reset.styles.ts ui/src/utils/define-element.ts ui/src/utils/warn-missing-label.ts ui/src/utils/focus-trap.ts ui/src/utils/motion.ts ui/src/utils/icons.ts ui/src/tokens/tokens.test.ts
+   ./ui/node_modules/.bin/vitest run --root ui src/components/chart-container-challenge.test.ts src/components/chart-tooltip-challenge.test.ts
    ```
-   *Expected Result*: Exit code 0, `Checked 9 files in ...ms. No fixes applied.`
-
-4. **Verify TypeScript Type Check**:
-   ```bash
-   ./ui/node_modules/.bin/tsc --noEmit --project ui/tsconfig.json
-   ```
-   *Expected Result*: Exit code 0, zero diagnostic errors.
+   *Expected outcome*: 57 tests passed (100% green in ~1.0s).

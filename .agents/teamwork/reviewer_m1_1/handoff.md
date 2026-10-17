@@ -1,217 +1,209 @@
-# Review & Adversarial Challenge Report: Milestone 1 (Phase 1)
+# Review & Adversarial Challenge Report: Milestone 1 (Phase 8)
 
-## Review Summary
-
+**Reviewer & Critic**: `reviewer_m1_1`  
+**Working Directory**: `/Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/reviewer_m1_1`  
+**Milestone**: Phase 8 Milestone 1 — Chart Container & Tooltip Foundation  
+**Date**: 2026-10-17  
 **Verdict**: **APPROVE**  
-**Integrity Status**: CLEAN — Zero integrity violations detected (no hardcoded test outputs, no dummy facades, no shortcuts, no fabricated logs, genuine independent verification).  
-**Overall Risk Assessment**: LOW
+**Overall Risk Assessment**: **LOW**
 
 ---
 
 ## 1. Observation
 
-Direct examination and execution results across all target files:
+Direct inspection of code, tests, linter, and build tooling produced the following observations:
 
-1. **`scripts/verify-no-react.ts` Execution & Edge Cases**:
-   - Executing `bun ./scripts/verify-no-react.ts all` exited with code `0`:
-     ```text
-     ✓ [verify-no-react] Target 'all': Zero disallowed React/legacy packages found across inspected manifests.
-     ```
-   - Executing `bun ./scripts/verify-no-react.ts ui` and `bun ./scripts/verify-no-react.ts docs` both exited with code `0`.
-   - Executing `bun ./scripts/verify-no-react.ts invalid` exited with code `1`:
-     ```text
-     Invalid target 'invalid'. Supported targets: all, ui, docs.
-     Usage: bun ./scripts/verify-no-react.ts [all|ui|docs]
-     ```
-   - Injected 15 banned packages (`react`, `react-dom`, `react-aria`, `react-aria-components`, `react-stately`, `@stylexjs/stylex`, `@vitejs/plugin-react`, `recharts`, `input-otp`, `waku`, `@lit/react`, `lucide-react`, `@phosphor-icons/react`, `fumadocs-core`, `@tanstack/react-table`) across `dependencies`, `devDependencies`, and `peerDependencies`. In every test, the script exited with code `1`, printed the offending package name, and highlighted the specific manifest block.
+### 1.1 Files Inspected
+1. `ui/src/components/ChartCommon.ts`:
+   - Pure TypeScript definitions: `ChartSeries`, `DoughnutDataItem`, `TopListItem`, `PointHoverDetail`.
+   - `CHART_COLORS` array defining `var(--color-chart-1)` through `var(--color-chart-8)`.
+   - `getChartColor(index: number)` mathematical modulo 8 mapping: `(((index % 8) + 8) % 8) + 1`.
+   - Zero React, StyleX, or external runtime imports.
+2. `ui/src/components/ChartContainer/ChartContainer.ts`:
+   - Extends `LitElement`, registered as `moul-chart-container` via idempotent `defineElement`.
+   - Properties: `title` (String), `description` (String), `height` (Number, default 300), `isEmpty` (Boolean, attribute `is-empty`).
+   - Attaches `LayoutIndicatorController(this, { observeDimensions: true })`.
+   - In `updated()`, detects dimensions or breakpoint changes and dispatches custom event `viewport-resize` with `{ bubbles: true, composed: true, detail: { width, height, breakpoint } }`. Initial 0x0 mount events are suppressed via `isInitialZero`.
+   - Disconnect cleanup: Lit's `disconnectedCallback` delegates to `LayoutIndicatorController.hostDisconnected()`, unhooking the `ResizeObserver`.
+   - Slots: `header`, default visualization slot, `empty`, and `legend`.
+3. `ui/src/components/ChartContainer/ChartContainer.styles.ts`:
+   - Pure Lit CSS tagged template `chartContainerStyles` composed with `resetStyles`.
+   - CSS Shadow DOM parts: `[part="header"]`, `[part="title"]`, `[part="description"]`, `[part="content"]`, `[part="empty"]`, `[part="legend"]`.
+4. `ui/src/components/ChartTooltip/ChartTooltip.ts`:
+   - Extends `LitElement`, registered as `moul-chart-tooltip` via idempotent `defineElement`.
+   - Configures `setAttribute('popover', 'manual')` in `connectedCallback()`.
+   - Integrates `OverlayPresenceController(this, { preset: 'tooltip', popover: () => this.popoverEl })`.
+   - Provides `show(optionsOrX, y?, label?, value?, color?)` supporting both options object and positional signatures.
+   - Provides `hide()`.
+   - Safe `showPopover()` and `hidePopover()` methods verify `this.isConnected` and catch missing native Popover API errors with fallback classes.
+   - Updates coordinates via both inline `left`/`top` and hardware-accelerated `transform: translate3d(${x}px, ${y}px, 0) translate(-50%, -100%) translateY(-8px)`.
+5. `ui/src/components/ChartTooltip/ChartTooltip.styles.ts`:
+   - Pure Lit CSS tagged template `chartTooltipStyles` composed with `resetStyles`.
+   - Specifies `pointer-events: none` on `:host` and `.tooltip-container` to prevent cursor jitter over underlying SVG geometry.
+6. `ui/src/components/Charts.test.ts`:
+   - 17 test cases across 4 test suites: `ChartCommon Utilities`, `MoulChartContainer`, `MoulChartTooltip`, and `Integration: Container & Tooltip Collaboration`.
+   - Includes property-based testing with `fast-check` over [-10,000, 10,000] for color wrapping.
 
-2. **Package Manifest Inspection**:
-   - `ui/package.json`:
-     - Prohibited packages: 0 matches for `react`, `react-dom`, `react-aria`, `react-aria-components`, `react-stately`, `@stylexjs/*`, `@vitejs/plugin-react`, `recharts`, `input-otp`, `waku`, `@lit/react`, or `/^react-/`.
-     - `peerDependencies` block: completely removed.
-     - `dependencies`: contains `@lit-labs/virtualizer` (^2.1.0), `@lit/context` (^1.1.3), `d3-scale` (^4.0.2), `d3-shape` (^3.2.0), `lit` (^3.2.1), `motion` (^13.4.1).
-     - `devDependencies`: contains `@biomejs/biome`, `@custom-elements-manifest/analyzer`, `@open-wc/testing-helpers`, `fast-check`, `happy-dom`, `@types/d3-scale`, `@types/d3-shape`, and build tooling.
-     - `exports`: strictly exposes `.` (`types: ./dist/src/index.d.ts`, `import: ./dist/moul-ui.js`, `default: ./dist/moul-ui.js`) and `./style.css` (`style: ./dist/assets/style.css`, `default: ./dist/assets/style.css`). Legacy subpaths (`./react`, `./tokens`, `./tokens.stylex`, `./theme.css`, `./style`) are absent.
-     - Metadata: contains `"customElements": "./dist/custom-elements.json"` and `"sideEffects": ["./dist/moul-ui.js", "./dist/assets/style.css"]`.
-   - `docs/package.json`:
-     - Zero React, Waku, or Fumadocs packages.
-     - `dependencies`: `@astrojs/starlight` (^0.32.0), `@moul-dev/ui` (`workspace:*`), `@phosphor-icons/web` (^2.1.1), `astro` (^5.5.0), `sharp` (^0.33.5).
-     - `devDependencies`: `@biomejs/biome`, `@types/node`, `typescript`.
+### 1.2 Tool Executions & Test Results
 
-3. **`ui/vite.config.ts` Plugin & Build Verification**:
-   - `banReactImportsPlugin`:
-     - Intercepts resolution of prohibited prefixes (`react`, `react-dom`, `react-aria`, `react-aria-components`, `@stylexjs/stylex`, `@lit/react`, `motion/react`).
-     - Tested resolution with banned specifiers (`react`, `react/jsx-runtime`, `react-dom`, `react-aria`, `@stylexjs/stylex`, `@lit/react`, `motion/react`): each throws `Error: [banReactImportsPlugin] Prohibited import detected...`.
-     - Tested resolution with allowed specifiers (`lit`, `@lit/context`, `@lit-labs/virtualizer`, `motion`, `d3-scale`, `d3-shape`, local paths): returns `null` as expected for normal Rollup pipeline resolution.
-   - `copyCssTokensPlugin`:
-     - Verified `closeBundle` checks existence of `ui/src/styles/style.css` before attempting copy, preventing crashes when `style.css` is not yet present. Verified with mock `style.css` that it correctly copies content to `ui/dist/assets/style.css`.
-   - Rollup library output:
-     - Configured with `formats: ['es']`, `fileName: () => 'moul-ui.js'`, and `banner: '"use client";'`.
+1. **Vitest Unit & Integration Test Suite**:
+   ```bash
+   ./ui/node_modules/.bin/vitest run --root ui src/components/Charts.test.ts
+   ```
+   *Result*:
+   ```text
+    ✓ src/components/Charts.test.ts (17)
+      ✓ Milestone 1: Chart Foundation & Tooltip Test Suite (17)
+        ✓ ChartCommon Utilities (`ChartCommon.ts`) (4)
+          ✓ CHART-COM-01: Base palette mapping (indices 0 to 7)
+          ✓ CHART-COM-02: Modulo 8 wrapping for indices >= 8
+          ✓ CHART-COM-03: Arbitrary integer and negative index wrapping via fast-check
+          ✓ CHART-COM-04: Interface contracts compile and conform to data structures
+        ✓ MoulChartContainer (`moul-chart-container`) (7)
+          ✓ CHART-CNT-01: Custom Element registration and instance check
+          ✓ CHART-CNT-02: Title and description rendering and reactive update
+          ✓ CHART-CNT-03: Slotted content and layout structure
+          ✓ CHART-CNT-04: Empty state rendering when is-empty is set
+          ✓ CHART-CNT-05: Deterministic resize to 600x300 and viewport-resize event detail
+          ✓ CHART-CNT-06: Breakpoint transitions across all supported widths
+          ✓ CHART-CNT-07: Observer disconnects cleanly when element is removed
+        ✓ MoulChartTooltip (`moul-chart-tooltip`) (5)
+          ✓ CHART-TLP-01: Custom Element registration and instance check
+          ✓ CHART-TLP-02: Initial closed state and popover="manual" configuration
+          ✓ CHART-TLP-03: Calling show(...) opens popover and renders indicator, label, and value
+          ✓ CHART-TLP-04: Coordinate positioning updates inline coordinates
+          ✓ CHART-TLP-05: Calling hide() or hidePopover() closes the popover
+        ✓ Integration: Container & Tooltip Collaboration (1)
+          ✓ CHART-INT-01: Slotted tooltip inside chart container maintains state during viewport resizes
 
-4. **`ui/custom-elements-manifest.config.mjs` Execution**:
-   - Configured with `globs: ['src/components/**/*.ts']`, `exclude: ['src/**/*.test.ts', 'src/**/*.styles.ts']`, `outdir: 'dist'`, `litelement: true`.
-   - Executing `./ui/node_modules/.bin/cem analyze --config custom-elements-manifest.config.mjs` in `ui/` created `dist/custom-elements.json` (93,591 bytes, valid JSON).
+    Test Files  1 passed (1)
+         Tests  17 passed (17)
+      Duration  1.18s
+   ```
 
-5. **`ui/src/test-setup.ts` Shims Stress-Testing**:
-   - Evaluated all 4 shims inside Happy-DOM environment with comprehensive assertions:
-     1. `ElementInternals`:
-        - Duplicate `attachInternals()` throws standard `DOMException` with `NotSupportedError`.
-        - Form association via hierarchy (`closest('form')`) and via explicit `form` attribute ID (`ownerDocument.getElementById(formId)`) resolves `internals.form === form`.
-        - Happy DOM proxy unwrapping via `Symbol(proxy)` ensures referential identity.
-        - Disconnected element without form correctly resolves `internals.form === null`.
-        - Initial validity is `valid === true`, validation message is `""`.
-        - `setValidity` with a 250-character string truncates `validationMessage` to exactly 200 characters.
-        - `checkValidity()` fires `'invalid'` event when invalid.
-        - Resetting validity (`setValidity({})`) restores `valid === true` and clears message.
-        - `setFormValue` records value on `formValue`.
-     2. Native `<dialog>`:
-        - Calling `showModal()` on disconnected `<dialog>` throws `DOMException` with `InvalidStateError` and message `Failed to execute showModal on HTMLDialogElement: The element is not in a Document.`.
-        - Calling `showModal()` on connected `<dialog>` sets `open = true` and `hasAttribute('open') === true`.
-        - Calling `showModal()` when already open throws `DOMException` with `InvalidStateError`.
-        - Calling `close('val')` sets `open = false`, sets `returnValue = 'val'`, and dispatches `close` event.
-        - Subsequent redundant `close()` calls do not re-fire `close` event.
-     3. Popover API:
-        - Calling `showPopover()` without `popover` attribute throws `DOMException` (`InvalidStateError`).
-        - Calling `showPopover()` when disconnected throws `DOMException` (`InvalidStateError`).
-        - `beforetoggle` event is cancelable; calling `e.preventDefault()` halts opening.
-        - Opening dispatches `beforetoggle` followed by `toggle`, sets `:popover-open` attribute/class, and `matches(':popover-open')` evaluates to `true`.
-        - `hidePopover()` dispatches `beforetoggle` and `toggle`, clears `:popover-open`, and `matches(':popover-open')` evaluates to `false`.
-        - `togglePopover(force)` correctly obeys boolean parameter and toggles state when omitted.
-     4. Deterministic `ResizeObserver`:
-        - Instantiating `ResizeObserver`, calling `observe(target)`, and triggering `window.__triggerResize(target, { width: 500, height: 250 })` synchronously updates `target.getBoundingClientRect()` and delivers spec-compliant `ResizeObserverEntry` (`target`, `contentRect`, `borderBoxSize`, `contentBoxSize`).
-        - Calling `unobserve(target)` stops delivery for that element.
-        - Calling `disconnect()` clears all target elements and detaches observer.
+2. **Regression Test Suite**:
+   ```bash
+   ./ui/node_modules/.bin/vitest run --root ui src/controllers/Controllers.test.ts src/components/Actions.test.ts src/components/Surfaces.test.ts src/components/Charts.test.ts
+   ```
+   *Result*:
+   ```text
+    Test Files  4 passed (4)
+         Tests  113 passed (113)
+      Duration  3.74s
+   ```
 
-6. **Linter Inspection**:
-   - Running `./node_modules/.bin/biome check scripts/verify-no-react.ts ui/src/test-setup.ts ui/vite.config.ts ui/custom-elements-manifest.config.mjs` completed with exit code `0` and 0 errors (2 optional chaining suggestions in `test-setup.ts`).
+3. **Biome Linter Check**:
+   ```bash
+   ./node_modules/.bin/biome check ui/src/components/ChartContainer ui/src/components/ChartTooltip ui/src/components/ChartCommon.ts ui/src/components/Charts.test.ts
+   ```
+   *Result*:
+   ```text
+   Checked 10 files in 33ms. No fixes applied.
+   ```
+   Exit Code: 0 (0 errors, 0 warnings).
+
+4. **Zero-React Policy Enforcement**:
+   ```bash
+   bun ./scripts/verify-no-react.ts all
+   ```
+   *Result*:
+   ```text
+   ✓ [verify-no-react] Target 'all': Zero disallowed React/legacy packages found across inspected manifests.
+   ```
+   Exit Code: 0.
+
+5. **TypeScript Compiler Verification**:
+   ```bash
+   ./ui/node_modules/.bin/tsc --noEmit --skipLibCheck ui/src/components/ChartCommon.ts ui/src/components/ChartContainer/ChartContainer.ts ui/src/components/ChartTooltip/ChartTooltip.ts ui/src/components/Charts.test.ts
+   ```
+   *Result*: Exit Code 0 (0 type errors).
 
 ---
 
 ## 2. Logic Chain
 
-1. **Acceptance Criteria R1 Alignment**:
-   - Observation 1 verifies that `scripts/verify-no-react.ts` fulfills both normal and negative verification paths. When manifests are clean, exit code is 0; when banned packages are present, exit code is 1 and error diagnostics clearly show the file, block, package, and version.
-   - Observation 2 verifies that `ui/package.json` and `docs/package.json` have completely eliminated legacy React, StyleX, Recharts, Waku, and Fumadocs dependencies, while establishing the runtime and dev dependency foundations required for Lit 3 and Astro Starlight.
-   - Observation 2 verifies that `ui/package.json` exports contract strictly limits entrypoints to `.` and `./style.css`, eliminating deprecated subpaths.
+1. **Integrity Audit**:
+   - Source code was scrutinized for hardcoded test fixtures, dummy implementations, or bypassed logic.
+   - `getChartColor` performs pure arithmetic rather than static lookups.
+   - `MoulChartContainer` and `MoulChartTooltip` are fully implemented Web Components with active controllers, DOM event lifecycles, and slot rendering.
+   - No integrity violations or self-certifying facades exist.
 
-2. **Build Protection & Analyzer Configuration**:
-   - Observation 3 proves that `banReactImportsPlugin` acts as an active compilation firewall at the Rollup `resolveId` stage, preventing any accidental or sneaky imports of React or its adapters.
-   - Observation 3 proves that `copyCssTokensPlugin` handles asset bundling gracefully without breaking builds prior to CSS token authoring.
-   - Observation 4 confirms that `custom-elements-manifest.config.mjs` interfaces correctly with `@custom-elements-manifest/analyzer` and generates valid schema output at `dist/custom-elements.json`.
+2. **Correctness & Reactive Controllers**:
+   - `LayoutIndicatorController` is initialized with `observeDimensions: true`. In `updated()`, it monitors dimension shifts and emits `viewport-resize`. The suppression guard (`isInitialZero`) correctly prevents spurious initial events before the first layout pass.
+   - `OverlayPresenceController` is coupled with `popover="manual"`. Disconnected checks (`if (!this.isConnected) return`) prevent uncaught `DOMException` errors in browsers when calling `showPopover()` off-screen.
+   - Slots for `header`, `empty`, and `legend` properly switch between default content and empty states depending on the `is-empty` attribute.
 
-3. **Test Harness & Shim Fidelity**:
-   - Observation 5 confirms that the test harness shims in `ui/src/test-setup.ts` provide robust, spec-compliant polyfills for headless Happy-DOM testing.
-   - The disconnected `<dialog>.showModal()` exception strictly matches Requirement 6.10 (`InvalidStateError`).
-   - `ElementInternals` handles form association accurately, including Happy DOM's internal proxy mechanics, and adheres to the 200-char message constraint.
-   - Popover API supports cancellation and `:popover-open` pseudo-class querying, and the `ResizeObserver` controller enables deterministic layout testing.
+3. **Interface Conformance & Purity**:
+   - All interfaces (`ChartSeries`, `DoughnutDataItem`, `TopListItem`, `PointHoverDetail`) conform to `PROJECT.md` specifications.
+   - Color mapping mathematically guarantees cyclic recurrence through 8 design tokens for any integer $i \in \mathbb{Z}$.
+   - All 6 files have zero React, React Aria, StyleX, or Recharts imports.
 
-4. **Adversarial & Integrity Review**:
-   - No hardcoded fixtures or dummy facade implementations exist in the tested code. All scripts and plugins perform actual runtime inspections and parsing.
-   - The worker's reported findings and execution outputs were independently verified and matched verbatim.
+4. **Exclusive Write Ownership**:
+   - The worker modified/created only the 6 files assigned to Milestone 1. Global barrel exports in `ui/src/index.ts` remain designated for Milestone 5 as planned.
 
 ---
 
 ## 3. Caveats
 
-1. **Component Source Code (Milestone 2 Scope)**:
-   - The component source files in `ui/src/components` and root entry `ui/src/index.ts` still contain legacy React component code; their migration to Lit 3 Web Components is planned for Milestone 2.
-2. **CSS Token File Authoring (Milestone 2 Scope)**:
-   - `ui/src/styles/style.css` will be authored in Milestone 2. `copyCssTokensPlugin` is defensively written with an existence check so it does not fail when `style.css` is not yet created.
+- **No Caveats**: All specifications from `PROJECT.md` and `ORIGINAL_REQUEST.md` for Milestone 1 have been completely satisfied and verified.
 
 ---
 
-## 4. Conclusion
+## 4. Adversarial Stress-Testing Report
 
-The worker's changes for Milestone 1 (Phase 1) are complete, functionally correct, defensively implemented, and strictly conform to all Acceptance Criteria defined in `ORIGINAL_REQUEST.md` and `PROJECT.md`.
+### Challenge Summary
+- **Overall Risk Assessment**: LOW
+- **Untested Angles**: None within Milestone 1 scope.
 
-Verdict: **APPROVE**
+### Stress Test Results
+
+| # | Stress Test Scenario | Expected Behavior | Actual Behavior | Result |
+|---|----------------------|-------------------|-----------------|--------|
+| 1 | Modulo wrapping with negative and large indices (-10,000 to +10,000) | Maps strictly to `var(--color-chart-1)` through `var(--color-chart-8)` | Validated across 100 randomly sampled runs via fast-check | PASS |
+| 2 | Calling `showPopover()` on disconnected `moul-chart-tooltip` | Avoids unhandled `DOMException` | Returns early due to `!this.isConnected` guard | PASS |
+| 3 | Tooltip hover collision with chart SVG | Pointer events do not jitter when hovering tooltip | `:host` and `.tooltip-container` specify `pointer-events: none` | PASS |
+| 4 | Container element removal from DOM | ResizeObserver must disconnect to prevent memory leaks | `disconnectedCallback` invokes controller cleanup; tested in `CHART-CNT-07` | PASS |
+| 5 | Dynamic repositioning via reactive property assignment (`tooltip.x = 200`) | Inline style and 3D transform update without calling `show()` | `updated()` reacts to `x`/`y` changes and updates positioning | PASS |
+| 6 | Slotting custom empty state content | `<slot name="empty">` overrides default "No data available" message | Confirmed via Shadow DOM inspection in `CHART-CNT-04` | PASS |
 
 ---
 
-## 5. Verification Method
+## 5. Conclusion
 
-To independently reproduce all observations and verify this milestone:
+**Verdict: APPROVE**
 
-1. **Verify Dependency Guard**:
+Milestone 1 satisfies all acceptance criteria:
+1. `MoulChartContainer` provides responsive layout observation, empty state slotting, and `viewport-resize` dispatch.
+2. `MoulChartTooltip` provides floating Popover API positioning with `OverlayPresenceController` integration and coordinate tracking.
+3. `ChartCommon.ts` provides pure TypeScript data contracts and modulo 8 color mapping.
+4. `Charts.test.ts` provides 17 comprehensive, passing unit, integration, and property-based tests.
+5. All 113 tests in the full test suite pass with 0 regressions, and Biome linting passes with 0 errors.
+
+Milestone 2 (`moul-line-chart` and `moul-area-chart`) is ready to proceed.
+
+---
+
+## 6. Verification Method
+
+To independently reproduce this verification:
+
+1. Run the Milestone 1 test suite:
+   ```bash
+   ./ui/node_modules/.bin/vitest run --root ui src/components/Charts.test.ts
+   ```
+2. Run the regression test suite:
+   ```bash
+   ./ui/node_modules/.bin/vitest run --root ui src/controllers/Controllers.test.ts src/components/Actions.test.ts src/components/Surfaces.test.ts src/components/Charts.test.ts
+   ```
+3. Run Biome lint check:
+   ```bash
+   ./node_modules/.bin/biome check ui/src/components/ChartContainer ui/src/components/ChartTooltip ui/src/components/ChartCommon.ts ui/src/components/Charts.test.ts
+   ```
+4. Verify zero React packages:
    ```bash
    bun ./scripts/verify-no-react.ts all
-   bun ./scripts/verify-no-react.ts ui
-   bun ./scripts/verify-no-react.ts docs
    ```
-   *Expected Result*: Exit code `0` with green success messages.
-
-2. **Verify Banned Imports Rollup Plugin**:
+5. Verify TypeScript types:
    ```bash
-   bun -e "
-   import { banReactImportsPlugin } from './ui/vite.config.ts';
-   const plugin = banReactImportsPlugin();
-   const resolve = plugin.resolveId.bind(plugin);
-   const banned = ['react', 'react/jsx-runtime', 'react-dom', 'react-aria', '@stylexjs/stylex', '@lit/react', 'motion/react'];
-   for (const id of banned) {
-     try { resolve(id); throw new Error('Expected ban on ' + id); } catch (e) {
-       if (!e.message.includes('[banReactImportsPlugin]')) throw e;
-     }
-   }
-   console.log('banReactImportsPlugin PASS');
-   "
+   ./ui/node_modules/.bin/tsc --noEmit --skipLibCheck ui/src/components/ChartCommon.ts ui/src/components/ChartContainer/ChartContainer.ts ui/src/components/ChartTooltip/ChartTooltip.ts ui/src/components/Charts.test.ts
    ```
-   *Expected Result*: `banReactImportsPlugin PASS`
-
-3. **Verify Happy-DOM Test Shims**:
-   ```bash
-   bun -e "
-   import { GlobalWindow } from './ui/node_modules/happy-dom/lib/index.js';
-   const window = new GlobalWindow();
-   globalThis.window = window;
-   globalThis.document = window.document;
-   globalThis.HTMLElement = window.HTMLElement;
-   globalThis.Element = window.Element;
-   globalThis.DOMException = window.DOMException;
-   globalThis.Event = window.Event;
-   globalThis.CustomEvent = window.CustomEvent;
-
-   await import('./ui/src/test-setup.ts');
-
-   // 1. ElementInternals
-   const form = document.createElement('form');
-   const host = document.createElement('div');
-   form.appendChild(host);
-   document.body.appendChild(form);
-   const internals = host.attachInternals();
-   console.assert(internals.form === form, 'form match');
-   internals.setValidity({ valueMissing: true }, 'X'.repeat(300));
-   console.assert(internals.validity.valid === false, 'validity false');
-   console.assert(internals.validationMessage.length === 200, 'truncated to 200');
-
-   // 2. <dialog> disconnected
-   const dialog = document.createElement('dialog');
-   let threwDisc = false;
-   try { dialog.showModal(); } catch (e) { threwDisc = e.name === 'InvalidStateError'; }
-   console.assert(threwDisc, 'dialog disconnected throws InvalidStateError');
-
-   // 3. Popover API
-   const pop = document.createElement('div');
-   pop.setAttribute('popover', 'auto');
-   document.body.appendChild(pop);
-   pop.showPopover();
-   console.assert(pop.matches(':popover-open'), 'popover opens');
-   pop.hidePopover();
-   console.assert(!pop.matches(':popover-open'), 'popover closes');
-
-   // 4. ResizeObserver
-   let resized = false;
-   const ro = new window.ResizeObserver(() => { resized = true; });
-   ro.observe(host);
-   window.__triggerResize(host, { width: 800 });
-   console.assert(resized, 'resize triggered');
-
-   console.log('ALL SHIMS VERIFIED PASS');
-   "
-   ```
-   *Expected Result*: `ALL SHIMS VERIFIED PASS`
-
-4. **Verify CEM Analyzer**:
-   ```bash
-   ./ui/node_modules/.bin/cem analyze --config ui/custom-elements-manifest.config.mjs
-   ```
-   *Expected Result*: Created new manifest at `ui/dist/custom-elements.json`.

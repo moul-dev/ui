@@ -1,29 +1,24 @@
-## 2026-10-16T04:16:37Z
-You are a Forensic Auditor (teamwork_preview_auditor).
-Your working directory is: /Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/auditor_m2_1
-You MUST read /Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/ORIGINAL_REQUEST.md and /Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/PROJECT.md first.
+# Dispatch: Auditor M2.1
+Perform forensic integrity audit on Milestone 2 implementation.
 
-Read worker handoff: /Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/worker_m2_1/handoff.md
+## 2026-10-17T04:22:58Z
+You are auditor_m2_1.
+Working directory: /Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/auditor_m2_1
 
-Conduct a rigorous Forensic Integrity Audit of the Milestone 2 implementation:
-Examine:
-- `ui/src/styles/style.css`
-- `ui/src/styles/semantic-tones.ts`
-- `ui/src/styles/reset.styles.ts`
-- `ui/src/utils/define-element.ts`
-- `ui/src/utils/warn-missing-label.ts`
-- `ui/src/utils/focus-trap.ts`
-- `ui/src/utils/motion.ts`
-- `ui/src/utils/icons.ts`
-- `ui/src/tokens/Tokens.test.ts`
+MANDATORY: Read /Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/ORIGINAL_REQUEST.md before starting work.
+Also read /Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/orchestrator_phase8_1/PROJECT.md and /Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/worker_m2_1/handoff.md.
 
-Integrity Checks:
-1. Static analysis: Is there any hardcoding of expected test outputs or facade implementations?
-2. Genuine logic: Are `semanticToneStyles` and the utilities genuine implementations, or dummy facades that pretend to work?
-3. Banned dependency presence: Are there any forbidden React imports anywhere in `ui/src/utils/` or `ui/src/styles/`? (e.g. check for `react`, `@lit/react`, `motion/react`).
-4. Execution validation: Run `bun run --cwd ui test src/tokens/Tokens.test.ts` and verify all tests pass genuinely. Run `bun ./scripts/verify-no-react.ts all`.
-5. Verification logs: Verify that test outputs reported by the worker were not fabricated.
+Perform forensic integrity audit on Milestone 2 files:
+- `ui/src/components/LineChart/LineChart.ts`
+- `ui/src/components/LineChart/LineChart.styles.ts`
+- `ui/src/components/AreaChart/AreaChart.ts`
+- `ui/src/components/AreaChart/AreaChart.styles.ts`
+- `ui/src/components/Charts.test.ts`
 
-State your audit verdict clearly: CLEAN or INTEGRITY VIOLATION.
-Write your full forensic audit report to `/Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/auditor_m2_1/handoff.md`.
-When done, send a message back to the orchestrator (conversation ID: d61b067a-65c4-48c0-9937-01779e27afa2).
+Conduct all forensic checks:
+1. Static analysis: Any hardcoded test strings or dummy implementations?
+2. Banned imports: Check for any import of `react`, `react-dom`, `recharts`, `@stylexjs/stylex`, `@lit/react`, `motion/react`.
+3. Check `bun ./scripts/verify-no-react.ts all`.
+4. Test genuineness: Verify that tests in `Charts.test.ts` execute real assertions on live DOM/SVG elements.
+5. Record your explicit verdict (CLEAN or INTEGRITY VIOLATION) with evidence in `/Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/auditor_m2_1/handoff.md`.
+Send a message back when done.

@@ -216,3 +216,50 @@ All components must:
 ## 2026-10-16T13:00:43Z
 
 The quota limit has reset and the server has restarted. Please resume where you left off on Milestone 5 remediation and continue through Milestone 6 (Overlays & Navigation), Milestone 7 (Inputs & Forms), and Milestone 8 (Integration & Audit).
+
+
+## 2026-10-17T03:06:45Z
+
+Implement Phase 8 of the design specification: Rebuild Category 1 — Charts & Data Visualization (7 Components + 2 Companions) as Lit Web Components powered by `d3-scale`, `d3-shape`, and `motion`.
+
+Working directory: /Users/phearak/github/orgs/moul-dev/ui
+Integrity mode: development
+
+## Requirements
+
+### R1. Chart Components & Companions Rebuild
+Implement `moul-chart-container`, `moul-chart-tooltip`, `moul-line-chart`, `moul-area-chart`, `moul-bar-chart`, `moul-doughnut-chart`, `moul-top-list`, `moul-stat`, `moul-percentage-bar`, and `moul-percentage-circle` as Lit Web Components, registered via idempotent `defineElement` under the `moul-` prefix, with zero React/Recharts dependencies.
+
+### R2. SVG Geometry & Color Token Mapping
+Generate SVG geometries using `d3-scale` and `d3-shape` without third-party chart wrappers, styling chart series with `--color-chart-1` through `--color-chart-8` CSS design tokens.
+
+### R3. Responsive Viewports, Empty States & Micro-Animations
+Make `moul-chart-container` responsive to dimension changes via `LayoutIndicatorController` and render `<slot name="empty">` when data is missing or empty. Animate SVG path/geometry transitions with `motion` (duration 200–500ms, respecting `prefers-reduced-motion: reduce`) and numeric stat changes with `NumberSpringController`.
+
+### R4. Data Point Tooltip Interaction
+Open and position `moul-chart-tooltip` via the native Popover API upon pointer interaction over chart data points, and close it when leaving.
+
+### R5. Verification Test Suite
+Provide unit and integration tests in `ui/src/components/Charts.test.ts` covering SVG path rendering, empty state handling, responsive resize triggers, and interactive point hover behavior.
+
+## Acceptance Criteria
+
+### Component Registration & Purity
+- [ ] Custom elements `moul-chart-container`, `moul-chart-tooltip`, `moul-line-chart`, `moul-area-chart`, `moul-bar-chart`, `moul-doughnut-chart`, `moul-top-list`, `moul-stat`, `moul-percentage-bar`, and `moul-percentage-circle` register without errors.
+- [ ] No imports from `react`, `react-dom`, `recharts`, or `@stylexjs/stylex` in chart source files.
+- [ ] Each component exports its class and registers in `HTMLElementTagNameMap`.
+
+### SVG Generation & Visuals
+- [ ] Line and Area charts render valid SVG `<path>` elements using D3 curves and project coordinates with D3 scales.
+- [ ] Bar chart supports horizontal and vertical layouts with proportional SVG rectangles.
+- [ ] Doughnut chart renders arc slices using D3 arc/pie generators with configurable `inner-radius-ratio`.
+- [ ] Percentage bar and circle render proportional fill progress.
+- [ ] Stat renders numeric value interpolating via `NumberSpringController`.
+
+### Empty States & Popover Tooltip
+- [ ] When data is null, undefined, or empty `[]`, `<slot name="empty">` is rendered instead of chart geometries.
+- [ ] Chart tooltip opens on point hover/pointerenter and dismisses on pointerleave using the Popover API.
+
+### Verification Suite
+- [ ] `bun run test ui/src/components/Charts.test.ts` passes with 100% green tests.
+- [ ] `bun run lint` passes with 0 errors across modified files.

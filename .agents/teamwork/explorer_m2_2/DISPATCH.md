@@ -1,27 +1,32 @@
-## 2026-10-16T03:50:45Z
+## 2026-10-17T04:08:01Z
 
-You are an Explorer agent (teamwork_preview_explorer).
-Your working directory is: /Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/explorer_m2_2
-You MUST read /Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/ORIGINAL_REQUEST.md and /Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/PROJECT.md first.
+You are explorer_m2_2.
+Working directory: /Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/explorer_m2_2
 
-Also read:
-- /Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/spec_miner_survey_3/handoff.md
-- /Users/phearak/github/orgs/moul-dev/ui/rdt/design.md (Section 5, lines 325-392)
+MANDATORY: Read /Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/ORIGINAL_REQUEST.md before starting work (focus on ## 2026-10-17T03:06:45Z).
+Also read /Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/orchestrator_phase8_1/PROJECT.md and /Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/spec_miner_survey_1/handoff.md (Section 2.2 #4).
+Do NOT write code or modify source code files. You are a read-only investigation agent.
 
-Scope: Milestone 2 Task 2.2 - Semantic Tones & Shadow DOM Reset
-Formulate a concrete, complete implementation strategy and code plan for:
-1. `ui/src/styles/semantic-tones.ts`:
-   - `SEMANTIC_TONES` (`'primary'`, `'accent'`, `'success'`, `'warning'`, `'error'`) and `SemanticTone` type
-   - `VISUAL_VARIANTS` (`'solid'`, `'flat'`, `'shadow'`, `'bordered'`, `'glass'`) and `VisualVariant` type
-   - `normalizeTone(value: unknown, fallback?: SemanticTone): SemanticTone`
-   - `normalizeVariant(value: unknown, fallback?: VisualVariant): VisualVariant`
-   - `semanticToneStyles: CSSResultGroup`:
-     Generates all 25 combinations of 5 tones × 5 variants:
-     - Scoped properties for tones: `--_tone-solid-bg`, `--_tone-solid-fg`, `--_tone-soft-bg`, `--_tone-soft-fg`, `--_tone-border`
-     - Rules for `solid`, `flat`, `bordered`, `shadow` (with `--shadow-md`)
-     - `glass` variant: `@supports (backdrop-filter: blur(12px)) or (-webkit-backdrop-filter: blur(12px))` with progressive enhancement, and a solid fallback (`background-color: var(--color-bg-glass); border: 1px solid var(--color-border-glass); color: var(--_tone-soft-fg);`) when unsupported.
-2. `ui/src/styles/reset.styles.ts`:
-   - Shared Lit `CSSResultGroup` reset for Shadow DOM (`box-sizing: border-box`, font inheritance, margin/padding resets, `:focus-visible` styling).
+Formulate the complete implementation blueprint for `moul-area-chart` (`ui/src/components/AreaChart/AreaChart.ts` & `AreaChart.styles.ts`):
+- Extends `LitElement`, registered via idempotent `defineElement` as `moul-area-chart`.
+- Augments `HTMLElementTagNameMap`: `'moul-area-chart': MoulAreaChart`.
+- Properties:
+  - `data: Record<string, unknown>[] = []` (`attribute: false`)
+  - `xKey: string = 'name'` (attribute `x-key`)
+  - `series: ChartSeries[] = []` (`attribute: false`)
+  - `height: number = 300` (type `Number`)
+  - `stacked: boolean = false` (type `Boolean`)
+  - `showGrid: boolean = true` (type `Boolean`, attribute `show-grid`)
+  - `valueFormatter?: (value: any) => string`
+- D3 pipeline using `d3-scale` and `d3-shape` (`area`, `line`, `curveMonotoneX`).
+  - Stacking support: when `stacked` is true, accumulate cumulative baseline offsets per category across series.
+  - SVG `<defs>` with `<linearGradient>` per series using `stop-opacity="0.25"` to `stop-opacity="0"`.
+  - Area filled `<path>` with gradient fill, plus upper boundary stroke `<path>`.
+- Interactive hover: `point-hover` event dispatch.
+- Empty state: When data is null, undefined, or empty `[]`, render `<slot name="empty"></slot>`.
+- Motion: Geometry transitions over 350ms with `CHART_EASE`, respecting `prefersReducedMotion()`.
+- Pure Lit CSS styles in `AreaChart.styles.ts` composed with `resetStyles`.
+- Zero React or StyleX imports.
 
-Do NOT modify files outside your working directory. Write your report to `/Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/explorer_m2_2/handoff.md`.
-When done, send a message back to the orchestrator (conversation ID: d61b067a-65c4-48c0-9937-01779e27afa2).
+Write your complete blueprint to `/Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/explorer_m2_2/handoff.md`.
+Send a message back when done.

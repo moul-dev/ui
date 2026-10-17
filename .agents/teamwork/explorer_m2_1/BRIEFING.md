@@ -1,48 +1,39 @@
-# BRIEFING — 2026-10-16T03:53:30Z
+# BRIEFING — 2026-10-17T04:12:15Z
 
 ## Mission
-Formulate a concrete, complete implementation strategy and code plan for Milestone 2 Task 2.1 - CSS Design Token Layer (`ui/src/styles/style.css`).
+Formulate the complete implementation blueprint for `moul-line-chart` (`ui/src/components/LineChart/LineChart.ts` & `LineChart.styles.ts`) as a read-only investigation.
 
 ## 🔒 My Identity
-- Archetype: teamwork_preview_explorer
-- Roles: explorer, synthesizer
+- Archetype: explorer
+- Roles: investigation, synthesis
 - Working directory: /Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/explorer_m2_1
-- Original parent: d61b067a-65c4-48c0-9937-01779e27afa2
-- Milestone: Milestone 2 Task 2.1
+- Original parent: 5d04df52-77dd-4159-8972-455e52835bdb
+- Milestone: M2 - moul-line-chart blueprint
 
 ## 🔒 Key Constraints
-- Read-only investigation — do NOT implement outside working directory
-- All findings, code plan, and proposed CSS token specifications in handoff report
-- Accurate extraction and mapping of OKLCH colors, 6 brand hooks, theme selectors, semantic tokens, status tokens, typography, spacing, radius, shadows, z-index, chart tokens
+- Read-only investigation — do NOT implement or modify source code files
+- Formulate complete implementation blueprint for `moul-line-chart` (`LineChart.ts` & `LineChart.styles.ts`)
+- Pure Lit CSS styles composed with `resetStyles`, zero React or StyleX imports
+- Idempotent `defineElement` registration, HTMLElementTagNameMap augmentation
+- D3 pipeline with domain safeguards, multi-series SVG rendering, hover events, empty state slot, motion with prefersReducedMotion
+- Follow Handoff Protocol (5 components: Observation, Logic Chain, Caveats, Conclusion, Verification Method) in `handoff.md`
 
 ## Current Parent
-- Conversation ID: d61b067a-65c4-48c0-9937-01779e27afa2
+- Conversation ID: 5d04df52-77dd-4159-8972-455e52835bdb
 - Updated: not yet
 
 ## Investigation State
-- **Explored paths**:
-  - `ui/src/tokens/tokens.stylex.ts` (183 lines) - canonical token source
-  - `ui/src/styles/theme.css` (20 lines) - legacy theme hooks
-  - `ui/src/tokens/tokens.test.ts` (183 lines) - legacy token test
-  - `ui/vite.config.ts` (83 lines) - contains `copyCssTokensPlugin` copying `src/styles/style.css` to `dist/assets/style.css`
-  - `rdt/requirements.md` (Req 3, Req 4)
-  - `rdt/design.md` (Section 4, Section 10, Section 11)
-  - `rdt/tasks.md` (Task 2.1)
-  - Survey handoffs (`explorer_survey_2`, `spec_miner_survey_3`)
-- **Key findings**:
-  - 124 total properties on `:root`: 6 brand customization hooks + 118 design tokens across 11 categories
-  - Theme selectors: `[data-theme="light"]` and `[data-theme="dark"], .dark`
-  - Shadow token correction: fix `var(--colorShadow)` to `var(--color-shadow)`
-  - Brand hook correction: add `--brand-font-family: inherit`
-  - Build pipeline (`ui/vite.config.ts`) already has `copyCssTokensPlugin()` copying `src/styles/style.css` to `dist/assets/style.css` on `closeBundle`
-- **Unexplored areas**: None for Task 2.1 scope
+- **Explored paths**: `ORIGINAL_REQUEST.md`, `PROJECT.md`, `spec_miner_survey_1/handoff.md`, `ChartCommon.ts`, `ChartContainer/`, `ChartTooltip/`, `Charts.test.ts`, `utils/motion.ts`, `styles/reset.styles.ts`, `controllers/layout-indicator.controller.ts`, `LineChart.styles.ts`, `LineChart.tsx`.
+- **Key findings**: Complete contract established: `MoulLineChart` LitElement, `LayoutIndicatorController` responsive measurement, D3 `scalePoint` + `scaleLinear` + `line` with `curveMonotoneX`, domain safeguards for empty/single/identical/negative values, multi-series SVG paths with `var(--color-chart-*)`, `point-hover` event dispatch, `<slot name="empty">` gating, 350ms motion transitions with `CHART_EASE` and `prefersReducedMotion()`, pure Lit CSS with `resetStyles`.
+- **Unexplored areas**: None. Blueprint formulation in progress.
 
 ## Key Decisions Made
-- All tokens mapped directly with full verbatim definitions ready for implementation in `ui/src/styles/style.css`
-- Complete implementation strategy and verification plan formulated
+- Architecture decision: Use `static override properties` and standard Lit property declarations to align with `MoulChartContainer` and avoid decorator issues.
+- Resilience decision: Incorporate `LayoutIndicatorController(this, { observeDimensions: true })` with fallback to `600x300` when unmeasured (e.g., in happy-dom or before first paint).
+- Domain safeguards: Handle single-point centering, expand identical-value domains `[val, val]` cleanly, preserve negative Y baselines, and use `line.defined()` for missing values.
 
 ## Artifact Index
-- DISPATCH.md — Initial dispatch instructions
-- BRIEFING.md — Situational awareness and state
-- progress.md — Liveness heartbeat
-- handoff.md — 5-component handoff report
+- DISPATCH.md — Received dispatch message
+- BRIEFING.md — Situational awareness and working memory
+- progress.md — Liveness heartbeat and progress tracking
+- handoff.md — Complete blueprint handoff report

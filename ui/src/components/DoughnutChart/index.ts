@@ -1,2 +1,5 @@
-export type { DoughnutChartProps } from './DoughnutChart'
-export { DoughnutChart } from './DoughnutChart'
+export type { DoughnutChartProps, DoughnutDataItem } from './DoughnutChart'
+export {
+  MoulDoughnutChart,
+  MoulDoughnutChart as DoughnutChart,
+} from './DoughnutChart'

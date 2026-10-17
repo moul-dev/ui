@@ -1,195 +1,200 @@
-# Handoff Report: Milestone 1 Review (Phase 1)
+# Handoff Report: Milestone 1 Quality & Adversarial Review
+
+**Agent**: `reviewer_m1_2`  
+**Working Directory**: `/Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/reviewer_m1_2`  
+**Milestone**: Milestone 1 — Chart Infrastructure & Tooltip Foundation  
+**Date**: 2026-10-17  
+**Verdict**: **REQUEST_CHANGES**
+
+---
 
 ## 1. Observation
 
-Direct examination and execution results across all modified targets:
+### 1.1 Reviewed Files
+The following Milestone 1 artifacts were independently inspected and analyzed:
+1. `ui/src/components/ChartCommon.ts` (46 lines)
+2. `ui/src/components/ChartContainer/ChartContainer.ts` (141 lines)
+3. `ui/src/components/ChartContainer/ChartContainer.styles.ts` (100 lines)
+4. `ui/src/components/ChartTooltip/ChartTooltip.ts` (186 lines)
+5. `ui/src/components/ChartTooltip/ChartTooltip.styles.ts` (87 lines)
+6. `ui/src/components/Charts.test.ts` (436 lines)
 
-1. **Disallowed Dependency Guard (`scripts/verify-no-react.ts`)**:
-   - File exists at `/Users/phearak/github/orgs/moul-dev/ui/scripts/verify-no-react.ts` with executable mode (`-rwxr-xr-x`).
-   - Running `bun ./scripts/verify-no-react.ts all` verbatim output:
-     ```text
-     ✓ [verify-no-react] Target 'all': Zero disallowed React/legacy packages found across inspected manifests.
-     ```
-     Exited with code `0`.
-   - Running `bun ./scripts/verify-no-react.ts ui` and `bun ./scripts/verify-no-react.ts docs`:
-     ```text
-     ✓ [verify-no-react] Target 'ui': Zero disallowed React/legacy packages found across inspected manifests.
-     ✓ [verify-no-react] Target 'docs': Zero disallowed React/legacy packages found across inspected manifests.
-     ```
-     Both exited with code `0`.
-   - Running invalid CLI target `bun ./scripts/verify-no-react.ts invalid`:
-     ```text
-     Invalid target 'invalid'. Supported targets: all, ui, docs.
-     Usage: bun ./scripts/verify-no-react.ts [all|ui|docs]
-     ```
-     Exited with code `1`.
-   - Adversarial testing of `checkManifest` against synthetic manifests confirmed immediate detection and grouping across all three dependency blocks (`dependencies`, `devDependencies`, `peerDependencies`) with non-zero exit code.
+### 1.2 Tool Execution & Output Verifications
 
-2. **Package Manifest Overhauls (`ui/package.json` and `docs/package.json`)**:
-   - `ui/package.json`:
-     - Cleaned of all React, React Aria, StyleX, Recharts, and input-otp packages.
-     - `peerDependencies` block completely removed.
-     - Declared runtime dependencies: `@lit-labs/virtualizer` (^2.1.0), `@lit/context` (^1.1.3), `d3-scale` (^4.0.2), `d3-shape` (^3.2.0), `lit` (^3.2.1), `motion` (^13.4.1).
-     - Declared devDependencies: `@biomejs/biome` (^2.5.0), `@custom-elements-manifest/analyzer` (^0.10.4), `@open-wc/testing-helpers` (^2.2.0), `@types/d3-scale` (^4.0.8), `@types/d3-shape` (^3.1.6), `@types/node` (^24.12.3), `fast-check` (^3.23.2), `glob` (^11.0.0), `happy-dom` (^16.8.1), `typescript` (~6.0.2), `vite` (^8.0.12), `vite-plugin-dts` (^5.0.2), `vitest` (^2.1.8).
-     - Package export contract strictly limits exports to `.` and `./style.css`:
-       ```json
-       "exports": {
-         ".": {
-           "types": "./dist/src/index.d.ts",
-           "import": "./dist/moul-ui.js",
-           "default": "./dist/moul-ui.js"
-         },
-         "./style.css": {
-           "style": "./dist/assets/style.css",
-           "default": "./dist/assets/style.css"
-         }
-       }
-       ```
-       Legacy subpaths (`./react`, `./tokens`, `./tokens.stylex`, `./theme.css`, `./style`) are absent.
-     - Added `"customElements": "./dist/custom-elements.json"` and `"sideEffects": ["./dist/moul-ui.js", "./dist/assets/style.css"]`.
-   - `docs/package.json`:
-     - Purged of all Waku, Fumadocs, and React dependencies.
-     - Declared runtime dependencies: `@astrojs/starlight` (^0.32.0), `@moul-dev/ui` (`workspace:*`), `@phosphor-icons/web` (^2.1.1), `astro` (^5.5.0), `sharp` (^0.33.5).
-     - Declared devDependencies: `@biomejs/biome` (^2.5.0), `@types/node` (^25.9.3), `typescript` (^6.0.3).
+1. **Vitest Unit & Integration Test Suite**:
+   ```bash
+   ./ui/node_modules/.bin/vitest run --root ui src/components/Charts.test.ts
+   ```
+   *Result*: Exit Code 0. 1 test file passed, 17/17 tests passed (598ms).
 
-3. **Vite Library Build & Rollup Guard Plugin (`ui/vite.config.ts`)**:
-   - `banReactImportsPlugin`:
-     - Resolves module IDs and throws descriptive errors on any import beginning with `react`, `react-dom`, `react-aria`, `react-aria-components`, `@stylexjs/stylex`, `@lit/react`, or `motion/react`.
-     - Confirmed in practice: when invoking Vite build and Vitest on existing un-migrated code, `banReactImportsPlugin` threw errors halting compilation across 69 legacy imports.
-   - Rollup options specify `"use client";` banner:
-     ```ts
-     rollupOptions: {
-       output: {
-         banner: '"use client";',
-       },
-     }
-     ```
-   - `copyCssTokensPlugin`:
-     - Preserves CSS tokens by copying `src/styles/style.css` to `dist/assets/style.css` without minification or downleveling.
-   - Vitest config sets `environment: 'happy-dom'`, `globals: true`, and `setupFiles: ['./src/test-setup.ts']`.
+2. **Biome Linter Check**:
+   ```bash
+   ./node_modules/.bin/biome check ui/src/components/ChartContainer ui/src/components/ChartTooltip ui/src/components/ChartCommon.ts ui/src/components/Charts.test.ts
+   ```
+   *Result*: Exit Code 0. 10 files checked, 0 errors, 0 warnings.
 
-4. **CEM Analyzer Configuration (`ui/custom-elements-manifest.config.mjs`)**:
-   - Exported object: `{ globs: ['src/components/**/*.ts'], exclude: ['src/**/*.test.ts', 'src/**/*.styles.ts'], outdir: 'dist', litelement: true }`.
-   - Executing `bun ./node_modules/@custom-elements-manifest/analyzer/cli.js analyze --config custom-elements-manifest.config.mjs` completed with exit code `0`, generating schema v1.0.0/v2 AST at `ui/dist/custom-elements.json` (93,591 bytes).
+3. **Zero-React Dependency Guard**:
+   ```bash
+   bun ./scripts/verify-no-react.ts all
+   ```
+   *Result*: Exit Code 0. Zero disallowed packages found.
 
-5. **Test Setup Shims (`ui/src/test-setup.ts`)**:
-   - All four headless shims were tested and verified with 100% assertions passing in Happy-DOM and Vitest:
-     - `ElementInternals`: Tracks `form` (including Happy DOM proxy symbol unwrapping), `setFormValue`, `setValidity` (message truncated to <= 200 chars), validity flags, and throws `NotSupportedError` on double attach.
-     - Native `<dialog>`: Disconnected `showModal()` throws `DOMException('Failed to execute showModal on HTMLDialogElement: The element is not in a Document.', 'InvalidStateError')` per Req 6.10; connected `showModal()` sets `open`; `close(returnValue)` updates `returnValue` and emits `close` event.
-     - Popover API: Checks `popover` attribute and connection state; dispatches `beforetoggle` (cancelable via `preventDefault()`) and `toggle` events; toggles `:popover-open` pseudo-class match.
-     - `ResizeObserver`: Registered on `window.ResizeObserver`; deterministic `window.__triggerResize(element, { width, height })` updates element bounding client rect and dispatches spec-compliant entries to registered observers.
-   - Biome lint check across the monorepo passed with exit code `0`.
+4. **Regression Test Suite (Converted Modern Components)**:
+   ```bash
+   ./ui/node_modules/.bin/vitest run --root ui src/tokens/Tokens.test.ts src/controllers/Controllers.test.ts src/components/Actions.test.ts src/components/Surfaces.test.ts src/components/Overlays.test.ts src/components/Navigation.test.ts src/components/Forms.test.ts src/components/Charts.test.ts
+   ```
+   *Result*: Exit Code 0. 8 test files passed, 185/185 tests passed (4.20s).
+
+### 1.3 Code & Standard Observations
+
+- **Observation 1 (Doubled Coordinate Translation Bug in `MoulChartTooltip`)**:
+  In `ui/src/components/ChartTooltip/ChartTooltip.ts`, lines 65–69:
+  ```ts
+  public updatePosition(): void {
+    this.style.left = `${this.x}px`
+    this.style.top = `${this.y}px`
+    this.style.transform = `translate3d(${this.x}px, ${this.y}px, 0) translate(-50%, -100%) translateY(-8px)`
+  }
+  ```
+  Both inline `left`/`top` AND `translate3d(${this.x}px, ${this.y}px, 0)` are applied to the `:host` element simultaneously.
+  In `ui/src/components/ChartTooltip/ChartTooltip.styles.ts`, line 8:
+  ```css
+  :host {
+    position: absolute;
+    top: 0;
+    left: 0;
+  ...
+  ```
+  Because `:host` already has `position: absolute;`, setting `left: 120px` sets the offset origin to 120px, and `transform: translate3d(120px, ...)` shifts the element an additional 120px, resulting in an effective horizontal displacement of 240px instead of 120px.
+
+- **Observation 2 (Omission of Glass Fallback & Progressive Enhancement)**:
+  In `ui/src/components/ChartTooltip/ChartTooltip.styles.ts`, lines 40–54:
+  ```css
+  [part="container"],
+  .tooltip-container {
+    display: inline-flex;
+    flex-direction: column;
+    gap: var(--spacing-1, 0.25rem);
+    padding: var(--spacing-2, 0.5rem) var(--spacing-3, 0.75rem);
+    background-color: var(--color-bg-elevated, #ffffff);
+    border: 1px solid var(--color-border-subtle, rgba(0, 0, 0, 0.1));
+    border-radius: var(--radius-md, 0.5rem);
+    box-shadow: var(--shadow-md, 0 4px 6px -1px rgba(0, 0, 0, 0.1));
+    font-size: var(--font-size-xs, 0.75rem);
+    color: var(--color-fg, #111827);
+    white-space: nowrap;
+    pointer-events: none;
+  }
+  ```
+  Neither `var(--color-bg-glass)` nor `@supports (backdrop-filter: blur(12px))` is present in `ChartTooltip.styles.ts`.
+
+- **Observation 3 (Multi-Series `payload` Render Omission)**:
+  In `ui/src/components/ChartTooltip/ChartTooltip.ts`, lines 25 and 160–174:
+  `payload` is accepted in `showOptions` and stored on `this.payload`, but `render()` only renders a single indicator dot, single label, and single value. It does not iterate over `this.payload` to render multi-series items.
+
+- **Observation 4 (Empty State Gating & Observer Cleanup)**:
+  In `ui/src/components/ChartContainer/ChartContainer.ts`:
+  - `isEmpty` conditionally renders `<slot name="empty">` or `<slot></slot>`.
+  - Detaching the container triggers `disconnectedCallback()`, delegating to `LayoutIndicatorController.hostDisconnected()`, setting `this.observer = null`.
+
+- **Observation 5 (Integrity Verification)**:
+  No dummy implementations, fake mocks, or hardcoded test returns were found in any source file. All tests execute real assertions.
 
 ---
 
 ## 2. Logic Chain
 
-1. **Integrity Audit**:
-   - Checked for embedded hardcoded outputs, dummy implementations, shortcuts, and self-certifying work.
-   - Observation 1 demonstrates `scripts/verify-no-react.ts` is a dynamic scanner inspecting manifest JSON objects against real RegExp sets, not a hardcoded stub.
-   - Observation 3 proves `banReactImportsPlugin` is genuinely active in the compiler pipeline, catching actual legacy imports in real build attempts.
-   - Observation 5 proves `ui/src/test-setup.ts` contains full state machines and event dispatching for `ElementInternals`, `<dialog>`, Popovers, and `ResizeObserver`.
-   - Conclusion: Zero integrity violations detected.
+1. **Doubled Coordinate Bug**:
+   - Setting both `style.left = `${this.x}px`` and `style.transform = `translate3d(${this.x}px, ...)` on the same element offsets the tooltip by `2 * x` and `2 * y`.
+   - The test `CHART-TLP-04` asserted `expect(hasLeftTop || hasTransform).toBe(true)`, allowing this bug to pass unnoticed during worker implementation.
+   - When continuous coordinate charts (LineChart, AreaChart) hover data points at coordinate `(x, y)`, the tooltip will render far away from the cursor/point.
+   - Fix direction: Maintain `top: 0; left: 0;` and use `translate3d(${this.x}px, ${this.y}px, 0) translate(-50%, -100%) translateY(-8px)` (or set `left: ${this.x}px; top: ${this.y}px;` and `transform: translate(-50%, -100%) translateY(-8px)` without `translate3d`).
 
-2. **Requirement & Contract Conformance**:
-   - Requirement 1 & 16: `ui/package.json` exposes solely `.` and `./style.css`, completely eliminating legacy export paths (`./react`, `./tokens`, `./tokens.stylex`, `./theme.css`, `./style`).
-   - Requirement 1.1, 1.2, 1.7: Both manifests are completely purged of React/StyleX/Waku/Fumadocs, and `verify-no-react.ts` guarantees regression defense on every build.
-   - Requirement 15.12, 15.13: `ui/vite.config.ts` builds library mode with `"use client";` banner.
-   - Requirement 2.7, 15.7: CEM analyzer configuration produces `dist/custom-elements.json`.
-   - Requirement 6.10 & 11.1: `ui/src/test-setup.ts` fulfills all test environment requirements for Happy-DOM without external polyfill overhead.
+2. **CSS Token & Glass Standards Compliance**:
+   - The specification and prompt mandate verification of glass fallback and elevated shadows.
+   - `ui/src/components/ChartTooltip/ChartTooltip.styles.ts` lacks `@supports (backdrop-filter: blur(12px)) or (-webkit-backdrop-filter: blur(12px))` and does not utilize `--color-bg-glass` / `--color-border-glass`.
+   - Adding the glass progressive enhancement aligns `ChartTooltip` with the design token layer in `ui/src/styles/style.css` and the pattern established in `semantic-tones.ts`.
 
-3. **Milestone Scoping**:
-   - Milestone 1 encompasses foundation manifests, dependency guards, build plugins, and test harness setup (Tasks 1.1–1.4).
-   - Component source code and tokens remain to be authored in Milestone 2.
+3. **Multi-Series Payload Support**:
+   - Multi-series continuous and discrete charts (Milestones 2 & 3) pass `payload: ChartTooltipPayloadEntry[]` to display all series values at a hovered category/index.
+   - If `payload` is provided and non-empty, `ChartTooltip` should render a list of series items with their respective colors, names, and values.
 
 ---
 
 ## 3. Caveats
 
-1. **Build & Existing Component Migration**:
-   - Running `bun run build:ui` or `bun test` across legacy React test files currently fails because `banReactImportsPlugin` halts when it encounters existing React files in `ui/src/components`. This is expected behavior proving the build guard is working. Migration of component source code to Lit Web Components occurs in Milestone 2.
-2. **CSS Token File Presence**:
-   - `ui/src/styles/style.css` will be authored in Milestone 2. `copyCssTokensPlugin` safely checks `fs.existsSync(srcPath)` before copying.
+- **Test Harness Compatibility**: Any modification to `updatePosition()` must preserve test compatibility with `CHART-TLP-04` which checks for either `left/top` or `transform`.
+- **Top Layer Containment**: The Popover API in browser environments renders elements into the top layer. By default, relative coordinates from SVG viewports require either `position: absolute` with coordinate translation or CSS Anchor Positioning.
 
 ---
 
-## 4. Quality Review
+## 4. Conclusion & Findings
 
-### Review Summary
-**Verdict**: **APPROVE**
+### Verdict: **REQUEST_CHANGES**
 
-### Findings
-- **[Minor] Finding 1: Biome `useOptionalChain` warnings in test-setup.ts**
-  - Where: `ui/src/test-setup.ts:245` (`if (DialogClass && DialogClass.prototype)`) and `ui/src/test-setup.ts:456` (`if (BaseElementClass && BaseElementClass.prototype)`)
-  - Why: Biome suggests optional chaining (`DialogClass?.prototype`).
-  - Severity: Low / Minor style preference; does not affect runtime correctness or exit code.
-  - Suggestion: Can be auto-fixed during next formatting pass.
+### Findings Summary:
 
-### Verified Claims
-- `bun ./scripts/verify-no-react.ts all` exits 0 on current manifests → verified via command execution → **PASS**
-- `bun ./scripts/verify-no-react.ts invalid` exits 1 with usage help → verified via command execution → **PASS**
-- `ui/package.json` exports strictly `.` and `./style.css` → verified via inspection → **PASS**
-- `ui/vite.config.ts` has `"use client";` banner → verified via inspection → **PASS**
-- `banReactImportsPlugin` blocks banned specifiers → verified via inline test & real vite build → **PASS**
-- `ui/custom-elements-manifest.config.mjs` generates `dist/custom-elements.json` → verified via execution → **PASS**
-- Happy-DOM shims for `ElementInternals`, `<dialog>`, Popovers, `ResizeObserver` → verified via adversarial tests → **PASS**
+#### [Major] Finding 1: Doubled Coordinate Positioning Offset in `MoulChartTooltip`
+- **Location**: `ui/src/components/ChartTooltip/ChartTooltip.ts:65–69`
+- **Issue**: `updatePosition()` assigns both `this.style.left = `${this.x}px`` / `this.style.top = `${this.y}px`` AND `translate3d(${this.x}px, ${this.y}px, 0)` in `transform`. In real browser rendering, this causes `2x` and `2y` positioning, placing the tooltip at twice the expected offset.
+- **Suggested Fix**: Update `updatePosition()` to use transform for coordinates without doubling `left`/`top`, e.g.:
+  ```ts
+  public updatePosition(): void {
+    this.style.left = '0px'
+    this.style.top = '0px'
+    this.style.transform = `translate3d(${this.x}px, ${this.y}px, 0) translate(-50%, -100%) translateY(-8px)`
+  }
+  ```
+  Or:
+  ```ts
+  public updatePosition(): void {
+    this.style.left = `${this.x}px`
+    this.style.top = `${this.y}px`
+    this.style.transform = `translate(-50%, -100%) translateY(-8px)`
+  }
+  ```
 
-### Coverage Gaps
-- None within Milestone 1 scope.
+#### [Major] Finding 2: Missing Glass Backdrop-Filter Fallback in `ChartTooltip.styles.ts`
+- **Location**: `ui/src/components/ChartTooltip/ChartTooltip.styles.ts:40–54`
+- **Issue**: Tooltip styling lacks glass progressive enhancement (`@supports (backdrop-filter: blur(12px))`) and references to `--color-bg-glass` / `--color-border-glass`.
+- **Suggested Fix**: Add glass progressive enhancement to `ChartTooltip.styles.ts`:
+  ```css
+  @supports (backdrop-filter: blur(12px)) or (-webkit-backdrop-filter: blur(12px)) {
+    [part="container"],
+    .tooltip-container {
+      background-color: var(--color-bg-glass, rgba(255, 255, 255, 0.75));
+      border-color: var(--color-border-glass, rgba(0, 0, 0, 0.1));
+      -webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(12px);
+    }
+  }
+  ```
 
-### Unverified Items
-- None.
-
----
-
-## 5. Adversarial Review
-
-### Challenge Summary
-**Overall risk assessment**: **LOW**
-
-### Challenges
-1. **Challenge 1: Could a banned package in `peerDependencies` bypass the guard?**
-   - Stress test: Injected mock `peerDependencies: { "react": "^19.0.0" }`.
-   - Result: `checkManifest` inspects `peerDependencies` and detected the violation. **Pass.**
-2. **Challenge 2: Could a package named `foo-react` or `@org/react` bypass pattern matching?**
-   - Stress test: Tested `isBannedPackage('foo-react')` and `isBannedPackage('@org/react')`.
-   - Result: Matched `/(-|\/)react$/` regex pattern and was rejected. **Pass.**
-3. **Challenge 3: Does `dialog.showModal()` accurately throw on disconnected elements?**
-   - Stress test: Called `showModal()` on newly created disconnected `<dialog>`.
-   - Result: Threw `DOMException` with `name === 'InvalidStateError'` and message matching standard W3C text. **Pass.**
-4. **Challenge 4: Does double-invoking `attachInternals()` throw as specified?**
-   - Stress test: Called `host.attachInternals()` twice on same element.
-   - Result: Threw `DOMException('ElementInternals already attached', 'NotSupportedError')`. **Pass.**
-5. **Challenge 5: Does `beforetoggle` cancellation prevent popover from opening?**
-   - Stress test: Added `beforetoggle` listener calling `event.preventDefault()`.
-   - Result: Popover remained closed (`matches(':popover-open') === false`). **Pass.**
+#### [Minor] Finding 3: Multi-Series Payload Rendering Ignored in Default Template
+- **Location**: `ui/src/components/ChartTooltip/ChartTooltip.ts:160–174`
+- **Issue**: `ChartTooltip` accepts `payload: unknown[]`, but `render()` does not render multi-series payload items if present.
+- **Suggested Fix**: Add support for rendering a list of items when `payload && payload.length > 0`.
 
 ---
 
-## 6. Conclusion
+## 5. Verification Method
 
-The worker's implementation for Milestone 1 (Phase 1) is robust, fully compliant with requirements and design specifications, and passes all verification gates.
-Verdict: **APPROVE**.
+Once changes are applied by the worker:
 
----
+1. **Verify Vitest Test Suite**:
+   ```bash
+   ./ui/node_modules/.bin/vitest run --root ui src/components/Charts.test.ts
+   ```
+   *Expected outcome*: 17/17 tests passing.
 
-## 7. Verification Method
+2. **Verify Biome Linter**:
+   ```bash
+   ./node_modules/.bin/biome check ui/src/components/ChartContainer ui/src/components/ChartTooltip ui/src/components/ChartCommon.ts ui/src/components/Charts.test.ts
+   ```
+   *Expected outcome*: 0 errors, 0 warnings.
 
-To independently reproduce verification:
-
-1. **Verify Dependency Guard**:
+3. **Verify Zero-React Compliance**:
    ```bash
    bun ./scripts/verify-no-react.ts all
-   bun ./scripts/verify-no-react.ts ui
-   bun ./scripts/verify-no-react.ts docs
    ```
-2. **Verify Package Exports Contract**:
-   Inspect `ui/package.json` to confirm only `.` and `./style.css` exist in `exports`.
-3. **Verify CEM Analyzer**:
-   ```bash
-   bun ./ui/node_modules/@custom-elements-manifest/analyzer/cli.js analyze --config ui/custom-elements-manifest.config.mjs
-   ```
-4. **Verify Lint**:
-   ```bash
-   bun run lint
-   ```
+   *Expected outcome*: 0 disallowed packages.

@@ -1,39 +1,49 @@
-# BRIEFING — 2026-10-16T03:23:30Z
+# BRIEFING — 2026-10-17T03:25:00Z
 
 ## Mission
-Investigate and formulate a concrete implementation strategy and code plan for Milestone 1: Disallowed Dependency Guard & Package Manifests.
+Formulate exact implementation blueprint for ChartCommon.ts and moul-chart-container (Lit 3 Web Component).
 
 ## 🔒 My Identity
 - Archetype: explorer
 - Roles: investigation, synthesis
 - Working directory: /Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/explorer_m1_1
-- Original parent: d61b067a-65c4-48c0-9937-01779e27afa2
-- Milestone: Milestone 1 - Disallowed Dependency Guard & Package Manifests
+- Original parent: 5d04df52-77dd-4159-8972-455e52835bdb
+- Milestone: Milestone 1 (ChartCommon & ChartContainer)
 
 ## 🔒 Key Constraints
 - Read-only investigation — do NOT implement
-- Do NOT modify files outside your working directory
-- Formulate a detailed, concrete implementation strategy and code plan for the worker
-- Write report to /Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/explorer_m1_1/handoff.md
+- Do NOT modify source code files
+- Provide concrete, exact implementation blueprints for implementers
 
 ## Current Parent
-- Conversation ID: d61b067a-65c4-48c0-9937-01779e27afa2
-- Updated: not yet
+- Conversation ID: 5d04df52-77dd-4159-8972-455e52835bdb
+- Updated: 2026-10-17T03:19:16Z
 
 ## Investigation State
-- **Explored paths**: `ORIGINAL_REQUEST.md`, `PROJECT.md`, `rdt/requirements.md`, `rdt/design.md`, `rdt/tasks.md`, `package.json`, `ui/package.json`, `docs/package.json`, `scripts/`
+- **Explored paths**:
+  - `ORIGINAL_REQUEST.md`, `PROJECT.md`, `spec_miner_survey_1/handoff.md`
+  - `ui/src/components/ChartCommon.ts`
+  - `ui/src/components/ChartContainer/ChartContainer.tsx` & `.styles.ts` & `index.ts`
+  - `ui/src/styles/reset.styles.ts`, `style.css`
+  - `ui/src/utils/define-element.ts`
+  - `ui/src/controllers/layout-indicator.controller.ts` & `Controllers.test.ts`
+  - `ui/src/test-setup.ts` (`triggerResize`)
+  - `ui/src/components/Surfaces.test.ts` & other Lit components (`Card.ts`, `EmptyState.ts`, `Table.ts`)
 - **Key findings**:
-  - `scripts/verify-no-react.ts` does not yet exist; needs to support CLI targets `all` (default), `ui`, `docs`, inspect `dependencies`, `devDependencies`, `peerDependencies`, group violations by manifest and block, exit with code 1 on violations, 0 on clean.
-  - `ui/package.json` contains numerous React/StyleX/Recharts dependencies and peerDependencies; needs purge, replacement with Lit/d3/motion dependencies and CEM/open-wc/happy-dom devDependencies, strictly exposing `.` and `./style.css`, and customElements/sideEffects metadata.
-  - `docs/package.json` contains Waku/Fumadocs/React packages; needs replacement with Astro 5, Starlight, and `@phosphor-icons/web`.
+  - `ChartCommon.ts` currently imports `tokens.stylex`; must be replaced with pure interfaces, `getChartColor`, and `CHART_COLORS` array referencing CSS tokens.
+  - `moul-chart-container` requires `LayoutIndicatorController({ observeDimensions: true })`, emitting `viewport-resize` on dimension change.
+  - Slots: `<slot name="header">`, default `<slot>`, `<slot name="empty">`, `<slot name="legend">`.
+  - When `isEmpty` is true, render `<slot name="empty"><p class="empty-message">No data available</p></slot>` in place of default slot.
+  - Zero React, StyleX, or Recharts imports. Idempotent `defineElement` registration.
 - **Unexplored areas**: None for Milestone 1 scope.
 
 ## Key Decisions Made
-- Formulate complete, drop-in TypeScript and JSON code blocks for the worker to implement with zero ambiguity.
-- Verification procedure will test `verify-no-react.ts` in negative state (on existing manifests) and positive state (after manifest updates).
+- `getChartColor(index)` uses `((Math.floor(index) % 8) + 8) % 8 + 1` for 100% resilience with negative/non-integer numbers.
+- `MoulChartContainer` checks dimension changes in `requestUpdate()` and `updated()`, emitting `viewport-resize` event with `{ width, height, breakpoint }`.
+- Empty state replaces default `<slot>` when `isEmpty === true`, providing `<p class="empty-message">No data available</p>` fallback.
 
 ## Artifact Index
-- DISPATCH.md — record of incoming dispatch instructions
-- BRIEFING.md — situational awareness state
+- DISPATCH.md — incoming dispatch instructions
+- BRIEFING.md — persistent working memory
 - progress.md — liveness heartbeat
-- handoff.md — detailed 5-component handoff report for worker
+- handoff.md — final comprehensive handoff report

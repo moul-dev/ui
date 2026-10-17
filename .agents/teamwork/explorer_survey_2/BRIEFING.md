@@ -1,39 +1,39 @@
-# BRIEFING — 2026-10-16T03:17:00Z
+# BRIEFING — 2026-10-17T03:15:30Z
 
 ## Mission
-Survey existing design tokens in `ui/src/tokens/tokens.stylex.ts` and CSS/token files in `ui/`, extracting exact OKLCH values, scales, semantic aliases, and documenting mapping rules for `style.css`.
+Investigate the existing codebase infrastructure supporting Charts & Data Visualization (Phase 8), including dependencies, CSS tokens, controllers, utilities, resets, and barrel exports.
 
 ## 🔒 My Identity
-- Archetype: Explorer (teamwork_preview_explorer)
-- Roles: Investigation, Synthesis
+- Archetype: explorer
+- Roles: read-only investigation, codebase infrastructure survey
 - Working directory: /Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/explorer_survey_2
-- Original parent: d61b067a-65c4-48c0-9937-01779e27afa2
-- Milestone: Design Token Survey & Mapping Analysis
+- Original parent: 5d04df52-77dd-4159-8972-455e52835bdb
+- Milestone: Phase 8 - Charts & Data Visualization Infrastructure Survey
 
 ## 🔒 Key Constraints
-- Read-only investigation — do NOT implement or modify files outside working directory
-- Survey exact oklch lightness, chroma, and hue values from `ui/src/tokens/tokens.stylex.ts`
-- Document mapping to `ui/src/styles/style.css` using `:root` `color-scheme: light dark` and `light-dark(...)`
-- Note naming conversions (camelCase vs kebab-case)
+- Read-only investigation — do NOT implement or modify source code
+- Files for content delivery, messages for coordination
+- Self-contained 5-component handoff report
 
 ## Current Parent
-- Conversation ID: d61b067a-65c4-48c0-9937-01779e27afa2
-- Updated: 2026-10-16T03:17:00Z
+- Conversation ID: 5d04df52-77dd-4159-8972-455e52835bdb
+- Updated: 2026-10-17T03:15:30Z
 
 ## Investigation State
-- **Explored paths**: `ORIGINAL_REQUEST.md`, `rdt/requirements.md`, `rdt/design.md`, `rdt/tasks.md`, `ui/src/tokens/tokens.stylex.ts`, `ui/src/styles/theme.css`, `ui/src/tokens/tokens.test.ts`, `docs/src/styles/globals.css`.
+- **Explored paths**: `ui/package.json`, `ui/src/styles/style.css`, `ui/src/styles/reset.styles.ts`, `ui/src/controllers/`, `ui/src/utils/`, `ui/src/index.ts`, `ui/src/test-setup.ts`, legacy chart components in `ui/src/components/*`
 - **Key findings**:
-  - Exactly 118 design tokens + 6 brand customization hooks (124 total `:root` properties) extracted from `tokens.stylex.ts`.
-  - All scales (Neutral, Primary, Error, Warning, Success), semantic aliases (13), alert tokens (20), typography (21), spacing (8), radius (5), shadows (3), z-index (5), charts (8), and brand hooks (6) mapped to kebab-case CSS custom properties.
-  - Critical shadow token fix identified: `tokens.stylex.ts` referenced `var(--colorShadow)`, whereas standard CSS requires `var(--color-shadow)`.
-  - Brand hooks fix identified: `theme.css` omitted `--brand-font-family: inherit;`, which is required by Requirement 3.2.
-- **Unexplored areas**: None within the survey scope.
+  1. Dependencies `d3-scale@^4.0.2`, `d3-shape@^3.2.0`, `motion@^13.4.1`, `lit@^3.2.1` and their `@types/*` are installed and verified.
+  2. Tokens `--color-chart-1` through `--color-chart-8` are defined with `light-dark(oklch(...))` in `style.css`.
+  3. `resetStyles` is verified in `reset.styles.ts`.
+  4. Reactive controllers (`LayoutIndicatorController`, `NumberSpringController`, `OverlayPresenceController`, `PressController`) and utilities (`defineElement`, `subtleAnimate`, `CHART_EASE`, `warnMissingLabel`) are fully implemented and tested.
+  5. Barrel `ui/src/index.ts` currently holds legacy React chart components that need to be replaced with the 10 Lit custom elements (`moul-chart-container`, `moul-chart-tooltip`, `moul-line-chart`, `moul-area-chart`, `moul-bar-chart`, `moul-doughnut-chart`, `moul-top-list`, `moul-stat`, `moul-percentage-bar`, `moul-percentage-circle`) and registered in `HTMLElementTagNameMap`.
+- **Unexplored areas**: None. Survey is complete.
 
 ## Key Decisions Made
-- Fully authored `handoff.md` with complete, copy-paste ready CSS snippet for `ui/src/styles/style.css`.
+- All findings synthesized in 5-component handoff report at `/Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/explorer_survey_2/handoff.md`.
 
 ## Artifact Index
-- DISPATCH.md — Received orchestrator messages
-- BRIEFING.md — Working memory index
-- progress.md — Liveness heartbeat tracker
-- handoff.md — Comprehensive Design Token Survey and CSS Mapping Report
+- DISPATCH.md — incoming dispatch instructions
+- BRIEFING.md — persistent working memory
+- progress.md — liveness heartbeat
+- handoff.md — final survey report

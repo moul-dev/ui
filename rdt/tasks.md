@@ -168,18 +168,18 @@ _Covers: Requirement 6, Requirement 9_
 ## Phase 8: Category 1 — Charts & Data Visualization (7 Components + 2 Companions)
 _Covers: Requirement 7_
 
-- [ ] **8.1 Implement `moul-chart-container` and `moul-chart-tooltip`**
+- [x] **8.1 Implement `moul-chart-container` and `moul-chart-tooltip`**
   - `moul-chart-container`: Responsive SVG viewport re-rendering on `LayoutIndicatorController` resize and rendering `<slot name="empty">` when data is empty (_Req 7.4, 7.5_).
   - `moul-chart-tooltip`: Popover API tooltip opening on data point `pointerenter` and closing on `pointerleave` with spring coordinate tracking (_Req 7.7, 7.8_).
-- [ ] **8.2 Implement `moul-line-chart` and `moul-area-chart`**
+- [x] **8.2 Implement `moul-line-chart` and `moul-area-chart`**
   - Render SVG paths using `d3-scale` and `d3-shape` (`line`, `area`), `--color-chart-1`–`--color-chart-8`, and `350ms` `motion` path transitions (_Req 7.1, 7.3, 7.6_).
-- [ ] **8.3 Implement `moul-bar-chart` and `moul-doughnut-chart`**
+- [x] **8.3 Implement `moul-bar-chart` and `moul-doughnut-chart`**
   - Render SVG bars and arcs using `d3-scale` and `d3-shape` (`pie`, `arc`) with `350ms` staggered `motion` transitions (_Req 7.1, 7.3, 7.6_).
-- [ ] **8.4 Implement `moul-top-list`, `moul-stat`, `moul-percentage-bar`, and `moul-percentage-circle`**
+- [x] **8.4 Implement `moul-top-list`, `moul-stat`, `moul-percentage-bar`, and `moul-percentage-circle`**
   - `moul-top-list`: Scaled horizontal bars with staggered `motion` fill (_Req 7.1, 7.3_).
   - `moul-stat`: Spring-animated metric card using `NumberSpringController` (_Req 7.1_).
   - `moul-percentage-bar` & `moul-percentage-circle`: SVG bar and `d3-shape` arc with `motion` spring transitions (_Req 7.1, 7.2, 7.3_).
-- [ ] **8.5 Write Chart Component Tests (`ui/src/components/Charts.test.ts`)**
+- [x] **8.5 Write Chart Component Tests (`ui/src/components/Charts.test.ts`)**
 
 ---
 

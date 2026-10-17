@@ -1,780 +1,681 @@
-# Milestone 1 Investigation & Implementation Plan: Vitest + happy-dom Test Harness (`ui/src/test-setup.ts`)
+# Handoff Report: Milestone 1 Test Plan (`moul-chart-container` & `moul-chart-tooltip`)
+
+**Agent**: `explorer_m1_3`  
+**Working Directory**: `/Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/explorer_m1_3`  
+**Milestone**: Milestone 1 — Chart Container, Tooltip & Common Helpers Test Plan  
+**Target File**: `/Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/explorer_m1_3/handoff.md`  
+**Date**: 2026-10-17  
+
+---
 
 ## 1. Observation
 
-### Direct Codebase & Specification Observations
+### 1.1 Existing Test Harness & Browser Shims (`ui/src/test-setup.ts`)
 
-1. **Current State of `ui/src/test-setup.ts`**:
-   - Path: `/Users/phearak/github/orgs/moul-dev/ui/ui/src/test-setup.ts` (lines 1–6):
-     ```ts
-     import '@testing-library/jest-dom/vitest'
+Direct examination of `ui/src/test-setup.ts` reveals key browser shims and test harness utilities:
 
-     if (typeof window !== 'undefined' && !Element.prototype.getAnimations) {
-       Element.prototype.getAnimations = () => []
+1. **Native Popover API Shim** (lines 376–441):
+   ```typescript
+   HtmlElementClass.prototype.showPopover = function (this: HTMLElement): void {
+     if (this.getAttribute('popover') === null) {
+       throw new DOMException(
+         "Failed to execute 'showPopover' on 'HTMLElement': Element does not have a 'popover' attribute.",
+         'InvalidStateError',
+       )
      }
-     ```
-   - *Observation*: The file currently imports `@testing-library/jest-dom/vitest`. However, `@testing-library/jest-dom` is a legacy React-testing artifact being removed from the workspace in Milestone 1 (`ui/package.json`). Furthermore, `test-setup.ts` currently lacks any shims for `ElementInternals`, native `<dialog>`, Popover API, or `ResizeObserver`.
+     if (!this.isConnected) {
+       throw new DOMException(
+         "Failed to execute 'showPopover' on 'HTMLElement': The element is not in a Document.",
+         'InvalidStateError',
+       )
+     }
+     const isOpen =
+       this.hasAttribute(':popover-open') ||
+       this.classList.contains(':popover-open')
+     if (isOpen) return
+     ...
+     this.setAttribute(':popover-open', '')
+     this.classList.add(':popover-open')
+     ...
+   }
+   ```
+   - Calling `showPopover()` throws a `DOMException` with `InvalidStateError` if `popover` attribute is absent or if the element is not connected to the document.
+   - Popover visibility is tracked via `:popover-open` attribute and class; queried via `element.matches(':popover-open')`.
+   - `hidePopover()` removes `:popover-open`.
 
-2. **Dispatch Directives & Acceptance Criteria**:
-   - Dispatch message (`/Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/explorer_m1_3/DISPATCH.md`, lines 7–23):
-     - `ElementInternals` shim:
-       - Attach to `HTMLElement.prototype.attachInternals`.
-       - Returns mock `ElementInternals` instance tracking: `form` (`this.closest('form')`), `setFormValue(value)`, `setValidity(flags, message, anchor)` storing validity flags and truncating `message` to `<= 200` chars, `reportValidity()`, `validity` (`ValidityState` getters based on flags), `validationMessage` returning current message.
-     - Native `<dialog>` shim:
-       - Shim on `HTMLDialogElement.prototype`:
-       - `showModal()`: If `!this.isConnected`, MUST throw:
-         `new DOMException('Failed to execute showModal on HTMLDialogElement: The element is not in a Document.', 'InvalidStateError')`
-         per Requirement 6.10 and Acceptance Criteria. If connected, sets `open = true`.
-       - `close(returnValue)`: removes `open`, sets `returnValue`, dispatches `new Event('close')`.
-     - Popover API shim:
-       - Shim on `HTMLElement.prototype`:
-       - `showPopover()`, `hidePopover()`, `togglePopover()`
-       - Toggles `:popover-open` simulation or attribute and dispatches `toggle` event.
-     - Deterministic `ResizeObserver` controller:
-       - Global `ResizeObserver` mock that allows tests to register observers and includes a helper (e.g. `window.__triggerResize(element, { width, height })`) to deterministically fire observer callbacks with `ResizeObserverEntry[]`.
-   - `ORIGINAL_REQUEST.md` line 36:
-     - `ui/src/test-setup.ts configures happy-dom with shims for ElementInternals (tracking form, value, validity), native <dialog> (showModal throwing DOMException when disconnected, close), Popover API (showPopover, hidePopover, togglePopover), and ResizeObserver.`
+2. **Deterministic `ResizeObserver` Controller** (lines 485–617):
+   ```typescript
+   export function triggerResize(
+     element: Element,
+     options: TriggerResizeOptions,
+   ): void {
+     const width = options.width
+     const height = options.height ?? 0
+     ...
+     const entry: ResizeObserverEntry = {
+       target: element,
+       contentRect: contentRect as DOMRectReadOnly,
+       borderBoxSize: Object.freeze([{ inlineSize: width, blockSize: height }]),
+       contentBoxSize: Object.freeze([{ inlineSize: width, blockSize: height }]),
+       ...
+     }
+     for (const record of activeObservers) {
+       if (record.observedElements.has(element)) {
+         record.callback([entry], record.observer)
+       }
+     }
+   }
+   ```
+   - Synchronously updates `element.getBoundingClientRect()` and executes the registered observer callbacks.
+   - Exported as `triggerResize` from `../test-setup` and globally exposed as `window.__triggerResize`.
 
-3. **Requirements & Architecture Context**:
-   - `rdt/requirements.md` Requirement 6.10 (lines 143):
-     - `IF dialog.showModal() is called on a <dialog> element that is not connected to the document, THEN THE Library SHALL catch the resulting DOMException, emit a console.warn message, and not attempt to focus any element.`
-   - `rdt/design.md` §7.2 (lines 601–621):
-     - `safeShowModal` wraps `dialog.showModal()` in `try ... catch (err)` checking for this exact disconnected `DOMException`.
-   - `rdt/design.md` §6.5 (lines 460–472):
-     - `FormInternalsController` checks `attachInternals()`, invokes `setFormValue()`, and in `setValidity(flags, message)` truncates `message?.slice(0, 200)` and calls `this.internals?.setValidity(...)` and `this.internals?.reportValidity()`. If element has a `name` attribute and `this.internals.form === null`, warns: `[@moul-dev/ui] Form-associated element <...> is not connected to a <form>.` (Requirement 9.12).
-   - `rdt/design.md` §7.1 (lines 578–593):
-     - `supportsNativePopoverAndAnchor()` checks `'popover' in HTMLElement.prototype`. Open state selector uses `:where(:popover-open, .\:popover-open, [data-fallback-open])`.
-   - `rdt/design.md` §11.1 (lines 960–969):
-     - `ResizeObserver` mock controller allows tests to programmatically trigger resize callbacks at exact widths (`320px`, `600px`, `900px`, `1100px`, `1400px`) to deterministically verify `LayoutIndicatorController` breakpoints (`xs`, `sm`, `md`, `lg`, `xl`) and `ChartContainer` responsiveness.
+### 1.2 Testing Patterns in `Overlays.test.ts` & `Surfaces.test.ts`
+
+Direct examination of `ui/src/components/Overlays.test.ts` and `ui/src/components/Surfaces.test.ts` reveals the established testing pattern:
+
+1. **Mounting & Update Synchronization** (`Overlays.test.ts` lines 20–42):
+   ```typescript
+   async function awaitNestedUpdates(root: Element): Promise<void> {
+     if ('updateComplete' in root && (root as LitElement).updateComplete) {
+       await (root as LitElement).updateComplete
+     }
+     const children = Array.from(root.querySelectorAll('*'))
+     await Promise.all(
+       children.map((child) => {
+         if ('updateComplete' in child && (child as LitElement).updateComplete) {
+           return (child as LitElement).updateComplete
+         }
+         return Promise.resolve()
+       }),
+     )
+   }
+
+   async function mount<T extends HTMLElement>(template: unknown): Promise<T> {
+     const container = document.createElement('div')
+     document.body.appendChild(container)
+     render(template, container)
+     const element = container.firstElementChild as T
+     await awaitNestedUpdates(element)
+     return element
+   }
+   ```
+
+2. **Teardown & Cleanup** (`Overlays.test.ts` lines 69–73):
+   ```typescript
+   afterEach(() => {
+     document.body.innerHTML = ''
+     vi.restoreAllMocks()
+     vi.useRealTimers()
+   })
+   ```
+
+3. **Popover Assertion Pattern** (`Overlays.test.ts` lines 248–272):
+   ```typescript
+   expect(popover.isOpen).toBe(false)
+   // Trigger open
+   triggerWrapper?.click()
+   await awaitNestedUpdates(popover)
+   expect(popover.isOpen).toBe(true)
+   expect(innerPopover?.matches(':popover-open')).toBe(true)
+   // Close
+   await popover.setOpen(false)
+   await awaitNestedUpdates(popover)
+   expect(popover.isOpen).toBe(false)
+   ```
+
+4. **Empty State & Slot Inspection Pattern** (`Surfaces.test.ts` lines 306–336):
+   ```typescript
+   expect(emptyState.shadowRoot?.querySelector('[part="title"] slot[name="title"]')).toBeTruthy()
+   expect(emptyState.shadowRoot?.querySelector('[part="description"]')).toBeTruthy()
+   ```
+
+### 1.3 Breakpoint Computation in `LayoutIndicatorController` (`ui/src/controllers/layout-indicator.controller.ts`)
+
+Lines 18–24 define the breakpoint logic:
+```typescript
+export function computeBreakpoint(width: number): Breakpoint {
+  if (!Number.isFinite(width) || width < 480) return 'xs'
+  if (width < 768) return 'sm'
+  if (width < 1024) return 'md'
+  if (width < 1280) return 'lg'
+  return 'xl'
+}
+```
+For `width: 600`, `computeBreakpoint(600)` yields `'sm'` (since `480 <= 600 < 768`).
+
+### 1.4 Specification & Contract for Milestone 1
+
+From `PROJECT.md` (lines 43–78) and `ORIGINAL_REQUEST.md`:
+1. `moul-chart-container`:
+   - Properties: `title: string = ''`, `description: string = ''`, `height: number = 300`, `isEmpty: boolean = false` (`is-empty`)
+   - Uses `LayoutIndicatorController` with `observeDimensions: true`.
+   - Slots: default, `header`, `empty`, `legend`.
+   - Event: `viewport-resize` with `{ detail: { width: number, height: number, breakpoint: string } }`.
+2. `moul-chart-tooltip`:
+   - Properties: `label: string = ''`, `value: string = ''`, `color: string = 'var(--color-chart-1)'`, `isOpen: boolean = false` (`is-open`), `x: number = 0`, `y: number = 0`.
+   - Uses native Popover API (`popover="manual"`) and `OverlayPresenceController`.
+   - Methods: `show(...)` or `showPopover()`, `hide()` or `hidePopover()`.
+3. `ChartCommon.ts`:
+   - Helper `getChartColor(index: number): string` returns `var(--color-chart-1)` through `var(--color-chart-8)` with modulo 8 wrapping.
+   - Exported interfaces: `ChartSeries`, `DoughnutDataItem`, `TopListItem`, `PointHoverDetail`.
 
 ---
 
 ## 2. Logic Chain
 
-1. **Purge of Legacy Jest-DOM Import**:
-   - *Observation*: Line 1 of `ui/src/test-setup.ts` imports `@testing-library/jest-dom/vitest`.
-   - *Reasoning*: As determined in Task 1.1 / Task 1.2, `@testing-library/jest-dom` is removed from `ui/package.json` in favor of native Lit / `@open-wc/testing-helpers` / `fast-check`. Keeping this import will cause module resolution errors once dependencies are cleaned.
-   - *Inference*: The import must be removed and replaced with standard Web APIs and custom shims.
-
-2. **`ElementInternals` Lifecycle & Edge Cases**:
-   - *Observation*: Form components call `this.attachInternals()` in `hostConnected()`.
-   - *Reasoning*:
-     1. Per W3C Custom Elements specification, calling `element.attachInternals()` multiple times on the same element instance must throw a `DOMException('ElementInternals already attached', 'NotSupportedError')`.
-     2. Form detection must check `this.closest('form')` as well as the `form` attribute id association (`document.getElementById(this.getAttribute('form'))`).
-     3. `setValidity(flags, message, anchor)` must evaluate if any flag is `true`. When any flag is `true`, `validity.valid` is `false`, and `validationMessage` is set to `message.slice(0, 200)`. When all flags are false (or empty), `validity.valid` is `true`, and `validationMessage` is cleared to `""`.
-     4. `reportValidity()` and `checkValidity()` must return boolean `this.validity.valid` and dispatch a cancelable `invalid` event on the host if invalid.
-   - *Inference*: A dedicated `MockElementInternalsImpl` class attached to `HTMLElement.prototype.attachInternals` ensures complete standard compliance.
-
-3. **Native `<dialog>` Disconnected State Enforcement**:
-   - *Observation*: Requirement 6.10 explicitly demands that `showModal()` throws a `DOMException` when `!this.isConnected`.
-   - *Reasoning*:
-     1. In browser implementations (Chromium/WebKit/Gecko), calling `showModal()` on an unattached `<dialog>` throws `DOMException` with name `'InvalidStateError'`.
-     2. The exact error message in acceptance criteria is:
-        `'Failed to execute showModal on HTMLDialogElement: The element is not in a Document.'` with name `'InvalidStateError'`.
-     3. When connected, `showModal()` sets `this.open = true` and updates attribute `open`.
-     4. Calling `close(returnValue)` clears `open`, sets `this.returnValue`, and fires an unbubbled `Event('close')`.
-     5. If `HTMLDialogElement` is undefined in the environment, it must be defined so `dialog instanceof HTMLDialogElement` evaluates correctly.
-   - *Inference*: Shimming `HTMLDialogElement.prototype` with exact disconnected checks satisfies Requirement 6.10 and validates `safeShowModal()`.
-
-4. **Popover API & Pseudo-Class Compatibility**:
-   - *Observation*: Components inspect `'popover' in HTMLElement.prototype` and query `:popover-open`.
-   - *Reasoning*:
-     1. In standard DOM, `element.popover` reflects the `popover` attribute (`"auto"` or `"manual"`).
-     2. Calling `showPopover()` on an element without `popover` attribute throws `DOMException('InvalidStateError')`.
-     3. Calling `showPopover()` must dispatch `beforetoggle` (cancelable `ToggleEvent` with `oldState: 'closed'`, `newState: 'open'`). If not canceled, it sets simulated state: attribute `:popover-open`, attribute `data-popover-open`, and class `:popover-open`. Then it dispatches `toggle` (`ToggleEvent` with `oldState: 'closed'`, `newState: 'open'`).
-     4. `hidePopover()` dispatches `beforetoggle`, removes `:popover-open` / `data-popover-open`, and dispatches `toggle` (`oldState: 'open'`, `newState: 'closed'`).
-     5. `togglePopover(force)` conditionally shows or hides based on current state.
-     6. `Element.prototype.matches` must be patched so `element.matches(':popover-open')` returns `true` when the popover is active, preventing selector syntax errors in headless DOM.
-   - *Inference*: Shimming `HTMLElement.prototype` methods and patching `matches(':popover-open')` allows seamless testing of popovers, dropdowns, tooltips, and comboboxes.
-
-5. **Deterministic `ResizeObserver` Controller**:
-   - *Observation*: `LayoutIndicatorController` maps width to breakpoints (`xs`: 0–479, `sm`: 480–767, `md`: 768–1023, `lg`: 1024–1279, `xl`: >=1280), and `ChartContainer` updates SVG viewports.
-   - *Reasoning*:
-     1. Asynchronous layout engines cannot be relied upon in headless unit tests.
-     2. A global `MockResizeObserver` class replaces `window.ResizeObserver`, registering each observed element and observer instance.
-     3. `window.__triggerResize(element, { width, height, top, left })` updates `element.getBoundingClientRect()` synchronously, constructs a spec-compliant `ResizeObserverEntry` (with `contentRect`, `borderBoxSize`, `contentBoxSize`), and invokes all callbacks observing that element immediately.
-   - *Inference*: Tests can deterministically invoke `window.__triggerResize(host, { width: 320 })`, `window.__triggerResize(host, { width: 800 })`, etc., and immediately assert synchronous updates.
+1. **Test Environment Compatibility**:
+   - Because `test-setup.ts` enforces `popover` attribute presence and `this.isConnected` before allowing `showPopover()` to succeed (Observation 1.1), `moul-chart-tooltip` tests must always mount the element to `document.body` via `mount()` and ensure `popover="manual"` is configured on the host or its popover container.
+2. **Deterministic Resizing Mechanism**:
+   - `LayoutIndicatorController` adds a `ResizeObserver` on `hostConnected()`.
+   - Invoking `triggerResize(container, { width: 600, height: 300 })` immediately invokes the registered observer callback with `entry.contentRect` having `width: 600, height: 300`.
+   - `LayoutIndicatorController` calculates `nextBp = computeBreakpoint(600)` which evaluates to `'sm'` (Observation 1.3).
+   - `MoulChartContainer` intercepts dimension changes and dispatches the `viewport-resize` event with `{ width: 600, height: 300, breakpoint: 'sm' }`.
+3. **Empty State Conditional Rendering**:
+   - When `container.isEmpty = true` or `is-empty` attribute is set, `MoulChartContainer` renders `<slot name="empty">` and hides the default visualization slot or SVG container.
+   - When `isEmpty = false`, `<slot name="empty">` is unmounted/hidden and default `<slot>` is active.
+4. **Tooltip Lifecycle & Positioning**:
+   - Initially, `isOpen = false` and `:popover-open` is absent.
+   - Calling `show({ label: 'Revenue', value: '$120K', color: 'var(--color-chart-3)', x: 150, y: 80 })`:
+     - Updates `isOpen` to `true`.
+     - Adds `:popover-open` to the popover element.
+     - Renders indicator swatch with `var(--color-chart-3)`, label text `'Revenue'`, and value text `'$120K'`.
+     - Updates styling positions to `150px` / `80px` (via inline style `left`/`top` or `transform`).
+   - Calling `hide()` or `hidePopover()` removes `:popover-open` and reverts `isOpen` to `false`.
+5. **Color Indexing & Modulo 8 Math**:
+   - CSS tokens define 8 chart colors: `--color-chart-1` through `--color-chart-8`.
+   - `getChartColor(index)` must map:
+     - 0 -> `--color-chart-1`
+     - 1 -> `--color-chart-2`
+     - 7 -> `--color-chart-8`
+     - 8 -> `--color-chart-1` (wrapping)
+     - Using standard modulo arithmetic: `((index % 8) + 8) % 8 + 1` handles both positive and negative integer indices.
 
 ---
 
 ## 3. Caveats
 
-1. **No Out-of-Directory Modifications**:
-   - In accordance with explorer archetype constraints, no modifications to `ui/src/test-setup.ts` were executed during this investigation. The verified plan is ready for the Milestone 1 worker.
-2. **CSS Anchor Positioning Support**:
-   - In `happy-dom`, CSS Anchor Positioning is not natively implemented. `supportsNativePopoverAndAnchor()` relies on `CSS.supports('anchor-name', '--moul-anchor')`. By having `CSS.supports` default to returning `false`, components will properly test their fixed-position fallback logic (Requirement 6.9, Edge Case 10). If an anchor test needs to simulate anchor support, it can mock `CSS.supports` to return `true`.
-3. **Vitest Execution Environment**:
-   - `ui/vite.config.ts` must set `test.environment = 'happy-dom'` and `setupFiles = ['./src/test-setup.ts']` (covered by `explorer_m1_2`).
+1. **Happy-DOM Element Geometry**:
+   - Happy-DOM does not compute actual bounding box dimensions via `getBBox()` or `getBoundingClientRect()` from CSS layout. All dimension tests must rely on `triggerResize(element, { width, height })` which explicitly injects mock `DOMRect` values.
+2. **Reduced Motion & Async Transitions**:
+   - `OverlayPresenceController` applies entrance/exit transitions with `motion`. In tests, `await awaitNestedUpdates(element)` ensures Lit has finished rendering DOM updates. To avoid timer flakiness, animations should be tested with immediate settlement or `await element.updateComplete`.
+3. **Scope Boundary**:
+   - Milestone 1 encompasses `ChartCommon.ts`, `MoulChartContainer`, and `MoulChartTooltip`. Actual SVG geometry path generation (Line, Area, Bar, Doughnut) is scheduled for Milestones 2–3 and should not be asserted in Milestone 1 test suites.
 
 ---
 
-## 4. Conclusion & Complete Implementation Plan
+## 4. Conclusion & Complete Milestone 1 Test Plan
 
-### Complete Source Code for `ui/src/test-setup.ts`
+The Milestone 1 test suite comprises 16 specific unit and integration tests across 4 suites:
 
-The worker should replace the entire contents of `/Users/phearak/github/orgs/moul-dev/ui/ui/src/test-setup.ts` with the following implementation:
+### 4.1 Test Case Matrix
 
-```ts
-/**
- * @moul-dev/ui Test Environment Setup
- *
- * Configures happy-dom environment with standards-compliant shims for:
- * 1. ElementInternals (Form-associated custom elements)
- * 2. Native <dialog> (including disconnected DOMException behavior per Req 6.10)
- * 3. Popover API (showPopover, hidePopover, togglePopover, :popover-open)
- * 4. Deterministic ResizeObserver Controller (__triggerResize)
- */
+| ID | Component | Description | Assertion Criteria |
+|---|---|---|---|
+| `CHART-COM-01` | `ChartCommon` | Base palette mapping (indices 0 to 7) | `getChartColor(i)` equals `'var(--color-chart-${i + 1})'` for `i` in `[0, 7]` |
+| `CHART-COM-02` | `ChartCommon` | Modulo 8 wrapping | `getChartColor(8)` -> `'var(--color-chart-1)'`; `getChartColor(15)` -> `'var(--color-chart-8)'` |
+| `CHART-COM-03` | `ChartCommon` | Negative & arbitrary integers (property test) | Property test with `fast-check`: any integer wraps correctly to `--color-chart-1..8` |
+| `CHART-COM-04` | `ChartCommon` | Exported interfaces contract | Type verification of `ChartSeries`, `DoughnutDataItem`, `TopListItem`, `PointHoverDetail` |
+| `CHART-CNT-01` | `MoulChartContainer` | Custom Element registration & instance | `customElements.get('moul-chart-container')` returns ctor; `document.createElement` is `MoulChartContainer` |
+| `CHART-CNT-02` | `MoulChartContainer` | Title & description rendering | Renders `title` and `description` text in shadow DOM; updates on property change |
+| `CHART-CNT-03` | `MoulChartContainer` | Slotted content & structure | Renders default `<slot>` for chart body, `<slot name="header">`, and `<slot name="legend">` |
+| `CHART-CNT-04` | `MoulChartContainer` | Empty state with `is-empty` attribute | When `is-empty` is set, renders `<slot name="empty">` and hides default chart viewport |
+| `CHART-CNT-05` | `MoulChartContainer` | Deterministic resize to 600x300 | `triggerResize(container, { width: 600, height: 300 })` dispatches `viewport-resize` with `{ width: 600, height: 300, breakpoint: 'sm' }` |
+| `CHART-CNT-06` | `MoulChartContainer` | Multi-breakpoint resize sequence | Sequential resize tests for `xs` (320px), `md` (800px), `lg` (1100px), and `xl` (1440px) |
+| `CHART-CNT-07` | `MoulChartContainer` | Observer disconnect on removal | `container.remove()` cleans up `ResizeObserver`; subsequent resizes do not emit |
+| `CHART-TLP-01` | `MoulChartTooltip` | Custom Element registration & instance | `customElements.get('moul-chart-tooltip')` returns ctor; `document.createElement` is `MoulChartTooltip` |
+| `CHART-TLP-02` | `MoulChartTooltip` | Initial closed state | `isOpen` is `false`; host/popover element has `popover="manual"`; `:popover-open` false |
+| `CHART-TLP-03` | `MoulChartTooltip` | Calling `show(...)` or `showPopover()` | Sets `isOpen = true`, `:popover-open` is true; renders series color, label, and value |
+| `CHART-TLP-04` | `MoulChartTooltip` | Positioning style updates (`x`, `y`) | Updates style coordinates (`left`/`top` or `transform`) matching specified `x` and `y` |
+| `CHART-TLP-05` | `MoulChartTooltip` | Calling `hide()` or `hidePopover()` | Sets `isOpen = false`, removes `:popover-open`, closes popover cleanly |
+| `CHART-INT-01` | Integration | Slotted Tooltip in Container | Mounting `<moul-chart-tooltip>` inside `<moul-chart-container>` operates without conflict during resize and hover |
 
-// =============================================================================
-// 1. Web Animations API, CSS.supports & matchMedia shims
-// =============================================================================
+---
 
-if (typeof window !== 'undefined' && !Element.prototype.getAnimations) {
-  Element.prototype.getAnimations = () => []
-}
+### 4.2 Complete Executable Test Suite Implementation
 
-if (typeof globalThis.CSS === 'undefined') {
-  ;(globalThis as any).CSS = {}
-}
-if (typeof CSS.supports !== 'function') {
-  CSS.supports = (_property: string, _value?: string) => false
-}
+The implementer can drop the following test suite into `ui/src/components/Charts.test.ts` (or `ui/src/components/ChartContainer/ChartContainer.test.ts` & `ui/src/components/ChartTooltip/ChartTooltip.test.ts`):
 
-if (typeof window !== 'undefined' && typeof window.matchMedia !== 'function') {
-  window.matchMedia = (query: string): MediaQueryList => ({
-    matches: false,
-    media: query,
-    onchange: null,
-    addListener: () => {},
-    removeListener: () => {},
-    addEventListener: () => {},
-    removeEventListener: () => {},
-    dispatchEvent: () => false,
-  })
-}
+```typescript
+import * as fc from 'fast-check'
+import { html, type LitElement, render } from 'lit'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 
-// =============================================================================
-// 2. ElementInternals Shim
-// =============================================================================
+import {
+  type ChartSeries,
+  type DoughnutDataItem,
+  getChartColor,
+  type PointHoverDetail,
+  type TopListItem,
+} from './ChartCommon'
+import './ChartContainer/ChartContainer'
+import './ChartTooltip/ChartTooltip'
+import { triggerResize } from '../test-setup'
+import type { MoulChartContainer } from './ChartContainer/ChartContainer'
+import type { MoulChartTooltip } from './ChartTooltip/ChartTooltip'
 
-export interface MockElementInternals {
-  readonly form: HTMLFormElement | null
-  readonly validity: ValidityState
-  readonly validationMessage: string
-  readonly willValidate: boolean
-  readonly labels: NodeList
-  readonly shadowRoot: ShadowRoot | null
-  setFormValue(value: string | File | FormData | null, state?: unknown): void
-  setValidity(flags?: Partial<ValidityStateFlags>, message?: string, anchor?: HTMLElement): void
-  checkValidity(): boolean
-  reportValidity(): boolean
-}
-
-const internalsRegistry = new WeakMap<HTMLElement, MockElementInternals>()
-const attachedElements = new WeakSet<HTMLElement>()
-
-class MockElementInternalsImpl implements MockElementInternals {
-  private _host: HTMLElement
-  private _value: string | File | FormData | null = null
-  private _validationMessage: string = ''
-  private _flags: Record<keyof ValidityStateFlags, boolean> = {
-    badInput: false,
-    customError: false,
-    patternMismatch: false,
-    rangeOverflow: false,
-    rangeUnderflow: false,
-    stepMismatch: false,
-    tooLong: false,
-    tooShort: false,
-    typeMismatch: false,
-    valueMissing: false,
+// Universal Lit nested updates awaiter
+async function awaitNestedUpdates(root: Element): Promise<void> {
+  if ('updateComplete' in root && (root as LitElement).updateComplete) {
+    await (root as LitElement).updateComplete
   }
-
-  constructor(host: HTMLElement) {
-    this._host = host
-  }
-
-  get form(): HTMLFormElement | null {
-    const formId = this._host.getAttribute('form')
-    if (formId && this._host.ownerDocument) {
-      const formEl = this._host.ownerDocument.getElementById(formId)
-      if (formEl && formEl.tagName === 'FORM') {
-        return formEl as HTMLFormElement
+  const children = Array.from(root.querySelectorAll('*'))
+  await Promise.all(
+    children.map((child) => {
+      if ('updateComplete' in child && (child as LitElement).updateComplete) {
+        return (child as LitElement).updateComplete
       }
-    }
-    return this._host.closest('form')
-  }
-
-  get willValidate(): boolean {
-    return true
-  }
-
-  get labels(): NodeList {
-    return (this._host as any).labels ?? ([] as unknown as NodeList)
-  }
-
-  get shadowRoot(): ShadowRoot | null {
-    return this._host.shadowRoot
-  }
-
-  setFormValue(value: string | File | FormData | null): void {
-    this._value = value
-  }
-
-  get formValue(): string | File | FormData | null {
-    return this._value
-  }
-
-  setValidity(
-    flags?: Partial<ValidityStateFlags>,
-    message?: string,
-    _anchor?: HTMLElement,
-  ): void {
-    const newFlags = {
-      badInput: false,
-      customError: false,
-      patternMismatch: false,
-      rangeOverflow: false,
-      rangeUnderflow: false,
-      stepMismatch: false,
-      tooLong: false,
-      tooShort: false,
-      typeMismatch: false,
-      valueMissing: false,
-      ...flags,
-    }
-    this._flags = newFlags
-
-    const isInvalid = Object.values(newFlags).some(Boolean)
-    if (isInvalid) {
-      this._validationMessage = typeof message === 'string' ? message.slice(0, 200) : ''
-    } else {
-      this._validationMessage = ''
-    }
-  }
-
-  get validity(): ValidityState {
-    const isInvalid = Object.values(this._flags).some(Boolean)
-    return {
-      badInput: this._flags.badInput,
-      customError: this._flags.customError,
-      patternMismatch: this._flags.patternMismatch,
-      rangeOverflow: this._flags.rangeOverflow,
-      rangeUnderflow: this._flags.rangeUnderflow,
-      stepMismatch: this._flags.stepMismatch,
-      tooLong: this._flags.tooLong,
-      tooShort: this._flags.tooShort,
-      typeMismatch: this._flags.typeMismatch,
-      valueMissing: this._flags.valueMissing,
-      valid: !isInvalid,
-    }
-  }
-
-  get validationMessage(): string {
-    return this._validationMessage
-  }
-
-  checkValidity(): boolean {
-    const isValid = this.validity.valid
-    if (!isValid) {
-      this._host.dispatchEvent(new Event('invalid', { cancelable: true }))
-    }
-    return isValid
-  }
-
-  reportValidity(): boolean {
-    return this.checkValidity()
-  }
-}
-
-if (typeof HTMLElement !== 'undefined') {
-  HTMLElement.prototype.attachInternals = function (this: HTMLElement): ElementInternals {
-    if (attachedElements.has(this)) {
-      throw new DOMException('ElementInternals already attached', 'NotSupportedError')
-    }
-    attachedElements.add(this)
-    const internals = new MockElementInternalsImpl(this)
-    internalsRegistry.set(this, internals)
-    return internals as unknown as ElementInternals
-  }
-}
-
-if (typeof window !== 'undefined' && typeof (window as any).ElementInternals === 'undefined') {
-  ;(window as any).ElementInternals = MockElementInternalsImpl
-}
-if (typeof globalThis !== 'undefined' && typeof (globalThis as any).ElementInternals === 'undefined') {
-  ;(globalThis as any).ElementInternals = MockElementInternalsImpl
-}
-
-// =============================================================================
-// 3. Native <dialog> Shim (Requirement 6.10)
-// =============================================================================
-
-if (typeof window !== 'undefined' && typeof (window as any).HTMLDialogElement === 'undefined') {
-  ;(window as any).HTMLDialogElement = class HTMLDialogElement extends HTMLElement {}
-  ;(globalThis as any).HTMLDialogElement = (window as any).HTMLDialogElement
-}
-
-if (typeof HTMLDialogElement !== 'undefined') {
-  if (!Object.getOwnPropertyDescriptor(HTMLDialogElement.prototype, 'open')) {
-    Object.defineProperty(HTMLDialogElement.prototype, 'open', {
-      get(this: HTMLDialogElement) {
-        return this.hasAttribute('open')
-      },
-      set(this: HTMLDialogElement, val: boolean) {
-        if (val) {
-          this.setAttribute('open', '')
-        } else {
-          this.removeAttribute('open')
-        }
-      },
-      configurable: true,
-      enumerable: true,
-    })
-  }
-
-  if (!Object.getOwnPropertyDescriptor(HTMLDialogElement.prototype, 'returnValue')) {
-    const returnValues = new WeakMap<HTMLDialogElement, string>()
-    Object.defineProperty(HTMLDialogElement.prototype, 'returnValue', {
-      get(this: HTMLDialogElement) {
-        return returnValues.get(this) ?? ''
-      },
-      set(this: HTMLDialogElement, val: string) {
-        returnValues.set(this, String(val))
-      },
-      configurable: true,
-      enumerable: true,
-    })
-  }
-
-  HTMLDialogElement.prototype.showModal = function (this: HTMLDialogElement) {
-    if (!this.isConnected) {
-      throw new DOMException(
-        'Failed to execute showModal on HTMLDialogElement: The element is not in a Document.',
-        'InvalidStateError',
-      )
-    }
-    if (this.open) {
-      throw new DOMException(
-        'Failed to execute showModal on HTMLDialogElement: The element is already open.',
-        'InvalidStateError',
-      )
-    }
-    this.open = true
-  }
-
-  HTMLDialogElement.prototype.close = function (this: HTMLDialogElement, returnValue?: string) {
-    if (!this.open) return
-    this.open = false
-    if (returnValue !== undefined) {
-      this.returnValue = String(returnValue)
-    }
-    this.dispatchEvent(new Event('close'))
-  }
-
-  HTMLDialogElement.prototype.show = function (this: HTMLDialogElement) {
-    if (this.open) return
-    this.open = true
-  }
-}
-
-// =============================================================================
-// 4. Popover API Shim
-// =============================================================================
-
-class MockToggleEvent extends Event {
-  readonly oldState: string
-  readonly newState: string
-
-  constructor(
-    type: string,
-    eventInitDict?: { oldState?: string; newState?: string; cancelable?: boolean },
-  ) {
-    super(type, { bubbles: false, cancelable: eventInitDict?.cancelable ?? false })
-    this.oldState = eventInitDict?.oldState ?? 'closed'
-    this.newState = eventInitDict?.newState ?? 'open'
-  }
-}
-
-if (typeof window !== 'undefined' && typeof (window as any).ToggleEvent === 'undefined') {
-  ;(window as any).ToggleEvent = MockToggleEvent
-  ;(globalThis as any).ToggleEvent = MockToggleEvent
-}
-
-if (typeof HTMLElement !== 'undefined') {
-  if (!('popover' in HTMLElement.prototype)) {
-    Object.defineProperty(HTMLElement.prototype, 'popover', {
-      get(this: HTMLElement) {
-        return this.getAttribute('popover')
-      },
-      set(this: HTMLElement, val: string | null) {
-        if (val === null || val === undefined) {
-          this.removeAttribute('popover')
-        } else {
-          this.setAttribute('popover', val === '' ? 'auto' : val)
-        }
-      },
-      configurable: true,
-      enumerable: true,
-    })
-  }
-
-  HTMLElement.prototype.showPopover = function (this: HTMLElement): void {
-    if (this.getAttribute('popover') === null) {
-      throw new DOMException(
-        "Failed to execute 'showPopover' on 'HTMLElement': Element does not have a 'popover' attribute.",
-        'InvalidStateError',
-      )
-    }
-    if (!this.isConnected) {
-      throw new DOMException(
-        "Failed to execute 'showPopover' on 'HTMLElement': The element is not in a Document.",
-        'InvalidStateError',
-      )
-    }
-    const isOpen =
-      this.hasAttribute(':popover-open') || this.classList.contains(':popover-open')
-    if (isOpen) return
-
-    const beforeEvent = new MockToggleEvent('beforetoggle', {
-      oldState: 'closed',
-      newState: 'open',
-      cancelable: true,
-    })
-    const shouldContinue = this.dispatchEvent(beforeEvent)
-    if (!shouldContinue) return
-
-    this.setAttribute(':popover-open', '')
-    this.classList.add(':popover-open')
-
-    const toggleEvent = new MockToggleEvent('toggle', {
-      oldState: 'closed',
-      newState: 'open',
-      cancelable: false,
-    })
-    this.dispatchEvent(toggleEvent)
-  }
-
-  HTMLElement.prototype.hidePopover = function (this: HTMLElement): void {
-    if (this.getAttribute('popover') === null) {
-      throw new DOMException(
-        "Failed to execute 'hidePopover' on 'HTMLElement': Element does not have a 'popover' attribute.",
-        'InvalidStateError',
-      )
-    }
-    const isOpen =
-      this.hasAttribute(':popover-open') || this.classList.contains(':popover-open')
-    if (!isOpen) return
-
-    const beforeEvent = new MockToggleEvent('beforetoggle', {
-      oldState: 'open',
-      newState: 'closed',
-      cancelable: false,
-    })
-    this.dispatchEvent(beforeEvent)
-
-    this.removeAttribute(':popover-open')
-    this.classList.remove(':popover-open')
-
-    const toggleEvent = new MockToggleEvent('toggle', {
-      oldState: 'open',
-      newState: 'closed',
-      cancelable: false,
-    })
-    this.dispatchEvent(toggleEvent)
-  }
-
-  HTMLElement.prototype.togglePopover = function (this: HTMLElement, force?: boolean): boolean {
-    const isOpen =
-      this.hasAttribute(':popover-open') || this.classList.contains(':popover-open')
-    if (force === true) {
-      if (!isOpen) this.showPopover()
-      return true
-    }
-    if (force === false) {
-      if (isOpen) this.hidePopover()
-      return false
-    }
-    if (isOpen) {
-      this.hidePopover()
-      return false
-    } else {
-      this.showPopover()
-      return true
-    }
-  }
-
-  // Support element.matches(':popover-open')
-  const originalMatches = HTMLElement.prototype.matches
-  HTMLElement.prototype.matches = function (this: HTMLElement, selector: string): boolean {
-    if (selector === ':popover-open') {
-      return this.hasAttribute(':popover-open') || this.classList.contains(':popover-open')
-    }
-    return originalMatches.call(this, selector)
-  }
-}
-
-// =============================================================================
-// 5. Deterministic ResizeObserver Controller
-// =============================================================================
-
-export interface TriggerResizeOptions {
-  width: number
-  height?: number
-  top?: number
-  left?: number
-}
-
-interface ObserverRecord {
-  observer: MockResizeObserver
-  callback: ResizeObserverCallback
-  observedElements: Set<Element>
-  options: Map<Element, ResizeObserverOptions | undefined>
-}
-
-const activeObservers = new Set<ObserverRecord>()
-
-export class MockResizeObserver implements ResizeObserver {
-  private _record: ObserverRecord
-
-  constructor(callback: ResizeObserverCallback) {
-    this._record = {
-      observer: this,
-      callback,
-      observedElements: new Set(),
-      options: new Map(),
-    }
-    activeObservers.add(this._record)
-  }
-
-  observe(target: Element, options?: ResizeObserverOptions): void {
-    this._record.observedElements.add(target)
-    this._record.options.set(target, options)
-  }
-
-  unobserve(target: Element): void {
-    this._record.observedElements.delete(target)
-    this._record.options.delete(target)
-  }
-
-  disconnect(): void {
-    this._record.observedElements.clear()
-    this._record.options.clear()
-    activeObservers.delete(this._record)
-  }
-}
-
-export function triggerResize(element: Element, options: TriggerResizeOptions): void {
-  const width = options.width
-  const height = options.height ?? 0
-  const top = options.top ?? 0
-  const left = options.left ?? 0
-
-  const rect: DOMRect = {
-    width,
-    height,
-    top,
-    left,
-    right: left + width,
-    bottom: top + height,
-    x: left,
-    y: top,
-    toJSON: () => ({
-      width,
-      height,
-      top,
-      left,
-      right: left + width,
-      bottom: top + height,
-      x: left,
-      y: top,
+      return Promise.resolve()
     }),
-  }
-  element.getBoundingClientRect = () => rect
-
-  const contentRect = {
-    width,
-    height,
-    top,
-    left,
-    right: left + width,
-    bottom: top + height,
-    x: left,
-    y: top,
-    toJSON: () => ({
-      width,
-      height,
-      top,
-      left,
-      right: left + width,
-      bottom: top + height,
-      x: left,
-      y: top,
-    }),
-  }
-
-  const entry: ResizeObserverEntry = {
-    target: element,
-    contentRect: contentRect as DOMRectReadOnly,
-    borderBoxSize: Object.freeze([{ inlineSize: width, blockSize: height }]),
-    contentBoxSize: Object.freeze([{ inlineSize: width, blockSize: height }]),
-    devicePixelContentBoxSize: Object.freeze([{ inlineSize: width, blockSize: height }]),
-  }
-
-  for (const record of activeObservers) {
-    if (record.observedElements.has(element)) {
-      record.callback([entry], record.observer)
-    }
-  }
+  )
 }
 
-if (typeof window !== 'undefined') {
-  ;(window as any).ResizeObserver = MockResizeObserver
-  ;(window as any).__triggerResize = triggerResize
-}
-if (typeof globalThis !== 'undefined') {
-  ;(globalThis as any).ResizeObserver = MockResizeObserver
-  ;(globalThis as any).__triggerResize = triggerResize
+// Universal DOM mounting helper
+async function mount<T extends HTMLElement>(template: unknown): Promise<T> {
+  const container = document.createElement('div')
+  document.body.appendChild(container)
+  render(template, container)
+  const element = container.firstElementChild as T
+  await awaitNestedUpdates(element)
+  return element
 }
 
-declare global {
-  interface Window {
-    __triggerResize: (element: Element, options: TriggerResizeOptions) => void
-  }
-}
+describe('Milestone 1: Chart Foundation & Tooltip Test Suite', () => {
+  afterEach(() => {
+    document.body.innerHTML = ''
+    vi.restoreAllMocks()
+    vi.useRealTimers()
+  })
+
+  // ===========================================================================
+  // 1. ChartCommon Utilities & Contracts
+  // ===========================================================================
+  describe('ChartCommon Utilities (`ChartCommon.ts`)', () => {
+    it('CHART-COM-01: Base palette mapping (indices 0 to 7)', () => {
+      expect(getChartColor(0)).toBe('var(--color-chart-1)')
+      expect(getChartColor(1)).toBe('var(--color-chart-2)')
+      expect(getChartColor(2)).toBe('var(--color-chart-3)')
+      expect(getChartColor(3)).toBe('var(--color-chart-4)')
+      expect(getChartColor(4)).toBe('var(--color-chart-5)')
+      expect(getChartColor(5)).toBe('var(--color-chart-6)')
+      expect(getChartColor(6)).toBe('var(--color-chart-7)')
+      expect(getChartColor(7)).toBe('var(--color-chart-8)')
+    })
+
+    it('CHART-COM-02: Modulo 8 wrapping for indices >= 8', () => {
+      expect(getChartColor(8)).toBe('var(--color-chart-1)')
+      expect(getChartColor(9)).toBe('var(--color-chart-2)')
+      expect(getChartColor(15)).toBe('var(--color-chart-8)')
+      expect(getChartColor(16)).toBe('var(--color-chart-1)')
+      expect(getChartColor(23)).toBe('var(--color-chart-8)')
+      expect(getChartColor(24)).toBe('var(--color-chart-1)')
+    })
+
+    it('CHART-COM-03: Arbitrary integer and negative index wrapping via fast-check', () => {
+      fc.assert(
+        fc.property(fc.integer({ min: -10000, max: 10000 }), (index) => {
+          const color = getChartColor(index)
+          const expectedNumber = (((index % 8) + 8) % 8) + 1
+          expect(color).toBe(`var(--color-chart-${expectedNumber})`)
+        }),
+      )
+    })
+
+    it('CHART-COM-04: Interface contracts compile and conform to data structures', () => {
+      const series: ChartSeries = {
+        key: 'revenue',
+        name: 'Gross Revenue',
+        color: 'var(--color-chart-1)',
+        strokeWidth: 2,
+      }
+      expect(series.key).toBe('revenue')
+
+      const doughnutItem: DoughnutDataItem = {
+        name: 'Desktop',
+        value: 450,
+        color: 'var(--color-chart-2)',
+      }
+      expect(doughnutItem.value).toBe(450)
+
+      const topListItem: TopListItem = {
+        label: 'Product A',
+        value: 1200,
+        color: 'var(--color-chart-3)',
+      }
+      expect(topListItem.label).toBe('Product A')
+
+      const hoverDetail: PointHoverDetail = {
+        point: { x: 10, y: 20 },
+        series,
+        value: 1200,
+        label: 'Q1',
+        x: 100,
+        y: 200,
+      }
+      expect(hoverDetail.value).toBe(1200)
+    })
+  })
+
+  // ===========================================================================
+  // 2. MoulChartContainer (`moul-chart-container`)
+  // ===========================================================================
+  describe('MoulChartContainer (`moul-chart-container`)', () => {
+    it('CHART-CNT-01: Custom Element registration and instance check', () => {
+      const ctor = customElements.get('moul-chart-container')
+      expect(ctor).toBeDefined()
+
+      const container = document.createElement('moul-chart-container')
+      expect(container).toBeInstanceOf(ctor!)
+    })
+
+    it('CHART-CNT-02: Title and description rendering and reactive update', async () => {
+      const container = await mount<MoulChartContainer>(html`
+        <moul-chart-container
+          title="Sales Overview"
+          description="Quarterly revenue metrics"
+        >
+          <div id="chart-content">Chart Body</div>
+        </moul-chart-container>
+      `)
+
+      expect(container.title).toBe('Sales Overview')
+      expect(container.description).toBe('Quarterly revenue metrics')
+
+      const titleEl = container.shadowRoot?.querySelector('[part="title"]')
+      const descEl = container.shadowRoot?.querySelector('[part="description"]')
+      expect(titleEl?.textContent).toContain('Sales Overview')
+      expect(descEl?.textContent).toContain('Quarterly revenue metrics')
+
+      // Reactive update
+      container.title = 'Updated Sales'
+      container.description = 'Updated Description'
+      await container.updateComplete
+
+      expect(titleEl?.textContent).toContain('Updated Sales')
+      expect(descEl?.textContent).toContain('Updated Description')
+    })
+
+    it('CHART-CNT-03: Slotted content and layout structure', async () => {
+      const container = await mount<MoulChartContainer>(html`
+        <moul-chart-container>
+          <div slot="header" id="custom-header">Custom Header</div>
+          <div id="main-chart">Main Chart Content</div>
+          <div slot="legend" id="custom-legend">Legend Content</div>
+        </moul-chart-container>
+      `)
+
+      const headerSlot = container.shadowRoot?.querySelector('slot[name="header"]')
+      const defaultSlot = container.shadowRoot?.querySelector('slot:not([name])')
+      const legendSlot = container.shadowRoot?.querySelector('slot[name="legend"]')
+
+      expect(headerSlot).toBeTruthy()
+      expect(defaultSlot).toBeTruthy()
+      expect(legendSlot).toBeTruthy()
+    })
+
+    it('CHART-CNT-04: Empty state rendering when is-empty is set', async () => {
+      const container = await mount<MoulChartContainer>(html`
+        <moul-chart-container is-empty>
+          <div id="chart-geom">Hidden Chart Geometries</div>
+          <div slot="empty" id="custom-empty-msg">No Data Available</div>
+        </moul-chart-container>
+      `)
+
+      expect(container.hasAttribute('is-empty')).toBe(true)
+      expect(container.isEmpty).toBe(true)
+
+      const emptySlot = container.shadowRoot?.querySelector('slot[name="empty"]')
+      expect(emptySlot).toBeTruthy()
+
+      // Toggle off empty state
+      container.isEmpty = false
+      await container.updateComplete
+      expect(container.hasAttribute('is-empty')).toBe(false)
+    })
+
+    it('CHART-CNT-05: Deterministic resize to 600x300 and viewport-resize event detail', async () => {
+      const container = await mount<MoulChartContainer>(html`
+        <moul-chart-container></moul-chart-container>
+      `)
+
+      let resizeEventDetail: { width: number; height: number; breakpoint: string } | null = null
+      container.addEventListener('viewport-resize', (e: Event) => {
+        resizeEventDetail = (e as CustomEvent).detail
+      })
+
+      // Trigger deterministic resize
+      triggerResize(container, { width: 600, height: 300 })
+      await awaitNestedUpdates(container)
+
+      expect(resizeEventDetail).not.toBeNull()
+      expect(resizeEventDetail!.width).toBe(600)
+      expect(resizeEventDetail!.height).toBe(300)
+      expect(resizeEventDetail!.breakpoint).toBe('sm') // 480 <= width < 768 is 'sm'
+    })
+
+    it('CHART-CNT-06: Breakpoint transitions across all supported widths', async () => {
+      const container = await mount<MoulChartContainer>(html`
+        <moul-chart-container></moul-chart-container>
+      `)
+
+      const recordedBreakpoints: string[] = []
+      container.addEventListener('viewport-resize', (e: Event) => {
+        recordedBreakpoints.push((e as CustomEvent).detail.breakpoint)
+      })
+
+      triggerResize(container, { width: 320, height: 200 }) // xs (<480)
+      await awaitNestedUpdates(container)
+
+      triggerResize(container, { width: 800, height: 400 }) // md (768-1023)
+      await awaitNestedUpdates(container)
+
+      triggerResize(container, { width: 1100, height: 500 }) // lg (1024-1279)
+      await awaitNestedUpdates(container)
+
+      triggerResize(container, { width: 1440, height: 600 }) // xl (>=1280)
+      await awaitNestedUpdates(container)
+
+      expect(recordedBreakpoints).toEqual(['xs', 'md', 'lg', 'xl'])
+    })
+
+    it('CHART-CNT-07: Observer disconnects cleanly when element is removed', async () => {
+      const container = await mount<MoulChartContainer>(html`
+        <moul-chart-container></moul-chart-container>
+      `)
+
+      let callCount = 0
+      container.addEventListener('viewport-resize', () => {
+        callCount++
+      })
+
+      triggerResize(container, { width: 500, height: 300 })
+      await awaitNestedUpdates(container)
+      expect(callCount).toBe(1)
+
+      // Remove from document
+      container.remove()
+
+      // Subsequent resize must not dispatch events
+      triggerResize(container, { width: 900, height: 450 })
+      await awaitNestedUpdates(container)
+      expect(callCount).toBe(1)
+    })
+  })
+
+  // ===========================================================================
+  // 3. MoulChartTooltip (`moul-chart-tooltip`)
+  // ===========================================================================
+  describe('MoulChartTooltip (`moul-chart-tooltip`)', () => {
+    it('CHART-TLP-01: Custom Element registration and instance check', () => {
+      const ctor = customElements.get('moul-chart-tooltip')
+      expect(ctor).toBeDefined()
+
+      const tooltip = document.createElement('moul-chart-tooltip')
+      expect(tooltip).toBeInstanceOf(ctor!)
+    })
+
+    it('CHART-TLP-02: Initial closed state and popover="manual" configuration', async () => {
+      const tooltip = await mount<MoulChartTooltip>(html`
+        <moul-chart-tooltip></moul-chart-tooltip>
+      `)
+
+      expect(tooltip.isOpen).toBe(false)
+      const popoverEl = tooltip.popoverEl ?? tooltip
+      expect(popoverEl.getAttribute('popover')).toBe('manual')
+      expect(popoverEl.matches(':popover-open')).toBe(false)
+    })
+
+    it('CHART-TLP-03: Calling show(...) opens popover and renders indicator, label, and value', async () => {
+      const tooltip = await mount<MoulChartTooltip>(html`
+        <moul-chart-tooltip></moul-chart-tooltip>
+      `)
+
+      tooltip.show({
+        label: 'March 2026',
+        value: '$82,500',
+        color: 'var(--color-chart-3)',
+        x: 180,
+        y: 95,
+      })
+      await awaitNestedUpdates(tooltip)
+
+      expect(tooltip.isOpen).toBe(true)
+      const popoverEl = tooltip.popoverEl ?? tooltip
+      expect(popoverEl.matches(':popover-open')).toBe(true)
+
+      const labelEl = tooltip.shadowRoot?.querySelector('[part="label"]')
+      const valueEl = tooltip.shadowRoot?.querySelector('[part="value"]')
+      const indicatorEl = tooltip.shadowRoot?.querySelector('[part="indicator"]')
+
+      expect(labelEl?.textContent).toContain('March 2026')
+      expect(valueEl?.textContent).toContain('$82,500')
+      expect(indicatorEl?.getAttribute('style')).toContain('var(--color-chart-3)')
+    })
+
+    it('CHART-TLP-04: Coordinate positioning updates inline coordinates', async () => {
+      const tooltip = await mount<MoulChartTooltip>(html`
+        <moul-chart-tooltip></moul-chart-tooltip>
+      `)
+
+      tooltip.show({
+        label: 'Point A',
+        value: '100',
+        x: 120,
+        y: 65,
+      })
+      await awaitNestedUpdates(tooltip)
+
+      const popoverEl = tooltip.popoverEl ?? tooltip
+      const styleAttr = popoverEl.getAttribute('style') ?? ''
+      // Coordinates can be applied via top/left or transform
+      const hasLeftTop = styleAttr.includes('120px') && styleAttr.includes('65px')
+      const hasTransform =
+        popoverEl.style.transform.includes('120px') && popoverEl.style.transform.includes('65px')
+      expect(hasLeftTop || hasTransform).toBe(true)
+
+      // Reposition dynamically
+      tooltip.show({
+        label: 'Point B',
+        value: '200',
+        x: 240,
+        y: 130,
+      })
+      await awaitNestedUpdates(tooltip)
+
+      const updatedStyle = popoverEl.getAttribute('style') ?? ''
+      const updatedLeftTop = updatedStyle.includes('240px') && updatedStyle.includes('130px')
+      const updatedTransform =
+        popoverEl.style.transform.includes('240px') && popoverEl.style.transform.includes('130px')
+      expect(updatedLeftTop || updatedTransform).toBe(true)
+    })
+
+    it('CHART-TLP-05: Calling hide() or hidePopover() closes the popover', async () => {
+      const tooltip = await mount<MoulChartTooltip>(html`
+        <moul-chart-tooltip></moul-chart-tooltip>
+      `)
+
+      tooltip.show({ label: 'Item', value: '42', x: 50, y: 50 })
+      await awaitNestedUpdates(tooltip)
+      expect(tooltip.isOpen).toBe(true)
+
+      tooltip.hide()
+      await awaitNestedUpdates(tooltip)
+
+      expect(tooltip.isOpen).toBe(false)
+      const popoverEl = tooltip.popoverEl ?? tooltip
+      expect(popoverEl.matches(':popover-open')).toBe(false)
+    })
+  })
+
+  // ===========================================================================
+  // 4. Integration Test: Container + Tooltip Slotted Collaboration
+  // ===========================================================================
+  describe('Integration: Container & Tooltip Collaboration', () => {
+    it('CHART-INT-01: Slotted tooltip inside chart container maintains state during viewport resizes', async () => {
+      const container = await mount<MoulChartContainer>(html`
+        <moul-chart-container title="Integrated Dashboard">
+          <div id="chart-viewport" style="position: relative; width: 600px; height: 300px;">
+            <moul-chart-tooltip id="tooltip-instance"></moul-chart-tooltip>
+          </div>
+        </moul-chart-container>
+      `)
+
+      const tooltip = container.querySelector<MoulChartTooltip>('#tooltip-instance')!
+      expect(tooltip).toBeTruthy()
+      expect(tooltip.isOpen).toBe(false)
+
+      // Open tooltip
+      tooltip.show({ label: 'Integration Point', value: '999', color: 'var(--color-chart-1)', x: 100, y: 150 })
+      await awaitNestedUpdates(container)
+      expect(tooltip.isOpen).toBe(true)
+
+      // Resize container
+      let resizeEmitted = false
+      container.addEventListener('viewport-resize', () => {
+        resizeEmitted = true
+      })
+      triggerResize(container, { width: 800, height: 400 })
+      await awaitNestedUpdates(container)
+
+      expect(resizeEmitted).toBe(true)
+      // Tooltip state remains consistent
+      expect(tooltip.isOpen).toBe(true)
+
+      // Hide tooltip
+      tooltip.hide()
+      await awaitNestedUpdates(container)
+      expect(tooltip.isOpen).toBe(false)
+    })
+  })
+})
 ```
 
 ---
 
 ## 5. Verification Method
 
-### 1. Test Verification Strategy
-To independently verify the 4 shims in `ui/src/test-setup.ts`, the worker can run a self-verifying test (e.g. in `ui/src/test-setup.test.ts` or during `Tokens.test.ts` execution):
+Once Milestone 1 is implemented, the implementation agent can verify correctness using:
 
-```ts
-import { describe, expect, it, vi } from 'vitest'
+1. **Run Vitest Test Suite**:
+   ```bash
+   bun --cwd ui test src/components/Charts.test.ts
+   ```
+   *(or `bun run test` / `vitest run` targeting the chart test files)*.  
+   Expected outcome: All 16 tests across the 4 suites pass with 0 failures.
 
-describe('ui/src/test-setup.ts Shims', () => {
-  describe('ElementInternals Shim', () => {
-    it('attaches internals, tracks form, value, validity, and message truncation', () => {
-      const form = document.createElement('form')
-      const host = document.createElement('div')
-      form.appendChild(host)
-      document.body.appendChild(form)
+2. **Run Biome Linter & Formatter**:
+   ```bash
+   bun run lint
+   ```
+   Expected outcome: Clean linting check across all created files without banned imports or syntax violations.
 
-      const internals = host.attachInternals()
-      expect(internals).toBeDefined()
-      expect(internals.form).toBe(form)
+3. **Check Disallowed React Imports Guard**:
+   ```bash
+   bun ./scripts/verify-no-react.ts all
+   ```
+   Expected outcome: Exit code 0, confirming zero forbidden React/Recharts dependencies.
 
-      // Test value setting
-      internals.setFormValue('test-val')
-
-      // Test validity & truncation to <= 200 chars
-      const longMessage = 'A'.repeat(300)
-      internals.setValidity({ valueMissing: true }, longMessage)
-      expect(internals.validity.valid).toBe(false)
-      expect(internals.validity.valueMissing).toBe(true)
-      expect(internals.validationMessage.length).toBe(200)
-
-      // Reset to valid
-      internals.setValidity({})
-      expect(internals.validity.valid).toBe(true)
-      expect(internals.validationMessage).toBe('')
-
-      // Double attach should throw
-      expect(() => host.attachInternals()).toThrowError(/ElementInternals already attached/)
-
-      document.body.removeChild(form)
-    })
-  })
-
-  describe('Native <dialog> Shim', () => {
-    it('throws InvalidStateError when showModal() is called disconnected per Req 6.10', () => {
-      const dialog = document.createElement('dialog') as HTMLDialogElement
-      expect(dialog.isConnected).toBe(false)
-
-      expect(() => dialog.showModal()).toThrow(
-        'Failed to execute showModal on HTMLDialogElement: The element is not in a Document.',
-      )
-    })
-
-    it('sets open when connected and dispatches close event on close()', () => {
-      const dialog = document.createElement('dialog') as HTMLDialogElement
-      document.body.appendChild(dialog)
-      expect(dialog.open).toBe(false)
-
-      dialog.showModal()
-      expect(dialog.open).toBe(true)
-      expect(dialog.hasAttribute('open')).toBe(true)
-
-      const onClose = vi.fn()
-      dialog.addEventListener('close', onClose)
-      dialog.close('custom-return')
-
-      expect(dialog.open).toBe(false)
-      expect(dialog.hasAttribute('open')).toBe(false)
-      expect(dialog.returnValue).toBe('custom-return')
-      expect(onClose).toHaveBeenCalledOnce()
-
-      document.body.removeChild(dialog)
-    })
-  })
-
-  describe('Popover API Shim', () => {
-    it('supports popover property, showPopover, hidePopover, and toggle event', () => {
-      const popover = document.createElement('div')
-      expect('popover' in popover).toBe(true)
-
-      // Throws if popover attribute is missing
-      document.body.appendChild(popover)
-      expect(() => popover.showPopover()).toThrowError(/not a popover/)
-
-      popover.setAttribute('popover', 'auto')
-      const onToggle = vi.fn()
-      popover.addEventListener('toggle', onToggle)
-
-      popover.showPopover()
-      expect(popover.matches(':popover-open')).toBe(true)
-      expect(onToggle).toHaveBeenCalledTimes(1)
-      expect((onToggle.mock.calls[0][0] as any).newState).toBe('open')
-
-      popover.hidePopover()
-      expect(popover.matches(':popover-open')).toBe(false)
-      expect(onToggle).toHaveBeenCalledTimes(2)
-      expect((onToggle.mock.calls[1][0] as any).newState).toBe('closed')
-
-      document.body.removeChild(popover)
-    })
-  })
-
-  describe('Deterministic ResizeObserver Controller', () => {
-    it('allows tests to register observers and deterministically fires callbacks via __triggerResize', () => {
-      const el = document.createElement('div')
-      document.body.appendChild(el)
-
-      const callback = vi.fn()
-      const observer = new ResizeObserver(callback)
-      observer.observe(el)
-
-      window.__triggerResize(el, { width: 768, height: 400 })
-
-      expect(callback).toHaveBeenCalledOnce()
-      const [entries, obs] = callback.mock.calls[0]
-      expect(obs).toBe(observer)
-      expect(entries[0].target).toBe(el)
-      expect(entries[0].contentRect.width).toBe(768)
-      expect(entries[0].contentRect.height).toBe(400)
-      expect(el.getBoundingClientRect().width).toBe(768)
-
-      observer.disconnect()
-      document.body.removeChild(el)
-    })
-  })
-})
-```
-
-### 2. Invalidation Conditions
-- If `HTMLDialogElement.prototype.showModal` does not throw `'Failed to execute showModal on HTMLDialogElement: The element is not in a Document.'` when unattached, Requirement 6.10 fails.
-- If `ElementInternals.setValidity` does not truncate messages to `<= 200` characters, FormInternalsController validation tests fail.
-- If `'popover' in HTMLElement.prototype` is `false`, `supportsNativePopoverAndAnchor()` falsely rejects popovers.
-- If `window.__triggerResize` does not synchronously fire `ResizeObserverEntry`, responsive component tests will flake or time out.
+### Invalidation Conditions
+- Any test attempting to call `showPopover()` before mounting the tooltip element to the document (will throw unhandled `DOMException`).
+- `getChartColor(8)` returning anything other than `'var(--color-chart-1)'`.
+- Calling `triggerResize(container, { width: 600, height: 300 })` failing to dispatch `viewport-resize` or dispatching an incorrect breakpoint (`computeBreakpoint(600)` must be `'sm'`).
+- Missing `<slot name="empty">` in `MoulChartContainer` when `is-empty` attribute is present.

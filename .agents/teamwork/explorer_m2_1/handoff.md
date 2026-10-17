@@ -1,387 +1,957 @@
-# Handoff Report: Milestone 2 Task 2.1 — CSS Design Token Layer (`ui/src/styles/style.css`)
+# Implementation Blueprint: `moul-line-chart` (`MoulLineChart`)
+
+**Investigator**: `explorer_m2_1`  
+**Working Directory**: `/Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/explorer_m2_1`  
+**Target Component**: `moul-line-chart` (`ui/src/components/LineChart/LineChart.ts` & `LineChart.styles.ts`)  
+**Date**: 2026-10-17  
+
+---
 
 ## 1. Observation
 
-### 1.1 Source Files Examined
-- `ui/src/tokens/tokens.stylex.ts` (lines 1–183): The canonical token source defining 118 design tokens as `stylex.defineVars()`.
-- `ui/src/styles/theme.css` (lines 1–20): Legacy theme variables containing 5 brand hooks and basic theme selectors.
-- `ui/src/tokens/tokens.test.ts` (lines 1–183): Legacy Vitest test asserting token structure and CSS outputs.
-- `ui/vite.config.ts` (lines 40–55): `copyCssTokensPlugin()` configured to copy `ui/src/styles/style.css` to `ui/dist/assets/style.css` during `closeBundle`.
-- `rdt/requirements.md` (lines 70–89, Requirement 3): Formal requirements for the CSS Design Token Layer.
-- `rdt/design.md` (lines 290–323, Section 4): Technical specification and token mapping table.
-- `rdt/tasks.md` (lines 34–38, Task 2.1): Task breakdown for Phase 2 Task 2.1.
-- `explorer_survey_2/handoff.md` (lines 1–502): Design token survey and initial extraction.
-- `spec_miner_survey_3/handoff.md` (lines 1–447): Phase 1 & Phase 2 foundation specification mining.
+### 1.1 Direct Specification Citations
 
-### 1.2 Verbatim Observations from `ui/src/tokens/tokens.stylex.ts`
-1. **Neutral Scale (lines 6–15)**: Zero chroma (`C=0`), hue `0`:
-   ```ts
-   colorNeutral50: 'light-dark(oklch(0.98 0 0),   oklch(0.14 0 0))',
-   colorNeutral100: 'light-dark(oklch(0.96 0 0),   oklch(0.18 0 0))',
-   colorNeutral200: 'light-dark(oklch(0.92 0 0),   oklch(0.24 0 0))',
-   colorNeutral300: 'light-dark(oklch(0.84 0 0),   oklch(0.32 0 0))',
-   colorNeutral400: 'light-dark(oklch(0.70 0 0),   oklch(0.45 0 0))',
-   colorNeutral500: 'light-dark(oklch(0.55 0 0),   oklch(0.55 0 0))',
-   colorNeutral600: 'light-dark(oklch(0.42 0 0),   oklch(0.68 0 0))',
-   colorNeutral700: 'light-dark(oklch(0.32 0 0),   oklch(0.78 0 0))',
-   colorNeutral800: 'light-dark(oklch(0.22 0 0),   oklch(0.88 0 0))',
-   colorNeutral900: 'light-dark(oklch(0.14 0 0),   oklch(0.96 0 0))',
-   ```
-2. **Primary Scale (lines 18–37)**: Dynamic chroma and hue:
-   ```ts
-   colorPrimary50: 'light-dark(oklch(0.96 calc(0.025 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)), oklch(0.22 calc(0.050 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)))',
-   colorPrimary100: 'light-dark(oklch(0.92 calc(0.050 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)), oklch(0.28 calc(0.080 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)))',
-   colorPrimary200: 'light-dark(oklch(0.85 calc(0.090 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)), oklch(0.36 calc(0.120 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)))',
-   colorPrimary300: 'light-dark(oklch(0.77 calc(0.140 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)), oklch(0.45 calc(0.160 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)))',
-   colorPrimary400: 'light-dark(oklch(0.66 calc(0.190 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)), oklch(0.56 calc(0.200 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)))',
-   colorPrimary500: 'light-dark(oklch(0.55 calc(0.240 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)), oklch(0.66 calc(0.220 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)))',
-   colorPrimary600: 'light-dark(oklch(0.46 calc(0.220 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)), oklch(0.75 calc(0.190 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)))',
-   colorPrimary700: 'light-dark(oklch(0.38 calc(0.190 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)), oklch(0.83 calc(0.150 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)))',
-   colorPrimary800: 'light-dark(oklch(0.30 calc(0.150 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)), oklch(0.90 calc(0.090 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)))',
-   colorPrimary900: 'light-dark(oklch(0.22 calc(0.110 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)), oklch(0.95 calc(0.040 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)))',
-   ```
-3. **Error Scale (lines 40–44)**: Hue `27`:
-   ```ts
-   colorError300: 'light-dark(oklch(0.80 0.120 27), oklch(0.45 0.150 27))',
-   colorError400: 'light-dark(oklch(0.68 0.170 27), oklch(0.58 0.180 27))',
-   colorError500: 'light-dark(oklch(0.56 0.200 27), oklch(0.68 0.190 27))',
-   colorError600: 'light-dark(oklch(0.46 0.190 27), oklch(0.78 0.150 27))',
-   colorError700: 'light-dark(oklch(0.36 0.160 27), oklch(0.87 0.090 27))',
-   ```
-4. **Warning Scale (lines 47–51)**: Hue `85`:
-   ```ts
-   colorWarning300: 'light-dark(oklch(0.85 0.130 85), oklch(0.48 0.140 85))',
-   colorWarning400: 'light-dark(oklch(0.78 0.160 85), oklch(0.60 0.165 85))',
-   colorWarning500: 'light-dark(oklch(0.70 0.175 85), oklch(0.72 0.165 85))',
-   colorWarning600: 'light-dark(oklch(0.60 0.165 85), oklch(0.82 0.130 85))',
-   colorWarning700: 'light-dark(oklch(0.48 0.140 85), oklch(0.90 0.080 85))',
-   ```
-5. **Success Scale (lines 54–58)**: Hue `145`:
-   ```ts
-   colorSuccess300: 'light-dark(oklch(0.82 0.120 145), oklch(0.44 0.130 145))',
-   colorSuccess400: 'light-dark(oklch(0.72 0.155 145), oklch(0.56 0.160 145))',
-   colorSuccess500: 'light-dark(oklch(0.62 0.175 145), oklch(0.68 0.170 145))',
-   colorSuccess600: 'light-dark(oklch(0.52 0.165 145), oklch(0.78 0.135 145))',
-   colorSuccess700: 'light-dark(oklch(0.40 0.135 145), oklch(0.87 0.085 145))',
-   ```
-6. **Semantic Aliases (lines 61–76)**:
-   ```ts
-   colorBg: 'light-dark(oklch(1 0 0),      oklch(0.12 0 0))',
-   colorBgSubtle: 'light-dark(oklch(0.97 0 0),   oklch(0.16 0 0))',
-   colorBgElevated: 'light-dark(oklch(1 0 0),      oklch(0.20 0 0))',
-   colorFg: 'light-dark(oklch(0.14 0 0),   oklch(0.96 0 0))',
-   colorFgSubtle: 'light-dark(oklch(0.42 0 0),   oklch(0.68 0 0))',
-   colorFgOnPrimary: 'light-dark(oklch(1 0 0),      oklch(0.10 0 0))',
-   colorBorder: 'light-dark(oklch(0.84 0 0),   oklch(0.28 0 0))',
-   colorBorderSubtle: 'light-dark(oklch(0.92 0 0),   oklch(0.22 0 0))',
-   colorBorderFocus: 'light-dark(oklch(0.55 calc(0.240 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)), oklch(0.66 calc(0.220 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)))',
-   colorBgGlass: 'light-dark(oklch(1 0 0 / 0.55), oklch(0.20 0 0 / 0.45))',
-   colorBorderGlass: 'light-dark(oklch(0 0 0 / 0.08), oklch(1 0 0 / 0.10))',
-   colorShadow: 'light-dark(oklch(0 0 0 / 0.10), oklch(0 0 0 / 0.40))',
-   colorOverlay: 'light-dark(oklch(0 0 0 / 0.40), oklch(0 0 0 / 0.60))',
-   ```
-7. **Alert Status Variants (lines 79–115)**: 20 tokens covering `info`, `accent`, `success`, `warning`, `error` × `Bg`, `Border`, `Hover`, `Active`.
-8. **Typography Tokens (lines 118–138)**:
-   - Font sizes: `xs` (0.75rem), `sm` (0.875rem), `md` (1rem), `lg` (1.125rem), `xl` (1.25rem), `xxl` (1.5rem), `3xl` (1.875rem), `4xl` (2.25rem) scaled by `var(--brand-font-scale, 1)`.
-   - Line heights: `xs` (1rem), `sm` (1.25rem), `md` (1.5rem), `lg` (1.75rem), `xl` (1.75rem), `xxl` (2rem), `3xl` (2.25rem), `4xl` (2.5rem) scaled by `var(--brand-font-scale, 1)`.
-   - Font weights: `normal: 400`, `medium: 500`, `semibold: 600`, `bold: 700`.
-   - Base font family: `var(--brand-font-family, inherit)`.
-9. **Spacing Tokens (lines 141–148)**:
-   - `spacing1` through `spacing8`: 4px increments (`0.25rem` through `2rem`) multiplied by `var(--brand-density-factor, 1)`.
-10. **Border Radius Tokens (lines 151–155)**:
-    - `radiusNone`: `0`
-    - `radiusSm`: `calc(0.375rem * var(--brand-radius-factor, 1))`
-    - `radiusMd`: `calc(0.75rem * var(--brand-radius-factor, 1))`
-    - `radiusLg`: `calc(1.25rem * var(--brand-radius-factor, 1))`
-    - `radiusFull`: `9999px`
-11. **Shadow Tokens (lines 158–162)**:
-    - `shadowSm`: `0 1px 2px 0 var(--colorShadow)`
-    - `shadowMd`: `0 4px 6px -1px var(--colorShadow), 0 2px 4px -2px var(--colorShadow)`
-    - `shadowLg`: `0 10px 15px -3px var(--colorShadow), 0 4px 6px -4px var(--colorShadow)`
-    *(Observation: referenced `--colorShadow` camelCase; must reference `--color-shadow` in native CSS)*.
-12. **Z-Index Tokens (lines 165–169)**:
-    - `zIndexBase`: `0`
-    - `zIndexDropdown`: `1000`
-    - `zIndexModal`: `1300`
-    - `zIndexTooltip`: `1500`
-    - `zIndexToast`: `1700`
-13. **Chart Color Tokens (lines 172–179)**: 8 tokens `colorChart1` through `colorChart8`.
+1. **`ORIGINAL_REQUEST.md` (Lines 221–266)**:
+   > "Implement Phase 8 of the design specification: Rebuild Category 1 — Charts & Data Visualization (7 Components + 2 Companions) as Lit Web Components powered by `d3-scale`, `d3-shape`, and `motion`."  
+   > - **R1. Chart Components & Companions Rebuild**: Implement `moul-line-chart` ... as Lit Web Components, registered via idempotent `defineElement` under the `moul-` prefix, with zero React/Recharts dependencies.  
+   > - **R2. SVG Geometry & Color Token Mapping**: Generate SVG geometries using `d3-scale` and `d3-shape` without third-party chart wrappers, styling chart series with `--color-chart-1` through `--color-chart-8` CSS design tokens.  
+   > - **R3. Responsive Viewports, Empty States & Micro-Animations**: Render `<slot name="empty">` when data is missing or empty. Animate SVG path/geometry transitions with `motion` (duration 200–500ms, respecting `prefers-reduced-motion: reduce`).  
+   > - **R4. Data Point Tooltip Interaction**: Open and position `moul-chart-tooltip` via pointer interaction over chart data points.  
+   > - **R5. Verification Test Suite**: Unit and integration tests in `ui/src/components/Charts.test.ts`.
+
+2. **`orchestrator_phase8_1/PROJECT.md` (Lines 22, 43–72, 80–112)**:
+   > - Feature 4: `moul-line-chart` — D3 line generator, curveMonotoneX, multi-series SVG paths, hover circles, point-hover dispatch (Milestone 2).
+   > - Shared interfaces in `ChartCommon.ts`: `ChartSeries` (`key`, `name?`, `color?`, `strokeWidth?`), `PointHoverDetail` (`point?`, `series?`, `value`, `label`, `x`, `y`), and `getChartColor(index: number): string`.
+   > - Event contract: `moul-line-chart` emits `point-hover: { detail: PointHoverDetail }`.
+   > - Code layout: `ui/src/components/LineChart/LineChart.ts` and `LineChart.styles.ts`.
+
+3. **`spec_miner_survey_1/handoff.md` (Section 2.2 #3, Lines 216–238; Section 1.3 Edge Cases 5–8)**:
+   > - Class `MoulLineChart` extending `LitElement`, registered as `moul-line-chart`.
+   > - Properties: `data: Record<string, unknown>[] = []`, `xKey: string = 'name'`, `series: ChartSeries[] = []`, `height: number = 300`, `showGrid: boolean = true`, `curve: string = 'monotoneX'`, `valueFormatter?: (value: any) => string`.
+   > - D3 pipeline:
+   >   - `xScale = scalePoint().domain(data.map(d => String(d[xKey]))).range([paddingLeft, width - paddingRight])`
+   >   - `yScale = scaleLinear().domain([minY <= 0 ? minY : 0, maxY || 1]).range([height - paddingBottom, paddingTop]).nice()`
+   >   - `lineGenerator = line<Record<string, unknown>>().x(d => xScale(String(d[xKey])) ?? 0).y(d => yScale(Number(d[s.key])) ?? 0).curve(curveMonotoneX)`
+   > - Edge Cases:
+   >   - Single data point (`data.length === 1`): Renders single coordinate point `<circle>` without `NaN` in SVG path string.
+   >   - All identical Y values (e.g. all 0 or all 100): Domain automatically expanded to avoid division by zero.
+   >   - Negative values: Y-axis scale domain adjusts to `[minVal, maxVal]` with baseline at appropriate Y position.
+   >   - Series color wrapping: Modulo 8 palette across `var(--color-chart-1)` through `var(--color-chart-8)`.
+   > - Motion: SVG `<path>` morphs/draws over `350ms` using `CHART_EASE` via `subtleAnimate`.
+   > - Empty state: When `!data || data.length === 0`, renders `<slot name="empty"></slot>`.
+
+4. **Existing Codebase State**:
+   - `ui/src/components/ChartCommon.ts`: Exports `ChartSeries`, `PointHoverDetail`, `CHART_COLORS`, `getChartColor(index: number)`.
+   - `ui/src/utils/motion.ts`: Exports `CHART_EASE = [0.22, 1, 0.36, 1]`, `subtleAnimate`, `prefersReducedMotion`.
+   - `ui/src/styles/reset.styles.ts`: Exports `resetStyles` Lit CSSResultGroup.
+   - `ui/src/utils/define-element.ts`: Exports idempotent `defineElement(tagName, ctor)`.
+   - `ui/src/controllers/layout-indicator.controller.ts`: Exports `LayoutIndicatorController`.
+   - Legacy files `ui/src/components/LineChart/LineChart.tsx` and `LineChart.styles.ts` contain banned React/StyleX/Recharts dependencies (`import * as stylex from '@stylexjs/stylex'`, `from 'recharts'`).
+   - Milestone 1 tests currently pass 100% (21/21 tests in `Charts.test.ts`).
+   - Linter (`biome check`) passes with 0 errors on existing components.
+   - `verify-no-react.ts all` exits with code 0.
 
 ---
 
 ## 2. Logic Chain
 
-1. **Native CSS Custom Property Cascade for Lit Web Components**:
-   - Web Components encapsulate template markup and local CSS in Shadow DOM.
-   - However, standard CSS custom properties defined on `:root` automatically pierce open Shadow Roots, making all 124 design properties available to any `<moul-*>` element without requiring individual style imports or JavaScript runtime context providers.
-   - Therefore, writing `ui/src/styles/style.css` as pure CSS variables on `:root` is the optimal foundation for the Lit migration.
+### 2.1 Component Architecture & Registration
+- The component must extend `LitElement` and be registered idempotently via `defineElement('moul-line-chart', MoulLineChart)` from `../../utils/define-element`.
+- To enable TypeScript DOM autocomplete and type checking, `HTMLElementTagNameMap` is augmented with `'moul-line-chart': MoulLineChart`.
+- Class alias export `export { MoulLineChart as LineChart }` ensures ergonomic module imports.
 
-2. **Dynamic `color-scheme` & `light-dark()` Evaluation**:
-   - Native CSS `light-dark(lightVal, darkVal)` resolves based on the element's computed `color-scheme`.
-   - Setting `:root { color-scheme: light dark; }` ensures the browser automatically selects light or dark token values matching the user's OS `prefers-color-scheme` setting without executing JavaScript.
-   - Adding selector rules `[data-theme="light"] { color-scheme: light; }` and `[data-theme="dark"], .dark { color-scheme: dark; }` allows applications or specific containers to force light or dark mode declaratively.
+### 2.2 Property Definitions & Reflection
+Consistent with `MoulChartContainer` and Lit 3 standards without decorator dependencies:
+- `data`: `{ attribute: false }`, typed as `Record<string, unknown>[]`, default `[]`.
+- `xKey`: `{ type: String, attribute: 'x-key' }`, default `'name'`.
+- `series`: `{ attribute: false }`, typed as `ChartSeries[]`, default `[]`.
+- `height`: `{ type: Number }`, default `300`.
+- `showGrid`: `{ type: Boolean, attribute: 'show-grid' }`, default `true`.
+- `curve`: `{ type: String }`, default `'monotoneX'`.
+- `valueFormatter`: `{ attribute: false }`, typed as `((value: any) => string) | undefined`, default `undefined`.
 
-3. **Correction of Legacy StyleX Inconsistencies**:
-   - In `tokens.stylex.ts`, shadows referenced `var(--colorShadow)`. CSS variables must use standard kebab-case naming (`--color-shadow`). Requirement 3.8 explicitly mandates `--color-shadow`.
-   - In `ui/src/styles/theme.css`, only 5 brand hooks were defined, omitting `--brand-font-family: inherit`. Requirement 3.2 explicitly requires 6 brand customization hooks (`--brand-hue: 250`, `--brand-chroma-multiplier: 1`, `--brand-font-family: inherit`, `--brand-font-scale: 1`, `--brand-density-factor: 1`, `--brand-radius-factor: 1`).
-   - Adding `--brand-font-family: inherit` ensures the typography system honors customized root fonts seamlessly.
+### 2.3 Viewport Sizing & Responsive Integration
+- `MoulLineChart` incorporates `LayoutIndicatorController(this, { observeDimensions: true })`.
+- Effective width calculation: `this.layout.width > 0 ? this.layout.width : (this.clientWidth > 0 ? this.clientWidth : 600)`.
+- Effective height calculation: `this.height > 0 ? this.height : 300`.
+- This ensures deterministic behavior across environments (real browser, flex/grid container, `triggerResize`, or `happy-dom` before measurement).
+- SVG `<svg>` renders with `viewBox="0 0 ${width} ${height}" preserveAspectRatio="xMidYMid meet"`.
 
-4. **Preservation of Exact Color Contrasts and Calculations**:
-   - The lightness, chroma, and hue numbers in `tokens.stylex.ts` were engineered for strict WCAG contrast compliance.
-   - Preserving every numerical coefficient and OKLCH value ensures zero visual regression during the monorepo rebuild.
+### 2.4 D3 Pipeline & Domain Safeguards
+The coordinate pipeline uses `scalePoint` and `scaleLinear` from `d3-scale`, and `line` from `d3-shape`.
 
-5. **Build and Package Contract Verification**:
-   - `ui/vite.config.ts` has `copyCssTokensPlugin()` that copies `src/styles/style.css` directly to `dist/assets/style.css` on bundle close.
-   - `ui/package.json` specifies `"./style.css": { "style": "./dist/assets/style.css", "default": "./dist/assets/style.css" }`.
-   - Thus, once `ui/src/styles/style.css` is written, running `bun run build:ui` will emit `dist/assets/style.css` cleanly without additional build configuration changes.
+1. **Empty State Safeguard**:
+   - If `!this.data || !Array.isArray(this.data) || this.data.length === 0`:
+     Early return rendering:
+     ```html
+     <div part="empty" class="empty-state">
+       <slot name="empty">
+         <p class="empty-message">No data available</p>
+       </slot>
+     </div>
+     ```
+   - No SVG or D3 computations are executed when data is absent.
+
+2. **Series Resolution**:
+   - If `this.series && this.series.length > 0`, use `this.series`.
+   - If `this.series` is empty `[]`, automatically extract series from numeric keys present in `this.data[0]` (excluding `this.xKey`), assigning color via `getChartColor(index)`.
+
+3. **X-Scale (`scalePoint`)**:
+   - Domain: `this.data.map(d => String(d[this.xKey] ?? ''))`.
+   - Range: `[padding.left, width - padding.right]`.
+   - Padding bounds: `padding = { top: 20, right: 24, bottom: 32, left: 48 }`.
+   - Single data point (`data.length === 1`): `scalePoint` returns the exact midpoint of the range without error.
+
+4. **Y-Scale Domain Safeguards (`scaleLinear`)**:
+   - Extract numeric values across all data items and active series:
+     `const rawVal = Number(d[s.key])` where `!Number.isNaN(rawVal) && Number.isFinite(rawVal)`.
+   - If no valid numbers exist: domain is `[0, 1]`.
+   - Otherwise, `rawMinY = Math.min(...yValues)`, `rawMaxY = Math.max(...yValues)`.
+   - **All-identical Y values safeguard**:
+     - If `rawMinY === rawMaxY`:
+       - If `rawMinY === 0`: `minY = 0, maxY = 1`.
+       - If `rawMinY > 0`: `minY = 0, maxY = rawMaxY * 1.2`.
+       - If `rawMinY < 0`: `minY = rawMinY * 1.2, maxY = 0`.
+   - **Negative values safeguard**:
+     - If `rawMinY < 0`: preserve negative `minY = rawMinY`, `maxY = Math.max(0, rawMaxY)`.
+     - If `rawMinY >= 0`: start baseline at `minY = 0`, `maxY = rawMaxY || 1`.
+   - Range: `[height - padding.bottom, padding.top]`.
+   - Apply `.nice()` to generate clean human-readable tick intervals.
+
+5. **Curve Factory**:
+   - Maps `this.curve` to D3 curve generators:
+     - `'monotoneX'` -> `curveMonotoneX` (default)
+     - `'linear'` -> `curveLinear`
+     - `'natural'` -> `curveNatural`
+     - `'step'` -> `curveStep`
+     - `'stepAfter'` -> `curveStepAfter`
+     - `'stepBefore'` -> `curveStepBefore`
+
+6. **Missing / Null Value Handling**:
+   - `line.defined(d => { const val = d[s.key]; return val !== null && val !== undefined && !Number.isNaN(Number(val)); })` ensures gaps in data do not produce `NaN` path segments.
+
+### 2.5 Multi-Series SVG Geometry & Grid Lines
+- **Grid lines**: When `showGrid` is true:
+  - Generate horizontal lines for `yScale.ticks(5)`:
+    `<line class="grid-line" x1="${padding.left}" y1="${y}" x2="${width - padding.right}" y2="${y}" />`
+  - Render Y-axis tick labels:
+    `<text class="axis-tick y-tick" x="${padding.left - 8}" y="${y}">${formatted}</text>`
+- **X-axis labels**:
+  - For each point: `<text class="axis-tick x-tick" x="${x}" y="${height - padding.bottom + 18}">${label}</text>`
+  - Baseline: `<line class="axis-line" x1="${padding.left}" y1="${yScale(0) ?? (height - padding.bottom)}" x2="${width - padding.right}" y2="${...}" />`
+- **Series Paths**:
+  - For each series `s` (index `idx`):
+    `<path class="series-path" data-series-key="${s.key}" d="${pathD}" stroke="${s.color || getChartColor(idx)}" stroke-width="${s.strokeWidth ?? 2}" fill="none" />`
+- **Interactive Points**:
+  - For each data point `d` of series `s`:
+    - Point marker circle: `<circle class="point-marker ${isActive ? 'is-active' : ''}" cx="${cx}" cy="${cy}" r="${isActive ? 6 : 4}" stroke="${strokeColor}" fill="var(--color-bg, #ffffff)" />`
+    - Invisible hit area: `<circle class="point-hit" cx="${cx}" cy="${cy}" r="12" @pointerenter="${...}" @pointerleave="${...}" />`
+
+### 2.6 Interactive Hover & Event Contracts
+- On `pointerenter` on a data point:
+  - Dispatches `CustomEvent<PointHoverDetail>('point-hover', { bubbles: true, composed: true, detail: { point: d, series: s, value: d[s.key], label: String(d[this.xKey] ?? ''), x: cx, y: cy } })`.
+  - Sets internal `activePoint = { seriesKey: s.key, index: dIdx }` and requests update.
+- On `pointerleave`:
+  - Dispatches `CustomEvent('point-leave', { bubbles: true, composed: true })`.
+  - Clears `activePoint = null` and requests update.
+
+### 2.7 Motion & Accessibility
+- In `updated(changedProperties)`:
+  - When `data`, `series`, or `curve` changes:
+    - Queries `.series-path` elements in `this.renderRoot`.
+    - Invokes `subtleAnimate(path, { opacity: [0, 1] }, { duration: 0.35, ease: CHART_EASE })`.
+    - `subtleAnimate` from `../../utils/motion` automatically inspects `prefersReducedMotion()`, collapsing duration to 0 when reduced motion is requested.
+
+### 2.8 Styling & Design Tokens
+- Pure Lit `css` composed with `resetStyles`:
+  - No imports from React, React Aria, StyleX, or Recharts.
+  - Full theme responsiveness via `var(--color-bg)`, `var(--color-fg)`, `var(--color-fg-subtle)`, `var(--color-border-subtle)`, `var(--color-chart-1)` through `var(--color-chart-8)`.
 
 ---
 
 ## 3. Caveats
 
-1. **Read-Only Scope**:
-   - This analysis was performed under read-only constraints. The target file `ui/src/styles/style.css` was NOT created during this task.
-2. **Legacy `ui/src/styles/theme.css`**:
-   - `ui/src/styles/theme.css` still exists in `ui/src/styles/`. It is superseded by `ui/src/styles/style.css`. Once `style.css` is implemented, `theme.css` should either be kept for backwards compatibility or replaced/redirected depending on Phase 2 instructions.
-3. **Step Name in Typography**:
-   - Requirement 3.5 and `tokens.stylex.ts` use `--font-size-xxl` and `--line-height-xxl` (not `2xl`). For complete spec adherence, `--font-size-xxl` is used, and optional `--font-size-2xl` alias can be added if desired.
-4. **Browser Requirements**:
-   - Native `light-dark()` and `oklch()` require modern browsers (Chrome 123+, Firefox 120+, Safari 17.5+). For older runtimes or Vitest `happy-dom`, the raw token strings are inspected directly in unit tests.
+1. **Test Environment Viewport Measurement (`happy-dom`)**:
+   - In `happy-dom`, elements have `clientWidth = 0` and `clientHeight = 0` unless explicitly resized.
+   - The blueprint specifies fallback dimensions `width = 600, height = 300` when unmeasured, and integrates `LayoutIndicatorController` so `triggerResize(element, { width: 800, height: 400 })` updates dynamically in tests.
+2. **SVG Path Geometry in Headless Tests**:
+   - `happy-dom` simulates SVG elements but does not calculate physical text glyph bounding boxes (`getBBox`). The SVG paths generated by `d3-shape` are pure mathematical strings (e.g. `M48,120C120,80...`) and can be asserted directly via `getAttribute('d')`.
+3. **Legacy File Deprecation**:
+   - The implementer must remove `ui/src/components/LineChart/LineChart.tsx` and replace `LineChart.styles.ts` to satisfy `verify-no-react.ts`.
 
 ---
 
-## 4. Conclusion & Actionable Implementation Plan
+## 4. Conclusion (Implementation Blueprint)
 
-The CSS design token layer requires authoring `ui/src/styles/style.css` with **124 custom properties** (6 brand hooks + 118 design tokens) on `:root`, along with theme selectors.
+Here is the complete, production-ready implementation blueprint for `moul-line-chart`.
 
-### Complete Target Code for `ui/src/styles/style.css`
+### 4.1 `ui/src/components/LineChart/LineChart.styles.ts`
 
-```css
-/**
- * Moul UI Native CSS Design Token Layer
- * Defines all design tokens at :root using light-dark() and oklch().
- * Inherits across Shadow DOM boundaries for Lit Web Components.
- */
+```ts
+import { css } from 'lit'
+import { resetStyles } from '../../styles/reset.styles'
 
-:root {
-  /* Color Scheme declaration for native light-dark() resolution */
-  color-scheme: light dark;
+export const lineChartStyles = [
+  resetStyles,
+  css`
+    :host {
+      display: block;
+      position: relative;
+      width: 100%;
+      box-sizing: border-box;
+      font-family: var(--font-family-base, inherit);
+      color: var(--color-fg, inherit);
+      overflow: hidden;
+    }
 
-  /* ── Brand Customization Hooks ────────────────────────────────── */
-  --brand-hue: 250;
-  --brand-chroma-multiplier: 1;
-  --brand-font-family: inherit;
-  --brand-font-scale: 1;
-  --brand-density-factor: 1;
-  --brand-radius-factor: 1;
+    .chart-svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
 
-  /* ── Neutral Scale (10 steps) ─────────────────────────────────── */
-  --color-neutral-50: light-dark(oklch(0.98 0 0), oklch(0.14 0 0));
-  --color-neutral-100: light-dark(oklch(0.96 0 0), oklch(0.18 0 0));
-  --color-neutral-200: light-dark(oklch(0.92 0 0), oklch(0.24 0 0));
-  --color-neutral-300: light-dark(oklch(0.84 0 0), oklch(0.32 0 0));
-  --color-neutral-400: light-dark(oklch(0.70 0 0), oklch(0.45 0 0));
-  --color-neutral-500: light-dark(oklch(0.55 0 0), oklch(0.55 0 0));
-  --color-neutral-600: light-dark(oklch(0.42 0 0), oklch(0.68 0 0));
-  --color-neutral-700: light-dark(oklch(0.32 0 0), oklch(0.78 0 0));
-  --color-neutral-800: light-dark(oklch(0.22 0 0), oklch(0.88 0 0));
-  --color-neutral-900: light-dark(oklch(0.14 0 0), oklch(0.96 0 0));
+    .grid-line {
+      stroke: var(--color-border-subtle, #e5e7eb);
+      stroke-dasharray: 3 3;
+      stroke-width: 1;
+      shape-rendering: crispEdges;
+    }
 
-  /* ── Primary Scale (10 steps) ─────────────────────────────────── */
-  --color-primary-50: light-dark(oklch(0.96 calc(0.025 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)), oklch(0.22 calc(0.050 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)));
-  --color-primary-100: light-dark(oklch(0.92 calc(0.050 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)), oklch(0.28 calc(0.080 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)));
-  --color-primary-200: light-dark(oklch(0.85 calc(0.090 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)), oklch(0.36 calc(0.120 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)));
-  --color-primary-300: light-dark(oklch(0.77 calc(0.140 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)), oklch(0.45 calc(0.160 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)));
-  --color-primary-400: light-dark(oklch(0.66 calc(0.190 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)), oklch(0.56 calc(0.200 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)));
-  --color-primary-500: light-dark(oklch(0.55 calc(0.240 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)), oklch(0.66 calc(0.220 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)));
-  --color-primary-600: light-dark(oklch(0.46 calc(0.220 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)), oklch(0.75 calc(0.190 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)));
-  --color-primary-700: light-dark(oklch(0.38 calc(0.190 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)), oklch(0.83 calc(0.150 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)));
-  --color-primary-800: light-dark(oklch(0.30 calc(0.150 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)), oklch(0.90 calc(0.090 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)));
-  --color-primary-900: light-dark(oklch(0.22 calc(0.110 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)), oklch(0.95 calc(0.040 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)));
+    .axis-line {
+      stroke: var(--color-border-subtle, #e5e7eb);
+      stroke-width: 1;
+      shape-rendering: crispEdges;
+    }
 
-  /* ── Error Scale (5 steps, hue 27) ────────────────────────────── */
-  --color-error-300: light-dark(oklch(0.80 0.120 27), oklch(0.45 0.150 27));
-  --color-error-400: light-dark(oklch(0.68 0.170 27), oklch(0.58 0.180 27));
-  --color-error-500: light-dark(oklch(0.56 0.200 27), oklch(0.68 0.190 27));
-  --color-error-600: light-dark(oklch(0.46 0.190 27), oklch(0.78 0.150 27));
-  --color-error-700: light-dark(oklch(0.36 0.160 27), oklch(0.87 0.090 27));
+    .axis-tick {
+      fill: var(--color-fg-subtle, #6b7280);
+      font-size: 11px;
+      font-family: var(--font-family-base, inherit);
+      user-select: none;
+    }
 
-  /* ── Warning Scale (5 steps, hue 85) ──────────────────────────── */
-  --color-warning-300: light-dark(oklch(0.85 0.130 85), oklch(0.48 0.140 85));
-  --color-warning-400: light-dark(oklch(0.78 0.160 85), oklch(0.60 0.165 85));
-  --color-warning-500: light-dark(oklch(0.70 0.175 85), oklch(0.72 0.165 85));
-  --color-warning-600: light-dark(oklch(0.60 0.165 85), oklch(0.82 0.130 85));
-  --color-warning-700: light-dark(oklch(0.48 0.140 85), oklch(0.90 0.080 85));
+    .series-path {
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      pointer-events: stroke;
+      transition: stroke-width 0.15s ease;
+    }
 
-  /* ── Success Scale (5 steps, hue 145) ─────────────────────────── */
-  --color-success-300: light-dark(oklch(0.82 0.120 145), oklch(0.44 0.130 145));
-  --color-success-400: light-dark(oklch(0.72 0.155 145), oklch(0.56 0.160 145));
-  --color-success-500: light-dark(oklch(0.62 0.175 145), oklch(0.68 0.170 145));
-  --color-success-600: light-dark(oklch(0.52 0.165 145), oklch(0.78 0.135 145));
-  --color-success-700: light-dark(oklch(0.40 0.135 145), oklch(0.87 0.085 145));
+    .point-marker {
+      fill: var(--color-bg, #ffffff);
+      cursor: pointer;
+      transform-origin: center;
+      transition: r 0.15s ease;
+    }
 
-  /* ── Semantic Surface & Text Aliases (13 tokens) ─────────────── */
-  --color-bg: light-dark(oklch(1 0 0), oklch(0.12 0 0));
-  --color-bg-subtle: light-dark(oklch(0.97 0 0), oklch(0.16 0 0));
-  --color-bg-elevated: light-dark(oklch(1 0 0), oklch(0.20 0 0));
-  --color-fg: light-dark(oklch(0.14 0 0), oklch(0.96 0 0));
-  --color-fg-subtle: light-dark(oklch(0.42 0 0), oklch(0.68 0 0));
-  --color-fg-on-primary: light-dark(oklch(1 0 0), oklch(0.10 0 0));
-  --color-border: light-dark(oklch(0.84 0 0), oklch(0.28 0 0));
-  --color-border-subtle: light-dark(oklch(0.92 0 0), oklch(0.22 0 0));
-  --color-border-focus: light-dark(oklch(0.55 calc(0.240 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)), oklch(0.66 calc(0.220 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)));
-  --color-bg-glass: light-dark(oklch(1 0 0 / 0.55), oklch(0.20 0 0 / 0.45));
-  --color-border-glass: light-dark(oklch(0 0 0 / 0.08), oklch(1 0 0 / 0.10));
-  --color-shadow: light-dark(oklch(0 0 0 / 0.10), oklch(0 0 0 / 0.40));
-  --color-overlay: light-dark(oklch(0 0 0 / 0.40), oklch(0 0 0 / 0.60));
+    .point-marker:hover,
+    .point-marker.is-active {
+      r: 6;
+    }
 
-  /* ── Alert / Status Variants (20 tokens) ──────────────────────── */
-  /* Info */
-  --color-alert-bg-info: light-dark(oklch(0.97 0 0), oklch(0.16 0 0));
-  --color-alert-border-info: light-dark(oklch(0.92 0 0), oklch(0.22 0 0));
-  --color-alert-hover-info: light-dark(oklch(0.92 calc(0.01 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)), oklch(0.12 calc(0.01 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)));
-  --color-alert-active-info: light-dark(oklch(0.88 calc(0.01 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)), oklch(0.08 calc(0.01 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)));
+    .point-hit {
+      fill: transparent;
+      cursor: pointer;
+    }
 
-  /* Accent */
-  --color-alert-bg-accent: light-dark(oklch(0.97 calc(0.02 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)), oklch(0.19 calc(0.035 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)));
-  --color-alert-border-accent: light-dark(oklch(0.88 calc(0.04 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)), oklch(0.28 calc(0.06 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)));
-  --color-alert-hover-accent: light-dark(oklch(0.92 calc(0.04 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)), oklch(0.14 calc(0.05 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)));
-  --color-alert-active-accent: light-dark(oklch(0.87 calc(0.06 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)), oklch(0.10 calc(0.06 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)));
+    [part="empty"],
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      min-height: 200px;
+      color: var(--color-fg-subtle, #6b7280);
+      font-size: var(--font-size-sm, 0.875rem);
+      padding: var(--spacing-8, 2rem) var(--spacing-4, 1rem);
+      text-align: center;
+    }
 
-  /* Success */
-  --color-alert-bg-success: light-dark(oklch(0.97 0.02 145), oklch(0.19 0.035 145));
-  --color-alert-border-success: light-dark(oklch(0.88 0.04 145), oklch(0.28 0.06 145));
-  --color-alert-hover-success: light-dark(oklch(0.92 0.04 145), oklch(0.14 0.05 145));
-  --color-alert-active-success: light-dark(oklch(0.87 0.06 145), oklch(0.10 0.06 145));
+    .empty-message {
+      margin: 0;
+    }
+  `,
+]
 
-  /* Warning */
-  --color-alert-bg-warning: light-dark(oklch(0.98 0.02 85), oklch(0.19 0.035 85));
-  --color-alert-border-warning: light-dark(oklch(0.90 0.05 85), oklch(0.28 0.06 85));
-  --color-alert-hover-warning: light-dark(oklch(0.93 0.04 85), oklch(0.14 0.05 85));
-  --color-alert-active-warning: light-dark(oklch(0.88 0.06 85), oklch(0.10 0.06 85));
+export const styles = lineChartStyles
+```
 
-  /* Error */
-  --color-alert-bg-error: light-dark(oklch(0.97 0.02 27), oklch(0.19 0.035 27));
-  --color-alert-border-error: light-dark(oklch(0.90 0.05 27), oklch(0.28 0.06 27));
-  --color-alert-hover-error: light-dark(oklch(0.92 0.04 27), oklch(0.14 0.05 27));
-  --color-alert-active-error: light-dark(oklch(0.87 0.06 27), oklch(0.10 0.06 27));
+---
 
-  /* ── Typography (21 tokens) ──────────────────────────────────── */
-  --font-size-xs: calc(0.75rem * var(--brand-font-scale, 1));
-  --font-size-sm: calc(0.875rem * var(--brand-font-scale, 1));
-  --font-size-md: calc(1rem * var(--brand-font-scale, 1));
-  --font-size-lg: calc(1.125rem * var(--brand-font-scale, 1));
-  --font-size-xl: calc(1.25rem * var(--brand-font-scale, 1));
-  --font-size-xxl: calc(1.5rem * var(--brand-font-scale, 1));
-  --font-size-3xl: calc(1.875rem * var(--brand-font-scale, 1));
-  --font-size-4xl: calc(2.25rem * var(--brand-font-scale, 1));
+### 4.2 `ui/src/components/LineChart/LineChart.ts`
 
-  --line-height-xs: calc(1rem * var(--brand-font-scale, 1));
-  --line-height-sm: calc(1.25rem * var(--brand-font-scale, 1));
-  --line-height-md: calc(1.5rem * var(--brand-font-scale, 1));
-  --line-height-lg: calc(1.75rem * var(--brand-font-scale, 1));
-  --line-height-xl: calc(1.75rem * var(--brand-font-scale, 1));
-  --line-height-xxl: calc(2rem * var(--brand-font-scale, 1));
-  --line-height-3xl: calc(2.25rem * var(--brand-font-scale, 1));
-  --line-height-4xl: calc(2.5rem * var(--brand-font-scale, 1));
+```ts
+import { html, LitElement, type PropertyValues, svg } from 'lit'
+import { scaleLinear, scalePoint } from 'd3-scale'
+import {
+  type CurveFactory,
+  curveLinear,
+  curveMonotoneX,
+  curveNatural,
+  curveStep,
+  curveStepAfter,
+  curveStepBefore,
+  line,
+} from 'd3-shape'
 
-  --font-weight-normal: 400;
-  --font-weight-medium: 500;
-  --font-weight-semibold: 600;
-  --font-weight-bold: 700;
-  --font-family-base: var(--brand-font-family, inherit);
+import { LayoutIndicatorController } from '../../controllers/layout-indicator.controller'
+import { defineElement } from '../../utils/define-element'
+import { CHART_EASE, subtleAnimate } from '../../utils/motion'
+import {
+  type ChartSeries,
+  getChartColor,
+  type PointHoverDetail,
+} from '../ChartCommon'
+import { lineChartStyles } from './LineChart.styles'
 
-  /* ── Spacing (8 steps, 4px base) ──────────────────────────────── */
-  --spacing-1: calc(0.25rem * var(--brand-density-factor, 1));
-  --spacing-2: calc(0.5rem * var(--brand-density-factor, 1));
-  --spacing-3: calc(0.75rem * var(--brand-density-factor, 1));
-  --spacing-4: calc(1rem * var(--brand-density-factor, 1));
-  --spacing-5: calc(1.25rem * var(--brand-density-factor, 1));
-  --spacing-6: calc(1.5rem * var(--brand-density-factor, 1));
-  --spacing-7: calc(1.75rem * var(--brand-density-factor, 1));
-  --spacing-8: calc(2rem * var(--brand-density-factor, 1));
-
-  /* ── Border Radius (5 steps) ─────────────────────────────────── */
-  --radius-none: 0;
-  --radius-sm: calc(0.375rem * var(--brand-radius-factor, 1));
-  --radius-md: calc(0.75rem * var(--brand-radius-factor, 1));
-  --radius-lg: calc(1.25rem * var(--brand-radius-factor, 1));
-  --radius-full: 9999px;
-
-  /* ── Shadows (3 steps, referencing --color-shadow) ───────────── */
-  --shadow-sm: 0 1px 2px 0 var(--color-shadow);
-  --shadow-md: 0 4px 6px -1px var(--color-shadow), 0 2px 4px -2px var(--color-shadow);
-  --shadow-lg: 0 10px 15px -3px var(--color-shadow), 0 4px 6px -4px var(--color-shadow);
-
-  /* ── Z-Index (5 steps) ────────────────────────────────────────── */
-  --z-base: 0;
-  --z-dropdown: 1000;
-  --z-modal: 1300;
-  --z-tooltip: 1500;
-  --z-toast: 1700;
-
-  /* ── Chart Colors (8 steps) ───────────────────────────────────── */
-  --color-chart-1: light-dark(oklch(0.60 0.18 250), oklch(0.65 0.16 250));
-  --color-chart-2: light-dark(oklch(0.75 0.15 75),  oklch(0.75 0.14 75));
-  --color-chart-3: light-dark(oklch(0.65 0.18 5),   oklch(0.68 0.16 5));
-  --color-chart-4: light-dark(oklch(0.62 0.20 300), oklch(0.65 0.18 300));
-  --color-chart-5: light-dark(oklch(0.68 0.16 195), oklch(0.70 0.14 195));
-  --color-chart-6: light-dark(oklch(0.58 0.16 45),  oklch(0.62 0.15 45));
-  --color-chart-7: light-dark(oklch(0.64 0.17 145), oklch(0.68 0.15 145));
-  --color-chart-8: light-dark(oklch(0.60 0 0),      oklch(0.65 0 0));
+export interface ActivePointState {
+  seriesKey: string
+  index: number
 }
 
-/* ── Theme Selectors ────────────────────────────────────────────── */
-[data-theme="light"] {
-  color-scheme: light;
+function resolveCurveFactory(curveName: string): CurveFactory {
+  switch (curveName) {
+    case 'linear':
+      return curveLinear
+    case 'natural':
+      return curveNatural
+    case 'step':
+      return curveStep
+    case 'stepAfter':
+      return curveStepAfter
+    case 'stepBefore':
+      return curveStepBefore
+    case 'monotoneX':
+    default:
+      return curveMonotoneX
+  }
 }
 
-[data-theme="dark"],
-.dark {
-  color-scheme: dark;
+export class MoulLineChart extends LitElement {
+  static override styles = lineChartStyles
+
+  static override properties = {
+    data: { attribute: false },
+    xKey: { type: String, attribute: 'x-key' },
+    series: { attribute: false },
+    height: { type: Number },
+    showGrid: { type: Boolean, attribute: 'show-grid' },
+    curve: { type: String },
+    valueFormatter: { attribute: false },
+  }
+
+  declare data: Record<string, unknown>[]
+  declare xKey: string
+  declare series: ChartSeries[]
+  declare height: number
+  declare showGrid: boolean
+  declare curve: string
+  declare valueFormatter?: (value: any) => string
+
+  public layout: LayoutIndicatorController
+  private activePoint: ActivePointState | null = null
+
+  constructor() {
+    super()
+    this.data = []
+    this.xKey = 'name'
+    this.series = []
+    this.height = 300
+    this.showGrid = true
+    this.curve = 'monotoneX'
+    this.valueFormatter = undefined
+
+    this.layout = new LayoutIndicatorController(this, {
+      observeDimensions: true,
+    })
+  }
+
+  public get containerWidth(): number {
+    return this.layout.width > 0
+      ? this.layout.width
+      : this.clientWidth > 0
+        ? this.clientWidth
+        : 600
+  }
+
+  public get containerHeight(): number {
+    return this.height > 0 ? this.height : 300
+  }
+
+  protected override updated(changedProps: PropertyValues): void {
+    super.updated(changedProps)
+
+    if (
+      changedProps.has('data') ||
+      changedProps.has('series') ||
+      changedProps.has('curve')
+    ) {
+      this.animatePaths()
+    }
+  }
+
+  private animatePaths(): void {
+    const paths =
+      this.renderRoot?.querySelectorAll<SVGPathElement>('.series-path')
+    if (paths && paths.length > 0) {
+      paths.forEach((path) => {
+        subtleAnimate(
+          path,
+          { opacity: [0, 1] },
+          { duration: 0.35, ease: CHART_EASE },
+        )
+      })
+    }
+  }
+
+  private getActiveSeries(): ChartSeries[] {
+    if (this.series && this.series.length > 0) {
+      return this.series
+    }
+
+    if (!this.data || this.data.length === 0) {
+      return []
+    }
+
+    const firstItem = this.data[0] || {}
+    return Object.keys(firstItem)
+      .filter((key) => key !== this.xKey)
+      .filter((key) => {
+        const val = firstItem[key]
+        return typeof val === 'number' || !Number.isNaN(Number(val))
+      })
+      .map((key, idx) => ({
+        key,
+        name: key,
+        color: getChartColor(idx),
+      }))
+  }
+
+  private handlePointEnter(
+    _event: PointerEvent,
+    item: Record<string, unknown>,
+    seriesItem: ChartSeries,
+    cx: number,
+    cy: number,
+    dIdx: number,
+  ): void {
+    this.activePoint = {
+      seriesKey: seriesItem.key,
+      index: dIdx,
+    }
+    this.requestUpdate()
+
+    const rawValue = item[seriesItem.key]
+    const label = String(item[this.xKey] ?? '')
+
+    this.dispatchEvent(
+      new CustomEvent<PointHoverDetail>('point-hover', {
+        bubbles: true,
+        composed: true,
+        detail: {
+          point: item,
+          series: seriesItem,
+          value: rawValue,
+          label,
+          x: cx,
+          y: cy,
+        },
+      }),
+    )
+  }
+
+  private handlePointLeave(_event: PointerEvent): void {
+    this.activePoint = null
+    this.requestUpdate()
+
+    this.dispatchEvent(
+      new CustomEvent('point-leave', {
+        bubbles: true,
+        composed: true,
+      }),
+    )
+  }
+
+  protected override render() {
+    // 1. Domain safeguard: empty data check
+    if (!this.data || !Array.isArray(this.data) || this.data.length === 0) {
+      return html`
+        <div part="empty" class="empty-state">
+          <slot name="empty">
+            <p class="empty-message">No data available</p>
+          </slot>
+        </div>
+      `
+    }
+
+    const width = this.containerWidth
+    const height = this.containerHeight
+    const padding = { top: 20, right: 24, bottom: 32, left: 48 }
+    const activeSeriesList = this.getActiveSeries()
+
+    // 2. X-Scale (scalePoint)
+    const xLabels = this.data.map((d) => String(d[this.xKey] ?? ''))
+    const xScale = scalePoint<string>()
+      .domain(xLabels)
+      .range([padding.left, width - padding.right])
+
+    // 3. Y-Scale Domain Safeguards
+    const yValues: number[] = []
+    for (const d of this.data) {
+      for (const s of activeSeriesList) {
+        const raw = d[s.key]
+        if (raw !== null && raw !== undefined) {
+          const num = Number(raw)
+          if (!Number.isNaN(num) && Number.isFinite(num)) {
+            yValues.push(num)
+          }
+        }
+      }
+    }
+
+    let minY = 0
+    let maxY = 1
+
+    if (yValues.length > 0) {
+      const rawMinY = Math.min(...yValues)
+      const rawMaxY = Math.max(...yValues)
+
+      if (rawMinY === rawMaxY) {
+        // All-identical values safeguard
+        if (rawMinY === 0) {
+          minY = 0
+          maxY = 1
+        } else if (rawMinY > 0) {
+          minY = 0
+          maxY = rawMaxY * 1.2
+        } else {
+          minY = rawMinY * 1.2
+          maxY = 0
+        }
+      } else {
+        // Normal domain calculation with negative safeguards
+        if (rawMinY < 0) {
+          minY = rawMinY
+          maxY = Math.max(0, rawMaxY)
+        } else {
+          minY = 0
+          maxY = rawMaxY || 1
+        }
+      }
+    }
+
+    const yScale = scaleLinear()
+      .domain([minY, maxY])
+      .range([height - padding.bottom, padding.top])
+      .nice()
+
+    const curveFactory = resolveCurveFactory(this.curve)
+
+    // 4. Grid & Axis Ticks
+    const yTicks = yScale.ticks(5)
+    const baselineY = yScale(0) ?? height - padding.bottom
+
+    return html`
+      <div style="width: 100%; height: ${height}px; position: relative;">
+        <svg
+          class="chart-svg"
+          viewBox="0 0 ${width} ${height}"
+          preserveAspectRatio="xMidYMid meet"
+          role="img"
+          aria-label="Line chart"
+        >
+          <!-- Grid Lines -->
+          ${
+            this.showGrid
+              ? svg`
+                <g class="grid-group" aria-hidden="true">
+                  ${yTicks.map((tick) => {
+                    const yPos = yScale(tick)
+                    return svg`
+                      <line
+                        class="grid-line"
+                        x1="${padding.left}"
+                        y1="${yPos}"
+                        x2="${width - padding.right}"
+                        y2="${yPos}"
+                      />
+                    `
+                  })}
+                </g>
+              `
+              : ''
+          }
+
+          <!-- X Axis Baseline -->
+          <line
+            class="axis-line"
+            x1="${padding.left}"
+            y1="${baselineY}"
+            x2="${width - padding.right}"
+            y2="${baselineY}"
+          />
+
+          <!-- Y Axis Labels -->
+          <g class="y-axis-labels" aria-hidden="true">
+            ${yTicks.map((tick) => {
+              const yPos = yScale(tick)
+              const formatted = this.valueFormatter
+                ? this.valueFormatter(tick)
+                : String(tick)
+              return svg`
+                <text
+                  class="axis-tick y-tick"
+                  x="${padding.left - 8}"
+                  y="${yPos}"
+                  text-anchor="end"
+                  dominant-baseline="middle"
+                >
+                  ${formatted}
+                </text>
+              `
+            })}
+          </g>
+
+          <!-- X Axis Labels -->
+          <g class="x-axis-labels" aria-hidden="true">
+            ${this.data.map((d) => {
+              const label = String(d[this.xKey] ?? '')
+              const xPos = xScale(label) ?? 0
+              return svg`
+                <text
+                  class="axis-tick x-tick"
+                  x="${xPos}"
+                  y="${height - padding.bottom + 18}"
+                  text-anchor="middle"
+                  dominant-baseline="hanging"
+                >
+                  ${label}
+                </text>
+              `
+            })}
+          </g>
+
+          <!-- Series Lines -->
+          <g class="series-lines-group">
+            ${activeSeriesList.map((s, sIdx) => {
+              const color = s.color || getChartColor(sIdx)
+              const strokeWidth = s.strokeWidth ?? 2
+
+              const lineGenerator = line<Record<string, unknown>>()
+                .defined((d) => {
+                  const val = d[s.key]
+                  return (
+                    val !== null &&
+                    val !== undefined &&
+                    !Number.isNaN(Number(val))
+                  )
+                })
+                .x((d) => xScale(String(d[this.xKey] ?? '')) ?? 0)
+                .y((d) => yScale(Number(d[s.key])) ?? 0)
+                .curve(curveFactory)
+
+              const pathD = lineGenerator(this.data) ?? ''
+
+              return svg`
+                <path
+                  class="series-path"
+                  data-series-key="${s.key}"
+                  d="${pathD}"
+                  stroke="${color}"
+                  stroke-width="${strokeWidth}"
+                />
+              `
+            })}
+          </g>
+
+          <!-- Data Points & Hit Areas -->
+          <g class="series-points-group">
+            ${activeSeriesList.map((s, sIdx) => {
+              const color = s.color || getChartColor(sIdx)
+
+              return this.data.map((d, dIdx) => {
+                const rawVal = d[s.key]
+                if (
+                  rawVal === null ||
+                  rawVal === undefined ||
+                  Number.isNaN(Number(rawVal))
+                ) {
+                  return svg``
+                }
+
+                const cx = xScale(String(d[this.xKey] ?? '')) ?? 0
+                const cy = yScale(Number(rawVal)) ?? 0
+                const isActive =
+                  this.activePoint?.seriesKey === s.key &&
+                  this.activePoint?.index === dIdx
+
+                return svg`
+                  <g class="point-group" data-series="${s.key}" data-index="${dIdx}">
+                    <circle
+                      class="point-marker ${isActive ? 'is-active' : ''}"
+                      cx="${cx}"
+                      cy="${cy}"
+                      r="${isActive ? 6 : 4}"
+                      stroke="${color}"
+                      stroke-width="2"
+                    />
+                    <circle
+                      class="point-hit"
+                      cx="${cx}"
+                      cy="${cy}"
+                      r="12"
+                      @pointerenter="${(e: PointerEvent) =>
+                        this.handlePointEnter(e, d, s, cx, cy, dIdx)}"
+                      @pointerleave="${(e: PointerEvent) =>
+                        this.handlePointLeave(e)}"
+                    />
+                  </g>
+                `
+              })
+            })}
+          </g>
+        </svg>
+      </div>
+    `
+  }
+}
+
+defineElement('moul-line-chart', MoulLineChart)
+
+export { MoulLineChart as LineChart }
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'moul-line-chart': MoulLineChart
+  }
 }
 ```
 
-### 4.2 Step-by-Step Implementation Strategy for Worker Agent
-1. **Create `ui/src/styles/style.css`**:
-   - Write the exact CSS content above to `ui/src/styles/style.css`.
-2. **Build and Asset Emission**:
-   - Run `bun run build:ui` (or `vite build` within `ui/`).
-   - Verify `ui/dist/assets/style.css` is emitted by `copyCssTokensPlugin`.
-3. **Format & Lint**:
-   - Run `bun run format` and `bun run lint` to confirm zero Biome formatting or lint issues in the stylesheet.
-4. **Prepare for Task 2.4 Test Suite**:
-   - In Task 2.4, write tests in `ui/src/tokens/Tokens.test.ts` verifying all 124 custom properties and selector blocks.
+---
+
+### 4.3 Proposed Milestone 2 Test Suite (`Charts.test.ts`)
+
+```ts
+import './LineChart/LineChart'
+import type { MoulLineChart } from './LineChart/LineChart'
+
+describe('Milestone 2: Continuous Coordinate Charts — MoulLineChart (`moul-line-chart`)', () => {
+  it('CHART-LINE-01: Custom Element registration and instance check', () => {
+    const ctor = customElements.get('moul-line-chart')
+    expect(ctor).toBeDefined()
+
+    const chart = document.createElement('moul-line-chart')
+    expect(chart).toBeInstanceOf(ctor!)
+  })
+
+  it('CHART-LINE-02: Property defaults', () => {
+    const chart = document.createElement('moul-line-chart') as MoulLineChart
+    expect(chart.data).toEqual([])
+    expect(chart.xKey).toBe('name')
+    expect(chart.series).toEqual([])
+    expect(chart.height).toBe(300)
+    expect(chart.showGrid).toBe(true)
+    expect(chart.curve).toBe('monotoneX')
+    expect(chart.valueFormatter).toBeUndefined()
+  })
+
+  it('CHART-LINE-03: Empty state slot rendered when data is empty or null', async () => {
+    const chart = await mount<MoulLineChart>(html`
+      <moul-line-chart>
+        <div slot="empty" id="custom-empty">Empty Dataset</div>
+      </moul-line-chart>
+    `)
+
+    expect(chart.shadowRoot?.querySelector('slot[name="empty"]')).toBeTruthy()
+    expect(chart.shadowRoot?.querySelector('svg')).toBeNull()
+
+    // Pass data dynamically -> renders SVG
+    chart.data = [
+      { name: 'Jan', val: 10 },
+      { name: 'Feb', val: 20 },
+    ]
+    await chart.updateComplete
+    expect(chart.shadowRoot?.querySelector('svg')).toBeTruthy()
+  })
+
+  it('CHART-LINE-04: Multi-series line rendering and color token assignment', async () => {
+    const chart = await mount<MoulLineChart>(html`
+      <moul-line-chart
+        .data=${[
+          { month: 'Q1', revenue: 100, cost: 60 },
+          { month: 'Q2', revenue: 150, cost: 80 },
+          { month: 'Q3', revenue: 130, cost: 70 },
+        ]}
+        x-key="month"
+        .series=${[
+          { key: 'revenue', name: 'Revenue', color: 'var(--color-chart-1)' },
+          { key: 'cost', name: 'Cost', color: 'var(--color-chart-2)' },
+        ]}
+      ></moul-line-chart>
+    `)
+
+    const paths = chart.shadowRoot?.querySelectorAll('.series-path')
+    expect(paths?.length).toBe(2)
+
+    const revPath = chart.shadowRoot?.querySelector(
+      '.series-path[data-series-key="revenue"]',
+    )
+    const costPath = chart.shadowRoot?.querySelector(
+      '.series-path[data-series-key="cost"]',
+    )
+
+    expect(revPath?.getAttribute('stroke')).toBe('var(--color-chart-1)')
+    expect(costPath?.getAttribute('stroke')).toBe('var(--color-chart-2)')
+    expect(revPath?.getAttribute('d')).toMatch(/^M/)
+  })
+
+  it('CHART-LINE-05: Auto-detected series when series property is omitted', async () => {
+    const chart = await mount<MoulLineChart>(html`
+      <moul-line-chart
+        .data=${[
+          { name: 'A', alpha: 10, beta: 20 },
+          { name: 'B', alpha: 30, beta: 40 },
+        ]}
+      ></moul-line-chart>
+    `)
+
+    const paths = chart.shadowRoot?.querySelectorAll('.series-path')
+    expect(paths?.length).toBe(2)
+  })
+
+  it('CHART-LINE-06: Grid lines visibility toggling via show-grid attribute', async () => {
+    const chart = await mount<MoulLineChart>(html`
+      <moul-line-chart
+        .data=${[{ name: 'X', y: 5 }, { name: 'Y', y: 10 }]}
+        show-grid="false"
+      ></moul-line-chart>
+    `)
+
+    expect(chart.shadowRoot?.querySelector('.grid-group')).toBeNull()
+
+    chart.showGrid = true
+    await chart.updateComplete
+    expect(chart.shadowRoot?.querySelector('.grid-group')).toBeTruthy()
+  })
+
+  it('CHART-LINE-07: Interactive hover dispatches point-hover with PointHoverDetail', async () => {
+    const chart = await mount<MoulLineChart>(html`
+      <moul-line-chart
+        .data=${[{ name: 'Jan', val: 50 }, { name: 'Feb', val: 80 }]}
+        .series=${[{ key: 'val', name: 'Metric' }]}
+      ></moul-line-chart>
+    `)
+
+    let hoverDetail: PointHoverDetail | null = null
+    chart.addEventListener('point-hover', (e: Event) => {
+      hoverDetail = (e as CustomEvent<PointHoverDetail>).detail
+    })
+
+    const firstHit = chart.shadowRoot?.querySelector('.point-hit')
+    expect(firstHit).toBeTruthy()
+
+    firstHit?.dispatchEvent(new PointerEvent('pointerenter', { bubbles: true }))
+    await chart.updateComplete
+
+    expect(hoverDetail).not.toBeNull()
+    expect(hoverDetail!.label).toBe('Jan')
+    expect(hoverDetail!.value).toBe(50)
+    expect(typeof hoverDetail!.x).toBe('number')
+    expect(typeof hoverDetail!.y).toBe('number')
+  })
+
+  it('CHART-LINE-08: Domain safeguard: single data point renders without NaN', async () => {
+    const chart = await mount<MoulLineChart>(html`
+      <moul-line-chart
+        .data=${[{ name: 'Only', value: 42 }]}
+        .series=${[{ key: 'value' }]}
+      ></moul-line-chart>
+    `)
+
+    const path = chart.shadowRoot?.querySelector('.series-path')
+    const dAttr = path?.getAttribute('d') ?? ''
+    expect(dAttr).not.toContain('NaN')
+
+    const marker = chart.shadowRoot?.querySelector('.point-marker')
+    expect(marker?.getAttribute('cx')).not.toContain('NaN')
+    expect(marker?.getAttribute('cy')).not.toContain('NaN')
+  })
+
+  it('CHART-LINE-09: Domain safeguard: all-identical Y values avoids zero-span error', async () => {
+    const chart = await mount<MoulLineChart>(html`
+      <moul-line-chart
+        .data=${[
+          { name: 'A', value: 100 },
+          { name: 'B', value: 100 },
+        ]}
+        .series=${[{ key: 'value' }]}
+      ></moul-line-chart>
+    `)
+
+    const path = chart.shadowRoot?.querySelector('.series-path')
+    expect(path?.getAttribute('d')).not.toContain('NaN')
+  })
+
+  it('CHART-LINE-10: Domain safeguard: negative values domain expansion', async () => {
+    const chart = await mount<MoulLineChart>(html`
+      <moul-line-chart
+        .data=${[
+          { name: 'A', value: -50 },
+          { name: 'B', value: 25 },
+        ]}
+        .series=${[{ key: 'value' }]}
+      ></moul-line-chart>
+    `)
+
+    const path = chart.shadowRoot?.querySelector('.series-path')
+    expect(path?.getAttribute('d')).not.toContain('NaN')
+  })
+
+  it('CHART-LINE-11: Responsive dimension resize via triggerResize updates viewBox', async () => {
+    const chart = await mount<MoulLineChart>(html`
+      <moul-line-chart
+        .data=${[{ name: 'A', v: 10 }, { name: 'B', v: 20 }]}
+      ></moul-line-chart>
+    `)
+
+    triggerResize(chart, { width: 900, height: 450 })
+    await awaitNestedUpdates(chart)
+
+    const svgEl = chart.shadowRoot?.querySelector('svg')
+    expect(svgEl?.getAttribute('viewBox')).toBe('0 0 900 300')
+  })
+})
+```
 
 ---
 
 ## 5. Verification Method
 
-To independently verify the strategy and implementation:
+To independently verify this implementation blueprint:
 
-1. **Verify Source Token Alignment**:
-   - Compare every token in `style.css` against `ui/src/tokens/tokens.stylex.ts`.
-   - Confirm OKLCH numbers match character-for-character.
-2. **Verify Variable Count**:
-   - Count `:root` custom properties:
-     ```bash
-     grep -E "^\s*--(brand|color|font|line|spacing|radius|shadow|z)-" ui/src/styles/style.css | wc -l
-     ```
-     Expected count: **124** (6 brand hooks + 10 neutral + 10 primary + 5 error + 5 warning + 5 success + 13 semantic aliases + 20 alert variants + 21 typography + 8 spacing + 5 radius + 3 shadows + 5 z-index + 8 chart colors).
-3. **Verify Shadow Reference Fix**:
-   - Run:
-     ```bash
-     grep "var(--colorShadow)" ui/src/styles/style.css
-     ```
-     Must return 0 results.
-   - Run:
-     ```bash
-     grep "var(--color-shadow)" ui/src/styles/style.css
-     ```
-     Must return 3 lines (`--shadow-sm`, `--shadow-md`, `--shadow-lg`).
-4. **Verify Theme Selectors**:
-   - Ensure `color-scheme: light dark;` is defined in `:root`.
-   - Ensure `[data-theme="light"] { color-scheme: light; }`.
-   - Ensure `[data-theme="dark"], .dark { color-scheme: dark; }`.
-5. **Verify Build Emission**:
-   - Run `bun run --cwd ui build` and inspect `ui/dist/assets/style.css`.
+1. **Verify No React Dependencies**:
+   ```bash
+   node -e "require('child_process').execSync('bun ./scripts/verify-no-react.ts all', {stdio: 'inherit'})"
+   ```
+   *Expected outcome*: Exit code 0, 0 disallowed React/legacy packages found.
+
+2. **Verify Component Unit & Integration Tests**:
+   ```bash
+   node ui/node_modules/.bin/vitest run --root ui src/components/Charts.test.ts
+   ```
+   *Expected outcome*: All existing M1 tests plus the new M2 `moul-line-chart` test suites pass 100% green.
+
+3. **Verify Linter & Formatter**:
+   ```bash
+   node node_modules/.bin/biome check ui/src/components/LineChart
+   ```
+   *Expected outcome*: 0 Biome lint or formatting errors.
+
+4. **Verify Type Checking & Library Build**:
+   ```bash
+   bun run --cwd ui build
+   ```
+   *Expected outcome*: Successful Vite library compilation producing `dist/moul-ui.js` and `dist/src/index.d.ts`.

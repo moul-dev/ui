@@ -1,59 +1,61 @@
-## 2026-10-16T03:26:07Z
-You are a Worker agent (teamwork_preview_worker).
-Your working directory is: /Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/worker_m1_1
-You MUST read /Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/ORIGINAL_REQUEST.md and /Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/PROJECT.md before doing any work.
+## 2026-10-17T03:24:40Z
 
-Read the detailed implementation plans provided by the explorers:
-- /Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/explorer_m1_1/handoff.md
-- /Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/explorer_m1_2/handoff.md
-- /Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/explorer_m1_3/handoff.md
+You are worker_m1_1.
+Working directory: /Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/worker_m1_1
 
-You exclusively own and may edit the following files:
-- scripts/verify-no-react.ts
-- ui/package.json
-- docs/package.json
-- ui/vite.config.ts
-- ui/custom-elements-manifest.config.mjs
-- ui/src/test-setup.ts
-(and you may run bun install to update bun.lock)
+MANDATORY: Read /Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/ORIGINAL_REQUEST.md before starting work.
+IMPORTANT: Note that the user request is in the LATEST section of ORIGINAL_REQUEST.md (under ## 2026-10-17T03:06:45Z), which mandates Phase 8: Category 1 — Charts & Data Visualization rebuild as Lit Web Components.
+
+Also read:
+- /Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/spec_miner_survey_1/handoff.md (Sections 2.1 & 2.2 for exact element specifications)
+- /Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/explorer_survey_2/handoff.md (Controller APIs and design tokens)
+- /Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/explorer_m1_3/handoff.md (Section 4.2 for the complete 16-test suite for Milestone 1)
 
 MANDATORY INTEGRITY WARNING:
 DO NOT CHEAT. All implementations must be genuine. DO NOT hardcode test results, create dummy/facade implementations, or circumvent the intended task. A teamwork_preview_auditor will independently verify your work. Integrity violations WILL be detected and your work WILL be rejected.
 
-Scope & Tasks for Milestone 1:
-1. Create `scripts/verify-no-react.ts`:
-   - Inspects `dependencies`, `devDependencies`, `peerDependencies` of `ui/package.json` and `docs/package.json`.
-   - Supports CLI targets: `all` (default), `ui`, `docs`.
-   - Exits with code 1 and prints offending packages grouped by package.json and dependency section if any banned React, StyleX, Recharts, Waku, Fumadocs, etc. package is present.
-   - Exits with code 0 if all clean.
-   - Make it executable.
-2. Update `ui/package.json`:
-   - Purge all React, StyleX, Recharts, input-otp, peerDependencies.
-   - Dependencies: `lit` (^3.2.1), `@lit/context` (^1.1.3), `@lit-labs/virtualizer` (^2.1.0), `d3-scale` (^4.0.2), `d3-shape` (^3.2.0), `motion` (^13.4.1).
-   - DevDependencies: `@biomejs/biome` (^2.5.0), `@custom-elements-manifest/analyzer` (^0.10.4), `@open-wc/testing-helpers` (^2.2.0), `@types/d3-scale` (^4.0.8), `@types/d3-shape` (^3.1.6), `@types/node` (^24.12.3), `fast-check` (^3.23.2), `glob` (^11.0.0), `happy-dom` (^16.8.1), `typescript` (~6.0.2), `vite` (^8.0.12), `vite-plugin-dts` (^5.0.2), `vitest` (^2.1.8).
-   - Exports: Strictly expose `.` (`types: ./dist/src/index.d.ts`, `import: ./dist/moul-ui.js`, `default: ./dist/moul-ui.js`) and `./style.css` (`style: ./dist/assets/style.css`, `default: ./dist/assets/style.css`). Delete `./react`, `./tokens`, `./tokens.stylex`, `./theme.css`, `./style`.
-   - Set `"customElements": "./dist/custom-elements.json"` and `"sideEffects": ["./dist/moul-ui.js", "./dist/assets/style.css"]`.
-   - Update scripts per explorer_m1_1 report.
-3. Update `docs/package.json`:
-   - Remove all React, Waku, Fumadocs packages.
-   - Dependencies: `@astrojs/starlight` (^0.32.0), `@moul-dev/ui` (workspace:*), `@phosphor-icons/web` (^2.1.1), `astro` (^5.5.0), `sharp` (^0.33.5).
-   - DevDependencies: `@biomejs/biome` (^2.5.0), `@types/node` (^25.9.3), `typescript` (^6.0.3).
-4. Run `bun install` at workspace root to update lockfile and dependencies.
-5. Verify `bun ./scripts/verify-no-react.ts all` exits with 0.
-6. Update `ui/vite.config.ts`:
-   - Configure library mode outputting `dist/moul-ui.js` with Rollup banner `"use client";`.
-   - Implement `banReactImportsPlugin()` rejecting any import starting with `react`, `react-dom`, `react-aria`, `react-aria-components`, `@stylexjs/stylex`, `@lit/react`, `motion/react`.
-   - Implement `copyCssTokensPlugin()` copying `ui/src/styles/style.css` to `ui/dist/assets/style.css` (safely checking if exists).
-   - Set Vitest environment to `happy-dom` with `setupFiles: ['./src/test-setup.ts']`.
-7. Create `ui/custom-elements-manifest.config.mjs` configured for schema v2 per explorer_m1_2 handoff.
-8. Update `ui/src/test-setup.ts`:
-   - Implement all 4 shims:
-     a) `ElementInternals` shim (tracking form, setFormValue, setValidity with <=200 char truncation, reportValidity, validity, validationMessage).
-     b) Native `<dialog>` shim (`showModal` throwing `new DOMException('Failed to execute showModal on HTMLDialogElement: The element is not in a Document.', 'InvalidStateError')` when disconnected per Req 6.10, `close` event).
-     c) Popover API shim (`showPopover`, `hidePopover`, `togglePopover`, `beforetoggle`/`toggle` events, simulating `:popover-open`).
-     d) Deterministic `ResizeObserver` controller (`window.__triggerResize(element, { width, height })`).
-9. Run verification commands:
-   - `bun ./scripts/verify-no-react.ts all`
-   - Test test-setup shim behaviors.
-10. Write complete handoff report to `/Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/worker_m1_1/handoff.md`.
-When finished, send a message back to the orchestrator (conversation ID: d61b067a-65c4-48c0-9937-01779e27afa2).
+EXCLUSIVE WRITE OWNERSHIP:
+You own and may ONLY create or modify the following files:
+1. `ui/src/components/ChartCommon.ts`
+2. `ui/src/components/ChartContainer/ChartContainer.ts`
+3. `ui/src/components/ChartContainer/ChartContainer.styles.ts`
+4. `ui/src/components/ChartTooltip/ChartTooltip.ts`
+5. `ui/src/components/ChartTooltip/ChartTooltip.styles.ts`
+6. `ui/src/components/Charts.test.ts`
+
+REQUIREMENTS FOR MILESTONE 1:
+1. `ui/src/components/ChartCommon.ts`:
+   - Export interfaces: `ChartSeries`, `DoughnutDataItem`, `TopListItem`, `PointHoverDetail`.
+   - Export helper `getChartColor(index: number): string` which returns `var(--color-chart-${(((index % 8) + 8) % 8) + 1})`.
+   - Pure TypeScript, zero React or StyleX imports.
+2. `moul-chart-container` (`ui/src/components/ChartContainer/ChartContainer.ts` & `ChartContainer.styles.ts`):
+   - Lit 3 LitElement, using `resetStyles` from `../../styles/reset.styles`.
+   - Register via idempotent `defineElement` from `../../utils/define-element`.
+   - Augment `HTMLElementTagNameMap`: `'moul-chart-container': MoulChartContainer`.
+   - Properties: `@property({ type: String, reflect: true }) title = ''`, `@property({ type: String, reflect: true }) description = ''`, `@property({ type: Number, reflect: true }) height = 300`, `@property({ type: Boolean, reflect: true, attribute: 'is-empty' }) isEmpty = false`.
+   - Controller: `private layout = new LayoutIndicatorController(this, { observeDimensions: true })`.
+   - On dimension change / updated: emit custom event `viewport-resize` (`bubbles: true, composed: true, detail: { width: this.layout.width, height: this.layout.height, breakpoint: this.layout.breakpoint }`).
+   - Shadow DOM template:
+     - Header container rendering title, description, and `<slot name="header">`.
+     - When `isEmpty` is true, render `<slot name="empty"><p class="empty-message">No data available</p></slot>`.
+     - When `isEmpty` is false, render default `<slot></slot>`.
+     - Footer / legend container rendering `<slot name="legend"></slot>`.
+   - Styles in `ChartContainer.styles.ts`: pure Lit CSS tagged template using CSS variables (`--color-bg`, `--color-border`, `--color-fg`, `--color-fg-subtle`, `--radius-lg`, `--shadow-sm`, etc.).
+3. `moul-chart-tooltip` (`ui/src/components/ChartTooltip/ChartTooltip.ts` & `ChartTooltip.styles.ts`):
+   - Lit 3 LitElement, using `resetStyles`.
+   - Register via idempotent `defineElement`.
+   - Augment `HTMLElementTagNameMap`: `'moul-chart-tooltip': MoulChartTooltip`.
+   - In `connectedCallback`, set `this.setAttribute('popover', 'manual')` (or inner popover element has `popover="manual"` and host delegates/manages).
+   - Integrate `OverlayPresenceController(this, { preset: 'tooltip', popover: () => this.popoverEl })`.
+   - Properties: `@property({ type: String }) label = ''`, `@property({ type: String }) value = ''`, `@property({ type: String }) color = 'var(--color-chart-1)'`, `@property({ type: Boolean, reflect: true, attribute: 'is-open' }) isOpen = false`, `@property({ type: Number }) x = 0`, `@property({ type: Number }) y = 0`, `@property({ attribute: false }) payload: any[] = []`.
+   - Methods:
+     - `show(options: { label: string; value: string; color?: string; x?: number; y?: number } | number, y?: number, label?: string, value?: string, color?: string)`: flexibly handle either options object or positional args. Sets `isOpen = true`, coordinates, label, value, and calls `showPopover()`.
+     - `hide()`: sets `isOpen = false` and calls `hidePopover()`.
+   - Coordinates applied to style via `left`, `top` or `transform: translate3d(${this.x}px, ${this.y}px, 0) translate(-50%, -100%) translateY(-8px)`.
+   - Shadow DOM renders indicator swatch with `${this.color}`, label text, value text, and default `<slot></slot>`.
+4. `ui/src/components/Charts.test.ts`:
+   - Implement the 16 tests specified in `explorer_m1_3/handoff.md` Section 4.2.
+5. Verification:
+   - Run `bun --cwd ui test src/components/Charts.test.ts` (or `node ui/node_modules/.bin/vitest run --root ui src/components/Charts.test.ts`). Ensure 100% pass!
+   - Run `bun run lint` (or `bun x biome check ui/src/components/ChartContainer ui/src/components/ChartTooltip ui/src/components/ChartCommon.ts ui/src/components/Charts.test.ts`). Ensure 0 errors!
+   - Verify `bun ./scripts/verify-no-react.ts all`.

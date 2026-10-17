@@ -1,42 +1,47 @@
-# BRIEFING — 2026-10-16T03:24:30Z
+# BRIEFING — 2026-10-17T03:25:00Z
 
 ## Mission
-Analyze requirements and formulate an exact, concrete implementation strategy and code plan for Milestone 1: Vitest + happy-dom Test Harness (`ui/src/test-setup.ts`), including ElementInternals shim, native `<dialog>` shim, Popover API shim, and deterministic ResizeObserver controller.
+Formulate the exact unit and integration test plan for Milestone 1 (`moul-chart-container` and `moul-chart-tooltip`).
 
 ## 🔒 My Identity
 - Archetype: explorer
-- Roles: investigator, analyzer, synthesizer
+- Roles: investigator, test planner
 - Working directory: /Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/explorer_m1_3
-- Original parent: d61b067a-65c4-48c0-9937-01779e27afa2
-- Milestone: Milestone 1 - Vitest + happy-dom Test Harness (`ui/src/test-setup.ts`)
+- Original parent: 5d04df52-77dd-4159-8972-455e52835bdb
+- Milestone: Milestone 1
 
 ## 🔒 Key Constraints
-- Read-only investigation — do NOT implement outside working directory
-- Produce structured 5-component handoff report at `/Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/explorer_m1_3/handoff.md`
-- Requirement 6.10 & Acceptance Criteria: showModal() MUST throw `new DOMException('Failed to execute showModal on HTMLDialogElement: The element is not in a Document.', 'InvalidStateError')` if `!this.isConnected`.
-- ElementInternals validity message truncate `<= 200` chars
-- Follow PROJECT.md and ORIGINAL_REQUEST.md conventions
+- Read-only investigation — do NOT implement
+- Do NOT write code or modify source code files
+- Review tests in `ui/src/components/Overlays.test.ts` and `Surfaces.test.ts` to replicate exact testing patterns
+- Write complete test plan to `/Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/explorer_m1_3/handoff.md`
 
 ## Current Parent
-- Conversation ID: d61b067a-65c4-48c0-9937-01779e27afa2
-- Updated: 2026-10-16T03:19:00Z
+- Conversation ID: 5d04df52-77dd-4159-8972-455e52835bdb
+- Updated: not yet
 
 ## Investigation State
-- **Explored paths**: `ORIGINAL_REQUEST.md`, `PROJECT.md`, `rdt/design.md`, `rdt/requirements.md`, `rdt/tasks.md`, `ui/src/test-setup.ts`, `ui/vite.config.ts`, `ui/package.json`
+- **Explored paths**:
+  - `ui/src/components/Overlays.test.ts` (lines 1–384): mounting helper, Popover/Tooltip assertions, `matches(':popover-open')`, timer simulation
+  - `ui/src/components/Surfaces.test.ts` (lines 1–340): slot tests, EmptyState assertions
+  - `ui/src/test-setup.ts` (lines 375–618): Popover API shim (`showPopover`, `hidePopover`, `:popover-open`), deterministic `ResizeObserver` controller (`triggerResize`)
+  - `ui/src/controllers/layout-indicator.controller.ts`: `computeBreakpoint` thresholds (`xs` < 480, `sm` 480–767, `md` 768–1023, `lg` 1024–1279, `xl` >= 1280), `observeDimensions` option
+  - `ui/src/controllers/overlay-presence.controller.ts`: Popover top-layer promotion and demotion
+  - `ui/src/components/ChartCommon.ts`: legacy StyleX color array to be replaced with Lit/token helpers
+  - `PROJECT.md` & `ORIGINAL_REQUEST.md`: contract specifications for `moul-chart-container`, `moul-chart-tooltip`, `ChartCommon.ts`
 - **Key findings**:
-  1. Existing `ui/src/test-setup.ts` imports `@testing-library/jest-dom/vitest` which must be replaced.
-  2. ElementInternals needs to track `form`, `setFormValue`, `setValidity` (truncating message to `<=200` chars), `reportValidity`, `validity`, and `validationMessage`.
-  3. Native `<dialog>` shim must strictly throw `new DOMException('Failed to execute showModal on HTMLDialogElement: The element is not in a Document.', 'InvalidStateError')` when disconnected.
-  4. Popover API needs `popover` getter/setter on `HTMLElement.prototype`, `showPopover()`, `hidePopover()`, `togglePopover()`, `:popover-open` simulation, and `ToggleEvent` dispatching.
-  5. Deterministic `ResizeObserver` controller needs global `ResizeObserver` mock tracking instances and `window.__triggerResize(element, { width, height })` to synchronously deliver entries with full `DOMRectReadOnly` structures.
-- **Unexplored areas**: None within the M1 test-setup scope.
+  - Deterministic resize must use `triggerResize(element, { width: 600, height: 300 })` which synchronously updates getBoundingClientRect and invokes `MockResizeObserver` callbacks
+  - Popover shim requires element to be connected to document and have `popover` attribute before `showPopover()` can be called without throwing `DOMException`
+  - Breakpoint for width 600 is `'sm'` (480–767px)
+  - `ChartCommon.getChartColor(index)` must return `var(--color-chart-1)` through `var(--color-chart-8)` with modulo 8 wrapping
+- **Unexplored areas**: Milestone 2–5 charts (line, area, bar, doughnut, etc. which are out of M1 scope)
 
 ## Key Decisions Made
-- Fully specify complete drop-in TypeScript implementation for `ui/src/test-setup.ts` ready for the worker to implement.
-- Include unit test specifications verifying each shim in isolation.
+- Structured test suites into 3 core units + 1 integration suite with standardized IDs (`CHART-CNT-*`, `CHART-TLP-*`, `CHART-COM-*`, `CHART-INT-*`)
+- Provided complete drop-in TypeScript test code for implementers in `handoff.md`
 
 ## Artifact Index
-- DISPATCH.md — Raw dispatch message
-- progress.md — Heartbeat and activity log
-- BRIEFING.md — Persistent context and situational awareness
-- handoff.md — 5-component handoff report
+- /Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/explorer_m1_3/DISPATCH.md — Received dispatch message
+- /Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/explorer_m1_3/BRIEFING.md — Persistent working memory
+- /Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/explorer_m1_3/progress.md — Liveness heartbeat
+- /Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/explorer_m1_3/handoff.md — Complete test plan report

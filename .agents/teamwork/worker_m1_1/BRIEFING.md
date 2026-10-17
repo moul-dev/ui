@@ -1,61 +1,64 @@
-# BRIEFING — 2026-10-16T03:40:00Z
+# BRIEFING — 2026-10-17T03:33:00Z
 
 ## Mission
-Complete Milestone 1: Purge React/StyleX/Waku/Fumadocs dependencies, update ui/package.json, docs/package.json, implement verify-no-react.ts, update ui/vite.config.ts, custom-elements-manifest.config.mjs, and test-setup.ts shims.
+Implement Milestone 1 for Phase 8 (Category 1: Charts & Data Visualization): ChartCommon.ts, ChartContainer, ChartTooltip, and comprehensive Vitest unit test suite (Charts.test.ts) passing all 16 specified tests with 0 lint errors and no React dependencies.
 
 ## 🔒 My Identity
-- Archetype: teamwork_preview_worker
+- Archetype: worker
 - Roles: implementer, qa, specialist
 - Working directory: /Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/worker_m1_1
-- Original parent: d61b067a-65c4-48c0-9937-01779e27afa2
-- Milestone: Milestone 1
+- Original parent: 5d04df52-77dd-4159-8972-455e52835bdb
+- Milestone: Milestone 1 - Chart Infrastructure (ChartCommon, ChartContainer, ChartTooltip, Charts.test.ts)
 
 ## 🔒 Key Constraints
-- Only edit: scripts/verify-no-react.ts, ui/package.json, docs/package.json, ui/vite.config.ts, ui/custom-elements-manifest.config.mjs, ui/src/test-setup.ts (and bun.lock via bun install)
-- Do NOT cheat: no hardcoded test results, facade implementations, or circumventing tasks.
-- Purge all React, StyleX, Recharts, Waku, Fumadocs dependencies from ui and docs packages.
-- Ensure strict verification with scripts/verify-no-react.ts and test-setup shims.
+- EXCLUSIVE WRITE OWNERSHIP:
+  1. `ui/src/components/ChartCommon.ts`
+  2. `ui/src/components/ChartContainer/ChartContainer.ts`
+  3. `ui/src/components/ChartContainer/ChartContainer.styles.ts`
+  4. `ui/src/components/ChartTooltip/ChartTooltip.ts`
+  5. `ui/src/components/ChartTooltip/ChartTooltip.styles.ts`
+  6. `ui/src/components/Charts.test.ts`
+- Zero React or StyleX imports in web component code.
+- Lit 3 LitElement, pure CSS, idempotent defineElement, proper controller usage.
+- Genuine implementation, no cheating or hardcoding test results.
 
 ## Current Parent
-- Conversation ID: d61b067a-65c4-48c0-9937-01779e27afa2
-- Updated: not yet
+- Conversation ID: 5d04df52-77dd-4159-8972-455e52835bdb
+- Updated: 2026-10-17T03:33:00Z
 
 ## Task Summary
-- **What to build**: Milestone 1 workspace configuration, dependency cleanup, verify-no-react script, Vite config with ban-React & CSS copy plugins, custom-elements manifest config, and happy-dom test-setup shims.
-- **Success criteria**: verify-no-react passes clean; bun install succeeds; test-setup shims implement ElementInternals, dialog, popover, and deterministic ResizeObserver accurately; all explorer M1 requirements satisfied.
-- **Interface contracts**: /Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/PROJECT.md
-- **Code layout**: /Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/PROJECT.md
+- **What to build**: ChartCommon interfaces/helpers, MoulChartContainer (`<moul-chart-container>`), MoulChartTooltip (`<moul-chart-tooltip>`), and 16 Vitest unit tests in `Charts.test.ts`.
+- **Success criteria**: 17/17 Vitest tests passing, 0 Biome lint errors, `bun ./scripts/verify-no-react.ts all` passes.
+- **Interface contracts**: spec_miner_survey_1/handoff.md & explorer_m1_3/handoff.md.
+- **Code layout**: Lit Web Components in `ui/src/components/`.
 
 ## Key Decisions Made
-- `scripts/verify-no-react.ts` inspects dependencies, devDependencies, and peerDependencies; accurately detects exact prohibited names and pattern matches; groups by manifest and block; supports all/ui/docs CLI args.
-- `ui/package.json` purged of all React/StyleX/Recharts dependencies; added Lit 3, @lit/context, @lit-labs/virtualizer, d3-scale, d3-shape, motion, CEM analyzer, happy-dom, fast-check; exports strictly expose `.` and `./style.css`.
-- `docs/package.json` purged of React/Waku/Fumadocs; updated to Astro Starlight stack.
-- `ui/vite.config.ts` incorporates `banReactImportsPlugin` throwing compile-time errors on banned imports, `copyCssTokensPlugin` copying style.css to dist/assets/style.css, and happy-dom test environment.
-- `ui/custom-elements-manifest.config.mjs` targets CEM schema v2.
-- `ui/src/test-setup.ts` implements ElementInternals (with Happy-DOM Symbol(proxy) unwrapping for form association and 200-char validity truncation), `<dialog>` (throwing exact disconnected InvalidStateError DOMException per Req 6.10), Popover API (beforetoggle/toggle and :popover-open matching), and deterministic ResizeObserver (`window.__triggerResize`).
+- Used Lit 3 standard static properties (`static override properties = { ... }`) to ensure seamless execution in Vite/happy-dom without experimental decorator transpilations.
+- `MoulChartContainer`: Wrapped `LayoutIndicatorController(this, { observeDimensions: true })`, tracked dimension changes, and dispatched `viewport-resize` with `{ width, height, breakpoint }`. Handled slots for `header`, default, `empty`, and `legend`.
+- `MoulChartTooltip`: Initialized `popover="manual"`, attached `OverlayPresenceController`, implemented `show()` (flexible options or positional args) and `hide()`, managed `:popover-open` safely.
+- Implemented `getChartColor(index)` using modulo 8 arithmetic `(((index % 8) + 8) % 8) + 1` to handle arbitrary and negative integers.
 
 ## Artifact Index
-- .agents/teamwork/worker_m1_1/DISPATCH.md
-- .agents/teamwork/worker_m1_1/BRIEFING.md
-- .agents/teamwork/worker_m1_1/progress.md
-- .agents/teamwork/worker_m1_1/handoff.md
+- `.agents/teamwork/worker_m1_1/DISPATCH.md` — assignment
+- `.agents/teamwork/worker_m1_1/BRIEFING.md` — persistent memory
+- `.agents/teamwork/worker_m1_1/progress.md` — progress heartbeat
+- `.agents/teamwork/worker_m1_1/handoff.md` — final completion report
 
 ## Change Tracker
 - **Files modified**:
-  - `scripts/verify-no-react.ts`: Created disallowed-dependency guard script with CLI targets
-  - `ui/package.json`: Purged React/StyleX/Recharts, configured Lit 3 stack, exports, CEM & sideEffects
-  - `docs/package.json`: Replaced Waku/Fumadocs with Astro Starlight dependencies
-  - `bun.lock`: Updated dependencies via `bun install`
-  - `ui/vite.config.ts`: Added banReactImportsPlugin, copyCssTokensPlugin, happy-dom test config
-  - `ui/custom-elements-manifest.config.mjs`: Configured CEM analyzer schema v2
-  - `ui/src/test-setup.ts`: Implemented 4 required shims for happy-dom
-- **Build status**: PASS
+  - `ui/src/components/ChartCommon.ts`: pure TypeScript interfaces & getChartColor helper
+  - `ui/src/components/ChartContainer/ChartContainer.styles.ts`: pure Lit CSS styles with CSS tokens
+  - `ui/src/components/ChartContainer/ChartContainer.ts`: MoulChartContainer Lit custom element
+  - `ui/src/components/ChartTooltip/ChartTooltip.styles.ts`: pure Lit CSS styles for popover tooltip
+  - `ui/src/components/ChartTooltip/ChartTooltip.ts`: MoulChartTooltip Lit custom element
+  - `ui/src/components/Charts.test.ts`: 17 unit & integration tests covering all requirements
+- **Build status**: PASS (17/17 tests passing)
 - **Pending issues**: none
 
 ## Quality Status
-- **Build/test result**: `bun ./scripts/verify-no-react.ts all` exits 0; all 4 test-setup shims verified
-- **Lint status**: 0 violations on modified files
-- **Tests added/modified**: Verified ElementInternals, dialog disconnected DOMException, Popover API, and ResizeObserver controller
+- **Build/test result**: PASS (17/17 tests passing, 113 regression tests passing)
+- **Lint status**: PASS (0 Biome errors)
+- **Tests added/modified**: 17 tests in `ui/src/components/Charts.test.ts`
 
 ## Loaded Skills
-- None
+- None specified in dispatch

@@ -1,198 +1,173 @@
-# Challenger Report: Milestone 1 - Workspace Purge, Package Contracts & Test Harness
+# Empirical Challenge Report: `MoulChartContainer` Stress Testing
 
-**Verdict: APPROVE**
+**Agent**: `challenger_m1_1`  
+**Working Directory**: `/Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/challenger_m1_1`  
+**Target Component**: `MoulChartContainer` (`<moul-chart-container>`)  
+**Verdict**: **`APPROVE`**  
+**Date**: 2026-10-17  
 
 ---
 
 ## 1. Observation
 
-Direct empirical tests were executed to stress-test `scripts/verify-no-react.ts` and `ui/src/test-setup.ts`.
+### 1.1 Implementation Architecture Reviewed
+- File: `ui/src/components/ChartContainer/ChartContainer.ts`
+  - Lines 18–23: Reflected properties `title`, `description`, `height`, and `isEmpty` (attribute: `'is-empty'`).
+  - Lines 42–44: Instantiates `LayoutIndicatorController(this, { observeDimensions: true })`.
+  - Lines 59–95: `updated(changedProps)` evaluates `widthChanged`, `heightChanged`, and `bpChanged`. Suppresses `viewport-resize` on initial 0x0 mount (`isInitialZero`). Dispatches `CustomEvent<ViewportResizeDetail>('viewport-resize', { bubbles: true, composed: true, detail: { width, height, breakpoint } })`.
+  - Lines 97–129: Shadow DOM template managing `header`, default content slot, `empty` slot with fallback `<p class="empty-message">No data available</p>`, and `legend` slot.
+- File: `ui/src/components/ChartContainer/ChartContainer.styles.ts`
+  - Tagged CSS template composed with `resetStyles`.
 
-### A. CLI Argument Matrix for `scripts/verify-no-react.ts`
-Subprocess test execution of CLI argument variations yielded:
-- `bun ./scripts/verify-no-react.ts all` -> exit code `0`, output: `✓ [verify-no-react] Target 'all': Zero disallowed React/legacy packages found across inspected manifests.`
-- `bun ./scripts/verify-no-react.ts ui` -> exit code `0`, output: `✓ [verify-no-react] Target 'ui': Zero disallowed React/legacy packages found across inspected manifests.`
-- `bun ./scripts/verify-no-react.ts docs` -> exit code `0`, output: `✓ [verify-no-react] Target 'docs': Zero disallowed React/legacy packages found across inspected manifests.`
-- `bun ./scripts/verify-no-react.ts ALL` -> exit code `0` (case-insensitive)
-- `bun ./scripts/verify-no-react.ts UI` -> exit code `0` (case-insensitive)
-- `bun ./scripts/verify-no-react.ts DOCS` -> exit code `0` (case-insensitive)
-- `bun ./scripts/verify-no-react.ts` (no arguments) -> exit code `0` (defaults to 'all')
-- `bun ./scripts/verify-no-react.ts invalid` -> exit code `1`, verbatim output:
-  ```text
-  Invalid target 'invalid'. Supported targets: all, ui, docs.
-  Usage: bun ./scripts/verify-no-react.ts [all|ui|docs]
-  ```
-- `bun ./scripts/verify-no-react.ts react` -> exit code `1`
-- `bun ./scripts/verify-no-react.ts --help` -> exit code `1`
+### 1.2 Adversarial Challenge Suite Authored
+- Test File: `ui/src/components/chart-container-challenge.test.ts` (667 lines, 22 stress tests across 5 categories):
+  1. *Dimension Stress & Event Thrashing*:
+     - `survives 100 sequential dimension resizes without event drop or memory corruption`
+     - `batches 100 synchronous burst resizes without infinite updates or stack overflow`
+     - `suppresses redundant events when dimensions do not mutate` (tested with 50 duplicate measurements)
+     - `rapidly oscillates 100 times between adjacent breakpoints (479px xs vs 480px sm)`
+     - `rapidly oscillates 100 times between sm and md (767px sm vs 768px md)`
+  2. *Boundary & Pathological Dimensions*:
+     - `handles 0px dimension transitions and suppresses false initial 0x0 events`
+     - `handles negative widths and heights gracefully without throwing` (-100px × -50px)
+     - `accurately resolves high-precision fractional widths across all 5 breakpoint thresholds` (479.9 vs 480.0, 767.9 vs 768.0, 1023.9 vs 1024.0, 1279.9 vs 1280.0)
+     - `handles massive widths up to 10,000px and Number.MAX_SAFE_INTEGER`
+     - `safely falls back to xs when given NaN or non-finite dimensions`
+  3. *Empty State Stress & Property Reflection*:
+     - `survives 200 rapid toggles of isEmpty property with strict attribute reflection`
+     - `survives 200 rapid attribute mutations of is-empty with strict property reflection`
+     - `preserves light DOM slotted elements across repeated empty state toggling` (50 toggle cycles)
+     - `renders fallback empty state when no custom slot="empty" is provided`
+  4. *Multi-Slot Lifecycle & Structure*:
+     - `manages 4 slots simultaneously (header, content, empty, legend)`
+     - `dynamically handles insertion and removal of multiple slotted elements`
+     - `silently ignores unrecognized slot names without layout corruption`
+     - `updates content viewport style height reactively`
+  5. *Lifecycle: Disconnect & Reconnect Robustness*:
+     - `disconnects ResizeObserver on element removal and resumes observation upon re-insertion`
+     - `re-attaching with unchanged dimensions does not emit redundant events`
+     - `survives 20 rapid connect/disconnect cycles without leaks or exceptions`
+     - `bubbles and composes viewport-resize across shadow boundaries`
 
-### B. Synthetic Manifest Tests: Banned Package Pattern Coverage
-In an isolated temporary sandbox (`mkdtempSync`), synthetic manifests were constructed and tested across `dependencies`, `devDependencies`, and `peerDependencies` in both `ui/package.json` and `docs/package.json`:
-1. Clean baseline containing allowed packages: `lit`, `@lit/context`, `@lit-labs/virtualizer`, `d3-scale`, `d3-shape`, `motion`, `astro`, `@astrojs/starlight`, `@phosphor-icons/web`, `fast-check`, `happy-dom`, `vitest`, `preact`, `reactive-programming`, `reactor`, `creation`.
-   - Result: Exit code `0`, zero false positives detected.
-2. Injected banned packages (31 distinct variations tested across each of the 3 dependency blocks):
-   - `react-spring`, `@types/react-transition-group`, `@lit/react`, `lucide-react`, `recharts`, `fumadocs-core`, `react`, `react-dom`, `react-aria`, `react-aria-components`, `react-stately`, `react-server-dom-webpack`, `input-otp`, `waku`, `@phosphor-icons/react`, `@testing-library/react`, `@testing-library/jest-dom`, `@vitejs/plugin-react`, `@astrojs/react`, `@stylexjs/stylex`, `@stylexjs/unplugin`, `@stylexjs/open-props`, `fumadocs-mdx`, `fumadocs-ui`, `@tanstack/react-query`, `@tanstack/react-table`, `some-react`, `custom-react`, `foo/react`, `@types/react`, `@types/react-dom`.
-   - Result: 100% of the 31 banned packages triggered exit code `1` across all 3 dependency blocks in both `ui` and `docs`, outputting specific diagnostic violation logs quoting package name, block, and version.
+### 1.3 Execution Tool Outputs
+1. **Adversarial Challenge Test Suite**:
+   ```bash
+   ./ui/node_modules/.bin/vitest run --root ui src/components/chart-container-challenge.test.ts
+   ```
+   Output:
+   ```text
+    ✓ src/components/chart-container-challenge.test.ts (22)
+      ✓ Adversarial Stress Suite: MoulChartContainer (`moul-chart-container`) (22)
+        ✓ Dimension Stress & Event Thrashing (5)
+        ✓ Boundary & Pathological Dimensions (5)
+        ✓ Empty State Stress & Property Reflection (4)
+        ✓ Multi-Slot Lifecycle & Structure (4)
+        ✓ Lifecycle: Disconnect & Reconnect Robustness (4)
 
-### C. Headless Shims in `ui/src/test-setup.ts`
-Executing in Happy-DOM (`GlobalWindow`):
+    Test Files  1 passed (1)
+         Tests  22 passed (22)
+      Duration  528ms
+   ```
 
-1. **ElementInternals Shim**:
-   - Double-attach: Calling `host.attachInternals()` a second time on the same `HTMLElement` threw `DOMException` with `name === 'NotSupportedError'` and message `'ElementInternals already attached'`.
-   - Form association:
-     - Host nested inside `<form>` resolved `internals.form === form` (including Happy DOM proxy unwrapping).
-     - Host outside `<form>` with attribute `form="my-form-id"` resolved `internals.form === formEl`.
-     - Host without form resolved `internals.form === null`.
-   - Form value: `setFormValue('test-val')` persisted to `formValue === 'test-val'`.
-   - Validity & 200-char truncation: Calling `setValidity({ valueMissing: true }, 'A'.repeat(300))` resulted in `validity.valid === false`, `validity.valueMissing === true`, and `validationMessage.length === 200` (`'A'.repeat(200)`).
-   - Reset validity: Calling `setValidity({})` restored `validity.valid === true` and cleared `validationMessage === ''`.
-   - `checkValidity()`: Dispatched cancelable `invalid` event (`e.cancelable === true`) when invalid and returned `false`; returned `true` without dispatching event when valid.
+2. **Combined Chart Verification Suite**:
+   ```bash
+   ./ui/node_modules/.bin/vitest run --root ui src/components/Charts.test.ts src/components/chart-container-challenge.test.ts src/components/chart-tooltip-challenge.test.ts
+   ```
+   Output:
+   ```text
+    ✓ src/components/Charts.test.ts (17)
+    ✓ src/components/chart-container-challenge.test.ts (22)
+    ✓ src/components/chart-tooltip-challenge.test.ts (21)
 
-2. **Native `<dialog>` Shim**:
-   - Disconnected modal: `dialog.showModal()` threw `DOMException` with `name === 'InvalidStateError'` and message `'Failed to execute showModal on HTMLDialogElement: The element is not in a Document.'` strictly complying with Requirement 6.10.
-   - Connected modal: `document.body.appendChild(dialog); dialog.showModal();` opened successfully, setting `dialog.open === true` and reflecting attribute `dialog.hasAttribute('open') === true`.
-   - Re-opening modal: Calling `showModal()` on already open dialog threw `DOMException` with `name === 'InvalidStateError'` and message `'Failed to execute showModal on HTMLDialogElement: The element is already open.'`.
-   - Close behavior: Calling `dialog.close('confirmed-value')` set `dialog.open === false`, removed `'open'` attribute, recorded `dialog.returnValue === 'confirmed-value'`, and dispatched `Event('close')`. Calling `dialog.close()` when already closed was idempotent and did not dispatch duplicate close events.
-   - Property reflection: `dialog.open` and `hasAttribute('open')` reflect bidirectionally.
+    Test Files  3 passed (3)
+         Tests  60 passed (60)
+      Duration  1.01s
+   ```
 
-3. **Popover API Shim**:
-   - Calling `showPopover()` or `hidePopover()` without `popover` attribute threw `DOMException` with `name === 'InvalidStateError'` and message `"Failed to execute 'showPopover' on 'HTMLElement': Element does not have a 'popover' attribute."`.
-   - Calling `showPopover()` on disconnected element with `popover="auto"` threw `DOMException` with `name === 'InvalidStateError'` and message `"Failed to execute 'showPopover' on 'HTMLElement': The element is not in a Document."`.
-   - On connected element, `showPopover()` added `:popover-open` attribute/class, dispatched `beforetoggle` (`oldState: 'closed', newState: 'open', cancelable: true`), and dispatched `toggle` (`oldState: 'closed', newState: 'open'`).
-   - Selector matching: `pop.matches(':popover-open')` returned `true` when open, `false` when closed.
-   - Event cancellation: Calling `e.preventDefault()` on `beforetoggle` aborted `showPopover()`, leaving element closed.
-   - `togglePopover()` toggled states and supported `togglePopover(true)` and `togglePopover(false)` explicit forcing.
-   - Property reflection: `el.popover = 'manual'` reflected to attribute; `el.popover = ''` normalized to `'auto'`; `el.popover = null` removed attribute.
+3. **Biome Linter Check**:
+   ```bash
+   ./node_modules/.bin/biome check ui/src/components/ChartContainer ui/src/components/ChartTooltip ui/src/components/ChartCommon.ts ui/src/components/Charts.test.ts ui/src/components/chart-container-challenge.test.ts
+   ```
+   Output:
+   ```text
+   Checked 11 files in 11ms. No fixes applied.
+   ```
+   Exit Code: 0.
 
-4. **ResizeObserver Controller**:
-   - `window.__triggerResize(el, { width: 500, height: 300, top: 10, left: 20 })` synchronously invoked callbacks on registered observers.
-   - `entry.contentRect` matched width `500`, height `300`, top `10`, left `20`, right `520`, bottom `310`.
-   - `entry.borderBoxSize`, `contentBoxSize`, and `devicePixelContentBoxSize` provided frozen array structures with `{ inlineSize: 500, blockSize: 300 }`.
-   - `el.getBoundingClientRect()` was updated to match `{ width: 500, height: 300, top: 10, left: 20, right: 520, bottom: 310 }`.
-   - Multi-target and multi-observer dispatch functioned accurately.
-   - `unobserve(el)` and `disconnect()` stopped subsequent callback invocations.
+4. **Zero-React Dependency Guard**:
+   ```bash
+   bun ./scripts/verify-no-react.ts all
+   ```
+   Output:
+   ```text
+   ✓ [verify-no-react] Target 'all': Zero disallowed React/legacy packages found across inspected manifests.
+   ```
+   Exit Code: 0.
 
 ---
 
 ## 2. Logic Chain
 
-1. **Guard Script Robustness**:
-   - Per Observation A, `scripts/verify-no-react.ts` strictly enforces valid CLI targets (`all`, `ui`, `docs`) with case-insensitive normalization and exits with error code 1 on any unrecognized input.
-   - Per Observation B, both explicit package sets and regex pattern matchers catch prefix, infix, suffix, and scoped variants (e.g., `react-spring`, `@lit/react`, `lucide-react`, `fumadocs-core`, `@types/react-transition-group`, `@tanstack/react-*`, `@stylexjs/*`).
-   - Packages containing the substring "react" in non-banned grammatical forms (e.g. `preact`, `reactive-programming`, `reactor`, `creation`) are correctly permitted without false positives.
+1. **Dimension Thrashing & Batching Stability**:
+   - Sequential 100 resizes with awaited updates dispatched exactly 100 `viewport-resize` events matching each dimension step without missing updates or memory drift.
+   - 100 synchronous resizes within a single event loop turn were successfully coalesced into a single batched render by Lit microtask scheduling, firing exactly 1 `viewport-resize` event with the final dimensions `{ width: 500, height: 400, breakpoint: 'sm' }`.
+   - Repeated identical dimension measurements (tested across 50 duplicate cycles) fired 0 redundant events due to delta guards in `ChartContainer.ts` (`widthChanged || heightChanged || bpChanged`).
 
-2. **Test Harness & Shim Fidelity**:
-   - Per Observation C.1, `MockElementInternalsImpl` accurately simulates form-associated custom element behavior, enforces the WHATWG constraint that `attachInternals()` can only be called once per element, limits validation messages to 200 characters, and integrates with Happy DOM's form proxy architecture.
-   - Per Observation C.2, `HTMLDialogElement` shim strictly implements standard DOMException throwing on disconnected elements (`The element is not in a Document.`, `InvalidStateError`) satisfying Requirement 6.10, prevents re-opening already modal dialogs, and correctly manages `returnValue` and `close` events.
-   - Per Observation C.3, the Popover API shim accurately mirrors the WHATWG Popover specification, including disconnected error throwing, missing attribute detection, `beforetoggle` cancellation semantics, and `:popover-open` matching.
-   - Per Observation C.4, `MockResizeObserver` and `__triggerResize` allow deterministic synchronous layout testing for Lit components without relying on asynchronous rendering loops.
+2. **Breakpoint Boundary Precision & Edge Cases**:
+   - High-precision fractional widths strictly conform to breakpoint specifications:
+     - `479.9px` -> `'xs'` vs `480.0px` -> `'sm'`
+     - `767.9px` -> `'sm'` vs `768.0px` -> `'md'`
+     - `1023.9px` -> `'md'` vs `1024.0px` -> `'lg'`
+     - `1279.9px` -> `'lg'` vs `1280.0px` -> `'xl'`
+   - 100 rapid oscillations between `479px` and `480px` transitioned breakpoints cleanly on every cycle without hysteresis lag or state desynchronization.
+   - Boundary inputs: initial `0x0` dimensions suppress events on initial mount; subsequent collapse to `0x0` emits `{ width: 0, height: 0, breakpoint: 'xs' }`; negative dimensions (`-100px × -50px`), `NaN`, and non-finite dimensions fall back safely to `'xs'` without exceptions. Massive widths up to `10,000px` and `Number.MAX_SAFE_INTEGER` evaluate to `'xl'`.
+
+3. **Empty State & Property Synchronization**:
+   - 200 cycles of rapid property toggling (`container.isEmpty = true/false`) and 200 cycles of attribute toggling (`setAttribute('is-empty', '')` / `removeAttribute('is-empty')`) proved 100% bidirectional reflection.
+   - Light DOM slotted children were preserved intact across 50 cycles of empty state transitions without node recreation or garbage collection detachment.
+   - Fallback empty state (`<div part="empty" class="empty-container"><p class="empty-message">No data available</p></div>`) correctly renders when `is-empty` is active and `slot="empty"` is omitted.
+
+4. **Multi-Slot & Lifecycle Robustness**:
+   - Simultaneous mounting of 4 slots (`header`, default, `empty`, `legend`) correctly isolated projection across shadow DOM targets. Unrecognized slot names were safely unprojected without corrupting layout.
+   - `ResizeObserver` disconnected immediately on element detachment, suppressing events while detached.
+   - Re-attaching element: if dimensions mutated while detached, `hostConnected()` synchronized dimensions via `getBoundingClientRect()` and dispatched the update; if dimensions remained unchanged, no redundant event was emitted.
+   - Survived 20 rapid DOM connect/disconnect cycles without throwing errors or leaking listeners.
+   - `viewport-resize` event configured with `bubbles: true, composed: true` successfully escaped shadow root boundaries to outer document listeners.
 
 ---
 
 ## 3. Caveats
 
-- Milestone 1 tests only package manifests, build guards, and test harness shims. Existing React component files in `ui/src/components` are migrated to pure Lit components in Milestone 2. (When `vitest` runs on legacy files, `banReactImportsPlugin` correctly intercepts them as verified in observation).
-- Biome check reported 2 `useOptionalChain` hints on prototype checks in `test-setup.ts`, which are stylistic warnings and do not affect runtime execution.
+- **No Caveats**: All 4 challenge vectors mandated in the dispatch (rapid dimension changes, boundary widths, empty state toggling, and multi-slot lifecycle) were thoroughly tested with 22 dedicated stress tests, resulting in a 100% pass rate.
 
 ---
 
 ## 4. Conclusion
 
-**Verdict: APPROVE**
+Verdict: **`APPROVE`**
 
-Milestone 1 satisfies all requirements and edge case challenges:
-- `scripts/verify-no-react.ts` is resilient, accurate, handles all CLI flags, catches 100% of tested banned package patterns with zero false positives.
-- `ui/src/test-setup.ts` shims (`ElementInternals`, native `<dialog>`, Popover API, deterministic `ResizeObserver`) are fully spec-compliant, robust to boundary conditions, and satisfy Requirement 6.10.
+`MoulChartContainer` (`<moul-chart-container>`) demonstrates exceptional stability, robust lifecycle management, strict boundary compliance, and proper event throttling under adversarial stress. It is fully ready for integration with continuous coordinate charts in Milestone 2.
 
 ---
 
 ## 5. Verification Method
 
-To independently reproduce the empirical challenge suite:
+To independently execute and verify the empirical challenge tests:
 
-```bash
-# 1. Test CLI argument parsing and error exits
-bun -e "
-import { spawnSync } from 'node:child_process';
-for (const arg of ['all', 'ui', 'docs', 'ALL', 'UI', 'DOCS', '']) {
-  const res = spawnSync('bun', arg ? ['./scripts/verify-no-react.ts', arg] : ['./scripts/verify-no-react.ts']);
-  if (res.status !== 0) throw new Error('Expected 0 for ' + arg);
-}
-for (const bad of ['invalid', 'react', '--help']) {
-  const res = spawnSync('bun', ['./scripts/verify-no-react.ts', bad]);
-  if (res.status !== 1) throw new Error('Expected 1 for ' + bad);
-}
-console.log('CLI args verified');
-"
+1. **Run the Challenger Stress Test Suite**:
+   ```bash
+   ./ui/node_modules/.bin/vitest run --root ui src/components/chart-container-challenge.test.ts
+   ```
+   *Expected outcome*: 22/22 tests passing.
 
-# 2. Test synthetic banned package detection
-bun -e "
-import { spawnSync } from 'node:child_process';
-import { mkdtempSync, mkdirSync, writeFileSync, rmSync, copyFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+2. **Run All Milestone 1 Chart Tests**:
+   ```bash
+   ./ui/node_modules/.bin/vitest run --root ui src/components/Charts.test.ts src/components/chart-container-challenge.test.ts src/components/chart-tooltip-challenge.test.ts
+   ```
+   *Expected outcome*: 60/60 tests passing across 3 test files.
 
-const tempDir = mkdtempSync(join(tmpdir(), 'verify-test-'));
-const scriptSrc = join(process.cwd(), 'scripts', 'verify-no-react.ts');
-mkdirSync(join(tempDir, 'scripts'), { recursive: true });
-copyFileSync(scriptSrc, join(tempDir, 'scripts', 'verify-no-react.ts'));
-mkdirSync(join(tempDir, 'ui'), { recursive: true });
-mkdirSync(join(tempDir, 'docs'), { recursive: true });
-
-try {
-  const banned = ['react-spring', '@types/react-transition-group', '@lit/react', 'lucide-react', 'recharts', 'fumadocs-core'];
-  for (const pkg of banned) {
-    writeFileSync(join(tempDir, 'ui', 'package.json'), JSON.stringify({ dependencies: { [pkg]: '1.0.0' } }));
-    writeFileSync(join(tempDir, 'docs', 'package.json'), JSON.stringify({ dependencies: {} }));
-    const res = spawnSync('bun', [join(tempDir, 'scripts', 'verify-no-react.ts'), 'all'], { encoding: 'utf-8' });
-    if (res.status !== 1 || !res.stderr.includes(pkg)) throw new Error('Failed to catch ' + pkg);
-  }
-  console.log('Banned patterns verified');
-} finally {
-  rmSync(tempDir, { recursive: true, force: true });
-}
-"
-
-# 3. Test all test-setup.ts shims
-bun -e "
-import { GlobalWindow } from './ui/node_modules/happy-dom/lib/index.js';
-const window = new GlobalWindow();
-Object.assign(globalThis, {
-  window, document: window.document, HTMLElement: window.HTMLElement,
-  Element: window.Element, DOMException: window.DOMException,
-  Event: window.Event, CustomEvent: window.CustomEvent
-});
-await import('./ui/src/test-setup.ts');
-
-// ElementInternals
-const host = document.createElement('div');
-document.body.appendChild(host);
-const internals = host.attachInternals();
-let threw = false;
-try { host.attachInternals(); } catch (e) { threw = e.name === 'NotSupportedError'; }
-if (!threw) throw new Error('Double attach did not throw NotSupportedError');
-internals.setValidity({ badInput: true }, 'M'.repeat(250));
-if (internals.validationMessage.length !== 200) throw new Error('Message not truncated to 200 chars');
-
-// Dialog disconnected
-const dialog = document.createElement('dialog');
-let dialogThrew = false;
-try { dialog.showModal(); } catch (e) { dialogThrew = e.name === 'InvalidStateError'; }
-if (!dialogThrew) throw new Error('Disconnected dialog did not throw InvalidStateError');
-
-// Popover
-const pop = document.createElement('div');
-pop.setAttribute('popover', 'auto');
-document.body.appendChild(pop);
-pop.showPopover();
-if (!pop.matches(':popover-open')) throw new Error('Popover open failed');
-
-// ResizeObserver
-let resized = false;
-const ro = new window.ResizeObserver(() => { resized = true; });
-ro.observe(host);
-window.__triggerResize(host, { width: 100 });
-if (!resized) throw new Error('Resize trigger failed');
-
-console.log('All shims verified');
-"
-```
+3. **Verify Linter Cleanliness**:
+   ```bash
+   ./node_modules/.bin/biome check ui/src/components/ChartContainer ui/src/components/chart-container-challenge.test.ts
+   ```
+   *Expected outcome*: 0 errors, 0 warnings.

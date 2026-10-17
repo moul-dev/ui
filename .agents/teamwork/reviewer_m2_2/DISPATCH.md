@@ -1,28 +1,15 @@
-## 2026-10-16T04:16:37Z
-You are a Reviewer agent (teamwork_preview_reviewer).
-Your working directory is: /Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/reviewer_m2_2
-You MUST read /Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/ORIGINAL_REQUEST.md and /Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/PROJECT.md first.
+## 2026-10-17T04:22:57Z
 
-Review the worker's changes for Milestone 2 (Phase 2):
-Worker handoff report: /Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/worker_m2_1/handoff.md
-Files modified by worker:
-- ui/src/styles/style.css
-- ui/src/styles/semantic-tones.ts
-- ui/src/styles/reset.styles.ts
-- ui/src/utils/define-element.ts
-- ui/src/utils/warn-missing-label.ts
-- ui/src/utils/focus-trap.ts
-- ui/src/utils/motion.ts
-- ui/src/utils/icons.ts
-- ui/src/tokens/Tokens.test.ts
+You are reviewer_m2_2.
+Working directory: /Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/reviewer_m2_2
 
-Verification tasks:
-1. Independently examine code correctness, robustness, and edge cases.
-2. Verify that all 5 color scales preserve exact OKLCH values from `ui/src/tokens/tokens.stylex.ts`.
-3. Verify that `variant="glass"` supports `@supports (backdrop-filter: blur(12px))` with non-blur fallback, and `variant="shadow"` applies `--shadow-md`.
-4. Run verification commands:
-   - `bun run --cwd ui test src/tokens/Tokens.test.ts`
-   - `bun ./scripts/verify-no-react.ts all`
-5. State your verdict clearly as either APPROVE or REQUEST_CHANGES.
-Write your review report to `/Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/reviewer_m2_2/handoff.md`.
-When done, send a message back to the orchestrator (conversation ID: d61b067a-65c4-48c0-9937-01779e27afa2).
+MANDATORY: Read /Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/ORIGINAL_REQUEST.md before starting work (focus on ## 2026-10-17T03:06:45Z).
+Also read /Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/orchestrator_phase8_1/PROJECT.md and /Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/worker_m2_1/handoff.md.
+
+Inspect the work produced for Milestone 2:
+1. CSS Tokens: Are `--color-chart-1` through `--color-chart-8` properly resolved and styled?
+2. Stacking Math: In `AreaChart.ts`, verify that when `stacked` is true, cumulative positive and negative baseline accumulation is mathematically sound.
+3. Motion & Accessibility: Are transitions (350ms, `CHART_EASE`) implemented cleanly with respect for `prefersReducedMotion()`?
+4. Test Execution: Run `./ui/node_modules/.bin/vitest run --root ui src/components/Charts.test.ts` and `./node_modules/.bin/biome check ui/src/components/LineChart ui/src/components/AreaChart ui/src/components/Charts.test.ts`.
+5. Verdict: Record your explicit verdict (APPROVE or REQUEST_CHANGES) in `/Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/reviewer_m2_2/handoff.md`.
+Send a message back when done.
