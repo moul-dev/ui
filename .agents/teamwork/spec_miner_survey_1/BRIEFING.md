@@ -1,49 +1,43 @@
-# BRIEFING — 2026-10-17T03:15:30Z
+# BRIEFING — 2026-10-17T04:04:30Z
 
 ## Mission
-Thoroughly analyze and document the specifications, requirements, and component contracts for Phase 8: Category 1 — Charts & Data Visualization (7 Components + 2 Companions + Container: 10 elements total) based on rdt/design.md, rdt/requirements.md, rdt/tasks.md, and ORIGINAL_REQUEST.md.
+Survey authoritative specification sources (`rdt/requirements.md`, `rdt/design.md`, `rdt/tasks.md`, `ORIGINAL_REQUEST.md`, and existing codebase) to produce a comprehensive specification report for Phase 9: Logs Viewer & Sidebar Suite.
 
 ## 🔒 My Identity
 - Archetype: Specification Miner
-- Roles: Specification Mining Specialist
-- Working directory: /Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/spec_miner_survey_1
-- Original parent: 5d04df52-77dd-4159-8972-455e52835bdb
-- Milestone: Phase 8 — Category 1: Charts & Data Visualization Specification Analysis
+- Roles: Teamwork specialist, Specification Miner
+- Working directory: /Users/phearak/.gemini/antigravity/worktrees/ui/implement_phase_nine_rdt/.agents/teamwork/spec_miner_survey_1
+- Original parent: 2e0278dc-1bf9-46f6-91f3-ef0c473f76ff
+- Milestone: Phase 9 Specification Mining
 
 ## 🔒 Key Constraints
-- Read-only specification investigator: Do NOT write code or modify source code files.
-- Probe the authoritative specification sources (rdt/design.md, rdt/requirements.md, rdt/tasks.md, ORIGINAL_REQUEST.md, existing package structure).
-- Enumerate full contracts for all 10 elements:
-  1. moul-chart-container
-  2. moul-chart-tooltip
-  3. moul-line-chart
-  4. moul-area-chart
-  5. moul-bar-chart
-  6. moul-doughnut-chart
-  7. moul-top-list
-  8. moul-stat
-  9. moul-percentage-bar
-  10. moul-percentage-circle
-- Document: registration contract, attributes/props, slots, SVG & D3 logic, styling/tokens, animation/motion, tooltip popover interactions, empty state rendering, and error handling.
-- Deliver findings in /Users/phearak/github/orgs/moul-dev/ui/.agents/teamwork/spec_miner_survey_1/handoff.md.
+- Do NOT implement anything — read-only probe.
+- Be thorough and capture all features, interfaces, types, CSS behaviors, and edge cases.
+- Group findings into standard tables (Features Discovered, Edge Cases).
+- Output comprehensive specification report to `spec_report.md` and `handoff.md`.
+- Communicate back to parent via `send_message`.
 
 ## Current Parent
-- Conversation ID: 5d04df52-77dd-4159-8972-455e52835bdb
-- Updated: 2026-10-17T03:15:30Z
+- Conversation ID: 2e0278dc-1bf9-46f6-91f3-ef0c473f76ff
+- Updated: 2026-10-17T04:04:30Z
 
 ## Task Summary
-- **What to build**: Specification report for Phase 8: Charts & Data Visualization
-- **Success criteria**: Comprehensive, complete specification mapping out all 10 elements with verified details from design.md, requirements.md, tasks.md, ORIGINAL_REQUEST.md, and codebase conventions.
-- **Interface contracts**: rdt/design.md § 8.1 / § 7.1, rdt/requirements.md Requirement 7, rdt/tasks.md Phase 8
-- **Code layout**: `ui/src/components/` (ChartContainer, ChartTooltip, LineChart, AreaChart, BarChart, DoughnutChart, TopList, Stat, Percentage, ChartCommon.ts)
+- **What to build**: Specification report covering Phase 9:
+  1. Logs Viewer & Pure Parser Utilities (`moul-logs-viewer`, `moul-logs`, `parseLogs`, `parseLogLine`, `parseAttributes`, `stripAttributes`, `normalizeLogLevel`, `SERVER_LOG_RAW`, `SERVER_LOGS`)
+  2. 10-element Sidebar compound suite (`moul-sidebar`, `moul-sidebar-aside`, `moul-sidebar-main`, `moul-sidebar-header`, `moul-sidebar-brand`, `moul-sidebar-group`, `moul-sidebar-item`, `moul-sidebar-divider`, `moul-sidebar-footer`, `moul-sidebar-user`) with `@lit/context` propagation, CSS grid height collapse, collapsed tooltip display, active indicator animation, and selection events.
+  3. Verification test suite requirements for `ui/src/components/Blocks.test.ts`.
+- **Status**: Completed! Generated `spec_report.md` and `handoff.md`.
 
 ## Key Decisions Made
-- Fully documented all 10 elements with exact Lit properties, attributes, slots, events, D3 math/curves, CSS token bindings, motion keyframes/durations, Popover API interaction lifecycle, empty state rendering, and error boundaries.
-- Identified legacy React/StyleX/Recharts artifacts that need replacement in Phase 8 (`ChartContainer.tsx`, `ChartTooltip.tsx`, `LineChart.tsx`, `AreaChart.tsx`, `BarChart.tsx`, `DoughnutChart.tsx`, `TopList.tsx`, `Stat.tsx`, `PercentageBar.tsx`, `PercentageCircle.tsx`, `ChartCommon.ts`).
-- Outlined precise test assertions for `ui/src/components/Charts.test.ts`.
+- All 12 custom elements mapped with idempotent `defineElement` and `HTMLElementTagNameMap`.
+- Complete pure parser functions signature and behavior cataloged.
+- Pure CSS Grid collapse `grid-template-rows: 0fr/1fr` specified without JS measurement.
+- `@lit/context` architecture defined with `sidebarContext` and `SidebarContextValue`.
+- Test case matrix drafted with 24 distinct test IDs covering parser, viewer, context, collapse, items, tooltips, and registration.
 
 ## Artifact Index
-- DISPATCH.md — Dispatch instructions
-- BRIEFING.md — Situational awareness
-- progress.md — Liveness & progress tracking
-- handoff.md — Final comprehensive specification report
+- `.agents/teamwork/spec_miner_survey_1/DISPATCH.md` — Incoming dispatch message
+- `.agents/teamwork/spec_miner_survey_1/BRIEFING.md` — Agent working memory
+- `.agents/teamwork/spec_miner_survey_1/progress.md` — Liveness and step tracking
+- `.agents/teamwork/spec_miner_survey_1/spec_report.md` — Full Phase 9 specification report
+- `.agents/teamwork/spec_miner_survey_1/handoff.md` — Self-contained handoff report

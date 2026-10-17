@@ -218,48 +218,58 @@ All components must:
 The quota limit has reset and the server has restarted. Please resume where you left off on Milestone 5 remediation and continue through Milestone 6 (Overlays & Navigation), Milestone 7 (Inputs & Forms), and Milestone 8 (Integration & Audit).
 
 
-## 2026-10-17T03:06:45Z
+## 2026-10-17T03:54:46Z
 
-Implement Phase 8 of the design specification: Rebuild Category 1 — Charts & Data Visualization (7 Components + 2 Companions) as Lit Web Components powered by `d3-scale`, `d3-shape`, and `motion`.
+Implement Phase 9 (Category 6: Composite Block Components) of the Lit Web Components migration for `@moul-dev/ui`, covering `moul-logs-viewer`, `moul-logs`, pure log parsing functions, and the 10-element `moul-sidebar` compound suite with context propagation and automated tests.
 
-Working directory: /Users/phearak/github/orgs/moul-dev/ui
+Working directory: /Users/phearak/.gemini/antigravity/worktrees/ui/implement_phase_nine_rdt
 Integrity mode: development
+
+References:
+- Task list: `rdt/tasks.md` (Phase 9: 9.1, 9.2, 9.3)
+- Requirements: `rdt/requirements.md` (Requirement 12)
+- Technical specification: `rdt/design.md` (Section 6.6, 8.6)
 
 ## Requirements
 
-### R1. Chart Components & Companions Rebuild
-Implement `moul-chart-container`, `moul-chart-tooltip`, `moul-line-chart`, `moul-area-chart`, `moul-bar-chart`, `moul-doughnut-chart`, `moul-top-list`, `moul-stat`, `moul-percentage-bar`, and `moul-percentage-circle` as Lit Web Components, registered via idempotent `defineElement` under the `moul-` prefix, with zero React/Recharts dependencies.
+### R1. Logs Viewer and Pure Parser Exports (`ui/src/components/LogsViewer/`)
+Implement `moul-logs-viewer` and companion `moul-logs` as Lit Web Components, eliminating all React and StyleX dependencies.
+- Preserve and export pure log parsing utilities: `parseLogs`, `parseLogLine`, `parseAttributes`, `stripAttributes`, `normalizeLogLevel`, `SERVER_LOG_RAW`, and `SERVER_LOGS`.
+- `moul-logs-viewer` must render log items with virtualization via `@lit-labs/virtualizer`, supporting search querying, log level filtering (`all`, `info`, `warn`, `error`, `debug`), timestamp toggling, line wrapping, and animated level indicator transitions.
+- `moul-logs` must accept a raw log string, parse it using `parseLogs()`, and render it via `moul-logs-viewer`.
 
-### R2. SVG Geometry & Color Token Mapping
-Generate SVG geometries using `d3-scale` and `d3-shape` without third-party chart wrappers, styling chart series with `--color-chart-1` through `--color-chart-8` CSS design tokens.
+### R2. Sidebar Compound Element Suite (`ui/src/components/Sidebar/`)
+Implement the full 10-element compound Sidebar suite as Lit Web Components:
+`moul-sidebar`, `moul-sidebar-aside`, `moul-sidebar-main`, `moul-sidebar-header`, `moul-sidebar-brand`, `moul-sidebar-group`, `moul-sidebar-item`, `moul-sidebar-divider`, `moul-sidebar-footer`, and `moul-sidebar-user`.
+- Propagate sidebar state (`dense`, `collapsed`, `selectedKey`, `layout`) from `moul-sidebar` down through all descendant components using `@lit/context` rather than prop-drilling.
+- Transition collapsed `moul-sidebar-group` height purely using CSS `grid-template-rows: 0fr` to `1fr` without JavaScript height measurements, animating the collapse chevron.
+- When `collapsed` is true on the sidebar (icon-only mode), wrap `moul-sidebar-item` in a tooltip trigger so that label previews appear on hover and focus.
+- Animate active item selection pill gliding using `animateActiveIndicator` and support `selectionchange` events when items are chosen.
 
-### R3. Responsive Viewports, Empty States & Micro-Animations
-Make `moul-chart-container` responsive to dimension changes via `LayoutIndicatorController` and render `<slot name="empty">` when data is missing or empty. Animate SVG path/geometry transitions with `motion` (duration 200–500ms, respecting `prefers-reduced-motion: reduce`) and numeric stat changes with `NumberSpringController`.
-
-### R4. Data Point Tooltip Interaction
-Open and position `moul-chart-tooltip` via the native Popover API upon pointer interaction over chart data points, and close it when leaving.
-
-### R5. Verification Test Suite
-Provide unit and integration tests in `ui/src/components/Charts.test.ts` covering SVG path rendering, empty state handling, responsive resize triggers, and interactive point hover behavior.
+### R3. Verification Test Suite (`ui/src/components/Blocks.test.ts`)
+Author a comprehensive Vitest test suite covering:
+- Pure log parsing edge cases (attribute chips, multiline logs, malformed strings, log levels).
+- `moul-logs-viewer` and `moul-logs` rendering, searching, filtering, and timestamp toggling.
+- `moul-sidebar` context propagation (`dense`, `collapsed`, `selectedKey`, `layout`) to child elements.
+- `moul-sidebar-group` collapse state toggling and CSS grid structure.
+- `moul-sidebar-item` selection events (`selectionchange`), keyboard navigation, and collapsed tooltip display.
+- Idempotent registration of all 12 custom elements without duplicate definition warnings or collisions.
 
 ## Acceptance Criteria
 
-### Component Registration & Purity
-- [ ] Custom elements `moul-chart-container`, `moul-chart-tooltip`, `moul-line-chart`, `moul-area-chart`, `moul-bar-chart`, `moul-doughnut-chart`, `moul-top-list`, `moul-stat`, `moul-percentage-bar`, and `moul-percentage-circle` register without errors.
-- [ ] No imports from `react`, `react-dom`, `recharts`, or `@stylexjs/stylex` in chart source files.
-- [ ] Each component exports its class and registers in `HTMLElementTagNameMap`.
+### Architecture & Registration
+- [ ] No React, React Aria, StyleX, or JSX dependencies exist in `ui/src/components/LogsViewer/` or `ui/src/components/Sidebar/`.
+- [ ] All 12 custom elements (`moul-logs-viewer`, `moul-logs`, `moul-sidebar`, `moul-sidebar-aside`, `moul-sidebar-main`, `moul-sidebar-header`, `moul-sidebar-brand`, `moul-sidebar-group`, `moul-sidebar-item`, `moul-sidebar-divider`, `moul-sidebar-footer`, `moul-sidebar-user`) are defined idempotently using `defineElement()`.
+- [ ] The pure log parser utilities (`parseLogs`, `parseLogLine`, `parseAttributes`, `stripAttributes`, `normalizeLogLevel`, `SERVER_LOG_RAW`, `SERVER_LOGS`) are exported and functional without DOM dependencies.
 
-### SVG Generation & Visuals
-- [ ] Line and Area charts render valid SVG `<path>` elements using D3 curves and project coordinates with D3 scales.
-- [ ] Bar chart supports horizontal and vertical layouts with proportional SVG rectangles.
-- [ ] Doughnut chart renders arc slices using D3 arc/pie generators with configurable `inner-radius-ratio`.
-- [ ] Percentage bar and circle render proportional fill progress.
-- [ ] Stat renders numeric value interpolating via `NumberSpringController`.
+### Behavior & Context
+- [ ] Toggling `dense` or `collapsed` on `moul-sidebar` updates descendant components via `@lit/context` without manual property assignment on children.
+- [ ] `moul-sidebar-group` collapses and expands using CSS `grid-template-rows` without runtime DOM height measurements.
+- [ ] In collapsed sidebar state, `moul-sidebar-item` displays tooltip content on hover/focus.
+- [ ] Selecting a sidebar item dispatches a `selectionchange` event with `{ detail: { selectedKey: string } }`.
+- [ ] Passing raw log strings to `moul-logs` renders parsed log entries inside `moul-logs-viewer`.
 
-### Empty States & Popover Tooltip
-- [ ] When data is null, undefined, or empty `[]`, `<slot name="empty">` is rendered instead of chart geometries.
-- [ ] Chart tooltip opens on point hover/pointerenter and dismisses on pointerleave using the Popover API.
-
-### Verification Suite
-- [ ] `bun run test ui/src/components/Charts.test.ts` passes with 100% green tests.
-- [ ] `bun run lint` passes with 0 errors across modified files.
+### Automated Verification
+- [ ] Vitest test suite in `ui/src/components/Blocks.test.ts` executes and passes all test assertions.
+- [ ] `scripts/verify-no-react.ts` passes with zero disallowed dependency or import violations in `ui`.
+- [ ] `Phase 9` tasks in `rdt/tasks.md` are marked completed `[x]`.
