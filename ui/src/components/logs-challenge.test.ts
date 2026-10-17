@@ -2,6 +2,7 @@ import * as fc from 'fast-check'
 import { html, type LitElement, render } from 'lit'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { SERVER_LOG_RAW, SERVER_LOGS } from './LogsViewer/exampleLogs'
+import './LogsViewer/Logs'
 import type { MoulLogs } from './LogsViewer/Logs'
 import type { LogItem } from './LogsViewer/Logs.types'
 import { HighlightText, type MoulLogsViewer } from './LogsViewer/LogsViewer'
@@ -580,7 +581,7 @@ describe('Empirical Challenge: Logs Viewer and MoulLogs Stress Tests', () => {
       await awaitNestedUpdates(viewer!)
       const afterSettingFalse = viewer?.showTimestamps
 
-      // Now verify if ?attr binding failed to communicate false on initial render:
+      // Verify that property binding accurately communicates false on initial render:
       expect({
         initialViewerShowTimestamps,
         initialViewerShowToolbar,
@@ -590,13 +591,13 @@ describe('Empirical Challenge: Logs Viewer and MoulLogs Stress Tests', () => {
         afterSettingTrue,
         afterSettingFalse,
       }).toEqual({
-        initialViewerShowTimestamps: true, // BUG: expected false, but received true!
-        initialViewerShowToolbar: true, // BUG: expected false, but received true!
-        initialViewerShowLevels: true, // BUG: expected false, but received true!
-        initialViewerShowLineNumbers: true, // BUG: expected false, but received true!
-        initialViewerVirtualized: true, // BUG: expected false, but received true!
+        initialViewerShowTimestamps: false,
+        initialViewerShowToolbar: false,
+        initialViewerShowLevels: false,
+        initialViewerShowLineNumbers: false,
+        initialViewerVirtualized: false,
         afterSettingTrue: true,
-        afterSettingFalse: false, // Removal after attribute existed sets it to false
+        afterSettingFalse: false,
       })
     })
 

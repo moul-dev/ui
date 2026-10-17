@@ -1,11 +1,21 @@
 import { html, type LitElement, render } from 'lit'
 import { afterEach, describe, expect, it, vi } from 'vitest'
+import { defineElement } from '../utils/define-element'
 import {
   type LogItem,
   Logs,
   LogsViewer,
   MoulLogs,
   MoulLogsViewer,
+  normalizeLogLevel,
+  parseAttributes,
+  parseLogLine,
+  parseLogs,
+  SERVER_LOG_RAW,
+  SERVER_LOGS,
+  stripAttributes,
+} from './LogsViewer'
+import {
   MoulSidebar,
   MoulSidebarAside,
   MoulSidebarBrand,
@@ -16,12 +26,6 @@ import {
   MoulSidebarItem,
   MoulSidebarMain,
   MoulSidebarUser,
-  normalizeLogLevel,
-  parseAttributes,
-  parseLogLine,
-  parseLogs,
-  SERVER_LOG_RAW,
-  SERVER_LOGS,
   Sidebar,
   SidebarAside,
   SidebarBrand,
@@ -33,10 +37,8 @@ import {
   SidebarMain,
   SidebarUser,
   sidebarContext,
-  stripAttributes,
   useSidebar,
-} from '../index'
-import { defineElement } from '../utils/define-element'
+} from './Sidebar'
 
 // Helper to await all pending Lit updates in the DOM tree
 async function awaitTreeUpdates(root: Element): Promise<void> {

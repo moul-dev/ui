@@ -18,7 +18,11 @@ import {
 import '../Avatar/Avatar'
 import '../Tooltip/Tooltip'
 import { defineElement } from '../../utils/define-element'
-import { animateActiveIndicator } from '../../utils/motion'
+import {
+  animateActiveIndicator,
+  SPRING_SNAPPY,
+  subtleAnimate,
+} from '../../utils/motion'
 import { sidebarContext } from './Sidebar.context'
 import {
   sidebarAsideStyles,
@@ -484,6 +488,27 @@ export class MoulSidebarGroup extends LitElement {
     if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
       e.preventDefault()
       this.toggleCollapse()
+    }
+  }
+
+  protected override updated(changedProps: PropertyValues): void {
+    super.updated(changedProps)
+    if (
+      changedProps.has('collapsed') &&
+      changedProps.get('collapsed') !== undefined
+    ) {
+      const chevron = this.shadowRoot?.querySelector<SVGElement>('.chevron')
+      if (chevron) {
+        try {
+          subtleAnimate(
+            chevron,
+            { rotate: this.collapsed ? -90 : 0 },
+            SPRING_SNAPPY,
+          )
+        } catch {
+          // Gracefully fallback
+        }
+      }
     }
   }
 
