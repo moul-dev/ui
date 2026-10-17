@@ -215,16 +215,16 @@ _Covers: Requirement 2, Requirement 15, Requirement 16_
 ## Phase 11: Astro Starlight Documentation Site Rebuild (`docs/`)
 _Covers: Requirement 13_
 
-- [ ] **11.1 Initialize Astro Starlight Configuration (`docs/astro.config.mjs` & `docs/src/content.config.ts`)**
+- [x] **11.1 Initialize Astro Starlight Configuration (`docs/astro.config.mjs` & `docs/src/content.config.ts`)**
   - Remove Waku (`waku.config.ts`, `source.config.ts`, `docs/src/pages/` React routes, `docs/src/components/mdx.tsx`).
   - Configure Starlight with bilingual i18n (`root` for English `en` with `hideLocale: 'root'`, `km` for Khmer) preserving `/docs/components/...`, `/docs/blocks/...`, `/changelog/...` and `/km/...` equivalents (_Req 13.1–13.3_).
   - Configure Starlight "Changelog" navigation group and `/changelog` index page (_Req 13.7_).
-- [ ] **11.2 Author Global Stylesheet (`docs/src/styles/global.css`)**
+- [x] **11.2 Author Global Stylesheet (`docs/src/styles/global.css`)**
   - Import `@moul-dev/ui/style.css` and configure `Kantumruy Pro` as the primary `font-family` for `:lang(km)` content (_Req 13.8, 13.10_).
-- [ ] **11.3 Implement `<ComponentPreview.astro>` and `/theme` Live Token Inspector (`docs/src/pages/theme.astro`)**
+- [x] **11.3 Implement `<ComponentPreview.astro>` and `/theme` Live Token Inspector (`docs/src/pages/theme.astro`)**
   - Build `ComponentPreview.astro` rendering native `<moul-*>` custom elements with client-side `<script>import '@moul-dev/ui'</script>` (_Req 13.4_).
   - Build `/theme` page with real-time sliders for `--brand-hue`, `--brand-chroma-multiplier`, `--brand-radius-factor`, and `--brand-density-factor` updating live `<moul-*>` component previews on the page (_Req 13.5_).
-- [ ] **11.4 Migrate English & Khmer MDX Documentation Content (`docs/src/content/docs/`)**
+- [x] **11.4 Migrate English & Khmer MDX Documentation Content (`docs/src/content/docs/`)**
   - Update component, block, and changelog MDX files to use `<ComponentPreview>` and native `<moul-*>` HTML custom elements instead of React JSX components (_Req 13.2, 13.4, 13.9_).
 
 ---

@@ -1,0 +1,84 @@
+---
+title: Introduction
+description: Meet Moul UI. A standards-first, zero-React Web Components library built on Lit 3, CSS Tokens, and Native Browser APIs.
+---
+
+import { Card, CardGrid, Tabs, TabItem, Steps } from '@astrojs/starlight/components';
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+Moul UI is a modular Web Components library designed for engineers who want a modern, consistent, and highly accessible baseline across any web stack.
+
+Built on **Lit 3**, **Shadow DOM**, and a runtime-tunable **CSS Design Token Layer (`light-dark()` + `oklch()`)**, Moul UI delivers beautiful default styles with zero React runtime overhead.
+
+---
+
+## Why Web Components?
+
+<CardGrid>
+  <Card title="Framework Agnostic" icon="puzzle">
+    Use seamlessly in Astro, Next.js, Remix, Svelte, Vue, or static HTML without adapter layers or hydration penalties.
+  </Card>
+  <Card title="Zero React Overhead" icon="rocket">
+    Shadow DOM encapsulation ensures component styles and internals never leak into or conflict with host application styles.
+  </Card>
+  <Card title="Standards-First APIs" icon="laptop">
+    Built directly on native browser primitives including `<dialog>`, Popover API, CSS Anchor Positioning, and `ElementInternals`.
+  </Card>
+</CardGrid>
+
+---
+
+## Installation
+
+<Steps>
+1. ### Install the Package
+   
+   Add the library to your workspace:
+
+   <Tabs>
+     <TabItem label="bun">
+       ```bash
+       bun add @moul-dev/ui
+       ```
+     </TabItem>
+     <TabItem label="npm">
+       ```bash
+       npm install @moul-dev/ui
+       ```
+     </TabItem>
+     <TabItem label="pnpm">
+       ```bash
+       pnpm add @moul-dev/ui
+       ```
+     </TabItem>
+     <TabItem label="yarn">
+       ```bash
+       yarn add @moul-dev/ui
+       ```
+     </TabItem>
+   </Tabs>
+
+2. ### Import Stylesheet & Elements
+
+   Import `@moul-dev/ui/style.css` in your global stylesheet and import `@moul-dev/ui` in your application client script:
+
+   ```ts
+   // Import global token definitions
+   import '@moul-dev/ui/style.css';
+
+   // Register all custom elements
+   import '@moul-dev/ui';
+   ```
+
+3. ### Use Custom Elements Directly in HTML
+
+   ```html
+   <moul-button variant="primary">Get Started</moul-button>
+   <moul-badge variant="success">Active</moul-badge>
+   ```
+
+   <ComponentPreview>
+     <moul-button variant="primary">Get Started</moul-button>
+     <moul-badge variant="success">Active</moul-badge>
+   </ComponentPreview>
+</Steps>

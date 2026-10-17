@@ -1,0 +1,39 @@
+---
+title: Moul UI
+description: Standards-first, zero-React Web Components crafted with Lit 3, CSS tokens, and native browser APIs.
+template: splash
+hero:
+  tagline: Standards-first, zero-React Web Components crafted with Lit 3, OKLCH design tokens, and native browser APIs.
+  actions:
+    - text: Get Started
+      link: /docs
+      icon: right-arrow
+      variant: primary
+    - text: Theme Studio
+      link: /theme
+      icon: seti:css
+      variant: secondary
+    - text: GitHub
+      link: https://github.com/moul-dev/ui
+      icon: external
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+## Architectural Principles
+
+<CardGrid stagger>
+  <Card title="Zero React, 100% Standards" icon="open-book">
+    Engineered with **Lit 3** and standard Web Components (`Shadow DOM`, `Custom Elements`). Runs in any framework—or none at all.
+  </Card>
+  <Card title="Perceptual CSS Tokens" icon="pencil">
+    Powered by `light-dark()` and OKLCH color spaces. Tune hue, chroma, radius, and density factors dynamically at runtime.
+  </Card>
+  <Card title="Native Browser Primitives" icon="setting">
+    Leverages `<dialog>`, Popover API, CSS Anchor Positioning, and `ElementInternals` form-associated elements for zero bundle bloat.
+  </Card>
+  <Card title="Bilingual & Khmer Typography" icon="translate">
+    First-class internationalization for English and Khmer (`ភាសាខ្មែរ`) with proportional typography powered by **Kantumruy Pro**.
+  </Card>
+</CardGrid>

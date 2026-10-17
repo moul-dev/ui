@@ -1,0 +1,41 @@
+---
+title: Spinner (សមាសភាគ)
+description: ឯកសារណែនាំសម្រាប់សមាសភាគ Spinner Web Component
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+# Spinner (សមាសភាគ)
+
+The `<moul-spinner>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
+
+## Preview
+
+<ComponentPreview>
+  <div style="display: flex; gap: 1rem; align-items: center;">
+  <moul-spinner size="sm"></moul-spinner>
+  <moul-spinner size="md"></moul-spinner>
+  <moul-spinner size="lg"></moul-spinner>
+</div>
+</ComponentPreview>
+
+## Import
+
+```ts
+import '@moul-dev/ui';
+```
+
+## HTML Usage
+
+```html
+<moul-spinner size="md"></moul-spinner>
+```
+
+## Attributes & Properties
+
+| Name | Type | Default |
+| :--- | :--- | :--- |
+| `size` | `SpinnerSize` | `'md'` |
+| `label` | `string` | `'Loading'` |
+
+

@@ -1,0 +1,46 @@
+---
+title: TextArea (សមាសភាគ)
+description: ឯកសារណែនាំសម្រាប់សមាសភាគ TextArea Web Component
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+# TextArea (សមាសភាគ)
+
+The `<moul-text-area>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
+
+## Preview
+
+<ComponentPreview>
+  <moul-text-area label="Release Description" placeholder="Summarize changes in this version..." style="width: 100%; max-width: 400px;"></moul-text-area>
+</ComponentPreview>
+
+## Import
+
+```ts
+import '@moul-dev/ui';
+```
+
+## HTML Usage
+
+```html
+<moul-text-area label="Notes" placeholder="Write here..."></moul-text-area>
+```
+
+## Attributes & Properties
+
+| Name | Type | Default |
+| :--- | :--- | :--- |
+| `name` | `string` | `''` |
+| `value` | `string` | `''` |
+| `rows` | `number` | `3` |
+| `auto-resize` | `boolean` | `false` |
+| `placeholder` | `string` | `''` |
+| `label` | `string` | `''` |
+| `description` | `string` | `''` |
+| `error-message` | `string` | `''` |
+| `is-disabled` | `boolean` | `false` |
+| `is-required` | `boolean` | `false` |
+| `is-readonly` | `boolean` | `false` |
+
+

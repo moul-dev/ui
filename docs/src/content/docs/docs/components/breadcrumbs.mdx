@@ -1,0 +1,44 @@
+---
+title: Breadcrumbs
+description: Hierarchical navigation trail indicating active page location.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+# Breadcrumbs
+
+The `<moul-breadcrumbs>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
+
+## Preview
+
+<ComponentPreview>
+  <moul-breadcrumbs>
+  <moul-breadcrumb-item href="#">Home</moul-breadcrumb-item>
+  <moul-breadcrumb-item href="#">Docs</moul-breadcrumb-item>
+  <moul-breadcrumb-item current>Breadcrumbs</moul-breadcrumb-item>
+</moul-breadcrumbs>
+</ComponentPreview>
+
+## Import
+
+```ts
+import '@moul-dev/ui';
+```
+
+## HTML Usage
+
+```html
+<moul-breadcrumbs>
+  <moul-breadcrumb-item href="/">Home</moul-breadcrumb-item>
+  <moul-breadcrumb-item href="/docs">Docs</moul-breadcrumb-item>
+  <moul-breadcrumb-item current>Components</moul-breadcrumb-item>
+</moul-breadcrumbs>
+```
+
+## Attributes & Properties
+
+| Name | Type | Default |
+| :--- | :--- | :--- |
+| `separator` | `string` | `'/'` |
+
+

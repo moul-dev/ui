@@ -1,0 +1,45 @@
+---
+title: Calendar (សមាសភាគ)
+description: ឯកសារណែនាំសម្រាប់សមាសភាគ Calendar Web Component
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+# Calendar (សមាសភាគ)
+
+The `<moul-calendar>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
+
+## Preview
+
+<ComponentPreview>
+  <moul-calendar></moul-calendar>
+</ComponentPreview>
+
+## Import
+
+```ts
+import '@moul-dev/ui';
+```
+
+## HTML Usage
+
+```html
+<moul-calendar></moul-calendar>
+```
+
+## Attributes & Properties
+
+| Name | Type | Default |
+| :--- | :--- | :--- |
+| `value` | `string` | `''` |
+| `locale` | `string` | `'en-US'` |
+| `min-date` | `string` | `''` |
+| `max-date` | `string` | `''` |
+| `is-disabled` | `boolean` | `false` |
+
+## Events
+
+| Event Name | Description |
+| :--- | :--- |
+| `change` | Dispatched when element fires change |
+

@@ -1,0 +1,42 @@
+---
+title: EmptyState
+description: Placeholder view when collections or queries contain zero items.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+# EmptyState
+
+The `<moul-empty-state>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
+
+## Preview
+
+<ComponentPreview>
+  <moul-empty-state title="No Deployments Found" description="Trigger a build or push a commit to see active pipelines.">
+  <moul-button slot="actions" variant="primary">New Deployment</moul-button>
+</moul-empty-state>
+</ComponentPreview>
+
+## Import
+
+```ts
+import '@moul-dev/ui';
+```
+
+## HTML Usage
+
+```html
+<moul-empty-state title="No Items" description="Create an item to get started.">
+  <moul-button slot="actions" variant="primary">Create</moul-button>
+</moul-empty-state>
+```
+
+## Attributes & Properties
+
+| Name | Type | Default |
+| :--- | :--- | :--- |
+| `size` | `EmptyStateSize` | `'md'` |
+| `align` | `EmptyStateAlign` | `'center'` |
+| `variant` | `VisualVariant` | `'flat'` |
+
+

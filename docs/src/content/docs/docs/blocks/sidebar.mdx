@@ -1,0 +1,55 @@
+---
+title: Sidebar
+description: Framed collapsible workstation sidebar with dense navigation.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+# Sidebar
+
+The `<moul-sidebar>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
+
+## Preview
+
+<ComponentPreview>
+  <moul-sidebar style="width: 260px; height: 300px; border: 1px solid var(--sl-color-gray-5, #e2e8f0); border-radius: 0.5rem;">
+  <moul-sidebar-group label="Workspace">
+    <moul-sidebar-item value="overview" active>Overview</moul-sidebar-item>
+    <moul-sidebar-item value="deployments">Deployments</moul-sidebar-item>
+    <moul-sidebar-item value="metrics">Metrics</moul-sidebar-item>
+  </moul-sidebar-group>
+</moul-sidebar>
+</ComponentPreview>
+
+## Import
+
+```ts
+import '@moul-dev/ui';
+```
+
+## HTML Usage
+
+```html
+<moul-sidebar>
+  <moul-sidebar-group label="Navigation">
+    <moul-sidebar-item value="home">Home</moul-sidebar-item>
+  </moul-sidebar-group>
+</moul-sidebar>
+```
+
+## Attributes & Properties
+
+| Name | Type | Default |
+| :--- | :--- | :--- |
+| `layout` | `SidebarLayout` | `'sidebar-framed'` |
+| `dense` | `boolean` | `false` |
+| `collapsed` | `boolean` | `false` |
+| `selected-key` | `string` | `''` |
+
+## Events
+
+| Event Name | Description |
+| :--- | :--- |
+| `selectionchange` | Dispatched when element fires selectionchange |
+| `collapsechange` | Dispatched when element fires collapsechange |
+

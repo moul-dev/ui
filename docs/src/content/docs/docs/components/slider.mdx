@@ -1,0 +1,48 @@
+---
+title: Slider
+description: Continuous or stepped value adjustment along a track.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+# Slider
+
+The `<moul-slider>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
+
+## Preview
+
+<ComponentPreview>
+  <moul-slider value="65" min="0" max="100" style="width: 280px;"></moul-slider>
+</ComponentPreview>
+
+## Import
+
+```ts
+import '@moul-dev/ui';
+```
+
+## HTML Usage
+
+```html
+<moul-slider value="50" min="0" max="100"></moul-slider>
+```
+
+## Attributes & Properties
+
+| Name | Type | Default |
+| :--- | :--- | :--- |
+| `name` | `string` | `''` |
+| `min` | `number` | `0` |
+| `max` | `number` | `100` |
+| `step` | `number` | `1` |
+| `value` | `number` | `0` |
+| `is-disabled` | `boolean` | `false` |
+| `label` | `string` | `''` |
+| `show-output` | `boolean` | `true` |
+
+## Events
+
+| Event Name | Description |
+| :--- | :--- |
+| `input` | Dispatched when element fires input |
+

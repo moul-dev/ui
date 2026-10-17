@@ -15,6 +15,7 @@
       "!**/.wrangler",
       "!**/dist",
       "!**/*.svg",
+      "!**/*.astro",
       "!docs/src/styles/globals.css",
       "!**/.agents"
     ]

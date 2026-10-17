@@ -1,0 +1,56 @@
+---
+title: ComboBox
+description: Searchable dropdown selection with filtering and keyboard navigation.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+# ComboBox
+
+The `<moul-combobox>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
+
+## Preview
+
+<ComponentPreview>
+  <moul-combobox label="Framework" placeholder="Choose a framework...">
+  <moul-combobox-item value="astro">Astro</moul-combobox-item>
+  <moul-combobox-item value="lit">Lit</moul-combobox-item>
+  <moul-combobox-item value="waku">Waku</moul-combobox-item>
+</moul-combobox>
+</ComponentPreview>
+
+## Import
+
+```ts
+import '@moul-dev/ui';
+```
+
+## HTML Usage
+
+```html
+<moul-combobox label="Framework">
+  <moul-combobox-item value="astro">Astro</moul-combobox-item>
+</moul-combobox>
+```
+
+## Attributes & Properties
+
+| Name | Type | Default |
+| :--- | :--- | :--- |
+| `name` | `string` | `''` |
+| `selected-key` | `string` | `''` |
+| `input-value` | `string` | `''` |
+| `placeholder` | `string` | `''` |
+| `label` | `string` | `''` |
+| `is-disabled` | `boolean` | `false` |
+| `is-required` | `boolean` | `false` |
+| `is-open` | `boolean` | `false` |
+
+## Events
+
+| Event Name | Description |
+| :--- | :--- |
+| `selectionchange` | Dispatched when element fires selectionchange |
+| `inputchange` | Dispatched when element fires inputchange |
+| `change` | Dispatched when element fires change |
+

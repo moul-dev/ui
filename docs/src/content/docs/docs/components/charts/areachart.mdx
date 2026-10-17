@@ -1,0 +1,45 @@
+---
+title: AreaChart
+description: Responsive area chart with gradient fills and smooth curves.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+# AreaChart
+
+The `<moul-area-chart>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
+
+## Preview
+
+<ComponentPreview>
+  <moul-area-chart height="220" style="width: 100%;"></moul-area-chart>
+</ComponentPreview>
+
+## Import
+
+```ts
+import '@moul-dev/ui';
+```
+
+## HTML Usage
+
+```html
+<moul-area-chart height="300"></moul-area-chart>
+```
+
+## Attributes & Properties
+
+| Name | Type | Default |
+| :--- | :--- | :--- |
+| `x-key` | `string` | `'name'` |
+| `height` | `number` | `300` |
+| `stacked` | `boolean` | `false` |
+| `show-grid` | `boolean` | `true` |
+
+## Events
+
+| Event Name | Description |
+| :--- | :--- |
+| `point-hover` | Dispatched when element fires point-hover |
+| `point-leave` | Dispatched when element fires point-leave |
+

@@ -1,0 +1,45 @@
+---
+title: TagGroup
+description: Selectable tag chips for multi-filtering and categorization.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+# TagGroup
+
+The `<moul-tag-group>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
+
+## Preview
+
+<ComponentPreview>
+  <moul-tag-group label="Technologies">
+  <moul-tag value="astro">Astro</moul-tag>
+  <moul-tag value="lit" selected>Lit</moul-tag>
+  <moul-tag value="typescript" selected>TypeScript</moul-tag>
+</moul-tag-group>
+</ComponentPreview>
+
+## Import
+
+```ts
+import '@moul-dev/ui';
+```
+
+## HTML Usage
+
+```html
+<moul-tag-group label="Tags">
+  <moul-tag value="1">Tag 1</moul-tag>
+</moul-tag-group>
+```
+
+## Attributes & Properties
+
+| Name | Type | Default |
+| :--- | :--- | :--- |
+| `selected-keys` | `string[]` | `[]` |
+| `selection-mode` | `TagSelectionMode` | `'none'` |
+| `is-removable` | `boolean` | `false` |
+| `label` | `string` | `''` |
+
+

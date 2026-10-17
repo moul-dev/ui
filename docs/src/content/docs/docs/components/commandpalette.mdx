@@ -1,0 +1,47 @@
+---
+title: CommandPalette
+description: Spotlight-style command palette modal with keyboard shortcuts.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+# CommandPalette
+
+The `<moul-command-palette>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
+
+## Preview
+
+<ComponentPreview>
+  <moul-button variant="outline">Press ⌘K to open command palette</moul-button>
+</ComponentPreview>
+
+## Import
+
+```ts
+import '@moul-dev/ui';
+```
+
+## HTML Usage
+
+```html
+<moul-command-palette placeholder="Type a command or search..."></moul-command-palette>
+```
+
+## Attributes & Properties
+
+| Name | Type | Default |
+| :--- | :--- | :--- |
+| `is-open` | `boolean` | `false` |
+| `placeholder` | `string` | `'Type a command or search...'` |
+| `shortcut` | `string` | `'k'` |
+| `virtualized` | `boolean` | `false` |
+| `query` | `string` | `''` |
+| `activeIndex` | `number` | `0` |
+
+## Events
+
+| Event Name | Description |
+| :--- | :--- |
+| `openchange` | Dispatched when element fires openchange |
+| `select` | Dispatched when element fires select |
+

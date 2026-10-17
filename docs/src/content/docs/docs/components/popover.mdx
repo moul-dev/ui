@@ -1,0 +1,46 @@
+---
+title: Popover
+description: Floating contextual container anchored to a trigger element.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+# Popover
+
+The `<moul-popover>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
+
+## Preview
+
+<ComponentPreview>
+  <moul-button variant="outline">Toggle Information</moul-button>
+</ComponentPreview>
+
+## Import
+
+```ts
+import '@moul-dev/ui';
+```
+
+## HTML Usage
+
+```html
+<moul-popover>
+  <p>Contextual popover details.</p>
+</moul-popover>
+```
+
+## Attributes & Properties
+
+| Name | Type | Default |
+| :--- | :--- | :--- |
+| `is-open` | `boolean` | `false` |
+| `trigger` | `PopoverTrigger` | `'click'` |
+| `placement` | `PopoverPlacement` | `'bottom'` |
+| `offset` | `number` | `8` |
+
+## Events
+
+| Event Name | Description |
+| :--- | :--- |
+| `openchange` | Dispatched when element fires openchange |
+

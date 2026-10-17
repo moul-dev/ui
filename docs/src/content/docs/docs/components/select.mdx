@@ -1,0 +1,54 @@
+---
+title: Select
+description: Collapsible single-value selector dropdown.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+# Select
+
+The `<moul-select>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
+
+## Preview
+
+<ComponentPreview>
+  <moul-select label="Environment" value="production">
+  <moul-select-item value="production">Production</moul-select-item>
+  <moul-select-item value="staging">Staging</moul-select-item>
+  <moul-select-item value="preview">Preview</moul-select-item>
+</moul-select>
+</ComponentPreview>
+
+## Import
+
+```ts
+import '@moul-dev/ui';
+```
+
+## HTML Usage
+
+```html
+<moul-select label="Role">
+  <moul-select-item value="admin">Admin</moul-select-item>
+</moul-select>
+```
+
+## Attributes & Properties
+
+| Name | Type | Default |
+| :--- | :--- | :--- |
+| `name` | `string` | `''` |
+| `selected-key` | `string` | `''` |
+| `placeholder` | `string` | `'Select an option'` |
+| `label` | `string` | `''` |
+| `is-disabled` | `boolean` | `false` |
+| `is-required` | `boolean` | `false` |
+| `is-open` | `boolean` | `false` |
+
+## Events
+
+| Event Name | Description |
+| :--- | :--- |
+| `selectionchange` | Dispatched when element fires selectionchange |
+| `change` | Dispatched when element fires change |
+

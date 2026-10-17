@@ -1,0 +1,48 @@
+---
+title: RadioGroup (សមាសភាគ)
+description: ឯកសារណែនាំសម្រាប់សមាសភាគ RadioGroup Web Component
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+# RadioGroup (សមាសភាគ)
+
+The `<moul-radio-group>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
+
+## Preview
+
+<ComponentPreview>
+  <moul-radio-group label="Select Tier" value="pro">
+  <moul-radio value="free">Free</moul-radio>
+  <moul-radio value="pro">Pro ($29/mo)</moul-radio>
+  <moul-radio value="enterprise">Enterprise</moul-radio>
+</moul-radio-group>
+</ComponentPreview>
+
+## Import
+
+```ts
+import '@moul-dev/ui';
+```
+
+## HTML Usage
+
+```html
+<moul-radio-group label="Plan" value="a">
+  <moul-radio value="a">Plan A</moul-radio>
+  <moul-radio value="b">Plan B</moul-radio>
+</moul-radio-group>
+```
+
+## Attributes & Properties
+
+| Name | Type | Default |
+| :--- | :--- | :--- |
+| `name` | `string` | `''` |
+| `value` | `string` | `''` |
+| `label` | `string` | `''` |
+| `is-disabled` | `boolean` | `false` |
+| `is-required` | `boolean` | `false` |
+| `orientation` | `RadioGroupOrientation` | `'vertical'` |
+
+

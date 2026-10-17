@@ -1,0 +1,57 @@
+---
+title: Card (សមាសភាគ)
+description: ឯកសារណែនាំសម្រាប់សមាសភាគ Card Web Component
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+# Card (សមាសភាគ)
+
+The `<moul-card>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
+
+## Preview
+
+<ComponentPreview>
+  <moul-card variant="outline" style="max-width: 380px;">
+  <moul-card-header>
+    <h4 style="margin: 0; font-size: 1.1rem; font-weight: 600;">Active Cluster</h4>
+  </moul-card-header>
+  <moul-card-body>
+    <p style="margin: 0; opacity: 0.8; font-size: 0.9rem;">High-performance Web Component surface container.</p>
+  </moul-card-body>
+  <moul-card-footer>
+    <moul-button variant="primary" size="sm">Manage</moul-button>
+  </moul-card-footer>
+</moul-card>
+</ComponentPreview>
+
+## Import
+
+```ts
+import '@moul-dev/ui';
+```
+
+## HTML Usage
+
+```html
+<moul-card variant="outline">
+  <moul-card-header>Title</moul-card-header>
+  <moul-card-body>Body content</moul-card-body>
+  <moul-card-footer>Actions</moul-card-footer>
+</moul-card>
+```
+
+## Attributes & Properties
+
+| Name | Type | Default |
+| :--- | :--- | :--- |
+| `tone` | `SemanticTone` | `'primary'` |
+| `variant` | `VisualVariant` | `'flat'` |
+| `is-interactive` | `boolean` | `false` |
+
+## Events
+
+| Event Name | Description |
+| :--- | :--- |
+| `press` | Dispatched when element fires press |
+

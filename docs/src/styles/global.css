@@ -1,0 +1,51 @@
+@import "@moul-dev/ui/style.css";
+@import url("https://fonts.googleapis.com/css2?family=Kantumruy+Pro:ital,wght@0,100..700;1,100..700&display=swap");
+
+:lang(km),
+:lang(km) * {
+  font-family: "Kantumruy Pro", var(--sl-font-system), sans-serif;
+}
+
+/* Component Preview styles */
+.moul-preview {
+  margin: 1.5rem 0;
+  border: 1px solid var(--sl-color-gray-5, #e2e8f0);
+  border-radius: var(--brand-radius, 0.75rem);
+  overflow: hidden;
+  background: var(--sl-color-bg, #ffffff);
+}
+
+.moul-preview-header {
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-bottom: 1px solid var(--sl-color-gray-5, #e2e8f0);
+  background: var(--sl-color-gray-6, #f8fafc);
+  color: var(--sl-color-text, inherit);
+}
+
+.moul-preview-canvas {
+  padding: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  min-height: 120px;
+}
+
+.moul-preview[data-align="center"] .moul-preview-canvas {
+  justify-content: center;
+}
+
+.moul-preview[data-align="start"] .moul-preview-canvas {
+  justify-content: flex-start;
+}
+
+.moul-preview[data-align="stretch"] .moul-preview-canvas {
+  justify-content: stretch;
+  flex-direction: column;
+}
+
+.moul-preview[data-align="stretch"] .moul-preview-canvas > * {
+  width: 100%;
+}

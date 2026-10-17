@@ -1,0 +1,40 @@
+---
+title: Typography
+description: Semantic typographic headings and body elements with OKLCH styling.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+# Typography
+
+The `<moul-typography>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
+
+## Preview
+
+<ComponentPreview>
+  <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+  <moul-typography variant="h3">Standards-First Design Systems</moul-typography>
+  <moul-typography variant="body">Engineered with Lit 3 and native Web Component primitives.</moul-typography>
+</div>
+</ComponentPreview>
+
+## Import
+
+```ts
+import '@moul-dev/ui';
+```
+
+## HTML Usage
+
+```html
+<moul-typography variant="h1">Header</moul-typography>
+```
+
+## Attributes & Properties
+
+| Name | Type | Default |
+| :--- | :--- | :--- |
+| `variant` | `TypographyVariant` | `'body'` |
+| `tone` | `SemanticTone | undefined` | `-` |
+
+

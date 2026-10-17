@@ -1,0 +1,48 @@
+---
+title: Tooltip
+description: Hover preview popover showing informative microcopy.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+# Tooltip
+
+The `<moul-tooltip>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
+
+## Preview
+
+<ComponentPreview>
+  <moul-tooltip content="Copy deployment URL to clipboard">
+  <moul-button variant="outline">Copy Link</moul-button>
+</moul-tooltip>
+</ComponentPreview>
+
+## Import
+
+```ts
+import '@moul-dev/ui';
+```
+
+## HTML Usage
+
+```html
+<moul-tooltip content="Hint">
+  <moul-button>Hover me</moul-button>
+</moul-tooltip>
+```
+
+## Attributes & Properties
+
+| Name | Type | Default |
+| :--- | :--- | :--- |
+| `content` | `string` | `''` |
+| `placement` | `TooltipPlacement` | `'top'` |
+| `delay` | `number` | `300` |
+| `is-open` | `boolean` | `false` |
+
+## Events
+
+| Event Name | Description |
+| :--- | :--- |
+| `openchange` | Dispatched when element fires openchange |
+
