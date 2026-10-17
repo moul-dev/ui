@@ -1,25 +1,2 @@
-export type {
-  TableBodyProps,
-  TableCaptionProps,
-  TableCellProps,
-  TableEmptyProps,
-  TableFooterProps,
-  TableHeaderProps,
-  TableHeadProps,
-  TableProps,
-  TableRowProps,
-  TableSkeletonProps,
-} from './Table'
-
-export {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableEmpty,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
-  TableSkeleton,
-} from './Table'
+export type { TableColumn } from './Table'
+export { MoulTable, MoulTable as Table } from './Table'

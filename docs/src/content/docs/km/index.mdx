@@ -1,0 +1,39 @@
+---
+title: Moul UI
+description: បណ្ណាល័យ Web Components ដោយគ្មាន React បង្កើតឡើងដោយ Lit 3 និង OKLCH CSS Tokens
+template: splash
+hero:
+  tagline: រចនាឡើងសម្រាប់ភាពរលូន — Web Components បង្កើតឡើងដោយ Lit 3, OKLCH design tokens និង Native Browser APIs។
+  actions:
+    - text: ចាប់ផ្តើម
+      link: /km/docs
+      icon: right-arrow
+      variant: primary
+    - text: បន្ទប់ពិសោធន៍ Theme
+      link: /theme
+      icon: seti:css
+      variant: secondary
+    - text: GitHub
+      link: https://github.com/moul-dev/ui
+      icon: external
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+## គោលការណ៍រចនាសម្ព័ន្ធ
+
+<CardGrid stagger>
+  <Card title="គ្មាន React, ស្តង់ដារសុទ្ធ ១០០%" icon="open-book">
+    បង្កើតឡើងដោយ **Lit 3** និងស្តង់ដារ Web Components (`Shadow DOM`, `Custom Elements`) ដំណើរការលើគ្រប់ Framework ទាំងអស់។
+  </Card>
+  <Card title="Perceptual CSS Tokens" icon="pencil">
+    ដំណើរការដោយ `light-dark()` និង OKLCH color spaces អាចកែសម្រួល hue, chroma, radius, និង density ភ្លាមៗ។
+  </Card>
+  <Card title="Native Browser Primitives" icon="setting">
+    ប្រើប្រាស់ `<dialog>`, Popover API, CSS Anchor Positioning, និង `ElementInternals` ដោយផ្ទាល់។
+  </Card>
+  <Card title="គាំទ្រភាសាខ្មែរពេញលេញ" icon="translate">
+    រចនាឡើងជាមួយពុម្ពអក្សរ **Kantumruy Pro** សម្រាប់គម្លាតបន្ទាត់ និងជើងអក្សរខ្មែរយ៉ាងច្បាស់លាស់។
+  </Card>
+</CardGrid>

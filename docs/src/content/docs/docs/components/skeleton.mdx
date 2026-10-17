@@ -1,0 +1,43 @@
+---
+title: Skeleton
+description: Animated placeholder geometry indicating pending content loading.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+# Skeleton
+
+The `<moul-skeleton>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
+
+## Preview
+
+<ComponentPreview>
+  <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 260px;">
+  <moul-skeleton style="height: 20px; width: 100%;"></moul-skeleton>
+  <moul-skeleton style="height: 16px; width: 80%;"></moul-skeleton>
+  <moul-skeleton style="height: 16px; width: 60%;"></moul-skeleton>
+</div>
+</ComponentPreview>
+
+## Import
+
+```ts
+import '@moul-dev/ui';
+```
+
+## HTML Usage
+
+```html
+<moul-skeleton style="height: 20px; width: 100%;"></moul-skeleton>
+```
+
+## Attributes & Properties
+
+| Name | Type | Default |
+| :--- | :--- | :--- |
+| `shape` | `SkeletonShape` | `'line'` |
+| `variant` | `SkeletonVariant` | `'pulse'` |
+| `width` | `string` | `''` |
+| `height` | `string` | `''` |
+
+

@@ -1,236 +1,170 @@
-import * as stylex from '@stylexjs/stylex'
-import { tokens } from '../../tokens/tokens.stylex'
+import { css } from 'lit'
+import { resetStyles } from '../../styles/reset.styles'
 
-export const styles = stylex.create({
-  // ── Container styles ──────────────────────────────────────────────────
-  container: {
-    display: 'flex',
-    gap: tokens.spacing2,
-    color: tokens.colorFg,
-    maxWidth: '100%',
-  },
-  containerHorizontal: {
-    flexDirection: 'column',
-  },
-  containerVertical: {
-    flexDirection: 'row',
-    width: '100%',
-  },
+export const tabsStyles = [
+  resetStyles,
+  css`
+    :host {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+    }
 
-  // ── TabList styles ────────────────────────────────────────────────────
-  tabList: {
-    display: 'flex',
-    maxWidth: '100%',
-    padding: 0,
-    margin: 0,
-    listStyleType: 'none',
-  },
-  tabListHorizontal: {
-    flexDirection: 'row',
-    borderBlockEndWidth: '1px',
-    borderBlockEndStyle: 'solid',
-    borderBlockEndColor: tokens.colorBorder,
-    overflowX: 'auto',
-    overflowY: 'clip',
-    scrollbarWidth: 'none',
-    '::-webkit-scrollbar': {
-      display: 'none',
-    },
-  },
-  tabListVertical: {
-    flexDirection: 'column',
-    borderInlineEndWidth: '1px',
-    borderInlineEndStyle: 'solid',
-    borderInlineEndColor: tokens.colorBorder,
-  },
-  tabListTertiary: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    width: 'fit-content',
-    maxWidth: '100%',
-    backgroundColor: tokens.colorBgSubtle,
-    borderRadius: tokens.radiusMd,
-    padding: tokens.spacing1,
-    gap: tokens.spacing1,
-    borderBlockStartWidth: '1px',
-    borderBlockStartStyle: 'solid',
-    borderBlockStartColor: tokens.colorBorder,
-    borderBlockEndWidth: '1px',
-    borderBlockEndStyle: 'solid',
-    borderBlockEndColor: tokens.colorBorder,
-    borderInlineStartWidth: '1px',
-    borderInlineStartStyle: 'solid',
-    borderInlineStartColor: tokens.colorBorder,
-    borderInlineEndWidth: '1px',
-    borderInlineEndStyle: 'solid',
-    borderInlineEndColor: tokens.colorBorder,
-  },
+    :host([orientation="vertical"]) {
+      flex-direction: row;
+      gap: var(--spacing-4, 1rem);
+    }
 
-  // ── Tab styles ────────────────────────────────────────────────────────
-  tab: {
-    position: 'relative',
-    cursor: 'pointer',
-    outline: 'none',
-    userSelect: 'none',
-    color: tokens.colorFgSubtle,
-    paddingBlock: tokens.spacing2,
-    paddingInline: tokens.spacing3,
-    fontFamily: tokens.fontFamilyBase,
-    fontSize: tokens.fontSizeMd,
-    lineHeight: tokens.lineHeightMd,
-    fontWeight: tokens.fontWeightMedium,
-    backgroundColor: 'transparent',
-    borderStyle: 'none',
-    transitionProperty: 'color',
-    transitionDuration: '0.15s',
-    transitionTimingFunction: 'ease-in-out',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    isolation: 'isolate',
-    WebkitTapHighlightColor: 'transparent',
-    ':focus-visible': {
-      outlineStyle: 'solid',
-      outlineWidth: '2px',
-      outlineOffset: '-2px',
-      outlineColor: tokens.colorBorderFocus,
-    },
-    '@media (prefers-reduced-motion: reduce)': {
-      transitionProperty: 'none',
-    },
-  },
-  tabPrimary: {
-    ':hover': {
-      color: tokens.colorPrimary500,
-    },
-  },
-  tabSecondary: {
-    ':hover': {
-      color: tokens.colorFg,
-    },
-  },
-  tabTertiary: {
-    borderRadius: tokens.radiusSm,
-    paddingBlock: tokens.spacing1,
-    paddingInline: tokens.spacing3,
-    fontSize: tokens.fontSizeSm,
-    lineHeight: tokens.lineHeightSm,
-    ':hover': {
-      color: tokens.colorFg,
-    },
-  },
-  tabPrimarySelected: {
-    color: tokens.colorPrimary500,
-  },
-  tabSecondarySelected: {
-    color: tokens.colorFg,
-  },
-  tabTertiarySelected: {
-    color: tokens.colorFg,
-    fontWeight: tokens.fontWeightSemibold,
-  },
-  tabDisabled: {
-    opacity: 0.4,
-    cursor: 'not-allowed',
-    ':hover': {
-      color: tokens.colorFgSubtle,
-    },
-  },
+    [part="base"] {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+    }
 
-  // ── SelectionIndicator styles ──────────────────────────────────────────
-  selectionIndicator: {
-    position: 'absolute',
-    transitionProperty: 'translate, width, height',
-    transitionDuration: '0.2s',
-    transitionTimingFunction: 'ease-in-out',
-    borderRadius: tokens.radiusSm,
-    pointerEvents: 'none',
-    '@media (prefers-reduced-motion: reduce)': {
-      transitionProperty: 'none',
-    },
-  },
-  selectionIndicatorHorizontal: {
-    insetInlineStart: 0,
-    insetBlockEnd: 0,
-    width: '100%',
-    height: '3px',
-  },
-  selectionIndicatorVertical: {
-    insetBlockStart: 0,
-    insetInlineEnd: 0,
-    height: '100%',
-    width: '3px',
-  },
-  selectionIndicatorPrimary: {
-    backgroundColor: tokens.colorPrimary500,
-  },
-  selectionIndicatorSecondary: {
-    backgroundColor: tokens.colorFg,
-  },
-  selectionIndicatorTertiary: {
-    insetBlockStart: 0,
-    insetInlineStart: 0,
-    width: '100%',
-    height: '100%',
-    backgroundColor: tokens.colorBgElevated,
-    borderRadius: tokens.radiusSm,
-    boxShadow: tokens.shadowSm,
-    borderBlockStartWidth: '1px',
-    borderBlockStartStyle: 'solid',
-    borderBlockStartColor: tokens.colorBorderGlass,
-    borderBlockEndWidth: '1px',
-    borderBlockEndStyle: 'solid',
-    borderBlockEndColor: tokens.colorBorderGlass,
-    borderInlineStartWidth: '1px',
-    borderInlineStartStyle: 'solid',
-    borderInlineStartColor: tokens.colorBorderGlass,
-    borderInlineEndWidth: '1px',
-    borderInlineEndStyle: 'solid',
-    borderInlineEndColor: tokens.colorBorderGlass,
-    boxSizing: 'border-box',
-    zIndex: -1,
-    transitionProperty: 'translate, width, height',
-    transitionDuration: '0.25s',
-    transitionTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
-  },
+    :host([orientation="vertical"]) [part="base"] {
+      flex-direction: row;
+      gap: var(--spacing-4, 1rem);
+    }
 
-  // ── TabPanels styles ──────────────────────────────────────────────────
-  tabPanels: {
-    position: 'relative',
-    overflow: 'clip',
-  },
-  tabPanelsFlex: {
-    flex: 1,
-  },
+    [part="tablist"] {
+      display: flex;
+      flex-direction: row;
+      position: relative;
+      border-bottom: 1px solid var(--color-border, #e5e7eb);
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
 
-  // ── TabPanel styles ───────────────────────────────────────────────────
-  tabPanel: {
-    paddingBlock: tokens.spacing4,
-    paddingInline: tokens.spacing4,
-    color: tokens.colorFg,
-    outline: 'none',
-    boxSizing: 'border-box',
-    transitionProperty: 'opacity',
-    transitionDuration: '0.2s',
-    transitionTimingFunction: 'ease-in-out',
-    ':focus-visible': {
-      outlineStyle: 'solid',
-      outlineWidth: '2px',
-      outlineOffset: '2px',
-      outlineColor: tokens.colorBorderFocus,
-    },
-    '@media (prefers-reduced-motion: reduce)': {
-      transitionProperty: 'none',
-    },
-  },
-  tabPanelEntering: {
-    opacity: 0,
-  },
-  tabPanelExiting: {
-    opacity: 0,
-    position: 'absolute',
-    insetBlockStart: 0,
-    insetInlineStart: 0,
-    width: '100%',
-  },
-})
+    [part="tablist"]::-webkit-scrollbar {
+      display: none;
+    }
+
+    :host([orientation="vertical"]) [part="tablist"] {
+      flex-direction: column;
+      border-bottom: none;
+      border-right: 1px solid var(--color-border, #e5e7eb);
+    }
+
+    :host([variant="pill"]) [part="tablist"] {
+      background-color: var(--color-bg-subtle, #f3f4f6);
+      border-radius: var(--radius-full, 9999px);
+      padding: var(--spacing-1, 0.25rem);
+      border: none;
+      gap: var(--spacing-1, 0.25rem);
+      width: fit-content;
+    }
+
+    :host([variant="enclosed"]) [part="tablist"] {
+      border-bottom: 1px solid var(--color-border, #e5e7eb);
+      gap: var(--spacing-1, 0.25rem);
+    }
+
+    [part="indicator"] {
+      position: absolute;
+      bottom: 0;
+      height: 2px;
+      background-color: var(--color-primary-500, #4f46e5);
+      pointer-events: none;
+      border-radius: var(--radius-full, 9999px);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    :host([orientation="vertical"]) [part="indicator"] {
+      right: 0;
+      bottom: auto;
+      width: 2px;
+      height: 100%;
+    }
+
+    :host([variant="pill"]) [part="indicator"] {
+      inset: 0;
+      height: 100%;
+      background-color: var(--color-bg-elevated, #ffffff);
+      border-radius: var(--radius-full, 9999px);
+      box-shadow: var(--shadow-sm, 0 1px 2px 0 rgb(0 0 0 / 0.05));
+      z-index: 0;
+    }
+
+    [part="panels"] {
+      display: block;
+      width: 100%;
+      position: relative;
+    }
+  `,
+]
+
+export const tabStyles = [
+  resetStyles,
+  css`
+    :host {
+      display: inline-flex;
+      position: relative;
+      z-index: 1;
+    }
+
+    [part="base"] {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--spacing-2, 0.5rem) var(--spacing-4, 1rem);
+      font-family: inherit;
+      font-size: var(--font-size-sm, 0.875rem);
+      line-height: var(--line-height-sm, 1.25rem);
+      font-weight: 500;
+      color: var(--color-fg-subtle, #6b7280);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      user-select: none;
+      outline: none;
+      border-radius: var(--radius-md, 0.375rem);
+      transition: color 0.15s ease, background-color 0.15s ease;
+      white-space: nowrap;
+    }
+
+    [part="base"]:hover:not(:disabled) {
+      color: var(--color-fg, #111827);
+    }
+
+    :host([aria-selected="true"]) [part="base"],
+    :host([is-selected]) [part="base"] {
+      color: var(--color-primary-600, #4f46e5);
+      font-weight: 600;
+    }
+
+    :host([is-disabled]) [part="base"],
+    [part="base"]:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    [part="base"]:focus-visible {
+      outline: 2px solid var(--color-border-focus, #3b82f6);
+      outline-offset: -2px;
+      border-radius: var(--radius-sm, 0.25rem);
+    }
+  `,
+]
+
+export const tabPanelStyles = [
+  resetStyles,
+  css`
+    :host {
+      display: block;
+      padding: var(--spacing-4, 1rem) 0;
+      color: var(--color-fg, #111827);
+      outline: none;
+    }
+
+    :host([hidden]),
+    [hidden] {
+      display: none !important;
+    }
+
+    :host(:focus-visible) {
+      outline: 2px solid var(--color-border-focus, #3b82f6);
+      outline-offset: 2px;
+    }
+  `,
+]

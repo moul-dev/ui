@@ -1,2 +1,2 @@
-export type { SeparatorProps } from './Separator'
-export { Separator } from './Separator'
+export type { SeparatorOrientation } from './Separator'
+export { MoulSeparator, MoulSeparator as Separator } from './Separator'

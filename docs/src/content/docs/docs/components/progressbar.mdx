@@ -1,0 +1,45 @@
+---
+title: ProgressBar
+description: Visual progress indicator for task and operation completion.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+# ProgressBar
+
+The `<moul-progress-bar>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
+
+## Preview
+
+<ComponentPreview>
+  <div style="width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 0.75rem;">
+  <moul-progress-bar value="65" max="100"></moul-progress-bar>
+</div>
+</ComponentPreview>
+
+## Import
+
+```ts
+import '@moul-dev/ui';
+```
+
+## HTML Usage
+
+```html
+<moul-progress-bar value="50" max="100"></moul-progress-bar>
+```
+
+## Attributes & Properties
+
+| Name | Type | Default |
+| :--- | :--- | :--- |
+| `value` | `number` | `0` |
+| `min` | `number` | `0` |
+| `max` | `number` | `100` |
+| `tone` | `SemanticTone` | `'primary'` |
+| `variant` | `VisualVariant` | `'solid'` |
+| `size` | `ProgressBarSize` | `'md'` |
+| `shape` | `ProgressBarShape` | `'pill'` |
+| `is-indeterminate` | `boolean` | `false` |
+
+

@@ -1,0 +1,45 @@
+---
+title: ToggleButton (សមាសភាគ)
+description: ឯកសារណែនាំសម្រាប់សមាសភាគ ToggleButton Web Component
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+# ToggleButton (សមាសភាគ)
+
+The `<moul-toggle-button>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
+
+## Preview
+
+<ComponentPreview>
+  <moul-toggle-button pressed>Pin to Top</moul-toggle-button>
+</ComponentPreview>
+
+## Import
+
+```ts
+import '@moul-dev/ui';
+```
+
+## HTML Usage
+
+```html
+<moul-toggle-button pressed>Bookmark</moul-toggle-button>
+```
+
+## Attributes & Properties
+
+| Name | Type | Default |
+| :--- | :--- | :--- |
+| `value` | `string` | `''` |
+| `is-selected` | `boolean` | `false` |
+| `size` | `ToggleButtonSize` | `'md'` |
+| `is-disabled` | `boolean` | `false` |
+
+## Events
+
+| Event Name | Description |
+| :--- | :--- |
+| `change` | Dispatched when element fires change |
+| `press` | Dispatched when element fires press |
+

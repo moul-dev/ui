@@ -1,240 +1,182 @@
-import * as stylex from '@stylexjs/stylex'
-import { tokens } from '../../tokens/tokens.stylex'
+import { css } from 'lit'
+import { resetStyles } from '../../styles/reset.styles'
 
-export const styles = stylex.create({
-  container: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: tokens.spacing1,
-    width: '100%',
-  },
-  group: {
-    display: 'flex',
-    alignItems: 'stretch',
-    borderWidth: '1px',
-    borderStyle: 'solid',
-    borderColor: tokens.colorBorder,
-    backgroundColor: tokens.colorBg,
-    boxShadow: tokens.shadowSm,
-    overflow: 'hidden',
-    outline: 'none',
-    transitionProperty: 'border-color, box-shadow',
-    transitionDuration: '0.15s',
-    transitionTimingFunction: 'ease-in-out',
-    '@media (prefers-reduced-motion: reduce)': {
-      transitionProperty: 'none',
-    },
-  },
-  groupSm: {
-    height: `calc(${tokens.spacing1} * 2 + ${tokens.lineHeightXs})`,
-    borderRadius: tokens.radiusSm,
-  },
-  groupMd: {
-    height: `calc(${tokens.spacing2} * 2 + ${tokens.lineHeightSm})`,
-    borderRadius: tokens.radiusMd,
-  },
-  groupLg: {
-    height: `calc(${tokens.spacing2} * 2 + ${tokens.lineHeightMd})`,
-    borderRadius: tokens.radiusMd,
-  },
-  primary: {
-    backgroundColor: tokens.colorBg,
-    borderColor: tokens.colorBorder,
-  },
-  secondary: {
-    backgroundColor: tokens.colorBgSubtle,
-    borderColor: tokens.colorBorderSubtle,
-  },
+export const comboBoxStyles = [
+  resetStyles,
+  css`
+    :host {
+      display: block;
+      width: 100%;
+      font-family: var(--font-family-base, inherit);
+      color: var(--color-fg, inherit);
+      position: relative;
+    }
 
-  groupHover: {
-    borderColor: tokens.colorNeutral400,
-  },
-  groupFocused: {
-    borderColor: {
-      default: tokens.colorBorderFocus,
-      ':hover': tokens.colorBorderFocus,
-    },
-    boxShadow: `0 0 0 1px ${tokens.colorBorderFocus}`,
-    outline: 'none',
-  },
-  groupInvalid: {
-    borderColor: tokens.colorError500,
-  },
-  groupFocusedInvalid: {
-    borderColor: {
-      default: tokens.colorError500,
-      ':hover': tokens.colorError500,
-    },
-    boxShadow: `0 0 0 1px ${tokens.colorError500}`,
-    outline: 'none',
-  },
-  groupDisabled: {
-    opacity: 0.4,
-    backgroundColor: tokens.colorBgSubtle,
-    cursor: 'not-allowed',
-    ':hover': {
-      borderColor: tokens.colorBorder,
-    },
-  },
-  input: {
-    flexGrow: 1,
-    width: '100%',
-    borderStyle: 'none',
-    backgroundColor: 'transparent',
-    color: tokens.colorFg,
-    fontFamily: tokens.fontFamilyBase,
-    outline: 'none',
-  },
-  inputSm: {
-    paddingBlock: 0,
-    paddingInlineStart: tokens.spacing2,
-    paddingInlineEnd: tokens.spacing1,
-    fontSize: tokens.fontSizeXs,
-    lineHeight: tokens.lineHeightXs,
-  },
-  inputMd: {
-    paddingBlock: 0,
-    paddingInlineStart: tokens.spacing3,
-    paddingInlineEnd: tokens.spacing1,
-    fontSize: tokens.fontSizeSm,
-    lineHeight: tokens.lineHeightSm,
-  },
-  inputLg: {
-    paddingBlock: 0,
-    paddingInlineStart: tokens.spacing4,
-    paddingInlineEnd: tokens.spacing1,
-    fontSize: tokens.fontSizeMd,
-    lineHeight: tokens.lineHeightMd,
-  },
-  trigger: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderStyle: 'none',
-    backgroundColor: 'transparent',
-    color: tokens.colorFgSubtle,
-    cursor: 'pointer',
-    transitionProperty: 'background-color, color',
-    transitionDuration: '0.1s',
-    transitionTimingFunction: 'ease-in-out',
-    ':hover': {
-      backgroundColor: tokens.colorBgSubtle,
-      color: tokens.colorFg,
-    },
-    ':active': {
-      backgroundColor: tokens.colorBorderSubtle,
-    },
-  },
-  triggerSm: {
-    paddingInline: tokens.spacing2,
-  },
-  triggerMd: {
-    paddingInline: tokens.spacing3,
-  },
-  triggerLg: {
-    paddingInline: tokens.spacing4,
-  },
-  triggerDisabled: {
-    cursor: 'not-allowed',
-    opacity: 0.5,
-    ':hover': {
-      backgroundColor: 'transparent',
-      color: tokens.colorFgSubtle,
-    },
-  },
-  chevron: {
-    width: tokens.spacing3,
-    height: tokens.spacing3,
-    color: 'currentColor',
-  },
-  popover: {
-    borderWidth: '1px',
-    borderStyle: 'solid',
-    borderColor: tokens.colorBorder,
-    backgroundColor: tokens.colorBgElevated,
-    boxShadow: tokens.shadowMd,
-    zIndex: tokens.zIndexDropdown,
-    minWidth: 'var(--trigger-width)',
-    maxHeight: '300px',
-    overflowY: 'auto',
-  },
-  popoverSm: {
-    borderRadius: tokens.radiusSm,
-  },
-  popoverMd: {
-    borderRadius: tokens.radiusMd,
-  },
-  popoverLg: {
-    borderRadius: tokens.radiusMd,
-  },
-  listbox: {
-    padding: tokens.spacing1,
-    outline: 'none',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '2px',
-  },
-  item: {
-    display: 'flex',
-    alignItems: 'center',
-    color: tokens.colorFg,
-    cursor: 'pointer',
-    outline: 'none',
-    userSelect: 'none',
-    backgroundColor: 'transparent',
-    transitionProperty: 'background-color, color',
-    transitionDuration: '0.1s',
-    transitionTimingFunction: 'ease-in-out',
-  },
-  itemSm: {
-    paddingBlock: tokens.spacing1,
-    paddingInline: tokens.spacing2,
-    borderRadius: `calc(${tokens.radiusSm} - ${tokens.spacing1})`,
-    fontSize: tokens.fontSizeXs,
-    lineHeight: tokens.lineHeightXs,
-  },
-  itemMd: {
-    paddingBlock: tokens.spacing2,
-    paddingInline: tokens.spacing3,
-    borderRadius: `calc(${tokens.radiusMd} - ${tokens.spacing1})`,
-    fontSize: tokens.fontSizeSm,
-    lineHeight: tokens.lineHeightSm,
-  },
-  itemLg: {
-    paddingBlock: tokens.spacing2,
-    paddingInline: tokens.spacing4,
-    borderRadius: `calc(${tokens.radiusMd} - ${tokens.spacing1})`,
-    fontSize: tokens.fontSizeMd,
-    lineHeight: tokens.lineHeightMd,
-  },
-  itemHovered: {
-    backgroundColor: tokens.colorBgSubtle,
-  },
-  itemFocused: {
-    backgroundColor: tokens.colorBgSubtle,
-  },
-  itemSelected: {
-    backgroundColor: tokens.colorPrimary50,
-    color: tokens.colorPrimary700,
-    fontWeight: tokens.fontWeightMedium,
-  },
-  itemDisabled: {
-    opacity: 0.4,
-    cursor: 'not-allowed',
-  },
-  section: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '2px',
-    paddingBlock: tokens.spacing1,
-  },
-  sectionHeader: {
-    fontSize: tokens.fontSizeXs,
-    fontWeight: tokens.fontWeightBold,
-    color: tokens.colorFgSubtle,
-    paddingBlock: tokens.spacing1,
-    paddingInline: tokens.spacing3,
-    textTransform: 'uppercase',
-    letterSpacing: '0.05em',
-  },
-})
+    :host([hidden]) {
+      display: none !important;
+    }
+
+    [part='base'] {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-1, 0.25rem);
+      width: 100%;
+    }
+
+    [part='label'] {
+      display: block;
+      font-size: var(--font-size-sm, 0.875rem);
+      font-weight: 500;
+      color: var(--color-fg, inherit);
+    }
+
+    [part='input-container'] {
+      display: flex;
+      align-items: center;
+      position: relative;
+      width: 100%;
+      border: 1px solid var(--color-border, #d1d5db);
+      border-radius: var(--radius-md, 0.375rem);
+      background-color: var(--color-bg, #ffffff);
+      color: var(--color-fg, inherit);
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+      box-shadow: var(--shadow-sm, 0 1px 2px 0 rgba(0, 0, 0, 0.05));
+    }
+
+    [part='input-container']:hover:not([data-disabled='true']) {
+      border-color: var(--color-neutral-400, #9ca3af);
+    }
+
+    [part='input-container']:focus-within:not([data-disabled='true']) {
+      border-color: var(--color-border-focus, #3b82f6);
+      outline: 2px solid var(--color-border-focus, #3b82f6);
+      outline-offset: 1px;
+    }
+
+    :host([is-invalid]) [part='input-container'],
+    [part='input-container'][data-invalid='true'] {
+      border-color: var(--color-error-500, #ef4444);
+    }
+
+    [part='input'] {
+      flex: 1;
+      width: 100%;
+      min-width: 0;
+      border: none;
+      outline: none;
+      background: transparent;
+      color: inherit;
+      font-family: inherit;
+      font-size: var(--font-size-sm, 0.875rem);
+      line-height: var(--line-height-sm, 1.25rem);
+      padding: var(--spacing-2, 0.5rem) var(--spacing-3, 0.75rem);
+    }
+
+    [part='input']::placeholder {
+      color: var(--color-fg-subtle, #9ca3af);
+    }
+
+    [part='toggle-btn'] {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      background: transparent;
+      color: var(--color-fg-subtle, #9ca3af);
+      cursor: pointer;
+      padding-inline: var(--spacing-2, 0.5rem);
+      height: 100%;
+      transition: transform 0.2s ease, color 0.1s ease;
+    }
+
+    [part='toggle-btn']:hover {
+      color: var(--color-fg, inherit);
+    }
+
+    :host([is-open]) [part='toggle-btn'] {
+      transform: rotate(180deg);
+    }
+
+    [part='popover'] {
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      width: 100%;
+      min-width: 8rem;
+      max-height: 16rem;
+      overflow-y: auto;
+      border: 1px solid var(--color-border, #d1d5db);
+      border-radius: var(--radius-md, 0.375rem);
+      background-color: var(--color-bg-elevated, #ffffff);
+      box-shadow: var(--shadow-md, 0 4px 6px -1px rgba(0, 0, 0, 0.1));
+      z-index: var(--z-dropdown, 1000);
+      padding: var(--spacing-1, 0.25rem);
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      outline: none;
+    }
+
+    [part='popover'][hidden] {
+      display: none !important;
+    }
+
+    [part='empty'] {
+      padding: var(--spacing-2, 0.5rem) var(--spacing-3, 0.75rem);
+      font-size: var(--font-size-sm, 0.875rem);
+      color: var(--color-fg-subtle, #9ca3af);
+      text-align: center;
+    }
+
+    :host([is-disabled]) {
+      opacity: 0.45;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+  `,
+]
+
+export const comboBoxItemStyles = [
+  resetStyles,
+  css`
+    :host {
+      display: block;
+      font-family: var(--font-family-base, inherit);
+      color: var(--color-fg, inherit);
+      user-select: none;
+    }
+
+    :host([hidden]) {
+      display: none !important;
+    }
+
+    [part='item'] {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--spacing-2, 0.5rem) var(--spacing-3, 0.75rem);
+      border-radius: var(--radius-sm, 0.25rem);
+      cursor: pointer;
+      font-size: var(--font-size-sm, 0.875rem);
+      line-height: var(--line-height-sm, 1.25rem);
+      transition: background-color 0.1s ease, color 0.1s ease;
+    }
+
+    [part='item']:hover:not([data-disabled='true']),
+    :host([is-active]) [part='item'] {
+      background-color: var(--color-bg-subtle, #f3f4f6);
+    }
+
+    :host([aria-selected='true']) [part='item'] {
+      background-color: var(--color-primary-50, #eff6ff);
+      color: var(--color-primary-700, #1d4ed8);
+      font-weight: 500;
+    }
+
+    :host([is-disabled]) {
+      opacity: 0.4;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+  `,
+]

@@ -1,0 +1,50 @@
+---
+title: Button
+description: Interactive button with multiple visual variants, sizes, and states.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+# Button
+
+The `<moul-button>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
+
+## Preview
+
+<ComponentPreview>
+  <moul-button variant="primary">Primary</moul-button>
+<moul-button variant="secondary">Secondary</moul-button>
+<moul-button variant="outline">Outline</moul-button>
+<moul-button variant="ghost">Ghost</moul-button>
+<moul-button variant="danger">Danger</moul-button>
+</ComponentPreview>
+
+## Import
+
+```ts
+import '@moul-dev/ui';
+```
+
+## HTML Usage
+
+```html
+<moul-button variant="primary">Click Me</moul-button>
+```
+
+## Attributes & Properties
+
+| Name | Type | Default |
+| :--- | :--- | :--- |
+| `variant` | `ButtonVariant` | `'primary'` |
+| `size` | `ButtonSize` | `'md'` |
+| `type` | `ButtonType` | `'button'` |
+| `is-icon` | `boolean` | `false` |
+| `is-disabled` | `boolean` | `false` |
+| `is-pending` | `boolean` | `false` |
+
+## Events
+
+| Event Name | Description |
+| :--- | :--- |
+| `press` | Dispatched when element fires press |
+

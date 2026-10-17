@@ -1,0 +1,37 @@
+---
+title: ListBox (សមាសភាគ)
+description: ឯកសារណែនាំសម្រាប់សមាសភាគ ListBox Web Component
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+# ListBox (សមាសភាគ)
+
+The `<moul-list-box>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
+
+## Preview
+
+<ComponentPreview>
+  <moul-list-box style="width: 260px;">
+  <moul-list-box-item value="production" selected>Production</moul-list-box-item>
+  <moul-list-box-item value="staging">Staging</moul-list-box-item>
+  <moul-list-box-item value="preview">Preview</moul-list-box-item>
+</moul-list-box>
+</ComponentPreview>
+
+## Import
+
+```ts
+import '@moul-dev/ui';
+```
+
+## HTML Usage
+
+```html
+<moul-list-box>
+  <moul-list-box-item value="1">Item 1</moul-list-box-item>
+</moul-list-box>
+```
+
+
+

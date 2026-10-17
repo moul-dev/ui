@@ -1,234 +1,97 @@
-/* eslint-disable @stylexjs/valid-styles */
-import * as stylex from '@stylexjs/stylex'
-import { tokens } from '../../tokens/tokens.stylex'
+import { css } from 'lit'
+import { resetStyles } from '../../styles/reset.styles'
 
-export const styles = stylex.create({
-  base: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: tokens.spacing2,
-    fontWeight: tokens.fontWeightMedium,
-    cursor: 'pointer',
-    boxSizing: 'border-box',
-    transitionProperty: 'background-color, border-color, color, transform',
-    transitionDuration: '0.15s',
-    transitionTimingFunction: 'ease-in-out',
-    ':active': {
-      transform: {
-        default: 'scale(0.98)',
-        '@media (prefers-reduced-motion: reduce)': 'none',
-      },
-    },
-    ':focus-visible': {
-      outlineStyle: 'solid',
-      outlineWidth: '2px',
-      outlineOffset: '2px',
-      outlineColor: tokens.colorBorderFocus,
-    },
-    '@media (prefers-reduced-motion: reduce)': {
-      transitionProperty: 'none',
-    },
-  },
-  sm: {
-    height: `calc(${tokens.spacing1} * 2 + ${tokens.lineHeightXs})`,
-    paddingBlock: 0,
-    paddingInline: tokens.spacing2,
-    borderRadius: tokens.radiusSm,
-    fontSize: tokens.fontSizeXs,
-    lineHeight: tokens.lineHeightXs,
-  },
-  md: {
-    height: `calc(${tokens.spacing2} * 2 + ${tokens.lineHeightSm})`,
-    paddingBlock: 0,
-    paddingInline: tokens.spacing3,
-    borderRadius: tokens.radiusMd,
-    fontSize: tokens.fontSizeSm,
-    lineHeight: tokens.lineHeightSm,
-  },
-  lg: {
-    height: `calc(${tokens.spacing2} * 2 + ${tokens.lineHeightMd})`,
-    paddingBlock: 0,
-    paddingInline: tokens.spacing4,
-    borderRadius: tokens.radiusMd,
-    fontSize: tokens.fontSizeMd,
-    lineHeight: tokens.lineHeightMd,
-  },
-  primary: {
-    backgroundColor: tokens.colorBg,
-    color: tokens.colorFg,
-    borderStyle: 'solid',
-    borderWidth: '1px',
-    borderColor: tokens.colorBorder,
-    boxShadow: 'none',
-    ':hover': {
-      backgroundColor: tokens.colorNeutral50,
-      borderColor: tokens.colorNeutral400,
-    },
-    ':active': {
-      backgroundColor: tokens.colorNeutral100,
-    },
-  },
-  primarySelected: {
-    backgroundColor: tokens.colorFg,
-    color: tokens.colorBg,
-    borderStyle: 'solid',
-    borderWidth: '1px',
-    borderColor: tokens.colorFg,
-    ':hover': {
-      backgroundColor: tokens.colorNeutral800,
-      borderColor: tokens.colorNeutral800,
-    },
-    ':active': {
-      backgroundColor: tokens.colorNeutral700,
-      borderColor: tokens.colorNeutral700,
-    },
-  },
-  secondary: {
-    backgroundColor: 'transparent',
-    color: tokens.colorFg,
-    borderStyle: 'none',
-    boxShadow: 'none',
-    ':hover': {
-      backgroundColor: tokens.colorNeutral100,
-    },
-    ':active': {
-      backgroundColor: tokens.colorNeutral200,
-    },
-  },
-  secondarySelected: {
-    backgroundColor: tokens.colorNeutral200,
-    color: tokens.colorFg,
-    borderStyle: 'none',
-    ':hover': {
-      backgroundColor: tokens.colorNeutral300,
-    },
-    ':active': {
-      backgroundColor: tokens.colorNeutral400,
-    },
-  },
-  isDisabled: {
-    opacity: 0.4,
-    cursor: 'not-allowed',
-    boxShadow: 'none',
-    pointerEvents: 'none',
-  },
-  groupItem: {
-    position: 'relative',
-    zIndex: 1,
-  },
-  groupItemActive: {
-    zIndex: 2,
-  },
-  groupItemDisabled: {
-    zIndex: 0,
-  },
-  groupHorizontal: {
-    borderRadius: 0,
-    marginInlineStart: '-1px',
-    ':first-child': {
-      borderTopLeftRadius: tokens.radiusMd,
-      borderBottomLeftRadius: tokens.radiusMd,
-      marginInlineStart: 0,
-    },
-    ':last-child': {
-      borderTopRightRadius: tokens.radiusMd,
-      borderBottomRightRadius: tokens.radiusMd,
-    },
-  },
-  groupVertical: {
-    borderRadius: 0,
-    marginBlockStart: '-1px',
-    ':first-child': {
-      borderTopLeftRadius: tokens.radiusMd,
-      borderTopRightRadius: tokens.radiusMd,
-      marginBlockStart: 0,
-    },
-    ':last-child': {
-      borderBottomLeftRadius: tokens.radiusMd,
-      borderBottomRightRadius: tokens.radiusMd,
-    },
-  },
-  animatedItem: {
-    backgroundColor: 'transparent',
-    borderStyle: 'none',
-    boxShadow: 'none',
-    color: tokens.colorFgSubtle,
-    transitionProperty: 'color',
-    ':hover': {
-      backgroundColor: 'transparent',
-      color: tokens.colorFg,
-    },
-    ':active': {
-      transform: 'none',
-    },
-  },
-  animatedItemSm: {
-    borderRadius: `calc(${tokens.radiusSm} - 3px)`,
-  },
-  animatedItemMd: {
-    borderRadius: `calc(${tokens.radiusMd} - 3px)`,
-  },
-  animatedItemLg: {
-    borderRadius: `calc(${tokens.radiusMd} - 3px)`,
-  },
-  animatedItemSelectedPrimary: {
-    color: tokens.colorFg,
-    backgroundColor: 'transparent',
-    ':hover': {
-      backgroundColor: 'transparent',
-      color: tokens.colorFg,
-    },
-  },
-  animatedItemSelectedSecondary: {
-    color: tokens.colorFg,
-    backgroundColor: 'transparent',
-    ':hover': {
-      backgroundColor: 'transparent',
-      color: tokens.colorFg,
-    },
-  },
-  selectionIndicator: {
-    position: 'absolute',
-    inset: 0,
-    zIndex: -1,
-    transitionProperty: 'translate, width, height',
-    transitionDuration: '0.2s',
-    transitionTimingFunction: 'ease-in-out',
-    pointerEvents: 'none',
-    '@media (prefers-reduced-motion: reduce)': {
-      transitionProperty: 'none',
-    },
-  },
-  selectionIndicatorSm: {
-    borderRadius: `calc(${tokens.radiusSm} - 3px)`,
-  },
-  selectionIndicatorMd: {
-    borderRadius: `calc(${tokens.radiusMd} - 3px)`,
-  },
-  selectionIndicatorLg: {
-    borderRadius: `calc(${tokens.radiusMd} - 3px)`,
-  },
-  selectionIndicatorPrimary: {
-    backgroundColor: tokens.colorBg,
-    boxShadow: tokens.shadowSm,
-  },
-  selectionIndicatorSecondary: {
-    backgroundColor: tokens.colorNeutral200,
-  },
-  iconSm: {
-    width: `calc(${tokens.spacing1} * 2 + ${tokens.lineHeightXs})`,
-    paddingInline: 0,
-    paddingBlock: 0,
-  },
-  iconMd: {
-    width: `calc(${tokens.spacing2} * 2 + ${tokens.lineHeightSm})`,
-    paddingInline: 0,
-    paddingBlock: 0,
-  },
-  iconLg: {
-    width: `calc(${tokens.spacing2} * 2 + ${tokens.lineHeightMd})`,
-    paddingInline: 0,
-    paddingBlock: 0,
-  },
-})
+export const toggleButtonStyles = [
+  resetStyles,
+  css`
+    :host {
+      display: inline-flex;
+      vertical-align: middle;
+      position: relative;
+      font-family: var(--font-family-base, inherit);
+      border-radius: var(--radius-md, 0.5rem);
+      user-select: none;
+      -webkit-user-select: none;
+      cursor: pointer;
+    }
+
+    [part="button"] {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box;
+      border-radius: inherit;
+      font-family: inherit;
+      font-weight: var(--font-weight-medium, 500);
+      line-height: 1;
+      text-decoration: none;
+      cursor: pointer;
+      position: relative;
+      white-space: nowrap;
+      transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+      background-color: transparent;
+      color: var(--color-fg, oklch(0.15 0.01 250));
+      border: 1px solid var(--color-border, oklch(0.85 0.01 250));
+    }
+
+    :host(:not([is-selected]):not([is-disabled])) [part="button"]:hover {
+      background-color: var(--color-bg-subtle, oklch(0.96 0.005 250));
+      border-color: var(--color-border-subtle, oklch(0.75 0.01 250));
+    }
+
+    /* Selected state */
+    :host([is-selected]) [part="button"] {
+      background-color: var(--color-primary-600, oklch(0.55 0.22 250));
+      color: var(--color-fg-on-primary, #ffffff);
+      border-color: var(--color-primary-600, oklch(0.55 0.22 250));
+    }
+
+    :host([is-selected]:not([is-disabled])) [part="button"]:hover {
+      background-color: var(--color-primary-700, oklch(0.48 0.22 250));
+      border-color: var(--color-primary-700, oklch(0.48 0.22 250));
+    }
+
+    /* Sizes */
+    :host([size="sm"]) [part="button"] {
+      height: 2rem;
+      padding: 0 var(--spacing-3, 0.75rem);
+      font-size: var(--font-size-sm, 0.875rem);
+      gap: var(--spacing-1, 0.25rem);
+    }
+
+    :host([size="md"]) [part="button"],
+    :host(:not([size])) [part="button"] {
+      height: 2.5rem;
+      padding: 0 var(--spacing-4, 1rem);
+      font-size: var(--font-size-md, 1rem);
+      gap: var(--spacing-2, 0.5rem);
+    }
+
+    :host([size="lg"]) [part="button"] {
+      height: 3rem;
+      padding: 0 var(--spacing-6, 1.5rem);
+      font-size: var(--font-size-lg, 1.125rem);
+      gap: var(--spacing-3, 0.75rem);
+    }
+
+    /* Disabled State */
+    :host([is-disabled]) {
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    :host([is-disabled]) [part="button"] {
+      opacity: 0.5;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    .content {
+      display: inline-flex;
+      align-items: center;
+      gap: inherit;
+    }
+  `,
+]

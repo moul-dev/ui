@@ -1,0 +1,18 @@
+---
+interface Props {
+  title?: string
+  align?: 'center' | 'start' | 'stretch'
+}
+const { title, align = 'center' } = Astro.props
+---
+
+<section class="moul-preview" data-align={align}>
+  {title && <header class="moul-preview-header">{title}</header>}
+  <div class="moul-preview-canvas">
+    <slot />
+  </div>
+</section>
+
+<script>
+  import '@moul-dev/ui'
+</script>

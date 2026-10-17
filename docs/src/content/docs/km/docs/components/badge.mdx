@@ -1,0 +1,44 @@
+---
+title: Badge (សមាសភាគ)
+description: ឯកសារណែនាំសម្រាប់សមាសភាគ Badge Web Component
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+# Badge (សមាសភាគ)
+
+The `<moul-badge>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
+
+## Preview
+
+<ComponentPreview>
+  <moul-badge variant="primary">Primary</moul-badge>
+<moul-badge variant="secondary">Secondary</moul-badge>
+<moul-badge variant="success">Completed</moul-badge>
+<moul-badge variant="warning">Pending</moul-badge>
+<moul-badge variant="danger">Failed</moul-badge>
+<moul-badge variant="outline">Outline</moul-badge>
+</ComponentPreview>
+
+## Import
+
+```ts
+import '@moul-dev/ui';
+```
+
+## HTML Usage
+
+```html
+<moul-badge variant="success">Active</moul-badge>
+```
+
+## Attributes & Properties
+
+| Name | Type | Default |
+| :--- | :--- | :--- |
+| `tone` | `SemanticTone` | `'primary'` |
+| `variant` | `VisualVariant` | `'flat'` |
+| `size` | `BadgeSize` | `'md'` |
+| `is-dot` | `boolean` | `false` |
+
+

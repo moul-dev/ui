@@ -1,6 +1,6 @@
 import type { LogItem, LogLevel } from './Logs.types'
 
-const LEVEL_MAP: Record<string, LogLevel> = {
+const LEVEL_MAP: Record<string, LogLevel> = Object.assign(Object.create(null), {
   trace: 'trace',
   trac: 'trace',
   debug: 'debug',
@@ -17,15 +17,49 @@ const LEVEL_MAP: Record<string, LogLevel> = {
   panic: 'fatal',
   crit: 'fatal',
   critical: 'fatal',
+})
+
+const NUMERIC_LEVEL_MAP: Record<number, LogLevel> = {
+  10: 'trace',
+  20: 'debug',
+  30: 'info',
+  40: 'warn',
+  50: 'error',
+  60: 'fatal',
 }
 
 /**
- * Normalizes any log level string into standard LogLevel.
+ * Normalizes any log level string or numeric level into standard LogLevel.
  */
-export function normalizeLogLevel(levelStr?: string): LogLevel {
+export function normalizeLogLevel(levelInput?: unknown): LogLevel {
+  if (levelInput === undefined || levelInput === null) return 'info'
+
+  if (typeof levelInput === 'number') {
+    return Object.hasOwn(NUMERIC_LEVEL_MAP, levelInput)
+      ? NUMERIC_LEVEL_MAP[levelInput]
+      : 'info'
+  }
+
+  const levelStr = String(levelInput).trim()
   if (!levelStr) return 'info'
+
+  if (/^\d+$/.test(levelStr)) {
+    const num = Number(levelStr)
+    if (Object.hasOwn(NUMERIC_LEVEL_MAP, num)) {
+      return NUMERIC_LEVEL_MAP[num]
+    }
+    return 'info'
+  }
+
   const cleaned = levelStr.toLowerCase().replace(/[^a-z]/g, '')
-  return LEVEL_MAP[cleaned] || 'info'
+  if (!cleaned) return 'info'
+
+  if (Object.hasOwn(LEVEL_MAP, cleaned)) {
+    const matched = LEVEL_MAP[cleaned]
+    if (typeof matched === 'string') return matched
+  }
+
+  return 'info'
 }
 
 /**
@@ -34,11 +68,13 @@ export function normalizeLogLevel(levelStr?: string): LogLevel {
 export function parseAttributes(
   text: string,
 ): Record<string, string | number | boolean | null> {
+  if (!text?.includes('=')) return {}
+
   const attributes: Record<string, string | number | boolean | null> = {}
 
-  // Regex matching key="val", key='val', or key=val (without spaces unless quoted)
+  // Regex matching key="val", key='val', or key=val (with leading boundary prefix)
   const regex =
-    /([a-zA-Z0-9_.-]+)=(?:"((?:\\"|[^"])*)"|'((?:\\'|[^'])*)'|([^\s]+))/g
+    /(?:^|\s+)([a-zA-Z0-9_.-]+)=(?:"((?:\\"|[^"])*)"|'((?:\\'|[^'])*)'|([^\s]+))/g
   let match: RegExpExecArray | null = regex.exec(text)
 
   while (match !== null) {
@@ -60,7 +96,12 @@ export function parseAttributes(
       value = Number(value)
     }
 
-    attributes[key] = value
+    Object.defineProperty(attributes, key, {
+      value,
+      enumerable: true,
+      writable: true,
+      configurable: true,
+    })
     match = regex.exec(text)
   }
 
@@ -71,7 +112,10 @@ export function parseAttributes(
  * Strips key=value pairs from the string to obtain the clean base message.
  */
 export function stripAttributes(text: string): string {
-  const regex = /\s+[a-zA-Z0-9_.-]+=(?:"(?:\\"|[^"])*"|'(?:\\'|[^'])*'|[^\s]+)/g
+  if (!text) return ''
+  if (!text.includes('=')) return text.trim()
+  const regex =
+    /(?:^|\s+)[a-zA-Z0-9_.-]+=(?:"(?:\\"|[^"])*"|'(?:\\'|[^'])*'|[^\s]+)/g
   return text.replace(regex, '').trim()
 }
 
@@ -117,7 +161,7 @@ export function parseLogLine(rawLine: string, index = 0): LogItem {
         lvl: _lvl,
         time: _t,
         timestamp: _ts,
-        ['@timestamp']: _ats,
+        '@timestamp': _ats,
         date: _d,
         msg: _m,
         message: _msg,
@@ -192,17 +236,24 @@ export function parseLogs(input?: string | (LogItem | string)[]): LogItem[] {
   }
 
   if (Array.isArray(input)) {
-    return input.map((item, idx) => {
-      if (typeof item === 'string') {
-        return parseLogLine(item, idx)
-      }
-      return {
-        ...item,
-        id: item.id ?? `log-${idx}`,
-        lineNumber: item.lineNumber ?? idx + 1,
-        level: normalizeLogLevel(item.level),
-      }
-    })
+    return input
+      .filter(
+        (item): item is LogItem | string => item !== null && item !== undefined,
+      )
+      .map((item, idx) => {
+        if (typeof item === 'string') {
+          return parseLogLine(item, idx)
+        }
+        if (typeof item === 'object') {
+          return {
+            ...item,
+            id: item.id ?? `log-${idx}`,
+            lineNumber: item.lineNumber ?? idx + 1,
+            level: normalizeLogLevel(item.level),
+          }
+        }
+        return parseLogLine(String(item), idx)
+      })
   }
 
   return []

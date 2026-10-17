@@ -1,0 +1,75 @@
+---
+title: សេចក្តីផ្តើម (Introduction)
+description: ស្វែងយល់ពី Moul UI។ បណ្ណាល័យ Web Components ដោយគ្មាន React បង្កើតឡើងដោយ Lit 3 និង OKLCH CSS Tokens
+---
+
+import { Card, CardGrid, Tabs, TabItem, Steps } from '@astrojs/starlight/components';
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+Moul UI គឺជាបណ្ណាល័យ Web Components ទំនើបដែលផ្អែកលើស្តង់ដារវេប សម្រាប់វិស្វករកម្មវិធីដែលចង់បានសមាសភាគ UI ប្រកបដោយភាពងាយស្រួលប្រើប្រាស់ (Accessibility) និងដំណើរការលឿន។
+
+បង្កើតឡើងលើ **Lit 3**, **Shadow DOM**, និង **CSS Design Token Layer (`light-dark()` + `oklch()`)**។
+
+---
+
+## ហេតុអ្វីជ្រើសរើស Web Components?
+
+<CardGrid>
+  <Card title="មិនអាស្រ័យលើ Framework" icon="puzzle">
+    អាចប្រើប្រាស់បានជាមួយ Astro, Next.js, Remix, Svelte, Vue ឬ HTML ធម្មតា។
+  </Card>
+  <Card title="គ្មានបន្ទុក React Runtime" icon="rocket">
+    ប្រើប្រាស់ Shadow DOM ដែលជួយការពារកុំឱ្យ styles ជាន់គ្នាជាមួយកម្មវិធីរបស់អ្នក។
+  </Card>
+  <Card title="ស្តង់ដារ Browser សុទ្ធ" icon="laptop">
+    ដំណើរការដោយ native primitives រួមមាន `<dialog>`, Popover API, CSS Anchor Positioning, និង `ElementInternals`។
+  </Card>
+</CardGrid>
+
+---
+
+## ការដំឡើង (Installation)
+
+<Steps>
+1. ### ដំឡើងកញ្ចប់កូដ
+
+   <Tabs>
+     <TabItem label="bun">
+       ```bash
+       bun add @moul-dev/ui
+       ```
+     </TabItem>
+     <TabItem label="npm">
+       ```bash
+       npm install @moul-dev/ui
+       ```
+     </TabItem>
+     <TabItem label="pnpm">
+       ```bash
+       pnpm add @moul-dev/ui
+       ```
+     </TabItem>
+   </Tabs>
+
+2. ### Import Stylesheet & Elements
+
+   ```ts
+   // Import global token definitions
+   import '@moul-dev/ui/style.css';
+
+   // Register all custom elements
+   import '@moul-dev/ui';
+   ```
+
+3. ### ប្រើប្រាស់ Custom Elements ក្នុង HTML
+
+   ```html
+   <moul-button variant="primary">ចាប់ផ្តើម</moul-button>
+   <moul-badge variant="success">សកម្ម</moul-badge>
+   ```
+
+   <ComponentPreview>
+     <moul-button variant="primary">ចាប់ផ្តើម</moul-button>
+     <moul-badge variant="success">សកម្ម</moul-badge>
+   </ComponentPreview>
+</Steps>

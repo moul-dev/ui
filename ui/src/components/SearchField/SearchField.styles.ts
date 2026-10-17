@@ -1,180 +1,157 @@
-import * as stylex from '@stylexjs/stylex'
-import { tokens } from '../../tokens/tokens.stylex'
+import { css } from 'lit'
+import { resetStyles } from '../../styles/reset.styles'
 
-export const styles = stylex.create({
-  container: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: tokens.spacing1,
-    width: '100%',
-  },
-  group: {
-    display: 'flex',
-    alignItems: 'center',
-    borderWidth: '1px',
-    borderStyle: 'solid',
-    borderColor: tokens.colorBorder,
-    backgroundColor: tokens.colorBg,
-    boxShadow: tokens.shadowSm,
-    boxSizing: 'border-box',
-    outline: 'none',
-    transitionProperty: 'border-color, box-shadow',
-    transitionDuration: '0.15s',
-    transitionTimingFunction: 'ease-in-out',
-    '@media (prefers-reduced-motion: reduce)': {
-      transitionProperty: 'none',
-    },
-  },
-  groupSm: {
-    height: `calc(${tokens.spacing1} * 2 + ${tokens.lineHeightXs})`,
-    borderRadius: tokens.radiusSm,
-    paddingInline: tokens.spacing2,
-  },
-  groupMd: {
-    height: `calc(${tokens.spacing2} * 2 + ${tokens.lineHeightSm})`,
-    borderRadius: tokens.radiusMd,
-    paddingInline: tokens.spacing3,
-  },
-  groupLg: {
-    height: `calc(${tokens.spacing2} * 2 + ${tokens.lineHeightMd})`,
-    borderRadius: tokens.radiusMd,
-    paddingInline: tokens.spacing4,
-  },
-  primary: {
-    backgroundColor: tokens.colorBg,
-    borderColor: tokens.colorBorder,
-  },
-  secondary: {
-    backgroundColor: tokens.colorBgSubtle,
-    borderColor: tokens.colorBorderSubtle,
-  },
+export const searchFieldStyles = [
+  resetStyles,
+  css`
+    :host {
+      display: block;
+      width: 100%;
+      font-family: var(--font-family-base, inherit);
+      color: var(--color-fg, inherit);
+    }
 
-  groupHover: {
-    borderColor: tokens.colorNeutral400,
-  },
-  groupFocused: {
-    borderColor: {
-      default: tokens.colorBorderFocus,
-      ':hover': tokens.colorBorderFocus,
-    },
-    boxShadow: `0 0 0 1px ${tokens.colorBorderFocus}`,
-    outline: 'none',
-  },
-  groupInvalid: {
-    borderColor: tokens.colorError500,
-  },
-  groupFocusedInvalid: {
-    borderColor: {
-      default: tokens.colorError500,
-      ':hover': tokens.colorError500,
-    },
-    boxShadow: `0 0 0 1px ${tokens.colorError500}`,
-    outline: 'none',
-  },
-  groupDisabled: {
-    opacity: 0.4,
-    backgroundColor: tokens.colorBgSubtle,
-    cursor: 'not-allowed',
-    ':hover': {
-      borderColor: tokens.colorBorder,
-    },
-  },
-  icon: {
-    color: tokens.colorFgSubtle,
-    flexShrink: 0,
-  },
-  iconSm: {
-    width: tokens.spacing3,
-    height: tokens.spacing3,
-  },
-  iconMd: {
-    width: tokens.spacing4,
-    height: tokens.spacing4,
-  },
-  iconLg: {
-    width: tokens.spacing4,
-    height: tokens.spacing4,
-  },
-  input: {
-    flexGrow: 1,
-    width: '100%',
-    height: '100%',
-    borderWidth: 0,
-    borderStyle: 'none',
-    backgroundColor: 'transparent',
-    color: tokens.colorFg,
-    fontFamily: tokens.fontFamilyBase,
-    outline: 'none',
-    boxSizing: 'border-box',
-    '::-webkit-search-cancel-button': {
-      display: 'none',
-      WebkitAppearance: 'none',
-    },
-    '::-webkit-search-decoration': {
-      display: 'none',
-      WebkitAppearance: 'none',
-    },
-    '::-webkit-search-results-button': {
-      display: 'none',
-    },
-    '::-webkit-search-results-decoration': {
-      display: 'none',
-    },
-  },
-  inputSm: {
-    paddingBlock: 0,
-    paddingInline: tokens.spacing1,
-    fontSize: tokens.fontSizeXs,
-    lineHeight: tokens.lineHeightXs,
-  },
-  inputMd: {
-    paddingBlock: 0,
-    paddingInline: tokens.spacing2,
-    fontSize: tokens.fontSizeSm,
-    lineHeight: tokens.lineHeightSm,
-  },
-  inputLg: {
-    paddingBlock: 0,
-    paddingInline: tokens.spacing2,
-    fontSize: tokens.fontSizeMd,
-    lineHeight: tokens.lineHeightMd,
-  },
-  clearButton: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderStyle: 'none',
-    backgroundColor: 'transparent',
-    color: tokens.colorFgSubtle,
-    cursor: 'pointer',
-    padding: 0,
-    borderRadius: tokens.radiusFull,
-    flexShrink: 0,
-    transitionProperty: 'background-color, color',
-    transitionDuration: '0.1s',
-    transitionTimingFunction: 'ease-in-out',
-    ':hover': {
-      backgroundColor: tokens.colorBgSubtle,
-      color: tokens.colorFg,
-    },
-  },
-  clearButtonSm: {
-    width: tokens.spacing3,
-    height: tokens.spacing3,
-    fontSize: tokens.fontSizeXs,
-  },
-  clearButtonMd: {
-    width: tokens.spacing4,
-    height: tokens.spacing4,
-    fontSize: tokens.fontSizeSm,
-  },
-  clearButtonLg: {
-    width: tokens.spacing4,
-    height: tokens.spacing4,
-    fontSize: tokens.fontSizeSm,
-  },
-  clearButtonHidden: {
-    visibility: 'hidden',
-    pointerEvents: 'none',
-  },
-})
+    :host([hidden]) {
+      display: none !important;
+    }
+
+    [part='base'] {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-1, 0.25rem);
+      width: 100%;
+    }
+
+    [part='label'] {
+      display: block;
+      font-size: var(--font-size-sm, 0.875rem);
+      font-weight: 500;
+      color: var(--color-fg, inherit);
+    }
+
+    search,
+    [part='search'] {
+      display: block;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    [part='input-container'] {
+      display: flex;
+      align-items: center;
+      position: relative;
+      width: 100%;
+      border: 1px solid var(--color-border, #d1d5db);
+      border-radius: var(--radius-md, 0.375rem);
+      background-color: var(--color-bg, #ffffff);
+      color: var(--color-fg, inherit);
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+      box-shadow: var(--shadow-sm, 0 1px 2px 0 rgba(0, 0, 0, 0.05));
+      padding-inline: var(--spacing-2, 0.5rem);
+    }
+
+    [part='input-container']:hover:not([data-disabled='true']) {
+      border-color: var(--color-neutral-400, #9ca3af);
+    }
+
+    [part='input-container']:focus-within:not([data-disabled='true']) {
+      border-color: var(--color-border-focus, #3b82f6);
+      outline: 2px solid var(--color-border-focus, #3b82f6);
+      outline-offset: 1px;
+    }
+
+    :host([is-invalid]) [part='input-container'],
+    [part='input-container'][data-invalid='true'] {
+      border-color: var(--color-error-500, #ef4444);
+    }
+
+    [part='search-icon'] {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-fg-subtle, #9ca3af);
+      width: 1rem;
+      height: 1rem;
+      flex-shrink: 0;
+    }
+
+    [part='search-icon'] svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    [part='input'] {
+      flex: 1;
+      width: 100%;
+      min-width: 0;
+      border: none;
+      outline: none;
+      background: transparent;
+      color: inherit;
+      font-family: inherit;
+      font-size: var(--font-size-sm, 0.875rem);
+      line-height: var(--line-height-sm, 1.25rem);
+      padding: var(--spacing-2, 0.5rem) var(--spacing-2, 0.5rem);
+    }
+
+    [part='input']::-webkit-search-cancel-button,
+    [part='input']::-webkit-search-decoration,
+    [part='input']::-webkit-search-results-button,
+    [part='input']::-webkit-search-results-decoration {
+      display: none;
+      -webkit-appearance: none;
+    }
+
+    [part='input']::placeholder {
+      color: var(--color-fg-subtle, #9ca3af);
+    }
+
+    [part='clear-btn'] {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      background: transparent;
+      color: var(--color-fg-subtle, #9ca3af);
+      cursor: pointer;
+      padding: 0;
+      width: 1.25rem;
+      height: 1.25rem;
+      border-radius: var(--radius-full, 9999px);
+      flex-shrink: 0;
+      transition: color 0.1s ease, transform 0.1s ease;
+    }
+
+    [part='clear-btn']:hover {
+      color: var(--color-fg, inherit);
+    }
+
+    [part='clear-btn'] svg {
+      width: 1rem;
+      height: 1rem;
+    }
+
+    [part='description'] {
+      font-size: var(--font-size-xs, 0.75rem);
+      color: var(--color-fg-subtle, #6b7280);
+    }
+
+    [part='error'] {
+      font-size: var(--font-size-xs, 0.75rem);
+      color: var(--color-error-500, #ef4444);
+    }
+
+    :host([is-disabled]) {
+      opacity: 0.5;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      [part='input-container'] {
+        transition: none;
+      }
+    }
+  `,
+]

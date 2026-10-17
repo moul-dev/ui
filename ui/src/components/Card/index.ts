@@ -1,8 +1,10 @@
-export type { CardProps, CardVariant, Elevation } from './Card'
-export { Card } from './Card'
-export type { CardBodyProps } from './CardBody'
-export { CardBody } from './CardBody'
-export type { CardFooterProps } from './CardFooter'
-export { CardFooter } from './CardFooter'
-export type { CardHeaderProps } from './CardHeader'
-export { CardHeader } from './CardHeader'
+export {
+  MoulCard,
+  MoulCard as Card,
+  MoulCardBody,
+  MoulCardBody as CardBody,
+  MoulCardFooter,
+  MoulCardFooter as CardFooter,
+  MoulCardHeader,
+  MoulCardHeader as CardHeader,
+} from './Card'

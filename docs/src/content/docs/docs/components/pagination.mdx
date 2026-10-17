@@ -1,0 +1,45 @@
+---
+title: Pagination
+description: Page navigation bar with previous, next, and numbered jumps.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+# Pagination
+
+The `<moul-pagination>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
+
+## Preview
+
+<ComponentPreview>
+  <moul-pagination current="1" total="8"></moul-pagination>
+</ComponentPreview>
+
+## Import
+
+```ts
+import '@moul-dev/ui';
+```
+
+## HTML Usage
+
+```html
+<moul-pagination current="1" total="10"></moul-pagination>
+```
+
+## Attributes & Properties
+
+| Name | Type | Default |
+| :--- | :--- | :--- |
+| `total-pages` | `number` | `1` |
+| `current-page` | `number` | `1` |
+| `page-size` | `number` | `10` |
+| `shape` | `PaginationShape` | `'rounded'` |
+| `sibling-count` | `number` | `1` |
+
+## Events
+
+| Event Name | Description |
+| :--- | :--- |
+| `pagechange` | Dispatched when element fires pagechange |
+

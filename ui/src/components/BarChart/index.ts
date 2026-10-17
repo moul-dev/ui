@@ -1,2 +1,2 @@
 export type { BarChartProps } from './BarChart'
-export { BarChart } from './BarChart'
+export { MoulBarChart, MoulBarChart as BarChart } from './BarChart'

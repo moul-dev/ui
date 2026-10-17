@@ -1,2 +1,2 @@
-export type { StatProps } from './Stat'
-export { Stat } from './Stat'
+export type { StatProps, StatTrend } from './Stat'
+export { MoulStat, MoulStat as Stat } from './Stat'

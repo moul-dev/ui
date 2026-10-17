@@ -1,0 +1,41 @@
+---
+title: ការណែនាំសម្រាប់ LLMs & AI Agents
+description: ឯកសារ Context និងគោលការណ៍ណែនាំសម្រាប់ប្រើប្រាស់ Moul UI Web Components ជាមួយ Cursor, Claude, Windsurf, Copilot និង AI Assistants
+---
+
+import { Card, CardGrid, Tabs, TabItem } from '@astrojs/starlight/components';
+
+Moul UI ផ្តល់ជូននូវឯកសារ Machine-Readable Context សម្រាប់ជំនួយការសរសេរកូដ AI ដូចជា **Cursor**, **Windsurf**, **Claude Projects**, **GitHub Copilot**, និង **ChatGPT**។
+
+តាមរយៈការប្រើប្រាស់ឯកសារខាងក្រោម ម៉ូដែល AI នឹងបង្កើតកូដតាមស្តង់ដារ Web Components (`<moul-*>`) ដោយផ្ទាល់ ជាមួយ attributes ត្រឹមត្រូវ និងចៀសវាងការស្រមើស្រមៃ (hallucination)។
+
+---
+
+## ឯកសារ Machine-Readable Context
+
+<CardGrid>
+  <Card title="llms.txt" icon="document">
+    សន្ទស្សន៍សង្ខេបនៃការណែនាំ និងកូដគំរូ HTML តាមស្តង់ដារ llmstxt.org។
+    <br />
+    [មើល /llms.txt](/llms.txt)
+  </Card>
+  <Card title="llms-full.txt" icon="open-book">
+    ឯកសារលម្អិតពេញលេញអំពី APIs, attributes, properties, events និង slots សម្រាប់គ្រប់សមាសភាគទាំងអស់។
+    <br />
+    [មើល /llms-full.txt](/llms-full.txt)
+  </Card>
+  <Card title="AGENTS.md" icon="seti:markdown">
+    ច្បាប់ប្រព័ន្ធ និងទម្រង់សរសេរកូដសម្រាប់ AI Coding Agents។
+    <br />
+    [មើល /AGENTS.md](/AGENTS.md)
+  </Card>
+</CardGrid>
+
+---
+
+## គោលការណ៍សំខាន់ៗសម្រាប់ AI Coding Agents
+
+1. **Native HTML Custom Elements**: បង្កើត tag `<moul-*>` (ឧ. `<moul-button>`, `<moul-card>`) ជានិច្ច ជំនួសឱ្យ React JSX។
+2. **Zero React Dependencies**: កុំ import `react` ឬ React adapters។ Import ត្រឹម `@moul-dev/ui` និង `@moul-dev/ui/style.css`។
+3. **Compound Structure**: ប្រើប្រាស់រចនាសម្ព័ន្ធ compound (ឧ. `<moul-card><moul-card-header>...</moul-card-header></moul-card>`)។
+4. **Standard DOM Events**: ប្រើ standard DOM event listeners (`click`, `input`, `change`)។

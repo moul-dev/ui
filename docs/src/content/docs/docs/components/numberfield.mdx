@@ -1,0 +1,53 @@
+---
+title: NumberField
+description: Numeric input with increment/decrement steppers and boundary checks.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+# NumberField
+
+The `<moul-number-field>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
+
+## Preview
+
+<ComponentPreview>
+  <moul-number-field label="Replicas" value="3" min="1" max="10"></moul-number-field>
+</ComponentPreview>
+
+## Import
+
+```ts
+import '@moul-dev/ui';
+```
+
+## HTML Usage
+
+```html
+<moul-number-field label="Count" value="1"></moul-number-field>
+```
+
+## Attributes & Properties
+
+| Name | Type | Default |
+| :--- | :--- | :--- |
+| `name` | `string` | `''` |
+| `value` | `number | null` | `null` |
+| `min` | `number | undefined` | `-` |
+| `max` | `number | undefined` | `-` |
+| `step` | `number` | `1` |
+| `placeholder` | `string` | `''` |
+| `label` | `string` | `''` |
+| `description` | `string` | `''` |
+| `error-message` | `string` | `''` |
+| `is-disabled` | `boolean` | `false` |
+| `is-required` | `boolean` | `false` |
+| `is-readonly` | `boolean` | `false` |
+
+## Events
+
+| Event Name | Description |
+| :--- | :--- |
+| `input` | Dispatched when element fires input |
+| `change` | Dispatched when element fires change |
+

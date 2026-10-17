@@ -1,0 +1,41 @@
+---
+title: Spinner
+description: Circular indeterminate loading animation indicator.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+# Spinner
+
+The `<moul-spinner>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
+
+## Preview
+
+<ComponentPreview>
+  <div style="display: flex; gap: 1rem; align-items: center;">
+  <moul-spinner size="sm"></moul-spinner>
+  <moul-spinner size="md"></moul-spinner>
+  <moul-spinner size="lg"></moul-spinner>
+</div>
+</ComponentPreview>
+
+## Import
+
+```ts
+import '@moul-dev/ui';
+```
+
+## HTML Usage
+
+```html
+<moul-spinner size="md"></moul-spinner>
+```
+
+## Attributes & Properties
+
+| Name | Type | Default |
+| :--- | :--- | :--- |
+| `size` | `SpinnerSize` | `'md'` |
+| `label` | `string` | `'Loading'` |
+
+

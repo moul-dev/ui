@@ -1,1 +1,5 @@
-export { Tooltip, type TooltipProps, TooltipTrigger } from './Tooltip'
+export {
+  MoulTooltip,
+  MoulTooltip as Tooltip,
+  type TooltipPlacement,
+} from './Tooltip'

@@ -1,13 +1,2 @@
-export type {
-  SelectItemProps,
-  SelectPopoverProps,
-  SelectProps,
-  SelectSectionProps,
-} from './Select'
-export {
-  Select,
-  SelectItem,
-  SelectPopover,
-  SelectSection,
-  SelectValue,
-} from './Select'
+export { MoulSelect, MoulSelect as Select } from './Select'
+export { MoulSelectItem, MoulSelectItem as SelectItem } from './SelectItem'

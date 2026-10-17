@@ -1,0 +1,46 @@
+---
+title: Link
+description: Accessible navigational anchor with primary, secondary, and subtle variants.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+# Link
+
+The `<moul-link>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
+
+## Preview
+
+<ComponentPreview>
+  <moul-link href="#">Documentation Overview →</moul-link>
+</ComponentPreview>
+
+## Import
+
+```ts
+import '@moul-dev/ui';
+```
+
+## HTML Usage
+
+```html
+<moul-link href="/docs">Docs</moul-link>
+```
+
+## Attributes & Properties
+
+| Name | Type | Default |
+| :--- | :--- | :--- |
+| `href` | `string` | `''` |
+| `target` | `string` | `''` |
+| `rel` | `string` | `''` |
+| `is-external` | `boolean` | `false` |
+| `variant` | `LinkVariant` | `'default'` |
+| `is-disabled` | `boolean` | `false` |
+
+## Events
+
+| Event Name | Description |
+| :--- | :--- |
+| `press` | Dispatched when element fires press |
+

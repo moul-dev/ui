@@ -1,0 +1,49 @@
+---
+title: Avatar
+description: Visual representation of a user or entity with status indicators and grouping.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+# Avatar
+
+The `<moul-avatar>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
+
+## Preview
+
+<ComponentPreview>
+  <moul-avatar-group>
+  <moul-avatar initials="PT"></moul-avatar>
+  <moul-avatar initials="JD"></moul-avatar>
+  <moul-avatar initials="AL"></moul-avatar>
+</moul-avatar-group>
+</ComponentPreview>
+
+## Import
+
+```ts
+import '@moul-dev/ui';
+```
+
+## HTML Usage
+
+```html
+<moul-avatar initials="PT" status="online"></moul-avatar>
+<moul-avatar-group max="3">
+  <moul-avatar initials="PT"></moul-avatar>
+  <moul-avatar initials="JD"></moul-avatar>
+</moul-avatar-group>
+```
+
+## Attributes & Properties
+
+| Name | Type | Default |
+| :--- | :--- | :--- |
+| `src` | `string` | `''` |
+| `name` | `string` | `''` |
+| `size` | `AvatarSize` | `-` |
+| `shape` | `AvatarShape` | `'circle'` |
+| `status` | `AvatarStatus | undefined` | `-` |
+| `hasImageError` | `boolean` | `false` |
+
+

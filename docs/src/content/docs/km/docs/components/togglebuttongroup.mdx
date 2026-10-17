@@ -1,0 +1,49 @@
+---
+title: ToggleButtonGroup (សមាសភាគ)
+description: ឯកសារណែនាំសម្រាប់សមាសភាគ ToggleButtonGroup Web Component
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+# ToggleButtonGroup (សមាសភាគ)
+
+The `<moul-toggle-button-group>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
+
+## Preview
+
+<ComponentPreview>
+  <moul-toggle-button-group>
+  <moul-toggle-button value="bold" pressed>Bold</moul-toggle-button>
+  <moul-toggle-button value="italic">Italic</moul-toggle-button>
+  <moul-toggle-button value="underline">Underline</moul-toggle-button>
+</moul-toggle-button-group>
+</ComponentPreview>
+
+## Import
+
+```ts
+import '@moul-dev/ui';
+```
+
+## HTML Usage
+
+```html
+<moul-toggle-button-group>
+  <moul-toggle-button value="1">1</moul-toggle-button>
+</moul-toggle-button-group>
+```
+
+## Attributes & Properties
+
+| Name | Type | Default |
+| :--- | :--- | :--- |
+| `selected-key` | `string` | `''` |
+| `orientation` | `ToggleButtonGroupOrientation` | `'horizontal'` |
+| `is-disabled` | `boolean` | `false` |
+
+## Events
+
+| Event Name | Description |
+| :--- | :--- |
+| `selectionchange` | Dispatched when element fires selectionchange |
+

@@ -1,393 +1,141 @@
-import * as stylex from '@stylexjs/stylex'
-import { tokens } from '../../tokens/tokens.stylex'
+import { css } from 'lit'
+import { resetStyles } from '../../styles/reset.styles'
 
-const fadeIn = stylex.keyframes({
-  from: { opacity: 0 },
-  to: { opacity: 1 },
-})
+export const drawerStyles = [
+  resetStyles,
+  css`
+    :host {
+      display: contents;
+    }
 
-const slideInRight = stylex.keyframes({
-  from: { transform: 'translateX(100%)' },
-  to: { transform: 'translateX(0)' },
-})
+    dialog {
+      padding: 0;
+      border: none;
+      background: transparent;
+      overflow: hidden;
+      margin: 0;
+      width: 100vw;
+      height: 100vh;
+      max-width: 100vw;
+      max-height: 100vh;
+      position: fixed;
+      inset: 0;
+      display: flex;
+      z-index: var(--z-modal, 1000);
+    }
 
-const slideInLeft = stylex.keyframes({
-  from: { transform: 'translateX(-100%)' },
-  to: { transform: 'translateX(0)' },
-})
+    dialog:not([open]) {
+      display: none;
+    }
 
-const slideInTop = stylex.keyframes({
-  from: { transform: 'translateY(-100%)' },
-  to: { transform: 'translateY(0)' },
-})
+    dialog::backdrop {
+      background-color: var(--color-overlay, rgba(0, 0, 0, 0.5));
+      backdrop-filter: blur(4px);
+    }
 
-export const styles = stylex.create({
-  overlay: {
-    position: 'fixed',
-    inset: 0,
-    zIndex: tokens.zIndexModal,
-    backgroundColor: tokens.colorOverlay,
-    display: 'flex',
-    animationName: fadeIn,
-    animationDuration: '0.35s',
-    animationTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
-    '@media (prefers-reduced-motion: reduce)': {
-      animationPlayState: 'paused',
-      animationDuration: '0s',
-    },
-  },
-  overlayRight: {
-    justifyContent: 'flex-end',
-    alignItems: 'stretch',
-  },
-  overlayLeft: {
-    justifyContent: 'flex-start',
-    alignItems: 'stretch',
-  },
-  overlayTop: {
-    justifyContent: 'center',
-    alignItems: 'flex-start',
-  },
-  overlayBottom: {
-    justifyContent: 'center',
-    alignItems: 'flex-end',
-  },
-  drawer: {
-    backgroundColor: tokens.colorBgElevated,
-    boxShadow: tokens.shadowLg,
-    overflow: 'hidden',
-    display: 'flex',
-    flexDirection: 'column',
-    outline: 'none',
-    boxSizing: 'border-box',
-    animationDuration: '0.35s',
-    animationTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
-    '@media (prefers-reduced-motion: reduce)': {
-      animationPlayState: 'paused',
-      animationDuration: '0s',
-    },
-  },
-  placementRight: {
-    height: {
-      default: `calc(100dvh - ${tokens.spacing2} * 2)`,
-      '@media (max-width: 640px)': '100dvh',
-    },
-    maxHeight: {
-      default: `calc(100dvh - ${tokens.spacing2} * 2)`,
-      '@media (max-width: 640px)': '100dvh',
-    },
-    marginBlock: {
-      default: tokens.spacing2,
-      '@media (max-width: 640px)': 0,
-    },
-    marginInlineEnd: {
-      default: tokens.spacing2,
-      '@media (max-width: 640px)': 0,
-    },
-    marginInlineStart: 0,
-    borderRadius: {
-      default: tokens.radiusLg,
-      '@media (max-width: 640px)': tokens.radiusNone,
-    },
-    borderWidth: {
-      default: '1px',
-      '@media (max-width: 640px)': 0,
-    },
-    borderStyle: 'solid',
-    borderColor: tokens.colorBorderSubtle,
-    animationName: slideInRight,
-  },
-  placementLeft: {
-    height: {
-      default: `calc(100dvh - ${tokens.spacing2} * 2)`,
-      '@media (max-width: 640px)': '100dvh',
-    },
-    maxHeight: {
-      default: `calc(100dvh - ${tokens.spacing2} * 2)`,
-      '@media (max-width: 640px)': '100dvh',
-    },
-    marginBlock: {
-      default: tokens.spacing2,
-      '@media (max-width: 640px)': 0,
-    },
-    marginInlineStart: {
-      default: tokens.spacing2,
-      '@media (max-width: 640px)': 0,
-    },
-    marginInlineEnd: 0,
-    borderRadius: {
-      default: tokens.radiusLg,
-      '@media (max-width: 640px)': tokens.radiusNone,
-    },
-    borderWidth: {
-      default: '1px',
-      '@media (max-width: 640px)': 0,
-    },
-    borderStyle: 'solid',
-    borderColor: tokens.colorBorderSubtle,
-    animationName: slideInLeft,
-  },
-  placementTop: {
-    width: {
-      default: `calc(100vw - ${tokens.spacing2} * 2)`,
-      '@media (max-width: 640px)': '100vw',
-    },
-    maxWidth: {
-      default: `calc(100vw - ${tokens.spacing2} * 2)`,
-      '@media (max-width: 640px)': '100vw',
-    },
-    marginBlockStart: {
-      default: tokens.spacing2,
-      '@media (max-width: 640px)': 0,
-    },
-    marginBlockEnd: 0,
-    marginInline: {
-      default: tokens.spacing2,
-      '@media (max-width: 640px)': 0,
-    },
-    borderRadius: {
-      default: tokens.radiusLg,
-      '@media (max-width: 640px)': tokens.radiusNone,
-    },
-    borderWidth: {
-      default: '1px',
-      '@media (max-width: 640px)': 0,
-    },
-    borderStyle: 'solid',
-    borderColor: tokens.colorBorderSubtle,
-    animationName: slideInTop,
-  },
-  modalReset: {
-    outline: 'none',
-    borderWidth: 0,
-    borderStyle: 'none',
-    borderColor: 'transparent',
-    backgroundColor: 'transparent',
-    boxShadow: 'none',
-    display: 'flex',
-    flexDirection: 'column',
-    boxSizing: 'border-box',
-    overflow: 'visible',
-    margin: 0,
-    padding: 0,
-  },
-  modalWrapperReset: {
-    borderWidth: 0,
-    borderStyle: 'none',
-    borderColor: 'transparent',
-    backgroundColor: 'transparent',
-    boxShadow: 'none',
-  },
-  placementBottom: {
-    width: '100vw',
-    maxWidth: '100vw',
-    marginBlockEnd: 0,
-    marginBlockStart: 0,
-    marginInline: 0,
-    borderTopLeftRadius: tokens.radiusLg,
-    borderTopRightRadius: tokens.radiusLg,
-    borderBottomLeftRadius: 0,
-    borderBottomRightRadius: 0,
-    borderWidth: 0,
-    borderStyle: 'none',
-    borderColor: 'transparent',
-  },
-  handleWrapper: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '100%',
-    paddingBlock: tokens.spacing2,
-    backgroundColor: 'transparent',
-    borderWidth: 0,
-    outline: 'none',
-    boxSizing: 'border-box',
-    userSelect: 'none',
-    touchAction: 'none',
-  },
-  handleBar: {
-    width: '36px',
-    height: '4px',
-    borderRadius: tokens.radiusFull,
-    backgroundColor: tokens.colorBorder,
-  },
-  // Horizontal (Side: Left / Right) Sizes
-  sideSm: {
-    width: {
-      default: '400px',
-      '@media (max-width: 640px)': '100vw',
-    },
-    maxWidth: {
-      default: `calc(100vw - ${tokens.spacing2} * 2)`,
-      '@media (max-width: 640px)': '100vw',
-    },
-  },
-  sideMd: {
-    width: {
-      default: '600px',
-      '@media (max-width: 640px)': '100vw',
-    },
-    maxWidth: {
-      default: `calc(100vw - ${tokens.spacing2} * 2)`,
-      '@media (max-width: 640px)': '100vw',
-    },
-  },
-  sideLg: {
-    width: {
-      default: '800px',
-      '@media (max-width: 640px)': '100vw',
-    },
-    maxWidth: {
-      default: `calc(100vw - ${tokens.spacing2} * 2)`,
-      '@media (max-width: 640px)': '100vw',
-    },
-  },
-  sideFull: {
-    width: {
-      default: `calc(100vw - ${tokens.spacing2} * 2)`,
-      '@media (max-width: 640px)': '100vw',
-    },
-    maxWidth: {
-      default: `calc(100vw - ${tokens.spacing2} * 2)`,
-      '@media (max-width: 640px)': '100vw',
-    },
-  },
-  // Vertical (Top / Bottom) Sizes
-  verticalSm: {
-    height: {
-      default: '400px',
-      '@media (max-width: 640px)': '60vh',
-    },
-    maxHeight: {
-      default: `calc(100dvh - ${tokens.spacing2} * 2)`,
-      '@media (max-width: 640px)': '90dvh',
-    },
-  },
-  verticalMd: {
-    height: {
-      default: '600px',
-      '@media (max-width: 640px)': '80vh',
-    },
-    maxHeight: {
-      default: `calc(100dvh - ${tokens.spacing2} * 2)`,
-      '@media (max-width: 640px)': '90dvh',
-    },
-  },
-  verticalLg: {
-    height: {
-      default: '800px',
-      '@media (max-width: 640px)': '90vh',
-    },
-    maxHeight: {
-      default: `calc(100dvh - ${tokens.spacing2} * 2)`,
-      '@media (max-width: 640px)': '95dvh',
-    },
-  },
-  verticalFull: {
-    height: {
-      default: `calc(100dvh - ${tokens.spacing2} * 2)`,
-      '@media (max-width: 640px)': '100dvh',
-    },
-    maxHeight: {
-      default: `calc(100dvh - ${tokens.spacing2} * 2)`,
-      '@media (max-width: 640px)': '100dvh',
-    },
-  },
-  dialog: {
-    outline: 'none',
-    borderWidth: 0,
-    borderStyle: 'none',
-    display: 'flex',
-    flexDirection: 'column',
-    flexGrow: 1,
-    width: '100%',
-    height: '100%',
-    overflow: 'hidden',
-    position: 'relative',
-    boxSizing: 'border-box',
-  },
-  header: {
-    position: 'sticky',
-    insetBlockStart: 0,
-    zIndex: 10,
-    backgroundColor: tokens.colorBgElevated,
-    paddingBlock: tokens.spacing4,
-    paddingInline: tokens.spacing5,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: tokens.spacing3,
-    borderBlockEndStyle: 'solid',
-    borderBlockEndWidth: '1px',
-    borderBlockEndColor: tokens.colorBorderSubtle,
-    flexShrink: 0,
-    boxSizing: 'border-box',
-  },
-  headerBottom: {
-    flexDirection: 'column',
-    alignItems: 'center',
-    paddingBlockStart: tokens.spacing1,
-    paddingBlockEnd: tokens.spacing3,
-    paddingInline: tokens.spacing4,
-    gap: tokens.spacing1,
-    borderBlockEndWidth: 0,
-    borderBlockEndStyle: 'none',
-  },
-  title: {
-    fontSize: tokens.fontSizeLg,
-    fontWeight: tokens.fontWeightBold,
-    color: tokens.colorFg,
-    margin: 0,
-    lineHeight: tokens.lineHeightLg,
-    flexGrow: 1,
-  },
-  body: {
-    paddingBlock: tokens.spacing5,
-    paddingInline: tokens.spacing5,
-    color: tokens.colorFg,
-    fontSize: tokens.fontSizeMd,
-    lineHeight: tokens.lineHeightMd,
-    flexGrow: 1,
-    overflowY: 'auto',
-    boxSizing: 'border-box',
-  },
-  footer: {
-    position: 'sticky',
-    insetBlockEnd: 0,
-    zIndex: 10,
-    backgroundColor: tokens.colorBgElevated,
-    paddingBlock: tokens.spacing4,
-    paddingInline: tokens.spacing5,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    gap: tokens.spacing3,
-    borderBlockStartStyle: 'solid',
-    borderBlockStartWidth: '1px',
-    borderBlockStartColor: tokens.colorBorderSubtle,
-    flexShrink: 0,
-    boxSizing: 'border-box',
-  },
-  closeButton: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: tokens.spacing2,
-    borderRadius: tokens.radiusMd,
-    color: tokens.colorFgSubtle,
-    backgroundColor: 'transparent',
-    borderWidth: 0,
-    cursor: 'pointer',
-    outline: 'none',
-    transitionProperty: 'color, background-color',
-    transitionDuration: '0.15s',
-    ':hover': {
-      color: tokens.colorFg,
-      backgroundColor: tokens.colorBgSubtle,
-    },
-    ':focus-visible': {
-      outline: `2px solid ${tokens.colorBorderFocus}`,
-      outlineOffset: '2px',
-    },
-  },
-})
+    :host([placement="right"]) dialog {
+      justify-content: flex-end;
+      align-items: stretch;
+    }
+
+    :host([placement="left"]) dialog {
+      justify-content: flex-start;
+      align-items: stretch;
+    }
+
+    :host([placement="top"]) dialog {
+      justify-content: stretch;
+      align-items: flex-start;
+    }
+
+    :host([placement="bottom"]) dialog {
+      justify-content: stretch;
+      align-items: flex-end;
+    }
+
+    [part="base"] {
+      background-color: var(--color-bg-elevated, #ffffff);
+      box-shadow: var(--shadow-lg, 0 10px 15px -3px rgb(0 0 0 / 0.1));
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      outline: none;
+      box-sizing: border-box;
+      color: var(--color-fg, #111827);
+    }
+
+    /* Horizontal placements (left & right) */
+    :host([placement="left"]) [part="base"],
+    :host([placement="right"]) [part="base"] {
+      height: 100%;
+      max-width: 100vw;
+    }
+
+    :host([placement="left"][size="sm"]) [part="base"],
+    :host([placement="right"][size="sm"]) [part="base"] {
+      width: 20rem;
+    }
+
+    :host([placement="left"][size="md"]) [part="base"],
+    :host([placement="right"][size="md"]) [part="base"] {
+      width: 28rem;
+    }
+
+    :host([placement="left"][size="lg"]) [part="base"],
+    :host([placement="right"][size="lg"]) [part="base"] {
+      width: 36rem;
+    }
+
+    /* Vertical placements (top & bottom) */
+    :host([placement="top"]) [part="base"],
+    :host([placement="bottom"]) [part="base"] {
+      width: 100%;
+      max-height: 90vh;
+    }
+
+    :host([placement="top"][size="sm"]) [part="base"],
+    :host([placement="bottom"][size="sm"]) [part="base"] {
+      height: 16rem;
+    }
+
+    :host([placement="top"][size="md"]) [part="base"],
+    :host([placement="bottom"][size="md"]) [part="base"] {
+      height: 24rem;
+    }
+
+    :host([placement="top"][size="lg"]) [part="base"],
+    :host([placement="bottom"][size="lg"]) [part="base"] {
+      height: 32rem;
+    }
+
+    [part="header"] {
+      padding: var(--spacing-4, 1rem) var(--spacing-6, 1.5rem);
+      font-size: var(--font-size-lg, 1.125rem);
+      font-weight: 600;
+      color: var(--color-fg, #111827);
+      border-bottom: 1px solid var(--color-border-subtle, #f3f4f6);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    [part="body"] {
+      padding: var(--spacing-4, 1rem) var(--spacing-6, 1.5rem);
+      overflow-y: auto;
+      flex: 1 1 auto;
+      font-size: var(--font-size-md, 1rem);
+      line-height: var(--line-height-md, 1.5rem);
+    }
+
+    [part="footer"] {
+      padding: var(--spacing-4, 1rem) var(--spacing-6, 1.5rem);
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: var(--spacing-3, 0.75rem);
+      border-top: 1px solid var(--color-border-subtle, #f3f4f6);
+      flex-shrink: 0;
+    }
+  `,
+]

@@ -1,14 +1,5 @@
 export {
-  Modal,
-  ModalBody,
-  type ModalBodyProps,
-  ModalDialog,
-  type ModalDialogProps,
-  ModalFooter,
-  type ModalFooterProps,
-  ModalHeader,
-  type ModalHeaderProps,
-  ModalOverlay,
-  type ModalOverlayProps,
-  type ModalProps,
+  type ModalSize,
+  MoulModal,
+  MoulModal as Modal,
 } from './Modal'

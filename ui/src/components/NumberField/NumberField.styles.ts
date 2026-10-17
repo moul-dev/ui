@@ -1,164 +1,147 @@
-import * as stylex from '@stylexjs/stylex'
-import { tokens } from '../../tokens/tokens.stylex'
+import { css } from 'lit'
+import { resetStyles } from '../../styles/reset.styles'
 
-export const styles = stylex.create({
-  container: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: tokens.spacing1,
-    width: '100%',
-  },
-  group: {
-    display: 'flex',
-    alignItems: 'stretch',
-    borderWidth: '1px',
-    borderStyle: 'solid',
-    borderColor: tokens.colorBorder,
-    backgroundColor: tokens.colorBg,
-    boxShadow: tokens.shadowSm,
-    overflow: 'hidden',
-    boxSizing: 'border-box',
-    outline: 'none',
-    transitionProperty: 'border-color, box-shadow',
-    transitionDuration: '0.15s',
-    transitionTimingFunction: 'ease-in-out',
-    '@media (prefers-reduced-motion: reduce)': {
-      transitionProperty: 'none',
-    },
-  },
-  groupSm: {
-    height: `calc(${tokens.spacing1} * 2 + ${tokens.lineHeightXs})`,
-    borderRadius: tokens.radiusSm,
-  },
-  groupMd: {
-    height: `calc(${tokens.spacing2} * 2 + ${tokens.lineHeightSm})`,
-    borderRadius: tokens.radiusMd,
-  },
-  groupLg: {
-    height: `calc(${tokens.spacing2} * 2 + ${tokens.lineHeightMd})`,
-    borderRadius: tokens.radiusMd,
-  },
-  primary: {
-    backgroundColor: tokens.colorBg,
-    borderColor: tokens.colorBorder,
-  },
-  secondary: {
-    backgroundColor: tokens.colorBgSubtle,
-    borderColor: tokens.colorBorderSubtle,
-  },
-  groupHover: {
-    borderColor: tokens.colorNeutral400,
-  },
-  groupFocused: {
-    borderColor: {
-      default: tokens.colorBorderFocus,
-      ':hover': tokens.colorBorderFocus,
-    },
-    boxShadow: `0 0 0 1px ${tokens.colorBorderFocus}`,
-    outline: 'none',
-  },
-  groupInvalid: {
-    borderColor: tokens.colorError500,
-  },
-  groupFocusedInvalid: {
-    borderColor: {
-      default: tokens.colorError500,
-      ':hover': tokens.colorError500,
-    },
-    boxShadow: `0 0 0 1px ${tokens.colorError500}`,
-    outline: 'none',
-  },
-  groupDisabled: {
-    opacity: 0.4,
-    backgroundColor: tokens.colorBgSubtle,
-    cursor: 'not-allowed',
-    ':hover': {
-      borderColor: tokens.colorBorder,
-    },
-  },
-  input: {
-    flexGrow: 1,
-    width: '100%',
-    height: '100%',
-    borderStyle: 'none',
-    backgroundColor: 'transparent',
-    color: tokens.colorFg,
-    fontFamily: tokens.fontFamilyBase,
-    outline: 'none',
-  },
-  inputSm: {
-    paddingBlock: 0,
-    paddingInlineStart: tokens.spacing2,
-    paddingInlineEnd: tokens.spacing1,
-    fontSize: tokens.fontSizeXs,
-    lineHeight: tokens.lineHeightXs,
-  },
-  inputMd: {
-    paddingBlock: 0,
-    paddingInlineStart: tokens.spacing3,
-    paddingInlineEnd: tokens.spacing1,
-    fontSize: tokens.fontSizeSm,
-    lineHeight: tokens.lineHeightSm,
-  },
-  inputLg: {
-    paddingBlock: 0,
-    paddingInlineStart: tokens.spacing4,
-    paddingInlineEnd: tokens.spacing1,
-    fontSize: tokens.fontSizeMd,
-    lineHeight: tokens.lineHeightMd,
-  },
-  stepperContainer: {
-    display: 'flex',
-    flexDirection: 'column',
-    borderInlineStartWidth: '1px',
-    borderInlineStartStyle: 'solid',
-    flexShrink: 0,
-  },
-  stepperContainerSm: {
-    width: tokens.spacing5,
-  },
-  stepperContainerMd: {
-    width: tokens.spacing6,
-  },
-  stepperContainerLg: {
-    width: tokens.spacing7,
-  },
-  stepperContainerPrimary: {
-    borderInlineStartColor: tokens.colorBorder,
-  },
-  stepperContainerSecondary: {
-    borderInlineStartColor: tokens.colorBorderSubtle,
-  },
+export const numberFieldStyles = [
+  resetStyles,
+  css`
+    :host {
+      display: block;
+      width: 100%;
+      font-family: var(--font-family-base, inherit);
+      color: var(--color-fg, inherit);
+    }
 
-  stepperButton: {
-    flexGrow: 1,
-    height: '50%',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderStyle: 'none',
-    backgroundColor: 'transparent',
-    color: tokens.colorFgSubtle,
-    cursor: 'pointer',
-    padding: 0,
-    fontSize: '0.625rem',
-    transitionProperty: 'background-color, color',
-    transitionDuration: '0.1s',
-    transitionTimingFunction: 'ease-in-out',
-    ':hover': {
-      backgroundColor: tokens.colorBgSubtle,
-      color: tokens.colorFg,
-    },
-    ':active': {
-      backgroundColor: tokens.colorBorderSubtle,
-    },
-  },
-  stepperButtonDisabled: {
-    cursor: 'not-allowed',
-    opacity: 0.5,
-    ':hover': {
-      backgroundColor: 'transparent',
-      color: tokens.colorFgSubtle,
-    },
-  },
-})
+    :host([hidden]) {
+      display: none !important;
+    }
+
+    [part='base'] {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-1, 0.25rem);
+      width: 100%;
+    }
+
+    [part='label'] {
+      display: block;
+      font-size: var(--font-size-sm, 0.875rem);
+      font-weight: 500;
+      color: var(--color-fg, inherit);
+    }
+
+    [part='input-container'] {
+      display: flex;
+      align-items: stretch;
+      position: relative;
+      width: 100%;
+      border: 1px solid var(--color-border, #d1d5db);
+      border-radius: var(--radius-md, 0.375rem);
+      background-color: var(--color-bg, #ffffff);
+      color: var(--color-fg, inherit);
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+      box-shadow: var(--shadow-sm, 0 1px 2px 0 rgba(0, 0, 0, 0.05));
+      overflow: hidden;
+    }
+
+    [part='input-container']:hover:not([data-disabled='true']) {
+      border-color: var(--color-neutral-400, #9ca3af);
+    }
+
+    [part='input-container']:focus-within:not([data-disabled='true']) {
+      border-color: var(--color-border-focus, #3b82f6);
+      outline: 2px solid var(--color-border-focus, #3b82f6);
+      outline-offset: 1px;
+    }
+
+    :host([is-invalid]) [part='input-container'],
+    [part='input-container'][data-invalid='true'] {
+      border-color: var(--color-error-500, #ef4444);
+    }
+
+    [part='input'] {
+      flex: 1;
+      width: 100%;
+      min-width: 0;
+      border: none;
+      outline: none;
+      background: transparent;
+      color: inherit;
+      font-family: inherit;
+      font-size: var(--font-size-sm, 0.875rem);
+      line-height: var(--line-height-sm, 1.25rem);
+      padding: var(--spacing-2, 0.5rem) var(--spacing-3, 0.75rem);
+    }
+
+    [part='input']::placeholder {
+      color: var(--color-fg-subtle, #9ca3af);
+    }
+
+    [part='stepper-group'] {
+      display: flex;
+      flex-direction: column;
+      border-left: 1px solid var(--color-border, #d1d5db);
+      width: 1.75rem;
+      flex-shrink: 0;
+    }
+
+    [part='stepper-btn'] {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      border: none;
+      background: transparent;
+      color: var(--color-fg-subtle, #6b7280);
+      cursor: pointer;
+      padding: 0;
+      font-size: 0.65rem;
+      user-select: none;
+      transition: background-color 0.1s ease, color 0.1s ease;
+    }
+
+    [part='stepper-btn']:hover:not(:disabled) {
+      background-color: var(--color-bg-subtle, #f3f4f6);
+      color: var(--color-fg, inherit);
+    }
+
+    [part='stepper-btn']:disabled {
+      cursor: not-allowed;
+      opacity: 0.4;
+    }
+
+    [part='stepper-btn-up'] {
+      border-bottom: 1px solid var(--color-border, #d1d5db);
+    }
+
+    [part='prefix'],
+    [part='suffix'] {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding-inline: var(--spacing-2, 0.5rem);
+      color: var(--color-fg-subtle, #9ca3af);
+    }
+
+    [part='description'] {
+      font-size: var(--font-size-xs, 0.75rem);
+      color: var(--color-fg-subtle, #6b7280);
+    }
+
+    [part='error'] {
+      font-size: var(--font-size-xs, 0.75rem);
+      color: var(--color-error-500, #ef4444);
+    }
+
+    :host([is-disabled]) {
+      opacity: 0.5;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      [part='input-container'] {
+        transition: none;
+      }
+    }
+  `,
+]

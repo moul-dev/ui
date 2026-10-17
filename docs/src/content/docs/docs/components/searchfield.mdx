@@ -1,0 +1,51 @@
+---
+title: SearchField
+description: Search input with clear trigger and submission handling.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+# SearchField
+
+The `<moul-search-field>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
+
+## Preview
+
+<ComponentPreview>
+  <moul-search-field placeholder="Filter repositories..."></moul-search-field>
+</ComponentPreview>
+
+## Import
+
+```ts
+import '@moul-dev/ui';
+```
+
+## HTML Usage
+
+```html
+<moul-search-field placeholder="Search..."></moul-search-field>
+```
+
+## Attributes & Properties
+
+| Name | Type | Default |
+| :--- | :--- | :--- |
+| `name` | `string` | `''` |
+| `value` | `string` | `''` |
+| `placeholder` | `string` | `'Search...'` |
+| `label` | `string` | `''` |
+| `description` | `string` | `''` |
+| `error-message` | `string` | `''` |
+| `is-disabled` | `boolean` | `false` |
+| `is-required` | `boolean` | `false` |
+| `is-readonly` | `boolean` | `false` |
+
+## Events
+
+| Event Name | Description |
+| :--- | :--- |
+| `clear` | Dispatched when element fires clear |
+| `input` | Dispatched when element fires input |
+| `change` | Dispatched when element fires change |
+

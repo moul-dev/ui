@@ -1,0 +1,46 @@
+---
+title: Toast (សមាសភាគ)
+description: ឯកសារណែនាំសម្រាប់សមាសភាគ Toast Web Component
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+# Toast (សមាសភាគ)
+
+The `<moul-toast>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
+
+## Preview
+
+<ComponentPreview>
+  <moul-button variant="primary">Dispatch Toast</moul-button>
+</ComponentPreview>
+
+## Import
+
+```ts
+import '@moul-dev/ui';
+```
+
+## HTML Usage
+
+```html
+<moul-toast title="File Saved" description="Your settings have been updated."></moul-toast>
+```
+
+## Attributes & Properties
+
+| Name | Type | Default |
+| :--- | :--- | :--- |
+| `tone` | `SemanticTone` | `'primary'` |
+| `variant` | `VisualVariant` | `'solid'` |
+| `duration` | `number` | `5000` |
+| `title` | `string` | `''` |
+| `description` | `string` | `''` |
+| `is-open` | `boolean` | `true` |
+
+## Events
+
+| Event Name | Description |
+| :--- | :--- |
+| `dismiss` | Dispatched when element fires dismiss |
+

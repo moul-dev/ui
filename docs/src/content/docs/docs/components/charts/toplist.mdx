@@ -1,0 +1,42 @@
+---
+title: TopList
+description: Ranked metric list display for leaders and top contributors.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+# TopList
+
+The `<moul-top-list>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
+
+## Preview
+
+<ComponentPreview>
+  <moul-top-list style="width: 100%;"></moul-top-list>
+</ComponentPreview>
+
+## Import
+
+```ts
+import '@moul-dev/ui';
+```
+
+## HTML Usage
+
+```html
+<moul-top-list></moul-top-list>
+```
+
+## Attributes & Properties
+
+| Name | Type | Default |
+| :--- | :--- | :--- |
+| `max` | `number | undefined` | `undefined` |
+| `max-value` | `number | undefined` | `undefined` |
+| `max-items` | `number` | `10` |
+| `show-rank` | `boolean` | `true` |
+| `multi-color` | `boolean` | `false` |
+| `bar-color` | `string` | `'var(--color-chart-1)'` |
+| `interactive` | `boolean` | `false` |
+
+

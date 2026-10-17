@@ -1,202 +1,70 @@
-import * as stylex from '@stylexjs/stylex'
-import { tokens } from '../../tokens/tokens.stylex'
+import { css } from 'lit'
+import { resetStyles } from '../../styles/reset.styles'
+import { semanticToneStyles } from '../../styles/semantic-tones'
 
-export const styles = stylex.create({
-  root: {
-    display: 'flex',
-    flexDirection: 'column',
-    overflow: 'hidden',
-    borderRadius: tokens.radiusLg,
-    borderStyle: 'solid',
-    borderWidth: '1px',
-    boxSizing: 'border-box',
-  },
+export const cardStyles = [
+  resetStyles,
+  semanticToneStyles,
+  css`
+    :host {
+      display: flex;
+      flex-direction: column;
+      border-radius: var(--radius-lg, 0.75rem);
+      overflow: hidden;
+      box-sizing: border-box;
+      position: relative;
+      transition: box-shadow 0.2s ease, transform 0.2s ease;
+    }
 
-  // Elevation Styles
-  el0: {
-    backgroundColor: tokens.colorBg,
-    borderColor: tokens.colorBorder,
-    boxShadow: 'none',
-  },
-  el1: {
-    backgroundColor: tokens.colorBgElevated,
-    borderColor: tokens.colorBorderSubtle,
-    boxShadow: tokens.shadowSm,
-  },
-  el2: {
-    backgroundColor: tokens.colorBgElevated,
-    borderColor: tokens.colorBorderSubtle,
-    boxShadow: tokens.shadowMd,
-  },
-  el3: {
-    backgroundColor: tokens.colorBgElevated,
-    borderColor: tokens.colorBorderSubtle,
-    boxShadow: tokens.shadowLg,
-  },
+    :host([is-interactive]) {
+      cursor: pointer;
+      user-select: none;
+    }
 
-  // Card Variants
-  default: {},
-  flat: {
-    backgroundColor: tokens.colorBgSubtle,
-    borderColor: 'transparent',
-    boxShadow: 'none',
-  },
+    :host([is-interactive]:focus-visible) {
+      outline: 2px solid var(--color-border-focus, #3b82f6);
+      outline-offset: 2px;
+    }
 
-  glass: {
-    backgroundColor: tokens.colorBgGlass,
-    borderColor: tokens.colorBorderGlass,
-    backdropFilter: 'blur(24px)',
-    WebkitBackdropFilter: 'blur(24px)',
-    boxShadow: tokens.shadowSm,
-  },
+    [part="header"] {
+      display: block;
+      padding: var(--spacing-4, 1rem);
+      border-bottom: 1px solid var(--color-border-subtle, rgba(0, 0, 0, 0.06));
+    }
 
-  // Layout structures
-  header: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: tokens.spacing1,
-    color: tokens.colorFg,
-    fontSize: tokens.fontSizeLg,
-    fontWeight: tokens.fontWeightSemibold,
-  },
-  headerDivided: {
-    borderBlockEndStyle: 'solid',
-    borderBlockEndWidth: '1px',
-    borderBlockEndColor: tokens.colorBorderSubtle,
-  },
+    [part="body"],
+    [part="content"] {
+      display: block;
+      padding: var(--spacing-4, 1rem);
+      flex: 1 1 auto;
+    }
 
-  body: {
-    flexGrow: 1,
-    display: 'flex',
-    flexDirection: 'column',
-    color: tokens.colorFgSubtle,
-    fontSize: tokens.fontSizeSm,
-    lineHeight: tokens.lineHeightSm,
-  },
+    [part="footer"] {
+      display: block;
+      padding: var(--spacing-4, 1rem);
+      border-top: 1px solid var(--color-border-subtle, rgba(0, 0, 0, 0.06));
+    }
 
-  footer: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    gap: tokens.spacing3,
-  },
-  footerDivided: {
-    borderBlockStartStyle: 'solid',
-    borderBlockStartWidth: '1px',
-    borderBlockStartColor: tokens.colorBorderSubtle,
-  },
+    /* Subcomponent styles */
+    moul-card-header,
+    [slot="header"] {
+      display: block;
+      padding: var(--spacing-4, 1rem);
+      font-size: var(--font-size-lg, 1.125rem);
+      font-weight: 600;
+    }
 
-  // Spacing presets for Header
-  header_sm: {
-    paddingInline: tokens.spacing4,
-    paddingBlockStart: tokens.spacing4,
-    paddingBlockEnd: tokens.spacing1,
-  },
-  header_sm_divided: {
-    paddingInline: tokens.spacing4,
-    paddingBlockStart: tokens.spacing3,
-    paddingBlockEnd: tokens.spacing3,
-  },
-  header_md: {
-    paddingInline: tokens.spacing6,
-    paddingBlockStart: tokens.spacing6,
-    paddingBlockEnd: tokens.spacing2,
-  },
-  header_md_divided: {
-    paddingInline: tokens.spacing5,
-    paddingBlockStart: tokens.spacing4,
-    paddingBlockEnd: tokens.spacing4,
-  },
-  header_lg: {
-    paddingInline: tokens.spacing8,
-    paddingBlockStart: tokens.spacing8,
-    paddingBlockEnd: tokens.spacing3,
-  },
-  header_lg_divided: {
-    paddingInline: tokens.spacing6,
-    paddingBlockStart: tokens.spacing6,
-    paddingBlockEnd: tokens.spacing6,
-  },
+    moul-card-body,
+    [slot="body"] {
+      display: block;
+      padding: var(--spacing-4, 1rem);
+      flex: 1 1 auto;
+    }
 
-  // Spacing presets for Body
-  body_sm: {
-    paddingInline: tokens.spacing4,
-    paddingBlockStart: tokens.spacing1,
-    paddingBlockEnd: tokens.spacing3,
-    ':first-child': {
-      paddingBlockStart: tokens.spacing4,
-    },
-    ':last-child': {
-      paddingBlockEnd: tokens.spacing4,
-    },
-  },
-  body_sm_divided: {
-    paddingInline: tokens.spacing4,
-    paddingBlockStart: tokens.spacing3,
-    paddingBlockEnd: tokens.spacing3,
-  },
-  body_md: {
-    paddingInline: tokens.spacing6,
-    paddingBlockStart: tokens.spacing2,
-    paddingBlockEnd: tokens.spacing4,
-    ':first-child': {
-      paddingBlockStart: tokens.spacing6,
-    },
-    ':last-child': {
-      paddingBlockEnd: tokens.spacing6,
-    },
-  },
-  body_md_divided: {
-    paddingInline: tokens.spacing5,
-    paddingBlockStart: tokens.spacing4,
-    paddingBlockEnd: tokens.spacing4,
-  },
-  body_lg: {
-    paddingInline: tokens.spacing8,
-    paddingBlockStart: tokens.spacing3,
-    paddingBlockEnd: tokens.spacing5,
-    ':first-child': {
-      paddingBlockStart: tokens.spacing8,
-    },
-    ':last-child': {
-      paddingBlockEnd: tokens.spacing8,
-    },
-  },
-  body_lg_divided: {
-    paddingInline: tokens.spacing6,
-    paddingBlockStart: tokens.spacing6,
-    paddingBlockEnd: tokens.spacing6,
-  },
-
-  // Spacing presets for Footer
-  footer_sm: {
-    paddingInline: tokens.spacing4,
-    paddingBlockStart: tokens.spacing1,
-    paddingBlockEnd: tokens.spacing4,
-  },
-  footer_sm_divided: {
-    paddingInline: tokens.spacing4,
-    paddingBlockStart: tokens.spacing3,
-    paddingBlockEnd: tokens.spacing3,
-  },
-  footer_md: {
-    paddingInline: tokens.spacing6,
-    paddingBlockStart: tokens.spacing2,
-    paddingBlockEnd: tokens.spacing6,
-  },
-  footer_md_divided: {
-    paddingInline: tokens.spacing5,
-    paddingBlockStart: tokens.spacing4,
-    paddingBlockEnd: tokens.spacing4,
-  },
-  footer_lg: {
-    paddingInline: tokens.spacing8,
-    paddingBlockStart: tokens.spacing3,
-    paddingBlockEnd: tokens.spacing8,
-  },
-  footer_lg_divided: {
-    paddingInline: tokens.spacing6,
-    paddingBlockStart: tokens.spacing6,
-    paddingBlockEnd: tokens.spacing6,
-  },
-})
+    moul-card-footer,
+    [slot="footer"] {
+      display: block;
+      padding: var(--spacing-4, 1rem);
+    }
+  `,
+]

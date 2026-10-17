@@ -1,104 +1,147 @@
-/* eslint-disable @stylexjs/valid-styles */
-import * as stylex from '@stylexjs/stylex'
-import { tokens } from '../../tokens/tokens.stylex'
+import { css } from 'lit'
+import { resetStyles } from '../../styles/reset.styles'
 
-export const styles = stylex.create({
-  base: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: tokens.spacing2,
-    cursor: 'pointer',
-    fontSize: tokens.fontSizeSm,
-    lineHeight: tokens.lineHeightSm,
-    color: tokens.colorFg,
-    userSelect: 'none',
-  },
-  isDisabled: {
-    opacity: 0.4,
-    cursor: 'not-allowed',
-  },
-  isReadOnly: {
-    cursor: 'default',
-  },
-  indicator: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: tokens.spacing4,
-    height: tokens.spacing4,
-    flexShrink: 0,
-    borderRadius: tokens.radiusSm,
-    borderWidth: '1px',
-    borderStyle: 'solid',
-    borderColor: tokens.colorBorder,
-    backgroundColor: tokens.colorBg,
-    transitionProperty: 'background-color, border-color, box-shadow',
-    transitionDuration: '0.15s',
-    transitionTimingFunction: 'ease-in-out',
-  },
-  indicatorHover: {
-    borderColor: tokens.colorNeutral400,
-  },
+export const checkboxStyles = [
+  resetStyles,
+  css`
+    :host {
+      display: inline-flex;
+      font-family: var(--font-family-base, inherit);
+      color: var(--color-fg, inherit);
+      user-select: none;
+    }
 
-  // Primary variant styles
-  checkedPrimary: {
-    backgroundColor: tokens.colorPrimary500,
-    borderColor: tokens.colorPrimary500,
-  },
-  checkedHoverPrimary: {
-    backgroundColor: tokens.colorPrimary600,
-    borderColor: tokens.colorPrimary600,
-  },
-  iconPrimary: {
-    color: tokens.colorFgOnPrimary,
-  },
-  focusPrimary: {
-    outlineColor: tokens.colorBorderFocus,
-  },
+    :host([hidden]) {
+      display: none !important;
+    }
 
-  // Secondary variant styles
-  checkedSecondary: {
-    backgroundColor: tokens.colorNeutral800,
-    borderColor: tokens.colorNeutral800,
-  },
-  checkedHoverSecondary: {
-    backgroundColor: tokens.colorNeutral900,
-    borderColor: tokens.colorNeutral900,
-  },
-  iconSecondary: {
-    color: tokens.colorBg,
-  },
-  focusSecondary: {
-    outlineColor: tokens.colorNeutral800,
-  },
+    [part='base'] {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacing-2, 0.5rem);
+      cursor: pointer;
+      font-size: var(--font-size-sm, 0.875rem);
+      line-height: var(--line-height-sm, 1.25rem);
+    }
 
-  // Tertiary variant styles
-  checkedTertiary: {
-    backgroundColor: tokens.colorBg,
-    borderColor: tokens.colorPrimary500,
-  },
-  checkedHoverTertiary: {
-    backgroundColor: tokens.colorPrimary50,
-    borderColor: tokens.colorPrimary600,
-  },
-  iconTertiary: {
-    color: tokens.colorPrimary500,
-  },
-  focusTertiary: {
-    outlineColor: tokens.colorPrimary500,
-  },
+    [part='indicator'] {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.125rem;
+      height: 1.125rem;
+      border-radius: var(--radius-sm, 0.25rem);
+      border: 1px solid var(--color-border, #d1d5db);
+      background-color: var(--color-bg, #ffffff);
+      color: var(--color-fg-on-primary, #ffffff);
+      transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+      flex-shrink: 0;
+    }
 
-  indicatorFocusVisible: {
-    outlineStyle: 'solid',
-    outlineWidth: '2px',
-    outlineOffset: '2px',
-  },
-  indicatorInvalid: {
-    borderColor: tokens.colorError500,
-  },
-  icon: {
-    width: '100%',
-    height: '100%',
-  },
-  label: {},
-})
+    [part='base']:hover:not([data-disabled='true']) [part='indicator'] {
+      border-color: var(--color-neutral-400, #9ca3af);
+    }
+
+    :host(:focus-visible) [part='indicator'],
+    [part='base']:focus-visible [part='indicator'] {
+      outline: 2px solid var(--color-border-focus, #3b82f6);
+      outline-offset: 2px;
+    }
+
+    :host([is-checked]) [part='indicator'],
+    :host([is-indeterminate]) [part='indicator'] {
+      background-color: var(--color-primary-500, #3b82f6);
+      border-color: var(--color-primary-500, #3b82f6);
+    }
+
+    :host([is-checked]:hover:not([is-disabled])) [part='indicator'],
+    :host([is-indeterminate]:hover:not([is-disabled])) [part='indicator'] {
+      background-color: var(--color-primary-600, #2563eb);
+      border-color: var(--color-primary-600, #2563eb);
+    }
+
+    :host([is-invalid]) [part='indicator'] {
+      border-color: var(--color-error-500, #ef4444);
+    }
+
+    [part='icon'] {
+      width: 0.875rem;
+      height: 0.875rem;
+      stroke: currentColor;
+      stroke-width: 2.5;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    [part='label'] {
+      display: inline-flex;
+      align-items: center;
+      color: inherit;
+    }
+
+    :host([is-disabled]) {
+      opacity: 0.45;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      [part='indicator'] {
+        transition: none;
+      }
+    }
+  `,
+]
+
+export const checkboxGroupStyles = [
+  resetStyles,
+  css`
+    :host {
+      display: block;
+      font-family: var(--font-family-base, inherit);
+      color: var(--color-fg, inherit);
+    }
+
+    :host([hidden]) {
+      display: none !important;
+    }
+
+    [part='base'] {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-2, 0.5rem);
+    }
+
+    [part='label'] {
+      font-size: var(--font-size-sm, 0.875rem);
+      font-weight: 500;
+      color: var(--color-fg, inherit);
+    }
+
+    [part='description'] {
+      font-size: var(--font-size-xs, 0.75rem);
+      color: var(--color-fg-subtle, #6b7280);
+    }
+
+    [part='group'] {
+      display: flex;
+      gap: var(--spacing-3, 0.75rem);
+    }
+
+    :host([orientation='vertical']) [part='group'] {
+      flex-direction: column;
+    }
+
+    :host([orientation='horizontal']) [part='group'] {
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    :host([is-disabled]) {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  `,
+]

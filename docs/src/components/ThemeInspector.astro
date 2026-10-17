@@ -1,0 +1,489 @@
+---
+// docs/src/components/ThemeInspector.astro
+---
+
+<div class="theme-inspector-root">
+  <header class="theme-header">
+    <p class="theme-lead">
+      Tune Moul UI's design token layer in real time. Adjust brand hue, saturation (chroma), border radius, and spatial density below to inspect live Web Component rendering across light and dark color schemes.
+    </p>
+  </header>
+
+  <div class="theme-grid">
+    <!-- Controls Column -->
+    <aside class="theme-controls-card">
+      <div class="theme-controls-header">
+        <h2 class="theme-controls-title">Design Tokens</h2>
+        <button id="reset-theme-btn" type="button" class="theme-reset-btn" title="Reset to defaults">
+          Reset
+        </button>
+      </div>
+
+      <div class="theme-controls-body">
+        <!-- Hue Control -->
+        <div class="theme-control-group">
+          <div class="control-label-row">
+            <label for="brand-hue-slider" class="control-label">Brand Hue (OKLCH)</label>
+            <div class="control-value-badge">
+              <span id="brand-hue-val">250</span>°
+            </div>
+          </div>
+          <div class="slider-row">
+            <input
+              id="brand-hue-slider"
+              type="range"
+              min="0"
+              max="360"
+              step="1"
+              value="250"
+              data-token="--brand-hue"
+              class="token-slider hue-slider"
+            />
+          </div>
+          <p class="control-help">Rotates the primary perceptual color wheel from 0° to 360°.</p>
+        </div>
+
+        <!-- Chroma Multiplier Control -->
+        <div class="theme-control-group">
+          <div class="control-label-row">
+            <label for="brand-chroma-slider" class="control-label">Chroma Multiplier</label>
+            <div class="control-value-badge">
+              <span id="brand-chroma-val">1.00</span>x
+            </div>
+          </div>
+          <div class="slider-row">
+            <input
+              id="brand-chroma-slider"
+              type="range"
+              min="0"
+              max="2"
+              step="0.05"
+              value="1"
+              data-token="--brand-chroma-multiplier"
+              class="token-slider"
+            />
+          </div>
+          <p class="control-help">Scales color saturation from monochrome (0x) to vivid (2x).</p>
+        </div>
+
+        <!-- Radius Factor Control -->
+        <div class="theme-control-group">
+          <div class="control-label-row">
+            <label for="brand-radius-slider" class="control-label">Radius Factor</label>
+            <div class="control-value-badge">
+              <span id="brand-radius-val">1.00</span>x
+            </div>
+          </div>
+          <div class="slider-row">
+            <input
+              id="brand-radius-slider"
+              type="range"
+              min="0"
+              max="2"
+              step="0.1"
+              value="1"
+              data-token="--brand-radius-factor"
+              class="token-slider"
+            />
+          </div>
+          <p class="control-help">Adjusts corner curvature from sharp (0x) to rounded (2x).</p>
+        </div>
+
+        <!-- Density Factor Control -->
+        <div class="theme-control-group">
+          <div class="control-label-row">
+            <label for="brand-density-slider" class="control-label">Density Factor</label>
+            <div class="control-value-badge">
+              <span id="brand-density-val">1.00</span>x
+            </div>
+          </div>
+          <div class="slider-row">
+            <input
+              id="brand-density-slider"
+              type="range"
+              min="0.75"
+              max="1.5"
+              step="0.05"
+              value="1"
+              data-token="--brand-density-factor"
+              class="token-slider"
+            />
+          </div>
+          <p class="control-help">Modulates padding and spatial scale for compact or spacious layouts.</p>
+        </div>
+      </div>
+
+      <!-- Generated CSS Code Snippet -->
+      <div class="theme-css-card">
+        <div class="css-card-header">
+          <span class="css-card-title">Generated CSS</span>
+          <button id="copy-css-btn" type="button" class="copy-css-btn">Copy CSS</button>
+        </div>
+        <pre class="css-code-block"><code id="css-snippet">{`:root {
+  --brand-hue: 250;
+  --brand-chroma-multiplier: 1;
+  --brand-radius-factor: 1;
+  --brand-density-factor: 1;
+}`}</code></pre>
+      </div>
+    </aside>
+
+    <!-- Previews Column -->
+    <main class="theme-previews-column">
+      <!-- Buttons & Badges -->
+      <div class="preview-section-card">
+        <h3 class="preview-card-title">Buttons & Badges</h3>
+        <div class="preview-items-row">
+          <moul-button variant="primary">Primary</moul-button>
+          <moul-button variant="secondary">Secondary</moul-button>
+          <moul-button variant="outline">Outline</moul-button>
+          <moul-button variant="ghost">Ghost</moul-button>
+          <moul-button variant="danger">Danger</moul-button>
+        </div>
+        <div class="preview-items-row" style="margin-top: 1rem;">
+          <moul-badge variant="primary">Primary</moul-badge>
+          <moul-badge variant="secondary">Secondary</moul-badge>
+          <moul-badge variant="success">Success</moul-badge>
+          <moul-badge variant="warning">Warning</moul-badge>
+          <moul-badge variant="danger">Danger</moul-badge>
+          <moul-badge variant="outline">Outline</moul-badge>
+        </div>
+      </div>
+
+      <!-- Card & Alert -->
+      <div class="preview-section-card">
+        <h3 class="preview-card-title">Card & Alert</h3>
+        <moul-alert
+          variant="accent"
+          title="Theme Tokens Applied"
+          description="Colors, border radii, and internal padding update automatically based on your active token settings."
+        ></moul-alert>
+
+        <div style="margin-top: 1.25rem;">
+          <moul-card variant="outline">
+            <div style="padding: 1.25rem; display: flex; flex-direction: column; gap: 0.75rem;">
+              <h4 style="margin: 0; font-size: 1.125rem; font-weight: 600;">Active Workspace</h4>
+              <p style="margin: 0; opacity: 0.8; font-size: 0.9rem;">
+                Card surfaces inherit current border-radius and token background shades.
+              </p>
+              <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+                <moul-button variant="primary" size="sm">Manage</moul-button>
+                <moul-button variant="outline" size="sm">Settings</moul-button>
+              </div>
+            </div>
+          </moul-card>
+        </div>
+      </div>
+
+      <!-- Form Inputs & Progress -->
+      <div class="preview-section-card">
+        <h3 class="preview-card-title">Text Field & Progress Bar</h3>
+        <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+          <moul-text-field
+            label="Organization Handle"
+            placeholder="e.g. moul-dev"
+            description="Unique identifier for workspace resources."
+          ></moul-text-field>
+
+          <div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 0.5rem;">
+              <span>Deployment Progress</span>
+              <span>75%</span>
+            </div>
+            <moul-progress-bar value="75" max="100"></moul-progress-bar>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script>
+  import '@moul-dev/ui'
+
+  const state = {
+    '--brand-hue': 250,
+    '--brand-chroma-multiplier': 1,
+    '--brand-radius-factor': 1,
+    '--brand-density-factor': 1,
+  }
+
+  const hueSlider = document.getElementById('brand-hue-slider') as HTMLInputElement | null
+  const chromaSlider = document.getElementById('brand-chroma-slider') as HTMLInputElement | null
+  const radiusSlider = document.getElementById('brand-radius-slider') as HTMLInputElement | null
+  const densitySlider = document.getElementById('brand-density-slider') as HTMLInputElement | null
+
+  const hueVal = document.getElementById('brand-hue-val')
+  const chromaVal = document.getElementById('brand-chroma-val')
+  const radiusVal = document.getElementById('brand-radius-val')
+  const densityVal = document.getElementById('brand-density-val')
+
+  const snippet = document.getElementById('css-snippet')
+  const copyBtn = document.getElementById('copy-css-btn')
+  const resetBtn = document.getElementById('reset-theme-btn')
+
+  function updateCSSSnippet() {
+    if (!snippet) return
+    snippet.textContent = `:root {
+  --brand-hue: ${state['--brand-hue']};
+  --brand-chroma-multiplier: ${state['--brand-chroma-multiplier']};
+  --brand-radius-factor: ${state['--brand-radius-factor']};
+  --brand-density-factor: ${state['--brand-density-factor']};
+}`
+  }
+
+  function applyToken(token: keyof typeof state, value: number) {
+    state[token] = value
+    document.documentElement.style.setProperty(token, String(value))
+    updateCSSSnippet()
+  }
+
+  hueSlider?.addEventListener('input', (e) => {
+    const val = Number((e.target as HTMLInputElement).value)
+    if (hueVal) hueVal.textContent = String(val)
+    applyToken('--brand-hue', val)
+  })
+
+  chromaSlider?.addEventListener('input', (e) => {
+    const val = Number((e.target as HTMLInputElement).value)
+    if (chromaVal) chromaVal.textContent = val.toFixed(2)
+    applyToken('--brand-chroma-multiplier', val)
+  })
+
+  radiusSlider?.addEventListener('input', (e) => {
+    const val = Number((e.target as HTMLInputElement).value)
+    if (radiusVal) radiusVal.textContent = val.toFixed(2)
+    applyToken('--brand-radius-factor', val)
+  })
+
+  densitySlider?.addEventListener('input', (e) => {
+    const val = Number((e.target as HTMLInputElement).value)
+    if (densityVal) densityVal.textContent = val.toFixed(2)
+    applyToken('--brand-density-factor', val)
+  })
+
+  resetBtn?.addEventListener('click', () => {
+    if (hueSlider) hueSlider.value = '250'
+    if (chromaSlider) chromaSlider.value = '1'
+    if (radiusSlider) radiusSlider.value = '1'
+    if (densitySlider) densitySlider.value = '1'
+
+    if (hueVal) hueVal.textContent = '250'
+    if (chromaVal) chromaVal.textContent = '1.00'
+    if (radiusVal) radiusVal.textContent = '1.00'
+    if (densityVal) densityVal.textContent = '1.00'
+
+    applyToken('--brand-hue', 250)
+    applyToken('--brand-chroma-multiplier', 1)
+    applyToken('--brand-radius-factor', 1)
+    applyToken('--brand-density-factor', 1)
+  })
+
+  copyBtn?.addEventListener('click', async () => {
+    if (!snippet) return
+    try {
+      await navigator.clipboard.writeText(snippet.textContent || '')
+      copyBtn.textContent = 'Copied!'
+      setTimeout(() => {
+        copyBtn.textContent = 'Copy CSS'
+      }, 2000)
+    } catch {
+      copyBtn.textContent = 'Failed'
+    }
+  })
+</script>
+
+<style>
+  .theme-inspector-root {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1.5rem 1rem 4rem;
+  }
+
+  .theme-header {
+    margin-bottom: 2rem;
+  }
+
+  .theme-lead {
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: var(--sl-color-text-accent, inherit);
+    opacity: 0.9;
+    max-width: 800px;
+  }
+
+  .theme-grid {
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    gap: 2rem;
+    align-items: start;
+  }
+
+  @media (max-width: 900px) {
+    .theme-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .theme-controls-card {
+    background: var(--sl-color-bg, #ffffff);
+    border: 1px solid var(--sl-color-gray-5, #e2e8f0);
+    border-radius: var(--brand-radius, 0.75rem);
+    padding: 1.5rem;
+    position: sticky;
+    top: 5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  }
+
+  .theme-controls-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--sl-color-gray-5, #e2e8f0);
+  }
+
+  .theme-controls-title {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 700;
+  }
+
+  .theme-reset-btn {
+    font-size: 0.8rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 0.375rem;
+    border: 1px solid var(--sl-color-gray-5, #cbd5e1);
+    background: transparent;
+    color: var(--sl-color-text, inherit);
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+  }
+
+  .theme-reset-btn:hover {
+    background: var(--sl-color-gray-6, #f1f5f9);
+  }
+
+  .theme-controls-body {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .theme-control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .control-label-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .control-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+
+  .control-value-badge {
+    font-size: 0.8rem;
+    font-family: var(--sl-font-mono, monospace);
+    background: var(--sl-color-gray-6, #f1f5f9);
+    padding: 0.15rem 0.45rem;
+    border-radius: 0.25rem;
+    border: 1px solid var(--sl-color-gray-5, #e2e8f0);
+  }
+
+  .token-slider {
+    width: 100%;
+    cursor: pointer;
+    accent-color: var(--brand-primary, #6366f1);
+  }
+
+  .hue-slider {
+    accent-color: hsl(250, 70%, 55%);
+  }
+
+  .control-help {
+    margin: 0;
+    font-size: 0.75rem;
+    opacity: 0.75;
+    line-height: 1.4;
+  }
+
+  .theme-css-card {
+    margin-top: 1.75rem;
+    border-top: 1px solid var(--sl-color-gray-5, #e2e8f0);
+    padding-top: 1.25rem;
+  }
+
+  .css-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+
+  .css-card-title {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    opacity: 0.7;
+  }
+
+  .copy-css-btn {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 0.25rem;
+    border: 1px solid var(--sl-color-gray-5, #cbd5e1);
+    background: transparent;
+    color: var(--sl-color-text, inherit);
+    cursor: pointer;
+  }
+
+  .copy-css-btn:hover {
+    background: var(--sl-color-gray-6, #f1f5f9);
+  }
+
+  .css-code-block {
+    margin: 0;
+    padding: 0.75rem;
+    background: var(--sl-color-gray-6, #0f172a);
+    color: var(--sl-color-text, #f8fafc);
+    border-radius: 0.375rem;
+    font-size: 0.8rem;
+    font-family: var(--sl-font-mono, monospace);
+    overflow-x: auto;
+  }
+
+  .theme-previews-column {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .preview-section-card {
+    background: var(--sl-color-bg, #ffffff);
+    border: 1px solid var(--sl-color-gray-5, #e2e8f0);
+    border-radius: var(--brand-radius, 0.75rem);
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  }
+
+  .preview-card-title {
+    margin: 0 0 1rem;
+    font-size: 1.05rem;
+    font-weight: 700;
+  }
+
+  .preview-items-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+  }
+</style>
