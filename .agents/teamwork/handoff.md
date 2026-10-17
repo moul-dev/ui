@@ -1,71 +1,98 @@
-# Sentinel Handoff Report: Phase 9 Lit Web Components Migration
+# Sentinel Handoff Report — Phase 10 Completion
 
-**Date**: 2026-10-17  
-**Agent**: Sentinel (`1e6c347e-9551-4001-bdc4-0bd52c3be6e6`)  
-**Parent Conversation ID**: `6b8da8e8-d77f-473d-8fcd-8ec9e6a8a4fa`  
-**Workspace**: `/Users/phearak/.gemini/antigravity/worktrees/ui/implement_phase_nine_rdt`  
-**Project Phase**: Phase 9 (Category 6: Composite Block Components)  
-**Status**: COMPLETE (VICTORY CONFIRMED)
+**Date**: 2026-10-17T14:58:00Z  
+**Archetype**: Sentinel  
+**Parent (Caller)**: `451f7ef1-0799-4540-9398-e868a838144b`  
+**Verdict**: **VICTORY CONFIRMED**  
 
 ---
 
 ## 1. Observation
 
-- **Request**: Implement Phase 9 of the Lit Web Components migration for `@moul-dev/ui`, covering `moul-logs-viewer`, `moul-logs`, pure log parsing functions, and the 10-element `moul-sidebar` compound suite with context propagation and automated tests.
-- **Routing**: Evaluated per Routing Decision Table and routed to General path (`teamwork_preview_orchestrator`).
-- **Orchestration**: Dispatched Project Orchestrator (`orchestrator_phase9_1`, conv ID `2e0278dc-1bf9-46f6-91f3-ef0c473f76ff`), who established three execution milestones:
-  - Milestone 1: Logs Viewer and Pure Parser Exports (`ui/src/components/LogsViewer/`).
-  - Milestone 2: 10-Element Sidebar Compound Element Suite (`ui/src/components/Sidebar/`).
-  - Milestone 3: Verification Test Suite (`ui/src/components/Blocks.test.ts`), barrel exports in `ui/src/index.ts`, and task tracking.
-- **Implementation & Remediation**:
-  - `worker_m1_logs_1` implemented the Logs Viewer suite; gate reviews identified 7 robustness and edge-case improvements, which `worker_m1_logs_2` successfully remediated (prototype safety, ReDoS elimination on 50KB strings from >4s to <1ms, boolean property reflection on `<moul-logs>`, and row keyboard accessibility).
-  - `worker_m2_sidebar_1` implemented the full 10-element compound Sidebar suite with `@lit/context` state distribution, pure CSS grid height collapse (`grid-template-rows: 0fr` to `1fr`), tooltip wrappers for collapsed mode, and active selection pill gliding.
-  - `worker_m3_integration_1` authored the comprehensive `ui/src/components/Blocks.test.ts` (41/41 passing tests), updated `ui/src/index.ts` with `HTMLElementTagNameMap` registrations, and marked Phase 9 tasks completed in `rdt/tasks.md`.
-- **Independent Victory Audit**:
-  - Dispatched `victory_auditor_4` (`71acba32-0fb6-4ba3-a951-5995bcaa26e1`) to conduct 3-phase blocking audit.
-  - **Verdict**: `VICTORY CONFIRMED`.
-  - Phase A (Timeline): PASS. Sequential development provenance verified.
-  - Phase B (Integrity): PASS. Zero React/StyleX/JSX dependencies, zero disallowed packages via `verify-no-react.ts all`.
-  - Phase C (Independent Tests): PASS. 90/90 tests passed across `Blocks.test.ts`, `LogsViewer.test.ts`, and `Sidebar.test.ts`. Full Phase 9 directory: 155/155 tests passed (100%). Regression suite: 255/255 passed (0 regressions).
+### 1.1 Requirements Delivered & Verified
+1. **R1: Single Public Entry Point & Complete Custom Element Exports (`ui/src/index.ts`)**:
+   - Cleanly exports all 54 component classes and companion elements (77 custom element classes under both `Moul*` and canonical aliases, 154 total class exports).
+   - Exports all 5 Lit reactive controllers (`PressController`, `LayoutIndicatorController`, `OverlayPresenceController`, `NumberSpringController`, `FormInternalsController`) and their configuration/state interfaces from `ui/src/controllers/index.ts`.
+   - Exports `toastQueue`, `generatePagination`, and 7 pure log parsing utilities/constants (`parseLogs`, `parseLogLine`, `parseAttributes`, `stripAttributes`, `normalizeLogLevel`, `SERVER_LOG_RAW`, `SERVER_LOGS`).
+   - Augments global `HTMLElementTagNameMap` with all 77 `moul-*` tags mapped 1:1 to their corresponding LitElement classes.
+   - All legacy React exports (`Autocomplete`, `Description`, `Label`) and phantom types (`ChartContainerProps`, `LegendItem`, `CustomTooltipProps`) completely removed.
+
+2. **R2: Pure Web Components Sandbox Kitchen Sink & Legacy Cleanup (`ui/index.html` & `ui/src/sandbox.ts`)**:
+   - Rebuilt sandbox application in vanilla HTML and pure Lit (`ui/src/sandbox.ts`, 1,074 lines) rendering an interactive kitchen-sink playground under `<moul-sidebar>` covering all 6 component categories (Actions, Surfaces, Overlays, Forms, Charts, Blocks) with light/dark theme toggling via `document.documentElement.dataset.theme`.
+   - `ui/index.html` updated with viewport meta, CSS token link, and pure ES module entry `<script type="module" src="/src/sandbox.ts"></script>`.
+   - 43 legacy React, StyleX, and obsolete test files across 8 directories completely deleted (`ui/src/App.tsx`, `ui/src/main.tsx`, `ui/src/theme/ThemeProvider.tsx`, `ui/src/tokens/tokens.stylex.ts`, `ThemeProvider.test.tsx`, `utils.test.tsx`, `Autocomplete.test.tsx`, `ListBox.test.tsx`, and legacy sandbox sections). Exactly 0 `.tsx`/`.jsx` files remain in `ui/src/`.
+
+3. **R3: Library Build & Export Contract Verification (`ui/src/components/Foundation.test.ts` & Build Pipeline)**:
+   - Configured `ui/custom-elements-manifest.config.mjs` with dynamic AST analyzer plugin `moul-define-element-plugin`, correctly indexing `tagName` and `custom-element-definition` exports for all 77 components in `dist/custom-elements.json`.
+   - Authored and verified `ui/src/components/Foundation.test.ts` (1,031 lines, 15/15 tests passing) validating public export contracts, zero React dependencies, custom element registration idempotency (`defineElement` warning emission without `DOMException`), and live DOM instantiation.
+   - Executed clean scratch build (`bun run build:ui`) exiting with code 0, emitting:
+     - `dist/moul-ui.js` starting with `"use client";` banner
+     - `dist/assets/style.css` containing `:root` OKLCH design tokens (12.6 kB)
+     - `dist/src/index.d.ts` compiling cleanly
+     - `dist/custom-elements.json` indexing all 77 custom elements with valid `moul-*` tag names.
+   - Verified `bun run test`: 34/34 test files passed (981/981 tests passed, 0 failures).
+   - Verified `bun run lint`: 305 files checked, 0 errors.
+   - Verified `bun ./scripts/verify-no-react.ts all`: 0 disallowed packages across all manifests.
 
 ---
 
 ## 2. Logic Chain
 
-1. The user request specified a composite block component migration across 12 custom elements with strict architectural constraints (no React/StyleX, pure log parsing exports, `@lit/context` propagation, CSS grid animation, and automated tests).
-2. The request mapped directly to the General path under the Routing Decision Table, requiring top-level orchestration without a pre-flight dependency audit.
-3. The Project Orchestrator executed a structured decomposition with milestone gates. Milestone 1 survived adversarial review and challenge testing through Iteration 2 hardening.
-4. Milestone 2 completed implementation of all 10 compound sidebar elements with `@lit/context` and pure CSS grid height transitions.
-5. Milestone 3 produced the unified `Blocks.test.ts` integration suite and updated `rdt/tasks.md`.
-6. Upon orchestrator victory claim, `victory_auditor_4` was spawned to independently verify provenance, check for facades or cheating, and execute test runs in a clean context.
-7. `victory_auditor_4` returned `VICTORY CONFIRMED` with 100% test pass rate and zero regressions.
-8. Sentinel crons were cancelled and subagents terminated per lifecycle rules.
+1. User requested Phase 10 implementation of the `@moul-dev/ui` Lit Web Components rebuild. Sentinel recorded request to `ORIGINAL_REQUEST.md` and routed to the Project Orchestrator under the General path.
+2. The orchestrator decomposed Phase 10 into 3 milestones:
+   - Milestone 1: Public Entry Point & Tag Augmentation
+   - Milestone 2: Legacy Purge & Pure Lit Sandbox
+   - Milestone 3: Build Pipeline, CEM Schema v2 & Foundation Contract Tests
+3. Each milestone was implemented by dedicated workers and subjected to adversarial review teams (2 Reviewers, 2 Challengers, and 1 Forensic Auditor per milestone).
+4. All 3 milestone quality gates passed with unanimous APPROVE / CLEAN consensus.
+5. Following orchestrator completion, Sentinel dispatched independent auditor `victory_auditor_5` with zero shared context from the implementation swarm.
+6. `victory_auditor_5` executed the 3-phase audit independently, conducting clean scratch builds, runtime element mounting, idempotency stress tests, and test suite execution, issuing a structured **VICTORY CONFIRMED** verdict.
+7. Background monitoring crons were cancelled and all subagents terminated per lifecycle rules.
 
 ---
 
 ## 3. Caveats
 
-- `@lit-labs/virtualizer` requires an environment with layout measurement support (e.g. `ResizeObserver` / DOM geometry); tests include appropriate Happy DOM shims where required.
-- In collapsed sidebar mode (`collapsed = true`), labels are collapsed and triggers wrap in `<moul-tooltip>` placing previews on hover/focus.
-- Custom elements are defined idempotently using `defineElement()` to avoid duplicate definition warnings across hot-reloading environments.
+- `@custom-elements-manifest/analyzer` generates file order within `custom-elements.json` based on filesystem directory traversal order. Both `dist/custom-elements.json` and `ui/dist/custom-elements.json` contain all 77 custom elements with valid tag names.
+- The `ui` package build isolates library bundling to `tsconfig.app.json` and tooling to `tsconfig.node.json`, with tests executing directly under Vitest using happy-dom and browser shims.
 
 ---
 
 ## 4. Conclusion
 
-Phase 9 (Category 6: Composite Block Components) is complete and verified. All 12 custom elements (`moul-logs-viewer`, `moul-logs`, `moul-sidebar`, `moul-sidebar-aside`, `moul-sidebar-main`, `moul-sidebar-header`, `moul-sidebar-brand`, `moul-sidebar-group`, `moul-sidebar-item`, `moul-sidebar-divider`, `moul-sidebar-footer`, `moul-sidebar-user`) are implemented as Lit Web Components, exported via `ui/src/index.ts`, and typed in `HTMLElementTagNameMap`. Tasks 9.1, 9.2, and 9.3 in `rdt/tasks.md` are marked complete.
+Phase 10 of the Lit Web Components rebuild for `@moul-dev/ui` is **100% COMPLETE** and independently verified. All requirements and acceptance criteria have been satisfied with zero regressions and zero remaining legacy React files.
 
 ---
 
 ## 5. Verification Method
 
-- **Core Phase 9 Test Suite**:
-  `cd ui && ./node_modules/.bin/vitest run src/components/Blocks.test.ts src/components/LogsViewer/LogsViewer.test.ts src/components/Sidebar/Sidebar.test.ts` (90/90 passed)
-- **Phase 9 Comprehensive Directory Suite**:
-  `cd ui && ./node_modules/.bin/vitest run src/components/Blocks.test.ts src/components/LogsViewer/ src/components/Sidebar/` (155/155 passed)
-- **Zero-React Dependency Check**:
-  `bun ./scripts/verify-no-react.ts all` (PASSED with 0 violations)
-- **Lint & Format Check**:
-  `bun run lint` (0 errors, 0 warnings)
-- **Regression Suite Across Components**:
-  `cd ui && ./node_modules/.bin/vitest run src/tokens/ src/controllers/ src/components/Actions.test.ts src/components/Surfaces.test.ts src/components/Overlays.test.ts src/components/Navigation.test.ts src/components/Forms.test.ts src/components/Blocks.test.ts` (255/255 passed)
+To reproduce the verified build, test, and contract guarantees:
+
+```bash
+# 1. Verify zero React packages in manifests
+bun ./scripts/verify-no-react.ts all
+
+# 2. Clean scratch build of the library, declarations, and CEM manifest
+rm -rf ui/dist dist
+bun run build:ui
+
+# 3. Verify built artifacts
+head -n 1 dist/moul-ui.js | grep '"use client";'
+test -f dist/assets/style.css && echo "style.css present"
+test -f dist/src/index.d.ts && echo "index.d.ts present"
+
+# 4. Verify custom-elements.json contains 77 custom elements
+bun -e "
+import fs from 'node:fs';
+const data = JSON.parse(fs.readFileSync('dist/custom-elements.json', 'utf8'));
+const tags = (data.modules || []).flatMap(m => m.declarations || []).filter(d => d.tagName && d.tagName.startsWith('moul-'));
+console.log('Tagged components:', tags.length);
+if (tags.length !== 77) process.exit(1);
+"
+
+# 5. Run full test suite including Foundation contract tests
+bun run test
+
+# 6. Verify zero lint errors
+bun run lint
+```

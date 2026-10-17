@@ -14,29 +14,6 @@ export {
   MoulAreaChart as AreaChart,
 } from './components/AreaChart'
 export type {
-  AutocompleteEmptyStateProps,
-  AutocompleteItemProps,
-  AutocompleteListProps,
-  AutocompleteMode,
-  AutocompletePopoverProps,
-  AutocompleteProps,
-  AutocompleteSectionProps,
-  AutocompleteSize,
-  Filter,
-} from './components/Autocomplete'
-export {
-  Autocomplete,
-  AutocompleteContext,
-  AutocompleteEmptyState,
-  AutocompleteItem,
-  AutocompleteList,
-  AutocompletePopover,
-  AutocompleteSection,
-  AutocompleteStateContext,
-  useAutocompleteInnerContext,
-  useFilter,
-} from './components/Autocomplete'
-export type {
   AvatarShape,
   AvatarSize,
   AvatarStatus,
@@ -59,20 +36,19 @@ export {
   MoulBreadcrumbs as Breadcrumbs,
 } from './components/Breadcrumbs'
 // Phase 4: Actions & Toggle Components
-export { MoulButton, MoulButton as Button } from './components/Button'
-export type {
-  ButtonSize,
-  ButtonType,
-  ButtonVariant,
-} from './components/Button/Button'
 export {
+  type ButtonSize,
+  type ButtonType,
+  type ButtonVariant,
+  MoulButton,
+  MoulButton as Button,
+} from './components/Button'
+export {
+  type ButtonGroupOrientation,
+  type ButtonGroupSpacing,
   MoulButtonGroup,
   MoulButtonGroup as ButtonGroup,
 } from './components/ButtonGroup'
-export type {
-  ButtonGroupOrientation,
-  ButtonGroupSpacing,
-} from './components/ButtonGroup/ButtonGroup'
 // Phase 7: Input & Form Components
 export { MoulCalendar, MoulCalendar as Calendar } from './components/Calendar'
 export {
@@ -85,16 +61,23 @@ export {
   MoulCardHeader,
   MoulCardHeader as CardHeader,
 } from './components/Card'
+// Chart Common Primitives & Types
 export type {
-  ChartContainerProps,
-  LegendItem,
-} from './components/ChartContainer'
+  ChartSeries,
+  DoughnutDataItem,
+  PointHoverDetail,
+} from './components/ChartCommon'
+export { CHART_COLORS, getChartColor } from './components/ChartCommon'
 // Charts and Analytics Components
+export type { ViewportResizeDetail } from './components/ChartContainer'
 export {
   MoulChartContainer,
   MoulChartContainer as ChartContainer,
 } from './components/ChartContainer'
-export type { CustomTooltipProps } from './components/ChartTooltip'
+export type {
+  ChartTooltipPayloadEntry,
+  ChartTooltipShowOptions,
+} from './components/ChartTooltip'
 export {
   MoulChartTooltip,
   MoulChartTooltip as ChartTooltip,
@@ -121,12 +104,7 @@ export {
   MoulDatePicker,
   MoulDatePicker as DatePicker,
 } from './components/DatePicker'
-export { Description } from './components/Description'
-export type { DescriptionProps } from './components/Description/Description'
-export type {
-  DoughnutChartProps,
-  DoughnutDataItem,
-} from './components/DoughnutChart'
+export type { DoughnutChartProps } from './components/DoughnutChart'
 export {
   MoulDoughnutChart,
   MoulDoughnutChart as DoughnutChart,
@@ -155,8 +133,6 @@ export {
   MoulInputOTP as InputOTP,
 } from './components/InputOTP'
 export { MoulKbd, MoulKbd as Kbd } from './components/Kbd'
-export { Label } from './components/Label'
-export type { LabelProps } from './components/Label/Label'
 export type { LineChartProps } from './components/LineChart'
 export {
   MoulLineChart,
@@ -306,8 +282,11 @@ export {
   MoulSlider,
   MoulSlider as Slider,
 } from './components/Slider'
-export { MoulSpinner, MoulSpinner as Spinner } from './components/Spinner'
-export type { SpinnerSize } from './components/Spinner/Spinner'
+export {
+  MoulSpinner,
+  MoulSpinner as Spinner,
+  type SpinnerSize,
+} from './components/Spinner'
 export type { StatProps, StatTrend } from './components/Stat'
 export { MoulStat, MoulStat as Stat } from './components/Stat'
 export {
@@ -357,13 +336,13 @@ export {
 export {
   MoulToggleButton,
   MoulToggleButton as ToggleButton,
+  type ToggleButtonSize,
 } from './components/ToggleButton'
-export type { ToggleButtonSize } from './components/ToggleButton/ToggleButton'
 export {
   MoulToggleButtonGroup,
   MoulToggleButtonGroup as ToggleButtonGroup,
+  type ToggleButtonGroupOrientation,
 } from './components/ToggleButtonGroup'
-export type { ToggleButtonGroupOrientation } from './components/ToggleButtonGroup/ToggleButtonGroup'
 export {
   MoulTooltip,
   MoulTooltip as Tooltip,
@@ -411,8 +390,10 @@ export {
 // Custom Element Type Imports for Global HTMLElementTagNameMap
 import type { MoulAlert } from './components/Alert'
 import type { MoulAlertDialog } from './components/AlertDialog'
+import type { MoulAreaChart } from './components/AreaChart'
 import type { MoulAvatar, MoulAvatarGroup } from './components/Avatar'
 import type { MoulBadge } from './components/Badge'
+import type { MoulBarChart } from './components/BarChart'
 import type {
   MoulBreadcrumbItem,
   MoulBreadcrumbs,
@@ -426,20 +407,28 @@ import type {
   MoulCardFooter,
   MoulCardHeader,
 } from './components/Card'
+import type { MoulChartContainer } from './components/ChartContainer'
+import type { MoulChartTooltip } from './components/ChartTooltip'
 import type { MoulCheckbox, MoulCheckboxGroup } from './components/Checkbox'
 import type { MoulComboBox, MoulComboBoxItem } from './components/ComboBox'
 import type { MoulCommandPalette } from './components/CommandPalette'
 import type { MoulDatePicker } from './components/DatePicker'
+import type { MoulDoughnutChart } from './components/DoughnutChart'
 import type { MoulDrawer } from './components/Drawer'
 import type { MoulEmptyState } from './components/EmptyState'
 import type { MoulForm } from './components/Form'
 import type { MoulInputOTP } from './components/InputOTP'
 import type { MoulKbd } from './components/Kbd'
+import type { MoulLineChart } from './components/LineChart'
 import type { MoulLink } from './components/Link'
 import type { MoulLogs, MoulLogsViewer } from './components/LogsViewer'
 import type { MoulModal } from './components/Modal'
 import type { MoulNumberField } from './components/NumberField'
 import type { MoulPagination } from './components/Pagination'
+import type {
+  MoulPercentageBar,
+  MoulPercentageCircle,
+} from './components/Percentage'
 import type { MoulPopover } from './components/Popover'
 import type { MoulProgressBar } from './components/ProgressBar'
 import type { MoulRadio, MoulRadioGroup } from './components/RadioGroup'
@@ -461,6 +450,7 @@ import type {
 import type { MoulSkeleton } from './components/Skeleton'
 import type { MoulSlider } from './components/Slider'
 import type { MoulSpinner } from './components/Spinner'
+import type { MoulStat } from './components/Stat'
 import type { MoulSwitch } from './components/Switch'
 import type { MoulTable } from './components/Table'
 import type { MoulTab, MoulTabPanel, MoulTabs } from './components/Tabs'
@@ -471,6 +461,7 @@ import type { MoulToast, MoulToastRegion } from './components/Toast'
 import type { MoulToggleButton } from './components/ToggleButton'
 import type { MoulToggleButtonGroup } from './components/ToggleButtonGroup'
 import type { MoulTooltip } from './components/Tooltip'
+import type { MoulTopList } from './components/TopList'
 import type { MoulTypography } from './components/Typography'
 
 declare global {

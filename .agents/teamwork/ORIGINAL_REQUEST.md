@@ -273,3 +273,49 @@ Author a comprehensive Vitest test suite covering:
 - [ ] Vitest test suite in `ui/src/components/Blocks.test.ts` executes and passes all test assertions.
 - [ ] `scripts/verify-no-react.ts` passes with zero disallowed dependency or import violations in `ui`.
 - [ ] `Phase 9` tasks in `rdt/tasks.md` are marked completed `[x]`.
+
+
+## 2026-10-17T12:40:55Z
+
+Implement Phase 10 of the `@moul-dev/ui` Lit Web Components rebuild: Complete the single public entry point (`ui/src/index.ts`), rebuild the sandbox app in vanilla HTML/Lit, purge remaining legacy React files, and verify library build and export contracts.
+
+Working directory: /Users/phearak/github/orgs/moul-dev/ui
+Integrity mode: development
+
+## Requirements
+
+### R1. Single Public Entry Point & Complete Custom Element Exports
+Wire `ui/src/index.ts` to export all 54 Lit component classes and companion elements, TypeScript types, the 5 reactive controllers (`press.controller`, `layout-indicator.controller`, `overlay-presence.controller`, `number-spring.controller`, `form-internals.controller`), `toastQueue`, `generatePagination`, and all log parser functions (`parseLogs`, `parseLogLine`, `parseAttributes`, `stripAttributes`, `normalizeLogLevel`, `SERVER_LOG_RAW`, `SERVER_LOGS`). Augment `HTMLElementTagNameMap` with all 54 `moul-*` custom element tag names and companion elements. Remove any lingering legacy React exports or broken module references.
+
+### R2. Pure Web Components Sandbox Kitchen Sink & Legacy Cleanup
+Rebuild the `ui/` sandbox app in vanilla HTML / Lit (`ui/index.html` & `ui/src/sandbox.ts`) to provide an interactive kitchen-sink playground for testing and demonstrating all component categories (actions, surfaces, overlays, forms, charts, blocks) when running `bun run dev:ui`. Delete legacy React files: `ui/src/App.tsx`, `ui/src/main.tsx`, `ui/src/theme/ThemeProvider.tsx`, `ui/src/tokens/tokens.stylex.ts`, and legacy React test files (`ui/src/theme/ThemeProvider.test.tsx`, `ui/src/utils/utils.test.tsx`, `ui/src/components/Autocomplete/Autocomplete.test.tsx`, `ui/src/components/ListBox/ListBox.test.tsx`).
+
+### R3. Library Build & Export Contract Verification
+Execute `bun run build:ui` to ensure the full build pipeline (dependency check, TypeScript typecheck, Vite library bundle, and CEM schema v2 analyzer) exits with code 0, emitting `dist/moul-ui.js` (with `"use client";` banner), `dist/assets/style.css`, `dist/src/index.d.ts`, and `dist/custom-elements.json` containing all 54 components. Implement and pass contract verification tests in `ui/src/components/Foundation.test.ts` checking export contracts, zero React imports, and idempotent `customElements.define` registrations.
+
+## Acceptance Criteria
+
+### Public API & Exports
+- [ ] `ui/src/index.ts` exports all 54 component classes, companion elements, types, 5 reactive controllers, `toastQueue`, `generatePagination`, and log parser utilities.
+- [ ] `HTMLElementTagNameMap` contains all 54 custom element tags with their respective LitElement class types.
+- [ ] No module specifier or import inside `ui/src/index.ts` references React, React Aria, StyleX, or missing files.
+
+### Sandbox & Legacy Cleanup
+- [ ] `ui/src/App.tsx`, `ui/src/main.tsx`, `ui/src/theme/ThemeProvider.tsx`, and `ui/src/tokens/tokens.stylex.ts` are completely deleted.
+- [ ] Legacy `.test.tsx` files (`ThemeProvider.test.tsx`, `utils.test.tsx`, `Autocomplete.test.tsx`, `ListBox.test.tsx`) are deleted or replaced with Web Component tests.
+- [ ] `ui/index.html` loads `ui/src/sandbox.ts` and renders interactive Web Component showcases across all categories.
+
+### Build, CEM & Contract Tests
+- [ ] `bun run build:ui` completes with exit code 0.
+- [ ] `dist/moul-ui.js` begins with the `"use client";` banner.
+- [ ] `dist/assets/style.css` exists and contains `:root` CSS token definitions.
+- [ ] `dist/src/index.d.ts` exists and compiles cleanly.
+- [ ] `dist/custom-elements.json` exists and indexes all 54 `moul-*` components.
+- [ ] `ui/src/components/Foundation.test.ts` passes under Vitest, verifying custom element registration idempotency (`customElements.get` before and after second import) and absence of banned dependencies.
+- [ ] Full monorepo test suite `bun run test` passes with 0 failed test suites.
+- [ ] `bun run lint` passes with 0 errors.
+
+
+## 2026-10-17T14:34:17Z
+
+Quota has reset. Please resume Phase 10: Milestone 3 implementation is complete and verified (build:ui exit 0, "use client" banner, style.css + index.d.ts present, custom-elements.json has 77 moul-* tags, 34/34 test files / 981 tests pass, lint 0 errors). Finish the Gate 3 review (reviewers, challengers, auditor), fix any defects, then send the final Phase 10 summary.

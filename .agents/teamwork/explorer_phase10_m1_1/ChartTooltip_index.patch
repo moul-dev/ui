@@ -1,0 +1,13 @@
+diff --git a/ui/src/components/ChartTooltip/index.ts b/ui/src/components/ChartTooltip/index.ts
+index d1e854c..377f794 100644
+--- a/ui/src/components/ChartTooltip/index.ts
++++ b/ui/src/components/ChartTooltip/index.ts
+@@ -1,4 +1,7 @@
+-export type { CustomTooltipProps } from './ChartTooltip'
++export type {
++  ChartTooltipPayloadEntry,
++  ChartTooltipShowOptions,
++} from './ChartTooltip'
+ export {
+   MoulChartTooltip,
+   MoulChartTooltip as ChartTooltip,

@@ -202,12 +202,12 @@ _Covers: Requirement 12_
 ## Phase 10: Public Entry Point, Sandbox App & Library Build Verification
 _Covers: Requirement 2, Requirement 15, Requirement 16_
 
-- [ ] **10.1 Wire `ui/src/index.ts` Single Public Entry Point**
+- [x] **10.1 Wire `ui/src/index.ts` Single Public Entry Point**
   - Export all 54 component classes, companion elements, TypeScript types, 5 reactive controllers, `toastQueue`, `generatePagination`, and log parser functions, plus `HTMLElementTagNameMap` augmentation (_Req 2.1, 2.6, 16.4_).
-- [ ] **10.2 Rebuild `ui/` Sandbox App in Vanilla HTML / Lit (`ui/index.html` & `ui/src/sandbox.ts`)**
+- [x] **10.2 Rebuild `ui/` Sandbox App in Vanilla HTML / Lit (`ui/index.html` & `ui/src/sandbox.ts`)**
   - Remove `ui/src/App.tsx`, `ui/src/main.tsx`, `ui/src/theme/ThemeProvider.tsx`, and `ui/src/tokens/tokens.stylex.ts`.
   - Create interactive Web Components kitchen-sink sandbox for `bun run dev:ui`.
-- [ ] **10.3 Run `bun run build:ui` and Write Export/Registration Contract Tests (`ui/src/components/Foundation.test.ts`)**
+- [x] **10.3 Run `bun run build:ui` and Write Export/Registration Contract Tests (`ui/src/components/Foundation.test.ts`)**
   - Verify `dist/moul-ui.js` starts with `"use client";`, `dist/assets/style.css` and `dist/src/index.d.ts` exist, `dist/custom-elements.json` contains all 54 components, and duplicate imports preserve existing custom element registrations.
 
 ---

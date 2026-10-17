@@ -63,7 +63,7 @@ export default defineConfig({
   },
   plugins: [
     banReactImportsPlugin(),
-    dts({ tsconfigPath: './tsconfig.app.json' }),
+    dts({ tsconfigPath: './tsconfig.app.json' }) as any,
     copyCssTokensPlugin(),
   ],
   build: {

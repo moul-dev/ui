@@ -1,4 +1,4 @@
-export type { ChartContainerProps, LegendItem } from './ChartContainer'
+export type { ViewportResizeDetail } from './ChartContainer'
 export {
   MoulChartContainer,
   MoulChartContainer as ChartContainer,
