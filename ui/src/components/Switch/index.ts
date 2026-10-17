@@ -1,2 +1,2 @@
-export type { SwitchProps } from './Switch'
-export { Switch } from './Switch'
+export type { SwitchSize } from './Switch'
+export { MoulSwitch, MoulSwitch as Switch } from './Switch'

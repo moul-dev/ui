@@ -1,2 +1,1 @@
-export type { TextAreaProps } from './TextArea'
-export { TextArea } from './TextArea'
+export { MoulTextArea, MoulTextArea as TextArea } from './TextArea'

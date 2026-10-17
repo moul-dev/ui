@@ -1,77 +1,138 @@
-import * as stylex from '@stylexjs/stylex'
-import { tokens } from '../../tokens/tokens.stylex'
+import { css } from 'lit'
+import { resetStyles } from '../../styles/reset.styles'
 
-export const styles = stylex.create({
-  groupBase: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: tokens.spacing1,
-  },
-  group: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: tokens.spacing2,
-  },
-  radioBase: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: tokens.spacing2,
-    cursor: 'pointer',
-    fontSize: tokens.fontSizeMd,
-    lineHeight: tokens.lineHeightMd,
-    color: tokens.colorFg,
-    userSelect: 'none',
-  },
-  radioDisabled: {
-    opacity: 0.4,
-    cursor: 'not-allowed',
-  },
-  radioReadOnly: {
-    cursor: 'default',
-  },
-  indicator: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: tokens.spacing4,
-    height: tokens.spacing4,
-    flexShrink: 0,
-    borderRadius: tokens.radiusFull,
-    borderWidth: '1px',
-    borderStyle: 'solid',
-    borderColor: tokens.colorBorder,
-    backgroundColor: tokens.colorBg,
-    transitionProperty: 'background-color, border-color, box-shadow',
-    transitionDuration: '0.15s',
-    transitionTimingFunction: 'ease-in-out',
-  },
-  indicatorHover: {
-    borderColor: tokens.colorNeutral400,
-  },
-  indicatorChecked: {
-    backgroundColor: tokens.colorPrimary500,
-    borderColor: tokens.colorPrimary500,
-  },
-  indicatorFocusVisible: {
-    outlineStyle: 'solid',
-    outlineWidth: '2px',
-    outlineOffset: '2px',
-    outlineColor: tokens.colorBorderFocus,
-  },
-  indicatorInvalid: {
-    borderColor: tokens.colorError500,
-  },
-  dot: {
-    width: tokens.spacing2,
-    height: tokens.spacing2,
-    borderRadius: tokens.radiusFull,
-    backgroundColor: tokens.colorFgOnPrimary,
-    transitionProperty: 'transform',
-    transitionDuration: '0.15s',
-    transitionTimingFunction: 'ease-in-out',
-    transform: 'scale(1)',
-  },
-  label: {
-    paddingInlineStart: tokens.spacing1,
-  },
-})
+export const radioStyles = [
+  resetStyles,
+  css`
+    :host {
+      display: inline-flex;
+      font-family: var(--font-family-base, inherit);
+      color: var(--color-fg, inherit);
+      user-select: none;
+    }
+
+    :host([hidden]) {
+      display: none !important;
+    }
+
+    [part='base'] {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacing-2, 0.5rem);
+      cursor: pointer;
+      font-size: var(--font-size-sm, 0.875rem);
+      line-height: var(--line-height-sm, 1.25rem);
+    }
+
+    [part='indicator'] {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.125rem;
+      height: 1.125rem;
+      border-radius: var(--radius-full, 9999px);
+      border: 1px solid var(--color-border, #d1d5db);
+      background-color: var(--color-bg, #ffffff);
+      transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+      flex-shrink: 0;
+    }
+
+    [part='base']:hover:not([data-disabled='true']) [part='indicator'] {
+      border-color: var(--color-neutral-400, #9ca3af);
+    }
+
+    :host(:focus-visible) [part='indicator'],
+    [part='base']:focus-visible [part='indicator'] {
+      outline: 2px solid var(--color-border-focus, #3b82f6);
+      outline-offset: 2px;
+    }
+
+    :host([is-checked]) [part='indicator'] {
+      border-color: var(--color-primary-500, #3b82f6);
+    }
+
+    [part='dot'] {
+      width: 0.5rem;
+      height: 0.5rem;
+      border-radius: var(--radius-full, 9999px);
+      background-color: var(--color-primary-500, #3b82f6);
+      transform: scale(0);
+      transition: transform 0.15s ease;
+    }
+
+    :host([is-checked]) [part='dot'] {
+      transform: scale(1);
+    }
+
+    [part='label'] {
+      display: inline-flex;
+      align-items: center;
+      color: inherit;
+    }
+
+    :host([is-disabled]) {
+      opacity: 0.45;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      [part='indicator'],
+      [part='dot'] {
+        transition: none;
+      }
+    }
+  `,
+]
+
+export const radioGroupStyles = [
+  resetStyles,
+  css`
+    :host {
+      display: block;
+      font-family: var(--font-family-base, inherit);
+      color: var(--color-fg, inherit);
+    }
+
+    :host([hidden]) {
+      display: none !important;
+    }
+
+    [part='base'] {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-2, 0.5rem);
+    }
+
+    [part='label'] {
+      font-size: var(--font-size-sm, 0.875rem);
+      font-weight: 500;
+      color: var(--color-fg, inherit);
+    }
+
+    [part='description'] {
+      font-size: var(--font-size-xs, 0.75rem);
+      color: var(--color-fg-subtle, #6b7280);
+    }
+
+    [part='group'] {
+      display: flex;
+      gap: var(--spacing-3, 0.75rem);
+    }
+
+    :host([orientation='vertical']) [part='group'] {
+      flex-direction: column;
+    }
+
+    :host([orientation='horizontal']) [part='group'] {
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    :host([is-disabled]) {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  `,
+]

@@ -1,2 +1,2 @@
-export type { BadgeProps, BadgeSize, BadgeVariant } from './Badge'
-export { Badge } from './Badge'
+export type { BadgeSize } from './Badge'
+export { MoulBadge, MoulBadge as Badge } from './Badge'

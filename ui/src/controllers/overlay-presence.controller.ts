@@ -78,6 +78,7 @@ export class OverlayPresenceController implements ReactiveController {
 
       // Allow Lit template to render DOM if unmounted
       if (
+        this.host.isConnected &&
         (this.host as unknown as { updateComplete?: Promise<boolean> })
           .updateComplete
       ) {
@@ -92,7 +93,7 @@ export class OverlayPresenceController implements ReactiveController {
         this.options.target?.() ??
         this.host) as HTMLElement | null
 
-      if (target) {
+      if (this.host.isConnected && target) {
         const keyframes = this.getEnterKeyframes(preset)
         const opts = prefersReducedMotion()
           ? { duration: 0 }
@@ -111,7 +112,7 @@ export class OverlayPresenceController implements ReactiveController {
         this.options.target?.() ??
         this.host) as HTMLElement | null
 
-      if (target) {
+      if (this.host.isConnected && target) {
         const keyframes = this.getExitKeyframes(preset)
         const opts = prefersReducedMotion()
           ? { duration: 0 }

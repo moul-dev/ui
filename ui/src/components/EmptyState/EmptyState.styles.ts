@@ -1,150 +1,109 @@
-import * as stylex from '@stylexjs/stylex'
-import { tokens } from '../../tokens/tokens.stylex'
+import { css } from 'lit'
+import { resetStyles } from '../../styles/reset.styles'
 
-export const styles = stylex.create({
-  container: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    textAlign: 'center',
-    width: '100%',
-    boxSizing: 'border-box',
-    fontFamily: tokens.fontFamilyBase,
-  },
-  alignStart: {
-    alignItems: 'flex-start',
-    textAlign: 'start',
-  },
-  alignCenter: {
-    alignItems: 'center',
-    textAlign: 'center',
-  },
+export const emptyStateStyles = [
+  resetStyles,
+  css`
+    :host {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      box-sizing: border-box;
+      font-family: var(--font-family-base, inherit);
+    }
 
-  // Sizes (padding & gap)
-  sizeSm: {
-    padding: `${tokens.spacing4} ${tokens.spacing3}`,
-    gap: tokens.spacing2,
-  },
-  sizeMd: {
-    padding: `${tokens.spacing6} ${tokens.spacing4}`,
-    gap: tokens.spacing3,
-  },
-  sizeLg: {
-    padding: `${tokens.spacing8} ${tokens.spacing6}`,
-    gap: tokens.spacing4,
-  },
+    [part="base"] {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      box-sizing: border-box;
+      border-radius: var(--radius-lg, 0.75rem);
+    }
 
-  // Variants
-  variantDefault: {
-    backgroundColor: 'transparent',
-  },
-  variantDashed: {
-    backgroundColor: tokens.colorBgSubtle,
-    borderWidth: '1px',
-    borderStyle: 'dashed',
-    borderColor: tokens.colorBorder,
-    borderRadius: tokens.radiusLg,
-  },
-  variantCard: {
-    backgroundColor: tokens.colorBgElevated,
-    borderWidth: '1px',
-    borderStyle: 'solid',
-    borderColor: tokens.colorBorderSubtle,
-    borderRadius: tokens.radiusLg,
-    boxShadow: tokens.shadowSm,
-  },
+    :host([align="center"]) [part="base"],
+    :host(:not([align])) [part="base"] {
+      align-items: center;
+      text-align: center;
+    }
 
-  // Icon Wrapper
-  iconWrapper: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: tokens.radiusFull,
-    backgroundColor: tokens.colorNeutral100,
-    color: tokens.colorFgSubtle,
-    flexShrink: 0,
-    borderWidth: '1px',
-    borderStyle: 'solid',
-    borderColor: tokens.colorBorderSubtle,
-  },
-  iconPrimary: {
-    backgroundColor: tokens.colorPrimary50,
-    color: tokens.colorPrimary600,
-    borderColor: tokens.colorPrimary100,
-  },
-  iconSm: {
-    width: '36px',
-    height: '36px',
-    fontSize: '18px',
-  },
-  iconMd: {
-    width: '48px',
-    height: '48px',
-    fontSize: '24px',
-  },
-  iconLg: {
-    width: '64px',
-    height: '64px',
-    fontSize: '32px',
-  },
+    :host([align="start"]) [part="base"] {
+      align-items: flex-start;
+      text-align: start;
+    }
 
-  // Content stack
-  content: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: tokens.spacing1,
-    alignItems: 'inherit',
-    maxWidth: '440px',
-  },
+    /* Sizes */
+    :host([size="sm"]) [part="base"] {
+      padding: var(--spacing-4, 1rem) var(--spacing-3, 0.75rem);
+      gap: var(--spacing-2, 0.5rem);
+    }
 
-  // Title
-  title: {
-    margin: 0,
-    fontWeight: tokens.fontWeightSemibold,
-    color: tokens.colorFg,
-    lineHeight: tokens.lineHeightSm,
-  },
-  titleSm: {
-    fontSize: tokens.fontSizeSm,
-  },
-  titleMd: {
-    fontSize: tokens.fontSizeMd,
-  },
-  titleLg: {
-    fontSize: tokens.fontSizeLg,
-  },
+    :host([size="md"]) [part="base"],
+    :host(:not([size])) [part="base"] {
+      padding: var(--spacing-6, 1.5rem) var(--spacing-4, 1rem);
+      gap: var(--spacing-3, 0.75rem);
+    }
 
-  // Description
-  description: {
-    margin: 0,
-    fontWeight: tokens.fontWeightNormal,
-    color: tokens.colorFgSubtle,
-    lineHeight: tokens.lineHeightSm,
-  },
-  descriptionSm: {
-    fontSize: tokens.fontSizeXs,
-  },
-  descriptionMd: {
-    fontSize: tokens.fontSizeSm,
-  },
-  descriptionLg: {
-    fontSize: tokens.fontSizeMd,
-  },
+    :host([size="lg"]) [part="base"] {
+      padding: var(--spacing-8, 2rem) var(--spacing-6, 1.5rem);
+      gap: var(--spacing-4, 1rem);
+    }
 
-  // Actions row
-  actions: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: tokens.spacing2,
-    flexWrap: 'wrap',
-    marginBlockStart: tokens.spacing1,
-  },
-  actionsStart: {
-    justifyContent: 'flex-start',
-  },
-  actionsCenter: {
-    justifyContent: 'center',
-  },
-})
+    /* Variants */
+    :host([variant="flat"]) [part="base"],
+    :host(:not([variant])) [part="base"] {
+      background-color: var(--color-bg-subtle, #f3f4f6);
+    }
+
+    :host([variant="bordered"]) [part="base"] {
+      background-color: var(--color-bg, #ffffff);
+      border: 1px dashed var(--color-border, #e5e7eb);
+    }
+
+    :host([variant="solid"]) [part="base"] {
+      background-color: var(--color-bg-elevated, #ffffff);
+      border: 1px solid var(--color-border-subtle, #f3f4f6);
+      box-shadow: var(--shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.05));
+    }
+
+    :host([variant="glass"]) [part="base"] {
+      background-color: var(--color-bg-glass, rgba(255, 255, 255, 0.7));
+      border: 1px solid var(--color-border-glass, rgba(255, 255, 255, 0.2));
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    [part="icon"] {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-fg-subtle, #6b7280);
+      font-size: 2.5rem;
+    }
+
+    [part="title"] {
+      font-size: var(--font-size-lg, 1.125rem);
+      font-weight: 600;
+      color: var(--color-fg, inherit);
+      line-height: var(--line-height-lg, 1.75rem);
+    }
+
+    [part="description"] {
+      font-size: var(--font-size-sm, 0.875rem);
+      color: var(--color-fg-subtle, #6b7280);
+      line-height: var(--line-height-sm, 1.25rem);
+      max-width: 48ch;
+    }
+
+    [part="actions"] {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacing-2, 0.5rem);
+      margin-top: var(--spacing-2, 0.5rem);
+    }
+
+    /* Hide empty parts if slotted elements are absent */
+    slot:empty {
+      display: none;
+    }
+  `,
+]

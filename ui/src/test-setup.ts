@@ -8,6 +8,18 @@
  * 4. Deterministic ResizeObserver Controller (__triggerResize)
  */
 
+import HTMLElementConfig from 'happy-dom/lib/config/HTMLElementConfig.js'
+
+// Fix Happy-DOM fragment parser stripping table elements in <template>
+if (HTMLElementConfig) {
+  for (const tag of ['th', 'td', 'tr', 'tbody', 'thead', 'tfoot']) {
+    const cfg = (HTMLElementConfig as Record<string, any>)[tag]
+    if (cfg?.permittedParents && !cfg.permittedParents.includes(undefined)) {
+      cfg.permittedParents.push(undefined)
+    }
+  }
+}
+
 // =============================================================================
 // 1. Web Animations API, CSS.supports & matchMedia shims
 // =============================================================================

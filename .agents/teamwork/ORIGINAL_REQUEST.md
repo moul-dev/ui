@@ -130,3 +130,89 @@ Author a complete test suite in `ui/src/controllers/Controllers.test.ts` (using 
 - [ ] `node ui/node_modules/.bin/vitest run --root ui src/tokens/tokens.test.ts` and `src/utils/utils-challenge.test.ts` continue to pass without regression.
 - [ ] `node_modules/.bin/biome check ui/src/controllers` passes with 0 errors.
 - [ ] `rdt/tasks.md` Phase 3 items (3.1 through 3.6) are marked `[x]` upon successful completion.
+
+
+## 2026-10-16T08:49:14Z
+
+Implement Phase 4 through Phase 7 of the `@moul-dev/ui` Lit Web Components rebuild, delivering 45 accessible, standards-first custom elements across Actions, Surfaces & Feedback, Overlays & Navigation, and Inputs & Forms with comprehensive tests and zero React dependencies.
+
+Working directory: `/Users/phearak/github/orgs/moul-dev/ui`
+Integrity mode: development
+
+## Reference Documentation
+- Tasks: `rdt/tasks.md` (Phases 4 through 7)
+- Requirements: `rdt/requirements.md` (Requirements 1, 2, 4, 5, 6, 8, 9, 10, 11)
+- Technical Specification: `rdt/design.md` (Sections 3, 5, 6, 7, 8.2, 8.3, 8.4, 8.5)
+
+## Requirements
+
+### R1. Actions & Toggle Components (Phase 4 — 4 Components)
+Implement `moul-button`, `moul-button-group`, `moul-toggle-button`, and `moul-toggle-button-group` in `ui/src/components/` using Lit 3, `PressController`, and `animateActiveIndicator` for roving focus and active indicator motion. Adhere strictly to Requirement 8 and write comprehensive tests in `ui/src/components/Actions.test.ts`.
+
+### R2. Surface & Feedback Components (Phase 5 — 16 Components)
+Implement all 16 surface and feedback elements (`moul-typography`, `moul-kbd`, `moul-separator`, `moul-spinner`, `moul-skeleton`, `moul-badge`, `moul-card`, `moul-empty-state`, `moul-alert`, `moul-progress-bar`, `moul-avatar`, `moul-avatar-group`, `moul-tag`, `moul-tag-group`, `moul-table`, `moul-toast` + singleton `toastQueue`). Apply `semanticToneStyles` across 25 tone × variant combinations, motion entrance/exit transitions, and verify in `ui/src/components/Surfaces.test.ts`.
+
+### R3. Overlay & Navigation Components (Phase 6 — 10 Components)
+Implement overlay and navigation elements (`moul-link`, `moul-breadcrumbs` + `moul-breadcrumb-item`, `moul-pagination`, `moul-tabs` + `moul-tab` + `moul-tab-panel`, `moul-popover`, `moul-tooltip`, `moul-modal`, `moul-alert-dialog`, `moul-drawer`, `moul-command-palette`). Use native `<dialog>` (`safeShowModal`, focus trapping, escape dismissal), Popover API + CSS Anchor Positioning with fallbacks, and verify in `ui/src/components/Overlays.test.ts` and `ui/src/components/Navigation.test.ts`.
+
+### R4. Input & Form Components (Phase 7 — 15 Components)
+Implement form-associated controls (`moul-form`, `moul-text-field`, `moul-number-field`, `moul-search-field`, `moul-text-area`, `moul-checkbox`, `moul-checkbox-group`, `moul-radio-group` + `moul-radio`, `moul-switch`, `moul-slider`, `moul-input-otp`, `moul-select` + `moul-select-item`, `moul-combobox` + `moul-combobox-item`, `moul-calendar`, `moul-date-picker`). Attach `FormInternalsController`, support form validation, Popover date/dropdown pickers, and verify in `ui/src/components/Forms.test.ts`.
+
+### R5. Architecture, Accessibility & Zero-React Constraints
+All components must:
+- Be registered via `defineElement` with `moul-` prefix and idempotent registration safeguards.
+- Use open Shadow DOM with CSS custom property theming via `style.css` and `semanticToneStyles`.
+- Trigger `warnMissingLabel` in development mode for unlabeled interactive or icon-only controls.
+- Maintain zero imports or dependencies on `react`, `react-dom`, `react-aria`, `react-aria-components`, `@stylexjs/stylex`, or `@lit/react`.
+- Export all component classes and TypeScript interfaces from `ui/src/index.ts`.
+
+## Verification Resources
+- Test harness with ElementInternals, Dialog, and Popover shims: `ui/src/test-setup.ts`
+- CSS Design Tokens: `ui/src/styles/style.css`
+- Semantic tones matrix: `ui/src/styles/semantic-tones.ts`
+- Reactive controllers: `ui/src/controllers/index.ts`
+- Test commands: `bun --cwd ui test` / `vitest run`
+
+## Acceptance Criteria
+
+### Actions & Toggle Components (Phase 4)
+- [ ] `moul-button` supports variants, sizes, `is-pending` (with spinner & `aria-busy`), `is-icon` with `warnMissingLabel`, and tactile press feedback.
+- [ ] `moul-button-group` applies orientation and spacing to slotted buttons.
+- [ ] `moul-toggle-button` updates `aria-pressed` via `is-selected`.
+- [ ] `moul-toggle-button-group` manages roving `tabindex` on arrow keys and dispatches `selectionchange`.
+- [ ] `ui/src/components/Actions.test.ts` passes with full coverage of actions behavior.
+
+### Surface & Feedback Components (Phase 5)
+- [ ] All 16 surface & feedback components render with open Shadow DOM, semantic slots, and tokens.
+- [ ] `moul-card`, `moul-badge`, `moul-alert` support all 25 tone × variant combinations with glass backdrop-filter fallback.
+- [ ] `moul-avatar` displays initials fallback on image load error; `moul-avatar-group` handles overflow badges.
+- [ ] `moul-table` renders skeleton placeholders when `is-loading` is true and handles sorting/selection.
+- [ ] `toastQueue` singleton correctly dispatches and dismisses top-layer toasts.
+- [ ] `ui/src/components/Surfaces.test.ts` passes.
+
+### Overlay & Navigation Components (Phase 6)
+- [ ] `moul-modal` and `moul-alert-dialog` manage `<dialog>` with `<100ms` focus trap, `Escape` key close, and focus restoration.
+- [ ] Calling `safeShowModal()` on a disconnected dialog catches the DOMException without unhandled errors.
+- [ ] `moul-popover` and `moul-tooltip` operate via Popover API with anchor positioning and fixed fallback.
+- [ ] `moul-tabs` manages tab roving focus, keyboard navigation, and panel visibility.
+- [ ] `moul-pagination` calculates pages and emits `pagechange` with `detail.page`.
+- [ ] `ui/src/components/Overlays.test.ts` and `ui/src/components/Navigation.test.ts` pass.
+
+### Input & Form Components (Phase 7)
+- [ ] All form controls declare `static formAssociated = true` and attach `FormInternalsController`.
+- [ ] Value changes synchronously call `setFormValue()` before repaint.
+- [ ] Empty required inputs fail validation with `valueMissing` and show validation messages.
+- [ ] `moul-select` and `moul-combobox` provide accessible dropdown listbox interaction with keyboard traversal.
+- [ ] `moul-input-otp` manages digit slots and fires `complete` when all slots are filled.
+- [ ] `moul-calendar` and `moul-date-picker` format dates via `Intl.DateTimeFormat(locale)`.
+- [ ] `moul-form` validates slotted controls and re-dispatches `submit` and `reset`.
+- [ ] `ui/src/components/Forms.test.ts` passes.
+
+### Monorepo & Zero-React Verification
+- [ ] No component imports any module matching `/^react/`, `@stylexjs/stylex`, or `@lit/react`.
+- [ ] All 45 component classes are exported from `ui/src/index.ts` and registered in `HTMLElementTagNameMap`.
+
+
+## 2026-10-16T13:00:43Z
+
+The quota limit has reset and the server has restarted. Please resume where you left off on Milestone 5 remediation and continue through Milestone 6 (Overlays & Navigation), Milestone 7 (Inputs & Forms), and Milestone 8 (Integration & Audit).

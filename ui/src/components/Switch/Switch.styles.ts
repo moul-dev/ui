@@ -1,68 +1,118 @@
-import * as stylex from '@stylexjs/stylex'
-import { tokens } from '../../tokens/tokens.stylex'
+import { css } from 'lit'
+import { resetStyles } from '../../styles/reset.styles'
 
-export const styles = stylex.create({
-  base: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: tokens.spacing2,
-    cursor: 'pointer',
-    fontSize: tokens.fontSizeMd,
-    lineHeight: tokens.lineHeightMd,
-    color: tokens.colorFg,
-    userSelect: 'none',
-  },
-  isDisabled: {
-    opacity: 0.4,
-    cursor: 'not-allowed',
-  },
-  isReadOnly: {
-    cursor: 'default',
-  },
-  track: {
-    position: 'relative',
-    display: 'inline-flex',
-    alignItems: 'center',
-    width: tokens.spacing8,
-    height: tokens.spacing5,
-    padding: '2px',
-    borderRadius: tokens.radiusFull,
-    backgroundColor: tokens.colorBorder,
-    boxSizing: 'border-box',
-    transitionProperty: 'background-color, box-shadow',
-    transitionDuration: '0.15s',
-    transitionTimingFunction: 'ease-in-out',
-    flexShrink: 0,
-  },
-  trackChecked: {
-    backgroundColor: tokens.colorPrimary500,
-  },
-  trackHover: {
-    filter: 'brightness(0.95)',
-  },
-  trackFocusVisible: {
-    outlineStyle: 'solid',
-    outlineWidth: '2px',
-    outlineOffset: '2px',
-    outlineColor: tokens.colorBorderFocus,
-  },
-  thumb: {
-    display: 'block',
-    height: '100%',
-    aspectRatio: '1 / 1',
-    borderRadius: tokens.radiusFull,
-    backgroundColor: tokens.colorBg,
-    boxShadow: tokens.shadowSm,
-    transform: 'translateX(0)',
-    transitionProperty: 'transform',
-    transitionDuration: '0.15s',
-    transitionTimingFunction: 'ease-in-out',
-    pointerEvents: 'none',
-  },
-  thumbChecked: {
-    transform: `translateX(calc(${tokens.spacing8} - ${tokens.spacing5}))`,
-  },
-  label: {
-    paddingInlineStart: tokens.spacing1,
-  },
-})
+export const switchStyles = [
+  resetStyles,
+  css`
+    :host {
+      display: inline-flex;
+      font-family: var(--font-family-base, inherit);
+      color: var(--color-fg, inherit);
+      user-select: none;
+    }
+
+    :host([hidden]) {
+      display: none !important;
+    }
+
+    [part='base'] {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacing-2, 0.5rem);
+      cursor: pointer;
+      font-size: var(--font-size-sm, 0.875rem);
+      line-height: var(--line-height-sm, 1.25rem);
+    }
+
+    [part='track'] {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      padding: 2px;
+      border-radius: var(--radius-full, 9999px);
+      background-color: var(--color-neutral-300, #d1d5db);
+      transition: background-color 0.2s ease, box-shadow 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    /* Size sm */
+    :host([size='sm']) [part='track'] {
+      width: 2rem;
+      height: 1.125rem;
+    }
+    :host([size='sm']) [part='thumb'] {
+      width: 0.875rem;
+      height: 0.875rem;
+    }
+    :host([size='sm'][is-checked]) [part='thumb'] {
+      transform: translateX(0.875rem);
+    }
+
+    /* Size md (default) */
+    :host([size='md']) [part='track'],
+    :host(:not([size])) [part='track'] {
+      width: 2.5rem;
+      height: 1.375rem;
+    }
+    :host([size='md']) [part='thumb'],
+    :host(:not([size])) [part='thumb'] {
+      width: 1.125rem;
+      height: 1.125rem;
+    }
+    :host([size='md'][is-checked]) [part='thumb'],
+    :host(:not([size])[is-checked]) [part='thumb'] {
+      transform: translateX(1.125rem);
+    }
+
+    /* Size lg */
+    :host([size='lg']) [part='track'] {
+      width: 3rem;
+      height: 1.625rem;
+    }
+    :host([size='lg']) [part='thumb'] {
+      width: 1.375rem;
+      height: 1.375rem;
+    }
+    :host([size='lg'][is-checked]) [part='thumb'] {
+      transform: translateX(1.375rem);
+    }
+
+    :host(:focus-visible) [part='track'],
+    [part='base']:focus-visible [part='track'] {
+      outline: 2px solid var(--color-border-focus, #3b82f6);
+      outline-offset: 2px;
+    }
+
+    :host([is-checked]) [part='track'] {
+      background-color: var(--color-primary-500, #3b82f6);
+    }
+
+    [part='thumb'] {
+      display: block;
+      border-radius: var(--radius-full, 9999px);
+      background-color: var(--color-bg, #ffffff);
+      box-shadow: var(--shadow-sm, 0 1px 2px 0 rgba(0, 0, 0, 0.05));
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+    }
+
+    [part='label'] {
+      display: inline-flex;
+      align-items: center;
+      color: inherit;
+    }
+
+    :host([is-disabled]) {
+      opacity: 0.45;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      [part='track'],
+      [part='thumb'] {
+        transition: none;
+      }
+    }
+  `,
+]

@@ -1,93 +1,93 @@
-import * as stylex from '@stylexjs/stylex'
-import { tokens } from '../../tokens/tokens.stylex'
+import { css } from 'lit'
+import { resetStyles } from '../../styles/reset.styles'
+import { semanticToneStyles } from '../../styles/semantic-tones'
 
-export const styles = stylex.create({
-  base: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: tokens.radiusFull,
-    fontWeight: tokens.fontWeightMedium,
-    whiteSpace: 'nowrap',
-  },
-  sm: {
-    paddingBlock: 0,
-    paddingInline: tokens.spacing1,
-    fontSize: tokens.fontSizeXs,
-    lineHeight: tokens.lineHeightXs,
-  },
-  md: {
-    paddingBlock: tokens.spacing1,
-    paddingInline: tokens.spacing2,
-    fontSize: tokens.fontSizeXs,
-    lineHeight: tokens.lineHeightXs,
-  },
-  lg: {
-    paddingBlock: tokens.spacing1,
-    paddingInline: tokens.spacing3,
-    fontSize: tokens.fontSizeSm,
-    lineHeight: tokens.lineHeightSm,
-  },
-  neutral: {
-    backgroundColor: tokens.colorNeutral200,
-    color: tokens.colorNeutral700,
-  },
-  primary: {
-    backgroundColor: tokens.colorPrimary100,
-    color: tokens.colorPrimary700,
-  },
-  success: {
-    backgroundColor: tokens.colorSuccess300,
-    color: tokens.colorSuccess700,
-  },
-  warning: {
-    backgroundColor: tokens.colorWarning300,
-    color: tokens.colorWarning700,
-  },
-  error: {
-    backgroundColor: tokens.colorError300,
-    color: tokens.colorError700,
-  },
-  dot: {
-    backgroundColor: tokens.colorNeutral100,
-    color: tokens.colorNeutral700,
-    borderWidth: '1px',
-    borderStyle: 'solid',
-    borderColor: tokens.colorBorderSubtle,
-  },
-  hasDot: {
-    gap: tokens.spacing1,
-  },
-  dotIndicator: {
-    display: 'inline-block',
-    borderRadius: tokens.radiusFull,
-    flexShrink: 0,
-  },
-  dot_sm: {
-    width: tokens.spacing1,
-    height: tokens.spacing1,
-  },
-  dot_md: {
-    width: tokens.spacing2,
-    height: tokens.spacing2,
-  },
-  dot_lg: {
-    width: tokens.spacing2,
-    height: tokens.spacing2,
-  },
-  dot_neutral: {
-    backgroundColor: tokens.colorNeutral600,
-  },
-  dot_primary: {
-    backgroundColor: tokens.colorPrimary500,
-  },
-  dot_success: {
-    backgroundColor: tokens.colorSuccess500,
-  },
-  dot_warning: {
-    backgroundColor: tokens.colorWarning500,
-  },
-  dot_error: {
-    backgroundColor: tokens.colorError500,
-  },
-})
+export const badgeStyles = [
+  resetStyles,
+  semanticToneStyles,
+  css`
+    :host {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--spacing-1, 0.25rem);
+      font-weight: 500;
+      white-space: nowrap;
+      border-radius: var(--radius-full, 9999px);
+      vertical-align: middle;
+      box-sizing: border-box;
+      line-height: 1;
+    }
+
+    [part="base"] {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--spacing-1, 0.25rem);
+      width: 100%;
+      height: 100%;
+    }
+
+    :host([size="sm"]) {
+      height: 1.25rem;
+      padding: 0 var(--spacing-2, 0.5rem);
+      font-size: var(--font-size-xs, 0.75rem);
+    }
+
+    :host([size="md"]),
+    :host(:not([size])) {
+      height: 1.5rem;
+      padding: 0 calc(var(--spacing-2, 0.5rem) + 2px);
+      font-size: var(--font-size-sm, 0.875rem);
+    }
+
+    :host([size="lg"]) {
+      height: 1.75rem;
+      padding: 0 var(--spacing-3, 0.75rem);
+      font-size: var(--font-size-md, 1rem);
+    }
+
+    /* Dot badge */
+    :host([is-dot]) {
+      min-width: 0.5rem;
+      width: 0.5rem;
+      height: 0.5rem;
+      padding: 0;
+      border-radius: var(--radius-full, 9999px);
+      overflow: hidden;
+    }
+
+    :host([is-dot][size="sm"]) {
+      min-width: 0.375rem;
+      width: 0.375rem;
+      height: 0.375rem;
+      padding: 0;
+    }
+
+    :host([is-dot][size="md"]),
+    :host([is-dot]:not([size])) {
+      min-width: 0.5rem;
+      width: 0.5rem;
+      height: 0.5rem;
+      padding: 0;
+    }
+
+    :host([is-dot][size="lg"]) {
+      min-width: 0.625rem;
+      width: 0.625rem;
+      height: 0.625rem;
+      padding: 0;
+    }
+
+    :host([is-dot]) [part="base"] {
+      display: none;
+    }
+
+    ::slotted([slot="prefix"]),
+    ::slotted([slot="suffix"]) {
+      display: inline-flex;
+      align-items: center;
+      font-size: 0.9em;
+    }
+  `,
+]

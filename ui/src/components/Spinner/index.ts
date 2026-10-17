@@ -1,2 +1,5 @@
-export type { SpinnerProps, SpinnerSize } from './Spinner'
-export { Spinner } from './Spinner'
+export {
+  MoulSpinner,
+  MoulSpinner as Spinner,
+  type SpinnerSize,
+} from './Spinner'

@@ -35,14 +35,16 @@ export function supportsNativePopoverAndAnchor(): boolean {
 }
 
 /**
- * Returns an array of visible, focusable HTML elements within a container.
+ * Returns an array of visible, focusable HTML elements within a container,
+ * inspecting both Shadow DOM and slotted Light DOM elements.
  */
 export function getFocusableElements(container: HTMLElement): HTMLElement[] {
   if (!container) return []
-  const elements = Array.from(
-    container.querySelectorAll<HTMLElement>(FOCUSABLE_ELEMENTS_SELECTOR),
-  )
-  return elements.filter((el) => {
+
+  const result: HTMLElement[] = []
+  const visited = new Set<HTMLElement>()
+
+  function isVisible(el: HTMLElement): boolean {
     const isHiddenAttr =
       el.hasAttribute('hidden') || el.getAttribute('aria-hidden') === 'true'
     const style =
@@ -50,9 +52,76 @@ export function getFocusableElements(container: HTMLElement): HTMLElement[] {
         ? window.getComputedStyle(el)
         : el.style
     const isHiddenStyle =
-      style.display === 'none' || style.visibility === 'hidden'
+      style?.display === 'none' || style?.visibility === 'hidden'
     return !isHiddenAttr && !isHiddenStyle
-  })
+  }
+
+  function checkElement(el: HTMLElement): void {
+    if (visited.has(el)) return
+    visited.add(el)
+    if (
+      typeof el.matches === 'function' &&
+      el.matches(FOCUSABLE_ELEMENTS_SELECTOR) &&
+      isVisible(el)
+    ) {
+      result.push(el)
+    }
+  }
+
+  function traverse(node: Element): void {
+    if (
+      typeof HTMLSlotElement !== 'undefined' &&
+      node instanceof HTMLSlotElement
+    ) {
+      const assigned =
+        typeof node.assignedElements === 'function'
+          ? node.assignedElements({ flatten: true })
+          : []
+      for (const el of assigned) {
+        if (el instanceof HTMLElement) {
+          checkElement(el)
+          if (typeof el.querySelectorAll === 'function') {
+            const innerFocusables = el.querySelectorAll<HTMLElement>(
+              FOCUSABLE_ELEMENTS_SELECTOR,
+            )
+            for (const inner of Array.from(innerFocusables)) {
+              checkElement(inner)
+            }
+          }
+        }
+      }
+      return
+    }
+
+    if (node.shadowRoot) {
+      for (const child of Array.from(node.shadowRoot.children)) {
+        traverse(child)
+      }
+      return
+    }
+
+    if (node !== container && node instanceof HTMLElement) {
+      checkElement(node)
+    }
+
+    for (const child of Array.from(node.children)) {
+      traverse(child)
+    }
+  }
+
+  traverse(container)
+
+  // Fallback / safeguard if traverse didn't find elements but querySelectorAll does
+  if (result.length === 0 && typeof container.querySelectorAll === 'function') {
+    const rawElements = Array.from(
+      container.querySelectorAll<HTMLElement>(FOCUSABLE_ELEMENTS_SELECTOR),
+    )
+    for (const el of rawElements) {
+      checkElement(el)
+    }
+  }
+
+  return result
 }
 
 /**
@@ -92,13 +161,28 @@ export function trapFocus(container: HTMLElement, event: KeyboardEvent): void {
   const doc = container.ownerDocument || document
   const active = doc.activeElement
 
+  const rootNode =
+    typeof container.getRootNode === 'function' ? container.getRootNode() : null
+  const shadowHost =
+    rootNode &&
+    typeof ShadowRoot !== 'undefined' &&
+    rootNode instanceof ShadowRoot
+      ? (rootNode as ShadowRoot).host
+      : null
+
+  const isInside =
+    Boolean(active) &&
+    (focusables.includes(active as HTMLElement) ||
+      container.contains(active as Node) ||
+      Boolean(shadowHost?.contains(active as Node)))
+
   if (event.shiftKey) {
-    if (active === first || !container.contains(active as Node)) {
+    if (active === first || !isInside) {
       event.preventDefault()
       last.focus()
     }
   } else {
-    if (active === last || !container.contains(active as Node)) {
+    if (active === last || !isInside) {
       event.preventDefault()
       first.focus()
     }

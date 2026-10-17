@@ -76,92 +76,92 @@ _Covers: Requirement 5, Requirement 6_
 ## Phase 4: Category 2 — Actions & Toggle Components (4 Components)
 _Covers: Requirement 8_
 
-- [ ] **4.1 Implement `moul-button` (`ui/src/components/Button/`)**
+- [x] **4.1 Implement `moul-button` (`ui/src/components/Button/`)**
   - Support `variant` (`primary | secondary | tertiary | outline | ghost | danger | danger-soft`), `size` (`sm | md | lg`), `is-icon`, `is-disabled`, and `is-pending` (`aria-busy="true"` + inline spinner) (_Req 8.1, 8.2_).
   - Call `warnMissingLabel` when `is-icon` is true without `aria-label` (_Req 8.3_).
   - Apply `PressController` with `scaleOnPress: 0.97` (`SPRING_SNAPPY`) and pending spinner pop-in animation.
-- [ ] **4.2 Implement `moul-button-group` (`ui/src/components/ButtonGroup/`)**
+- [x] **4.2 Implement `moul-button-group` (`ui/src/components/ButtonGroup/`)**
   - Render default slot and apply `orientation` (`horizontal | vertical`) and `spacing` to slotted `moul-button` elements (_Req 8.4_).
-- [ ] **4.3 Implement `moul-toggle-button` (`ui/src/components/ToggleButton/`)**
+- [x] **4.3 Implement `moul-toggle-button` (`ui/src/components/ToggleButton/`)**
   - Support `is-selected` boolean attribute setting `aria-pressed` on the button and tactile press animation (_Req 8.5_).
-- [ ] **4.4 Implement `moul-toggle-button-group` (`ui/src/components/ToggleButtonGroup/`)**
+- [x] **4.4 Implement `moul-toggle-button-group` (`ui/src/components/ToggleButtonGroup/`)**
   - Manage `selected-key`, dispatch `selectionchange` on child toggle press, implement WAI-ARIA roving `tabindex` on arrow keys, and animate the active selection pill with `animateActiveIndicator` (_Req 8.6, 8.7_).
-- [ ] **4.5 Write Action & Toggle Component Tests (`ui/src/components/Actions.test.ts`)**
+- [x] **4.5 Write Action & Toggle Component Tests (`ui/src/components/Actions.test.ts`)**
 
 ---
 
 ## Phase 5: Category 5 — Surface & Feedback Components (16 Components)
 _Covers: Requirement 11_
 
-- [ ] **5.1 Implement `moul-typography`, `moul-kbd`, `moul-separator`, `moul-spinner`, and `moul-skeleton`**
+- [x] **5.1 Implement `moul-typography`, `moul-kbd`, `moul-separator`, `moul-spinner`, and `moul-skeleton`**
   - `moul-typography`: `variant` (`h1`–`h6`, `body`, `caption`, `code`, `mono`) (_Req 11.16_).
   - `moul-kbd`: `<kbd>` shortcut display (_Req 11.7_).
   - `moul-separator`: `<hr>` with `orientation` (`horizontal | vertical`) (_Req 11.9_).
   - `moul-spinner`: SVG spinner with `size` (`sm | md | lg`) and CSS animation (_Req 11.11_).
   - `moul-skeleton`: `shape` (`line | circle | rect`) and `variant` (`pulse | wave`) (_Req 11.10_).
-- [ ] **5.2 Implement `moul-badge`, `moul-card`, and `moul-empty-state`**
+- [x] **5.2 Implement `moul-badge`, `moul-card`, and `moul-empty-state`**
   - `moul-badge`: `tone`, `variant`, `size`, and mount scale-in (_Req 11.4_).
   - `moul-card`: `header`, `body`, and `footer` slots, `variant`, `tone`, and interactive hover lift / press scale (_Req 11.5_).
   - `moul-empty-state`: `icon`, `title`, `description`, `actions` slots, `size`, `align`, and `stagger(0.05)` entrance animation (_Req 11.6_).
-- [ ] **5.3 Implement `moul-alert` and `moul-progress-bar`**
+- [x] **5.3 Implement `moul-alert` and `moul-progress-bar`**
   - `moul-alert`: `tone`, `variant`, `is-dismissible`, entrance fade, and collapse exit animation before dispatching `dismiss` (_Req 11.1_).
   - `moul-progress-bar`: `value` (`0–100`), `tone`, `variant`, `size`, `shape`, host `aria-valuenow/min/max`, and `motion` spring fill animation (_Req 11.8_).
-- [ ] **5.4 Implement `moul-avatar` and `moul-avatar-group`**
+- [x] **5.4 Implement `moul-avatar` and `moul-avatar-group`**
   - `moul-avatar`: `src`, `name` (initials fallback when `src` fails or is empty), `size` (`xs`–`xl`), `shape` (`circle | square`), `status` (`online | offline | away | busy`), and image load crossfade (_Req 11.2, 11.3_).
   - `moul-avatar-group`: Overlapping slotted avatars with `max` overflow counter and hover lift (_Req 11.2_).
-- [ ] **5.5 Implement `moul-tag` and `moul-tag-group`**
+- [x] **5.5 Implement `moul-tag` and `moul-tag-group`**
   - Support `selected-keys`, `is-removable`, tactile press, and `motion` scale-out before dispatching `remove` (_Req 11.14_).
-- [ ] **5.6 Implement `moul-table`**
+- [x] **5.6 Implement `moul-table`**
   - Support `data` array/JSON property, named `columns` slot configuration, `is-sortable` (with rotating sort icon), `is-selectable`, and `is-loading` (rendering `moul-skeleton` rows in place of data rows) (_Req 11.12, 11.13_).
-- [ ] **5.7 Implement `moul-toast` and global `toastQueue`**
+- [x] **5.7 Implement `moul-toast` and global `toastQueue`**
   - Support `tone`, `variant`, `duration`, `popover="manual"` top-layer promotion, `OverlayPresenceController` spring slide-in/out, and `toastQueue` singleton (_Req 11.15_).
-- [ ] **5.8 Write Surface & Feedback Component Tests (`ui/src/components/Surfaces.test.ts`)**
+- [x] **5.8 Write Surface & Feedback Component Tests (`ui/src/components/Surfaces.test.ts`)**
 
 ---
 
 ## Phase 6: Category 4 — Overlay & Navigation Components (10 Components)
 _Covers: Requirement 6, Requirement 10_
 
-- [ ] **6.1 Implement `moul-link` and `moul-breadcrumbs` (+ `moul-breadcrumb-item`)**
+- [x] **6.1 Implement `moul-link` and `moul-breadcrumbs` (+ `moul-breadcrumb-item`)**
   - `moul-link`: `href`, `target`, `rel`, `is-external` (adding `rel="noopener noreferrer"` + external link icon with hover diagonal nudge) (_Req 10.10, 10.11_).
   - `moul-breadcrumbs` & `moul-breadcrumb-item`: `<nav aria-label="Breadcrumb">` with slotted items (_Req 10.9_).
-- [ ] **6.2 Implement `moul-pagination`**
+- [x] **6.2 Implement `moul-pagination`**
   - Support `total-pages`, `current-page`, `page-size`, `shape` (`square | rounded | pill`), `pagechange` event (`detail.page`), and `generatePagination()` helper (_Req 10.12_).
-- [ ] **6.3 Implement `moul-tabs`, `moul-tab`, and `moul-tab-panel`**
+- [x] **6.3 Implement `moul-tabs`, `moul-tab`, and `moul-tab-panel`**
   - Manage `selected-key`, slotted tabs/panels, `selectionchange` event, WAI-ARIA arrow key roving focus, `animateActiveIndicator` sliding tab indicator, and panel crossfade (_Req 10.13, 10.14_).
-- [ ] **6.4 Implement `moul-popover` and `moul-tooltip`**
+- [x] **6.4 Implement `moul-popover` and `moul-tooltip`**
   - `moul-popover`: Native Popover API + CSS Anchor Positioning (`trigger`, `placement`, `offset`), keyboard focus trap, fixed fallback, and `OverlayPresenceController` micro-slide (_Req 6.1, 6.8, 6.9, 10.6_).
   - `moul-tooltip`: Native Popover API + CSS Anchor Positioning with `placement` and `300ms` pointerenter/focus delay (_Req 6.1, 10.7_).
-- [ ] **6.5 Implement `moul-modal` and `moul-alert-dialog`**
+- [x] **6.5 Implement `moul-modal` and `moul-alert-dialog`**
   - `moul-modal`: Native `<dialog>` with `is-open`, `size` (`sm | md | lg | fullscreen`), `safeShowModal()`, `<100ms` focus trap, `Escape` closing + `openchange` (`detail.isOpen = false`), focus restoration, and spring entrance/exit (_Req 6.2–6.4, 6.10, 10.1–10.3_).
   - `moul-alert-dialog`: Native `<dialog role="alertdialog">` with `header`, `body`, `footer` named slots (_Req 6.2, 10.4_).
-- [ ] **6.6 Implement `moul-drawer`**
+- [x] **6.6 Implement `moul-drawer`**
   - Native `<dialog>` with `placement` (`left | right | top | bottom`), `IOS_SHEET_CURVE` `motion` entrance/exit animation, and bottom-sheet drag-to-dismiss (_Req 6.5, 10.5_).
-- [ ] **6.7 Implement `moul-command-palette`**
+- [x] **6.7 Implement `moul-command-palette`**
   - Native `<dialog>` containing `moul-search-field` and virtualized results list via `@lit-labs/virtualizer` (_Req 10.8_).
-- [ ] **6.8 Write Overlay & Navigation Component Tests (`ui/src/components/Overlays.test.ts` & `Navigation.test.ts`)**
+- [x] **6.8 Write Overlay & Navigation Component Tests (`ui/src/components/Overlays.test.ts` & `Navigation.test.ts`)**
 
 ---
 
 ## Phase 7: Category 3 — Input & Form Components (15 Components)
 _Covers: Requirement 6, Requirement 9_
 
-- [ ] **7.1 Implement `moul-form`**
+- [x] **7.1 Implement `moul-form`**
   - Render `<form>` in Shadow DOM, validate associated controls, and re-dispatch `submit` and `reset` events (_Req 9.11_).
-- [ ] **7.2 Implement `moul-text-field`, `moul-number-field`, `moul-search-field`, and `moul-text-area`**
+- [x] **7.2 Implement `moul-text-field`, `moul-number-field`, `moul-search-field`, and `moul-text-area`**
   - Attach `FormInternalsController`, support `name`, `value`, `placeholder`, `is-disabled`, `is-required`, `is-readonly`, `label`, `description`, validate `valueMissing` on required empty submission, and animate error reveals / search clear button (_Req 6.6, 6.7, 9.1, 9.2_).
-- [ ] **7.3 Implement `moul-checkbox`, `moul-checkbox-group`, `moul-radio-group` (+ `moul-radio`), and `moul-switch`**
+- [x] **7.3 Implement `moul-checkbox`, `moul-checkbox-group`, `moul-radio-group` (+ `moul-radio`), and `moul-switch`**
   - `moul-checkbox` & `moul-checkbox-group`: `name`, `value`, `is-checked`, `is-indeterminate`, `is-disabled`, `is-required`, and checkmark SVG path draw animation (_Req 9.3_).
   - `moul-radio-group` & `moul-radio`: Slotted radios, selection management, `change` event, and inner dot spring pop (_Req 9.4_).
   - `moul-switch`: `is-checked`, `name`, `value`, `is-disabled`, `label`, and spring thumb translation + press stretch (_Req 9.7_).
-- [ ] **7.4 Implement `moul-slider` and `moul-input-otp`**
+- [x] **7.4 Implement `moul-slider` and `moul-input-otp`**
   - `moul-slider`: `min`, `max`, `step`, `value`, `is-disabled`, `label`, Shadow DOM range track + spring-scaled custom thumb (_Req 9.6_).
   - `moul-input-otp`: `length` (default `6`) digit input slots, `complete` event when all slots filled, slot entry pulse, and invalid shake animation (_Req 9.8_).
-- [ ] **7.5 Implement `moul-select` (+ `moul-select-item`) and `moul-combobox` (+ `moul-combobox-item`)**
+- [x] **7.5 Implement `moul-select` (+ `moul-select-item`) and `moul-combobox` (+ `moul-combobox-item`)**
   - Popover API + CSS Anchor Positioning dropdowns, `selected-key`, `placeholder`, `is-disabled`, `is-required`, `label`, keyboard navigation, and `OverlayPresenceController` spring motion + chevron rotation (_Req 6.1, 6.6, 9.5_).
-- [ ] **7.6 Implement `moul-calendar` and `moul-date-picker`**
+- [x] **7.6 Implement `moul-calendar` and `moul-date-picker`**
   - Locale-aware date formatting via `Intl.DateTimeFormat(this.locale)`, Popover dropdown calendar for `moul-date-picker`, and month navigation slide/crossfade (_Req 9.9, 9.10_).
-- [ ] **7.7 Write Input & Form Component Tests (`ui/src/components/Forms.test.ts`)**
+- [x] **7.7 Write Input & Form Component Tests (`ui/src/components/Forms.test.ts`)**
 
 ---
 

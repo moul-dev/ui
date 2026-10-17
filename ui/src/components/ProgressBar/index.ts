@@ -1,7 +1,2 @@
-export type {
-  ProgressBarProps,
-  ProgressBarShape,
-  ProgressBarSize,
-  ProgressBarVariant,
-} from './ProgressBar'
-export { ProgressBar } from './ProgressBar'
+export type { ProgressBarShape, ProgressBarSize } from './ProgressBar'
+export { MoulProgressBar, MoulProgressBar as ProgressBar } from './ProgressBar'

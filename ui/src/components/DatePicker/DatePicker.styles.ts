@@ -1,129 +1,133 @@
-import * as stylex from '@stylexjs/stylex'
-import { tokens } from '../../tokens/tokens.stylex'
+import { css } from 'lit'
+import { resetStyles } from '../../styles/reset.styles'
 
-export const styles = stylex.create({
-  container: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: tokens.spacing1,
-    width: '100%',
-  },
-  group: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    borderWidth: '1px',
-    borderStyle: 'solid',
-    borderColor: tokens.colorBorder,
-    borderRadius: tokens.radiusSm,
-    backgroundColor: tokens.colorBg,
-    color: tokens.colorFg,
-    boxSizing: 'border-box',
-    width: '100%',
-    transition: 'border-color 0.15s ease, box-shadow 0.15s ease',
-  },
-  groupSm: {
-    height: `calc(${tokens.spacing1} * 2 + ${tokens.lineHeightXs})`,
-    paddingInlineStart: tokens.spacing2,
-    paddingInlineEnd: tokens.spacing1,
-    borderRadius: tokens.radiusSm,
-    fontSize: tokens.fontSizeXs,
-    lineHeight: tokens.lineHeightXs,
-  },
-  groupMd: {
-    height: `calc(${tokens.spacing2} * 2 + ${tokens.lineHeightSm})`,
-    paddingInlineStart: tokens.spacing3,
-    paddingInlineEnd: tokens.spacing2,
-    borderRadius: tokens.radiusMd,
-    fontSize: tokens.fontSizeSm,
-    lineHeight: tokens.lineHeightSm,
-  },
-  groupLg: {
-    height: `calc(${tokens.spacing2} * 2 + ${tokens.lineHeightMd})`,
-    paddingInlineStart: tokens.spacing4,
-    paddingInlineEnd: tokens.spacing2,
-    borderRadius: tokens.radiusMd,
-    fontSize: tokens.fontSizeMd,
-    lineHeight: tokens.lineHeightMd,
-  },
-  primary: {
-    backgroundColor: tokens.colorBg,
-  },
-  secondary: {
-    backgroundColor: tokens.colorBgSubtle,
-  },
-  groupHover: {
-    borderColor: tokens.colorNeutral400,
-  },
-  groupFocused: {
-    borderColor: tokens.colorBorderFocus,
-    boxShadow: `0 0 0 1px ${tokens.colorBorderFocus}`,
-  },
-  groupInvalid: {
-    borderColor: tokens.colorError500,
-  },
-  groupFocusedInvalid: {
-    borderColor: tokens.colorError500,
-    boxShadow: `0 0 0 1px ${tokens.colorError500}`,
-  },
-  groupDisabled: {
-    backgroundColor: tokens.colorNeutral100,
-    color: tokens.colorNeutral400,
-    borderColor: tokens.colorBorderSubtle,
-    cursor: 'not-allowed',
-    opacity: 0.6,
-  },
-  rangeSeparator: {
-    color: tokens.colorFgSubtle,
-    paddingInline: tokens.spacing1,
-    userSelect: 'none',
-    display: 'inline-flex',
-    alignItems: 'center',
-  },
-  triggerButton: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'transparent',
-    borderWidth: 0,
-    color: tokens.colorFgSubtle,
-    borderRadius: tokens.radiusSm,
-    padding: tokens.spacing1,
-    cursor: 'pointer',
-    outline: 'none',
-    transition: 'color 0.15s ease, background-color 0.15s ease',
-  },
-  triggerButtonHover: {
-    color: tokens.colorFg,
-    backgroundColor: tokens.colorNeutral100,
-  },
-  triggerButtonPressed: {
-    backgroundColor: tokens.colorNeutral200,
-  },
-  triggerButtonDisabled: {
-    opacity: 0.4,
-    cursor: 'not-allowed',
-    pointerEvents: 'none',
-  },
-  triggerButtonFocused: {
-    color: tokens.colorPrimary500,
-  },
-  calendarIcon: {
-    width: '16px',
-    height: '16px',
-  },
-  popover: {
-    backgroundColor: tokens.colorBgElevated,
-    boxShadow: tokens.shadowMd,
-    borderRadius: tokens.radiusMd,
-    borderWidth: '1px',
-    borderStyle: 'solid',
-    borderColor: tokens.colorBorder,
-    zIndex: tokens.zIndexDropdown,
-    outline: 'none',
-    padding: tokens.spacing2,
-  },
-  dialog: {
-    outline: 'none',
-  },
-})
+export const datePickerStyles = [
+  resetStyles,
+  css`
+    :host {
+      display: block;
+      width: 100%;
+      font-family: var(--font-family-base, inherit);
+      color: var(--color-fg, inherit);
+      position: relative;
+    }
+
+    :host([hidden]) {
+      display: none !important;
+    }
+
+    [part='base'] {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-1, 0.25rem);
+      width: 100%;
+    }
+
+    [part='label'] {
+      display: block;
+      font-size: var(--font-size-sm, 0.875rem);
+      font-weight: 500;
+      color: var(--color-fg, inherit);
+    }
+
+    [part='input-container'] {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      width: 100%;
+      border: 1px solid var(--color-border, #d1d5db);
+      border-radius: var(--radius-md, 0.375rem);
+      background-color: var(--color-bg, #ffffff);
+      color: var(--color-fg, inherit);
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+      box-shadow: var(--shadow-sm, 0 1px 2px 0 rgba(0, 0, 0, 0.05));
+    }
+
+    [part='input-container']:hover:not([data-disabled='true']) {
+      border-color: var(--color-neutral-400, #9ca3af);
+    }
+
+    [part='input-container']:focus-within:not([data-disabled='true']) {
+      border-color: var(--color-border-focus, #3b82f6);
+      outline: 2px solid var(--color-border-focus, #3b82f6);
+      outline-offset: 1px;
+    }
+
+    :host([is-invalid]) [part='input-container'],
+    [part='input-container'][data-invalid='true'] {
+      border-color: var(--color-error-500, #ef4444);
+    }
+
+    [part='input'] {
+      flex: 1;
+      width: 100%;
+      min-width: 0;
+      border: none;
+      outline: none;
+      background: transparent;
+      color: inherit;
+      font-family: inherit;
+      font-size: var(--font-size-sm, 0.875rem);
+      line-height: var(--line-height-sm, 1.25rem);
+      padding: var(--spacing-2, 0.5rem) var(--spacing-3, 0.75rem);
+    }
+
+    [part='input']::placeholder {
+      color: var(--color-fg-subtle, #9ca3af);
+    }
+
+    [part='trigger-btn'] {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      background: transparent;
+      color: var(--color-fg-subtle, #9ca3af);
+      cursor: pointer;
+      padding-inline: var(--spacing-3, 0.75rem);
+      height: 100%;
+      transition: color 0.1s ease;
+    }
+
+    [part='trigger-btn']:hover:not(:disabled) {
+      color: var(--color-fg, inherit);
+    }
+
+    [part='trigger-btn'] svg {
+      width: 1.125rem;
+      height: 1.125rem;
+    }
+
+    [part='popover'] {
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      z-index: var(--z-dropdown, 1000);
+      background-color: var(--color-bg-elevated, #ffffff);
+      border-radius: var(--radius-md, 0.375rem);
+      box-shadow: var(--shadow-md, 0 4px 6px -1px rgba(0, 0, 0, 0.1));
+      outline: none;
+    }
+
+    [part='popover'][hidden] {
+      display: none !important;
+    }
+
+    [part='description'] {
+      font-size: var(--font-size-xs, 0.75rem);
+      color: var(--color-fg-subtle, #6b7280);
+    }
+
+    [part='error'] {
+      font-size: var(--font-size-xs, 0.75rem);
+      color: var(--color-error-500, #ef4444);
+    }
+
+    :host([is-disabled]) {
+      opacity: 0.45;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+  `,
+]
