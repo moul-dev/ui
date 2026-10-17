@@ -32,6 +32,18 @@ if (BaseElementClass && !BaseElementClass.prototype.getAnimations) {
   BaseElementClass.prototype.getAnimations = () => []
 }
 
+const BaseNodeClass =
+  (typeof window !== 'undefined' && window.Node) ||
+  (typeof globalThis !== 'undefined' && (globalThis as any).Node)
+
+if (BaseNodeClass && !('assignedSlot' in BaseNodeClass.prototype)) {
+  Object.defineProperty(BaseNodeClass.prototype, 'assignedSlot', {
+    value: null,
+    writable: true,
+    configurable: true,
+  })
+}
+
 if (typeof globalThis.CSS === 'undefined') {
   ;(globalThis as any).CSS = {}
 }
@@ -254,7 +266,7 @@ if (typeof globalThis !== 'undefined') {
   ;(globalThis as any).HTMLDialogElement = DialogClass
 }
 
-if (DialogClass && DialogClass.prototype) {
+if (DialogClass?.prototype) {
   if (!Object.getOwnPropertyDescriptor(DialogClass.prototype, 'open')) {
     Object.defineProperty(DialogClass.prototype, 'open', {
       get(this: any) {
@@ -465,7 +477,7 @@ if (HtmlElementClass) {
   }
 
   // Support element.matches(':popover-open')
-  if (BaseElementClass && BaseElementClass.prototype) {
+  if (BaseElementClass?.prototype) {
     const originalMatches = BaseElementClass.prototype.matches
     BaseElementClass.prototype.matches = function (
       this: Element,

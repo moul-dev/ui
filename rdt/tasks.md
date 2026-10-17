@@ -186,16 +186,16 @@ _Covers: Requirement 7_
 ## Phase 9: Category 6 — Composite Block Components (2 Component Families)
 _Covers: Requirement 12_
 
-- [ ] **9.1 Implement `moul-logs-viewer`, `moul-logs`, and Pure Log Parser Functions (`ui/src/components/LogsViewer/`)**
+- [x] **9.1 Implement `moul-logs-viewer`, `moul-logs`, and Pure Log Parser Functions (`ui/src/components/LogsViewer/`)**
   - Preserve and export `parseLogs`, `parseLogLine`, `parseAttributes`, `stripAttributes`, `normalizeLogLevel`, `SERVER_LOG_RAW`, and `SERVER_LOGS` (_Req 12.3_).
   - Implement `moul-logs-viewer` using `@lit-labs/virtualizer` for `logs: LogItem[]` and `animateActiveIndicator` for level filter pills (_Req 12.1_).
   - Implement `moul-logs` parsing raw log strings and forwarding to `moul-logs-viewer` (_Req 12.2_).
-- [ ] **9.2 Implement `moul-sidebar` Compound Suite (10 Elements, `ui/src/components/Sidebar/`)**
+- [x] **9.2 Implement `moul-sidebar` Compound Suite (10 Elements, `ui/src/components/Sidebar/`)**
   - Implement `moul-sidebar`, `moul-sidebar-aside`, `moul-sidebar-main`, `moul-sidebar-header`, `moul-sidebar-brand`, `moul-sidebar-group`, `moul-sidebar-item`, `moul-sidebar-divider`, `moul-sidebar-footer`, and `moul-sidebar-user` (_Req 12.4, 12.5_).
   - Propagate `dense`, `collapsed`, `selectedKey`, and `layout` via `@lit/context` (_Req 12.6_).
   - Transition collapsed `moul-sidebar-group` height via CSS `grid-template-rows: 0fr` to `1fr` + chevron rotation via `motion` (_Req 12.7_).
   - Wrap `moul-sidebar-item` in `moul-tooltip` when collapsed to icon-only mode and animate active item pill via `animateActiveIndicator` (_Req 12.8_).
-- [ ] **9.3 Write Composite Block Tests (`ui/src/components/Blocks.test.ts`)**
+- [x] **9.3 Write Composite Block Tests (`ui/src/components/Blocks.test.ts`)**
 
 ---
 

@@ -1,931 +1,676 @@
-/* eslint-disable @stylexjs/valid-styles */
-import * as stylex from '@stylexjs/stylex'
-import { tokens } from '../../tokens/tokens.stylex'
+/**
+ * Moul UI - Compound Sidebar Element Suite Styles
+ * Authored with Lit css + resetStyles and CSS design tokens.
+ */
 
-export const styles = stylex.create({
-  // ── Sidebar Container ───────────────────────────────────────────────
-  // ── Sidebar Container ───────────────────────────────────────────────
-  sidebar: {
-    display: 'flex',
-    flexDirection: 'column',
-    flexShrink: 0,
-    boxSizing: 'border-box',
-    overflow: 'hidden',
-    position: 'relative',
-    fontFamily: tokens.fontFamilyBase,
-    color: tokens.colorFg,
-  },
-  sidebarResponsive: {
-    display: {
-      default: 'flex',
-      '@media (max-width: 768px)': 'none',
-    },
-  },
+import { type CSSResultGroup, css } from 'lit'
+import { resetStyles } from '../../styles/reset.styles'
 
-  // Sidebar Layout variants (framed vs flush/unframed)
-  sidebarFramed: {
-    height: {
-      default: `calc(100% - ${tokens.spacing3} * 2)`,
-      '@media (max-width: 768px)': 'auto',
-    },
-    marginBlock: {
-      default: tokens.spacing3,
-      '@media (max-width: 768px)': 0,
-    },
-    marginInlineStart: {
-      default: tokens.spacing3,
-      '@media (max-width: 768px)': 0,
-    },
-    marginInlineEnd: 0,
-    borderRadius: {
-      default: tokens.radiusLg,
-      '@media (max-width: 768px)': 0,
-    },
-    borderWidth: '1px',
-    borderStyle: 'solid',
-  },
-  sidebarUnframed: {
-    height: {
-      default: `calc(100% - ${tokens.spacing3} * 2)`,
-      '@media (max-width: 768px)': 'auto',
-    },
-    marginBlock: {
-      default: tokens.spacing3,
-      '@media (max-width: 768px)': 0,
-    },
-    marginInlineStart: {
-      default: tokens.spacing3,
-      '@media (max-width: 768px)': 0,
-    },
-    marginInlineEnd: 0,
-    borderRadius: 0,
-    borderWidth: 0,
-    borderStyle: 'none',
-    borderColor: 'transparent',
-    backgroundColor: 'transparent',
-  },
+export const sidebarStyles: CSSResultGroup = [
+  resetStyles,
+  css`
+    :host {
+      display: flex;
+      position: relative;
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+      box-sizing: border-box;
+      font-family: var(--font-family-base, inherit);
+      color: var(--color-fg);
+      background-color: var(--color-bg);
+    }
+  `,
+]
 
-  // Width variants
-  expanded: {
-    width: 'var(--sidebar-width, 260px)',
-  },
-  collapsed: {
-    width: 'var(--sidebar-collapsed-width, 72px)',
-  },
+export const sidebarAsideStyles: CSSResultGroup = [
+  resetStyles,
+  css`
+    :host {
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      box-sizing: border-box;
+      overflow: hidden;
+      position: relative;
+      width: var(--sidebar-width, 260px);
+      height: 100%;
+      background-color: var(--color-bg-subtle);
+      border-inline-end: 1px solid var(--color-border);
+      transition: width 0.3s cubic-bezier(0.32, 0.72, 0, 1),
+        background-color 0.2s ease,
+        border-color 0.2s ease;
+    }
 
-  // Style variants (Solid and Glassmorphic)
-  solid: {
-    backgroundColor: tokens.colorBgSubtle,
-    borderColor: tokens.colorBorder,
-  },
-  glass: {
-    backgroundColor: tokens.colorBgSubtle,
-    borderColor: tokens.colorBorder,
-    '@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))':
-      {
-        backgroundColor: tokens.colorBgGlass,
-        borderColor: tokens.colorBorderGlass,
-        backdropFilter: 'blur(20px)',
-        WebkitBackdropFilter: 'blur(20px)',
-      },
-  },
+    :host([collapsed]) {
+      width: var(--sidebar-collapsed-width, 72px);
+    }
 
-  // ── Sidebar Header ──────────────────────────────────────────────────
-  header: {
-    display: 'flex',
-    alignItems: 'center',
-    paddingBlock: tokens.spacing4,
-    paddingInline: tokens.spacing4,
-    minHeight: '64px',
-    boxSizing: 'border-box',
-    gap: tokens.spacing3,
-  },
-  headerDense: {
-    minHeight: '48px',
-    paddingBlock: tokens.spacing2,
-    paddingInline: tokens.spacing3,
-    gap: tokens.spacing2,
-  },
-  headerCollapsed: {
-    justifyContent: 'center',
-    paddingInline: tokens.spacing2,
-    paddingBlock: tokens.spacing3,
-  },
-  headerContent: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: tokens.spacing3,
-    width: '100%',
-    overflow: 'hidden',
-    whiteSpace: 'nowrap',
-    transitionProperty: 'opacity, transform',
-    transitionDuration: '0.2s',
-  },
-  headerContentDense: {
-    gap: tokens.spacing2,
-  },
-  headerContentCollapsed: {
-    justifyContent: 'center',
-    gap: 0,
-    width: '100%',
-  },
+    :host([layout='sidebar-framed']) {
+      margin-block: var(--spacing-3);
+      margin-inline-start: var(--spacing-3);
+      margin-inline-end: 0;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--color-border);
+      height: calc(100% - var(--spacing-3) * 2);
+    }
 
-  // ── Sidebar Footer ──────────────────────────────────────────────────
-  footer: {
-    display: 'flex',
-    alignItems: 'center',
-    paddingBlock: tokens.spacing4,
-    paddingInline: tokens.spacing4,
-    borderBlockStartWidth: '1px',
-    borderBlockStartStyle: 'solid',
-    borderBlockStartColor: 'transparent',
-    boxSizing: 'border-box',
-    marginTop: 'auto',
-    gap: tokens.spacing3,
-    minHeight: '64px',
-  },
-  footerDense: {
-    minHeight: '48px',
-    paddingBlock: tokens.spacing2,
-    paddingInline: tokens.spacing3,
-    gap: tokens.spacing2,
-  },
-  footerBorder: {
-    borderBlockStartColor: tokens.colorBorderSubtle,
-  },
-  footerCollapsed: {
-    justifyContent: 'center',
-    paddingInline: tokens.spacing2,
-    paddingBlock: tokens.spacing3,
-  },
-  footerContent: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: tokens.spacing3,
-    width: '100%',
-    overflow: 'hidden',
-    whiteSpace: 'nowrap',
-    transitionProperty: 'opacity, transform',
-    transitionDuration: '0.2s',
-  },
-  footerContentDense: {
-    gap: tokens.spacing2,
-  },
-  footerContentCollapsed: {
-    justifyContent: 'center',
-    gap: 0,
-    width: '100%',
-  },
+    :host([layout='main-framed']) {
+      border-inline-end: 1px solid var(--color-border);
+      background-color: transparent;
+    }
 
-  // ── Sidebar User / Profile ──────────────────────────────────────────
-  user: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: tokens.spacing3,
-    width: '100%',
-    minWidth: 0,
-    overflow: 'hidden',
-    boxSizing: 'border-box',
-    borderRadius: tokens.radiusMd,
-    textDecoration: 'none',
-    color: tokens.colorFg,
-  },
-  userInteractive: {
-    cursor: 'pointer',
-    userSelect: 'none',
-    paddingBlock: tokens.spacing1,
-    paddingInline: tokens.spacing2,
-    marginInline: `calc(-1 * ${tokens.spacing2})`,
-    transitionProperty: 'background-color, transform',
-    transitionDuration: '0.15s',
-    ':hover': {
-      backgroundColor: tokens.colorNeutral100,
-    },
-    ':active': {
-      transform: 'scale(0.98)',
-    },
-  },
-  userCollapsed: {
-    justifyContent: 'center',
-    gap: 0,
-    width: '100%',
-    paddingInline: 0,
-    marginInline: 0,
-  },
-  userDense: {
-    gap: tokens.spacing2,
-  },
-  userAvatarWrapper: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexShrink: 0,
-  },
-  userInfo: {
-    display: 'flex',
-    flexDirection: 'column',
-    minWidth: 0,
-    flex: 1,
-    overflow: 'hidden',
-  },
-  userName: {
-    fontSize: tokens.fontSizeSm,
-    fontWeight: tokens.fontWeightSemibold,
-    color: tokens.colorFg,
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap',
-  },
-  userDescription: {
-    fontSize: tokens.fontSizeXs,
-    color: tokens.colorFgSubtle,
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap',
-    marginTop: '2px',
-  },
-  userAction: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexShrink: 0,
-    color: tokens.colorFgSubtle,
-  },
+    .aside {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      position: relative;
+      box-sizing: border-box;
+    }
 
-  // ── Sidebar Brand ───────────────────────────────────────────────────
-  brand: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: tokens.spacing3,
-    width: '100%',
-    minWidth: 0,
-    overflow: 'hidden',
-    boxSizing: 'border-box',
-    borderRadius: tokens.radiusMd,
-    textDecoration: 'none',
-    color: tokens.colorFg,
-  },
-  brandInteractive: {
-    cursor: 'pointer',
-    userSelect: 'none',
-    paddingBlock: tokens.spacing1,
-    paddingInline: tokens.spacing2,
-    marginInline: `calc(-1 * ${tokens.spacing2})`,
-    transitionProperty: 'background-color, transform',
-    transitionDuration: '0.15s',
-    ':hover': {
-      backgroundColor: tokens.colorNeutral100,
-    },
-    ':active': {
-      transform: 'scale(0.98)',
-    },
-  },
-  brandCollapsed: {
-    justifyContent: 'center',
-    gap: 0,
-    width: '100%',
-    paddingInline: 0,
-    marginInline: 0,
-  },
-  brandDense: {
-    gap: tokens.spacing2,
-  },
-  brandLogoWrapper: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexShrink: 0,
-  },
-  brandInfo: {
-    display: 'flex',
-    flexDirection: 'column',
-    minWidth: 0,
-    flex: 1,
-    overflow: 'hidden',
-  },
-  brandTitle: {
-    fontSize: tokens.fontSizeSm,
-    fontWeight: tokens.fontWeightBold,
-    color: tokens.colorFg,
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap',
-  },
-  brandSubtitle: {
-    fontSize: tokens.fontSizeXs,
-    color: tokens.colorFgSubtle,
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap',
-    marginTop: '2px',
-  },
+    .toggle-button {
+      position: absolute;
+      bottom: var(--spacing-4);
+      right: var(--spacing-4);
+      width: var(--spacing-8, 32px);
+      height: var(--spacing-8, 32px);
+      border-radius: var(--radius-full);
+      background-color: var(--color-bg-elevated);
+      border: 1px solid var(--color-border);
+      color: var(--color-fg-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+      z-index: 10;
+      transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+    }
 
-  // ── Sidebar Group ───────────────────────────────────────────────────
-  group: {
-    display: 'flex',
-    flexDirection: 'column',
-    paddingInline: tokens.spacing3,
-    paddingBlockEnd: tokens.spacing4,
-    gap: tokens.spacing1,
-  },
-  groupDense: {
-    paddingInline: tokens.spacing2,
-    paddingBlockEnd: tokens.spacing2,
-  },
-  groupCollapsed: {
-    paddingInline: tokens.spacing2,
-    alignItems: 'center',
-  },
+    .toggle-button:hover {
+      background-color: var(--color-neutral-100, rgba(0, 0, 0, 0.05));
+      color: var(--color-fg);
+    }
 
-  // Group Header / Title
-  groupHeader: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingBlock: tokens.spacing2,
-    paddingInline: tokens.spacing3,
-    fontSize: tokens.fontSizeXs,
-    fontWeight: tokens.fontWeightSemibold,
-    color: tokens.colorFgSubtle,
-    textTransform: 'uppercase',
-    letterSpacing: '0.05em',
-    userSelect: 'none',
-    boxSizing: 'border-box',
-    height: tokens.spacing7,
-  },
-  groupHeaderDense: {
-    height: tokens.spacing6,
-    paddingBlock: tokens.spacing1,
-    paddingInline: tokens.spacing2,
-  },
-  groupHeaderCollapsible: {
-    cursor: 'pointer',
-    borderRadius: tokens.radiusSm,
-    ':hover': {
-      backgroundColor: tokens.colorNeutral100,
-      color: tokens.colorFg,
-    },
-  },
-  groupTitle: {
-    margin: 0,
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap',
-  },
-  groupHeaderCollapsed: {
-    display: 'none',
-  },
+    :host([collapsed]) .toggle-button {
+      right: 50%;
+      transform: translateX(50%);
+    }
 
-  // Collapse indicator (chevron icon)
-  groupChevron: {
-    width: tokens.spacing3,
-    height: tokens.spacing3,
-    fill: 'currentColor',
-    transitionProperty: 'transform',
-    transitionDuration: '0.2s',
-    transitionTimingFunction: 'ease',
-  },
-  groupChevronExpanded: {
-    transform: 'rotate(90deg)',
-  },
+    @media (prefers-reduced-motion: reduce) {
+      :host,
+      .toggle-button {
+        transition: none !important;
+      }
+    }
+  `,
+]
 
-  // Items container for Group
-  groupItems: {
-    gap: tokens.spacing1,
-    overflow: 'hidden',
-    boxSizing: 'border-box',
-    width: '100%',
-    transitionProperty: 'grid-template-rows, opacity',
-    transitionDuration: '0.25s',
-    transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
-    display: 'grid',
-  },
-  groupItemsExpanded: {
-    gridTemplateRows: '1fr',
-    opacity: 1,
-  },
-  groupItemsCollapsed: {
-    gridTemplateRows: '0fr',
-    opacity: 0,
-    pointerEvents: 'none',
-  },
-  groupItemsInner: {
-    minHeight: 0,
-    display: 'flex',
-    flexDirection: 'column',
-    gap: tokens.spacing1,
-  },
-  groupItemsInnerDense: {
-    gap: '2px',
-  },
+export const sidebarMainStyles: CSSResultGroup = [
+  resetStyles,
+  css`
+    :host {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-width: 0;
+      min-height: 0;
+      box-sizing: border-box;
+      overflow: auto;
+    }
 
-  // ── Sidebar Item ────────────────────────────────────────────────────
-  item: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: tokens.spacing3,
-    paddingBlock: tokens.spacing2,
-    paddingInline: tokens.spacing3,
-    borderRadius: tokens.radiusMd,
-    fontSize: tokens.fontSizeSm,
-    fontWeight: tokens.fontWeightMedium,
-    color: tokens.colorFg,
-    textDecoration: 'none',
-    cursor: 'pointer',
-    userSelect: 'none',
-    outline: 'none',
-    boxSizing: 'border-box',
-    height: '36px',
-    transitionProperty: 'background-color, color, transform',
-    transitionDuration: '0.15s',
-    transitionTimingFunction: 'ease-in-out',
-    isolation: 'isolate',
-    ':active': {
-      transform: 'scale(0.98)',
-    },
-    ':focus-visible': {
-      outlineStyle: 'solid',
-      outlineWidth: '2px',
-      outlineColor: tokens.colorBorderFocus,
-      outlineOffset: '2px',
-    },
-  },
-  itemDense: {
-    height: '30px',
-    paddingBlock: tokens.spacing1,
-    paddingInline: tokens.spacing2,
-    gap: tokens.spacing2,
-  },
+    :host([layout='main-framed']) {
+      margin: var(--spacing-3);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--color-border);
+      background-color: var(--color-bg-subtle);
+      padding: var(--spacing-4);
+    }
 
-  // Hover & Active/Selected states
-  itemHover: {
-    ':hover': {
-      backgroundColor: tokens.colorNeutral100,
-    },
-  },
-  itemSelected: {
-    backgroundColor: tokens.colorPrimary100,
-    color: tokens.colorPrimary500,
-    fontWeight: tokens.fontWeightSemibold,
-    ':hover': {
-      backgroundColor: tokens.colorPrimary200,
-    },
-  },
+    :host([layout='sidebar-framed']) {
+      padding: var(--spacing-4);
+    }
 
-  // Collapsed item styles
-  itemCollapsed: {
-    justifyContent: 'center',
-    paddingInline: 0,
-    width: '36px',
-    height: '36px',
-    alignSelf: 'center',
-  },
-  itemCollapsedDense: {
-    width: '30px',
-    height: '30px',
-  },
+    .main {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+      box-sizing: border-box;
+    }
+  `,
+]
 
-  // Icon container
-  itemIcon: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexShrink: 0,
-    width: tokens.spacing4,
-    height: tokens.spacing4,
-    transitionProperty: 'transform',
-    transitionDuration: '0.2s',
-  },
-  itemIconSelected: {
-    color: tokens.colorPrimary500,
-  },
+export const sidebarHeaderStyles: CSSResultGroup = [
+  resetStyles,
+  css`
+    :host {
+      display: flex;
+      align-items: center;
+      padding: var(--spacing-4);
+      min-height: 64px;
+      box-sizing: border-box;
+      gap: var(--spacing-3);
+      flex-shrink: 0;
+      width: 100%;
+    }
 
-  // Label text
-  itemLabel: {
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap',
-    transitionProperty: 'opacity, transform',
-    transitionDuration: '0.2s',
-  },
-  itemLabelCollapsed: {
-    opacity: 0,
-    transform: 'translateX(-10px)',
-    width: 0,
-    display: 'none',
-  },
+    :host([dense]) {
+      min-height: 48px;
+      padding: var(--spacing-2) var(--spacing-3);
+      gap: var(--spacing-2);
+    }
 
-  // ── Divider ─────────────────────────────────────────────────────────
-  divider: {
-    marginBlock: tokens.spacing3,
-    marginInline: tokens.spacing4,
-    height: '1px',
-    backgroundColor: tokens.colorBorderSubtle,
-    borderStyle: 'none',
-  },
-  dividerDense: {
-    marginBlock: tokens.spacing2,
-  },
-  dividerCollapsed: {
-    marginInline: tokens.spacing3,
-  },
+    :host([collapsed]) {
+      justify-content: center;
+      padding: var(--spacing-3) var(--spacing-2);
+    }
 
-  // ── Toggle Button ───────────────────────────────────────────────────
-  toggleButton: {
-    position: 'absolute',
-    insetBlockEnd: tokens.spacing4,
-    insetInlineEnd: tokens.spacing4,
-    width: tokens.spacing8,
-    height: tokens.spacing8,
-    borderRadius: tokens.radiusFull,
-    backgroundColor: tokens.colorBgElevated,
-    borderStyle: 'solid',
-    borderWidth: '1px',
-    borderColor: tokens.colorBorder,
-    color: tokens.colorFgSubtle,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    cursor: 'pointer',
-    boxShadow: tokens.shadowSm,
-    zIndex: tokens.zIndexBase,
-    transitionProperty: 'transform, background-color, color, border-color',
-    transitionDuration: '0.2s',
-    outline: 'none',
-    ':hover': {
-      backgroundColor: tokens.colorNeutral100,
-      color: tokens.colorFg,
-    },
-    ':active': {
-      transform: 'scale(0.95)',
-    },
-    ':focus-visible': {
-      outlineStyle: 'solid',
-      outlineWidth: '2px',
-      outlineColor: tokens.colorBorderFocus,
-    },
-  },
-  toggleButtonCollapsed: {
-    position: 'relative',
-    insetBlockEnd: 'auto',
-    insetInlineEnd: 'auto',
-    alignSelf: 'center',
-    marginBlockStart: tokens.spacing1,
-    marginBlockEnd: tokens.spacing3,
-  },
-  layout: {
-    display: 'flex',
-    flexDirection: {
-      default: 'row',
-      '@media (max-width: 768px)': 'column',
-    },
-    height: '100%',
-    maxHeight: '100%',
-    width: '100%',
-    backgroundColor: tokens.colorBg,
-    color: tokens.colorFg,
-    fontFamily: tokens.fontFamilyBase,
-    boxSizing: 'border-box',
-    overflow: 'hidden',
-    gap: {
-      default: tokens.spacing3,
-      '@media (max-width: 768px)': 0,
-    },
-  },
-  layoutStatic: {
-    flexDirection: 'row',
-    gap: tokens.spacing3,
-  },
-  layoutMobile: {
-    flexDirection: 'column',
-    gap: 0,
-  },
-  mainContent: {
-    flex: 1,
-    display: 'flex',
-    flexDirection: 'column',
-    overflowY: 'auto',
-    boxSizing: 'border-box',
-    fontFamily: tokens.fontFamilyBase,
-    color: tokens.colorFg,
-    minWidth: 0,
-  },
-  mainContentMobileNav: {
-    paddingBlockEnd: {
-      default: 0,
-      '@media (max-width: 768px)': `calc(env(safe-area-inset-bottom, 0px) + ${tokens.spacing8} * 2.5)`,
-    },
-  },
-  mainContentMobileWithHeader: {
-    paddingBlockStart: {
-      default: 0,
-      '@media (max-width: 768px)': `calc(${tokens.spacing7} * 2)`,
-    },
-  },
-  mainUnframed: {
-    height: '100%',
-    backgroundColor: 'transparent',
-    paddingBlockStart: {
-      default: tokens.spacing3,
-      '@media (max-width: 768px)': 0,
-    },
-    borderWidth: 0,
-    borderStyle: 'none',
-    borderColor: 'transparent',
-    borderRadius: 0,
-    margin: 0,
-  },
-  mainFramed: {
-    height: {
-      default: `calc(100% - ${tokens.spacing3} * 2)`,
-      '@media (max-width: 768px)': '100%',
-    },
-    marginBlock: {
-      default: tokens.spacing3,
-      '@media (max-width: 768px)': 0,
-    },
-    marginInlineEnd: {
-      default: tokens.spacing3,
-      '@media (max-width: 768px)': 0,
-    },
-    marginInlineStart: 0,
-    borderRadius: {
-      default: tokens.radiusLg,
-      '@media (max-width: 768px)': 0,
-    },
-    borderWidth: {
-      default: '1px',
-      '@media (max-width: 768px)': 0,
-    },
-    borderStyle: 'solid',
-    overflow: 'hidden',
-  },
-  mainSolid: {
-    backgroundColor: tokens.colorBgSubtle,
-    borderColor: tokens.colorBorder,
-  },
-  mainGlass: {
-    backgroundColor: tokens.colorBgSubtle,
-    borderColor: tokens.colorBorder,
-    '@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))':
-      {
-        backgroundColor: tokens.colorBgGlass,
-        borderColor: tokens.colorBorderGlass,
-        backdropFilter: 'blur(20px)',
-        WebkitBackdropFilter: 'blur(20px)',
-      },
-  },
+    .header {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-3);
+      width: 100%;
+      overflow: hidden;
+      white-space: nowrap;
+    }
 
-  // ── Mobile Top Bar ──────────────────────────────────────────────────
-  mobileTopBar: {
-    display: {
-      default: 'none',
-      '@media (max-width: 768px)': 'flex',
-    },
-    position: 'absolute',
-    insetBlockStart: 0,
-    insetInline: 0,
-    zIndex: 40,
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingBlock: tokens.spacing2,
-    paddingInline: tokens.spacing4,
-    minHeight: '56px',
-    boxSizing: 'border-box',
-    backgroundColor: tokens.colorBgSubtle,
-    borderBlockEndWidth: '1px',
-    borderBlockEndStyle: 'solid',
-    borderBlockEndColor: tokens.colorBorderSubtle,
-    '@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))':
-      {
-        backgroundColor: tokens.colorBgGlass,
-        borderBlockEndColor: tokens.colorBorderGlass,
-        backdropFilter: 'blur(20px)',
-        WebkitBackdropFilter: 'blur(20px)',
-      },
-  },
-  mobileTopBarContent: {
-    display: 'flex',
-    alignItems: 'center',
-    width: '100%',
-    justifyContent: 'space-between',
-    gap: tokens.spacing2,
-  },
+    :host([collapsed]) .header {
+      justify-content: center;
+      gap: 0;
+    }
+  `,
+]
 
-  // ── Mobile Bottom Navigation Dock ───────────────────────────────────
-  mobileBottomNavContainer: {
-    display: {
-      default: 'none',
-      '@media (max-width: 768px)': 'flex',
-    },
-    position: 'fixed',
-    insetBlockEnd: `calc(env(safe-area-inset-bottom, 0px) + ${tokens.spacing3})`,
-    insetInline: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-    pointerEvents: 'none',
-    zIndex: 50,
-    paddingInline: tokens.spacing3,
-  },
-  mobileBottomNav: {
-    pointerEvents: 'auto',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-around',
-    gap: tokens.spacing1,
-    paddingBlock: tokens.spacing1,
-    paddingInline: tokens.spacing2,
-    borderRadius: tokens.radiusFull,
-    backgroundColor: tokens.colorBgElevated,
-    borderWidth: '1px',
-    borderStyle: 'solid',
-    borderColor: tokens.colorBorder,
-    boxShadow: tokens.shadowLg,
-    maxWidth: '420px',
-    width: 'auto',
-    minWidth: '240px',
-    boxSizing: 'border-box',
-    transformOrigin: 'bottom center',
-    '@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))':
-      {
-        backgroundColor: tokens.colorBgGlass,
-        borderColor: tokens.colorBorderGlass,
-        backdropFilter: 'blur(24px)',
-        WebkitBackdropFilter: 'blur(24px)',
-      },
-  },
-  mobileNavItem: {
-    position: 'relative',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: '2px',
-    minWidth: '52px',
-    minHeight: '44px',
-    paddingBlock: tokens.spacing1,
-    paddingInline: tokens.spacing2,
-    borderRadius: tokens.radiusFull,
-    color: tokens.colorFgSubtle,
-    textDecoration: 'none',
-    cursor: 'pointer',
-    userSelect: 'none',
-    boxSizing: 'border-box',
-    zIndex: 1,
-    borderStyle: 'none',
-    backgroundColor: 'transparent',
-    outline: 'none',
-  },
-  mobileNavItemActive: {
-    color: tokens.colorPrimary500,
-    fontWeight: tokens.fontWeightSemibold,
-  },
-  mobileNavActivePill: {
-    position: 'absolute',
-    insetBlock: 0,
-    insetInline: 0,
-    borderRadius: tokens.radiusFull,
-    backgroundColor: tokens.colorNeutral100,
-    zIndex: -1,
-  },
-  mobileNavIcon: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '22px',
-    height: '22px',
-    flexShrink: 0,
-  },
-  mobileNavLabel: {
-    fontSize: tokens.fontSizeXs,
-    lineHeight: tokens.lineHeightXs,
-    textAlign: 'center',
-    whiteSpace: 'nowrap',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    maxWidth: '64px',
-    display: 'block',
-  },
-  mobileNavMoreButton: {
-    position: 'relative',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: '2px',
-    minWidth: '52px',
-    minHeight: '44px',
-    paddingBlock: tokens.spacing1,
-    paddingInline: tokens.spacing2,
-    borderRadius: tokens.radiusFull,
-    color: tokens.colorFgSubtle,
-    cursor: 'pointer',
-    userSelect: 'none',
-    boxSizing: 'border-box',
-    zIndex: 1,
-    borderStyle: 'none',
-    backgroundColor: 'transparent',
-    outline: 'none',
-  },
+export const sidebarBrandStyles: CSSResultGroup = [
+  resetStyles,
+  css`
+    :host {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-3);
+      width: 100%;
+      min-width: 0;
+      overflow: hidden;
+      box-sizing: border-box;
+      border-radius: var(--radius-md);
+      text-decoration: none;
+      color: var(--color-fg);
+      user-select: none;
+    }
 
-  // ── Mobile Drawer Content ───────────────────────────────────────────
-  mobileDrawerOverlay: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'flex-end',
-  },
-  mobileDrawerModal: {
-    width: '100vw',
-    maxWidth: '100vw',
-    marginBlockEnd: 0,
-    marginBlockStart: 'auto',
-    marginInline: 0,
-    borderTopLeftRadius: tokens.radiusLg,
-    borderTopRightRadius: tokens.radiusLg,
-    borderBottomLeftRadius: 0,
-    borderBottomRightRadius: 0,
-    borderWidth: 0,
-    borderStyle: 'none',
-    borderColor: 'transparent',
-    maxHeight: '85dvh',
-    height: 'auto',
-    backgroundColor: tokens.colorBgElevated,
-    boxShadow: tokens.shadowLg,
-    outline: 'none',
-    boxSizing: 'border-box',
-    overflow: 'hidden',
-  },
-  mobileDrawerDialog: {
-    outline: 'none',
-    borderWidth: 0,
-    borderStyle: 'none',
-    display: 'flex',
-    flexDirection: 'column',
-    width: '100%',
-    maxHeight: '85dvh',
-    boxSizing: 'border-box',
-    overflow: 'hidden',
-  },
-  mobileDrawerHeader: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    paddingBlockStart: tokens.spacing1,
-    paddingBlockEnd: tokens.spacing3,
-    paddingInline: tokens.spacing4,
-    borderBlockEndWidth: 0,
-    borderBlockEndStyle: 'none',
-    backgroundColor: tokens.colorBgElevated,
-    gap: tokens.spacing1,
-    flexShrink: 0,
-    boxSizing: 'border-box',
-  },
-  mobileDrawerHeaderRow: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
-  },
-  mobileDrawerTitle: {
-    fontSize: tokens.fontSizeMd,
-    fontWeight: tokens.fontWeightBold,
-    color: tokens.colorFg,
-    margin: 0,
-  },
-  mobileDrawerBody: {
-    display: 'flex',
-    flexDirection: 'column',
-    flexGrow: 1,
-    paddingBlockStart: tokens.spacing3,
-    paddingBlockEnd: `calc(max(${tokens.spacing4}, env(safe-area-inset-bottom, ${tokens.spacing4})) + ${tokens.spacing3})`,
-    paddingInline: tokens.spacing4,
-    overflowY: 'auto',
-    boxSizing: 'border-box',
-  },
-  mobileDrawerContent: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: tokens.spacing3,
-  },
-  mobileDrawerGroup: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: tokens.spacing1,
-  },
-  mobileDrawerGroupTitle: {
-    fontSize: tokens.fontSizeXs,
-    fontWeight: tokens.fontWeightSemibold,
-    color: tokens.colorFgSubtle,
-    paddingBlock: tokens.spacing1,
-    paddingInline: tokens.spacing2,
-    textTransform: 'uppercase',
-    letterSpacing: '0.05em',
-  },
-  mobileDrawerFooter: {
-    paddingBlockStart: tokens.spacing3,
-    borderBlockStartWidth: '1px',
-    borderBlockStartStyle: 'solid',
-    borderBlockStartColor: tokens.colorBorderSubtle,
-    marginBlockStart: tokens.spacing2,
-  },
-})
+    :host([dense]) {
+      gap: var(--spacing-2);
+    }
+
+    :host([collapsed]) {
+      justify-content: center;
+      gap: 0;
+    }
+
+    .brand-link {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-3);
+      width: 100%;
+      min-width: 0;
+      overflow: hidden;
+      color: inherit;
+      text-decoration: none;
+      border-radius: var(--radius-md);
+    }
+
+    :host([collapsed]) .brand-link {
+      justify-content: center;
+      gap: 0;
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .brand-info {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    :host([collapsed]) .brand-info {
+      display: none !important;
+    }
+
+    .brand-title {
+      font-size: var(--font-size-sm, 0.875rem);
+      font-weight: var(--font-weight-bold, 700);
+      color: var(--color-fg);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .brand-subtitle {
+      font-size: var(--font-size-xs, 0.75rem);
+      color: var(--color-fg-subtle);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      margin-top: 2px;
+    }
+  `,
+]
+
+export const sidebarGroupStyles: CSSResultGroup = [
+  resetStyles,
+  css`
+    :host {
+      display: flex;
+      flex-direction: column;
+      padding-inline: var(--spacing-3);
+      padding-block-end: var(--spacing-4);
+      gap: var(--spacing-1);
+      box-sizing: border-box;
+      width: 100%;
+    }
+
+    :host([dense]) {
+      padding-inline: var(--spacing-2);
+      padding-block-end: var(--spacing-2);
+    }
+
+    :host([collapsed-sidebar]) {
+      padding-inline: var(--spacing-2);
+      align-items: center;
+    }
+
+    .group-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-block: var(--spacing-2);
+      padding-inline: var(--spacing-3);
+      font-size: var(--font-size-xs, 0.75rem);
+      font-weight: var(--font-weight-semibold, 600);
+      color: var(--color-fg-subtle);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      user-select: none;
+      box-sizing: border-box;
+      height: var(--spacing-7, 28px);
+      background: none;
+      border: none;
+      width: 100%;
+      text-align: left;
+      cursor: default;
+      outline: none;
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+    }
+
+    :host([dense]) .group-header {
+      height: var(--spacing-6, 24px);
+      padding-block: var(--spacing-1);
+      padding-inline: var(--spacing-2);
+    }
+
+    :host([collapsible]) .group-header {
+      cursor: pointer;
+    }
+
+    :host([collapsible]) .group-header:hover {
+      background-color: var(--color-neutral-100, rgba(0, 0, 0, 0.05));
+      color: var(--color-fg);
+    }
+
+    :host([collapsed-sidebar]) .group-header {
+      display: none;
+    }
+
+    .group-title {
+      margin: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      flex: 1;
+    }
+
+    .chevron {
+      width: var(--spacing-3, 12px);
+      height: var(--spacing-3, 12px);
+      flex-shrink: 0;
+      transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    :host([collapsed]) .chevron {
+      transform: rotate(-90deg);
+    }
+
+    /* Pure CSS Grid Height Collapse (Requirement 12.7) */
+    .group-items {
+      display: grid;
+      grid-template-rows: 1fr;
+      opacity: 1;
+      transition: grid-template-rows 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+        opacity 0.25s ease;
+      width: 100%;
+      overflow: hidden;
+      box-sizing: border-box;
+    }
+
+    :host([collapsed]) .group-items,
+    .group-items.collapsed {
+      grid-template-rows: 0fr;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .group-items-inner {
+      min-height: 0;
+      overflow: clip;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-1, 4px);
+    }
+
+    :host([dense]) .group-items-inner {
+      gap: 2px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .chevron,
+      .group-items {
+        transition: none !important;
+      }
+    }
+  `,
+]
+
+export const sidebarItemStyles: CSSResultGroup = [
+  resetStyles,
+  css`
+    :host {
+      display: block;
+      position: relative;
+      box-sizing: border-box;
+      width: 100%;
+    }
+
+    .item {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-3);
+      padding-block: var(--spacing-2);
+      padding-inline: var(--spacing-3);
+      border-radius: var(--radius-md);
+      font-size: var(--font-size-sm, 0.875rem);
+      font-weight: var(--font-weight-medium, 500);
+      color: var(--color-fg);
+      text-decoration: none;
+      cursor: pointer;
+      user-select: none;
+      outline: none;
+      box-sizing: border-box;
+      height: 36px;
+      width: 100%;
+      transition: background-color 0.15s ease, color 0.15s ease;
+      position: relative;
+      border: none;
+      background: transparent;
+      text-align: left;
+      font-family: inherit;
+    }
+
+    :host([dense]) .item {
+      height: 30px;
+      padding-block: var(--spacing-1);
+      padding-inline: var(--spacing-2);
+      gap: var(--spacing-2);
+    }
+
+    :host(:not([is-selected]):not([is-disabled])) .item:hover {
+      background-color: var(--color-neutral-100, rgba(0, 0, 0, 0.05));
+    }
+
+    :host([is-selected]) .item {
+      color: var(--color-primary-600, var(--color-primary, #2563eb));
+      font-weight: var(--font-weight-semibold, 600);
+    }
+
+    .indicator {
+      position: absolute;
+      inset: 0;
+      border-radius: var(--radius-md);
+      background-color: var(--color-primary-100, rgba(59, 130, 246, 0.12));
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      width: var(--spacing-4, 16px);
+      height: var(--spacing-4, 16px);
+      position: relative;
+      z-index: 1;
+    }
+
+    .label {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      flex: 1;
+      position: relative;
+      z-index: 1;
+    }
+
+    .badge {
+      font-size: var(--font-size-xs, 0.75rem);
+      background-color: var(--color-neutral-200, rgba(0, 0, 0, 0.08));
+      padding: 1px 6px;
+      border-radius: var(--radius-full);
+      margin-inline-start: auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    :host([collapsed]) .item {
+      justify-content: center;
+      padding-inline: 0;
+      width: 36px;
+      height: 36px;
+      margin-inline: auto;
+    }
+
+    :host([collapsed][dense]) .item {
+      width: 30px;
+      height: 30px;
+    }
+
+    :host([collapsed]) .label,
+    :host([collapsed]) .badge {
+      display: none !important;
+    }
+
+    :host([is-disabled]) {
+      opacity: 0.5;
+      pointer-events: none;
+      cursor: not-allowed;
+    }
+
+    :focus-visible {
+      outline: 2px solid var(--color-border-focus);
+      outline-offset: 2px;
+    }
+  `,
+]
+
+export const sidebarDividerStyles: CSSResultGroup = [
+  resetStyles,
+  css`
+    :host {
+      display: block;
+      box-sizing: border-box;
+      margin-block: var(--spacing-3);
+      margin-inline: var(--spacing-4);
+      height: 1px;
+      background-color: var(--color-border-subtle);
+      border: none;
+    }
+
+    :host([dense]) {
+      margin-block: var(--spacing-2);
+    }
+
+    :host([collapsed]) {
+      margin-inline: var(--spacing-2);
+    }
+  `,
+]
+
+export const sidebarFooterStyles: CSSResultGroup = [
+  resetStyles,
+  css`
+    :host {
+      display: flex;
+      align-items: center;
+      padding-block: var(--spacing-4);
+      padding-inline: var(--spacing-4);
+      box-sizing: border-box;
+      margin-top: auto;
+      gap: var(--spacing-3);
+      min-height: 64px;
+      flex-shrink: 0;
+      width: 100%;
+    }
+
+    :host([show-border]) {
+      border-block-start: 1px solid var(--color-border-subtle);
+    }
+
+    :host([dense]) {
+      min-height: 48px;
+      padding-block: var(--spacing-2);
+      padding-inline: var(--spacing-3);
+      gap: var(--spacing-2);
+    }
+
+    :host([collapsed]) {
+      justify-content: center;
+      padding-inline: var(--spacing-2);
+      padding-block: var(--spacing-3);
+    }
+
+    .footer {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-3);
+      width: 100%;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    :host([collapsed]) .footer {
+      justify-content: center;
+      gap: 0;
+    }
+  `,
+]
+
+export const sidebarUserStyles: CSSResultGroup = [
+  resetStyles,
+  css`
+    :host {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-3);
+      width: 100%;
+      min-width: 0;
+      overflow: hidden;
+      box-sizing: border-box;
+      border-radius: var(--radius-md);
+      text-decoration: none;
+      color: var(--color-fg);
+      cursor: pointer;
+      user-select: none;
+      padding-block: var(--spacing-1);
+      padding-inline: var(--spacing-2);
+      transition: background-color 0.15s ease;
+    }
+
+    :host(:hover) {
+      background-color: var(--color-neutral-100, rgba(0, 0, 0, 0.05));
+    }
+
+    :host([dense]) {
+      gap: var(--spacing-2);
+    }
+
+    :host([collapsed]) {
+      justify-content: center;
+      gap: 0;
+      padding-inline: 0;
+    }
+
+    .user-avatar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .user-info {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    :host([collapsed]) .user-info {
+      display: none !important;
+    }
+
+    .user-name {
+      font-size: var(--font-size-sm, 0.875rem);
+      font-weight: var(--font-weight-semibold, 600);
+      color: var(--color-fg);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .user-email {
+      font-size: var(--font-size-xs, 0.75rem);
+      color: var(--color-fg-subtle);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      margin-top: 2px;
+    }
+
+    .user-action {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: var(--color-fg-subtle);
+      margin-inline-start: auto;
+    }
+
+    :host([collapsed]) .user-action {
+      display: none !important;
+    }
+  `,
+]

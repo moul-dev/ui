@@ -1,37 +1,13 @@
 // Entrypoint for @moul-dev/ui component library
-export const version = '2026.9.28'
+export const version = '2026.10.17'
 
+// Phase 5: Surface & Feedback Components
 export { MoulAlert, MoulAlert as Alert } from './components/Alert'
 export {
   type AlertDialogSize,
   MoulAlertDialog,
   MoulAlertDialog as AlertDialog,
 } from './components/AlertDialog'
-export type { AreaChartProps } from './components/AreaChart'
-export { AreaChart } from './components/AreaChart'
-export type {
-  AutocompleteEmptyStateProps,
-  AutocompleteItemProps,
-  AutocompleteListProps,
-  AutocompleteMode,
-  AutocompletePopoverProps,
-  AutocompleteProps,
-  AutocompleteSectionProps,
-  AutocompleteSize,
-  Filter,
-} from './components/Autocomplete'
-export {
-  Autocomplete,
-  AutocompleteContext,
-  AutocompleteEmptyState,
-  AutocompleteItem,
-  AutocompleteList,
-  AutocompletePopover,
-  AutocompleteSection,
-  AutocompleteStateContext,
-  useAutocompleteInnerContext,
-  useFilter,
-} from './components/Autocomplete'
 export type {
   AvatarShape,
   AvatarSize,
@@ -45,14 +21,14 @@ export {
 } from './components/Avatar'
 export type { BadgeSize } from './components/Badge'
 export { MoulBadge, MoulBadge as Badge } from './components/Badge'
-export type { BarChartProps } from './components/BarChart'
-export { BarChart } from './components/BarChart'
+// Phase 6: Overlay & Navigation Components
 export {
   MoulBreadcrumbItem,
   MoulBreadcrumbItem as BreadcrumbItem,
   MoulBreadcrumbs,
   MoulBreadcrumbs as Breadcrumbs,
 } from './components/Breadcrumbs'
+// Phase 4: Actions & Toggle Components
 export { MoulButton, MoulButton as Button } from './components/Button'
 export type {
   ButtonSize,
@@ -67,6 +43,7 @@ export type {
   ButtonGroupOrientation,
   ButtonGroupSpacing,
 } from './components/ButtonGroup/ButtonGroup'
+// Phase 7: Input & Form Components
 export { MoulCalendar, MoulCalendar as Calendar } from './components/Calendar'
 export {
   MoulCard,
@@ -78,14 +55,6 @@ export {
   MoulCardHeader,
   MoulCardHeader as CardHeader,
 } from './components/Card'
-export type {
-  ChartContainerProps,
-  LegendItem,
-} from './components/ChartContainer'
-// Charts and Analytics Components
-export { ChartContainer } from './components/ChartContainer'
-export type { CustomTooltipProps } from './components/ChartTooltip'
-export { ChartTooltip } from './components/ChartTooltip'
 export {
   type CheckboxGroupOrientation,
   MoulCheckbox,
@@ -104,24 +73,10 @@ export {
   MoulCommandPalette,
   MoulCommandPalette as CommandPalette,
 } from './components/CommandPalette'
-export type {
-  DateFieldProps,
-  DateInputProps,
-  DateSegmentProps,
-} from './components/DateField'
-export {
-  DateField,
-  DateInput,
-  DateSegment,
-} from './components/DateField'
 export {
   MoulDatePicker,
   MoulDatePicker as DatePicker,
 } from './components/DatePicker'
-export { Description } from './components/Description'
-export type { DescriptionProps } from './components/Description/Description'
-export type { DoughnutChartProps } from './components/DoughnutChart'
-export { DoughnutChart } from './components/DoughnutChart'
 export {
   type DrawerPlacement,
   type DrawerSize,
@@ -136,10 +91,6 @@ export {
   MoulEmptyState,
   MoulEmptyState as EmptyState,
 } from './components/EmptyState'
-export { ErrorMessage } from './components/ErrorMessage'
-export type { ErrorMessageProps } from './components/ErrorMessage/ErrorMessage'
-export { FieldError } from './components/FieldError'
-export type { FieldErrorProps } from './components/FieldError/FieldError'
 export {
   type FormMethod,
   MoulForm,
@@ -150,47 +101,30 @@ export {
   MoulInputOTP as InputOTP,
 } from './components/InputOTP'
 export { MoulKbd, MoulKbd as Kbd } from './components/Kbd'
-export { Label } from './components/Label'
-export type { LabelProps } from './components/Label/Label'
-export type { LineChartProps } from './components/LineChart'
-export { LineChart } from './components/LineChart'
 export { type LinkVariant, MoulLink, MoulLink as Link } from './components/Link'
-export type {
-  DropIndicatorProps,
-  ListBoxItemProps,
-  ListBoxLayout,
-  ListBoxLoadMoreItemProps,
-  ListBoxOrientation,
-  ListBoxProps,
-  ListBoxSectionProps,
-  ListBoxSize,
-  ListBoxVariant,
-} from './components/ListBox'
-export {
-  DropIndicator,
-  Header,
-  ListBox,
-  ListBoxItem,
-  ListBoxLoadMoreItem,
-  ListBoxSection,
-  Text,
-} from './components/ListBox'
+// Phase 9: Composite Block Components
 export type {
   HighlightTextProps,
   LogAttributeChipProps,
+  LogCopyIconButtonProps,
   LogFilterLevel,
   LogItem,
   LogLevel,
   LogLevelBadgeProps,
   LogsProps,
   LogsViewerProps,
+  MoulLogsElement,
+  MoulLogsViewerElement,
 } from './components/LogsViewer'
 export {
   HighlightText,
   LogAttributeChip,
+  LogCopyIconButton,
   LogLevelBadge,
-  Logs,
-  LogsViewer,
+  MoulLogs,
+  MoulLogs as Logs,
+  MoulLogsViewer,
+  MoulLogsViewer as LogsViewer,
   normalizeLogLevel,
   parseAttributes,
   parseLogLine,
@@ -216,11 +150,6 @@ export {
   type PaginationItem,
   type PaginationShape,
 } from './components/Pagination'
-export type {
-  PercentageBarProps,
-  PercentageCircleProps,
-} from './components/Percentage'
-export { PercentageBar, PercentageCircle } from './components/Percentage'
 export {
   MoulPopover,
   MoulPopover as Popover,
@@ -260,6 +189,7 @@ export {
 export type {
   SidebarAsideProps,
   SidebarBrandProps,
+  SidebarContextValue,
   SidebarDividerProps,
   SidebarFooterProps,
   SidebarGroupProps,
@@ -271,16 +201,27 @@ export type {
   SidebarUserProps,
 } from './components/Sidebar'
 export {
-  Sidebar,
-  SidebarAside,
-  SidebarBrand,
-  SidebarDivider,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarHeader,
-  SidebarItem,
-  SidebarMain,
-  SidebarUser,
+  MoulSidebar,
+  MoulSidebar as Sidebar,
+  MoulSidebarAside,
+  MoulSidebarAside as SidebarAside,
+  MoulSidebarBrand,
+  MoulSidebarBrand as SidebarBrand,
+  MoulSidebarDivider,
+  MoulSidebarDivider as SidebarDivider,
+  MoulSidebarFooter,
+  MoulSidebarFooter as SidebarFooter,
+  MoulSidebarGroup,
+  MoulSidebarGroup as SidebarGroup,
+  MoulSidebarHeader,
+  MoulSidebarHeader as SidebarHeader,
+  MoulSidebarItem,
+  MoulSidebarItem as SidebarItem,
+  MoulSidebarMain,
+  MoulSidebarMain as SidebarMain,
+  MoulSidebarUser,
+  MoulSidebarUser as SidebarUser,
+  sidebarContext,
   useSidebar,
 } from './components/Sidebar'
 export type {
@@ -294,8 +235,6 @@ export {
 } from './components/Slider'
 export { MoulSpinner, MoulSpinner as Spinner } from './components/Spinner'
 export type { SpinnerSize } from './components/Spinner/Spinner'
-export type { StatProps } from './components/Stat'
-export { Stat } from './components/Stat'
 export {
   MoulSwitch,
   MoulSwitch as Switch,
@@ -355,13 +294,12 @@ export {
   MoulTooltip as Tooltip,
   type TooltipPlacement,
 } from './components/Tooltip'
-export type { TopListItem, TopListProps } from './components/TopList'
-export { TopList } from './components/TopList'
 export type { TypographyVariant } from './components/Typography'
 export {
   MoulTypography,
   MoulTypography as Typography,
 } from './components/Typography'
+
 // Reusable Lit Reactive Controllers
 export {
   type Breakpoint,
@@ -381,6 +319,7 @@ export {
   PressController,
   type PressControllerOptions,
 } from './controllers'
+
 // Design Tokens & Semantic Tones System
 export {
   normalizeTone,
@@ -391,10 +330,6 @@ export {
   VISUAL_VARIANTS,
   type VisualVariant,
 } from './styles/semantic-tones'
-export type { ThemeProviderProps } from './theme/ThemeProvider'
-export { ThemeProvider } from './theme/ThemeProvider'
-export type { Tokens } from './tokens/tokens.stylex'
-export { tokens } from './tokens/tokens.stylex'
 
 // Custom Element Type Imports for Global HTMLElementTagNameMap
 import type { MoulAlert } from './components/Alert'
@@ -424,6 +359,7 @@ import type { MoulForm } from './components/Form'
 import type { MoulInputOTP } from './components/InputOTP'
 import type { MoulKbd } from './components/Kbd'
 import type { MoulLink } from './components/Link'
+import type { MoulLogs, MoulLogsViewer } from './components/LogsViewer'
 import type { MoulModal } from './components/Modal'
 import type { MoulNumberField } from './components/NumberField'
 import type { MoulPagination } from './components/Pagination'
@@ -433,6 +369,18 @@ import type { MoulRadio, MoulRadioGroup } from './components/RadioGroup'
 import type { MoulSearchField } from './components/SearchField'
 import type { MoulSelect, MoulSelectItem } from './components/Select'
 import type { MoulSeparator } from './components/Separator'
+import type {
+  MoulSidebar,
+  MoulSidebarAside,
+  MoulSidebarBrand,
+  MoulSidebarDivider,
+  MoulSidebarFooter,
+  MoulSidebarGroup,
+  MoulSidebarHeader,
+  MoulSidebarItem,
+  MoulSidebarMain,
+  MoulSidebarUser,
+} from './components/Sidebar'
 import type { MoulSkeleton } from './components/Skeleton'
 import type { MoulSlider } from './components/Slider'
 import type { MoulSpinner } from './components/Spinner'
@@ -512,5 +460,19 @@ declare global {
     'moul-combobox-item': MoulComboBoxItem
     'moul-calendar': MoulCalendar
     'moul-date-picker': MoulDatePicker
+
+    // Phase 9: Composite Block Components
+    'moul-logs': MoulLogs
+    'moul-logs-viewer': MoulLogsViewer
+    'moul-sidebar': MoulSidebar
+    'moul-sidebar-aside': MoulSidebarAside
+    'moul-sidebar-main': MoulSidebarMain
+    'moul-sidebar-header': MoulSidebarHeader
+    'moul-sidebar-brand': MoulSidebarBrand
+    'moul-sidebar-group': MoulSidebarGroup
+    'moul-sidebar-item': MoulSidebarItem
+    'moul-sidebar-divider': MoulSidebarDivider
+    'moul-sidebar-footer': MoulSidebarFooter
+    'moul-sidebar-user': MoulSidebarUser
   }
 }
