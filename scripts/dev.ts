@@ -1,8 +1,9 @@
 #!/usr/bin/env bun
-import { spawn } from 'node:child_process'
-import { resolve } from 'node:path'
+import { spawn, spawnSync } from 'node:child_process'
+import { existsSync } from 'node:fs'
+import { join, resolve } from 'node:path'
 
-const rootDir = resolve(__dirname, '..')
+const rootDir = resolve(import.meta.dir, '..')
 
 interface Service {
   name: string
@@ -25,26 +26,20 @@ const colors = {
   gray: '\x1b[90m',
 }
 
+// `bun dev` = `bun run dev:ui` + `bun run dev:docs`, side by side (Req 15.1–15.3).
 const services: Service[] = [
-  {
-    name: 'ui:build',
-    color: colors.blue,
-    command: 'bun',
-    args: ['--cwd', 'ui', 'build:watch'],
-    cwd: rootDir,
-  },
   {
     name: 'ui:vite',
     color: colors.cyan,
     command: 'bun',
-    args: ['--cwd', 'ui', 'dev'],
+    args: ['run', 'dev:ui'],
     cwd: rootDir,
   },
   {
-    name: 'docs:waku',
+    name: 'docs:astro',
     color: colors.magenta,
     command: 'bun',
-    args: ['--cwd', 'docs', 'dev'],
+    args: ['run', 'dev:docs'],
     cwd: rootDir,
   },
 ]
@@ -105,12 +100,29 @@ ${colors.bright}${colors.cyan}========================================${colors.r
 ${colors.bright}  Moul UI Dev Environment Supervisor${colors.reset}
 ${colors.cyan}========================================${colors.reset}
 
-  ${colors.blue}● ui:build${colors.reset}  Watch library StyleX/TS changes
-  ${colors.cyan}● ui:vite${colors.reset}   Sandbox server (Vite)
-  ${colors.magenta}● docs:waku${colors.reset} Documentation server (Waku)
+  ${colors.cyan}● ui:vite${colors.reset}    Web Components sandbox (Vite)
+  ${colors.magenta}● docs:astro${colors.reset}  Documentation site (Astro Starlight)
 
 ${colors.dim}Press Ctrl+C to terminate all services cleanly.${colors.reset}
 `)
+
+// The docs site resolves `@moul-dev/ui` through the package exports, which
+// point at `ui/dist`. Build once up front so a fresh clone can start docs.
+if (!existsSync(join(rootDir, 'ui', 'dist', 'moul-ui.js'))) {
+  console.log(
+    `${colors.yellow}ui/dist not found — running ${colors.bright}bun run build:ui${colors.reset}${colors.yellow} first...${colors.reset}\n`,
+  )
+  const build = spawnSync('bun', ['run', 'build:ui'], {
+    cwd: rootDir,
+    stdio: 'inherit',
+  })
+  if (build.status !== 0) {
+    console.error(
+      `${colors.red}${colors.bright}build:ui failed with code ${build.status}; not starting dev servers.${colors.reset}`,
+    )
+    process.exit(build.status ?? 1)
+  }
+}
 
 for (const s of services) {
   const child = spawn(s.command, s.args, {

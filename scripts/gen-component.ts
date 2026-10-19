@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
-import { join, resolve } from 'node:path'
+import { dirname, join, resolve } from 'node:path'
 
 // ANSI colors for clean console logging
 const colors = {
@@ -10,71 +10,76 @@ const colors = {
   green: '\x1b[32m',
   cyan: '\x1b[36m',
   yellow: '\x1b[33m',
-  blue: '\x1b[34m',
-  magenta: '\x1b[35m',
   red: '\x1b[31m',
 }
 
-function toKebabCase(str: string): string {
+export function toPascalCase(str: string): string {
   return str
-    .replace(/([a-z])([A-Z])/g, '$1-$2')
-    .replace(/[\s_]+/g, '-')
+    .replace(/[^A-Za-z0-9]+(.)?/g, (_, chr: string | undefined) =>
+      chr ? chr.toUpperCase() : '',
+    )
+    .replace(/^./, (chr) => chr.toUpperCase())
+}
+
+export function toKebabCase(str: string): string {
+  return str
+    .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
+    .replace(/([A-Z]+)([A-Z][a-z])/g, '$1-$2')
     .toLowerCase()
 }
 
-function toPascalCase(str: string): string {
-  return str
-    .replace(/(?:^\w|[A-Z]|\b\w)/g, (letter) => letter.toUpperCase())
-    .replace(/[\s-_]+/g, '')
-}
-
 interface GeneratorOptions {
+  /** PascalCase directory / file name, e.g. `SegmentedControl`. */
   componentName: string
-  kebabName: string
+  /** Lit class name, e.g. `MoulSegmentedControl`. */
+  className: string
+  /** Custom element tag, e.g. `moul-segmented-control`. */
+  tagName: string
+  /** Docs route slug, matching existing pages (`segmentedcontrol`). */
+  docSlug: string
   description: string
-  category: string
   dryRun: boolean
-  isAria: boolean
 }
 
-function parseArgs(args: string[]): GeneratorOptions {
-  let name = ''
-  let description = ''
-  let category = 'general'
-  let dryRun = false
-  let isAria = true
-
-  for (let i = 0; i < args.length; i++) {
-    const arg = args[i]
-    if (arg === '--help' || arg === '-h') {
-      console.log(`
+function printHelp() {
+  console.log(`
 ${colors.bright}Moul UI Component Generator${colors.reset}
 
 ${colors.yellow}Usage:${colors.reset}
   bun run gen:component <ComponentName> [options]
 
 ${colors.yellow}Options:${colors.reset}
-  --description, -d <text>   Component description for docs and JSDoc
-  --category, -c <name>      Category (actions, forms, overlays, feedback, navigation, layout, charts)
-  --no-aria                  Generate simple HTML element component instead of React Aria primitive
+  --description, -d <text>   One-line description for JSDoc and the docs page
   --dry-run                  Preview generated files without writing to disk
   --help, -h                 Show this help message
 
+${colors.yellow}Generates:${colors.reset}
+  ui/src/components/<ComponentName>/<ComponentName>.ts         LitElement class (moul-<kebab-name>)
+  ui/src/components/<ComponentName>/<ComponentName>.styles.ts  Lit css\`\` styles
+  ui/src/components/<ComponentName>/<ComponentName>.test.ts    Vitest + @open-wc/testing-helpers
+  ui/src/components/<ComponentName>/index.ts                   Barrel export
+  docs/src/content/docs/docs/components/<slug>.mdx             Starlight MDX stub with <ComponentPreview>
+
 ${colors.yellow}Examples:${colors.reset}
   bun run gen:component Timeline
-  bun run gen:component SegmentedControl -d "Segmented toggle picker" -c actions
+  bun run gen:component SegmentedControl -d "Segmented single-choice picker"
 `)
-      process.exit(0)
-    }
+}
 
-    if (arg === '--dry-run') {
+function parseArgs(args: string[]): GeneratorOptions {
+  let name = ''
+  let description = ''
+  let dryRun = false
+
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i]
+    if (arg === '--help' || arg === '-h') {
+      printHelp()
+      process.exit(0)
+    } else if (arg === '--dry-run') {
       dryRun = true
-    } else if (arg === '--no-aria') {
-      isAria = false
     } else if (arg === '--description' || arg === '-d') {
       description = args[++i] || ''
-    } else if (arg === '--category' || arg === '-c') {
-      category = args[++i] || 'general'
     } else if (!arg.startsWith('-') && !name) {
       name = arg
     }
@@ -90,307 +95,315 @@ ${colors.yellow}Examples:${colors.reset}
     process.exit(1)
   }
 
-  const pascalName = toPascalCase(name)
-  const kebabName = toKebabCase(pascalName)
-  const defaultDesc = `${pascalName} component built with React Aria and StyleX.`
+  const componentName = toPascalCase(name)
+  if (!/^[A-Z][A-Za-z0-9]*$/.test(componentName)) {
+    console.error(
+      `${colors.red}Error:${colors.reset} "${name}" is not a valid component name. Use PascalCase letters and digits, e.g. SegmentedControl.`,
+    )
+    process.exit(1)
+  }
 
   return {
-    componentName: pascalName,
-    kebabName,
-    description: description || defaultDesc,
-    category,
+    componentName,
+    className: `Moul${componentName}`,
+    tagName: `moul-${toKebabCase(componentName)}`,
+    docSlug: componentName.toLowerCase(),
+    description:
+      description ||
+      `${componentName} Web Component built with Lit and Moul CSS tokens.`,
     dryRun,
-    isAria,
   }
 }
 
 function generateComponentFile(opts: GeneratorOptions): string {
-  const { componentName, description, isAria } = opts
+  const { componentName, className, tagName, description } = opts
+  return `import { html, LitElement, type PropertyValues } from 'lit'
+import {
+  normalizeTone,
+  normalizeVariant,
+  type SemanticTone,
+  type VisualVariant,
+} from '../../styles/semantic-tones'
+import { defineElement } from '../../utils/define-element'
+import { ${lowerFirst(componentName)}Styles } from './${componentName}.styles'
 
-  if (isAria) {
-    return `'use client'
-import type { StyleXStyles } from '@stylexjs/stylex'
-import * as stylex from '@stylexjs/stylex'
-import * as React from 'react'
-import { styles } from './${componentName}.styles'
-
-export type ${componentName}Variant = 'neutral' | 'primary' | 'subtle'
 export type ${componentName}Size = 'sm' | 'md' | 'lg'
 
-export interface ${componentName}Props extends Omit<React.HTMLAttributes<HTMLDivElement>, 'style'> {
-  /** Visual variant style */
-  variant?: ${componentName}Variant
-  /** Component size */
-  size?: ${componentName}Size
-  /** StyleX override styles */
-  style?: StyleXStyles
-  /** Custom CSS class names */
-  className?: string
-  /** Children elements */
-  children?: React.ReactNode
-}
-
 /**
  * ${description}
+ *
+ * @slot - Default content.
+ * @slot prefix - Content rendered before the default slot.
+ * @slot suffix - Content rendered after the default slot.
+ * @csspart base - The wrapper element.
  */
-export const ${componentName} = React.forwardRef<HTMLDivElement, ${componentName}Props>(
-  function ${componentName}(
-    {
-      variant = 'neutral',
-      size = 'md',
-      style,
-      className,
-      children,
-      ...rest
-    },
-    ref,
-  ) {
-    const { className: stylexClass, style: stylexStyle } = stylex.props(
-      styles.base,
-      styles[variant],
-      styles[size],
-      style,
-    )
+export class ${className} extends LitElement {
+  static override styles = ${lowerFirst(componentName)}Styles
 
-    return (
-      <div
-        {...rest}
-        ref={ref}
-        className={[stylexClass, className].filter(Boolean).join(' ')}
-        style={stylexStyle}
-      >
-        {children}
-      </div>
-    )
-  },
-)
-`
+  static override properties = {
+    tone: { type: String, reflect: true },
+    variant: { type: String, reflect: true },
+    size: { type: String, reflect: true },
+    isDisabled: { type: Boolean, reflect: true, attribute: 'is-disabled' },
   }
 
-  return `import type { StyleXStyles } from '@stylexjs/stylex'
-import * as stylex from '@stylexjs/stylex'
-import * as React from 'react'
-import { styles } from './${componentName}.styles'
+  declare tone: SemanticTone
+  declare variant: VisualVariant
+  declare size: ${componentName}Size
+  declare isDisabled: boolean
 
-export interface ${componentName}Props extends Omit<React.HTMLAttributes<HTMLDivElement>, 'style'> {
-  /** StyleX override styles */
-  style?: StyleXStyles
-  /** Custom CSS class names */
-  className?: string
-  /** Children elements */
-  children?: React.ReactNode
+  constructor() {
+    super()
+    this.tone = 'primary'
+    this.variant = 'flat'
+    this.size = 'md'
+    this.isDisabled = false
+  }
+
+  protected override willUpdate(changedProps: PropertyValues): void {
+    super.willUpdate(changedProps)
+    if (changedProps.has('tone')) {
+      const normalized = normalizeTone(this.tone)
+      if (this.tone !== normalized) this.tone = normalized
+    }
+    if (changedProps.has('variant')) {
+      const normalized = normalizeVariant(this.variant)
+      if (this.variant !== normalized) this.variant = normalized
+    }
+    if (changedProps.has('isDisabled')) {
+      if (this.isDisabled) {
+        this.setAttribute('aria-disabled', 'true')
+      } else {
+        this.removeAttribute('aria-disabled')
+      }
+    }
+  }
+
+  protected override render() {
+    return html\`
+      <div part="base">
+        <slot name="prefix"></slot>
+        <slot></slot>
+        <slot name="suffix"></slot>
+      </div>
+    \`
+  }
 }
 
-/**
- * ${description}
- */
-export const ${componentName} = React.forwardRef<HTMLDivElement, ${componentName}Props>(
-  function ${componentName}({ style, className, children, ...rest }, ref) {
-    const { className: stylexClass, style: stylexStyle } = stylex.props(
-      styles.base,
-      style,
-    )
+defineElement('${tagName}', ${className})
 
-    return (
-      <div
-        {...rest}
-        ref={ref}
-        className={[stylexClass, className].filter(Boolean).join(' ')}
-        style={stylexStyle}
-      >
-        {children}
-      </div>
-    )
-  },
-)
+declare global {
+  interface HTMLElementTagNameMap {
+    '${tagName}': ${className}
+  }
+}
 `
 }
 
-function generateStylesFile(_opts: GeneratorOptions): string {
-  return `import * as stylex from '@stylexjs/stylex'
-import { tokens } from '../../tokens/tokens.stylex'
+function generateStylesFile(opts: GeneratorOptions): string {
+  return `import { css } from 'lit'
+import { resetStyles } from '../../styles/reset.styles'
+import { semanticToneStyles } from '../../styles/semantic-tones'
 
-export const styles = stylex.create({
-  base: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    boxSizing: 'border-box',
-    fontFamily: tokens.fontFamilySans,
-    color: tokens.colorNeutral900,
-    borderRadius: tokens.radiusMd,
-    transitionProperty: 'background-color, border-color, color, box-shadow',
-    transitionDuration: '150ms',
-    transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
-  },
-  sm: {
-    paddingBlock: tokens.spacing1,
-    paddingInline: tokens.spacing2,
-    fontSize: tokens.fontSizeSm,
-    lineHeight: tokens.lineHeightSm,
-  },
-  md: {
-    paddingBlock: tokens.spacing2,
-    paddingInline: tokens.spacing3,
-    fontSize: tokens.fontSizeMd,
-    lineHeight: tokens.lineHeightMd,
-  },
-  lg: {
-    paddingBlock: tokens.spacing3,
-    paddingInline: tokens.spacing4,
-    fontSize: tokens.fontSizeLg,
-    lineHeight: tokens.lineHeightLg,
-  },
-  neutral: {
-    backgroundColor: tokens.colorNeutral100,
-    borderColor: tokens.colorBorderSubtle,
-    borderWidth: '1px',
-    borderStyle: 'solid',
-  },
-  primary: {
-    backgroundColor: tokens.colorPrimary100,
-    color: tokens.colorPrimary700,
-    borderColor: tokens.colorPrimary300,
-    borderWidth: '1px',
-    borderStyle: 'solid',
-  },
-  subtle: {
-    backgroundColor: 'transparent',
-    color: tokens.colorNeutral700,
-  },
-})
+export const ${lowerFirst(opts.componentName)}Styles = [
+  resetStyles,
+  semanticToneStyles,
+  css\`
+    :host {
+      display: inline-flex;
+      box-sizing: border-box;
+      font-family: var(--font-family-base);
+      border-radius: var(--radius-md, 0.5rem);
+      transition:
+        background-color 150ms ease,
+        border-color 150ms ease,
+        color 150ms ease;
+    }
+
+    :host([hidden]) {
+      display: none;
+    }
+
+    :host([is-disabled]) {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    [part='base'] {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacing-2, 0.5rem);
+    }
+
+    :host([size='sm']) [part='base'] {
+      padding: var(--spacing-1, 0.25rem) var(--spacing-2, 0.5rem);
+      font-size: var(--font-size-sm, 0.875rem);
+    }
+
+    :host([size='md']) [part='base'],
+    :host(:not([size])) [part='base'] {
+      padding: var(--spacing-2, 0.5rem) var(--spacing-3, 0.75rem);
+      font-size: var(--font-size-md, 1rem);
+    }
+
+    :host([size='lg']) [part='base'] {
+      padding: var(--spacing-3, 0.75rem) var(--spacing-4, 1rem);
+      font-size: var(--font-size-lg, 1.125rem);
+    }
+  \`,
+]
 `
 }
 
 function generateIndexFile(opts: GeneratorOptions): string {
-  const { componentName } = opts
-  return `export { ${componentName} } from './${componentName}'
-export type {
-  ${componentName}Props,
-  ${componentName}Size,
-  ${componentName}Variant,
-} from './${componentName}'
+  const { componentName, className } = opts
+  return `export type { ${componentName}Size } from './${componentName}'
+export { ${className}, ${className} as ${componentName} } from './${componentName}'
 `
 }
 
 function generateTestFile(opts: GeneratorOptions): string {
-  const { componentName } = opts
-  return `import { render, screen } from '@testing-library/react'
-import * as React from 'react'
+  const { componentName, className, tagName } = opts
+  return `import { fixture, html } from '@open-wc/testing-helpers'
 import { describe, expect, it } from 'vitest'
-import { ${componentName} } from './${componentName}'
+import './${componentName}'
+import type { ${className} } from './${componentName}'
 
-describe('${componentName}', () => {
-  it('renders children correctly', () => {
-    render(<${componentName}>Test Content</${componentName}>)
-    expect(screen.getByText('Test Content')).toBeInTheDocument()
+describe('<${tagName}>', () => {
+  it('is registered as a custom element with an open shadow root', async () => {
+    const el = await fixture<${className}>(html\`<${tagName}>Content</${tagName}>\`)
+    expect(customElements.get('${tagName}')).toBeDefined()
+    expect(el.shadowRoot).not.toBeNull()
+    expect(el.shadowRoot?.querySelector('[part="base"]')).not.toBeNull()
   })
 
-  it('supports custom className and ref forwarding', () => {
-    const ref = React.createRef<HTMLDivElement>()
-    render(
-      <${componentName} ref={ref} className="custom-test-class" data-testid="${opts.kebabName}">
-        Hello
-      </${componentName}>,
-    )
-    const element = screen.getByTestId('${opts.kebabName}')
-    expect(element).toHaveClass('custom-test-class')
-    expect(ref.current).toBe(element)
+  it('applies default attribute values', async () => {
+    const el = await fixture<${className}>(html\`<${tagName}></${tagName}>\`)
+    expect(el.tone).toBe('primary')
+    expect(el.variant).toBe('flat')
+    expect(el.size).toBe('md')
+    expect(el.getAttribute('size')).toBe('md')
   })
 
-  it('renders variants and sizes without throwing', () => {
-    const { container } = render(
-      <div>
-        <${componentName} variant="primary" size="sm">Small Primary</${componentName}>
-        <${componentName} variant="neutral" size="md">Medium Neutral</${componentName}>
-        <${componentName} variant="subtle" size="lg">Large Subtle</${componentName}>
-      </div>,
+  it('falls back to defaults for invalid tone and variant values', async () => {
+    const el = await fixture<${className}>(
+      html\`<${tagName} tone="nope" variant="nope"></${tagName}>\`,
     )
-    expect(container).toBeInTheDocument()
+    await el.updateComplete
+    expect(el.tone).toBe('primary')
+    expect(el.variant).toBe('flat')
+  })
+
+  it('reflects is-disabled to aria-disabled', async () => {
+    const el = await fixture<${className}>(html\`<${tagName} is-disabled></${tagName}>\`)
+    expect(el.isDisabled).toBe(true)
+    expect(el.getAttribute('aria-disabled')).toBe('true')
+    el.isDisabled = false
+    await el.updateComplete
+    expect(el.hasAttribute('aria-disabled')).toBe(false)
   })
 })
 `
 }
 
 function generateMdxDoc(opts: GeneratorOptions): string {
-  const { componentName, description } = opts
+  const { componentName, tagName, description } = opts
   return `---
 title: ${componentName}
 description: ${description}
 ---
 
-import { ${componentName} } from '@moul-dev/ui';
+import ComponentPreview from '@/components/ComponentPreview.astro';
 
 # ${componentName}
 
-${description}
+The \`<${tagName}>\` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
 
 ## Preview
 
-<ComponentPlayground component="${componentName}" />
+<ComponentPreview>
+  <${tagName} size="sm">Small</${tagName}>
+  <${tagName} size="md">Medium</${tagName}>
+  <${tagName} size="lg">Large</${tagName}>
+</ComponentPreview>
 
 ## Import
 
-\`\`\`tsx
-import { ${componentName} } from '@moul-dev/ui';
+\`\`\`ts
+import '@moul-dev/ui';
+import '@moul-dev/ui/style.css';
 \`\`\`
 
-## Usage
+## HTML Usage
 
-\`\`\`tsx
-<${componentName} variant="neutral" size="md">
-  ${componentName} Content
-</${componentName}>
+\`\`\`html
+<${tagName} tone="primary" variant="flat" size="md">${componentName} content</${tagName}>
 \`\`\`
 
-## Sizes
+## Attributes & Properties
 
-\`\`\`tsx
-<div className="flex items-center gap-3">
-  <${componentName} size="sm">Small</${componentName}>
-  <${componentName} size="md">Medium</${componentName}>
-  <${componentName} size="lg">Large</${componentName}>
-</div>
-\`\`\`
+| Name | Type | Default |
+| :--- | :--- | :--- |
+| \`tone\` | \`SemanticTone\` | \`'primary'\` |
+| \`variant\` | \`VisualVariant\` | \`'flat'\` |
+| \`size\` | \`'sm' \\| 'md' \\| 'lg'\` | \`'md'\` |
+| \`is-disabled\` | \`boolean\` | \`false\` |
 
-## Variants
+## Slots
 
-\`\`\`tsx
-<div className="flex items-center gap-3">
-  <${componentName} variant="neutral">Neutral</${componentName}>
-  <${componentName} variant="primary">Primary</${componentName}>
-  <${componentName} variant="subtle">Subtle</${componentName}>
-</div>
-\`\`\`
-
-## Props
-
-<TypeTable
-  type={{
-    size: {
-      type: "'sm' | 'md' | 'lg'",
-      default: "'md'",
-      description: 'The size scaling of the component.',
-    },
-    variant: {
-      type: "'neutral' | 'primary' | 'subtle'",
-      default: "'neutral'",
-      description: 'The visual variant style.',
-    },
-    className: {
-      type: 'string',
-      description: 'Custom CSS class name.',
-    },
-  }}
-/>
+| Name | Description |
+| :--- | :--- |
+| (default) | Main content. |
+| \`prefix\` | Content before the main content. |
+| \`suffix\` | Content after the main content. |
 `
 }
 
-async function main() {
-  const rootDir = resolve(__dirname, '..')
+function lowerFirst(str: string): string {
+  return str.charAt(0).toLowerCase() + str.slice(1)
+}
+
+/**
+ * Register the new element in the public entry point: value export, type
+ * import, and `HTMLElementTagNameMap` entry. Returns null when an anchor is
+ * missing so the caller can print manual instructions instead of guessing.
+ */
+function updateIndexTs(content: string, opts: GeneratorOptions): string | null {
+  const { componentName, className, tagName } = opts
+  const typeImportsAnchor = '// Custom Element Type Imports'
+  const mapClose = /\n {2}\}\n\}\s*$/
+
+  if (!content.includes(typeImportsAnchor) || !mapClose.test(content)) {
+    return null
+  }
+
+  const exportBlock = `export type { ${componentName}Size } from './components/${componentName}'
+export {
+  ${className},
+  ${className} as ${componentName},
+} from './components/${componentName}'
+
+`
+  const typeImport = `import type { ${className} } from './components/${componentName}'\n`
+
+  let next = content.replace(
+    typeImportsAnchor,
+    `${exportBlock}${typeImportsAnchor}`,
+  )
+  next = next.replace(
+    new RegExp(`(${typeImportsAnchor}[^\\n]*\\n)`),
+    `$1${typeImport}`,
+  )
+  next = next.replace(mapClose, `\n    '${tagName}': ${className}\n  }\n}\n`)
+  return next
+}
+
+function main() {
+  const rootDir = resolve(import.meta.dir, '..')
   const opts = parseArgs(process.argv.slice(2))
 
   console.log(
-    `\\n${colors.bright}${colors.cyan}Moul UI Scaffolding:${colors.reset} Generating ${colors.green}${opts.componentName}${colors.reset}\\n`,
+    `\n${colors.bright}${colors.cyan}Moul UI Scaffolding:${colors.reset} Generating ${colors.green}<${opts.tagName}>${colors.reset} (${opts.className})\n`,
   )
 
   const componentDir = join(
@@ -403,10 +416,12 @@ async function main() {
   const docPath = join(
     rootDir,
     'docs',
+    'src',
     'content',
     'docs',
+    'docs',
     'components',
-    `${opts.kebabName}.mdx`,
+    `${opts.docSlug}.mdx`,
   )
   const indexTsPath = join(rootDir, 'ui', 'src', 'index.ts')
 
@@ -416,17 +431,28 @@ async function main() {
     )
     process.exit(1)
   }
+  if (existsSync(docPath)) {
+    console.error(
+      `${colors.red}Error:${colors.reset} Docs page already exists: ${docPath}`,
+    )
+    process.exit(1)
+  }
 
   const files = [
     {
-      path: join(componentDir, `${opts.componentName}.tsx`),
+      path: join(componentDir, `${opts.componentName}.ts`),
       content: generateComponentFile(opts),
-      desc: 'Component implementation',
+      desc: 'LitElement class',
     },
     {
       path: join(componentDir, `${opts.componentName}.styles.ts`),
       content: generateStylesFile(opts),
-      desc: 'StyleX style declarations',
+      desc: 'Lit css`` styles',
+    },
+    {
+      path: join(componentDir, `${opts.componentName}.test.ts`),
+      content: generateTestFile(opts),
+      desc: 'Vitest unit tests',
     },
     {
       path: join(componentDir, 'index.ts'),
@@ -434,67 +460,77 @@ async function main() {
       desc: 'Barrel export',
     },
     {
-      path: join(componentDir, `${opts.componentName}.test.tsx`),
-      content: generateTestFile(opts),
-      desc: 'Vitest unit tests',
-    },
-    {
       path: docPath,
       content: generateMdxDoc(opts),
-      desc: 'Fumadocs MDX documentation',
+      desc: 'Starlight MDX documentation stub',
     },
   ]
 
+  const rel = (path: string) => path.slice(rootDir.length + 1)
+
   if (opts.dryRun) {
     console.log(
-      `${colors.yellow}[DRY RUN]${colors.reset} The following files would be created:\\n`,
+      `${colors.yellow}[DRY RUN]${colors.reset} The following files would be created:\n`,
     )
     for (const file of files) {
       console.log(
-        `  ${colors.green}+${colors.reset} ${file.path} ${colors.dim}(${file.desc})${colors.reset}`,
+        `  ${colors.green}+${colors.reset} ${rel(file.path)} ${colors.dim}(${file.desc})${colors.reset}`,
       )
     }
     console.log(
-      `\\n  ${colors.cyan}~${colors.reset} Append export to ${indexTsPath}`,
+      `\n  ${colors.cyan}~${colors.reset} Register exports and tag map entry in ${rel(indexTsPath)}`,
     )
     return
   }
 
-  // Create component directory
-  mkdirSync(componentDir, { recursive: true })
-
-  // Write files
   for (const file of files) {
+    mkdirSync(dirname(file.path), { recursive: true })
     writeFileSync(file.path, file.content, 'utf-8')
-    console.log(`  ${colors.green}✓ Created${colors.reset} ${file.path}`)
+    console.log(`  ${colors.green}✓ Created${colors.reset} ${rel(file.path)}`)
   }
 
-  // Append export to ui/src/index.ts
-  if (existsSync(indexTsPath)) {
-    const indexContent = readFileSync(indexTsPath, 'utf-8')
-    const exportStatement = `\\nexport { ${opts.componentName} } from './components/${opts.componentName}'\\nexport type {\\n  ${opts.componentName}Props,\\n  ${opts.componentName}Size,\\n  ${opts.componentName}Variant,\\n} from './components/${opts.componentName}'\\n`
-    writeFileSync(
-      indexTsPath,
-      indexContent.trimEnd() + exportStatement,
-      'utf-8',
+  const indexContent = readFileSync(indexTsPath, 'utf-8')
+  const updatedIndex = updateIndexTs(indexContent, opts)
+  if (updatedIndex) {
+    writeFileSync(indexTsPath, updatedIndex, 'utf-8')
+    console.log(`  ${colors.green}✓ Updated${colors.reset} ${rel(indexTsPath)}`)
+  } else {
+    console.warn(
+      `  ${colors.yellow}⚠ Could not locate export anchors in ${rel(indexTsPath)}; add the export and HTMLElementTagNameMap entry manually.${colors.reset}`,
     )
-    console.log(`  ${colors.green}✓ Updated${colors.reset} ${indexTsPath}`)
+  }
+
+  // Let Biome own import order and line wrapping so generated code always
+  // passes `bun run lint`, regardless of where it was spliced in.
+  const touched = [...files.map((f) => f.path), indexTsPath].filter((p) =>
+    p.endsWith('.ts'),
+  )
+  const biome = Bun.spawnSync(
+    ['bunx', 'biome', 'check', '--write', ...touched],
+    { cwd: rootDir, stdout: 'ignore', stderr: 'pipe' },
+  )
+  if (biome.exitCode === 0) {
+    console.log(`  ${colors.green}✓ Formatted${colors.reset} with Biome`)
+  } else {
+    console.warn(
+      `  ${colors.yellow}⚠ Biome reported issues; run ${colors.cyan}bun run lint${colors.yellow} to review.${colors.reset}`,
+    )
   }
 
   console.log(
-    `\\n${colors.bright}${colors.green}Success!${colors.reset} Component ${colors.cyan}${opts.componentName}${colors.reset} has been generated.\\n`,
+    `\n${colors.bright}${colors.green}Success!${colors.reset} <${opts.tagName}> has been generated.\n`,
   )
   console.log('Next steps:')
   console.log(
-    `  1. Customize styles in: ${colors.dim}ui/src/components/${opts.componentName}/${opts.componentName}.styles.ts${colors.reset}`,
+    `  1. Implement the element in ${colors.dim}ui/src/components/${opts.componentName}/${opts.componentName}.ts${colors.reset}`,
   )
   console.log(
-    `  2. Add showcase in: ${colors.dim}ui/src/sandbox/sections/...${colors.reset}`,
+    `  2. Add it to the sandbox in ${colors.dim}ui/src/sandbox.ts${colors.reset}`,
   )
-  console.log(`  3. Run tests: ${colors.dim}bun test${colors.reset}`)
+  console.log(
+    `  3. Add a catalog entry in ${colors.dim}scripts/llms-catalog.ts${colors.reset}, then run ${colors.cyan}bun run build:ui && bun run sync:llms --write${colors.reset}`,
+  )
+  console.log(`  4. Run tests: ${colors.cyan}bun run test${colors.reset}`)
 }
 
-main().catch((err) => {
-  console.error(err)
-  process.exit(1)
-})
+main()

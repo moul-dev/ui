@@ -232,11 +232,11 @@ _Covers: Requirement 13_
 ## Phase 12: Monorepo Tooling Scripts, LLM Context Sync & Final QA
 _Covers: Requirement 14, Requirement 15_
 
-- [ ] **12.1 Update Monorepo Developer Scripts (`scripts/`)**
+- [x] **12.1 Update Monorepo Developer Scripts (`scripts/`)**
   - `scripts/gen-component.ts`: Scaffold `<ComponentName>.ts`, `<ComponentName>.styles.ts`, `<ComponentName>.test.ts`, and `<ComponentName>.mdx` (_Req 15.4_).
   - `scripts/bump-version.ts`: Compute UTC CalVer `YYYY.M.D` and increment `YYYY.M.D.N` patch suffix when bumping on the same UTC date (_Req 15.10, 15.11_).
   - `scripts/dev.ts`: Run `bun run dev:ui` and `bun run dev:docs` concurrently (_Req 15.1–15.3_).
-- [ ] **12.2 Update `scripts/sync-llms.ts` and Regenerate LLM Context Files**
+- [x] **12.2 Update `scripts/sync-llms.ts` and Regenerate LLM Context Files**
   - Parse `ui/dist/custom-elements.json` and cross-reference/generate `docs/public/llms.txt` (with `<moul-*>` HTML snippets), `docs/public/llms-full.txt` (full CEM attributes, properties, events, slots), `docs/public/AGENTS.md`, and root `AGENTS.md` (_Req 13.6, 14.1–14.5, 15.5_).
-- [ ] **12.3 Full End-to-End Verification**
+- [x] **12.3 Full End-to-End Verification**
   - Run `bun run build:ui`, `bun run sync:llms`, `bun run test`, `bun run build:docs`, and `bun run lint` to confirm zero errors across the monorepo (_Req 15.6–15.9_).
