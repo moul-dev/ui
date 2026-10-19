@@ -1,45 +1,46 @@
 ---
 title: ToggleButton
-description: Two-state button with pressed status and icon integration.
+description: A button that stays on or off.
 ---
 
 import ComponentPreview from '@/components/ComponentPreview.astro';
 
-# ToggleButton
-
-The `<moul-toggle-button>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
-
-## Preview
+`<moul-toggle-button>` keeps a pressed state. Selection tints the glass with the brand color and is announced through `aria-pressed`.
 
 <ComponentPreview>
-  <moul-toggle-button pressed>Pin to Top</moul-toggle-button>
+<div class="demo-row">
+  <moul-toggle-button value="pin" is-selected>Pinned</moul-toggle-button>
+  <moul-toggle-button value="star">Star</moul-toggle-button>
+  <moul-toggle-button value="mute" size="sm">Mute</moul-toggle-button>
+  <moul-toggle-button value="off" is-disabled>Disabled</moul-toggle-button>
+</div>
 </ComponentPreview>
 
-## Import
-
-```ts
-import '@moul-dev/ui';
-```
-
-## HTML Usage
-
 ```html
-<moul-toggle-button pressed>Bookmark</moul-toggle-button>
+<div class="demo-row">
+  <moul-toggle-button value="pin" is-selected>Pinned</moul-toggle-button>
+  <moul-toggle-button value="star">Star</moul-toggle-button>
+  <moul-toggle-button value="mute" size="sm">Mute</moul-toggle-button>
+  <moul-toggle-button value="off" is-disabled>Disabled</moul-toggle-button>
+</div>
 ```
 
-## Attributes & Properties
+## API reference
 
-| Name | Type | Default |
-| :--- | :--- | :--- |
-| `value` | `string` | `''` |
-| `is-selected` | `boolean` | `false` |
-| `size` | `ToggleButtonSize` | `'md'` |
-| `is-disabled` | `boolean` | `false` |
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `value` | `value` | `string` | `''` |
+| `is-selected` | `isSelected` | `boolean` | `false` |
+| `size` | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` |
+| `is-disabled` | `isDisabled` | `boolean` | `false` |
 
-## Events
+| Event | Type |
+| :-- | :-- |
+| `change` | `CustomEvent` |
+| `press` | `CustomEvent` |
 
-| Event Name | Description |
-| :--- | :--- |
-| `change` | Dispatched when element fires change |
-| `press` | Dispatched when element fires press |
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | — |
 
+**CSS parts:** `button`, `content`

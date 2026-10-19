@@ -25,7 +25,18 @@ export class FormInternalsController implements ReactiveController {
     this.host.addController(this)
   }
 
+  /**
+   * Marks the control as touched (`data-touched`) once the user leaves it or a
+   * submit reports it invalid, so error styling waits for real interaction —
+   * the same contract as CSS `:user-invalid`.
+   */
+  private readonly markTouched = (): void => {
+    this.host.toggleAttribute('data-touched', true)
+  }
+
   public hostConnected(): void {
+    this.host.addEventListener('focusout', this.markTouched)
+    this.host.addEventListener('invalid', this.markTouched)
     if (typeof this.host.attachInternals !== 'function') {
       console.warn(
         '[@moul-dev/ui] ElementInternals is not supported in this environment.',
@@ -62,6 +73,8 @@ export class FormInternalsController implements ReactiveController {
 
   public hostDisconnected(): void {
     // ElementInternals remains associated with the DOM node
+    this.host.removeEventListener('focusout', this.markTouched)
+    this.host.removeEventListener('invalid', this.markTouched)
   }
 
   public setValue(
@@ -81,8 +94,9 @@ export class FormInternalsController implements ReactiveController {
     if (this.internals && typeof this.internals.setValidity === 'function') {
       const truncatedMessage =
         typeof message === 'string' ? message.slice(0, 200) : ''
+      // Only record validity here. Reporting would pop the browser's validation
+      // bubble on first render and on every keystroke; forms report on submit.
       this.internals.setValidity(flags, truncatedMessage, anchor)
-      this.internals.reportValidity?.()
     }
   }
 

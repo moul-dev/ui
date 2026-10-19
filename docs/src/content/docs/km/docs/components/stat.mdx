@@ -5,40 +5,39 @@ description: ឯកសារណែនាំសម្រាប់សមាសភ�
 
 import ComponentPreview from '@/components/ComponentPreview.astro';
 
-# Stat (សមាសភាគ)
-
-The `<moul-stat>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
-
-## Preview
+`<moul-stat>` counts up to `value` with a spring and shows the trend beside it.
 
 <ComponentPreview>
-  <moul-stat title="Conversion Rate" value="4.8%" change="+0.6%"></moul-stat>
+<div class="demo-row" style="align-items: stretch">
+  <moul-stat label="Revenue" value="52400" prefix="$" trend="up" trend-value="+14.8%" description="vs last month" tone="success"></moul-stat>
+  <moul-stat label="Error rate" value="0.42" suffix="%" trend="down" trend-value="-0.1%" description="last 24h" variant="glass"></moul-stat>
+</div>
 </ComponentPreview>
 
-## Import
-
-```ts
-import '@moul-dev/ui';
-```
-
-## HTML Usage
-
 ```html
-<moul-stat title="Visitors" value="10k"></moul-stat>
+<div class="demo-row" style="align-items: stretch">
+  <moul-stat label="Revenue" value="52400" prefix="$" trend="up" trend-value="+14.8%" description="vs last month" tone="success"></moul-stat>
+  <moul-stat label="Error rate" value="0.42" suffix="%" trend="down" trend-value="-0.1%" description="last 24h" variant="glass"></moul-stat>
+</div>
 ```
 
-## Attributes & Properties
+## API reference
 
-| Name | Type | Default |
-| :--- | :--- | :--- |
-| `label` | `string` | `''` |
-| `value` | `number` | `0` |
-| `prefix` | `string` | `''` |
-| `suffix` | `string` | `''` |
-| `trend` | `StatTrend` | `'neutral'` |
-| `trend-value` | `string` | `''` |
-| `tone` | `SemanticTone` | `'primary'` |
-| `variant` | `VisualVariant` | `'flat'` |
-| `description` | `string` | `''` |
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `label` | `label` | `string` | `''` |
+| `value` | `value` | `number` | `0` |
+| `prefix` | `prefix` | `string` | `''` |
+| `suffix` | `suffix` | `string` | `''` |
+| `trend` | `trend` | `'up' \| 'down' \| 'neutral'` | `'neutral'` |
+| `trend-value` | `trendValue` | `string` | `''` |
+| `tone` | `tone` | `'primary' \| 'accent' \| 'success' \| 'warning' \| 'error'` | `'primary'` |
+| `variant` | `variant` | `'solid' \| 'flat' \| 'shadow' \| 'bordered' \| 'glass'` | `'flat'` |
+| `description` | `description` | `string` | `''` |
 
+| Slot | Description |
+| :-- | :-- |
+| `icon` | — |
+| `footer` | — |
 
+**CSS parts:** `header`, `label`, `icon`, `body`, `value-row`, `prefix`, `value`, `suffix`, `footer`, `trend-badge`, `description`

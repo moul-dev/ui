@@ -12,7 +12,7 @@ export const spinnerStyles = [
       color: currentColor;
     }
 
-    [part="base"] {
+    [part~="base"] {
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -27,18 +27,18 @@ export const spinnerStyles = [
       animation: moul-spin 0.75s linear infinite;
     }
 
-    :host([size="sm"]) [part="base"] {
+    :host([size="sm"]) [part~="base"] {
       width: var(--spacing-4, 1rem);
       height: var(--spacing-4, 1rem);
     }
 
-    :host([size="md"]) [part="base"],
-    :host(:not([size])) [part="base"] {
+    :host([size="md"]) [part~="base"],
+    :host(:not([size])) [part~="base"] {
       width: var(--spacing-5, 1.25rem);
       height: var(--spacing-5, 1.25rem);
     }
 
-    :host([size="lg"]) [part="base"] {
+    :host([size="lg"]) [part~="base"] {
       width: var(--spacing-7, 1.75rem);
       height: var(--spacing-7, 1.75rem);
     }

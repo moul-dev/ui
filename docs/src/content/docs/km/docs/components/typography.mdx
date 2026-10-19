@@ -5,36 +5,35 @@ description: ឯកសារណែនាំសម្រាប់សមាសភ�
 
 import ComponentPreview from '@/components/ComponentPreview.astro';
 
-# Typography (សមាសភាគ)
+`<moul-typography>` maps `variant` onto the token type scale so text stays consistent across shadow roots.
 
-The `<moul-typography>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
-
-## Preview
-
-<ComponentPreview>
-  <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-  <moul-typography variant="h3">Standards-First Design Systems</moul-typography>
-  <moul-typography variant="body">Engineered with Lit 3 and native Web Component primitives.</moul-typography>
-</div>
+<ComponentPreview align="start" stack>
+<moul-typography variant="h1">Display heading</moul-typography>
+<moul-typography variant="h3">Section heading</moul-typography>
+<moul-typography variant="body">Body copy sits comfortably at 16px with a 1.5 line height.</moul-typography>
+<moul-typography variant="caption">Caption — secondary detail</moul-typography>
+<moul-typography variant="code">bun add @moul-dev/ui</moul-typography>
+<moul-typography variant="body" tone="success">Toned text</moul-typography>
 </ComponentPreview>
 
-## Import
-
-```ts
-import '@moul-dev/ui';
-```
-
-## HTML Usage
-
 ```html
-<moul-typography variant="h1">Header</moul-typography>
+<moul-typography variant="h1">Display heading</moul-typography>
+<moul-typography variant="h3">Section heading</moul-typography>
+<moul-typography variant="body">Body copy sits comfortably at 16px with a 1.5 line height.</moul-typography>
+<moul-typography variant="caption">Caption — secondary detail</moul-typography>
+<moul-typography variant="code">bun add @moul-dev/ui</moul-typography>
+<moul-typography variant="body" tone="success">Toned text</moul-typography>
 ```
 
-## Attributes & Properties
+## API reference
 
-| Name | Type | Default |
-| :--- | :--- | :--- |
-| `variant` | `TypographyVariant` | `'body'` |
-| `tone` | `SemanticTone | undefined` | `-` |
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `variant` | `variant` | `'h1' \| 'h2' \| 'h3' \| 'h4' \| 'h5' \| 'h6' \| 'body' \| 'caption' \| 'code'` | `'body'` |
+| `tone` | `tone` | `'primary' \| 'accent' \| 'success' \| 'warning' \| 'error' \| undefined` | — |
 
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | — |
 
+**CSS parts:** `root`

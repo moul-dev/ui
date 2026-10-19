@@ -18,7 +18,7 @@ export const alertStyles = [
       position: relative;
     }
 
-    [part="base"] {
+    [part~="base"] {
       display: flex;
       flex-direction: row;
       align-items: flex-start;
@@ -26,7 +26,7 @@ export const alertStyles = [
       width: 100%;
     }
 
-    [part="icon"] {
+    [part~="icon"] {
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -36,12 +36,12 @@ export const alertStyles = [
       margin-top: 0.125rem;
     }
 
-    [part="icon"] svg {
+    [part~="icon"] svg {
       width: 100%;
       height: 100%;
     }
 
-    [part="content"] {
+    [part~="content"] {
       display: flex;
       flex-direction: column;
       gap: var(--spacing-1, 0.25rem);
@@ -49,19 +49,19 @@ export const alertStyles = [
       min-width: 0;
     }
 
-    [part="title"] {
+    [part~="title"] {
       font-size: var(--font-size-sm, 0.875rem);
       font-weight: 600;
       line-height: var(--line-height-sm, 1.25rem);
     }
 
-    [part="description"] {
+    [part~="description"] {
       font-size: var(--font-size-sm, 0.875rem);
       line-height: var(--line-height-sm, 1.25rem);
       opacity: 0.9;
     }
 
-    [part="actions"] {
+    [part~="actions"] {
       display: inline-flex;
       align-items: center;
       gap: var(--spacing-2, 0.5rem);

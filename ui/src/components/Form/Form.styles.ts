@@ -9,7 +9,7 @@ export const formStyles = [
       width: 100%;
     }
 
-    [part='base'] {
+    [part~='base'] {
       display: flex;
       flex-direction: column;
       gap: var(--spacing-4, 1rem);

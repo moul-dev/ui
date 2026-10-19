@@ -5,41 +5,84 @@ description: ឯកសារណែនាំសម្រាប់សមាសភ�
 
 import ComponentPreview from '@/components/ComponentPreview.astro';
 
-# AreaChart (សមាសភាគ)
+`<moul-area-chart>` plots `series` keys from `data` against `x-key`. Hover a point for the glass tooltip.
 
-The `<moul-area-chart>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
-
-## Preview
-
-<ComponentPreview>
-  <moul-area-chart height="220" style="width: 100%;"></moul-area-chart>
+<ComponentPreview align="stretch">
+<moul-area-chart x-key="month" height="260" show-grid data-props='{"data":[{"month":"Jan","desktop":186,"mobile":80,"revenue":4200},{"month":"Feb","desktop":305,"mobile":200,"revenue":5100},{"month":"Mar","desktop":237,"mobile":120,"revenue":4800},{"month":"Apr","desktop":273,"mobile":190,"revenue":6100},{"month":"May","desktop":209,"mobile":130,"revenue":5600},{"month":"Jun","desktop":314,"mobile":240,"revenue":7300}],"series":[{"key":"desktop","name":"Desktop"},{"key":"mobile","name":"Mobile"}]}'></moul-area-chart>
 </ComponentPreview>
 
-## Import
-
-```ts
-import '@moul-dev/ui';
-```
-
-## HTML Usage
-
 ```html
-<moul-area-chart height="300"></moul-area-chart>
+<moul-area-chart x-key="month" height="260" show-grid></moul-area-chart>
 ```
 
-## Attributes & Properties
+```js
+const areaChart = document.querySelector('moul-area-chart')
+areaChart.data = [
+  {
+    "month": "Jan",
+    "desktop": 186,
+    "mobile": 80,
+    "revenue": 4200
+  },
+  {
+    "month": "Feb",
+    "desktop": 305,
+    "mobile": 200,
+    "revenue": 5100
+  },
+  {
+    "month": "Mar",
+    "desktop": 237,
+    "mobile": 120,
+    "revenue": 4800
+  },
+  {
+    "month": "Apr",
+    "desktop": 273,
+    "mobile": 190,
+    "revenue": 6100
+  },
+  {
+    "month": "May",
+    "desktop": 209,
+    "mobile": 130,
+    "revenue": 5600
+  },
+  {
+    "month": "Jun",
+    "desktop": 314,
+    "mobile": 240,
+    "revenue": 7300
+  }
+]
+areaChart.series = [
+  {
+    "key": "desktop",
+    "name": "Desktop"
+  },
+  {
+    "key": "mobile",
+    "name": "Mobile"
+  }
+]
+```
 
-| Name | Type | Default |
-| :--- | :--- | :--- |
-| `x-key` | `string` | `'name'` |
-| `height` | `number` | `300` |
-| `stacked` | `boolean` | `false` |
-| `show-grid` | `boolean` | `true` |
+## API reference
 
-## Events
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `x-key` | `xKey` | `string` | `'name'` |
+| `height` | `height` | `number` | `300` |
+| `stacked` | `stacked` | `boolean` | `false` |
+| `show-grid` | `showGrid` | `boolean` | `true` |
 
-| Event Name | Description |
-| :--- | :--- |
-| `point-hover` | Dispatched when element fires point-hover |
-| `point-leave` | Dispatched when element fires point-leave |
+| Event | Type |
+| :-- | :-- |
+| `point-hover` | `CustomEvent` |
+| `point-leave` | `CustomEvent` |
 
+| Slot | Description |
+| :-- | :-- |
+| `empty` | — |
+
+**CSS parts:** `empty`, `container`, `svg`, `grid`, `x-axis`, `series`, `area`, `line`, `stroke`, `points`, `point`

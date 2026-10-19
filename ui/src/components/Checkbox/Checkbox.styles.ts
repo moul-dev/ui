@@ -15,66 +15,99 @@ export const checkboxStyles = [
       display: none !important;
     }
 
-    [part='base'] {
+    [part~='base'] {
       display: inline-flex;
       align-items: center;
-      gap: var(--spacing-2, 0.5rem);
+      gap: 0.625rem;
       cursor: pointer;
       font-size: var(--font-size-sm, 0.875rem);
       line-height: var(--line-height-sm, 1.25rem);
     }
 
-    [part='indicator'] {
+    /* Recessed well when off, lit brand-color gem when on */
+    [part~='indicator'] {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       width: 1.125rem;
       height: 1.125rem;
-      border-radius: var(--radius-sm, 0.25rem);
-      border: 1px solid var(--color-border, #d1d5db);
-      background-color: var(--color-bg, #ffffff);
+      border-radius: calc(0.3125rem * var(--brand-radius-factor, 1));
+      border: none;
+      background-color: light-dark(oklch(1 0 0), oklch(1 0 0 / 0.08));
+      box-shadow:
+        inset 0 0 0 1px var(--color-fill-track-strong),
+        inset 0 1px 1px light-dark(oklch(0 0 0 / 0.06), oklch(0 0 0 / 0.3));
       color: var(--color-fg-on-primary, #ffffff);
-      transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+      transition:
+        background-color var(--duration-fast, 140ms) ease,
+        box-shadow var(--duration-fast, 140ms) ease;
       flex-shrink: 0;
     }
 
-    [part='base']:hover:not([data-disabled='true']) [part='indicator'] {
-      border-color: var(--color-neutral-400, #9ca3af);
+    [part~='base']:hover:not([data-disabled]) [part~='indicator'] {
+      box-shadow:
+        inset 0 0 0 1px light-dark(oklch(0.5 0 0 / 0.36), oklch(1 0 0 / 0.3)),
+        inset 0 1px 1px light-dark(oklch(0 0 0 / 0.06), oklch(0 0 0 / 0.3));
     }
 
-    :host(:focus-visible) [part='indicator'],
-    [part='base']:focus-visible [part='indicator'] {
-      outline: 2px solid var(--color-border-focus, #3b82f6);
-      outline-offset: 2px;
+    :host(:focus-visible) {
+      outline: none;
     }
 
-    :host([is-checked]) [part='indicator'],
-    :host([is-indeterminate]) [part='indicator'] {
-      background-color: var(--color-primary-500, #3b82f6);
-      border-color: var(--color-primary-500, #3b82f6);
+    :host(:focus-visible) [part~='indicator'] {
+      box-shadow:
+        inset 0 0 0 1px var(--color-fill-track-strong),
+        var(--focus-ring);
     }
 
-    :host([is-checked]:hover:not([is-disabled])) [part='indicator'],
-    :host([is-indeterminate]:hover:not([is-disabled])) [part='indicator'] {
-      background-color: var(--color-primary-600, #2563eb);
-      border-color: var(--color-primary-600, #2563eb);
+    :host([is-checked]) [part~='indicator'],
+    :host([is-indeterminate]) [part~='indicator'] {
+      background: linear-gradient(
+        to bottom,
+        var(--color-primary-400, #60a5fa),
+        var(--color-primary-500, #3b82f6)
+      );
+      box-shadow:
+        inset 0 1px 0 oklch(1 0 0 / 0.28),
+        inset 0 0 0 1px oklch(0 0 0 / 0.08),
+        0 1px 2px color-mix(in oklch, var(--color-primary-500) 40%, transparent);
     }
 
-    :host([is-invalid]) [part='indicator'] {
-      border-color: var(--color-error-500, #ef4444);
+    :host([is-checked]:focus-visible) [part~='indicator'],
+    :host([is-indeterminate]:focus-visible) [part~='indicator'] {
+      box-shadow:
+        inset 0 1px 0 oklch(1 0 0 / 0.28),
+        var(--focus-ring);
     }
 
-    [part='icon'] {
-      width: 0.875rem;
-      height: 0.875rem;
+    :host([is-invalid][data-touched]) [part~='indicator'] {
+      box-shadow: inset 0 0 0 1px var(--color-error-500, #ef4444);
+    }
+
+    [part~='icon'] {
+      width: 0.8125rem;
+      height: 0.8125rem;
       stroke: currentColor;
-      stroke-width: 2.5;
+      stroke-width: 3;
       fill: none;
       stroke-linecap: round;
       stroke-linejoin: round;
     }
 
-    [part='label'] {
+    /* The check mark draws itself in */
+    [part~='icon'] path {
+      stroke-dasharray: 24;
+      stroke-dashoffset: 24;
+      animation: moul-check-draw var(--duration-base, 240ms) var(--ease-out, ease-out) forwards;
+    }
+
+    @keyframes moul-check-draw {
+      to {
+        stroke-dashoffset: 0;
+      }
+    }
+
+    [part~='label'] {
       display: inline-flex;
       align-items: center;
       color: inherit;
@@ -87,8 +120,13 @@ export const checkboxStyles = [
     }
 
     @media (prefers-reduced-motion: reduce) {
-      [part='indicator'] {
+      [part~='indicator'] {
         transition: none;
+      }
+
+      [part~='icon'] path {
+        animation: none;
+        stroke-dashoffset: 0;
       }
     }
   `,
@@ -107,33 +145,33 @@ export const checkboxGroupStyles = [
       display: none !important;
     }
 
-    [part='base'] {
+    [part~='base'] {
       display: flex;
       flex-direction: column;
       gap: var(--spacing-2, 0.5rem);
     }
 
-    [part='label'] {
+    [part~='label'] {
       font-size: var(--font-size-sm, 0.875rem);
       font-weight: 500;
       color: var(--color-fg, inherit);
     }
 
-    [part='description'] {
+    [part~='description'] {
       font-size: var(--font-size-xs, 0.75rem);
       color: var(--color-fg-subtle, #6b7280);
     }
 
-    [part='group'] {
+    [part~='group'] {
       display: flex;
       gap: var(--spacing-3, 0.75rem);
     }
 
-    :host([orientation='vertical']) [part='group'] {
+    :host([orientation='vertical']) [part~='group'] {
       flex-direction: column;
     }
 
-    :host([orientation='horizontal']) [part='group'] {
+    :host([orientation='horizontal']) [part~='group'] {
       flex-direction: row;
       flex-wrap: wrap;
       align-items: center;

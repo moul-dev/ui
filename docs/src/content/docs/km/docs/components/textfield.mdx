@@ -5,41 +5,52 @@ description: ឯកសារណែនាំសម្រាប់សមាសភ�
 
 import ComponentPreview from '@/components/ComponentPreview.astro';
 
-# TextField (សមាសភាគ)
-
-The `<moul-text-field>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
-
-## Preview
+`<moul-text-field>` wraps a native input with a label, helper text and an animated error message. It participates in forms through `ElementInternals`.
 
 <ComponentPreview>
-  <moul-text-field label="Application Name" placeholder="moul-portal" description="Unique alphanumeric identifier." style="width: 100%; max-width: 360px;"></moul-text-field>
+<div class="demo-stack" style="width: min(100%, 22rem)">
+  <moul-text-field label="Project name" placeholder="moul-portal" description="Lowercase letters, numbers and dashes."></moul-text-field>
+  <moul-text-field label="Email" type="email" value="alex@example" error-message="Enter a complete email address." is-required></moul-text-field>
+  <moul-text-field label="API key" value="sk_live_••••" is-readonly></moul-text-field>
+  <moul-text-field label="Disabled" placeholder="Unavailable" is-disabled></moul-text-field>
+</div>
 </ComponentPreview>
 
-## Import
-
-```ts
-import '@moul-dev/ui';
-```
-
-## HTML Usage
-
 ```html
-<moul-text-field label="Name" placeholder="Enter name..."></moul-text-field>
+<div class="demo-stack" style="width: min(100%, 22rem)">
+  <moul-text-field label="Project name" placeholder="moul-portal" description="Lowercase letters, numbers and dashes."></moul-text-field>
+  <moul-text-field label="Email" type="email" value="alex@example" error-message="Enter a complete email address." is-required></moul-text-field>
+  <moul-text-field label="API key" value="sk_live_••••" is-readonly></moul-text-field>
+  <moul-text-field label="Disabled" placeholder="Unavailable" is-disabled></moul-text-field>
+</div>
 ```
 
-## Attributes & Properties
+## API reference
 
-| Name | Type | Default |
-| :--- | :--- | :--- |
-| `name` | `string` | `''` |
-| `value` | `string` | `''` |
-| `type` | `TextFieldType` | `'text'` |
-| `placeholder` | `string` | `''` |
-| `label` | `string` | `''` |
-| `description` | `string` | `''` |
-| `error-message` | `string` | `''` |
-| `is-disabled` | `boolean` | `false` |
-| `is-required` | `boolean` | `false` |
-| `is-readonly` | `boolean` | `false` |
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `name` | `name` | `string` | `''` |
+| `value` | `value` | `string` | `''` |
+| `type` | `type` | `'text' \| 'email' \| 'password' \| 'tel' \| 'url'` | `'text'` |
+| `placeholder` | `placeholder` | `string` | `''` |
+| `label` | `label` | `string` | `''` |
+| `description` | `description` | `string` | `''` |
+| `error-message` | `errorMessage` | `string` | `''` |
+| `is-disabled` | `isDisabled` | `boolean` | `false` |
+| `is-required` | `isRequired` | `boolean` | `false` |
+| `is-readonly` | `isReadonly` | `boolean` | `false` |
 
+| Event | Type |
+| :-- | :-- |
+| `input` | `CustomEvent` |
+| `change` | `CustomEvent` |
 
+| Slot | Description |
+| :-- | :-- |
+| `label` | — |
+| `prefix` | — |
+| `suffix` | — |
+| `description` | — |
+| `error` | — |
+
+**CSS parts:** `error`, `base`, `label`, `input-container`, `prefix`, `input`, `suffix`, `description`

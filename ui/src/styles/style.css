@@ -137,7 +137,7 @@
   --color-bg-elevated: light-dark(oklch(1 0 0), oklch(0.2 0 0));
   --color-fg: light-dark(oklch(0.14 0 0), oklch(0.96 0 0));
   --color-fg-subtle: light-dark(oklch(0.42 0 0), oklch(0.68 0 0));
-  --color-fg-on-primary: light-dark(oklch(1 0 0), oklch(0.1 0 0));
+  --color-fg-on-primary: oklch(1 0 0);
   --color-border: light-dark(oklch(0.84 0 0), oklch(0.28 0 0));
   --color-border-subtle: light-dark(oklch(0.92 0 0), oklch(0.22 0 0));
   --color-border-focus: light-dark(
@@ -148,10 +148,36 @@
       0.66 calc(0.22 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)
     )
   );
-  --color-bg-glass: light-dark(oklch(1 0 0 / 0.55), oklch(0.2 0 0 / 0.45));
-  --color-border-glass: light-dark(oklch(0 0 0 / 0.08), oklch(1 0 0 / 0.1));
-  --color-shadow: light-dark(oklch(0 0 0 / 0.1), oklch(0 0 0 / 0.4));
+  --color-bg-glass: var(--glass-bg);
+  --color-border-glass: light-dark(oklch(0 0 0 / 0.08), oklch(1 0 0 / 0.12));
+  --color-shadow: light-dark(oklch(0 0 0 / 0.12), oklch(0 0 0 / 0.5));
   --color-overlay: light-dark(oklch(0 0 0 / 0.4), oklch(0 0 0 / 0.6));
+
+  /* ── Solid Fills (stay saturated with white text in both schemes) ── */
+  --color-primary-solid: light-dark(
+    oklch(
+      0.56 calc(0.22 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)
+    ),
+    oklch(
+      0.62 calc(0.2 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)
+    )
+  );
+  --color-primary-solid-hover: light-dark(
+    oklch(
+      0.5 calc(0.22 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)
+    ),
+    oklch(
+      0.67 calc(0.19 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)
+    )
+  );
+  --color-error-solid: light-dark(oklch(0.58 0.22 27), oklch(0.64 0.21 27));
+  --color-error-solid-hover: light-dark(
+    oklch(0.52 0.21 27),
+    oklch(0.69 0.19 27)
+  );
+  --color-success-solid: light-dark(oklch(0.6 0.17 150), oklch(0.66 0.17 150));
+  --color-warning-solid: light-dark(oklch(0.78 0.16 75), oklch(0.8 0.15 75));
+  --color-fg-on-warning: oklch(0.28 0.06 60);
 
   /* ── Alert / Status Variants (20 tokens) ──────────────────────── */
   /* Info */
@@ -304,11 +330,86 @@
   --radius-full: 9999px;
 
   /* ── Shadows (3 steps, referencing --color-shadow) ───────────── */
-  --shadow-sm: 0 1px 2px 0 var(--color-shadow);
+  --shadow-sm: 0 1px 2px 0 var(--color-shadow), 0 0 1px 0 var(--color-shadow);
   --shadow-md:
-    0 4px 6px -1px var(--color-shadow), 0 2px 4px -2px var(--color-shadow);
+    0 6px 16px -6px var(--color-shadow), 0 2px 4px -2px var(--color-shadow);
   --shadow-lg:
-    0 10px 15px -3px var(--color-shadow), 0 4px 6px -4px var(--color-shadow);
+    0 24px 48px -12px var(--color-shadow), 0 8px 16px -8px var(--color-shadow);
+
+  /* ── Liquid Glass Materials ───────────────────────────────────── */
+  /* Translucent fills tuned for legibility over busy content; pair with --glass-filter. */
+  --glass-bg-thin: light-dark(oklch(1 0 0 / 0.42), oklch(0.32 0 0 / 0.32));
+  --glass-bg: light-dark(oklch(1 0 0 / 0.64), oklch(0.26 0 0 / 0.52));
+  --glass-bg-thick: light-dark(oklch(0.995 0 0 / 0.8), oklch(0.22 0 0 / 0.74));
+  --glass-tint: light-dark(
+    oklch(
+      0.97 calc(0.03 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250) /
+      0.5
+    ),
+    oklch(
+      0.3 calc(0.05 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250) /
+      0.4
+    )
+  );
+  --glass-blur: 24px;
+  --glass-filter: blur(var(--glass-blur)) saturate(180%);
+  /* Rim light: bright specular top edge, faint lower edge — the "lensed" look. */
+  --glass-highlight:
+    inset 0 1px 0 0 light-dark(oklch(1 0 0 / 0.85), oklch(1 0 0 / 0.14)),
+    inset 0 -1px 0 0 light-dark(oklch(1 0 0 / 0.3), oklch(1 0 0 / 0.04)),
+    inset 0 0 0 1px light-dark(oklch(1 0 0 / 0.35), oklch(1 0 0 / 0.06));
+  /* Hairline that separates glass from same-colored content behind it. */
+  --glass-edge: light-dark(oklch(0 0 0 / 0.08), oklch(0 0 0 / 0.55));
+  --shadow-glass:
+    0 0 0 0.5px var(--glass-edge),
+    0 12px 40px -12px light-dark(oklch(0 0 0 / 0.22), oklch(0 0 0 / 0.7)),
+    0 3px 8px -3px light-dark(oklch(0 0 0 / 0.1), oklch(0 0 0 / 0.45));
+  /* Recessed track (switch, slider, segmented control). */
+  --color-fill-track: light-dark(oklch(0.5 0 0 / 0.12), oklch(1 0 0 / 0.12));
+  --color-fill-track-strong: light-dark(
+    oklch(0.5 0 0 / 0.2),
+    oklch(1 0 0 / 0.18)
+  );
+  --color-fill-hover: light-dark(oklch(0.5 0 0 / 0.07), oklch(1 0 0 / 0.08));
+  --color-fill-pressed: light-dark(oklch(0.5 0 0 / 0.12), oklch(1 0 0 / 0.13));
+  --focus-ring: 0 0 0 3px
+    light-dark(
+      oklch(
+        0.66 calc(0.19 * var(--brand-chroma-multiplier, 1))
+          var(--brand-hue, 250) /
+        0.4
+      ),
+      oklch(
+        0.66 calc(0.19 * var(--brand-chroma-multiplier, 1))
+          var(--brand-hue, 250) /
+        0.5
+      )
+    );
+
+  /* ── Motion ───────────────────────────────────────────────────── */
+  /* Critically-damped-ish spring sampled into linear(); slight overshoot, fast settle. */
+  --ease-spring: linear(
+    0,
+    0.009,
+    0.035 2.1%,
+    0.141 4.4%,
+    0.723 12.9%,
+    0.938 16.7%,
+    1.017 19.4%,
+    1.067 22.2%,
+    1.088 25%,
+    1.084 28.3%,
+    1.058 32.6%,
+    1.007 41.5%,
+    0.993 47.6%,
+    0.998 63.6%,
+    1
+  );
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-sheet: cubic-bezier(0.32, 0.72, 0, 1);
+  --duration-fast: 140ms;
+  --duration-base: 240ms;
+  --duration-slow: 420ms;
 
   /* ── Z-Index (5 steps) ────────────────────────────────────────── */
   --z-base: 0;

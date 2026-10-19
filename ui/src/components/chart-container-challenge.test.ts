@@ -809,7 +809,7 @@ describe('Adversarial Stress Suite: MoulChartContainer (`moul-chart-container`)'
 
       expect(stylesText).toMatch(/:host\s*{[^}]*pointer-events:\s*none/)
       expect(stylesText).toMatch(
-        /\[part="container"\][^}]*pointer-events:\s*none/,
+        /\[part~?="container"\][^}]*pointer-events:\s*none/,
       )
 
       // Show tooltip directly over the button

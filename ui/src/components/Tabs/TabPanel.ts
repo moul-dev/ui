@@ -24,6 +24,7 @@ export class MoulTabPanel extends LitElement {
   }
 
   public reveal(): void {
+    if (!this.hasAttribute('hidden')) return
     this.removeAttribute('hidden')
     subtleAnimate(this, { opacity: [0, 1], y: [4, 0] }, { duration: 0.16 })
   }

@@ -1,46 +1,49 @@
 ---
 title: TextArea
-description: Multi-line text input with auto-resize and validation hooks.
+description: Multi-line text input that can grow with its content.
 ---
 
 import ComponentPreview from '@/components/ComponentPreview.astro';
 
-# TextArea
-
-The `<moul-text-area>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
-
-## Preview
+`<moul-text-area>` accepts longer text. Set `auto-resize` to let it grow as the user types.
 
 <ComponentPreview>
-  <moul-text-area label="Release Description" placeholder="Summarize changes in this version..." style="width: 100%; max-width: 400px;"></moul-text-area>
+<div class="demo-stack" style="width: min(100%, 26rem)">
+  <moul-text-area label="Release notes" placeholder="Summarize what changed…" rows="3" auto-resize description="Markdown is supported."></moul-text-area>
+</div>
 </ComponentPreview>
 
-## Import
-
-```ts
-import '@moul-dev/ui';
-```
-
-## HTML Usage
-
 ```html
-<moul-text-area label="Notes" placeholder="Write here..."></moul-text-area>
+<div class="demo-stack" style="width: min(100%, 26rem)">
+  <moul-text-area label="Release notes" placeholder="Summarize what changed…" rows="3" auto-resize description="Markdown is supported."></moul-text-area>
+</div>
 ```
 
-## Attributes & Properties
+## API reference
 
-| Name | Type | Default |
-| :--- | :--- | :--- |
-| `name` | `string` | `''` |
-| `value` | `string` | `''` |
-| `rows` | `number` | `3` |
-| `auto-resize` | `boolean` | `false` |
-| `placeholder` | `string` | `''` |
-| `label` | `string` | `''` |
-| `description` | `string` | `''` |
-| `error-message` | `string` | `''` |
-| `is-disabled` | `boolean` | `false` |
-| `is-required` | `boolean` | `false` |
-| `is-readonly` | `boolean` | `false` |
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `name` | `name` | `string` | `''` |
+| `value` | `value` | `string` | `''` |
+| `rows` | `rows` | `number` | `3` |
+| `auto-resize` | `autoResize` | `boolean` | `false` |
+| `placeholder` | `placeholder` | `string` | `''` |
+| `label` | `label` | `string` | `''` |
+| `description` | `description` | `string` | `''` |
+| `error-message` | `errorMessage` | `string` | `''` |
+| `is-disabled` | `isDisabled` | `boolean` | `false` |
+| `is-required` | `isRequired` | `boolean` | `false` |
+| `is-readonly` | `isReadonly` | `boolean` | `false` |
 
+| Event | Type |
+| :-- | :-- |
+| `input` | `CustomEvent` |
+| `change` | `CustomEvent` |
 
+| Slot | Description |
+| :-- | :-- |
+| `label` | — |
+| `description` | — |
+| `error` | — |
+
+**CSS parts:** `error`, `base`, `label`, `textarea`, `description`

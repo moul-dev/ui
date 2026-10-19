@@ -63,7 +63,7 @@ export const lineChartStyles = [
       r: 6;
     }
 
-    [part="empty"],
+    [part~="empty"],
     .empty-state {
       display: flex;
       flex-direction: column;

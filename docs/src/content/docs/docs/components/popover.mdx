@@ -1,46 +1,70 @@
 ---
 title: Popover
-description: Floating contextual container anchored to a trigger element.
+description: Anchored floating panel for rich, interactive content.
 ---
 
 import ComponentPreview from '@/components/ComponentPreview.astro';
 
-# Popover
+`<moul-popover>` anchors a glass panel to its trigger with CSS anchor positioning and the Popover API. It closes on outside click or Escape.
 
-The `<moul-popover>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
-
-## Preview
-
-<ComponentPreview>
-  <moul-button variant="outline">Toggle Information</moul-button>
+<ComponentPreview minHeight="260px">
+<div class="demo-row">
+  <moul-popover placement="bottom">
+    <moul-button slot="trigger" variant="secondary">Bottom</moul-button>
+    <div class="demo-stack" style="width: 14rem">
+      <strong>Deployment</strong>
+      <p>Built 2 minutes ago from main.</p>
+      <moul-button size="sm">View logs</moul-button>
+    </div>
+  </moul-popover>
+  <moul-popover placement="top">
+    <moul-button slot="trigger" variant="secondary">Top</moul-button>
+    <p>Anchored above the trigger.</p>
+  </moul-popover>
+  <moul-popover placement="right">
+    <moul-button slot="trigger" variant="secondary">Right</moul-button>
+    <p>Anchored to the right.</p>
+  </moul-popover>
+</div>
 </ComponentPreview>
 
-## Import
-
-```ts
-import '@moul-dev/ui';
-```
-
-## HTML Usage
-
 ```html
-<moul-popover>
-  <p>Contextual popover details.</p>
-</moul-popover>
+<div class="demo-row">
+  <moul-popover placement="bottom">
+    <moul-button slot="trigger" variant="secondary">Bottom</moul-button>
+    <div class="demo-stack" style="width: 14rem">
+      <strong>Deployment</strong>
+      <p>Built 2 minutes ago from main.</p>
+      <moul-button size="sm">View logs</moul-button>
+    </div>
+  </moul-popover>
+  <moul-popover placement="top">
+    <moul-button slot="trigger" variant="secondary">Top</moul-button>
+    <p>Anchored above the trigger.</p>
+  </moul-popover>
+  <moul-popover placement="right">
+    <moul-button slot="trigger" variant="secondary">Right</moul-button>
+    <p>Anchored to the right.</p>
+  </moul-popover>
+</div>
 ```
 
-## Attributes & Properties
+## API reference
 
-| Name | Type | Default |
-| :--- | :--- | :--- |
-| `is-open` | `boolean` | `false` |
-| `trigger` | `PopoverTrigger` | `'click'` |
-| `placement` | `PopoverPlacement` | `'bottom'` |
-| `offset` | `number` | `8` |
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `is-open` | `isOpen` | `boolean` | `false` |
+| `trigger` | `trigger` | `'click' \| 'manual'` | `'click'` |
+| `placement` | `placement` | `'top' \| 'bottom' \| 'left' \| 'right'` | `'bottom'` |
+| `offset` | `offset` | `number` | `8` |
 
-## Events
+| Event | Type |
+| :-- | :-- |
+| `openchange` | `CustomEvent` |
 
-| Event Name | Description |
-| :--- | :--- |
-| `openchange` | Dispatched when element fires openchange |
+| Slot | Description |
+| :-- | :-- |
+| `trigger` | — |
+| `(default)` | — |
 
+**CSS parts:** `popover`, `trigger`

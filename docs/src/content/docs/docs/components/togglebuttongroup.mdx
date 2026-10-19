@@ -1,49 +1,64 @@
 ---
 title: ToggleButtonGroup
-description: Single or multi-select group of mutually exclusive toggles.
+description: Segmented control with a single selection.
 ---
 
 import ComponentPreview from '@/components/ComponentPreview.astro';
 
-# ToggleButtonGroup
+`<moul-toggle-button-group>` is a segmented control. A glass thumb glides between segments on a spring; arrow keys move the selection.
 
-The `<moul-toggle-button-group>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
-
-## Preview
+## Segmented control
 
 <ComponentPreview>
-  <moul-toggle-button-group>
-  <moul-toggle-button value="bold" pressed>Bold</moul-toggle-button>
-  <moul-toggle-button value="italic">Italic</moul-toggle-button>
-  <moul-toggle-button value="underline">Underline</moul-toggle-button>
+<moul-toggle-button-group selected-key="week" aria-label="Range">
+  <moul-toggle-button value="day">Day</moul-toggle-button>
+  <moul-toggle-button value="week">Week</moul-toggle-button>
+  <moul-toggle-button value="month">Month</moul-toggle-button>
+  <moul-toggle-button value="year">Year</moul-toggle-button>
 </moul-toggle-button-group>
 </ComponentPreview>
 
-## Import
-
-```ts
-import '@moul-dev/ui';
-```
-
-## HTML Usage
-
 ```html
-<moul-toggle-button-group>
-  <moul-toggle-button value="1">1</moul-toggle-button>
+<moul-toggle-button-group selected-key="week" aria-label="Range">
+  <moul-toggle-button value="day">Day</moul-toggle-button>
+  <moul-toggle-button value="week">Week</moul-toggle-button>
+  <moul-toggle-button value="month">Month</moul-toggle-button>
+  <moul-toggle-button value="year">Year</moul-toggle-button>
 </moul-toggle-button-group>
 ```
 
-## Attributes & Properties
+## Vertical
 
-| Name | Type | Default |
-| :--- | :--- | :--- |
-| `selected-key` | `string` | `''` |
-| `orientation` | `ToggleButtonGroupOrientation` | `'horizontal'` |
-| `is-disabled` | `boolean` | `false` |
+<ComponentPreview>
+<moul-toggle-button-group selected-key="left" orientation="vertical" aria-label="Alignment">
+  <moul-toggle-button value="left" size="sm">Left</moul-toggle-button>
+  <moul-toggle-button value="center" size="sm">Center</moul-toggle-button>
+  <moul-toggle-button value="right" size="sm">Right</moul-toggle-button>
+</moul-toggle-button-group>
+</ComponentPreview>
 
-## Events
+```html
+<moul-toggle-button-group selected-key="left" orientation="vertical" aria-label="Alignment">
+  <moul-toggle-button value="left" size="sm">Left</moul-toggle-button>
+  <moul-toggle-button value="center" size="sm">Center</moul-toggle-button>
+  <moul-toggle-button value="right" size="sm">Right</moul-toggle-button>
+</moul-toggle-button-group>
+```
 
-| Event Name | Description |
-| :--- | :--- |
-| `selectionchange` | Dispatched when element fires selectionchange |
+## API reference
 
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `selected-key` | `selectedKey` | `string` | `''` |
+| `orientation` | `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` |
+| `is-disabled` | `isDisabled` | `boolean` | `false` |
+
+| Event | Type |
+| :-- | :-- |
+| `selectionchange` | `CustomEvent` |
+
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | — |
+
+**CSS parts:** `base`, `indicator`

@@ -5,37 +5,29 @@ description: ឯកសារណែនាំសម្រាប់សមាសភ�
 
 import ComponentPreview from '@/components/ComponentPreview.astro';
 
-# Spinner (សមាសភាគ)
-
-The `<moul-spinner>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
-
-## Preview
+`<moul-spinner>` is an accessible `role="status"` indicator; `label` is read to screen readers.
 
 <ComponentPreview>
-  <div style="display: flex; gap: 1rem; align-items: center;">
-  <moul-spinner size="sm"></moul-spinner>
-  <moul-spinner size="md"></moul-spinner>
-  <moul-spinner size="lg"></moul-spinner>
+<div class="demo-row">
+  <moul-spinner size="sm" label="Loading"></moul-spinner>
+  <moul-spinner size="md" label="Loading"></moul-spinner>
+  <moul-spinner size="lg" label="Loading"></moul-spinner>
 </div>
 </ComponentPreview>
 
-## Import
-
-```ts
-import '@moul-dev/ui';
-```
-
-## HTML Usage
-
 ```html
-<moul-spinner size="md"></moul-spinner>
+<div class="demo-row">
+  <moul-spinner size="sm" label="Loading"></moul-spinner>
+  <moul-spinner size="md" label="Loading"></moul-spinner>
+  <moul-spinner size="lg" label="Loading"></moul-spinner>
+</div>
 ```
 
-## Attributes & Properties
+## API reference
 
-| Name | Type | Default |
-| :--- | :--- | :--- |
-| `size` | `SpinnerSize` | `'md'` |
-| `label` | `string` | `'Loading'` |
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `size` | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` |
+| `label` | `label` | `string` | `'Loading'` |
 
-
+**CSS parts:** `base`

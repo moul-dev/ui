@@ -160,22 +160,22 @@ export class MoulPopover extends LitElement {
       case 'bottom':
         popover.style.top = `${rect.bottom + this.offset}px`
         popover.style.left = `${rect.left + rect.width / 2}px`
-        popover.style.transform = 'translateX(-50%)'
+        popover.style.translate = '-50% 0'
         break
       case 'top':
         popover.style.bottom = `${window.innerHeight - rect.top + this.offset}px`
         popover.style.left = `${rect.left + rect.width / 2}px`
-        popover.style.transform = 'translateX(-50%)'
+        popover.style.translate = '-50% 0'
         break
       case 'left':
         popover.style.right = `${window.innerWidth - rect.left + this.offset}px`
         popover.style.top = `${rect.top + rect.height / 2}px`
-        popover.style.transform = 'translateY(-50%)'
+        popover.style.translate = '0 -50%'
         break
       case 'right':
         popover.style.left = `${rect.right + this.offset}px`
         popover.style.top = `${rect.top + rect.height / 2}px`
-        popover.style.transform = 'translateY(-50%)'
+        popover.style.translate = '0 -50%'
         break
     }
   }

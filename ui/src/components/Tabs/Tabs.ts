@@ -1,6 +1,6 @@
 import { html, LitElement, type PropertyValues } from 'lit'
 import { defineElement } from '../../utils/define-element'
-import { animateActiveIndicator } from '../../utils/motion'
+import { placeIndicator } from '../../utils/motion'
 import type { MoulTab } from './Tab'
 import type { MoulTabPanel } from './TabPanel'
 import { tabsStyles } from './Tabs.styles'
@@ -21,7 +21,7 @@ export class MoulTabs extends LitElement {
   declare orientation: TabsOrientation
   declare variant: TabsVariant
 
-  private previousIndicatorRect: DOMRect | null = null
+  private resizeObserver: ResizeObserver | null = null
 
   constructor() {
     super()
@@ -44,6 +44,17 @@ export class MoulTabs extends LitElement {
     super.disconnectedCallback()
     this.removeEventListener('click', this.handleTabClick)
     this.removeEventListener('keydown', this.handleKeyDown)
+    this.resizeObserver?.disconnect()
+    this.resizeObserver = null
+  }
+
+  protected override firstUpdated(): void {
+    // Re-measure when the tab strip reflows (web fonts landing, container resizes).
+    if (typeof ResizeObserver === 'undefined') return
+    this.resizeObserver = new ResizeObserver(() => this.updateIndicator(true))
+    const tablist = this.shadowRoot?.querySelector('[part="tablist"]')
+    if (tablist) this.resizeObserver.observe(tablist)
+    for (const tab of this.getTabs()) this.resizeObserver.observe(tab)
   }
 
   protected override updated(changedProps: PropertyValues): void {
@@ -53,7 +64,7 @@ export class MoulTabs extends LitElement {
       this.setAttribute('aria-orientation', this.orientation)
     }
 
-    if (changedProps.has('selectedKey')) {
+    if (changedProps.has('selectedKey') || changedProps.has('variant')) {
       this.syncSelection()
     }
   }
@@ -98,6 +109,7 @@ export class MoulTabs extends LitElement {
 
     for (const tab of tabs) {
       tab.isSelected = tab.key === this.selectedKey
+      tab.dataset.variant = this.variant
     }
 
     for (const panel of panels) {
@@ -111,17 +123,18 @@ export class MoulTabs extends LitElement {
     this.updateIndicator()
   }
 
-  private updateIndicator(): void {
-    const activeTab = this.getTabs().find((t) => t.key === this.selectedKey)
+  private updateIndicator(instant = false): void {
     const indicator =
       this.shadowRoot?.querySelector<HTMLElement>('[part="indicator"]')
-    if (!activeTab || !indicator) return
-
-    const tabRect = activeTab.getBoundingClientRect()
-    if (this.previousIndicatorRect && tabRect.width > 0 && tabRect.height > 0) {
-      animateActiveIndicator(indicator, this.previousIndicatorRect, tabRect)
-    }
-    this.previousIndicatorRect = tabRect
+    const tablist =
+      this.shadowRoot?.querySelector<HTMLElement>('[part="tablist"]')
+    if (!indicator || !tablist) return
+    const activeTab =
+      this.getTabs().find((t) => t.key === this.selectedKey) ?? null
+    // Wait for the selected tab's own render so its box reflects the final label.
+    const place = () => placeIndicator(indicator, tablist, activeTab, instant)
+    if (activeTab) activeTab.updateComplete.then(place)
+    else place()
   }
 
   private readonly handleTabClick = (e: MouseEvent): void => {

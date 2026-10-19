@@ -1,48 +1,86 @@
 ---
 title: RadioGroup
-description: Single selection control among mutually exclusive choices.
+description: Single selection among mutually exclusive choices.
 ---
 
 import ComponentPreview from '@/components/ComponentPreview.astro';
 
-# RadioGroup
-
-The `<moul-radio-group>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
-
-## Preview
+`<moul-radio-group>` holds one value. Arrow keys move both focus and selection, and the dot springs into the newly chosen radio.
 
 <ComponentPreview>
-  <moul-radio-group label="Select Tier" value="pro">
+<moul-radio-group label="Plan" value="pro">
   <moul-radio value="free">Free</moul-radio>
-  <moul-radio value="pro">Pro ($29/mo)</moul-radio>
+  <moul-radio value="pro">Pro — $29/mo</moul-radio>
   <moul-radio value="enterprise">Enterprise</moul-radio>
+  <moul-radio value="legacy" is-disabled>Legacy (unavailable)</moul-radio>
 </moul-radio-group>
 </ComponentPreview>
 
-## Import
-
-```ts
-import '@moul-dev/ui';
-```
-
-## HTML Usage
-
 ```html
-<moul-radio-group label="Plan" value="a">
-  <moul-radio value="a">Plan A</moul-radio>
-  <moul-radio value="b">Plan B</moul-radio>
+<moul-radio-group label="Plan" value="pro">
+  <moul-radio value="free">Free</moul-radio>
+  <moul-radio value="pro">Pro — $29/mo</moul-radio>
+  <moul-radio value="enterprise">Enterprise</moul-radio>
+  <moul-radio value="legacy" is-disabled>Legacy (unavailable)</moul-radio>
 </moul-radio-group>
 ```
 
-## Attributes & Properties
+## Horizontal
 
-| Name | Type | Default |
-| :--- | :--- | :--- |
-| `name` | `string` | `''` |
-| `value` | `string` | `''` |
-| `label` | `string` | `''` |
-| `is-disabled` | `boolean` | `false` |
-| `is-required` | `boolean` | `false` |
-| `orientation` | `RadioGroupOrientation` | `'vertical'` |
+<ComponentPreview>
+<moul-radio-group label="Density" value="comfortable" orientation="horizontal">
+  <moul-radio value="compact">Compact</moul-radio>
+  <moul-radio value="comfortable">Comfortable</moul-radio>
+  <moul-radio value="spacious">Spacious</moul-radio>
+</moul-radio-group>
+</ComponentPreview>
 
+```html
+<moul-radio-group label="Density" value="comfortable" orientation="horizontal">
+  <moul-radio value="compact">Compact</moul-radio>
+  <moul-radio value="comfortable">Comfortable</moul-radio>
+  <moul-radio value="spacious">Spacious</moul-radio>
+</moul-radio-group>
+```
 
+## API reference
+
+### `<moul-radio-group>`
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `name` | `name` | `string` | `''` |
+| `value` | `value` | `string` | `''` |
+| `label` | `label` | `string` | `''` |
+| `is-disabled` | `isDisabled` | `boolean` | `false` |
+| `is-required` | `isRequired` | `boolean` | `false` |
+| `orientation` | `orientation` | `'horizontal' \| 'vertical'` | `'vertical'` |
+
+| Event | Type |
+| :-- | :-- |
+| `change` | `CustomEvent` |
+
+| Slot | Description |
+| :-- | :-- |
+| `label` | — |
+| `(default)` | — |
+
+**CSS parts:** `base`, `label`, `group`
+
+### `<moul-radio>`
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `value` | `value` | `string` | `''` |
+| `is-checked` | `isChecked` | `boolean` | `false` |
+| `is-disabled` | `isDisabled` | `boolean` | `false` |
+
+| Event | Type |
+| :-- | :-- |
+| `radio-select` | `CustomEvent` |
+
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | — |
+
+**CSS parts:** `dot`, `base`, `indicator`, `label`

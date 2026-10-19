@@ -1,4 +1,5 @@
 import { css } from 'lit'
+import { overlayStyles } from '../../styles/overlay.styles'
 import { resetStyles } from '../../styles/reset.styles'
 
 export const modalStyles = [
@@ -36,7 +37,7 @@ export const modalStyles = [
       backdrop-filter: blur(4px);
     }
 
-    [part="base"] {
+    [part~="base"] {
       background-color: var(--color-bg-elevated, #ffffff);
       border-radius: var(--radius-lg, 0.5rem);
       border: 1px solid var(--color-border, #e5e7eb);
@@ -51,19 +52,19 @@ export const modalStyles = [
       margin: var(--spacing-4, 1rem);
     }
 
-    :host([size="sm"]) [part="base"] {
+    :host([size="sm"]) [part~="base"] {
       max-width: 24rem;
     }
 
-    :host([size="md"]) [part="base"] {
+    :host([size="md"]) [part~="base"] {
       max-width: 32rem;
     }
 
-    :host([size="lg"]) [part="base"] {
+    :host([size="lg"]) [part~="base"] {
       max-width: 48rem;
     }
 
-    :host([size="fullscreen"]) [part="base"] {
+    :host([size="fullscreen"]) [part~="base"] {
       max-width: 100vw;
       width: 100vw;
       height: 100vh;
@@ -73,7 +74,7 @@ export const modalStyles = [
       margin: 0;
     }
 
-    [part="header"] {
+    [part~="header"] {
       padding: var(--spacing-4, 1rem) var(--spacing-6, 1.5rem);
       font-size: var(--font-size-lg, 1.125rem);
       font-weight: 600;
@@ -81,7 +82,7 @@ export const modalStyles = [
       border-bottom: 1px solid var(--color-border-subtle, #f3f4f6);
     }
 
-    [part="body"] {
+    [part~="body"] {
       padding: var(--spacing-4, 1rem) var(--spacing-6, 1.5rem);
       overflow-y: auto;
       flex: 1 1 auto;
@@ -90,7 +91,7 @@ export const modalStyles = [
       line-height: var(--line-height-md, 1.5rem);
     }
 
-    [part="footer"] {
+    [part~="footer"] {
       padding: var(--spacing-4, 1rem) var(--spacing-6, 1.5rem);
       display: flex;
       align-items: center;
@@ -99,4 +100,5 @@ export const modalStyles = [
       border-top: 1px solid var(--color-border-subtle, #f3f4f6);
     }
   `,
+  overlayStyles,
 ]

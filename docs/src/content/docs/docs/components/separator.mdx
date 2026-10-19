@@ -1,40 +1,44 @@
 ---
 title: Separator
-description: Visual or semantic divider between layout sections.
+description: Divides content horizontally or vertically.
 ---
 
 import ComponentPreview from '@/components/ComponentPreview.astro';
 
-# Separator
-
-The `<moul-separator>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
-
-## Preview
+`<moul-separator>` draws a hairline divider with `role="separator"`.
 
 <ComponentPreview>
-  <div style="width: 100%; max-width: 300px;">
-  <p style="margin: 0 0 0.5rem 0;">Upper Section</p>
+<div class="demo-stack" style="width: min(100%, 20rem)">
+  <span>Account</span>
   <moul-separator></moul-separator>
-  <p style="margin: 0.5rem 0 0 0;">Lower Section</p>
+  <div class="demo-row" style="justify-content: flex-start; height: 1.5rem">
+    <span>Profile</span>
+    <moul-separator orientation="vertical"></moul-separator>
+    <span>Billing</span>
+    <moul-separator orientation="vertical"></moul-separator>
+    <span>Security</span>
+  </div>
 </div>
 </ComponentPreview>
 
-## Import
-
-```ts
-import '@moul-dev/ui';
-```
-
-## HTML Usage
-
 ```html
-<moul-separator></moul-separator>
+<div class="demo-stack" style="width: min(100%, 20rem)">
+  <span>Account</span>
+  <moul-separator></moul-separator>
+  <div class="demo-row" style="justify-content: flex-start; height: 1.5rem">
+    <span>Profile</span>
+    <moul-separator orientation="vertical"></moul-separator>
+    <span>Billing</span>
+    <moul-separator orientation="vertical"></moul-separator>
+    <span>Security</span>
+  </div>
+</div>
 ```
 
-## Attributes & Properties
+## API reference
 
-| Name | Type | Default |
-| :--- | :--- | :--- |
-| `orientation` | `SeparatorOrientation` | `'horizontal'` |
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `orientation` | `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` |
 
-
+**CSS parts:** `separator`

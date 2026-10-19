@@ -5,46 +5,91 @@ description: ឯកសារណែនាំសម្រាប់សមាសភ�
 
 import ComponentPreview from '@/components/ComponentPreview.astro';
 
-# Button (សមាសភាគ)
+`<moul-button>` triggers an action. It springs down on press, exposes a pending state that keeps its width, and fires a `press` event for pointer and keyboard activation alike.
 
-The `<moul-button>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
-
-## Preview
+## Variants
 
 <ComponentPreview>
+<div class="demo-row">
   <moul-button variant="primary">Primary</moul-button>
-<moul-button variant="secondary">Secondary</moul-button>
-<moul-button variant="outline">Outline</moul-button>
-<moul-button variant="ghost">Ghost</moul-button>
-<moul-button variant="danger">Danger</moul-button>
+  <moul-button variant="secondary">Secondary</moul-button>
+  <moul-button variant="tertiary">Tertiary</moul-button>
+  <moul-button variant="outline">Outline</moul-button>
+  <moul-button variant="ghost">Ghost</moul-button>
+  <moul-button variant="danger">Danger</moul-button>
+  <moul-button variant="danger-soft">Danger soft</moul-button>
+</div>
 </ComponentPreview>
 
-## Import
-
-```ts
-import '@moul-dev/ui';
+```html
+<div class="demo-row">
+  <moul-button variant="primary">Primary</moul-button>
+  <moul-button variant="secondary">Secondary</moul-button>
+  <moul-button variant="tertiary">Tertiary</moul-button>
+  <moul-button variant="outline">Outline</moul-button>
+  <moul-button variant="ghost">Ghost</moul-button>
+  <moul-button variant="danger">Danger</moul-button>
+  <moul-button variant="danger-soft">Danger soft</moul-button>
+</div>
 ```
 
-## HTML Usage
+## Sizes
+
+<ComponentPreview>
+<div class="demo-row">
+  <moul-button size="sm">Small</moul-button>
+  <moul-button size="md">Medium</moul-button>
+  <moul-button size="lg">Large</moul-button>
+</div>
+</ComponentPreview>
 
 ```html
-<moul-button variant="primary">Click Me</moul-button>
+<div class="demo-row">
+  <moul-button size="sm">Small</moul-button>
+  <moul-button size="md">Medium</moul-button>
+  <moul-button size="lg">Large</moul-button>
+</div>
 ```
 
-## Attributes & Properties
+## States
 
-| Name | Type | Default |
-| :--- | :--- | :--- |
-| `variant` | `ButtonVariant` | `'primary'` |
-| `size` | `ButtonSize` | `'md'` |
-| `type` | `ButtonType` | `'button'` |
-| `is-icon` | `boolean` | `false` |
-| `is-disabled` | `boolean` | `false` |
-| `is-pending` | `boolean` | `false` |
+Pending buttons show a spinner and ignore presses; disabled buttons are skipped by focus.
 
-## Events
+<ComponentPreview>
+<div class="demo-row">
+  <moul-button is-pending>Saving</moul-button>
+  <moul-button variant="secondary" is-disabled>Disabled</moul-button>
+  <moul-button variant="outline" is-icon aria-label="Add item">+</moul-button>
+</div>
+</ComponentPreview>
 
-| Event Name | Description |
-| :--- | :--- |
-| `press` | Dispatched when element fires press |
+```html
+<div class="demo-row">
+  <moul-button is-pending>Saving</moul-button>
+  <moul-button variant="secondary" is-disabled>Disabled</moul-button>
+  <moul-button variant="outline" is-icon aria-label="Add item">+</moul-button>
+</div>
+```
 
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `variant` | `variant` | `'primary' \| 'secondary' \| 'tertiary' \| 'outline' \| 'ghost' \| 'danger' \| 'danger-soft'` | `'primary'` |
+| `size` | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` |
+| `type` | `type` | `'button' \| 'submit' \| 'reset'` | `'button'` |
+| `is-icon` | `isIcon` | `boolean` | `false` |
+| `is-disabled` | `isDisabled` | `boolean` | `false` |
+| `is-pending` | `isPending` | `boolean` | `false` |
+
+| Event | Type |
+| :-- | :-- |
+| `press` | `CustomEvent` |
+
+| Slot | Description |
+| :-- | :-- |
+| `prefix` | — |
+| `(default)` | — |
+| `suffix` | — |
+
+**CSS parts:** `button`, `spinner`, `prefix`, `content`, `suffix`

@@ -5,43 +5,72 @@ description: ឯកសារណែនាំសម្រាប់សមាសភ�
 
 import ComponentPreview from '@/components/ComponentPreview.astro';
 
-# CommandPalette (សមាសភាគ)
-
-The `<moul-command-palette>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
-
-## Preview
+`<moul-command-palette>` opens with ⌘K / Ctrl+K (change it with `shortcut`), filters `items` as you type and fires `select`.
 
 <ComponentPreview>
-  <moul-button variant="outline">Press ⌘K to open command palette</moul-button>
+<moul-button variant="secondary" data-open="demo-palette">Open palette <moul-kbd slot="suffix">⌘K</moul-kbd></moul-button>
+<moul-command-palette id="demo-palette" placeholder="Type a command…" data-props='{"items":[{"id":"new","title":"New project","group":"Create","shortcut":"\u2318N"},{"id":"invite","title":"Invite teammate","group":"Create"},{"id":"deploy","title":"Deploy to production","group":"Actions","description":"Promote the latest preview"},{"id":"logs","title":"Open logs","group":"Actions","shortcut":"\u2318L"},{"id":"theme","title":"Toggle theme","group":"Preferences"}]}'></moul-command-palette>
 </ComponentPreview>
 
-## Import
-
-```ts
-import '@moul-dev/ui';
-```
-
-## HTML Usage
-
 ```html
-<moul-command-palette placeholder="Type a command or search..."></moul-command-palette>
+<moul-button variant="secondary">Open palette <moul-kbd slot="suffix">⌘K</moul-kbd></moul-button>
+<moul-command-palette id="demo-palette" placeholder="Type a command…"></moul-command-palette>
 ```
 
-## Attributes & Properties
+```js
+const commandPalette = document.querySelector('#demo-palette')
+commandPalette.items = [
+  {
+    "id": "new",
+    "title": "New project",
+    "group": "Create",
+    "shortcut": "\u2318N"
+  },
+  {
+    "id": "invite",
+    "title": "Invite teammate",
+    "group": "Create"
+  },
+  {
+    "id": "deploy",
+    "title": "Deploy to production",
+    "group": "Actions",
+    "description": "Promote the latest preview"
+  },
+  {
+    "id": "logs",
+    "title": "Open logs",
+    "group": "Actions",
+    "shortcut": "\u2318L"
+  },
+  {
+    "id": "theme",
+    "title": "Toggle theme",
+    "group": "Preferences"
+  }
+]
+```
 
-| Name | Type | Default |
-| :--- | :--- | :--- |
-| `is-open` | `boolean` | `false` |
-| `placeholder` | `string` | `'Type a command or search...'` |
-| `shortcut` | `string` | `'k'` |
-| `virtualized` | `boolean` | `false` |
-| `query` | `string` | `''` |
-| `activeIndex` | `number` | `0` |
+## API reference
 
-## Events
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `is-open` | `isOpen` | `boolean` | `false` |
+| `placeholder` | `placeholder` | `string` | `'Type a command or search...'` |
+| `shortcut` | `shortcut` | `string` | `'k'` |
+| `virtualized` | `virtualized` | `boolean` | `false` |
+| `query` | `query` | `string` | `''` |
+| `activeIndex` | `activeIndex` | `number` | `0` |
 
-| Event Name | Description |
-| :--- | :--- |
-| `openchange` | Dispatched when element fires openchange |
-| `select` | Dispatched when element fires select |
+| Event | Type |
+| :-- | :-- |
+| `openchange` | `CustomEvent` |
+| `select` | `CustomEvent` |
 
+| Slot | Description |
+| :-- | :-- |
+| `header` | — |
+| `empty` | — |
+| `footer` | — |
+
+**CSS parts:** `input`, `dialog`, `base`, `input-wrapper`, `list`, `empty`, `footer`

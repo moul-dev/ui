@@ -156,7 +156,7 @@ Class: `MoulBarChart` · Source: `ui/src/components/BarChart/BarChart.ts`
 | :--- |
 | `empty` |
 
-**CSS Parts:** `empty`, `grid`, `bar`
+**CSS Parts:** `bar`, `empty`, `grid`
 
 ## LineChart
 
@@ -991,7 +991,7 @@ Class: `MoulRadio` · Source: `ui/src/components/RadioGroup/Radio.ts`
 | :--- |
 | (default) |
 
-**CSS Parts:** `dot`, `base`, `indicator`, `label`
+**CSS Parts:** `base`, `indicator`, `dot`, `label`
 
 ## Switch
 
@@ -1028,7 +1028,7 @@ Class: `MoulSwitch` · Source: `ui/src/components/Switch/Switch.ts`
 | :--- |
 | (default) |
 
-**CSS Parts:** `thumb`, `base`, `track`, `label`
+**CSS Parts:** `base`, `track`, `thumb`, `label`
 
 ## Slider
 
@@ -1185,7 +1185,7 @@ Class: `MoulComboBox` · Source: `ui/src/components/ComboBox/ComboBox.ts`
 | (default) |
 | `empty` |
 
-**CSS Parts:** `popover`, `base`, `label`, `input-container`, `input`, `toggle-btn`, `empty`
+**CSS Parts:** `input-container`, `popover`, `base`, `label`, `input`, `toggle-btn`, `empty`
 
 ### `<moul-combobox-item>`
 
@@ -1255,7 +1255,7 @@ Class: `MoulDatePicker` · Source: `ui/src/components/DatePicker/DatePicker.ts`
 | `description` |
 | `error` |
 
-**CSS Parts:** `popover`, `base`, `label`, `input-container`, `input`, `trigger-btn`
+**CSS Parts:** `input-container`, `popover`, `base`, `label`, `input`, `trigger-btn`
 
 ## Calendar
 
@@ -1572,7 +1572,7 @@ Class: `MoulTooltip` · Source: `ui/src/components/Tooltip/Tooltip.ts`
 | (default) |
 | `content` |
 
-**CSS Parts:** `popover`, `trigger`, `tooltip`
+**CSS Parts:** `trigger`, `popover`, `tooltip`
 
 ## CommandPalette
 
@@ -1667,7 +1667,7 @@ Class: `MoulTabs` · Source: `ui/src/components/Tabs/Tabs.ts`
 | `tab` |
 | (default) |
 
-**CSS Parts:** `indicator`, `base`, `tablist`, `panels`
+**CSS Parts:** `tablist`, `indicator`, `base`, `panels`
 
 ### `<moul-tab>`
 
@@ -2330,7 +2330,7 @@ Class: `MoulToast` · Source: `ui/src/components/Toast/Toast.ts`
 | Attribute | Property | Type | Default |
 | :--- | :--- | :--- | :--- |
 | `tone` | `tone` | `'primary' \| 'accent' \| 'success' \| 'warning' \| 'error'` | `'primary'` |
-| `variant` | `variant` | `'solid' \| 'flat' \| 'shadow' \| 'bordered' \| 'glass'` | `'solid'` |
+| `variant` | `variant` | `'solid' \| 'flat' \| 'shadow' \| 'bordered' \| 'glass'` | `'glass'` |
 | `duration` | `duration` | `number` | `5000` |
 | `title` | `title` | `string` | `''` |
 | `description` | `description` | `string` | `''` |
@@ -2356,6 +2356,12 @@ Class: `MoulToast` · Source: `ui/src/components/Toast/Toast.ts`
 ### `<moul-toast-region>`
 
 Class: `MoulToastRegion` · Source: `ui/src/components/Toast/ToastQueue.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `placement` | `placement` | `'top-start' \| 'top-center' \| 'top-end' \| 'bottom-start' \| 'bottom-center' \| 'bottom-end'` | `'bottom-end'` |
 
 **Slots**
 

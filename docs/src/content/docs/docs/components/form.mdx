@@ -1,46 +1,58 @@
 ---
 title: Form
-description: Accessible form container with native validation integration.
+description: Native form wrapper that validates Moul inputs.
 ---
 
 import ComponentPreview from '@/components/ComponentPreview.astro';
 
-# Form
-
-The `<moul-form>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
-
-## Preview
+`<moul-form>` collects every form-associated Moul input by `name`, runs constraint validation on submit and fires `submit` with the `FormData`.
 
 <ComponentPreview>
-  <moul-form style="width: 100%; max-width: 360px;">
-  <moul-text-field label="Username" placeholder="alice" required></moul-text-field>
-  <div style="margin-top: 1rem;">
-    <moul-button type="submit" variant="primary">Submit</moul-button>
+<moul-form style="width: min(100%, 22rem)">
+  <div class="demo-stack">
+    <moul-text-field name="username" label="Username" placeholder="alice" is-required></moul-text-field>
+    <moul-select name="role" label="Role" selected-key="editor">
+      <moul-select-item key="viewer">Viewer</moul-select-item>
+      <moul-select-item key="editor">Editor</moul-select-item>
+      <moul-select-item key="admin">Admin</moul-select-item>
+    </moul-select>
+    <moul-switch name="notify" is-checked>Email me about activity</moul-switch>
+    <moul-button type="submit">Create account</moul-button>
   </div>
 </moul-form>
 </ComponentPreview>
 
-## Import
-
-```ts
-import '@moul-dev/ui';
-```
-
-## HTML Usage
-
 ```html
-<moul-form>
-  <moul-text-field label="Name" required></moul-text-field>
-  <moul-button type="submit">Submit</moul-button>
+<moul-form style="width: min(100%, 22rem)">
+  <div class="demo-stack">
+    <moul-text-field name="username" label="Username" placeholder="alice" is-required></moul-text-field>
+    <moul-select name="role" label="Role" selected-key="editor">
+      <moul-select-item key="viewer">Viewer</moul-select-item>
+      <moul-select-item key="editor">Editor</moul-select-item>
+      <moul-select-item key="admin">Admin</moul-select-item>
+    </moul-select>
+    <moul-switch name="notify" is-checked>Email me about activity</moul-switch>
+    <moul-button type="submit">Create account</moul-button>
+  </div>
 </moul-form>
 ```
 
-## Attributes & Properties
+## API reference
 
-| Name | Type | Default |
-| :--- | :--- | :--- |
-| `action` | `string` | `''` |
-| `method` | `FormMethod` | `'post'` |
-| `novalidate` | `boolean` | `false` |
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `action` | `action` | `string` | `''` |
+| `method` | `method` | `'get' \| 'post' \| 'dialog'` | `'post'` |
+| `novalidate` | `novalidate` | `boolean` | `false` |
 
+| Event | Type |
+| :-- | :-- |
+| `submit` | `CustomEvent` |
+| `reset` | `CustomEvent` |
+| `invalid` | `CustomEvent` |
 
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | — |
+
+**CSS parts:** `base`

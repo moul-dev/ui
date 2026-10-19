@@ -584,9 +584,10 @@ describe('Empirical Adversarial Challenge Suite: MoulTable & MoulToast', () => {
       ) as NodeListOf<MoulToast>
       expect(toasts.length).toBe(TOTAL_TOASTS)
 
-      // 3. Verify top-layer manual popover properties across sample toasts
+      // 3. The region (not each toast) is the top-layer manual popover
+      expect(region?.getAttribute('popover')).toBe('manual')
       const firstToast = toasts[0]
-      expect(firstToast.getAttribute('popover')).toBe('manual')
+      expect(firstToast.hasAttribute('popover')).toBe(false)
       expect(firstToast.getAttribute('role')).toBe('status')
       expect(firstToast.getAttribute('aria-live')).toBe('polite')
       expect(firstToast.isOpen).toBe(true)
@@ -778,7 +779,7 @@ describe('Empirical Adversarial Challenge Suite: MoulTable & MoulToast', () => {
               const expectedLive = tone === 'error' ? 'assertive' : 'polite'
               expect(tst.getAttribute('role')).toBe(expectedRole)
               expect(tst.getAttribute('aria-live')).toBe(expectedLive)
-              expect(tst.getAttribute('popover')).toBe('manual')
+              expect(tst.hasAttribute('popover')).toBe(false)
             } finally {
               tst.remove()
             }

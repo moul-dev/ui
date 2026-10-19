@@ -37,7 +37,7 @@ export const chartTooltipStyles = [
       display: block;
     }
 
-    [part="container"],
+    [part~="container"],
     .tooltip-container {
       display: inline-flex;
       flex-direction: column;
@@ -55,7 +55,7 @@ export const chartTooltipStyles = [
 
     /* Glass progressive enhancement with 12px blur */
     @supports (backdrop-filter: blur(12px)) or (-webkit-backdrop-filter: blur(12px)) {
-      [part="container"],
+      [part~="container"],
       .tooltip-container {
         background-color: var(--color-bg-glass, rgba(255, 255, 255, 0.75));
         border-color: var(--color-border-glass, rgba(0, 0, 0, 0.1));
@@ -64,21 +64,21 @@ export const chartTooltipStyles = [
       }
     }
 
-    [part="header"],
+    [part~="header"],
     .tooltip-header {
       display: flex;
       align-items: center;
       gap: var(--spacing-2, 0.5rem);
     }
 
-    [part="title"],
+    [part~="title"],
     .tooltip-title {
       font-weight: var(--font-weight-semibold, 600);
       color: var(--color-fg, #111827);
     }
 
     /* Multi-series list & item layout */
-    [part="list"],
+    [part~="list"],
     .tooltip-list {
       display: flex;
       flex-direction: column;
@@ -88,7 +88,7 @@ export const chartTooltipStyles = [
       list-style: none;
     }
 
-    [part="item"],
+    [part~="item"],
     .tooltip-item {
       display: flex;
       align-items: center;
@@ -102,7 +102,7 @@ export const chartTooltipStyles = [
       gap: var(--spacing-2, 0.5rem);
     }
 
-    [part="indicator"],
+    [part~="indicator"],
     .indicator {
       width: 8px;
       height: 8px;
@@ -111,13 +111,13 @@ export const chartTooltipStyles = [
       display: inline-block;
     }
 
-    [part="label"],
+    [part~="label"],
     .label {
       color: var(--color-fg-subtle, #6b7280);
       font-weight: var(--font-weight-medium, 500);
     }
 
-    [part="value"],
+    [part~="value"],
     .value {
       color: var(--color-fg, #111827);
       font-weight: var(--font-weight-semibold, 600);

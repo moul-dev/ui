@@ -65,7 +65,7 @@ export const semanticToneStyles: CSSResultGroup = css`
   :host,
   :host([tone="primary"]),
   [data-tone="primary"] {
-    --_tone-solid-bg: var(--color-primary-600);
+    --_tone-solid-bg: var(--color-primary-solid);
     --_tone-solid-fg: var(--color-fg-on-primary);
     --_tone-soft-bg: var(--color-primary-100);
     --_tone-soft-fg: var(--color-primary-700);
@@ -85,7 +85,7 @@ export const semanticToneStyles: CSSResultGroup = css`
   /* Success Tone */
   :host([tone="success"]),
   [data-tone="success"] {
-    --_tone-solid-bg: var(--color-success-500);
+    --_tone-solid-bg: var(--color-success-solid);
     --_tone-solid-fg: var(--color-fg-on-primary);
     --_tone-soft-bg: var(--color-alert-bg-success);
     --_tone-soft-fg: var(--color-success-700);
@@ -95,8 +95,8 @@ export const semanticToneStyles: CSSResultGroup = css`
   /* Warning Tone */
   :host([tone="warning"]),
   [data-tone="warning"] {
-    --_tone-solid-bg: var(--color-warning-500);
-    --_tone-solid-fg: var(--color-fg-on-primary);
+    --_tone-solid-bg: var(--color-warning-solid);
+    --_tone-solid-fg: var(--color-fg-on-warning);
     --_tone-soft-bg: var(--color-alert-bg-warning);
     --_tone-soft-fg: var(--color-warning-700);
     --_tone-border: var(--color-alert-border-warning);
@@ -105,7 +105,7 @@ export const semanticToneStyles: CSSResultGroup = css`
   /* Error Tone */
   :host([tone="error"]),
   [data-tone="error"] {
-    --_tone-solid-bg: var(--color-error-500);
+    --_tone-solid-bg: var(--color-error-solid);
     --_tone-solid-fg: var(--color-fg-on-primary);
     --_tone-soft-bg: var(--color-alert-bg-error);
     --_tone-soft-fg: var(--color-error-700);
@@ -147,23 +147,22 @@ export const semanticToneStyles: CSSResultGroup = css`
     border: 1px solid transparent;
   }
 
-  /* Glass Variant - Base fallback when backdrop-filter is unsupported */
+  /* Glass Variant - Liquid glass material: tinted translucent fill, rim light, soft depth */
   :host([variant="glass"]),
   [data-variant="glass"] {
-    background-color: var(--color-bg-glass);
+    background-color: color-mix(in oklch, var(--_tone-soft-bg) 45%, var(--glass-bg-thick));
     border: 1px solid var(--color-border-glass);
     color: var(--_tone-soft-fg);
+    box-shadow: var(--glass-highlight), var(--shadow-glass);
   }
 
-  /* Glass Variant - Progressive enhancement with blur */
-  @supports (backdrop-filter: blur(12px)) or (-webkit-backdrop-filter: blur(12px)) {
+  /* Progressive enhancement: frost what's behind once backdrop-filter is available */
+  @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
     :host([variant="glass"]),
     [data-variant="glass"] {
-      background-color: var(--color-bg-glass);
-      border: 1px solid var(--color-border-glass);
-      color: var(--_tone-soft-fg);
-      -webkit-backdrop-filter: blur(12px);
-      backdrop-filter: blur(12px);
+      background-color: color-mix(in oklch, var(--_tone-soft-bg) 40%, var(--color-bg-glass));
+      -webkit-backdrop-filter: var(--glass-filter);
+      backdrop-filter: var(--glass-filter);
     }
   }
 `

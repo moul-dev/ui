@@ -22,14 +22,30 @@ export type OverlayPreset =
   | 'drawer-top'
   | 'drawer-bottom'
   | 'toast'
+  | 'toast-top'
 
 export interface OverlayPresenceControllerOptions {
   preset?: OverlayPreset
   target?: () => HTMLElement | null
   dialog?: () => HTMLDialogElement | null
   popover?: () => HTMLElement | null
+  /**
+   * Element the popover should hang from. Top-layer popovers are positioned against
+   * the viewport, so `top: 100%` style CSS can't reach the trigger; when set, the
+   * controller pins the popover below (or above, if there's no room) this anchor,
+   * matches its width, and follows scroll/resize while open.
+   */
+  anchor?: () => HTMLElement | null
+  /**
+   * Called when the browser closes a `popover="auto"` element on its own
+   * (outside click, Escape) so the host can sync its `isOpen` state.
+   */
+  onLightDismiss?: () => void
   onOpenChange?: (open: boolean) => void
 }
+
+const ANCHOR_GAP = 6
+const VIEWPORT_MARGIN = 8
 
 export class OverlayPresenceController implements ReactiveController {
   public isOpen: boolean = false
@@ -37,9 +53,34 @@ export class OverlayPresenceController implements ReactiveController {
 
   private host: ReactiveControllerHost & HTMLElement
   private options: OverlayPresenceControllerOptions
+
+  /** Swap the motion preset, e.g. when a toast learns which edge its region docks to. */
+  public set preset(next: OverlayPreset) {
+    this.options.preset = next
+  }
   private activeAnimation: AnimationPlaybackControls | null = null
   private cancelActiveAnimation: (() => void) | null = null
   private currentTransitionId: number = 0
+  private anchorFrame = 0
+  private watchedPopover: HTMLElement | null = null
+  private lastLightDismissAt = -Infinity
+
+  private readonly handleNativeToggle = (event: Event): void => {
+    const { newState } = event as Event & { newState?: string }
+    if (newState === 'closed' && this.isOpen) {
+      this.lastLightDismissAt = performance.now()
+      this.options.onLightDismiss?.()
+    }
+  }
+
+  /**
+   * True right after a light dismiss. The pointerdown that dismisses a popover is
+   * usually followed by a click on its own trigger; hosts check this to avoid
+   * immediately reopening what the user just closed.
+   */
+  public get wasJustDismissed(): boolean {
+    return performance.now() - this.lastLightDismissAt < 350
+  }
 
   constructor(
     host: ReactiveControllerHost & HTMLElement,
@@ -55,6 +96,7 @@ export class OverlayPresenceController implements ReactiveController {
   }
 
   public hostDisconnected(): void {
+    this.stopAnchoring()
     this.stopActiveAnimation()
     this.currentTransitionId++
   }
@@ -88,6 +130,7 @@ export class OverlayPresenceController implements ReactiveController {
 
       // Promote to top layer
       this.promoteTopLayer()
+      this.startAnchoring()
 
       const target = (targetElement ??
         this.options.target?.() ??
@@ -127,6 +170,7 @@ export class OverlayPresenceController implements ReactiveController {
       }
 
       // Top layer cleanup AFTER animation completes
+      this.stopAnchoring()
       this.demoteTopLayer()
 
       this.isMounted = false
@@ -175,6 +219,61 @@ export class OverlayPresenceController implements ReactiveController {
     }
   }
 
+  private readonly reposition = (): void => {
+    cancelAnimationFrame(this.anchorFrame)
+    this.anchorFrame = requestAnimationFrame(() => this.placeAgainstAnchor())
+  }
+
+  private startAnchoring(): void {
+    if (!this.options.anchor || typeof window === 'undefined') return
+    this.placeAgainstAnchor()
+    window.addEventListener('scroll', this.reposition, true)
+    window.addEventListener('resize', this.reposition)
+  }
+
+  private stopAnchoring(): void {
+    if (!this.options.anchor || typeof window === 'undefined') return
+    cancelAnimationFrame(this.anchorFrame)
+    window.removeEventListener('scroll', this.reposition, true)
+    window.removeEventListener('resize', this.reposition)
+  }
+
+  private placeAgainstAnchor(): void {
+    const anchor = this.options.anchor?.()
+    const popover = this.options.popover?.()
+    if (!anchor || !popover) return
+    const rect = anchor.getBoundingClientRect()
+    if (rect.width === 0 && rect.height === 0) return
+
+    const style = popover.style
+    style.position = 'fixed'
+    style.margin = '0'
+    style.right = 'auto'
+    style.bottom = 'auto'
+    style.minWidth = `${rect.width}px`
+
+    const vw = window.innerWidth
+    const vh = window.innerHeight
+    const height = popover.offsetHeight
+    const width = popover.offsetWidth
+    const below = vh - rect.bottom - ANCHOR_GAP - VIEWPORT_MARGIN
+    const above = rect.top - ANCHOR_GAP - VIEWPORT_MARGIN
+    const flip = height > below && above > below
+    const top = flip
+      ? Math.max(VIEWPORT_MARGIN, rect.top - ANCHOR_GAP - height)
+      : rect.bottom + ANCHOR_GAP
+    const left = Math.min(
+      Math.max(VIEWPORT_MARGIN, rect.left),
+      Math.max(VIEWPORT_MARGIN, vw - width - VIEWPORT_MARGIN),
+    )
+    style.top = `${Math.round(top)}px`
+    style.left = `${Math.round(left)}px`
+    style.maxHeight = `${Math.max(120, Math.floor(flip ? above : below))}px`
+    // Grow out of the anchor edge, like a macOS menu.
+    style.transformOrigin = flip ? 'bottom center' : 'top center'
+    popover.toggleAttribute('data-flipped', flip)
+  }
+
   private promoteTopLayer(): void {
     const dialog =
       this.options.dialog?.() ??
@@ -193,6 +292,15 @@ export class OverlayPresenceController implements ReactiveController {
         '[popover]',
       ) as HTMLElement | null) ??
       (this.host.querySelector?.('[popover]') as HTMLElement | null)
+
+    if (popover && popover !== this.watchedPopover) {
+      this.watchedPopover?.removeEventListener(
+        'toggle',
+        this.handleNativeToggle,
+      )
+      popover.addEventListener('toggle', this.handleNativeToggle)
+      this.watchedPopover = popover
+    }
 
     if (
       popover &&
@@ -260,7 +368,9 @@ export class OverlayPresenceController implements ReactiveController {
       case 'drawer-bottom':
         return { y: ['100%', '0%'] }
       case 'toast':
-        return { opacity: [0, 1], y: [14, 0], scale: [0.95, 1] }
+        return { opacity: [0, 1], y: [24, 0], scale: [0.92, 1] }
+      case 'toast-top':
+        return { opacity: [0, 1], y: [-24, 0], scale: [0.92, 1] }
       default:
         return { opacity: [0, 1], scale: [0.95, 1], y: [8, 0] }
     }
@@ -270,6 +380,7 @@ export class OverlayPresenceController implements ReactiveController {
     switch (preset) {
       case 'modal':
       case 'toast':
+      case 'toast-top':
         return SPRING_GENTLE
       case 'popover':
       case 'tooltip':
@@ -300,7 +411,12 @@ export class OverlayPresenceController implements ReactiveController {
       case 'drawer-bottom':
         return { y: ['0%', '100%'] }
       case 'toast':
-        return { opacity: [1, 0], y: [0, 14], scale: [1, 0.95] }
+      case 'toast-top':
+        return {
+          opacity: [1, 0],
+          scale: [1, 0.9],
+          filter: ['blur(0px)', 'blur(4px)'],
+        }
       default:
         return { opacity: [1, 0], scale: [1, 0.95], y: [0, 8] }
     }
@@ -320,7 +436,8 @@ export class OverlayPresenceController implements ReactiveController {
       case 'drawer-bottom':
         return { duration: 0.22, ease: IOS_SHEET_CURVE }
       case 'toast':
-        return { duration: 0.18 }
+      case 'toast-top':
+        return { duration: 0.2 }
       default:
         return { duration: 0.15 }
     }

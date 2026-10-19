@@ -5,41 +5,84 @@ description: ឯកសារណែនាំសម្រាប់សមាសភ�
 
 import ComponentPreview from '@/components/ComponentPreview.astro';
 
-# LineChart (សមាសភាគ)
+`<moul-line-chart>` connects each series with a smooth curve.
 
-The `<moul-line-chart>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
-
-## Preview
-
-<ComponentPreview>
-  <moul-line-chart height="220" style="width: 100%;"></moul-line-chart>
+<ComponentPreview align="stretch">
+<moul-line-chart x-key="month" height="260" show-grid data-props='{"data":[{"month":"Jan","desktop":186,"mobile":80,"revenue":4200},{"month":"Feb","desktop":305,"mobile":200,"revenue":5100},{"month":"Mar","desktop":237,"mobile":120,"revenue":4800},{"month":"Apr","desktop":273,"mobile":190,"revenue":6100},{"month":"May","desktop":209,"mobile":130,"revenue":5600},{"month":"Jun","desktop":314,"mobile":240,"revenue":7300}],"series":[{"key":"desktop","name":"Desktop"},{"key":"mobile","name":"Mobile"}]}'></moul-line-chart>
 </ComponentPreview>
 
-## Import
-
-```ts
-import '@moul-dev/ui';
-```
-
-## HTML Usage
-
 ```html
-<moul-line-chart height="300"></moul-line-chart>
+<moul-line-chart x-key="month" height="260" show-grid></moul-line-chart>
 ```
 
-## Attributes & Properties
+```js
+const lineChart = document.querySelector('moul-line-chart')
+lineChart.data = [
+  {
+    "month": "Jan",
+    "desktop": 186,
+    "mobile": 80,
+    "revenue": 4200
+  },
+  {
+    "month": "Feb",
+    "desktop": 305,
+    "mobile": 200,
+    "revenue": 5100
+  },
+  {
+    "month": "Mar",
+    "desktop": 237,
+    "mobile": 120,
+    "revenue": 4800
+  },
+  {
+    "month": "Apr",
+    "desktop": 273,
+    "mobile": 190,
+    "revenue": 6100
+  },
+  {
+    "month": "May",
+    "desktop": 209,
+    "mobile": 130,
+    "revenue": 5600
+  },
+  {
+    "month": "Jun",
+    "desktop": 314,
+    "mobile": 240,
+    "revenue": 7300
+  }
+]
+lineChart.series = [
+  {
+    "key": "desktop",
+    "name": "Desktop"
+  },
+  {
+    "key": "mobile",
+    "name": "Mobile"
+  }
+]
+```
 
-| Name | Type | Default |
-| :--- | :--- | :--- |
-| `x-key` | `string` | `'name'` |
-| `height` | `number` | `300` |
-| `show-grid` | `boolean` | `true` |
-| `curve` | `string` | `'monotoneX'` |
+## API reference
 
-## Events
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `x-key` | `xKey` | `string` | `'name'` |
+| `height` | `height` | `number` | `300` |
+| `show-grid` | `showGrid` | `boolean` | `true` |
+| `curve` | `curve` | `string` | `'monotoneX'` |
 
-| Event Name | Description |
-| :--- | :--- |
-| `point-hover` | Dispatched when element fires point-hover |
-| `point-leave` | Dispatched when element fires point-leave |
+| Event | Type |
+| :-- | :-- |
+| `point-hover` | `CustomEvent` |
+| `point-leave` | `CustomEvent` |
 
+| Slot | Description |
+| :-- | :-- |
+| `empty` | — |
+
+**CSS parts:** `empty`, `grid`, `line`, `point`

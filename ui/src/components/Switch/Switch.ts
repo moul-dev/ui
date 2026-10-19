@@ -1,7 +1,6 @@
 import { html, LitElement, type PropertyValues } from 'lit'
 import { FormInternalsController } from '../../controllers/form-internals.controller'
 import { defineElement } from '../../utils/define-element'
-import { SPRING_SNAPPY, subtleAnimate } from '../../utils/motion'
 import { warnMissingLabel } from '../../utils/warn-missing-label'
 import { switchStyles } from './Switch.styles'
 
@@ -59,13 +58,6 @@ export class MoulSwitch extends LitElement {
 
     this.isChecked = !this.isChecked
     this.syncFormValue()
-
-    const thumb = this.renderRoot?.querySelector(
-      '[part="thumb"]',
-    ) as HTMLElement | null
-    if (thumb) {
-      subtleAnimate(thumb, { scaleX: [1.08, 1] }, SPRING_SNAPPY)
-    }
 
     this.dispatchEvent(
       new CustomEvent('change', {

@@ -1,4 +1,5 @@
 import { css } from 'lit'
+import { fieldStyles } from '../../styles/field.styles'
 import { resetStyles } from '../../styles/reset.styles'
 
 export const numberFieldStyles = [
@@ -15,21 +16,21 @@ export const numberFieldStyles = [
       display: none !important;
     }
 
-    [part='base'] {
+    [part~='base'] {
       display: flex;
       flex-direction: column;
       gap: var(--spacing-1, 0.25rem);
       width: 100%;
     }
 
-    [part='label'] {
+    [part~='label'] {
       display: block;
       font-size: var(--font-size-sm, 0.875rem);
       font-weight: 500;
       color: var(--color-fg, inherit);
     }
 
-    [part='input-container'] {
+    [part~='input-container'] {
       display: flex;
       align-items: stretch;
       position: relative;
@@ -43,22 +44,22 @@ export const numberFieldStyles = [
       overflow: hidden;
     }
 
-    [part='input-container']:hover:not([data-disabled='true']) {
+    [part~='input-container']:hover:not([data-disabled='true']) {
       border-color: var(--color-neutral-400, #9ca3af);
     }
 
-    [part='input-container']:focus-within:not([data-disabled='true']) {
+    [part~='input-container']:focus-within:not([data-disabled='true']) {
       border-color: var(--color-border-focus, #3b82f6);
       outline: 2px solid var(--color-border-focus, #3b82f6);
       outline-offset: 1px;
     }
 
-    :host([is-invalid]) [part='input-container'],
-    [part='input-container'][data-invalid='true'] {
+    :host([is-invalid]) [part~='input-container'],
+    [part~='input-container'][data-invalid='true'] {
       border-color: var(--color-error-500, #ef4444);
     }
 
-    [part='input'] {
+    [part~='input'] {
       flex: 1;
       width: 100%;
       min-width: 0;
@@ -72,11 +73,11 @@ export const numberFieldStyles = [
       padding: var(--spacing-2, 0.5rem) var(--spacing-3, 0.75rem);
     }
 
-    [part='input']::placeholder {
+    [part~='input']::placeholder {
       color: var(--color-fg-subtle, #9ca3af);
     }
 
-    [part='stepper-group'] {
+    [part~='stepper-group'] {
       display: flex;
       flex-direction: column;
       border-left: 1px solid var(--color-border, #d1d5db);
@@ -84,7 +85,7 @@ export const numberFieldStyles = [
       flex-shrink: 0;
     }
 
-    [part='stepper-btn'] {
+    [part~='stepper-btn'] {
       display: flex;
       align-items: center;
       justify-content: center;
@@ -99,22 +100,22 @@ export const numberFieldStyles = [
       transition: background-color 0.1s ease, color 0.1s ease;
     }
 
-    [part='stepper-btn']:hover:not(:disabled) {
+    [part~='stepper-btn']:hover:not(:disabled) {
       background-color: var(--color-bg-subtle, #f3f4f6);
       color: var(--color-fg, inherit);
     }
 
-    [part='stepper-btn']:disabled {
+    [part~='stepper-btn']:disabled {
       cursor: not-allowed;
       opacity: 0.4;
     }
 
-    [part='stepper-btn-up'] {
+    [part~='stepper-btn-up'] {
       border-bottom: 1px solid var(--color-border, #d1d5db);
     }
 
-    [part='prefix'],
-    [part='suffix'] {
+    [part~='prefix'],
+    [part~='suffix'] {
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -122,12 +123,12 @@ export const numberFieldStyles = [
       color: var(--color-fg-subtle, #9ca3af);
     }
 
-    [part='description'] {
+    [part~='description'] {
       font-size: var(--font-size-xs, 0.75rem);
       color: var(--color-fg-subtle, #6b7280);
     }
 
-    [part='error'] {
+    [part~='error'] {
       font-size: var(--font-size-xs, 0.75rem);
       color: var(--color-error-500, #ef4444);
     }
@@ -139,9 +140,10 @@ export const numberFieldStyles = [
     }
 
     @media (prefers-reduced-motion: reduce) {
-      [part='input-container'] {
+      [part~='input-container'] {
         transition: none;
       }
     }
   `,
+  fieldStyles,
 ]

@@ -5,49 +5,50 @@ description: ឯកសារណែនាំសម្រាប់សមាសភ�
 
 import ComponentPreview from '@/components/ComponentPreview.astro';
 
-# NumberField (សមាសភាគ)
-
-The `<moul-number-field>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
-
-## Preview
+`<moul-number-field>` clamps to `min`/`max`, steps with the buttons or arrow keys, and gives a small spring on each step.
 
 <ComponentPreview>
+<div class="demo-row">
   <moul-number-field label="Replicas" value="3" min="1" max="10"></moul-number-field>
+  <moul-number-field label="Opacity" value="0.5" min="0" max="1" step="0.1"></moul-number-field>
+</div>
 </ComponentPreview>
 
-## Import
-
-```ts
-import '@moul-dev/ui';
-```
-
-## HTML Usage
-
 ```html
-<moul-number-field label="Count" value="1"></moul-number-field>
+<div class="demo-row">
+  <moul-number-field label="Replicas" value="3" min="1" max="10"></moul-number-field>
+  <moul-number-field label="Opacity" value="0.5" min="0" max="1" step="0.1"></moul-number-field>
+</div>
 ```
 
-## Attributes & Properties
+## API reference
 
-| Name | Type | Default |
-| :--- | :--- | :--- |
-| `name` | `string` | `''` |
-| `value` | `number | null` | `null` |
-| `min` | `number | undefined` | `-` |
-| `max` | `number | undefined` | `-` |
-| `step` | `number` | `1` |
-| `placeholder` | `string` | `''` |
-| `label` | `string` | `''` |
-| `description` | `string` | `''` |
-| `error-message` | `string` | `''` |
-| `is-disabled` | `boolean` | `false` |
-| `is-required` | `boolean` | `false` |
-| `is-readonly` | `boolean` | `false` |
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `name` | `name` | `string` | `''` |
+| `value` | `value` | `number \| null` | `null` |
+| `min` | `min` | `number \| undefined` | — |
+| `max` | `max` | `number \| undefined` | — |
+| `step` | `step` | `number` | `1` |
+| `placeholder` | `placeholder` | `string` | `''` |
+| `label` | `label` | `string` | `''` |
+| `description` | `description` | `string` | `''` |
+| `error-message` | `errorMessage` | `string` | `''` |
+| `is-disabled` | `isDisabled` | `boolean` | `false` |
+| `is-required` | `isRequired` | `boolean` | `false` |
+| `is-readonly` | `isReadonly` | `boolean` | `false` |
 
-## Events
+| Event | Type |
+| :-- | :-- |
+| `input` | `Event` |
+| `change` | `Event` |
 
-| Event Name | Description |
-| :--- | :--- |
-| `input` | Dispatched when element fires input |
-| `change` | Dispatched when element fires change |
+| Slot | Description |
+| :-- | :-- |
+| `label` | — |
+| `prefix` | — |
+| `suffix` | — |
+| `description` | — |
+| `error` | — |
 
+**CSS parts:** `error`, `base`, `label`, `input-container`, `prefix`, `input`, `suffix`, `stepper-group`, `stepper-btn`, `stepper-btn-up`, `stepper-btn-down`, `description`

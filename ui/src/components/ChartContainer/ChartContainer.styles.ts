@@ -18,7 +18,7 @@ export const chartContainerStyles = [
       font-family: var(--font-family-base, inherit);
     }
 
-    [part="header"],
+    [part~="header"],
     .header {
       display: flex;
       justify-content: space-between;
@@ -33,7 +33,7 @@ export const chartContainerStyles = [
       gap: var(--spacing-1, 0.25rem);
     }
 
-    [part="title"],
+    [part~="title"],
     .title {
       font-size: var(--font-size-lg, 1.125rem);
       font-weight: var(--font-weight-semibold, 600);
@@ -42,7 +42,7 @@ export const chartContainerStyles = [
       line-height: var(--line-height-lg, 1.5rem);
     }
 
-    [part="description"],
+    [part~="description"],
     .description {
       font-size: var(--font-size-xs, 0.75rem);
       color: var(--color-fg-subtle, #6b7280);
@@ -56,14 +56,14 @@ export const chartContainerStyles = [
       gap: var(--spacing-2, 0.5rem);
     }
 
-    [part="content"],
+    [part~="content"],
     .content {
       position: relative;
       width: 100%;
       box-sizing: border-box;
     }
 
-    [part="empty"],
+    [part~="empty"],
     .empty-container {
       display: flex;
       flex-direction: column;
@@ -82,7 +82,7 @@ export const chartContainerStyles = [
       margin: 0;
     }
 
-    [part="legend"],
+    [part~="legend"],
     .legend {
       margin-top: var(--spacing-3, 0.75rem);
       display: flex;

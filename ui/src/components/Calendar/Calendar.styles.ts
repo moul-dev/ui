@@ -15,7 +15,7 @@ export const calendarStyles = [
       display: none !important;
     }
 
-    [part='base'] {
+    [part~='base'] {
       display: inline-flex;
       flex-direction: column;
       width: fit-content;
@@ -26,7 +26,7 @@ export const calendarStyles = [
       border: 1px solid var(--color-border, #e5e7eb);
     }
 
-    [part='header'] {
+    [part~='header'] {
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -34,7 +34,7 @@ export const calendarStyles = [
       margin-bottom: var(--spacing-2, 0.5rem);
     }
 
-    [part='heading'] {
+    [part~='heading'] {
       margin: 0;
       font-size: var(--font-size-sm, 0.875rem);
       font-weight: 600;
@@ -43,7 +43,7 @@ export const calendarStyles = [
       flex: 1;
     }
 
-    [part='nav-btn'] {
+    [part~='nav-btn'] {
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -59,27 +59,27 @@ export const calendarStyles = [
       transition: background-color 0.15s ease, border-color 0.15s ease;
     }
 
-    [part='nav-btn']:hover:not(:disabled) {
+    [part~='nav-btn']:hover:not(:disabled) {
       background-color: var(--color-neutral-100, #f3f4f6);
       border-color: var(--color-border, #d1d5db);
     }
 
-    [part='nav-btn']:disabled {
+    [part~='nav-btn']:disabled {
       opacity: 0.4;
       cursor: not-allowed;
     }
 
-    [part='nav-btn'] svg {
+    [part~='nav-btn'] svg {
       width: 1rem;
       height: 1rem;
     }
 
-    [part='grid'] {
+    [part~='grid'] {
       border-collapse: collapse;
       width: 100%;
     }
 
-    [part='grid-header'] th {
+    [part~='grid-header'] th {
       font-size: var(--font-size-xs, 0.75rem);
       font-weight: 500;
       color: var(--color-fg-subtle, #6b7280);
@@ -88,12 +88,12 @@ export const calendarStyles = [
       width: 2.25rem;
     }
 
-    [part='grid-cell'] {
+    [part~='grid-cell'] {
       text-align: center;
       padding: 1px;
     }
 
-    [part='day-btn'] {
+    [part~='day-btn'] {
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -110,32 +110,32 @@ export const calendarStyles = [
       transition: background-color 0.12s ease, color 0.12s ease;
     }
 
-    [part='day-btn']:hover:not(:disabled) {
+    [part~='day-btn']:hover:not(:disabled) {
       background-color: var(--color-neutral-100, #f3f4f6);
     }
 
-    [part='day-btn']:focus-visible {
+    [part~='day-btn']:focus-visible {
       outline: 2px solid var(--color-border-focus, #3b82f6);
       outline-offset: 1px;
     }
 
-    [part='day-btn'][data-selected='true'] {
-      background-color: var(--color-primary-500, #3b82f6);
+    [part~='day-btn'][data-selected='true'] {
+      background-color: var(--color-primary-solid, #3b82f6);
       color: var(--color-fg-on-primary, #ffffff);
       font-weight: 600;
     }
 
-    [part='day-btn'][data-today='true']:not([data-selected='true']) {
+    [part~='day-btn'][data-today='true']:not([data-selected='true']) {
       border-color: var(--color-primary-500, #3b82f6);
       font-weight: 600;
     }
 
-    [part='day-btn'][data-outside='true'] {
+    [part~='day-btn'][data-outside='true'] {
       color: var(--color-neutral-400, #9ca3af);
       opacity: 0.5;
     }
 
-    [part='day-btn']:disabled {
+    [part~='day-btn']:disabled {
       color: var(--color-neutral-300, #d1d5db);
       cursor: not-allowed;
       opacity: 0.35;

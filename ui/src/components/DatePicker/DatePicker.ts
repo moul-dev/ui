@@ -55,6 +55,12 @@ export class MoulDatePicker extends LitElement {
     this.overlayController = new OverlayPresenceController(this, {
       preset: 'popover',
       popover: () => this.popoverElement,
+      target: () => this.popoverElement,
+      onLightDismiss: () => this.close(),
+      anchor: () =>
+        this.renderRoot?.querySelector<HTMLElement>(
+          '[part="input-container"]',
+        ) ?? null,
     })
   }
 
@@ -96,6 +102,7 @@ export class MoulDatePicker extends LitElement {
 
   public open(): void {
     if (this.isDisabled || this.isOpen) return
+    if (this.overlayController.wasJustDismissed) return
     this.isOpen = true
     this.overlayController.setOpen(true)
   }
@@ -104,6 +111,14 @@ export class MoulDatePicker extends LitElement {
     if (!this.isOpen) return
     this.isOpen = false
     this.overlayController.setOpen(false)
+  }
+
+  /** Clicking anywhere on the field opens the calendar, like a native date control. */
+  private readonly handleFieldClick = (event: MouseEvent): void => {
+    const onButton = (event.target as Element | null)?.closest?.(
+      '[part~="trigger-btn"]',
+    )
+    if (!onButton) this.open()
   }
 
   public toggle(): void {
@@ -240,6 +255,7 @@ export class MoulDatePicker extends LitElement {
           part="input-container"
           ?data-invalid=${isInvalid}
           ?data-disabled=${this.isDisabled}
+          @click=${this.handleFieldClick}
         >
           <input
             id="input"

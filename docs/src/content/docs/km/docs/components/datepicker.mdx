@@ -5,41 +5,44 @@ description: ឯកសារណែនាំសម្រាប់សមាសភ�
 
 import ComponentPreview from '@/components/ComponentPreview.astro';
 
-# DatePicker (សមាសភាគ)
+`<moul-date-picker>` pairs a formatted field with a calendar in the top layer. Values are ISO `YYYY-MM-DD` strings.
 
-The `<moul-date-picker>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
-
-## Preview
-
-<ComponentPreview>
-  <moul-date-picker label="Scheduled Launch"></moul-date-picker>
+<ComponentPreview align="start" minHeight="420px">
+<div style="width: min(100%, 18rem)">
+  <moul-date-picker label="Launch date" value="2026-10-24"></moul-date-picker>
+</div>
 </ComponentPreview>
 
-## Import
-
-```ts
-import '@moul-dev/ui';
-```
-
-## HTML Usage
-
 ```html
-<moul-date-picker label="Date"></moul-date-picker>
+<div style="width: min(100%, 18rem)">
+  <moul-date-picker label="Launch date" value="2026-10-24"></moul-date-picker>
+</div>
 ```
 
-## Attributes & Properties
+## API reference
 
-| Name | Type | Default |
-| :--- | :--- | :--- |
-| `name` | `string` | `''` |
-| `value` | `string` | `''` |
-| `locale` | `string` | `'en-US'` |
-| `placeholder` | `string` | `'YYYY-MM-DD'` |
-| `label` | `string` | `''` |
-| `is-disabled` | `boolean` | `false` |
-| `is-required` | `boolean` | `false` |
-| `min-date` | `string` | `''` |
-| `max-date` | `string` | `''` |
-| `is-open` | `boolean` | `false` |
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `name` | `name` | `string` | `''` |
+| `value` | `value` | `string` | `''` |
+| `locale` | `locale` | `string` | `'en-US'` |
+| `placeholder` | `placeholder` | `string` | `'YYYY-MM-DD'` |
+| `label` | `label` | `string` | `''` |
+| `is-disabled` | `isDisabled` | `boolean` | `false` |
+| `is-required` | `isRequired` | `boolean` | `false` |
+| `min-date` | `minDate` | `string` | `''` |
+| `max-date` | `maxDate` | `string` | `''` |
+| `is-open` | `isOpen` | `boolean` | `false` |
 
+| Event | Type |
+| :-- | :-- |
+| `change` | `CustomEvent` |
+| `input` | `CustomEvent` |
 
+| Slot | Description |
+| :-- | :-- |
+| `label` | — |
+| `description` | — |
+| `error` | — |
+
+**CSS parts:** `popover`, `base`, `label`, `input-container`, `input`, `trigger-btn`

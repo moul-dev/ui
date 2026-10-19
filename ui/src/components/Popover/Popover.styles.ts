@@ -9,19 +9,23 @@ export const popoverStyles = [
       position: relative;
     }
 
-    [part="trigger"] {
+    [part~="trigger"] {
       display: inline-block;
       anchor-name: --moul-popover-anchor;
     }
 
-    [part="popover"] {
+    [part~="popover"] {
       margin: 0;
       padding: var(--spacing-4, 1rem);
-      background-color: var(--color-bg-elevated, #ffffff);
-      border: 1px solid var(--color-border, #e5e7eb);
-      border-radius: var(--radius-md, 0.375rem);
-      box-shadow: var(--shadow-md, 0 4px 6px -1px rgb(0 0 0 / 0.1));
+      background-color: var(--glass-bg-thick, #ffffff);
+      -webkit-backdrop-filter: var(--glass-filter);
+      backdrop-filter: var(--glass-filter);
+      border: none;
+      border-radius: calc(1rem * var(--brand-radius-factor, 1));
+      box-shadow: var(--glass-highlight), var(--shadow-glass);
       color: var(--color-fg, #111827);
+      font-size: var(--font-size-sm, 0.875rem);
+      line-height: var(--line-height-sm, 1.25rem);
       outline: none;
       position-anchor: --moul-popover-anchor;
       inset: auto;
@@ -32,42 +36,42 @@ export const popoverStyles = [
     }
 
     /* Native popover visibility */
-    [part="popover"]:not(:popover-open):not(.\:popover-open) {
+    [part~="popover"]:not(:popover-open):not(.\:popover-open) {
       display: none;
     }
 
-    [part="popover"]:popover-open,
-    [part="popover"].\:popover-open {
+    [part~="popover"]:popover-open,
+    [part~="popover"].\:popover-open {
       display: block;
     }
 
     /* Anchor positioning styles */
     @supports (anchor-name: --test) {
-      :host([placement="bottom"]) [part="popover"] {
+      :host([placement="bottom"]) [part~="popover"] {
         top: anchor(bottom);
         left: anchor(center);
-        transform: translateX(-50%);
+        translate: -50% 0;
         margin-top: var(--_offset, 8px);
       }
 
-      :host([placement="top"]) [part="popover"] {
+      :host([placement="top"]) [part~="popover"] {
         bottom: anchor(top);
         left: anchor(center);
-        transform: translateX(-50%);
+        translate: -50% 0;
         margin-bottom: var(--_offset, 8px);
       }
 
-      :host([placement="left"]) [part="popover"] {
+      :host([placement="left"]) [part~="popover"] {
         right: anchor(left);
         top: anchor(center);
-        transform: translateY(-50%);
+        translate: 0 -50%;
         margin-right: var(--_offset, 8px);
       }
 
-      :host([placement="right"]) [part="popover"] {
+      :host([placement="right"]) [part~="popover"] {
         left: anchor(right);
         top: anchor(center);
-        transform: translateY(-50%);
+        translate: 0 -50%;
         margin-left: var(--_offset, 8px);
       }
     }

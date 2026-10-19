@@ -1,45 +1,32 @@
 ---
 title: Calendar
-description: Accessible grid for date browsing, selection, and scheduling.
+description: Month grid for picking a single date.
 ---
 
 import ComponentPreview from '@/components/ComponentPreview.astro';
 
-# Calendar
-
-The `<moul-calendar>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
-
-## Preview
+`<moul-calendar>` renders an accessible month grid. Months slide as you page, and arrow keys move the focused day.
 
 <ComponentPreview>
-  <moul-calendar></moul-calendar>
+<moul-calendar value="2026-10-19" min-date="2026-10-05"></moul-calendar>
 </ComponentPreview>
 
-## Import
-
-```ts
-import '@moul-dev/ui';
-```
-
-## HTML Usage
-
 ```html
-<moul-calendar></moul-calendar>
+<moul-calendar value="2026-10-19" min-date="2026-10-05"></moul-calendar>
 ```
 
-## Attributes & Properties
+## API reference
 
-| Name | Type | Default |
-| :--- | :--- | :--- |
-| `value` | `string` | `''` |
-| `locale` | `string` | `'en-US'` |
-| `min-date` | `string` | `''` |
-| `max-date` | `string` | `''` |
-| `is-disabled` | `boolean` | `false` |
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `value` | `value` | `string` | `''` |
+| `locale` | `locale` | `string` | `'en-US'` |
+| `min-date` | `minDate` | `string` | `''` |
+| `max-date` | `maxDate` | `string` | `''` |
+| `is-disabled` | `isDisabled` | `boolean` | `false` |
 
-## Events
+| Event | Type |
+| :-- | :-- |
+| `change` | `CustomEvent` |
 
-| Event Name | Description |
-| :--- | :--- |
-| `change` | Dispatched when element fires change |
-
+**CSS parts:** `base`, `header`, `nav-btn`, `nav-btn-prev`, `heading`, `nav-btn-next`, `grid`, `grid-header`, `grid-cell`, `day-btn`

@@ -1,47 +1,61 @@
 ---
 title: DoughnutChart
-description: Radial categorical chart with proportion segments and center slots.
+description: Part-to-whole breakdown.
 ---
 
 import ComponentPreview from '@/components/ComponentPreview.astro';
 
-# DoughnutChart
-
-The `<moul-doughnut-chart>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
-
-## Preview
+`<moul-doughnut-chart>` shows shares of a total with an optional center label.
 
 <ComponentPreview>
-  <moul-doughnut-chart height="220" style="width: 100%;"></moul-doughnut-chart>
+<moul-doughnut-chart height="260" center-label="990" center-sublabel="Visitors" style="width: min(100%, 22rem)" data-props='{"data":[{"name":"Organic","value":420},{"name":"Referral","value":260},{"name":"Social","value":190},{"name":"Email","value":120}]}'></moul-doughnut-chart>
 </ComponentPreview>
 
-## Import
-
-```ts
-import '@moul-dev/ui';
-```
-
-## HTML Usage
-
 ```html
-<moul-doughnut-chart height="260"></moul-doughnut-chart>
+<moul-doughnut-chart height="260" center-label="990" center-sublabel="Visitors" style="width: min(100%, 22rem)"></moul-doughnut-chart>
 ```
 
-## Attributes & Properties
+```js
+const doughnutChart = document.querySelector('moul-doughnut-chart')
+doughnutChart.data = [
+  {
+    "name": "Organic",
+    "value": 420
+  },
+  {
+    "name": "Referral",
+    "value": 260
+  },
+  {
+    "name": "Social",
+    "value": 190
+  },
+  {
+    "name": "Email",
+    "value": 120
+  }
+]
+```
 
-| Name | Type | Default |
-| :--- | :--- | :--- |
-| `inner-radius-ratio` | `number` | `0.6` |
-| `height` | `number` | `300` |
-| `center-label` | `string` | `''` |
-| `center-sublabel` | `string` | `''` |
-| `pad-angle` | `number` | `0.02` |
-| `corner-radius` | `number` | `4` |
+## API reference
 
-## Events
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `inner-radius-ratio` | `innerRadiusRatio` | `number` | `0.6` |
+| `height` | `height` | `number` | `300` |
+| `center-label` | `centerLabel` | `string` | `''` |
+| `center-sublabel` | `centerSublabel` | `string` | `''` |
+| `pad-angle` | `padAngle` | `number` | `0.02` |
+| `corner-radius` | `cornerRadius` | `number` | `4` |
 
-| Event Name | Description |
-| :--- | :--- |
-| `point-hover` | Dispatched when element fires point-hover |
-| `point-leave` | Dispatched when element fires point-leave |
+| Event | Type |
+| :-- | :-- |
+| `point-hover` | `CustomEvent` |
+| `point-leave` | `CustomEvent` |
 
+| Slot | Description |
+| :-- | :-- |
+| `empty` | — |
+| `center` | — |
+
+**CSS parts:** `empty`, `wrapper`, `svg`, `slice`, `center`, `center-label`, `center-sublabel`

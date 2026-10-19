@@ -10,7 +10,7 @@ export const buttonGroupStyles = [
       box-sizing: border-box;
     }
 
-    [part="base"] {
+    [part~="base"] {
       display: inline-flex;
       width: 100%;
       height: 100%;
@@ -23,8 +23,8 @@ export const buttonGroupStyles = [
       flex-direction: row;
     }
 
-    :host([orientation="horizontal"]) [part="base"],
-    :host(:not([orientation])) [part="base"] {
+    :host([orientation="horizontal"]) [part~="base"],
+    :host(:not([orientation])) [part~="base"] {
       flex-direction: row;
       align-items: center;
     }
@@ -33,22 +33,22 @@ export const buttonGroupStyles = [
       flex-direction: column;
     }
 
-    :host([orientation="vertical"]) [part="base"] {
+    :host([orientation="vertical"]) [part~="base"] {
       flex-direction: column;
       align-items: stretch;
     }
 
     /* Spacing */
-    :host([spacing="none"]) [part="base"] {
+    :host([spacing="none"]) [part~="base"] {
       gap: 0;
     }
 
-    :host([spacing="sm"]) [part="base"],
-    :host(:not([spacing])) [part="base"] {
+    :host([spacing="sm"]) [part~="base"],
+    :host(:not([spacing])) [part~="base"] {
       gap: var(--spacing-1, 0.25rem);
     }
 
-    :host([spacing="md"]) [part="base"] {
+    :host([spacing="md"]) [part~="base"] {
       gap: var(--spacing-2, 0.5rem);
     }
 

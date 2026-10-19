@@ -3,5 +3,6 @@ export {
   MoulToastRegion,
   MoulToastRegion as ToastRegion,
   type ToastOptions,
+  type ToastPlacement,
   toastQueue,
 } from './ToastQueue'

@@ -1,4 +1,5 @@
 import { execSync } from 'node:child_process'
+import { fileURLToPath } from 'node:url'
 import starlight from '@astrojs/starlight'
 import { defineConfig } from 'astro/config'
 
@@ -8,9 +9,25 @@ try {
   process.exit(1)
 }
 
+// Previews render straight from the library source so the docs never drift
+// behind a stale `ui/dist` build, and component edits hot-reload in dev.
+const uiSrc = (path) =>
+  fileURLToPath(new URL(`../ui/src/${path}`, import.meta.url))
+
 export default defineConfig({
   site: 'https://moul.dev',
   output: 'static',
+  vite: {
+    resolve: {
+      alias: [
+        {
+          find: /^@moul-dev\/ui\/style\.css$/,
+          replacement: uiSrc('styles/style.css'),
+        },
+        { find: /^@moul-dev\/ui$/, replacement: uiSrc('index.ts') },
+      ],
+    },
+  },
   integrations: [
     starlight({
       title: 'Moul UI',

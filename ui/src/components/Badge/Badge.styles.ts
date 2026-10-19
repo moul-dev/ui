@@ -19,7 +19,7 @@ export const badgeStyles = [
       line-height: 1;
     }
 
-    [part="base"] {
+    [part~="base"] {
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -79,7 +79,7 @@ export const badgeStyles = [
       padding: 0;
     }
 
-    :host([is-dot]) [part="base"] {
+    :host([is-dot]) [part~="base"] {
       display: none;
     }
 

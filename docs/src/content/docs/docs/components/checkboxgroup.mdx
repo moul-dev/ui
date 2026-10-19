@@ -1,49 +1,66 @@
 ---
 title: CheckboxGroup
-description: Grouped multi-selection control with unified label and validation.
+description: A labelled set of checkboxes submitted as one value.
 ---
 
 import ComponentPreview from '@/components/ComponentPreview.astro';
 
-# CheckboxGroup
-
-The `<moul-checkbox-group>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
-
-## Preview
+`<moul-checkbox-group>` groups checkboxes under one label and reports the checked values as an array.
 
 <ComponentPreview>
-  <moul-checkbox-group label="Email Preferences">
-  <moul-checkbox checked>Security alerts</moul-checkbox>
-  <moul-checkbox checked>Product updates</moul-checkbox>
-  <moul-checkbox>Newsletter</moul-checkbox>
+<moul-checkbox-group label="Email preferences" description="Choose what lands in your inbox.">
+  <moul-checkbox value="security" is-checked>Security alerts</moul-checkbox>
+  <moul-checkbox value="product" is-checked>Product updates</moul-checkbox>
+  <moul-checkbox value="newsletter">Newsletter</moul-checkbox>
 </moul-checkbox-group>
 </ComponentPreview>
 
-## Import
-
-```ts
-import '@moul-dev/ui';
-```
-
-## HTML Usage
-
 ```html
-<moul-checkbox-group label="Options">
-  <moul-checkbox>Option A</moul-checkbox>
-  <moul-checkbox>Option B</moul-checkbox>
+<moul-checkbox-group label="Email preferences" description="Choose what lands in your inbox.">
+  <moul-checkbox value="security" is-checked>Security alerts</moul-checkbox>
+  <moul-checkbox value="product" is-checked>Product updates</moul-checkbox>
+  <moul-checkbox value="newsletter">Newsletter</moul-checkbox>
 </moul-checkbox-group>
 ```
 
-## Attributes & Properties
+## Horizontal
 
-| Name | Type | Default |
-| :--- | :--- | :--- |
-| `name` | `string` | `''` |
-| `value` | `string[]` | `[]` |
-| `label` | `string` | `''` |
-| `description` | `string` | `''` |
-| `is-disabled` | `boolean` | `false` |
-| `is-required` | `boolean` | `false` |
-| `orientation` | `CheckboxGroupOrientation` | `'vertical'` |
+<ComponentPreview>
+<moul-checkbox-group label="Platforms" orientation="horizontal">
+  <moul-checkbox value="web" is-checked>Web</moul-checkbox>
+  <moul-checkbox value="ios">iOS</moul-checkbox>
+  <moul-checkbox value="android">Android</moul-checkbox>
+</moul-checkbox-group>
+</ComponentPreview>
 
+```html
+<moul-checkbox-group label="Platforms" orientation="horizontal">
+  <moul-checkbox value="web" is-checked>Web</moul-checkbox>
+  <moul-checkbox value="ios">iOS</moul-checkbox>
+  <moul-checkbox value="android">Android</moul-checkbox>
+</moul-checkbox-group>
+```
 
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `name` | `name` | `string` | `''` |
+| `value` | `value` | `string[]` | `[]` |
+| `label` | `label` | `string` | `''` |
+| `description` | `description` | `string` | `''` |
+| `is-disabled` | `isDisabled` | `boolean` | `false` |
+| `is-required` | `isRequired` | `boolean` | `false` |
+| `orientation` | `orientation` | `'horizontal' \| 'vertical'` | `'vertical'` |
+
+| Event | Type |
+| :-- | :-- |
+| `change` | `CustomEvent` |
+
+| Slot | Description |
+| :-- | :-- |
+| `label` | — |
+| `description` | — |
+| `(default)` | — |
+
+**CSS parts:** `base`, `label`, `description`, `group`

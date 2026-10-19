@@ -1,43 +1,41 @@
 ---
 title: Skeleton
-description: Animated placeholder geometry indicating pending content loading.
+description: Placeholder shapes while content loads.
 ---
 
 import ComponentPreview from '@/components/ComponentPreview.astro';
 
-# Skeleton
-
-The `<moul-skeleton>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
-
-## Preview
+`<moul-skeleton>` mirrors the shape of incoming content. `wave` sweeps a highlight; `pulse` breathes.
 
 <ComponentPreview>
-  <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 260px;">
-  <moul-skeleton style="height: 20px; width: 100%;"></moul-skeleton>
-  <moul-skeleton style="height: 16px; width: 80%;"></moul-skeleton>
-  <moul-skeleton style="height: 16px; width: 60%;"></moul-skeleton>
+<div class="demo-row" style="width: min(100%, 22rem); justify-content: flex-start; flex-wrap: nowrap">
+  <moul-skeleton shape="circle" width="3rem" height="3rem"></moul-skeleton>
+  <div class="demo-stack" style="flex: 1; gap: 0.5rem">
+    <moul-skeleton shape="line" width="60%"></moul-skeleton>
+    <moul-skeleton shape="line" width="90%" variant="wave"></moul-skeleton>
+    <moul-skeleton shape="rect" height="4rem" variant="wave"></moul-skeleton>
+  </div>
 </div>
 </ComponentPreview>
 
-## Import
-
-```ts
-import '@moul-dev/ui';
-```
-
-## HTML Usage
-
 ```html
-<moul-skeleton style="height: 20px; width: 100%;"></moul-skeleton>
+<div class="demo-row" style="width: min(100%, 22rem); justify-content: flex-start; flex-wrap: nowrap">
+  <moul-skeleton shape="circle" width="3rem" height="3rem"></moul-skeleton>
+  <div class="demo-stack" style="flex: 1; gap: 0.5rem">
+    <moul-skeleton shape="line" width="60%"></moul-skeleton>
+    <moul-skeleton shape="line" width="90%" variant="wave"></moul-skeleton>
+    <moul-skeleton shape="rect" height="4rem" variant="wave"></moul-skeleton>
+  </div>
+</div>
 ```
 
-## Attributes & Properties
+## API reference
 
-| Name | Type | Default |
-| :--- | :--- | :--- |
-| `shape` | `SkeletonShape` | `'line'` |
-| `variant` | `SkeletonVariant` | `'pulse'` |
-| `width` | `string` | `''` |
-| `height` | `string` | `''` |
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `shape` | `shape` | `'line' \| 'circle' \| 'rect'` | `'line'` |
+| `variant` | `variant` | `'pulse' \| 'wave'` | `'pulse'` |
+| `width` | `width` | `string` | `''` |
+| `height` | `height` | `string` | `''` |
 
-
+**CSS parts:** `base`

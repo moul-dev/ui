@@ -50,13 +50,29 @@ export class MoulEmptyState extends LitElement {
     }
   }
 
+  /** `slot:empty` can't see assigned content, so emptiness is tracked from slotchange. */
+  private readonly handleSlotChange = (event: Event): void => {
+    const part = (event.target as HTMLSlotElement).parentElement
+    if (!part) return
+    const hasContent = Array.from(part.querySelectorAll('slot')).some((slot) =>
+      slot
+        .assignedNodes({ flatten: true })
+        .some(
+          (node) =>
+            node.nodeType === Node.ELEMENT_NODE ||
+            (node.textContent ?? '').trim() !== '',
+        ),
+    )
+    part.toggleAttribute('data-empty', !hasContent)
+  }
+
   protected override render() {
     return html`
-      <div part="base">
-        <div part="icon"><slot name="icon"></slot></div>
-        <div part="title"><slot name="title"></slot></div>
-        <div part="description"><slot name="description"></slot><slot></slot></div>
-        <div part="actions"><slot name="actions"></slot></div>
+      <div part="base" @slotchange=${this.handleSlotChange}>
+        <div part="icon" data-empty><slot name="icon"></slot></div>
+        <div part="title" data-empty><slot name="title"></slot></div>
+        <div part="description" data-empty><slot name="description"></slot><slot></slot></div>
+        <div part="actions" data-empty><slot name="actions"></slot></div>
       </div>
     `
   }

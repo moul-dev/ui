@@ -9,11 +9,21 @@ export const cardStyles = [
     :host {
       display: flex;
       flex-direction: column;
-      border-radius: var(--radius-lg, 0.75rem);
+      border-radius: var(--radius-lg, 1.25rem);
       overflow: hidden;
       box-sizing: border-box;
       position: relative;
-      transition: box-shadow 0.2s ease, transform 0.2s ease;
+      font-size: var(--font-size-sm, 0.875rem);
+      line-height: var(--line-height-sm, 1.25rem);
+      transition:
+        box-shadow var(--duration-base, 240ms) ease,
+        background-color var(--duration-base, 240ms) ease;
+    }
+
+    /* Body copy stays neutral on bordered and glass surfaces; the tone shows in the frame */
+    :host([variant="bordered"]),
+    :host([variant="glass"]) {
+      color: var(--color-fg);
     }
 
     :host([is-interactive]) {
@@ -21,50 +31,80 @@ export const cardStyles = [
       user-select: none;
     }
 
+    :host([is-interactive]:hover) {
+      box-shadow: var(--shadow-lg);
+    }
+
     :host([is-interactive]:focus-visible) {
-      outline: 2px solid var(--color-border-focus, #3b82f6);
-      outline-offset: 2px;
+      outline: none;
+      box-shadow: var(--focus-ring);
     }
 
-    [part="header"] {
+    /* Named slots collapse to nothing when empty, so only real content takes space */
+    [part~="header"],
+    [part~="body"],
+    [part~="content"],
+    [part~="footer"] {
       display: block;
-      padding: var(--spacing-4, 1rem);
-      border-bottom: 1px solid var(--color-border-subtle, rgba(0, 0, 0, 0.06));
     }
 
-    [part="body"],
-    [part="content"] {
-      display: block;
-      padding: var(--spacing-4, 1rem);
+    [part~="body"],
+    [part~="content"] {
       flex: 1 1 auto;
     }
 
-    [part="footer"] {
+    ::slotted([slot="header"]:not(moul-card-header)) {
       display: block;
-      padding: var(--spacing-4, 1rem);
-      border-top: 1px solid var(--color-border-subtle, rgba(0, 0, 0, 0.06));
-    }
-
-    /* Subcomponent styles */
-    moul-card-header,
-    [slot="header"] {
-      display: block;
-      padding: var(--spacing-4, 1rem);
-      font-size: var(--font-size-lg, 1.125rem);
+      padding: var(--spacing-5, 1.25rem) var(--spacing-5, 1.25rem) 0;
       font-weight: 600;
     }
 
-    moul-card-body,
-    [slot="body"] {
+    ::slotted([slot="body"]:not(moul-card-body)) {
       display: block;
-      padding: var(--spacing-4, 1rem);
-      flex: 1 1 auto;
+      padding: var(--spacing-4, 1rem) var(--spacing-5, 1.25rem);
     }
 
-    moul-card-footer,
-    [slot="footer"] {
+    ::slotted([slot="footer"]:not(moul-card-footer)) {
       display: block;
-      padding: var(--spacing-4, 1rem);
+      padding: 0 var(--spacing-5, 1.25rem) var(--spacing-5, 1.25rem);
+    }
+  `,
+]
+
+/** Header / body / footer sections: padding only — they inherit the card's surface. */
+export const cardSectionStyles = [
+  resetStyles,
+  css`
+    :host {
+      display: block;
+      padding: var(--spacing-3, 0.75rem) var(--spacing-5, 1.25rem);
+      color: inherit;
+      font-size: inherit;
+      line-height: inherit;
+    }
+
+    :host(:first-child) {
+      padding-top: var(--spacing-5, 1.25rem);
+    }
+
+    :host(:last-child) {
+      padding-bottom: var(--spacing-5, 1.25rem);
+    }
+
+    :host([data-section="header"]) {
+      font-size: var(--font-size-md, 1rem);
+      line-height: var(--line-height-md, 1.5rem);
+      font-weight: 600;
+    }
+
+    :host([data-section="body"]) {
+      color: color-mix(in oklch, currentColor 78%, transparent);
+    }
+
+    :host([data-section="footer"]) {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-2, 0.5rem);
     }
   `,
 ]

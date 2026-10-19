@@ -23,7 +23,7 @@ export class MoulToast extends LitElement {
     tone: { type: String, reflect: true },
     variant: { type: String, reflect: true },
     duration: { type: Number, reflect: true },
-    title: { type: String, reflect: true },
+    title: { type: String },
     description: { type: String, reflect: true },
     isOpen: { type: Boolean, reflect: true, attribute: 'is-open' },
   }
@@ -43,23 +43,26 @@ export class MoulToast extends LitElement {
   constructor() {
     super()
     this.tone = 'primary'
-    this.variant = 'solid'
+    this.variant = 'glass'
     this.duration = 5000
     this.title = ''
     this.description = ''
     this.isOpen = true
 
+    // The surrounding <moul-toast-region> owns the top layer; a toast only animates.
     this.overlayPresence = new OverlayPresenceController(this, {
       preset: 'toast',
-      popover: () => this,
+      popover: () => null,
+      dialog: () => null,
     })
   }
 
   public override connectedCallback(): void {
     super.connectedCallback()
-    if (!this.hasAttribute('popover')) {
-      this.setAttribute('popover', 'manual')
-    }
+    const region = this.closest('moul-toast-region') as
+      | (HTMLElement & { isTop?: boolean })
+      | null
+    this.overlayPresence.preset = region?.isTop ? 'toast-top' : 'toast'
 
     const isAlert = this.tone === 'error'
     this.setAttribute('role', isAlert ? 'alert' : 'status')

@@ -6,46 +6,127 @@
   font-family: "Kantumruy Pro", var(--sl-font-system), sans-serif;
 }
 
-/* Component Preview styles */
+/* Starlight drives light/dark through data-theme; mirror it so light-dark() tokens follow the toggle. */
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+/* ── Component Preview ───────────────────────────────────────────── */
 .moul-preview {
+  --preview-radius: 1.25rem;
   margin: 1.5rem 0;
-  border: 1px solid var(--sl-color-gray-5, #e2e8f0);
-  border-radius: var(--brand-radius, 0.75rem);
+  border: 1px solid var(--color-border-glass);
+  border-radius: var(--preview-radius);
   overflow: hidden;
-  background: var(--sl-color-bg, #ffffff);
+  background: var(--color-bg);
+  box-shadow: var(--shadow-sm);
+  isolation: isolate;
+  font-family: var(--sl-font-system, system-ui), sans-serif;
+  color: var(--color-fg);
 }
 
 .moul-preview-header {
-  padding: 0.75rem 1rem;
-  font-size: 0.875rem;
+  padding: 0.75rem 1.125rem;
+  font-size: 0.8125rem;
   font-weight: 600;
-  border-bottom: 1px solid var(--sl-color-gray-5, #e2e8f0);
-  background: var(--sl-color-gray-6, #f8fafc);
-  color: var(--sl-color-text, inherit);
+  letter-spacing: 0.01em;
+  border-bottom: 1px solid var(--color-border-glass);
+  background: var(--color-bg-subtle);
+  color: var(--color-fg-subtle);
 }
 
 .moul-preview-canvas {
-  padding: 2rem;
+  position: relative;
+  padding: 2.5rem 2rem;
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
   align-items: center;
-  min-height: 120px;
+  justify-content: center;
+  min-height: 160px;
+  font-size: 0.9375rem;
+  line-height: 1.5;
 }
 
-.moul-preview[data-align="center"] .moul-preview-canvas {
-  justify-content: center;
+/* A soft color field so glass surfaces have something to refract, like a wallpaper behind macOS chrome. */
+.moul-preview[data-backdrop="mesh"] .moul-preview-canvas {
+  background:
+    radial-gradient(
+      60% 80% at 0% 0%,
+      light-dark(
+        oklch(0.9 0.08 var(--brand-hue) / 0.55),
+        oklch(0.35 0.12 var(--brand-hue) / 0.45)
+      ),
+      transparent 70%
+    ),
+    radial-gradient(
+      50% 70% at 100% 100%,
+      light-dark(oklch(0.9 0.08 330 / 0.45), oklch(0.32 0.1 330 / 0.4)),
+      transparent 70%
+    ),
+    radial-gradient(
+      45% 60% at 100% 0%,
+      light-dark(oklch(0.92 0.07 190 / 0.45), oklch(0.32 0.08 190 / 0.35)),
+      transparent 70%
+    ),
+    var(--color-bg-subtle);
+}
+
+.moul-preview[data-stack] .moul-preview-canvas {
+  flex-direction: column;
 }
 
 .moul-preview[data-align="start"] .moul-preview-canvas {
   justify-content: flex-start;
+  align-items: flex-start;
 }
 
 .moul-preview[data-align="stretch"] .moul-preview-canvas {
-  justify-content: stretch;
   flex-direction: column;
+  align-items: stretch;
 }
 
 .moul-preview[data-align="stretch"] .moul-preview-canvas > * {
   width: 100%;
+}
+
+/* Hide elements until Lit upgrades them so previews never flash unstyled light DOM. */
+.moul-preview-canvas :not(:defined) {
+  visibility: hidden;
+}
+
+/* Helpers used inside preview markup */
+.moul-preview .demo-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.moul-preview .demo-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.moul-preview .demo-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-fg-subtle);
+}
+
+.moul-preview p {
+  margin: 0;
+}
+
+@media (max-width: 40rem) {
+  .moul-preview-canvas {
+    padding: 1.75rem 1rem;
+  }
 }

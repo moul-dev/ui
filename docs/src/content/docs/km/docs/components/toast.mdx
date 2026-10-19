@@ -5,42 +5,78 @@ description: ឯកសារណែនាំសម្រាប់សមាសភ�
 
 import ComponentPreview from '@/components/ComponentPreview.astro';
 
-# Toast (សមាសភាគ)
+Toasts are queued with `toastQueue.add()`. They stack inside one `<moul-toast-region>` in the top layer, pause while hovered, and the remaining toasts glide together when one leaves.
 
-The `<moul-toast>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
-
-## Preview
+## Tones
 
 <ComponentPreview>
-  <moul-button variant="primary">Dispatch Toast</moul-button>
+<div class="demo-row">
+  <moul-button variant="secondary" data-toast='{"title":"Saved","description":"Your settings were updated.","tone":"primary"}'>Primary</moul-button>
+  <moul-button variant="secondary" data-toast='{"title":"Deployed","description":"Release 2026.10 is live.","tone":"success"}'>Success</moul-button>
+  <moul-button variant="secondary" data-toast='{"title":"Quota warning","description":"84% of build minutes used.","tone":"warning"}'>Warning</moul-button>
+  <moul-button variant="secondary" data-toast='{"title":"Build failed","description":"Type check failed.","tone":"error"}'>Error</moul-button>
+</div>
 </ComponentPreview>
 
-## Import
+## Placement
 
-```ts
-import '@moul-dev/ui';
+Set `toastQueue.placement` (or the `placement` attribute on `<moul-toast-region>`). Bottom regions stack upward, top regions stack downward.
+
+<ComponentPreview>
+<div class="demo-row">
+  <moul-button variant="outline" data-toast='{"title":"Top start","placement":"top-start"}'>Top start</moul-button>
+  <moul-button variant="outline" data-toast='{"title":"Top center","placement":"top-center"}'>Top center</moul-button>
+  <moul-button variant="outline" data-toast='{"title":"Top end","placement":"top-end"}'>Top end</moul-button>
+  <moul-button variant="outline" data-toast='{"title":"Bottom start","placement":"bottom-start"}'>Bottom start</moul-button>
+  <moul-button variant="outline" data-toast='{"title":"Bottom center","placement":"bottom-center"}'>Bottom center</moul-button>
+  <moul-button variant="outline" data-toast='{"title":"Bottom end","placement":"bottom-end"}'>Bottom end</moul-button>
+</div>
+</ComponentPreview>
+
+## Usage
+
+```js
+import { toastQueue } from '@moul-dev/ui'
+
+toastQueue.placement = 'top-center'
+const id = toastQueue.add({
+  title: 'Saved',
+  description: 'Your settings were updated.',
+  tone: 'success',   // primary | accent | success | warning | error
+  variant: 'glass',  // default
+  duration: 5000,    // 0 keeps it open
+})
+toastQueue.close(id)
 ```
 
-## HTML Usage
+## API reference
 
-```html
-<moul-toast title="File Saved" description="Your settings have been updated."></moul-toast>
-```
+### `<moul-toast>`
 
-## Attributes & Properties
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `tone` | `tone` | `'primary' \| 'accent' \| 'success' \| 'warning' \| 'error'` | `'primary'` |
+| `variant` | `variant` | `'solid' \| 'flat' \| 'shadow' \| 'bordered' \| 'glass'` | `'solid'` |
+| `duration` | `duration` | `number` | `5000` |
+| `title` | `title` | `string` | `''` |
+| `description` | `description` | `string` | `''` |
+| `is-open` | `isOpen` | `boolean` | `true` |
 
-| Name | Type | Default |
-| :--- | :--- | :--- |
-| `tone` | `SemanticTone` | `'primary'` |
-| `variant` | `VisualVariant` | `'solid'` |
-| `duration` | `number` | `5000` |
-| `title` | `string` | `''` |
-| `description` | `string` | `''` |
-| `is-open` | `boolean` | `true` |
+| Event | Type |
+| :-- | :-- |
+| `dismiss` | `CustomEvent` |
 
-## Events
+| Slot | Description |
+| :-- | :-- |
+| `icon` | — |
+| `title` | — |
+| `(default)` | — |
+| `action` | — |
 
-| Event Name | Description |
-| :--- | :--- |
-| `dismiss` | Dispatched when element fires dismiss |
+**CSS parts:** `base`, `icon`, `content`, `title`, `description`, `actions`, `dismiss-button`
 
+### `<moul-toast-region>`
+
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | — |

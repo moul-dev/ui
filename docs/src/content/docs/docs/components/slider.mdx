@@ -1,48 +1,46 @@
 ---
 title: Slider
-description: Continuous or stepped value adjustment along a track.
+description: Pick a value from a continuous range.
 ---
 
 import ComponentPreview from '@/components/ComponentPreview.astro';
 
-# Slider
-
-The `<moul-slider>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
-
-## Preview
+`<moul-slider>` is built on a native range input, so keyboard, touch and form submission work out of the box.
 
 <ComponentPreview>
-  <moul-slider value="65" min="0" max="100" style="width: 280px;"></moul-slider>
+<div class="demo-stack" style="width: min(100%, 22rem)">
+  <moul-slider label="Volume" value="65" min="0" max="100" show-output></moul-slider>
+  <moul-slider label="Disabled" value="30" is-disabled></moul-slider>
+</div>
 </ComponentPreview>
 
-## Import
-
-```ts
-import '@moul-dev/ui';
-```
-
-## HTML Usage
-
 ```html
-<moul-slider value="50" min="0" max="100"></moul-slider>
+<div class="demo-stack" style="width: min(100%, 22rem)">
+  <moul-slider label="Volume" value="65" min="0" max="100" show-output></moul-slider>
+  <moul-slider label="Disabled" value="30" is-disabled></moul-slider>
+</div>
 ```
 
-## Attributes & Properties
+## API reference
 
-| Name | Type | Default |
-| :--- | :--- | :--- |
-| `name` | `string` | `''` |
-| `min` | `number` | `0` |
-| `max` | `number` | `100` |
-| `step` | `number` | `1` |
-| `value` | `number` | `0` |
-| `is-disabled` | `boolean` | `false` |
-| `label` | `string` | `''` |
-| `show-output` | `boolean` | `true` |
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `name` | `name` | `string` | `''` |
+| `min` | `min` | `number` | `0` |
+| `max` | `max` | `number` | `100` |
+| `step` | `step` | `number` | `1` |
+| `value` | `value` | `number` | `0` |
+| `is-disabled` | `isDisabled` | `boolean` | `false` |
+| `label` | `label` | `string` | `''` |
+| `show-output` | `showOutput` | `boolean` | `true` |
 
-## Events
+| Event | Type |
+| :-- | :-- |
+| `input` | `CustomEvent` |
+| `change` | `CustomEvent` |
 
-| Event Name | Description |
-| :--- | :--- |
-| `input` | Dispatched when element fires input |
+| Slot | Description |
+| :-- | :-- |
+| `label` | — |
 
+**CSS parts:** `thumb`, `track`, `base`, `header`, `label`, `output`, `track-container`, `fill`

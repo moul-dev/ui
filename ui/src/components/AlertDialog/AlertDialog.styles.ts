@@ -1,4 +1,5 @@
 import { css } from 'lit'
+import { overlayStyles } from '../../styles/overlay.styles'
 import { resetStyles } from '../../styles/reset.styles'
 
 export const alertDialogStyles = [
@@ -36,7 +37,7 @@ export const alertDialogStyles = [
       backdrop-filter: blur(4px);
     }
 
-    [part="base"] {
+    [part~="base"] {
       background-color: var(--color-bg-elevated, #ffffff);
       border-radius: var(--radius-lg, 0.5rem);
       border: 1px solid var(--color-border, #e5e7eb);
@@ -52,26 +53,26 @@ export const alertDialogStyles = [
       margin: var(--spacing-4, 1rem);
     }
 
-    :host([size="sm"]) [part="base"] {
+    :host([size="sm"]) [part~="base"] {
       max-width: 24rem;
     }
 
-    :host([size="md"]) [part="base"] {
+    :host([size="md"]) [part~="base"] {
       max-width: 28rem;
     }
 
-    :host([size="lg"]) [part="base"] {
+    :host([size="lg"]) [part~="base"] {
       max-width: 36rem;
     }
 
-    [part="header"] {
+    [part~="header"] {
       padding: var(--spacing-6, 1.5rem) var(--spacing-6, 1.5rem) var(--spacing-2, 0.5rem);
       font-size: var(--font-size-lg, 1.125rem);
       font-weight: 600;
       color: var(--color-fg, #111827);
     }
 
-    [part="body"] {
+    [part~="body"] {
       padding: var(--spacing-2, 0.5rem) var(--spacing-6, 1.5rem) var(--spacing-4, 1rem);
       font-size: var(--font-size-sm, 0.875rem);
       line-height: var(--line-height-sm, 1.25rem);
@@ -79,7 +80,7 @@ export const alertDialogStyles = [
       overflow-y: auto;
     }
 
-    [part="footer"] {
+    [part~="footer"] {
       padding: var(--spacing-4, 1rem) var(--spacing-6, 1.5rem) var(--spacing-6, 1.5rem);
       display: flex;
       align-items: center;
@@ -87,4 +88,5 @@ export const alertDialogStyles = [
       gap: var(--spacing-3, 0.75rem);
     }
   `,
+  overlayStyles,
 ]

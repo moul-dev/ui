@@ -5,47 +5,45 @@ description: ឯកសារណែនាំសម្រាប់សមាសភ�
 
 import ComponentPreview from '@/components/ComponentPreview.astro';
 
-# SearchField (សមាសភាគ)
-
-The `<moul-search-field>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
-
-## Preview
+`<moul-search-field>` shows a clear button once there is text and fires `submit` when Enter is pressed.
 
 <ComponentPreview>
-  <moul-search-field placeholder="Filter repositories..."></moul-search-field>
+<div style="width: min(100%, 22rem)">
+  <moul-search-field label="Repositories" placeholder="Filter repositories…" value="moul"></moul-search-field>
+</div>
 </ComponentPreview>
 
-## Import
-
-```ts
-import '@moul-dev/ui';
-```
-
-## HTML Usage
-
 ```html
-<moul-search-field placeholder="Search..."></moul-search-field>
+<div style="width: min(100%, 22rem)">
+  <moul-search-field label="Repositories" placeholder="Filter repositories…" value="moul"></moul-search-field>
+</div>
 ```
 
-## Attributes & Properties
+## API reference
 
-| Name | Type | Default |
-| :--- | :--- | :--- |
-| `name` | `string` | `''` |
-| `value` | `string` | `''` |
-| `placeholder` | `string` | `'Search...'` |
-| `label` | `string` | `''` |
-| `description` | `string` | `''` |
-| `error-message` | `string` | `''` |
-| `is-disabled` | `boolean` | `false` |
-| `is-required` | `boolean` | `false` |
-| `is-readonly` | `boolean` | `false` |
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `name` | `name` | `string` | `''` |
+| `value` | `value` | `string` | `''` |
+| `placeholder` | `placeholder` | `string` | `'Search...'` |
+| `label` | `label` | `string` | `''` |
+| `description` | `description` | `string` | `''` |
+| `error-message` | `errorMessage` | `string` | `''` |
+| `is-disabled` | `isDisabled` | `boolean` | `false` |
+| `is-required` | `isRequired` | `boolean` | `false` |
+| `is-readonly` | `isReadonly` | `boolean` | `false` |
 
-## Events
+| Event | Type |
+| :-- | :-- |
+| `clear` | `CustomEvent` |
+| `input` | `Event` |
+| `change` | `Event` |
+| `submit` | `CustomEvent` |
 
-| Event Name | Description |
-| :--- | :--- |
-| `clear` | Dispatched when element fires clear |
-| `input` | Dispatched when element fires input |
-| `change` | Dispatched when element fires change |
+| Slot | Description |
+| :-- | :-- |
+| `label` | — |
+| `description` | — |
+| `error` | — |
 
+**CSS parts:** `clear-btn`, `error`, `base`, `label`, `search`, `input-container`, `search-icon`, `input`, `description`

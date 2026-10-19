@@ -5,41 +5,41 @@ description: ឯកសារណែនាំសម្រាប់សមាសភ�
 
 import ComponentPreview from '@/components/ComponentPreview.astro';
 
-# ProgressBar (សមាសភាគ)
-
-The `<moul-progress-bar>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
-
-## Preview
+`<moul-progress-bar>` animates its fill with a spring when `value` changes; `is-indeterminate` loops while the duration is unknown.
 
 <ComponentPreview>
-  <div style="width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 0.75rem;">
-  <moul-progress-bar value="65" max="100"></moul-progress-bar>
+<div class="demo-stack" style="width: min(100%, 24rem)">
+  <moul-progress-bar value="65"><span slot="label">Uploading assets</span></moul-progress-bar>
+  <moul-progress-bar value="90" tone="success" size="sm"></moul-progress-bar>
+  <moul-progress-bar value="35" tone="warning" shape="square" size="lg"></moul-progress-bar>
+  <moul-progress-bar is-indeterminate><span slot="label">Preparing build</span></moul-progress-bar>
 </div>
 </ComponentPreview>
 
-## Import
-
-```ts
-import '@moul-dev/ui';
-```
-
-## HTML Usage
-
 ```html
-<moul-progress-bar value="50" max="100"></moul-progress-bar>
+<div class="demo-stack" style="width: min(100%, 24rem)">
+  <moul-progress-bar value="65"><span slot="label">Uploading assets</span></moul-progress-bar>
+  <moul-progress-bar value="90" tone="success" size="sm"></moul-progress-bar>
+  <moul-progress-bar value="35" tone="warning" shape="square" size="lg"></moul-progress-bar>
+  <moul-progress-bar is-indeterminate><span slot="label">Preparing build</span></moul-progress-bar>
+</div>
 ```
 
-## Attributes & Properties
+## API reference
 
-| Name | Type | Default |
-| :--- | :--- | :--- |
-| `value` | `number` | `0` |
-| `min` | `number` | `0` |
-| `max` | `number` | `100` |
-| `tone` | `SemanticTone` | `'primary'` |
-| `variant` | `VisualVariant` | `'solid'` |
-| `size` | `ProgressBarSize` | `'md'` |
-| `shape` | `ProgressBarShape` | `'pill'` |
-| `is-indeterminate` | `boolean` | `false` |
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `value` | `value` | `number` | `0` |
+| `min` | `min` | `number` | `0` |
+| `max` | `max` | `number` | `100` |
+| `tone` | `tone` | `'primary' \| 'accent' \| 'success' \| 'warning' \| 'error'` | `'primary'` |
+| `variant` | `variant` | `'solid' \| 'flat' \| 'shadow' \| 'bordered' \| 'glass'` | `'solid'` |
+| `size` | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` |
+| `shape` | `shape` | `'square' \| 'rounded' \| 'pill'` | `'pill'` |
+| `is-indeterminate` | `isIndeterminate` | `boolean` | `false` |
 
+| Slot | Description |
+| :-- | :-- |
+| `label` | — |
 
+**CSS parts:** `fill`, `header`, `track`

@@ -16,14 +16,14 @@ export const sliderStyles = [
       display: none !important;
     }
 
-    [part='base'] {
+    [part~='base'] {
       display: flex;
       flex-direction: column;
       gap: var(--spacing-1, 0.25rem);
       width: 100%;
     }
 
-    [part='header'] {
+    [part~='header'] {
       display: flex;
       justify-content: space-between;
       align-items: baseline;
@@ -31,16 +31,16 @@ export const sliderStyles = [
       font-weight: 500;
     }
 
-    [part='label'] {
+    [part~='label'] {
       color: var(--color-fg, inherit);
     }
 
-    [part='output'] {
+    [part~='output'] {
       color: var(--color-fg-subtle, #6b7280);
       font-size: var(--font-size-xs, 0.75rem);
     }
 
-    [part='track-container'] {
+    [part~='track-container'] {
       position: relative;
       display: flex;
       align-items: center;
@@ -50,7 +50,7 @@ export const sliderStyles = [
       touch-action: none;
     }
 
-    [part='track'] {
+    [part~='track'] {
       position: relative;
       width: 100%;
       height: 0.375rem;
@@ -58,7 +58,7 @@ export const sliderStyles = [
       background-color: var(--color-neutral-200, #e5e7eb);
     }
 
-    [part='fill'] {
+    [part~='fill'] {
       position: absolute;
       left: 0;
       top: 0;
@@ -67,10 +67,10 @@ export const sliderStyles = [
       background-color: var(--color-primary-500, #3b82f6);
     }
 
-    [part='thumb'] {
+    [part~='thumb'] {
       position: absolute;
       top: 50%;
-      transform: translate(-50%, -50%);
+      translate: -50% -50%;
       width: 1.125rem;
       height: 1.125rem;
       border-radius: var(--radius-full, 9999px);
@@ -82,11 +82,11 @@ export const sliderStyles = [
       transition: border-color 0.1s ease, box-shadow 0.1s ease;
     }
 
-    [part='thumb']:active {
+    [part~='thumb']:active {
       cursor: grabbing;
     }
 
-    [part='thumb']:focus-visible {
+    [part~='thumb']:focus-visible {
       outline: 2px solid var(--color-border-focus, #3b82f6);
       outline-offset: 2px;
     }
@@ -97,7 +97,7 @@ export const sliderStyles = [
       pointer-events: none;
     }
 
-    :host([is-disabled]) [part='track-container'] {
+    :host([is-disabled]) [part~='track-container'] {
       cursor: not-allowed;
     }
   `,

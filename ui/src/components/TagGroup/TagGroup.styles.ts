@@ -26,7 +26,7 @@ export const tagStyles = [
       cursor: not-allowed;
     }
 
-    [part="base"] {
+    [part~="base"] {
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -55,8 +55,19 @@ export const tagStyles = [
     }
 
     :host([is-selected]) {
-      outline: 2px solid var(--color-border-focus, #3b82f6);
-      outline-offset: 1px;
+      background: var(--_tone-solid-bg);
+      color: var(--_tone-solid-fg);
+      border-color: transparent;
+      box-shadow:
+        inset 0 1px 0 oklch(1 0 0 / 0.25),
+        0 2px 6px -2px color-mix(in oklch, var(--_tone-solid-bg) 60%, transparent);
+    }
+
+    :host {
+      transition:
+        background-color var(--duration-fast, 140ms) ease,
+        color var(--duration-fast, 140ms) ease,
+        box-shadow var(--duration-fast, 140ms) ease;
     }
 
     .remove-button {

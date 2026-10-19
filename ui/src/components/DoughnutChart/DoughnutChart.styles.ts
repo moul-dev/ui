@@ -87,7 +87,7 @@ export const doughnutChartStyles: CSSResultGroup = [
       pointer-events: auto;
     }
 
-    [part="empty"],
+    [part~="empty"],
     .empty-state {
       display: flex;
       flex-direction: column;

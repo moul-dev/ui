@@ -5,45 +5,85 @@ description: ឯកសារណែនាំសម្រាប់សមាសភ�
 
 import ComponentPreview from '@/components/ComponentPreview.astro';
 
-# Avatar (សមាសភាគ)
-
-The `<moul-avatar>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
-
-## Preview
+`<moul-avatar>` fades its image in once loaded and falls back to initials from `name`. `<moul-avatar-group>` overlaps avatars and summarises the overflow.
 
 <ComponentPreview>
-  <moul-avatar-group>
-  <moul-avatar initials="PT"></moul-avatar>
-  <moul-avatar initials="JD"></moul-avatar>
-  <moul-avatar initials="AL"></moul-avatar>
+<div class="demo-row">
+  <moul-avatar name="Sarah Chen" size="xs"></moul-avatar>
+  <moul-avatar name="Marcus Brody" size="sm" status="online"></moul-avatar>
+  <moul-avatar name="Elena Rostova" size="md" status="away"></moul-avatar>
+  <moul-avatar name="Devon Vance" size="lg" status="busy"></moul-avatar>
+  <moul-avatar name="Kim Ly" size="xl" shape="square"></moul-avatar>
+</div>
+</ComponentPreview>
+
+```html
+<div class="demo-row">
+  <moul-avatar name="Sarah Chen" size="xs"></moul-avatar>
+  <moul-avatar name="Marcus Brody" size="sm" status="online"></moul-avatar>
+  <moul-avatar name="Elena Rostova" size="md" status="away"></moul-avatar>
+  <moul-avatar name="Devon Vance" size="lg" status="busy"></moul-avatar>
+  <moul-avatar name="Kim Ly" size="xl" shape="square"></moul-avatar>
+</div>
+```
+
+## Group
+
+<ComponentPreview>
+<moul-avatar-group max="4">
+  <moul-avatar name="Sarah Chen"></moul-avatar>
+  <moul-avatar name="Marcus Brody"></moul-avatar>
+  <moul-avatar name="Elena Rostova"></moul-avatar>
+  <moul-avatar name="Devon Vance"></moul-avatar>
+  <moul-avatar name="Alex Miller"></moul-avatar>
+  <moul-avatar name="Jordan Reed"></moul-avatar>
 </moul-avatar-group>
 </ComponentPreview>
 
-## Import
-
-```ts
-import '@moul-dev/ui';
-```
-
-## HTML Usage
-
 ```html
-<moul-avatar initials="PT" status="online"></moul-avatar>
-<moul-avatar-group max="3">
-  <moul-avatar initials="PT"></moul-avatar>
-  <moul-avatar initials="JD"></moul-avatar>
+<moul-avatar-group max="4">
+  <moul-avatar name="Sarah Chen"></moul-avatar>
+  <moul-avatar name="Marcus Brody"></moul-avatar>
+  <moul-avatar name="Elena Rostova"></moul-avatar>
+  <moul-avatar name="Devon Vance"></moul-avatar>
+  <moul-avatar name="Alex Miller"></moul-avatar>
+  <moul-avatar name="Jordan Reed"></moul-avatar>
 </moul-avatar-group>
 ```
 
-## Attributes & Properties
+## API reference
 
-| Name | Type | Default |
-| :--- | :--- | :--- |
-| `src` | `string` | `''` |
-| `name` | `string` | `''` |
-| `size` | `AvatarSize` | `-` |
-| `shape` | `AvatarShape` | `'circle'` |
-| `status` | `AvatarStatus | undefined` | `-` |
-| `hasImageError` | `boolean` | `false` |
+### `<moul-avatar>`
 
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `src` | `src` | `string` | `''` |
+| `name` | `name` | `string` | `''` |
+| `size` | `size` | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl'` | — |
+| `shape` | `shape` | `'circle' \| 'square'` | `'circle'` |
+| `status` | `status` | `'online' \| 'offline' \| 'away' \| 'busy' \| undefined` | — |
+| `hasImageError` | `hasImageError` | `boolean` | `false` |
 
+| Event | Type |
+| :-- | :-- |
+| `error` | `CustomEvent` |
+
+| Slot | Description |
+| :-- | :-- |
+| `fallback` | — |
+
+**CSS parts:** `image`, `initials`, `fallback`, `status`
+
+### `<moul-avatar-group>`
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `max` | `max` | `number` | `5` |
+| `size` | `size` | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl'` | `'md'` |
+| `totalAvatars` | `totalAvatars` | `number` | `0` |
+
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | — |
+
+**CSS parts:** `overflow`

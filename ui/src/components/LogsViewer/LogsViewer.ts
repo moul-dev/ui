@@ -543,7 +543,7 @@ export class MoulLogsViewer extends LitElement {
             : ''
         }
         <div class="cell cell-message" part="cell-message" role="cell">
-          <span>${HighlightText({ text: item.message, query: this.searchQuery })}</span>
+          <span class="message-text">${HighlightText({ text: item.message, query: this.searchQuery })}</span>
           ${
             item.attributes && Object.keys(item.attributes).length > 0
               ? html`

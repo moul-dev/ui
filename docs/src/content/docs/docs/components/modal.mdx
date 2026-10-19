@@ -1,45 +1,63 @@
 ---
 title: Modal
-description: Dialog overlay with focus containment and keyboard escape dismissal.
+description: Dialog with focus containment, Escape and backdrop dismissal.
 ---
 
 import ComponentPreview from '@/components/ComponentPreview.astro';
 
-# Modal
-
-The `<moul-modal>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
-
-## Preview
+`<moul-modal>` opens a native `<dialog>` in the top layer on a frosted backdrop. Focus is trapped inside and returns to the trigger on close.
 
 <ComponentPreview>
-  <moul-button variant="primary">Launch Modal</moul-button>
+<moul-button data-open="demo-modal">Open modal</moul-button>
+<moul-modal id="demo-modal" aria-label="Invite teammates">
+  <h3 slot="header">Invite teammates</h3>
+  <div class="demo-stack">
+    <p>New members get access to every project in this workspace.</p>
+    <moul-text-field label="Email" type="email" placeholder="name@company.com"></moul-text-field>
+  </div>
+  <div slot="footer" class="demo-row" style="justify-content: flex-end">
+    <moul-button variant="ghost" data-close="demo-modal">Cancel</moul-button>
+    <moul-button data-close="demo-modal">Send invite</moul-button>
+  </div>
+</moul-modal>
 </ComponentPreview>
 
-## Import
-
-```ts
-import '@moul-dev/ui';
-```
-
-## HTML Usage
-
 ```html
-<moul-modal title="Dialog Title">
-  <p>Modal dialog body content.</p>
+<moul-button id="invite">Open modal</moul-button>
+<moul-modal id="invite-modal" aria-label="Invite teammates">
+  <h3 slot="header">Invite teammates</h3>
+  <p>New members get access to every project in this workspace.</p>
+  <div slot="footer">
+    <moul-button variant="ghost">Cancel</moul-button>
+    <moul-button>Send invite</moul-button>
+  </div>
 </moul-modal>
 ```
 
-## Attributes & Properties
+```js
+const modal = document.querySelector('#invite-modal')
+document.querySelector('#invite').addEventListener('press', () => {
+  modal.isOpen = true
+})
+modal.addEventListener('openchange', (event) => console.log(event.detail.isOpen))
+```
 
-| Name | Type | Default |
-| :--- | :--- | :--- |
-| `is-open` | `boolean` | `false` |
-| `size` | `ModalSize` | `'md'` |
-| `is-dismissable` | `boolean` | `true` |
+## API reference
 
-## Events
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `is-open` | `isOpen` | `boolean` | `false` |
+| `size` | `size` | `'sm' \| 'md' \| 'lg' \| 'fullscreen'` | `'md'` |
+| `is-dismissable` | `isDismissable` | `boolean` | `true` |
 
-| Event Name | Description |
-| :--- | :--- |
-| `openchange` | Dispatched when element fires openchange |
+| Event | Type |
+| :-- | :-- |
+| `openchange` | `CustomEvent` |
 
+| Slot | Description |
+| :-- | :-- |
+| `header` | — |
+| `(default)` | — |
+| `footer` | — |
+
+**CSS parts:** `base`, `dialog`, `header`, `body`, `footer`

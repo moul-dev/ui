@@ -5,42 +5,45 @@ description: ឯកសារណែនាំសម្រាប់សមាសភ�
 
 import ComponentPreview from '@/components/ComponentPreview.astro';
 
-# Link (សមាសភាគ)
-
-The `<moul-link>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
-
-## Preview
+`<moul-link>` renders an anchor. `is-external` opens a new tab with safe `rel` defaults and adds an arrow glyph.
 
 <ComponentPreview>
-  <moul-link href="#">Documentation Overview →</moul-link>
+<div class="demo-row">
+  <moul-link href="#">Default link</moul-link>
+  <moul-link href="#" variant="subtle">Subtle link</moul-link>
+  <moul-link href="#" variant="underline">Underlined</moul-link>
+  <moul-link href="https://developer.mozilla.org" is-external>MDN</moul-link>
+  <moul-link href="#" is-disabled>Disabled</moul-link>
+</div>
 </ComponentPreview>
 
-## Import
-
-```ts
-import '@moul-dev/ui';
-```
-
-## HTML Usage
-
 ```html
-<moul-link href="/docs">Docs</moul-link>
+<div class="demo-row">
+  <moul-link href="#">Default link</moul-link>
+  <moul-link href="#" variant="subtle">Subtle link</moul-link>
+  <moul-link href="#" variant="underline">Underlined</moul-link>
+  <moul-link href="https://developer.mozilla.org" is-external>MDN</moul-link>
+  <moul-link href="#" is-disabled>Disabled</moul-link>
+</div>
 ```
 
-## Attributes & Properties
+## API reference
 
-| Name | Type | Default |
-| :--- | :--- | :--- |
-| `href` | `string` | `''` |
-| `target` | `string` | `''` |
-| `rel` | `string` | `''` |
-| `is-external` | `boolean` | `false` |
-| `variant` | `LinkVariant` | `'default'` |
-| `is-disabled` | `boolean` | `false` |
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `href` | `href` | `string` | `''` |
+| `target` | `target` | `string` | `''` |
+| `rel` | `rel` | `string` | `''` |
+| `is-external` | `isExternal` | `boolean` | `false` |
+| `variant` | `variant` | `'default' \| 'subtle' \| 'underline'` | `'default'` |
+| `is-disabled` | `isDisabled` | `boolean` | `false` |
 
-## Events
+| Event | Type |
+| :-- | :-- |
+| `press` | `CustomEvent` |
 
-| Event Name | Description |
-| :--- | :--- |
-| `press` | Dispatched when element fires press |
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | — |
 
+**CSS parts:** `base`, `external-icon`

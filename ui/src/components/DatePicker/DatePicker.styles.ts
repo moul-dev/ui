@@ -1,4 +1,5 @@
 import { css } from 'lit'
+import { fieldStyles } from '../../styles/field.styles'
 import { resetStyles } from '../../styles/reset.styles'
 
 export const datePickerStyles = [
@@ -16,21 +17,21 @@ export const datePickerStyles = [
       display: none !important;
     }
 
-    [part='base'] {
+    [part~='base'] {
       display: flex;
       flex-direction: column;
       gap: var(--spacing-1, 0.25rem);
       width: 100%;
     }
 
-    [part='label'] {
+    [part~='label'] {
       display: block;
       font-size: var(--font-size-sm, 0.875rem);
       font-weight: 500;
       color: var(--color-fg, inherit);
     }
 
-    [part='input-container'] {
+    [part~='input-container'] {
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -44,22 +45,22 @@ export const datePickerStyles = [
       box-shadow: var(--shadow-sm, 0 1px 2px 0 rgba(0, 0, 0, 0.05));
     }
 
-    [part='input-container']:hover:not([data-disabled='true']) {
+    [part~='input-container']:hover:not([data-disabled='true']) {
       border-color: var(--color-neutral-400, #9ca3af);
     }
 
-    [part='input-container']:focus-within:not([data-disabled='true']) {
+    [part~='input-container']:focus-within:not([data-disabled='true']) {
       border-color: var(--color-border-focus, #3b82f6);
       outline: 2px solid var(--color-border-focus, #3b82f6);
       outline-offset: 1px;
     }
 
-    :host([is-invalid]) [part='input-container'],
-    [part='input-container'][data-invalid='true'] {
+    :host([is-invalid]) [part~='input-container'],
+    [part~='input-container'][data-invalid='true'] {
       border-color: var(--color-error-500, #ef4444);
     }
 
-    [part='input'] {
+    [part~='input'] {
       flex: 1;
       width: 100%;
       min-width: 0;
@@ -73,11 +74,11 @@ export const datePickerStyles = [
       padding: var(--spacing-2, 0.5rem) var(--spacing-3, 0.75rem);
     }
 
-    [part='input']::placeholder {
+    [part~='input']::placeholder {
       color: var(--color-fg-subtle, #9ca3af);
     }
 
-    [part='trigger-btn'] {
+    [part~='trigger-btn'] {
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -90,36 +91,39 @@ export const datePickerStyles = [
       transition: color 0.1s ease;
     }
 
-    [part='trigger-btn']:hover:not(:disabled) {
+    [part~='trigger-btn']:hover:not(:disabled) {
       color: var(--color-fg, inherit);
     }
 
-    [part='trigger-btn'] svg {
+    [part~='trigger-btn'] svg {
       width: 1.125rem;
       height: 1.125rem;
     }
 
-    [part='popover'] {
-      position: absolute;
-      top: calc(100% + 4px);
-      left: 0;
+    [part~='popover'] {
+      margin: 0;
+      border: none;
+      border-radius: calc(0.875rem * var(--brand-radius-factor, 1));
+      background-color: var(--glass-bg-thick);
+      -webkit-backdrop-filter: var(--glass-filter);
+      backdrop-filter: var(--glass-filter);
+      box-shadow: var(--glass-highlight), var(--shadow-glass);
+      color: var(--color-fg);
       z-index: var(--z-dropdown, 1000);
-      background-color: var(--color-bg-elevated, #ffffff);
-      border-radius: var(--radius-md, 0.375rem);
-      box-shadow: var(--shadow-md, 0 4px 6px -1px rgba(0, 0, 0, 0.1));
       outline: none;
+      padding: 6px;
     }
 
-    [part='popover'][hidden] {
+    [part~='popover'][hidden] {
       display: none !important;
     }
 
-    [part='description'] {
+    [part~='description'] {
       font-size: var(--font-size-xs, 0.75rem);
       color: var(--color-fg-subtle, #6b7280);
     }
 
-    [part='error'] {
+    [part~='error'] {
       font-size: var(--font-size-xs, 0.75rem);
       color: var(--color-error-500, #ef4444);
     }
@@ -130,4 +134,5 @@ export const datePickerStyles = [
       pointer-events: none;
     }
   `,
+  fieldStyles,
 ]

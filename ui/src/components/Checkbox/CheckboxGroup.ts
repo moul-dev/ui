@@ -102,8 +102,22 @@ export class MoulCheckboxGroup extends LitElement {
     }
   }
 
+  private hasSeededFromChildren = false
+
   public syncChildCheckboxes(): void {
-    for (const cb of this.checkboxes) {
+    const checkboxes = this.checkboxes
+    // Markup like <moul-checkbox is-checked> declares the initial value when the
+    // group itself has none; adopt it once instead of unchecking those boxes.
+    if (!this.hasSeededFromChildren && checkboxes.length > 0) {
+      this.hasSeededFromChildren = true
+      if (this.value.length === 0) {
+        const preset = checkboxes
+          .filter((cb) => cb.isChecked || cb.hasAttribute('is-checked'))
+          .map((cb) => cb.value)
+        if (preset.length > 0) this.value = preset
+      }
+    }
+    for (const cb of checkboxes) {
       cb.isChecked = this.value.includes(cb.value)
       if (this.isDisabled) {
         cb.isDisabled = true

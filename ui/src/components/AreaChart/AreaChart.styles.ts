@@ -75,7 +75,7 @@ export const areaChartStyles: CSSResultGroup = [
       r: 6;
     }
 
-    [part="empty"],
+    [part~="empty"],
     .empty-state {
       display: flex;
       align-items: center;

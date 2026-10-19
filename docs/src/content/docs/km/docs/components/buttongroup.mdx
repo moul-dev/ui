@@ -5,42 +5,68 @@ description: ឯកសារណែនាំសម្រាប់សមាសភ�
 
 import ComponentPreview from '@/components/ComponentPreview.astro';
 
-# ButtonGroup (សមាសភាគ)
+`<moul-button-group>` fuses adjacent buttons into a single shape. Use `spacing` to keep them apart while still grouping them for assistive technology.
 
-The `<moul-button-group>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
-
-## Preview
+## Attached
 
 <ComponentPreview>
-  <moul-button-group>
-  <moul-button variant="outline">Day</moul-button>
-  <moul-button variant="outline">Week</moul-button>
-  <moul-button variant="outline">Month</moul-button>
-  <moul-button variant="outline">Year</moul-button>
+<moul-button-group spacing="none">
+  <moul-button variant="secondary">Day</moul-button>
+  <moul-button variant="secondary">Week</moul-button>
+  <moul-button variant="secondary">Month</moul-button>
+  <moul-button variant="secondary">Year</moul-button>
 </moul-button-group>
 </ComponentPreview>
 
-## Import
-
-```ts
-import '@moul-dev/ui';
-```
-
-## HTML Usage
-
 ```html
-<moul-button-group>
-  <moul-button variant="outline">Left</moul-button>
-  <moul-button variant="outline">Right</moul-button>
+<moul-button-group spacing="none">
+  <moul-button variant="secondary">Day</moul-button>
+  <moul-button variant="secondary">Week</moul-button>
+  <moul-button variant="secondary">Month</moul-button>
+  <moul-button variant="secondary">Year</moul-button>
 </moul-button-group>
 ```
 
-## Attributes & Properties
+## Spaced and vertical
 
-| Name | Type | Default |
-| :--- | :--- | :--- |
-| `orientation` | `ButtonGroupOrientation` | `'horizontal'` |
-| `spacing` | `ButtonGroupSpacing` | `'sm'` |
-| `is-disabled` | `boolean` | `false` |
+<ComponentPreview>
+<div class="demo-row">
+  <moul-button-group spacing="sm">
+    <moul-button variant="outline">Cancel</moul-button>
+    <moul-button>Save</moul-button>
+  </moul-button-group>
+  <moul-button-group orientation="vertical" spacing="none">
+    <moul-button variant="secondary">Top</moul-button>
+    <moul-button variant="secondary">Middle</moul-button>
+    <moul-button variant="secondary">Bottom</moul-button>
+  </moul-button-group>
+</div>
+</ComponentPreview>
 
+```html
+<div class="demo-row">
+  <moul-button-group spacing="sm">
+    <moul-button variant="outline">Cancel</moul-button>
+    <moul-button>Save</moul-button>
+  </moul-button-group>
+  <moul-button-group orientation="vertical" spacing="none">
+    <moul-button variant="secondary">Top</moul-button>
+    <moul-button variant="secondary">Middle</moul-button>
+    <moul-button variant="secondary">Bottom</moul-button>
+  </moul-button-group>
+</div>
+```
 
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `orientation` | `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` |
+| `spacing` | `spacing` | `'none' \| 'sm' \| 'md'` | `'sm'` |
+| `is-disabled` | `isDisabled` | `boolean` | `false` |
+
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | — |
+
+**CSS parts:** `base`

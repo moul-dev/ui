@@ -11,7 +11,7 @@ export const linkStyles = [
       vertical-align: baseline;
     }
 
-    [part="base"] {
+    [part~="base"] {
       display: inline-flex;
       align-items: center;
       gap: var(--spacing-1, 0.25rem);
@@ -29,52 +29,52 @@ export const linkStyles = [
       transition: color 0.15s ease, opacity 0.15s ease;
     }
 
-    :host([variant="default"]) [part="base"] {
+    :host([variant="default"]) [part~="base"] {
       color: var(--color-primary-500, #4f46e5);
       text-decoration: none;
     }
 
-    :host([variant="default"]) [part="base"]:hover {
+    :host([variant="default"]) [part~="base"]:hover {
       color: var(--color-primary-600, #4338ca);
       text-decoration: underline;
     }
 
-    :host([variant="subtle"]) [part="base"] {
+    :host([variant="subtle"]) [part~="base"] {
       color: var(--color-fg-subtle, #6b7280);
       text-decoration: none;
     }
 
-    :host([variant="subtle"]) [part="base"]:hover {
+    :host([variant="subtle"]) [part~="base"]:hover {
       color: var(--color-fg, #111827);
       text-decoration: underline;
     }
 
-    :host([variant="underline"]) [part="base"] {
+    :host([variant="underline"]) [part~="base"] {
       color: var(--color-primary-500, #4f46e5);
       text-decoration: underline;
       text-underline-offset: 0.2em;
     }
 
-    :host([variant="underline"]) [part="base"]:hover {
+    :host([variant="underline"]) [part~="base"]:hover {
       color: var(--color-primary-600, #4338ca);
     }
 
     :host([is-disabled]),
-    [part="base"]:disabled,
-    [part="base"][aria-disabled="true"] {
+    [part~="base"]:disabled,
+    [part~="base"][aria-disabled="true"] {
       opacity: 0.5;
       cursor: not-allowed;
       pointer-events: none;
       text-decoration: none;
     }
 
-    [part="base"]:focus-visible {
+    [part~="base"]:focus-visible {
       outline: 2px solid var(--color-border-focus, #3b82f6);
       outline-offset: 2px;
       border-radius: var(--radius-xs, 0.125rem);
     }
 
-    [part="external-icon"] {
+    [part~="external-icon"] {
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -85,19 +85,19 @@ export const linkStyles = [
       transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
-    [part="external-icon"] svg {
+    [part~="external-icon"] svg {
       width: 100%;
       height: 100%;
     }
 
-    [part="base"]:hover [part="external-icon"],
-    :host(:hover) [part="external-icon"] {
+    [part~="base"]:hover [part~="external-icon"],
+    :host(:hover) [part~="external-icon"] {
       transform: translate(2px, -2px);
     }
 
     @media (prefers-reduced-motion: reduce) {
-      [part="base"]:hover [part="external-icon"],
-      :host(:hover) [part="external-icon"] {
+      [part~="base"]:hover [part~="external-icon"],
+      :host(:hover) [part~="external-icon"] {
         transform: none;
       }
     }

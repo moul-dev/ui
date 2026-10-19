@@ -7,7 +7,7 @@ import {
   type VisualVariant,
 } from '../../styles/semantic-tones'
 import { defineElement } from '../../utils/define-element'
-import { cardStyles } from './Card.styles'
+import { cardSectionStyles, cardStyles } from './Card.styles'
 
 export class MoulCard extends LitElement {
   static override styles = cardStyles
@@ -141,21 +141,33 @@ export class MoulCard extends LitElement {
 }
 
 export class MoulCardHeader extends LitElement {
-  static override styles = cardStyles
+  static override styles = cardSectionStyles
+  public override connectedCallback(): void {
+    super.connectedCallback()
+    this.dataset.section = 'header'
+  }
   protected override render() {
     return html`<slot></slot>`
   }
 }
 
 export class MoulCardBody extends LitElement {
-  static override styles = cardStyles
+  static override styles = cardSectionStyles
+  public override connectedCallback(): void {
+    super.connectedCallback()
+    this.dataset.section = 'body'
+  }
   protected override render() {
     return html`<slot></slot>`
   }
 }
 
 export class MoulCardFooter extends LitElement {
-  static override styles = cardStyles
+  static override styles = cardSectionStyles
+  public override connectedCallback(): void {
+    super.connectedCallback()
+    this.dataset.section = 'footer'
+  }
   protected override render() {
     return html`<slot></slot>`
   }

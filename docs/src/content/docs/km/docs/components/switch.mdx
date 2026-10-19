@@ -5,45 +5,45 @@ description: ឯកសារណែនាំសម្រាប់សមាសភ�
 
 import ComponentPreview from '@/components/ComponentPreview.astro';
 
-# Switch (សមាសភាគ)
-
-The `<moul-switch>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
-
-## Preview
+`<moul-switch>` is an iOS-style toggle. The thumb stretches while pressed and glides across on a spring.
 
 <ComponentPreview>
-  <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-  <moul-switch checked>Auto-deploy on git push</moul-switch>
-  <moul-switch>Enable debug logging</moul-switch>
+<div class="demo-stack">
+  <moul-switch is-checked>Auto-deploy on push</moul-switch>
+  <moul-switch>Debug logging</moul-switch>
+  <moul-switch size="sm" is-checked>Small</moul-switch>
+  <moul-switch size="lg">Large</moul-switch>
+  <moul-switch is-disabled>Disabled</moul-switch>
 </div>
 </ComponentPreview>
 
-## Import
-
-```ts
-import '@moul-dev/ui';
-```
-
-## HTML Usage
-
 ```html
-<moul-switch checked>Enable notifications</moul-switch>
+<div class="demo-stack">
+  <moul-switch is-checked>Auto-deploy on push</moul-switch>
+  <moul-switch>Debug logging</moul-switch>
+  <moul-switch size="sm" is-checked>Small</moul-switch>
+  <moul-switch size="lg">Large</moul-switch>
+  <moul-switch is-disabled>Disabled</moul-switch>
+</div>
 ```
 
-## Attributes & Properties
+## API reference
 
-| Name | Type | Default |
-| :--- | :--- | :--- |
-| `name` | `string` | `''` |
-| `value` | `string` | `'on'` |
-| `is-checked` | `boolean` | `false` |
-| `is-disabled` | `boolean` | `false` |
-| `label` | `string` | `''` |
-| `size` | `SwitchSize` | `'md'` |
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `name` | `name` | `string` | `''` |
+| `value` | `value` | `string` | `'on'` |
+| `is-checked` | `isChecked` | `boolean` | `false` |
+| `is-disabled` | `isDisabled` | `boolean` | `false` |
+| `label` | `label` | `string` | `''` |
+| `size` | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` |
 
-## Events
+| Event | Type |
+| :-- | :-- |
+| `change` | `CustomEvent` |
 
-| Event Name | Description |
-| :--- | :--- |
-| `change` | Dispatched when element fires change |
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | — |
 
+**CSS parts:** `thumb`, `base`, `track`, `label`

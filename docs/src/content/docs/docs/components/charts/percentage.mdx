@@ -1,42 +1,70 @@
 ---
 title: PercentageBar
-description: Stacked linear bar visualizer for proportional segments.
+description: Single-value bars and rings.
 ---
 
 import ComponentPreview from '@/components/ComponentPreview.astro';
 
-# PercentageBar
-
-The `<moul-percentage-bar>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
-
-## Preview
+`<moul-percentage-bar>` and `<moul-percentage-circle>` show one ratio at a glance.
 
 <ComponentPreview>
-  <moul-percentage-bar value="75" style="width: 100%;"></moul-percentage-bar>
+<div class="demo-stack" style="width: min(100%, 24rem)">
+  <moul-percentage-bar label="Memory" value="74" show-label></moul-percentage-bar>
+  <moul-percentage-bar label="Storage" value="89" tone="warning" show-label></moul-percentage-bar>
+  <div class="demo-row">
+    <moul-percentage-circle value="84" tone="success" show-label></moul-percentage-circle>
+    <moul-percentage-circle value="52" tone="accent" show-label size="lg"></moul-percentage-circle>
+  </div>
+</div>
 </ComponentPreview>
 
-## Import
-
-```ts
-import '@moul-dev/ui';
-```
-
-## HTML Usage
-
 ```html
-<moul-percentage-bar value="60"></moul-percentage-bar>
+<div class="demo-stack" style="width: min(100%, 24rem)">
+  <moul-percentage-bar label="Memory" value="74" show-label></moul-percentage-bar>
+  <moul-percentage-bar label="Storage" value="89" tone="warning" show-label></moul-percentage-bar>
+  <div class="demo-row">
+    <moul-percentage-circle value="84" tone="success" show-label></moul-percentage-circle>
+    <moul-percentage-circle value="52" tone="accent" show-label size="lg"></moul-percentage-circle>
+  </div>
+</div>
 ```
 
-## Attributes & Properties
+## API reference
 
-| Name | Type | Default |
-| :--- | :--- | :--- |
-| `value` | `number` | `0` |
-| `size` | `PercentageBarSize` | `'md'` |
-| `tone` | `SemanticTone` | `'primary'` |
-| `show-label` | `boolean` | `true` |
-| `label` | `string` | `''` |
-| `show-value-text` | `boolean` | `true` |
-| `color` | `string` | `''` |
+### `<moul-percentage-bar>`
 
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `value` | `value` | `number` | `0` |
+| `size` | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` |
+| `tone` | `tone` | `'primary' \| 'accent' \| 'success' \| 'warning' \| 'error'` | `'primary'` |
+| `show-label` | `showLabel` | `boolean` | `true` |
+| `label` | `label` | `string` | `''` |
+| `show-value-text` | `showValueText` | `boolean` | `true` |
+| `color` | `color` | `string` | `''` |
 
+| Slot | Description |
+| :-- | :-- |
+| `label` | — |
+
+**CSS parts:** `container`, `header`, `label`, `value`, `svg`
+
+### `<moul-percentage-circle>`
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `value` | `value` | `number` | `0` |
+| `size` | `size` | `'sm' \| 'md' \| 'lg' \| number` | `'md'` |
+| `tone` | `tone` | `'primary' \| 'accent' \| 'success' \| 'warning' \| 'error'` | `'primary'` |
+| `show-label` | `showLabel` | `boolean` | `true` |
+| `stroke-width` | `strokeWidth` | `number` | `8` |
+| `label` | `label` | `string` | `''` |
+| `show-value-text` | `showValueText` | `boolean` | `true` |
+| `color` | `color` | `string` | `''` |
+
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | — |
+| `label` | — |
+
+**CSS parts:** `wrapper`, `svg`, `center`, `value`, `label`

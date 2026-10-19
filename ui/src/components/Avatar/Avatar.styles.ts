@@ -9,8 +9,14 @@ export const avatarStyles = [
       position: relative;
       align-items: center;
       justify-content: center;
-      background-color: var(--color-bg-subtle, #e5e7eb);
-      color: var(--color-fg, #374151);
+      /* Contacts-style monogram: soft graphite gradient, white initials */
+      background: linear-gradient(
+        to bottom,
+        light-dark(oklch(0.76 0.015 260), oklch(0.62 0.015 260)),
+        light-dark(oklch(0.62 0.02 260), oklch(0.48 0.02 260))
+      );
+      color: oklch(1 0 0);
+      box-shadow: inset 0 0 0 0.5px oklch(0 0 0 / 0.08);
       font-weight: 600;
       user-select: none;
       box-sizing: border-box;
@@ -61,7 +67,7 @@ export const avatarStyles = [
       font-size: 1.25rem;
     }
 
-    [part="image"] {
+    [part~="image"] {
       width: 100%;
       height: 100%;
       object-fit: cover;
@@ -69,7 +75,7 @@ export const avatarStyles = [
       display: block;
     }
 
-    [part="initials"] {
+    [part~="initials"] {
       display: flex;
       align-items: center;
       justify-content: center;
@@ -79,22 +85,22 @@ export const avatarStyles = [
       letter-spacing: 0.05em;
     }
 
-    [part="fallback"] {
+    [part~="fallback"] {
       display: flex;
       align-items: center;
       justify-content: center;
       width: 100%;
       height: 100%;
-      color: var(--color-fg-subtle, #9ca3af);
+      color: oklch(1 0 0 / 0.85);
     }
 
-    [part="fallback"] svg {
+    [part~="fallback"] svg {
       width: 60%;
       height: 60%;
     }
 
     /* Status indicator dot */
-    [part="status"] {
+    [part~="status"] {
       position: absolute;
       bottom: 0;
       right: 0;

@@ -306,11 +306,20 @@ export const logsViewerStyles: CSSResultGroup = [
       color: var(--color-fg, #0f172a);
     }
 
+    /* Preserve whitespace in the log text only — not the template's own indentation */
     .wrap-lines .cell-message {
-      white-space: pre-wrap;
+      white-space: normal;
     }
 
     .no-wrap .cell-message {
+      white-space: nowrap;
+    }
+
+    .wrap-lines .cell-message > .message-text {
+      white-space: pre-wrap;
+    }
+
+    .no-wrap .cell-message > .message-text {
       white-space: pre;
     }
 

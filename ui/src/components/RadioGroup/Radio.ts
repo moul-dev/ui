@@ -1,6 +1,5 @@
 import { html, LitElement, type PropertyValues } from 'lit'
 import { defineElement } from '../../utils/define-element'
-import { SPRING_SNAPPY, subtleAnimate } from '../../utils/motion'
 import { radioStyles } from './RadioGroup.styles'
 
 export class MoulRadio extends LitElement {
@@ -51,19 +50,6 @@ export class MoulRadio extends LitElement {
         this.setAttribute('aria-disabled', 'true')
       } else {
         this.removeAttribute('aria-disabled')
-      }
-    }
-  }
-
-  protected override updated(changedProperties: PropertyValues): void {
-    super.updated(changedProperties)
-
-    if (changedProperties.has('isChecked') && this.isChecked) {
-      const dot = this.renderRoot?.querySelector(
-        '[part="dot"]',
-      ) as HTMLElement | null
-      if (dot) {
-        subtleAnimate(dot, { scale: [0, 1] }, SPRING_SNAPPY)
       }
     }
   }

@@ -5,38 +5,60 @@ description: ឯកសារណែនាំសម្រាប់សមាសភ�
 
 import ComponentPreview from '@/components/ComponentPreview.astro';
 
-# TopList (សមាសភាគ)
+`<moul-top-list>` ranks items by value, scaling each bar against the largest.
 
-The `<moul-top-list>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
-
-## Preview
-
-<ComponentPreview>
-  <moul-top-list style="width: 100%;"></moul-top-list>
+<ComponentPreview align="stretch">
+<moul-top-list show-rank multi-color data-props='{"data":[{"label":"Chrome","value":6420},{"label":"Safari","value":3810},{"label":"Firefox","value":1290},{"label":"Edge","value":980},{"label":"Arc","value":410}]}'></moul-top-list>
 </ComponentPreview>
 
-## Import
-
-```ts
-import '@moul-dev/ui';
-```
-
-## HTML Usage
-
 ```html
-<moul-top-list></moul-top-list>
+<moul-top-list show-rank multi-color></moul-top-list>
 ```
 
-## Attributes & Properties
+```js
+const topList = document.querySelector('moul-top-list')
+topList.data = [
+  {
+    "label": "Chrome",
+    "value": 6420
+  },
+  {
+    "label": "Safari",
+    "value": 3810
+  },
+  {
+    "label": "Firefox",
+    "value": 1290
+  },
+  {
+    "label": "Edge",
+    "value": 980
+  },
+  {
+    "label": "Arc",
+    "value": 410
+  }
+]
+```
 
-| Name | Type | Default |
-| :--- | :--- | :--- |
-| `max` | `number | undefined` | `undefined` |
-| `max-value` | `number | undefined` | `undefined` |
-| `max-items` | `number` | `10` |
-| `show-rank` | `boolean` | `true` |
-| `multi-color` | `boolean` | `false` |
-| `bar-color` | `string` | `'var(--color-chart-1)'` |
-| `interactive` | `boolean` | `false` |
+## API reference
 
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `max` | `max` | `number \| undefined` | `undefined` |
+| `max-value` | `maxValue` | `number \| undefined` | `undefined` |
+| `max-items` | `maxItems` | `number` | `10` |
+| `show-rank` | `showRank` | `boolean` | `true` |
+| `multi-color` | `multiColor` | `boolean` | `false` |
+| `bar-color` | `barColor` | `string` | `'var(--color-chart-1)'` |
+| `interactive` | `interactive` | `boolean` | `false` |
 
+| Event | Type |
+| :-- | :-- |
+| `item-press` | `CustomEvent` |
+
+| Slot | Description |
+| :-- | :-- |
+| `empty` | — |
+
+**CSS parts:** `empty`, `container`, `list`, `item`, `rank`, `label`, `track`, `bar`, `value`

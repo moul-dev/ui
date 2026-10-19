@@ -5,42 +5,73 @@ description: ឯកសារណែនាំសម្រាប់សមាសភ�
 
 import ComponentPreview from '@/components/ComponentPreview.astro';
 
-# Drawer (សមាសភាគ)
-
-The `<moul-drawer>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
-
-## Preview
+`<moul-drawer>` slides a sheet in from `left`, `right`, `top` or `bottom` with the iOS sheet curve.
 
 <ComponentPreview>
-  <moul-button variant="outline">Open Settings Drawer</moul-button>
+<div class="demo-row">
+  <moul-button variant="secondary" data-open="demo-drawer-right">Right</moul-button>
+  <moul-button variant="secondary" data-open="demo-drawer-left">Left</moul-button>
+  <moul-button variant="secondary" data-open="demo-drawer-bottom">Bottom</moul-button>
+</div>
+<moul-drawer id="demo-drawer-right" placement="right" aria-label="Settings">
+  <h3 slot="header">Settings</h3>
+  <div class="demo-stack">
+    <moul-switch is-checked>Auto-deploy</moul-switch>
+    <moul-switch>Preview comments</moul-switch>
+  </div>
+  <moul-button slot="footer" data-close="demo-drawer-right">Done</moul-button>
+</moul-drawer>
+<moul-drawer id="demo-drawer-left" placement="left" size="sm" aria-label="Navigation">
+  <h3 slot="header">Navigation</h3>
+  <p>Left-edge drawers suit app navigation on narrow screens.</p>
+</moul-drawer>
+<moul-drawer id="demo-drawer-bottom" placement="bottom" aria-label="Share">
+  <h3 slot="header">Share</h3>
+  <p>Bottom sheets work well for quick actions on touch devices.</p>
+</moul-drawer>
 </ComponentPreview>
 
-## Import
-
-```ts
-import '@moul-dev/ui';
-```
-
-## HTML Usage
-
 ```html
-<moul-drawer placement="right" title="Drawer Title">
-  <p>Drawer content</p>
+<div class="demo-row">
+  <moul-button variant="secondary">Right</moul-button>
+  <moul-button variant="secondary">Left</moul-button>
+  <moul-button variant="secondary">Bottom</moul-button>
+</div>
+<moul-drawer id="demo-drawer-right" placement="right" aria-label="Settings">
+  <h3 slot="header">Settings</h3>
+  <div class="demo-stack">
+    <moul-switch is-checked>Auto-deploy</moul-switch>
+    <moul-switch>Preview comments</moul-switch>
+  </div>
+  <moul-button slot="footer">Done</moul-button>
+</moul-drawer>
+<moul-drawer id="demo-drawer-left" placement="left" size="sm" aria-label="Navigation">
+  <h3 slot="header">Navigation</h3>
+  <p>Left-edge drawers suit app navigation on narrow screens.</p>
+</moul-drawer>
+<moul-drawer id="demo-drawer-bottom" placement="bottom" aria-label="Share">
+  <h3 slot="header">Share</h3>
+  <p>Bottom sheets work well for quick actions on touch devices.</p>
 </moul-drawer>
 ```
 
-## Attributes & Properties
+## API reference
 
-| Name | Type | Default |
-| :--- | :--- | :--- |
-| `is-open` | `boolean` | `false` |
-| `placement` | `DrawerPlacement` | `'right'` |
-| `size` | `DrawerSize` | `'md'` |
-| `is-dismissable` | `boolean` | `true` |
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `is-open` | `isOpen` | `boolean` | `false` |
+| `placement` | `placement` | `'left' \| 'right' \| 'top' \| 'bottom'` | `'right'` |
+| `size` | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` |
+| `is-dismissable` | `isDismissable` | `boolean` | `true` |
 
-## Events
+| Event | Type |
+| :-- | :-- |
+| `openchange` | `CustomEvent` |
 
-| Event Name | Description |
-| :--- | :--- |
-| `openchange` | Dispatched when element fires openchange |
+| Slot | Description |
+| :-- | :-- |
+| `header` | — |
+| `(default)` | — |
+| `footer` | — |
 
+**CSS parts:** `base`, `dialog`, `header`, `body`, `footer`

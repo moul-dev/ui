@@ -5,76 +5,93 @@ description: ឯកសារណែនាំសម្រាប់សមាសភ�
 
 import ComponentPreview from '@/components/ComponentPreview.astro';
 
-# Table (សមាសភាគ)
+`<moul-table>` renders `data` against `columns`. Turn on `is-sortable` and `is-selectable` for click-to-sort headers and row checkboxes.
 
-The `<moul-table>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
-
-## Preview
-
-<ComponentPreview>
-  <moul-table style="width: 100%;">
-  <moul-table-header>
-    <moul-table-row>
-      <moul-table-head>Resource</moul-table-head>
-      <moul-table-head>Region</moul-table-head>
-      <moul-table-head>Status</moul-table-head>
-    </moul-table-row>
-  </moul-table-header>
-  <moul-table-body>
-    <moul-table-row>
-      <moul-table-cell>api-gateway</moul-table-cell>
-      <moul-table-cell>us-east</moul-table-cell>
-      <moul-table-cell><moul-badge variant="success">Healthy</moul-badge></moul-table-cell>
-    </moul-table-row>
-    <moul-table-row>
-      <moul-table-cell>auth-worker</moul-table-cell>
-      <moul-table-cell>ap-southeast</moul-table-cell>
-      <moul-table-cell><moul-badge variant="primary">Running</moul-badge></moul-table-cell>
-    </moul-table-row>
-  </moul-table-body>
-</moul-table>
+<ComponentPreview align="stretch">
+<moul-table is-sortable is-selectable data-props='{"columns":[{"key":"name","title":"Service","sortable":true},{"key":"region","title":"Region"},{"key":"status","title":"Status"},{"key":"latency","title":"p95 (ms)","sortable":true,"align":"right"}],"data":[{"id":"1","name":"api-gateway","region":"us-east","status":"Healthy","latency":42},{"id":"2","name":"auth-worker","region":"ap-southeast","status":"Degraded","latency":188},{"id":"3","name":"billing","region":"eu-west","status":"Healthy","latency":67},{"id":"4","name":"search","region":"us-west","status":"Healthy","latency":95}]}'></moul-table>
 </ComponentPreview>
 
-## Import
-
-```ts
-import '@moul-dev/ui';
-```
-
-## HTML Usage
-
 ```html
-<moul-table>
-  <moul-table-header>
-    <moul-table-row>
-      <moul-table-head>Name</moul-table-head>
-    </moul-table-row>
-  </moul-table-header>
-  <moul-table-body>
-    <moul-table-row>
-      <moul-table-cell>Value</moul-table-cell>
-    </moul-table-row>
-  </moul-table-body>
-</moul-table>
+<moul-table is-sortable is-selectable></moul-table>
 ```
 
-## Attributes & Properties
+```js
+const table = document.querySelector('moul-table')
+table.columns = [
+  {
+    "key": "name",
+    "title": "Service",
+    "sortable": true
+  },
+  {
+    "key": "region",
+    "title": "Region"
+  },
+  {
+    "key": "status",
+    "title": "Status"
+  },
+  {
+    "key": "latency",
+    "title": "p95 (ms)",
+    "sortable": true,
+    "align": "right"
+  }
+]
+table.data = [
+  {
+    "id": "1",
+    "name": "api-gateway",
+    "region": "us-east",
+    "status": "Healthy",
+    "latency": 42
+  },
+  {
+    "id": "2",
+    "name": "auth-worker",
+    "region": "ap-southeast",
+    "status": "Degraded",
+    "latency": 188
+  },
+  {
+    "id": "3",
+    "name": "billing",
+    "region": "eu-west",
+    "status": "Healthy",
+    "latency": 67
+  },
+  {
+    "id": "4",
+    "name": "search",
+    "region": "us-west",
+    "status": "Healthy",
+    "latency": 95
+  }
+]
+```
 
-| Name | Type | Default |
-| :--- | :--- | :--- |
-| `data` | `Record<string, unknown>[]` | `[]` |
-| `columns` | `TableColumn[]` | `[]` |
-| `is-sortable` | `boolean` | `false` |
-| `is-selectable` | `boolean` | `false` |
-| `is-loading` | `boolean` | `false` |
-| `selected-keys` | `string[]` | `[]` |
-| `sort-column` | `string` | `''` |
-| `sort-direction` | `'asc' | 'desc'` | `'asc'` |
+## API reference
 
-## Events
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `data` | `data` | `Record<string, unknown>[]` | `[]` |
+| `columns` | `columns` | `TableColumn[]` | `[]` |
+| `is-sortable` | `isSortable` | `boolean` | `false` |
+| `is-selectable` | `isSelectable` | `boolean` | `false` |
+| `is-loading` | `isLoading` | `boolean` | `false` |
+| `selected-keys` | `selectedKeys` | `string[]` | `[]` |
+| `sort-column` | `sortColumn` | `string` | `''` |
+| `sort-direction` | `sortDirection` | `'asc' \| 'desc'` | `'asc'` |
 
-| Event Name | Description |
-| :--- | :--- |
-| `sortchange` | Dispatched when element fires sortchange |
-| `selectionchange` | Dispatched when element fires selectionchange |
+| Event | Type |
+| :-- | :-- |
+| `sortchange` | `CustomEvent` |
+| `selectionchange` | `CustomEvent` |
 
+| Slot | Description |
+| :-- | :-- |
+| `caption` | — |
+| `empty` | — |
+| `footer` | — |
+
+**CSS parts:** `caption`, `header-checkbox`, `th`, `loading-row`, `row`, `footer`

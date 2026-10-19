@@ -601,7 +601,7 @@ describe('Adversarial Stress Test: Phase 6 Overlay Components', () => {
       expect(innerPop.style.position).toBe('fixed')
       expect(innerPop.style.top).toBe('162px')
       expect(innerPop.style.left).toBe('250px')
-      expect(innerPop.style.transform).toBe('translateX(-50%)')
+      expect(innerPop.style.translate).toBe('-50% 0')
 
       await popover.setOpen(false)
 
@@ -612,7 +612,7 @@ describe('Adversarial Stress Test: Phase 6 Overlay Components', () => {
 
       expect(innerPop.style.bottom).toBe(`${winHeight - 100 + 12}px`)
       expect(innerPop.style.left).toBe('250px')
-      expect(innerPop.style.transform).toBe('translateX(-50%)')
+      expect(innerPop.style.translate).toBe('-50% 0')
 
       await popover.setOpen(false)
 
@@ -623,7 +623,7 @@ describe('Adversarial Stress Test: Phase 6 Overlay Components', () => {
 
       expect(innerPop.style.right).toBe(`${winWidth - 200 + 12}px`)
       expect(innerPop.style.top).toBe('125px')
-      expect(innerPop.style.transform).toBe('translateY(-50%)')
+      expect(innerPop.style.translate).toBe('0 -50%')
 
       await popover.setOpen(false)
 
@@ -634,7 +634,7 @@ describe('Adversarial Stress Test: Phase 6 Overlay Components', () => {
 
       expect(innerPop.style.left).toBe('312px')
       expect(innerPop.style.top).toBe('125px')
-      expect(innerPop.style.transform).toBe('translateY(-50%)')
+      expect(innerPop.style.translate).toBe('0 -50%')
 
       await popover.setOpen(false)
       Object.getPrototypeOf(window.CSS).supports = originalSupports

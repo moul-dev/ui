@@ -9,7 +9,7 @@ export const paginationStyles = [
       align-items: center;
     }
 
-    [part="base"] {
+    [part~="base"] {
       display: inline-flex;
       align-items: center;
       gap: var(--spacing-1, 0.25rem);
@@ -65,7 +65,7 @@ export const paginationStyles = [
     }
 
     [part~="page"][aria-current="page"] {
-      background-color: var(--color-primary-500, #4f46e5);
+      background-color: var(--color-primary-solid, #4f46e5);
       color: var(--color-fg-on-primary, #ffffff);
       font-weight: 600;
       border-color: var(--color-primary-500, #4f46e5);
@@ -84,7 +84,7 @@ export const paginationStyles = [
       pointer-events: none;
     }
 
-    [part="ellipsis"] {
+    [part~="ellipsis"] {
       display: inline-flex;
       align-items: center;
       justify-content: center;

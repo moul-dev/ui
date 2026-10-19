@@ -42,7 +42,7 @@ export class MoulTooltip extends LitElement {
 
   public get popoverEl(): HTMLElement | null {
     return (
-      this.shadowRoot?.querySelector<HTMLElement>('[part="popover"]') ?? null
+      this.shadowRoot?.querySelector<HTMLElement>('[role="tooltip"]') ?? null
     )
   }
 

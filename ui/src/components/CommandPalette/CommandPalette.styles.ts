@@ -1,4 +1,5 @@
 import { css } from 'lit'
+import { overlayStyles } from '../../styles/overlay.styles'
 import { resetStyles } from '../../styles/reset.styles'
 
 export const commandPaletteStyles = [
@@ -38,7 +39,7 @@ export const commandPaletteStyles = [
       backdrop-filter: blur(4px);
     }
 
-    [part="base"] {
+    [part~="base"] {
       background-color: var(--color-bg-elevated, #ffffff);
       border-radius: var(--radius-lg, 0.5rem);
       border: 1px solid var(--color-border, #e5e7eb);
@@ -54,7 +55,7 @@ export const commandPaletteStyles = [
       color: var(--color-fg, #111827);
     }
 
-    [part="input-wrapper"] {
+    [part~="input-wrapper"] {
       display: flex;
       align-items: center;
       gap: var(--spacing-3, 0.75rem);
@@ -77,7 +78,7 @@ export const commandPaletteStyles = [
       height: 100%;
     }
 
-    [part="input"] {
+    [part~="input"] {
       flex: 1 1 auto;
       border: none;
       outline: none;
@@ -89,11 +90,11 @@ export const commandPaletteStyles = [
       padding: 0;
     }
 
-    [part="input"]::placeholder {
+    [part~="input"]::placeholder {
       color: var(--color-fg-subtle, #9ca3af);
     }
 
-    [part="list"] {
+    [part~="list"] {
       max-height: 20rem;
       overflow-y: auto;
       padding: var(--spacing-2, 0.5rem);
@@ -159,7 +160,7 @@ export const commandPaletteStyles = [
       flex-shrink: 0;
     }
 
-    [part="empty"] {
+    [part~="empty"] {
       display: flex;
       align-items: center;
       justify-content: center;
@@ -169,7 +170,7 @@ export const commandPaletteStyles = [
       text-align: center;
     }
 
-    [part="footer"] {
+    [part~="footer"] {
       padding: var(--spacing-2, 0.5rem) var(--spacing-4, 1rem);
       display: flex;
       align-items: center;
@@ -179,6 +180,35 @@ export const commandPaletteStyles = [
       background-color: var(--color-bg-subtle, #f9fafb);
       font-size: var(--font-size-xs, 0.75rem);
       color: var(--color-fg-subtle, #9ca3af);
+    }
+  `,
+  overlayStyles,
+  css`
+    [part~="base"] {
+      overflow: hidden;
+    }
+    [part~="input-wrapper"] {
+      background: transparent;
+      border-bottom: 1px solid var(--color-border-glass);
+    }
+    [part~="item"] {
+      border-radius: calc(0.625rem * var(--brand-radius-factor, 1));
+      transition: none;
+    }
+    [part~="item-active"] {
+      background-color: var(--color-primary-solid);
+      color: var(--color-fg-on-primary);
+    }
+    [part~="item-active"] * {
+      color: inherit !important;
+    }
+    [part~="item-active"] .item-shortcut {
+      background-color: oklch(1 0 0 / 0.2);
+      border-color: transparent;
+    }
+    [part~="footer"] {
+      background-color: transparent;
+      border-top: 1px solid var(--color-border-glass);
     }
   `,
 ]

@@ -677,11 +677,11 @@ describe('Phase 5: Surface & Feedback Components', () => {
 
   // 14. MoulToast & toastQueue
   describe('MoulToast & toastQueue', () => {
-    it('SURF-TST-01: Toast initialization, role status, and popover manual', async () => {
+    it('SURF-TST-01: Toast initialization, role status, and region-owned top layer', async () => {
       const toast = await mount<MoulToast>(
         html`<moul-toast title="File Saved" description="Your changes are saved."></moul-toast>`,
       )
-      expect(toast.getAttribute('popover')).toBe('manual')
+      expect(toast.hasAttribute('popover')).toBe(false)
       expect(toast.getAttribute('role')).toBe('status')
       expect(toast.getAttribute('aria-live')).toBe('polite')
       expect(

@@ -8,13 +8,13 @@ export const breadcrumbsStyles = [
       display: block;
     }
 
-    [part="base"] {
+    [part~="base"] {
       display: flex;
       padding: 0;
       margin: 0;
     }
 
-    [part="list"] {
+    [part~="list"] {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
@@ -38,38 +38,38 @@ export const breadcrumbItemStyles = [
       font-family: inherit;
     }
 
-    [part="item"] {
+    [part~="item"] {
       display: inline-flex;
       align-items: center;
       list-style: none;
     }
 
-    [part="link"] {
+    [part~="link"] {
       color: inherit;
       text-decoration: none;
       transition: color 0.15s ease;
       cursor: pointer;
     }
 
-    [part="link"]:hover {
+    [part~="link"]:hover {
       text-decoration: underline;
       color: var(--color-fg, #111827);
     }
 
-    [part="link"]:focus-visible {
+    [part~="link"]:focus-visible {
       outline: 2px solid var(--color-border-focus, #3b82f6);
       outline-offset: 2px;
       border-radius: var(--radius-xs, 0.125rem);
     }
 
-    :host([is-current]) [part="text"],
+    :host([is-current]) [part~="text"],
     [aria-current="page"] {
       color: var(--color-fg, #111827);
       font-weight: 600;
       pointer-events: none;
     }
 
-    [part="separator"] {
+    [part~="separator"] {
       display: inline-flex;
       align-items: center;
       margin-inline-start: var(--spacing-1, 0.25rem);
@@ -78,8 +78,8 @@ export const breadcrumbItemStyles = [
       user-select: none;
     }
 
-    :host(:last-of-type) [part="separator"],
-    :host(:last-child) [part="separator"] {
+    :host(:last-of-type) [part~="separator"],
+    :host(:last-child) [part~="separator"] {
       display: none !important;
     }
   `,

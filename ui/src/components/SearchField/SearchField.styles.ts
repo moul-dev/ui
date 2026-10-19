@@ -1,4 +1,5 @@
 import { css } from 'lit'
+import { fieldStyles } from '../../styles/field.styles'
 import { resetStyles } from '../../styles/reset.styles'
 
 export const searchFieldStyles = [
@@ -15,14 +16,14 @@ export const searchFieldStyles = [
       display: none !important;
     }
 
-    [part='base'] {
+    [part~='base'] {
       display: flex;
       flex-direction: column;
       gap: var(--spacing-1, 0.25rem);
       width: 100%;
     }
 
-    [part='label'] {
+    [part~='label'] {
       display: block;
       font-size: var(--font-size-sm, 0.875rem);
       font-weight: 500;
@@ -30,14 +31,14 @@ export const searchFieldStyles = [
     }
 
     search,
-    [part='search'] {
+    [part~='search'] {
       display: block;
       width: 100%;
       margin: 0;
       padding: 0;
     }
 
-    [part='input-container'] {
+    [part~='input-container'] {
       display: flex;
       align-items: center;
       position: relative;
@@ -51,22 +52,22 @@ export const searchFieldStyles = [
       padding-inline: var(--spacing-2, 0.5rem);
     }
 
-    [part='input-container']:hover:not([data-disabled='true']) {
+    [part~='input-container']:hover:not([data-disabled='true']) {
       border-color: var(--color-neutral-400, #9ca3af);
     }
 
-    [part='input-container']:focus-within:not([data-disabled='true']) {
+    [part~='input-container']:focus-within:not([data-disabled='true']) {
       border-color: var(--color-border-focus, #3b82f6);
       outline: 2px solid var(--color-border-focus, #3b82f6);
       outline-offset: 1px;
     }
 
-    :host([is-invalid]) [part='input-container'],
-    [part='input-container'][data-invalid='true'] {
+    :host([is-invalid]) [part~='input-container'],
+    [part~='input-container'][data-invalid='true'] {
       border-color: var(--color-error-500, #ef4444);
     }
 
-    [part='search-icon'] {
+    [part~='search-icon'] {
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -76,12 +77,12 @@ export const searchFieldStyles = [
       flex-shrink: 0;
     }
 
-    [part='search-icon'] svg {
+    [part~='search-icon'] svg {
       width: 100%;
       height: 100%;
     }
 
-    [part='input'] {
+    [part~='input'] {
       flex: 1;
       width: 100%;
       min-width: 0;
@@ -95,19 +96,19 @@ export const searchFieldStyles = [
       padding: var(--spacing-2, 0.5rem) var(--spacing-2, 0.5rem);
     }
 
-    [part='input']::-webkit-search-cancel-button,
-    [part='input']::-webkit-search-decoration,
-    [part='input']::-webkit-search-results-button,
-    [part='input']::-webkit-search-results-decoration {
+    [part~='input']::-webkit-search-cancel-button,
+    [part~='input']::-webkit-search-decoration,
+    [part~='input']::-webkit-search-results-button,
+    [part~='input']::-webkit-search-results-decoration {
       display: none;
       -webkit-appearance: none;
     }
 
-    [part='input']::placeholder {
+    [part~='input']::placeholder {
       color: var(--color-fg-subtle, #9ca3af);
     }
 
-    [part='clear-btn'] {
+    [part~='clear-btn'] {
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -123,21 +124,21 @@ export const searchFieldStyles = [
       transition: color 0.1s ease, transform 0.1s ease;
     }
 
-    [part='clear-btn']:hover {
+    [part~='clear-btn']:hover {
       color: var(--color-fg, inherit);
     }
 
-    [part='clear-btn'] svg {
+    [part~='clear-btn'] svg {
       width: 1rem;
       height: 1rem;
     }
 
-    [part='description'] {
+    [part~='description'] {
       font-size: var(--font-size-xs, 0.75rem);
       color: var(--color-fg-subtle, #6b7280);
     }
 
-    [part='error'] {
+    [part~='error'] {
       font-size: var(--font-size-xs, 0.75rem);
       color: var(--color-error-500, #ef4444);
     }
@@ -149,9 +150,10 @@ export const searchFieldStyles = [
     }
 
     @media (prefers-reduced-motion: reduce) {
-      [part='input-container'] {
+      [part~='input-container'] {
         transition: none;
       }
     }
   `,
+  fieldStyles,
 ]

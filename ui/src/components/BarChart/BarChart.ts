@@ -117,7 +117,7 @@ export class MoulBarChart extends LitElement {
     if (prefersReducedMotion()) return
 
     const bars = this.renderRoot?.querySelectorAll<SVGRectElement>(
-      'rect.chart-bar, [part~="bar"]',
+      'rect.chart-bar, [part="bar"]',
     )
     if (bars && bars.length > 0) {
       subtleAnimate(

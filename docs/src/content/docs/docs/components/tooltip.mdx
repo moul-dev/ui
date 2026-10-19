@@ -1,48 +1,62 @@
 ---
 title: Tooltip
-description: Hover preview popover showing informative microcopy.
+description: Short label shown on hover or focus.
 ---
 
 import ComponentPreview from '@/components/ComponentPreview.astro';
 
-# Tooltip
+`<moul-tooltip>` describes its trigger through `aria-describedby`. It opens immediately on keyboard focus and after `delay` on hover.
 
-The `<moul-tooltip>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
-
-## Preview
-
-<ComponentPreview>
-  <moul-tooltip content="Copy deployment URL to clipboard">
-  <moul-button variant="outline">Copy Link</moul-button>
-</moul-tooltip>
+<ComponentPreview minHeight="200px">
+<div class="demo-row">
+  <moul-tooltip content="Copy link" placement="top">
+    <moul-button variant="secondary">Top</moul-button>
+  </moul-tooltip>
+  <moul-tooltip content="Opens in a new tab" placement="bottom">
+    <moul-button variant="secondary">Bottom</moul-button>
+  </moul-tooltip>
+  <moul-tooltip content="Previous" placement="left">
+    <moul-button variant="secondary">Left</moul-button>
+  </moul-tooltip>
+  <moul-tooltip content="Next" placement="right">
+    <moul-button variant="secondary">Right</moul-button>
+  </moul-tooltip>
+</div>
 </ComponentPreview>
 
-## Import
-
-```ts
-import '@moul-dev/ui';
-```
-
-## HTML Usage
-
 ```html
-<moul-tooltip content="Hint">
-  <moul-button>Hover me</moul-button>
-</moul-tooltip>
+<div class="demo-row">
+  <moul-tooltip content="Copy link" placement="top">
+    <moul-button variant="secondary">Top</moul-button>
+  </moul-tooltip>
+  <moul-tooltip content="Opens in a new tab" placement="bottom">
+    <moul-button variant="secondary">Bottom</moul-button>
+  </moul-tooltip>
+  <moul-tooltip content="Previous" placement="left">
+    <moul-button variant="secondary">Left</moul-button>
+  </moul-tooltip>
+  <moul-tooltip content="Next" placement="right">
+    <moul-button variant="secondary">Right</moul-button>
+  </moul-tooltip>
+</div>
 ```
 
-## Attributes & Properties
+## API reference
 
-| Name | Type | Default |
-| :--- | :--- | :--- |
-| `content` | `string` | `''` |
-| `placement` | `TooltipPlacement` | `'top'` |
-| `delay` | `number` | `300` |
-| `is-open` | `boolean` | `false` |
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `content` | `content` | `string` | `''` |
+| `placement` | `placement` | `'top' \| 'bottom' \| 'left' \| 'right'` | `'top'` |
+| `delay` | `delay` | `number` | `300` |
+| `is-open` | `isOpen` | `boolean` | `false` |
 
-## Events
+| Event | Type |
+| :-- | :-- |
+| `openchange` | `CustomEvent` |
 
-| Event Name | Description |
-| :--- | :--- |
-| `openchange` | Dispatched when element fires openchange |
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | — |
+| `content` | — |
 
+**CSS parts:** `popover`, `trigger`, `tooltip`

@@ -1,47 +1,55 @@
 ---
 title: AlertDialog
-description: Modal confirmation dialog for destructive or high-impact actions.
+description: Interrupting confirmation for destructive or important actions.
 ---
 
 import ComponentPreview from '@/components/ComponentPreview.astro';
 
-# AlertDialog
-
-The `<moul-alert-dialog>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
-
-## Preview
+`<moul-alert-dialog>` asks for an explicit decision. Buttons marked `data-action="confirm"` or `"cancel"` fire the matching event and close it; focus starts on Cancel.
 
 <ComponentPreview>
-  <moul-button variant="danger">Delete Workspace</moul-button>
+<moul-button variant="danger" data-open="demo-alert-dialog">Delete workspace</moul-button>
+<moul-alert-dialog id="demo-alert-dialog" tone="error" aria-label="Delete workspace">
+  <h3 slot="header">Delete this workspace?</h3>
+  <p slot="body">All projects, deployments and logs will be permanently removed. This can’t be undone.</p>
+  <div slot="footer" class="demo-row" style="justify-content: flex-end">
+    <moul-button variant="ghost" data-action="cancel">Cancel</moul-button>
+    <moul-button variant="danger" data-action="confirm">Delete</moul-button>
+  </div>
+</moul-alert-dialog>
 </ComponentPreview>
 
-## Import
-
-```ts
-import '@moul-dev/ui';
-```
-
-## HTML Usage
-
 ```html
-<moul-alert-dialog title="Delete Project?" description="This action cannot be undone.">
-  <moul-button slot="actions" variant="danger">Confirm Delete</moul-button>
+<moul-button variant="danger">Delete workspace</moul-button>
+<moul-alert-dialog id="demo-alert-dialog" tone="error" aria-label="Delete workspace">
+  <h3 slot="header">Delete this workspace?</h3>
+  <p slot="body">All projects, deployments and logs will be permanently removed. This can’t be undone.</p>
+  <div slot="footer" class="demo-row" style="justify-content: flex-end">
+    <moul-button variant="ghost" data-action="cancel">Cancel</moul-button>
+    <moul-button variant="danger" data-action="confirm">Delete</moul-button>
+  </div>
 </moul-alert-dialog>
 ```
 
-## Attributes & Properties
+## API reference
 
-| Name | Type | Default |
-| :--- | :--- | :--- |
-| `is-open` | `boolean` | `false` |
-| `tone` | `SemanticTone` | `'error'` |
-| `size` | `AlertDialogSize` | `'md'` |
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `is-open` | `isOpen` | `boolean` | `false` |
+| `tone` | `tone` | `'primary' \| 'accent' \| 'success' \| 'warning' \| 'error'` | `'error'` |
+| `size` | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` |
 
-## Events
+| Event | Type |
+| :-- | :-- |
+| `openchange` | `CustomEvent` |
+| `confirm` | `CustomEvent` |
+| `cancel` | `CustomEvent` |
 
-| Event Name | Description |
-| :--- | :--- |
-| `openchange` | Dispatched when element fires openchange |
-| `confirm` | Dispatched when element fires confirm |
-| `cancel` | Dispatched when element fires cancel |
+| Slot | Description |
+| :-- | :-- |
+| `header` | — |
+| `body` | — |
+| `(default)` | — |
+| `footer` | — |
 
+**CSS parts:** `base`, `dialog`, `header`, `body`, `footer`

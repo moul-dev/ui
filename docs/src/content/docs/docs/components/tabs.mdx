@@ -1,60 +1,131 @@
 ---
 title: Tabs
-description: Multi-panel tabbed view container with keyboard arrow switching.
+description: Switch between related panels.
 ---
 
 import ComponentPreview from '@/components/ComponentPreview.astro';
 
-# Tabs
+`<moul-tabs>` pairs `<moul-tab>` and `<moul-tab-panel>` by `key`. The indicator glides to the selected tab and arrow keys move between tabs.
 
-The `<moul-tabs>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
+## Line
 
-## Preview
-
-<ComponentPreview>
-  <moul-tabs style="width: 100%; max-width: 480px;">
-  <moul-tab-list>
-    <moul-tab value="overview" selected>Overview</moul-tab>
-    <moul-tab value="analytics">Analytics</moul-tab>
-    <moul-tab value="settings">Settings</moul-tab>
-  </moul-tab-list>
-  <moul-tab-panel value="overview">
-    <p style="padding-top: 1rem; margin: 0;">Overview telemetry and workspace summaries.</p>
-  </moul-tab-panel>
-  <moul-tab-panel value="analytics">
-    <p style="padding-top: 1rem; margin: 0;">Detailed charts and metric breakdowns.</p>
-  </moul-tab-panel>
-  <moul-tab-panel value="settings">
-    <p style="padding-top: 1rem; margin: 0;">Configure workspace preferences.</p>
-  </moul-tab-panel>
+<ComponentPreview align="stretch">
+<moul-tabs selected-key="overview">
+  <moul-tab key="overview">Overview</moul-tab>
+  <moul-tab key="analytics">Analytics</moul-tab>
+  <moul-tab key="settings">Settings</moul-tab>
+  <moul-tab key="billing" is-disabled>Billing</moul-tab>
+  <moul-tab-panel key="overview">Workspace summary and recent activity.</moul-tab-panel>
+  <moul-tab-panel key="analytics">Traffic, conversion and retention metrics.</moul-tab-panel>
+  <moul-tab-panel key="settings">Members, domains and integrations.</moul-tab-panel>
+  <moul-tab-panel key="billing">Invoices and payment methods.</moul-tab-panel>
 </moul-tabs>
 </ComponentPreview>
 
-## Import
-
-```ts
-import '@moul-dev/ui';
-```
-
-## HTML Usage
-
 ```html
-<moul-tabs>
-  <moul-tab-list>
-    <moul-tab value="a" selected>Tab A</moul-tab>
-    <moul-tab value="b">Tab B</moul-tab>
-  </moul-tab-list>
-  <moul-tab-panel value="a">Content A</moul-tab-panel>
-  <moul-tab-panel value="b">Content B</moul-tab-panel>
+<moul-tabs selected-key="overview">
+  <moul-tab key="overview">Overview</moul-tab>
+  <moul-tab key="analytics">Analytics</moul-tab>
+  <moul-tab key="settings">Settings</moul-tab>
+  <moul-tab key="billing" is-disabled>Billing</moul-tab>
+  <moul-tab-panel key="overview">Workspace summary and recent activity.</moul-tab-panel>
+  <moul-tab-panel key="analytics">Traffic, conversion and retention metrics.</moul-tab-panel>
+  <moul-tab-panel key="settings">Members, domains and integrations.</moul-tab-panel>
+  <moul-tab-panel key="billing">Invoices and payment methods.</moul-tab-panel>
 </moul-tabs>
 ```
 
-## Attributes & Properties
+## Pill
 
-| Name | Type | Default |
-| :--- | :--- | :--- |
-| `selected-key` | `string` | `''` |
-| `orientation` | `TabsOrientation` | `'horizontal'` |
-| `variant` | `TabsVariant` | `'line'` |
+A segmented control with a floating glass thumb.
 
+<ComponentPreview>
+<moul-tabs selected-key="week" variant="pill">
+  <moul-tab key="day">Day</moul-tab>
+  <moul-tab key="week">Week</moul-tab>
+  <moul-tab key="month">Month</moul-tab>
+  <moul-tab-panel key="day">Today’s numbers.</moul-tab-panel>
+  <moul-tab-panel key="week">This week’s numbers.</moul-tab-panel>
+  <moul-tab-panel key="month">This month’s numbers.</moul-tab-panel>
+</moul-tabs>
+</ComponentPreview>
 
+```html
+<moul-tabs selected-key="week" variant="pill">
+  <moul-tab key="day">Day</moul-tab>
+  <moul-tab key="week">Week</moul-tab>
+  <moul-tab key="month">Month</moul-tab>
+  <moul-tab-panel key="day">Today’s numbers.</moul-tab-panel>
+  <moul-tab-panel key="week">This week’s numbers.</moul-tab-panel>
+  <moul-tab-panel key="month">This month’s numbers.</moul-tab-panel>
+</moul-tabs>
+```
+
+## Vertical
+
+<ComponentPreview align="stretch">
+<moul-tabs selected-key="profile" orientation="vertical">
+  <moul-tab key="profile">Profile</moul-tab>
+  <moul-tab key="security">Security</moul-tab>
+  <moul-tab key="notifications">Notifications</moul-tab>
+  <moul-tab-panel key="profile">Name, avatar and bio.</moul-tab-panel>
+  <moul-tab-panel key="security">Passkeys and sessions.</moul-tab-panel>
+  <moul-tab-panel key="notifications">Email and push preferences.</moul-tab-panel>
+</moul-tabs>
+</ComponentPreview>
+
+```html
+<moul-tabs selected-key="profile" orientation="vertical">
+  <moul-tab key="profile">Profile</moul-tab>
+  <moul-tab key="security">Security</moul-tab>
+  <moul-tab key="notifications">Notifications</moul-tab>
+  <moul-tab-panel key="profile">Name, avatar and bio.</moul-tab-panel>
+  <moul-tab-panel key="security">Passkeys and sessions.</moul-tab-panel>
+  <moul-tab-panel key="notifications">Email and push preferences.</moul-tab-panel>
+</moul-tabs>
+```
+
+## API reference
+
+### `<moul-tabs>`
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `selected-key` | `selectedKey` | `string` | `''` |
+| `orientation` | `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` |
+| `variant` | `variant` | `'line' \| 'pill' \| 'enclosed'` | `'line'` |
+
+| Event | Type |
+| :-- | :-- |
+| `selectionchange` | `CustomEvent` |
+
+| Slot | Description |
+| :-- | :-- |
+| `tab` | — |
+| `(default)` | — |
+
+**CSS parts:** `indicator`, `base`, `tablist`, `panels`
+
+### `<moul-tab>`
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `key` | `key` | `string` | `''` |
+| `is-disabled` | `isDisabled` | `boolean` | `false` |
+| `is-selected` | `isSelected` | `boolean` | `false` |
+
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | — |
+
+**CSS parts:** `base`
+
+### `<moul-tab-panel>`
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `key` | `key` | `string` | `''` |
+
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | — |

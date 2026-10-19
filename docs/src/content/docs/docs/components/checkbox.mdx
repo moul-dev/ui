@@ -1,47 +1,48 @@
 ---
 title: Checkbox
-description: Binary selection toggle for forms and lists.
+description: Binary choice with an indeterminate state.
 ---
 
 import ComponentPreview from '@/components/ComponentPreview.astro';
 
-# Checkbox
-
-The `<moul-checkbox>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
-
-## Preview
+`<moul-checkbox>` toggles with click or Space. The check mark draws in on a spring.
 
 <ComponentPreview>
-  <moul-checkbox checked>Receive release notifications</moul-checkbox>
+<div class="demo-stack">
+  <moul-checkbox is-checked>Receive release notifications</moul-checkbox>
+  <moul-checkbox>Send weekly digest</moul-checkbox>
+  <moul-checkbox is-indeterminate>Select all regions</moul-checkbox>
+  <moul-checkbox is-disabled>Disabled option</moul-checkbox>
+</div>
 </ComponentPreview>
 
-## Import
-
-```ts
-import '@moul-dev/ui';
-```
-
-## HTML Usage
-
 ```html
-<moul-checkbox checked>I agree to terms</moul-checkbox>
+<div class="demo-stack">
+  <moul-checkbox is-checked>Receive release notifications</moul-checkbox>
+  <moul-checkbox>Send weekly digest</moul-checkbox>
+  <moul-checkbox is-indeterminate>Select all regions</moul-checkbox>
+  <moul-checkbox is-disabled>Disabled option</moul-checkbox>
+</div>
 ```
 
-## Attributes & Properties
+## API reference
 
-| Name | Type | Default |
-| :--- | :--- | :--- |
-| `name` | `string` | `''` |
-| `value` | `string` | `'on'` |
-| `is-checked` | `boolean` | `false` |
-| `is-indeterminate` | `boolean` | `false` |
-| `is-disabled` | `boolean` | `false` |
-| `is-required` | `boolean` | `false` |
-| `label` | `string` | `''` |
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `name` | `name` | `string` | `''` |
+| `value` | `value` | `string` | `'on'` |
+| `is-checked` | `isChecked` | `boolean` | `false` |
+| `is-indeterminate` | `isIndeterminate` | `boolean` | `false` |
+| `is-disabled` | `isDisabled` | `boolean` | `false` |
+| `is-required` | `isRequired` | `boolean` | `false` |
+| `label` | `label` | `string` | `''` |
 
-## Events
+| Event | Type |
+| :-- | :-- |
+| `change` | `CustomEvent` |
 
-| Event Name | Description |
-| :--- | :--- |
-| `change` | Dispatched when element fires change |
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | — |
 
+**CSS parts:** `indicator`, `base`, `icon`, `label`

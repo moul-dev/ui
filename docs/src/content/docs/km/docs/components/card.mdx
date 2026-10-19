@@ -5,53 +5,83 @@ description: ឯកសារណែនាំសម្រាប់សមាសភ�
 
 import ComponentPreview from '@/components/ComponentPreview.astro';
 
-# Card (សមាសភាគ)
-
-The `<moul-card>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
-
-## Preview
+`<moul-card>` groups related content. The `glass` variant is a liquid-glass panel that frosts whatever sits behind it.
 
 <ComponentPreview>
-  <moul-card variant="outline" style="max-width: 380px;">
-  <moul-card-header>
-    <h4 style="margin: 0; font-size: 1.1rem; font-weight: 600;">Active Cluster</h4>
-  </moul-card-header>
-  <moul-card-body>
-    <p style="margin: 0; opacity: 0.8; font-size: 0.9rem;">High-performance Web Component surface container.</p>
-  </moul-card-body>
-  <moul-card-footer>
-    <moul-button variant="primary" size="sm">Manage</moul-button>
-  </moul-card-footer>
-</moul-card>
+<div class="demo-row" style="align-items: stretch">
+  <moul-card variant="glass" style="width: 16rem">
+    <moul-card-header><strong>Glass</strong></moul-card-header>
+    <moul-card-body>Frosted, tinted material with a specular rim.</moul-card-body>
+    <moul-card-footer><moul-button size="sm">Open</moul-button></moul-card-footer>
+  </moul-card>
+  <moul-card variant="bordered" style="width: 16rem">
+    <moul-card-header><strong>Bordered</strong></moul-card-header>
+    <moul-card-body>Quiet outline for dense layouts.</moul-card-body>
+    <moul-card-footer><moul-button size="sm" variant="secondary">Open</moul-button></moul-card-footer>
+  </moul-card>
+  <moul-card variant="shadow" tone="accent" is-interactive style="width: 16rem">
+    <moul-card-header><strong>Interactive</strong></moul-card-header>
+    <moul-card-body>Lifts on hover and fires press.</moul-card-body>
+  </moul-card>
+</div>
 </ComponentPreview>
 
-## Import
-
-```ts
-import '@moul-dev/ui';
-```
-
-## HTML Usage
-
 ```html
-<moul-card variant="outline">
-  <moul-card-header>Title</moul-card-header>
-  <moul-card-body>Body content</moul-card-body>
-  <moul-card-footer>Actions</moul-card-footer>
-</moul-card>
+<div class="demo-row" style="align-items: stretch">
+  <moul-card variant="glass" style="width: 16rem">
+    <moul-card-header><strong>Glass</strong></moul-card-header>
+    <moul-card-body>Frosted, tinted material with a specular rim.</moul-card-body>
+    <moul-card-footer><moul-button size="sm">Open</moul-button></moul-card-footer>
+  </moul-card>
+  <moul-card variant="bordered" style="width: 16rem">
+    <moul-card-header><strong>Bordered</strong></moul-card-header>
+    <moul-card-body>Quiet outline for dense layouts.</moul-card-body>
+    <moul-card-footer><moul-button size="sm" variant="secondary">Open</moul-button></moul-card-footer>
+  </moul-card>
+  <moul-card variant="shadow" tone="accent" is-interactive style="width: 16rem">
+    <moul-card-header><strong>Interactive</strong></moul-card-header>
+    <moul-card-body>Lifts on hover and fires press.</moul-card-body>
+  </moul-card>
+</div>
 ```
 
-## Attributes & Properties
+## API reference
 
-| Name | Type | Default |
-| :--- | :--- | :--- |
-| `tone` | `SemanticTone` | `'primary'` |
-| `variant` | `VisualVariant` | `'flat'` |
-| `is-interactive` | `boolean` | `false` |
+### `<moul-card>`
 
-## Events
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `tone` | `tone` | `'primary' \| 'accent' \| 'success' \| 'warning' \| 'error'` | `'primary'` |
+| `variant` | `variant` | `'solid' \| 'flat' \| 'shadow' \| 'bordered' \| 'glass'` | `'flat'` |
+| `is-interactive` | `isInteractive` | `boolean` | `false` |
 
-| Event Name | Description |
-| :--- | :--- |
-| `press` | Dispatched when element fires press |
+| Event | Type |
+| :-- | :-- |
+| `press` | `CustomEvent` |
 
+| Slot | Description |
+| :-- | :-- |
+| `header` | — |
+| `body` | — |
+| `(default)` | — |
+| `footer` | — |
+
+**CSS parts:** `header`, `body`, `content`, `footer`
+
+### `<moul-card-header>`
+
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | — |
+
+### `<moul-card-body>`
+
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | — |
+
+### `<moul-card-footer>`
+
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | — |

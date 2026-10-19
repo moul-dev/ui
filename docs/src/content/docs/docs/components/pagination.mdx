@@ -1,45 +1,38 @@
 ---
 title: Pagination
-description: Page navigation bar with previous, next, and numbered jumps.
+description: Navigate between pages of results.
 ---
 
 import ComponentPreview from '@/components/ComponentPreview.astro';
 
-# Pagination
-
-The `<moul-pagination>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
-
-## Preview
+`<moul-pagination>` collapses long ranges with ellipses and fires `pagechange` with the new page.
 
 <ComponentPreview>
-  <moul-pagination current="1" total="8"></moul-pagination>
+<div class="demo-stack" style="align-items: center">
+  <moul-pagination total-pages="12" current-page="4"></moul-pagination>
+  <moul-pagination total-pages="5" current-page="2" shape="pill"></moul-pagination>
+</div>
 </ComponentPreview>
 
-## Import
-
-```ts
-import '@moul-dev/ui';
-```
-
-## HTML Usage
-
 ```html
-<moul-pagination current="1" total="10"></moul-pagination>
+<div class="demo-stack" style="align-items: center">
+  <moul-pagination total-pages="12" current-page="4"></moul-pagination>
+  <moul-pagination total-pages="5" current-page="2" shape="pill"></moul-pagination>
+</div>
 ```
 
-## Attributes & Properties
+## API reference
 
-| Name | Type | Default |
-| :--- | :--- | :--- |
-| `total-pages` | `number` | `1` |
-| `current-page` | `number` | `1` |
-| `page-size` | `number` | `10` |
-| `shape` | `PaginationShape` | `'rounded'` |
-| `sibling-count` | `number` | `1` |
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `total-pages` | `totalPages` | `number` | `1` |
+| `current-page` | `currentPage` | `number` | `1` |
+| `page-size` | `pageSize` | `number` | `10` |
+| `shape` | `shape` | `'square' \| 'rounded' \| 'pill'` | `'rounded'` |
+| `sibling-count` | `siblingCount` | `number` | `1` |
 
-## Events
+| Event | Type |
+| :-- | :-- |
+| `pagechange` | `CustomEvent` |
 
-| Event Name | Description |
-| :--- | :--- |
-| `pagechange` | Dispatched when element fires pagechange |
-
+**CSS parts:** `base`, `button`, `prev`, `ellipsis`, `next`

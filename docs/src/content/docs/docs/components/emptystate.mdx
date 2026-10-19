@@ -1,42 +1,50 @@
 ---
 title: EmptyState
-description: Placeholder view when collections or queries contain zero items.
+description: Friendly placeholder when there is nothing to show.
 ---
 
 import ComponentPreview from '@/components/ComponentPreview.astro';
 
-# EmptyState
-
-The `<moul-empty-state>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
-
-## Preview
+`<moul-empty-state>` explains why a view is empty and offers the next step. Its parts rise in with a short stagger.
 
 <ComponentPreview>
-  <moul-empty-state title="No Deployments Found" description="Trigger a build or push a commit to see active pipelines.">
-  <moul-button slot="actions" variant="primary">New Deployment</moul-button>
+<moul-empty-state variant="glass" style="width: min(100%, 28rem)">
+  <span slot="icon" style="font-size: 1.75rem">📦</span>
+  <span slot="title">No deployments yet</span>
+  <span slot="description">Push a commit or trigger a build to see it here.</span>
+  <div slot="actions" class="demo-row">
+    <moul-button size="sm">New deployment</moul-button>
+    <moul-button size="sm" variant="ghost">Read the docs</moul-button>
+  </div>
 </moul-empty-state>
 </ComponentPreview>
 
-## Import
-
-```ts
-import '@moul-dev/ui';
-```
-
-## HTML Usage
-
 ```html
-<moul-empty-state title="No Items" description="Create an item to get started.">
-  <moul-button slot="actions" variant="primary">Create</moul-button>
+<moul-empty-state variant="glass" style="width: min(100%, 28rem)">
+  <span slot="icon" style="font-size: 1.75rem">📦</span>
+  <span slot="title">No deployments yet</span>
+  <span slot="description">Push a commit or trigger a build to see it here.</span>
+  <div slot="actions" class="demo-row">
+    <moul-button size="sm">New deployment</moul-button>
+    <moul-button size="sm" variant="ghost">Read the docs</moul-button>
+  </div>
 </moul-empty-state>
 ```
 
-## Attributes & Properties
+## API reference
 
-| Name | Type | Default |
-| :--- | :--- | :--- |
-| `size` | `EmptyStateSize` | `'md'` |
-| `align` | `EmptyStateAlign` | `'center'` |
-| `variant` | `VisualVariant` | `'flat'` |
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `size` | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` |
+| `align` | `align` | `'start' \| 'center'` | `'center'` |
+| `variant` | `variant` | `'solid' \| 'flat' \| 'shadow' \| 'bordered' \| 'glass'` | `'flat'` |
 
+| Slot | Description |
+| :-- | :-- |
+| `icon` | — |
+| `title` | — |
+| `description` | — |
+| `(default)` | — |
+| `actions` | — |
 
+**CSS parts:** `icon`, `title`, `description`, `actions`, `base`

@@ -5,40 +5,69 @@ description: ឯកសារណែនាំសម្រាប់សមាសភ�
 
 import ComponentPreview from '@/components/ComponentPreview.astro';
 
-# Badge (សមាសភាគ)
+`<moul-badge>` labels status with a semantic `tone` and a surface `variant`. `is-dot` renders a status dot and needs an `aria-label` when it stands alone.
 
-The `<moul-badge>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
-
-## Preview
+## Tones
 
 <ComponentPreview>
-  <moul-badge variant="primary">Primary</moul-badge>
-<moul-badge variant="secondary">Secondary</moul-badge>
-<moul-badge variant="success">Completed</moul-badge>
-<moul-badge variant="warning">Pending</moul-badge>
-<moul-badge variant="danger">Failed</moul-badge>
-<moul-badge variant="outline">Outline</moul-badge>
+<div class="demo-row">
+  <moul-badge tone="primary">Primary</moul-badge>
+  <moul-badge tone="accent">Accent</moul-badge>
+  <moul-badge tone="success">Healthy</moul-badge>
+  <moul-badge tone="warning">Pending</moul-badge>
+  <moul-badge tone="error">Failed</moul-badge>
+</div>
 </ComponentPreview>
 
-## Import
-
-```ts
-import '@moul-dev/ui';
+```html
+<div class="demo-row">
+  <moul-badge tone="primary">Primary</moul-badge>
+  <moul-badge tone="accent">Accent</moul-badge>
+  <moul-badge tone="success">Healthy</moul-badge>
+  <moul-badge tone="warning">Pending</moul-badge>
+  <moul-badge tone="error">Failed</moul-badge>
+</div>
 ```
 
-## HTML Usage
+## Variants and sizes
+
+<ComponentPreview>
+<div class="demo-row">
+  <moul-badge tone="success" variant="solid">Solid</moul-badge>
+  <moul-badge tone="success" variant="flat">Flat</moul-badge>
+  <moul-badge tone="success" variant="bordered">Bordered</moul-badge>
+  <moul-badge tone="success" variant="glass">Glass</moul-badge>
+  <moul-badge tone="success" is-dot>Live</moul-badge>
+  <moul-badge size="sm">Small</moul-badge>
+  <moul-badge size="lg">Large</moul-badge>
+</div>
+</ComponentPreview>
 
 ```html
-<moul-badge variant="success">Active</moul-badge>
+<div class="demo-row">
+  <moul-badge tone="success" variant="solid">Solid</moul-badge>
+  <moul-badge tone="success" variant="flat">Flat</moul-badge>
+  <moul-badge tone="success" variant="bordered">Bordered</moul-badge>
+  <moul-badge tone="success" variant="glass">Glass</moul-badge>
+  <moul-badge tone="success" is-dot>Live</moul-badge>
+  <moul-badge size="sm">Small</moul-badge>
+  <moul-badge size="lg">Large</moul-badge>
+</div>
 ```
 
-## Attributes & Properties
+## API reference
 
-| Name | Type | Default |
-| :--- | :--- | :--- |
-| `tone` | `SemanticTone` | `'primary'` |
-| `variant` | `VisualVariant` | `'flat'` |
-| `size` | `BadgeSize` | `'md'` |
-| `is-dot` | `boolean` | `false` |
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `tone` | `tone` | `'primary' \| 'accent' \| 'success' \| 'warning' \| 'error'` | `'primary'` |
+| `variant` | `variant` | `'solid' \| 'flat' \| 'shadow' \| 'bordered' \| 'glass'` | `'flat'` |
+| `size` | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` |
+| `is-dot` | `isDot` | `boolean` | `false` |
 
+| Slot | Description |
+| :-- | :-- |
+| `prefix` | — |
+| `(default)` | — |
+| `suffix` | — |
 
+**CSS parts:** `base`, `prefix`, `content`, `suffix`

@@ -1,4 +1,5 @@
 import { css } from 'lit'
+import { fieldStyles } from '../../styles/field.styles'
 import { resetStyles } from '../../styles/reset.styles'
 
 export const comboBoxStyles = [
@@ -16,21 +17,21 @@ export const comboBoxStyles = [
       display: none !important;
     }
 
-    [part='base'] {
+    [part~='base'] {
       display: flex;
       flex-direction: column;
       gap: var(--spacing-1, 0.25rem);
       width: 100%;
     }
 
-    [part='label'] {
+    [part~='label'] {
       display: block;
       font-size: var(--font-size-sm, 0.875rem);
       font-weight: 500;
       color: var(--color-fg, inherit);
     }
 
-    [part='input-container'] {
+    [part~='input-container'] {
       display: flex;
       align-items: center;
       position: relative;
@@ -43,22 +44,22 @@ export const comboBoxStyles = [
       box-shadow: var(--shadow-sm, 0 1px 2px 0 rgba(0, 0, 0, 0.05));
     }
 
-    [part='input-container']:hover:not([data-disabled='true']) {
+    [part~='input-container']:hover:not([data-disabled='true']) {
       border-color: var(--color-neutral-400, #9ca3af);
     }
 
-    [part='input-container']:focus-within:not([data-disabled='true']) {
+    [part~='input-container']:focus-within:not([data-disabled='true']) {
       border-color: var(--color-border-focus, #3b82f6);
       outline: 2px solid var(--color-border-focus, #3b82f6);
       outline-offset: 1px;
     }
 
-    :host([is-invalid]) [part='input-container'],
-    [part='input-container'][data-invalid='true'] {
+    :host([is-invalid]) [part~='input-container'],
+    [part~='input-container'][data-invalid='true'] {
       border-color: var(--color-error-500, #ef4444);
     }
 
-    [part='input'] {
+    [part~='input'] {
       flex: 1;
       width: 100%;
       min-width: 0;
@@ -72,11 +73,11 @@ export const comboBoxStyles = [
       padding: var(--spacing-2, 0.5rem) var(--spacing-3, 0.75rem);
     }
 
-    [part='input']::placeholder {
+    [part~='input']::placeholder {
       color: var(--color-fg-subtle, #9ca3af);
     }
 
-    [part='toggle-btn'] {
+    [part~='toggle-btn'] {
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -89,39 +90,40 @@ export const comboBoxStyles = [
       transition: transform 0.2s ease, color 0.1s ease;
     }
 
-    [part='toggle-btn']:hover {
+    [part~='toggle-btn']:hover {
       color: var(--color-fg, inherit);
     }
 
-    :host([is-open]) [part='toggle-btn'] {
+    :host([is-open]) [part~='toggle-btn'] {
       transform: rotate(180deg);
     }
 
-    [part='popover'] {
-      position: absolute;
-      top: calc(100% + 4px);
-      left: 0;
-      width: 100%;
+    /* Glass menu; geometry is set by the overlay controller against the trigger */
+    [part~='popover'] {
+      margin: 0;
+      border: none;
+      border-radius: calc(0.875rem * var(--brand-radius-factor, 1));
+      background-color: var(--glass-bg-thick);
+      -webkit-backdrop-filter: var(--glass-filter);
+      backdrop-filter: var(--glass-filter);
+      box-shadow: var(--glass-highlight), var(--shadow-glass);
+      color: var(--color-fg);
+      z-index: var(--z-dropdown, 1000);
+      outline: none;
       min-width: 8rem;
       max-height: 16rem;
       overflow-y: auto;
-      border: 1px solid var(--color-border, #d1d5db);
-      border-radius: var(--radius-md, 0.375rem);
-      background-color: var(--color-bg-elevated, #ffffff);
-      box-shadow: var(--shadow-md, 0 4px 6px -1px rgba(0, 0, 0, 0.1));
-      z-index: var(--z-dropdown, 1000);
-      padding: var(--spacing-1, 0.25rem);
+      padding: 5px;
       display: flex;
       flex-direction: column;
-      gap: 2px;
-      outline: none;
+      gap: 1px;
     }
 
-    [part='popover'][hidden] {
+    [part~='popover'][hidden] {
       display: none !important;
     }
 
-    [part='empty'] {
+    [part~='empty'] {
       padding: var(--spacing-2, 0.5rem) var(--spacing-3, 0.75rem);
       font-size: var(--font-size-sm, 0.875rem);
       color: var(--color-fg-subtle, #9ca3af);
@@ -134,6 +136,7 @@ export const comboBoxStyles = [
       pointer-events: none;
     }
   `,
+  fieldStyles,
 ]
 
 export const comboBoxItemStyles = [
@@ -150,27 +153,32 @@ export const comboBoxItemStyles = [
       display: none !important;
     }
 
-    [part='item'] {
+    [part~='item'] {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: var(--spacing-2, 0.5rem) var(--spacing-3, 0.75rem);
-      border-radius: var(--radius-sm, 0.25rem);
-      cursor: pointer;
+      padding: 0.375rem 0.625rem;
+      border-radius: calc(0.5rem * var(--brand-radius-factor, 1));
+      cursor: default;
       font-size: var(--font-size-sm, 0.875rem);
       line-height: var(--line-height-sm, 1.25rem);
-      transition: background-color 0.1s ease, color 0.1s ease;
+      transition: none;
     }
 
-    [part='item']:hover:not([data-disabled='true']),
-    :host([is-active]) [part='item'] {
-      background-color: var(--color-bg-subtle, #f3f4f6);
+    /* macOS menu highlight: solid accent row, white text (and check) */
+    [part~='item']:hover:not([data-disabled]),
+    :host([is-active]) [part~='item'] {
+      background-color: var(--color-primary-solid, #3b82f6);
+      color: var(--color-fg-on-primary, #fff);
     }
 
-    :host([aria-selected='true']) [part='item'] {
-      background-color: var(--color-primary-50, #eff6ff);
-      color: var(--color-primary-700, #1d4ed8);
+    :host([aria-selected='true']) [part~='item'] {
       font-weight: 500;
+    }
+
+    [part~='item']:hover:not([data-disabled]) [part~='check'],
+    :host([is-active]) [part~='check'] {
+      color: inherit;
     }
 
     :host([is-disabled]) {

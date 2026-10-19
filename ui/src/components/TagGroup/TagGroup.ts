@@ -68,11 +68,24 @@ export class MoulTagGroup extends LitElement {
     }
   }
 
+  private hasSeededFromChildren = false
+
   private syncChildren(): void {
     const slot = this.shadowRoot?.querySelector('slot')
     const tags = ((slot?.assignedElements() ?? []) as MoulTag[]).filter(
       (el) => el.tagName.toLowerCase() === 'moul-tag',
     )
+
+    // Adopt <moul-tag is-selected> markup as the initial selection when none is given.
+    if (!this.hasSeededFromChildren && tags.length > 0) {
+      this.hasSeededFromChildren = true
+      if (this.selectedKeys.length === 0) {
+        const preset = tags
+          .filter((tag) => tag.isSelected || tag.hasAttribute('is-selected'))
+          .map((tag) => tag.key)
+        if (preset.length > 0) this.selectedKeys = preset
+      }
+    }
 
     tags.forEach((tag) => {
       if (this.isRemovable && !tag.hasAttribute('is-removable')) {

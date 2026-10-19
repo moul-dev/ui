@@ -58,7 +58,7 @@ export const barChartStyles: CSSResultGroup = [
       opacity: 0.9;
     }
 
-    [part="empty"],
+    [part~="empty"],
     .empty-state {
       display: flex;
       flex-direction: column;

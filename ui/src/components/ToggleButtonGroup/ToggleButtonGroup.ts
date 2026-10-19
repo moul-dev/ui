@@ -1,6 +1,6 @@
 import { html, LitElement, type PropertyValues } from 'lit'
 import { defineElement } from '../../utils/define-element'
-import { animateActiveIndicator } from '../../utils/motion'
+import { placeIndicator } from '../../utils/motion'
 import type { MoulToggleButton } from '../ToggleButton/ToggleButton'
 import { toggleButtonGroupStyles } from './ToggleButtonGroup.styles'
 
@@ -20,6 +20,7 @@ export class MoulToggleButtonGroup extends LitElement {
   declare isDisabled: boolean
 
   private previousSelectedButton: MoulToggleButton | null = null
+  private resizeObserver: ResizeObserver | null = null
 
   constructor() {
     super()
@@ -44,6 +45,8 @@ export class MoulToggleButtonGroup extends LitElement {
     this.removeEventListener('keydown', this.handleKeyDown)
     this.removeEventListener('change', this.handleChildChange)
     this.removeEventListener('press', this.handleChildPress)
+    this.resizeObserver?.disconnect()
+    this.resizeObserver = null
   }
 
   protected override updated(changedProperties: PropertyValues): void {
@@ -65,6 +68,12 @@ export class MoulToggleButtonGroup extends LitElement {
   protected override firstUpdated(changedProperties: PropertyValues): void {
     super.firstUpdated(changedProperties)
     this.syncSelection()
+    if (typeof ResizeObserver !== 'undefined') {
+      this.resizeObserver = new ResizeObserver(() =>
+        this.updateIndicator(null, this.getSelectedButton(), true),
+      )
+      this.resizeObserver.observe(this)
+    }
   }
 
   public getItems(): MoulToggleButton[] {
@@ -100,6 +109,7 @@ export class MoulToggleButtonGroup extends LitElement {
     let selectedItem: MoulToggleButton | null = null
 
     items.forEach((item) => {
+      item.toggleAttribute('data-in-group', true)
       const shouldSelect = Boolean(
         this.selectedKey && item.value === this.selectedKey,
       )
@@ -231,39 +241,17 @@ export class MoulToggleButtonGroup extends LitElement {
   }
 
   private updateIndicator(
-    prev: MoulToggleButton | null,
+    _prev: MoulToggleButton | null,
     next: MoulToggleButton | null,
+    instant = false,
   ): void {
-    const indicator = this.shadowRoot?.querySelector(
-      '.active-indicator',
-    ) as HTMLElement | null
-    if (!indicator) return
-
-    if (!next) {
-      indicator.classList.remove('is-visible')
-      return
-    }
-
-    try {
-      const nextRect = next.getBoundingClientRect()
-      const groupRect = this.getBoundingClientRect()
-
-      if (nextRect.width > 0 && nextRect.height > 0) {
-        indicator.classList.add('is-visible')
-        indicator.style.width = `${nextRect.width}px`
-        indicator.style.height = `${nextRect.height}px`
-        indicator.style.transform = `translate(${nextRect.left - groupRect.left}px, ${nextRect.top - groupRect.top}px)`
-
-        if (prev) {
-          const prevRect = prev.getBoundingClientRect()
-          if (prevRect.width > 0 && prevRect.height > 0) {
-            animateActiveIndicator(indicator, prevRect, nextRect)
-          }
-        }
-      }
-    } catch {
-      // In headless test environments where getBoundingClientRect is 0, ignore gracefully
-    }
+    const indicator =
+      this.shadowRoot?.querySelector<HTMLElement>('.active-indicator')
+    const base = this.shadowRoot?.querySelector<HTMLElement>('[part="base"]')
+    if (!indicator || !base) return
+    const place = () => placeIndicator(indicator, base, next, instant)
+    if (next) next.updateComplete.then(place)
+    else place()
   }
 
   protected override render() {

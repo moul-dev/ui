@@ -50,6 +50,12 @@ export class MoulComboBox extends LitElement {
     this.overlayController = new OverlayPresenceController(this, {
       preset: 'popover',
       popover: () => this.popoverElement,
+      target: () => this.popoverElement,
+      onLightDismiss: () => this.close(),
+      anchor: () =>
+        this.renderRoot?.querySelector<HTMLElement>(
+          '[part="input-container"]',
+        ) ?? null,
     })
   }
 
@@ -109,6 +115,7 @@ export class MoulComboBox extends LitElement {
 
   public open(): void {
     if (this.isDisabled || this.isOpen) return
+    if (this.overlayController.wasJustDismissed) return
     this.isOpen = true
     this.overlayController.setOpen(true)
     this.filterItems()

@@ -1,44 +1,55 @@
 ---
 title: Breadcrumbs
-description: Hierarchical navigation trail indicating active page location.
+description: Shows where the current page sits in a hierarchy.
 ---
 
 import ComponentPreview from '@/components/ComponentPreview.astro';
 
-# Breadcrumbs
-
-The `<moul-breadcrumbs>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
-
-## Preview
+`<moul-breadcrumbs>` renders a navigation landmark; the `is-current` item gets `aria-current="page"`.
 
 <ComponentPreview>
-  <moul-breadcrumbs>
+<moul-breadcrumbs>
   <moul-breadcrumb-item href="#">Home</moul-breadcrumb-item>
-  <moul-breadcrumb-item href="#">Docs</moul-breadcrumb-item>
-  <moul-breadcrumb-item current>Breadcrumbs</moul-breadcrumb-item>
+  <moul-breadcrumb-item href="#">Projects</moul-breadcrumb-item>
+  <moul-breadcrumb-item href="#">moul-portal</moul-breadcrumb-item>
+  <moul-breadcrumb-item is-current>Settings</moul-breadcrumb-item>
 </moul-breadcrumbs>
 </ComponentPreview>
 
-## Import
-
-```ts
-import '@moul-dev/ui';
-```
-
-## HTML Usage
-
 ```html
 <moul-breadcrumbs>
-  <moul-breadcrumb-item href="/">Home</moul-breadcrumb-item>
-  <moul-breadcrumb-item href="/docs">Docs</moul-breadcrumb-item>
-  <moul-breadcrumb-item current>Components</moul-breadcrumb-item>
+  <moul-breadcrumb-item href="#">Home</moul-breadcrumb-item>
+  <moul-breadcrumb-item href="#">Projects</moul-breadcrumb-item>
+  <moul-breadcrumb-item href="#">moul-portal</moul-breadcrumb-item>
+  <moul-breadcrumb-item is-current>Settings</moul-breadcrumb-item>
 </moul-breadcrumbs>
 ```
 
-## Attributes & Properties
+## API reference
 
-| Name | Type | Default |
-| :--- | :--- | :--- |
-| `separator` | `string` | `'/'` |
+### `<moul-breadcrumbs>`
 
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `separator` | `separator` | `string` | `'/'` |
 
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | — |
+
+**CSS parts:** `base`, `list`
+
+### `<moul-breadcrumb-item>`
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `href` | `href` | `string` | `''` |
+| `is-current` | `isCurrent` | `boolean` | `false` |
+| `separator` | `separator` | `string` | `''` |
+
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | — |
+| `separator` | — |
+
+**CSS parts:** `item`, `link`, `text`, `separator`

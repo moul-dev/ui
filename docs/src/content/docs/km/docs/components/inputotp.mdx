@@ -5,45 +5,37 @@ description: ឯកសារណែនាំសម្រាប់សមាសភ�
 
 import ComponentPreview from '@/components/ComponentPreview.astro';
 
-# InputOTP (សមាសភាគ)
-
-The `<moul-input-otp>` component is a standards-first Web Component built with Lit 3 and styled with OKLCH CSS tokens.
-
-## Preview
+`<moul-input-otp>` splits a code across boxes, supports paste, and fires `complete` once every slot is filled.
 
 <ComponentPreview>
-  <moul-input-otp length="6"></moul-input-otp>
+<moul-input-otp label="Verification code" length="6"></moul-input-otp>
 </ComponentPreview>
 
-## Import
-
-```ts
-import '@moul-dev/ui';
-```
-
-## HTML Usage
-
 ```html
-<moul-input-otp length="6"></moul-input-otp>
+<moul-input-otp label="Verification code" length="6"></moul-input-otp>
 ```
 
-## Attributes & Properties
+## API reference
 
-| Name | Type | Default |
-| :--- | :--- | :--- |
-| `name` | `string` | `''` |
-| `length` | `number` | `6` |
-| `value` | `string` | `''` |
-| `pattern` | `string` | `'^\\d+$'` |
-| `is-disabled` | `boolean` | `false` |
-| `is-required` | `boolean` | `false` |
-| `label` | `string` | `''` |
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `name` | `name` | `string` | `''` |
+| `length` | `length` | `number` | `6` |
+| `value` | `value` | `string` | `''` |
+| `pattern` | `pattern` | `string` | `'^\\d+$'` |
+| `is-disabled` | `isDisabled` | `boolean` | `false` |
+| `is-required` | `isRequired` | `boolean` | `false` |
+| `label` | `label` | `string` | `''` |
 
-## Events
+| Event | Type |
+| :-- | :-- |
+| `input` | `CustomEvent` |
+| `change` | `CustomEvent` |
+| `complete` | `CustomEvent` |
 
-| Event Name | Description |
-| :--- | :--- |
-| `input` | Dispatched when element fires input |
-| `change` | Dispatched when element fires change |
-| `complete` | Dispatched when element fires complete |
+| Slot | Description |
+| :-- | :-- |
+| `label` | — |
+| `separator` | — |
 
+**CSS parts:** `group`, `base`, `label`, `slot`, `separator`
