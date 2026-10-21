@@ -16,13 +16,12 @@
 
 /* ── Component Preview ───────────────────────────────────────────── */
 .moul-preview {
-  --preview-radius: 1.25rem;
+  --preview-radius: var(--radius-surface, 1.5rem);
   margin: 1.5rem 0;
-  border: 1px solid var(--color-border-glass);
+  border: 1px solid var(--color-separator);
   border-radius: var(--preview-radius);
   overflow: hidden;
   background: var(--color-bg);
-  box-shadow: var(--shadow-sm);
   isolation: isolate;
   font-family: var(--sl-font-system, system-ui), sans-serif;
   color: var(--color-fg);
@@ -31,11 +30,10 @@
 .moul-preview-header {
   padding: 0.75rem 1.125rem;
   font-size: 0.8125rem;
-  font-weight: 600;
-  letter-spacing: 0.01em;
-  border-bottom: 1px solid var(--color-border-glass);
-  background: var(--color-bg-subtle);
-  color: var(--color-fg-subtle);
+  font-weight: 500;
+  border-bottom: 1px solid var(--color-separator);
+  background: var(--color-surface);
+  color: var(--color-muted);
 }
 
 .moul-preview-canvas {
@@ -51,7 +49,7 @@
   line-height: 1.5;
 }
 
-/* A soft color field so glass surfaces have something to refract, like a wallpaper behind macOS chrome. */
+/* Opt-in color field (backdrop="mesh") so glass variants have something to refract. */
 .moul-preview[data-backdrop="mesh"] .moul-preview-canvas {
   background:
     radial-gradient(

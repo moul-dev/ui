@@ -7,6 +7,20 @@ export const popoverStyles = [
     :host {
       display: inline-block;
       position: relative;
+      /* Grow out of the trigger edge */
+      --_origin: top center;
+    }
+
+    :host([placement="top"]) {
+      --_origin: bottom center;
+    }
+
+    :host([placement="left"]) {
+      --_origin: center right;
+    }
+
+    :host([placement="right"]) {
+      --_origin: center left;
     }
 
     [part~="trigger"] {
@@ -17,13 +31,11 @@ export const popoverStyles = [
     [part~="popover"] {
       margin: 0;
       padding: var(--spacing-4, 1rem);
-      background-color: var(--glass-bg-thick, #ffffff);
-      -webkit-backdrop-filter: var(--glass-filter);
-      backdrop-filter: var(--glass-filter);
+      background-color: var(--color-bg-elevated);
       border: none;
-      border-radius: calc(1rem * var(--brand-radius-factor, 1));
-      box-shadow: var(--glass-highlight), var(--shadow-glass);
-      color: var(--color-fg, #111827);
+      border-radius: var(--radius-surface, 1.5rem);
+      box-shadow: var(--shadow-overlay);
+      color: var(--color-fg);
       font-size: var(--font-size-sm, 0.875rem);
       line-height: var(--line-height-sm, 1.25rem);
       outline: none;
@@ -33,6 +45,7 @@ export const popoverStyles = [
       max-width: 24rem;
       box-sizing: border-box;
       z-index: var(--z-popover, 1000);
+      transform-origin: var(--_origin);
     }
 
     /* Native popover visibility */
@@ -45,6 +58,7 @@ export const popoverStyles = [
       display: block;
     }
 
+    /* Enter/exit motion (fade + zoom) is driven by OverlayPresenceController on the panel. */
     /* Anchor positioning styles */
     @supports (anchor-name: --test) {
       :host([placement="bottom"]) [part~="popover"] {

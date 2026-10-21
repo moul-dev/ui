@@ -9,87 +9,91 @@ export const radioStyles = [
       font-family: var(--font-family-base, inherit);
       color: var(--color-fg, inherit);
       user-select: none;
+      -webkit-tap-highlight-color: transparent;
     }
 
     :host([hidden]) {
       display: none !important;
     }
 
-    [part~='base'] {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.625rem;
-      cursor: pointer;
-      font-size: var(--font-size-sm, 0.875rem);
-      line-height: var(--line-height-sm, 1.25rem);
-    }
-
-    [part~='indicator'] {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 1.125rem;
-      height: 1.125rem;
-      border-radius: var(--radius-full, 9999px);
-      border: none;
-      background-color: light-dark(oklch(1 0 0), oklch(1 0 0 / 0.08));
-      box-shadow:
-        inset 0 0 0 1px var(--color-fill-track-strong),
-        inset 0 1px 1px light-dark(oklch(0 0 0 / 0.06), oklch(0 0 0 / 0.3));
-      transition:
-        background-color var(--duration-fast, 140ms) ease,
-        box-shadow var(--duration-fast, 140ms) ease;
-      flex-shrink: 0;
-    }
-
-    [part~='base']:hover:not([data-disabled]) [part~='indicator'] {
-      box-shadow:
-        inset 0 0 0 1px light-dark(oklch(0.5 0 0 / 0.36), oklch(1 0 0 / 0.3)),
-        inset 0 1px 1px light-dark(oklch(0 0 0 / 0.06), oklch(0 0 0 / 0.3));
-    }
-
     :host(:focus-visible) {
       outline: none;
     }
 
-    :host(:focus-visible) [part~='indicator'] {
+    [part~='base'] {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacing-3, 0.75rem);
+      cursor: pointer;
+      font-size: var(--font-size-sm, 0.875rem);
+      line-height: var(--line-height-sm, 1.25rem);
+      font-weight: var(--font-weight-medium, 500);
+    }
+
+    /* A white, borderless field circle that fills with the accent when selected */
+    [part~='indicator'] {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      width: 1rem;
+      height: 1rem;
+      border-radius: var(--radius-full, 9999px);
+      background-color: var(--color-field);
       box-shadow:
-        inset 0 0 0 1px var(--color-fill-track-strong),
-        var(--focus-ring);
+        var(--_control-ring, 0 0 0 0 transparent),
+        var(--shadow-field);
+      transition:
+        background-color 200ms var(--ease-out, ease-out),
+        box-shadow 150ms var(--ease-out, ease-out),
+        transform 100ms var(--ease-out, ease-out);
     }
 
     :host([is-checked]) [part~='indicator'] {
-      background: linear-gradient(
-        to bottom,
-        var(--color-primary-400, #60a5fa),
-        var(--color-primary-500, #3b82f6)
-      );
-      box-shadow:
-        inset 0 1px 0 oklch(1 0 0 / 0.28),
-        inset 0 0 0 1px oklch(0 0 0 / 0.08),
-        0 1px 2px color-mix(in oklch, var(--color-primary-500) 40%, transparent);
+      background-color: var(--color-accent);
     }
 
-    :host([is-checked]:focus-visible) [part~='indicator'] {
+    :host(:focus-visible) [part~='indicator'] {
       box-shadow:
-        inset 0 1px 0 oklch(1 0 0 / 0.28),
-        var(--focus-ring);
+        var(--focus-ring),
+        var(--shadow-field);
     }
 
-    /* White pip springs in (slight overshoot), collapses quickly when deselected */
+    [part~='base']:active:not([data-disabled]) [part~='indicator'] {
+      transform: scale(0.95);
+    }
+
+    :host([is-checked]) [part~='base']:active:not([data-disabled]) [part~='indicator'] {
+      background-color: var(--color-accent-hover);
+    }
+
+    /* A clear disc fills the control (leaving the field hairline visible), then
+       turns accent-fg and shrinks to a 6px pip when selected */
     [part~='dot'] {
-      width: 0.4375rem;
-      height: 0.4375rem;
+      width: 100%;
+      height: 100%;
       border-radius: var(--radius-full, 9999px);
-      background-color: oklch(1 0 0);
-      box-shadow: 0 1px 1px oklch(0 0 0 / 0.2);
-      transform: scale(0);
-      transition: transform var(--duration-fast, 140ms) ease-in;
+      background-color: transparent;
+      scale: 1;
+      transition:
+        scale 200ms var(--ease-out, ease-out),
+        background-color 200ms var(--ease-out, ease-out);
+    }
+
+    @media (hover: hover) {
+      :host(:not([is-checked])) [part~='base']:hover:not([data-disabled]) [part~='dot'] {
+        background-color: var(--color-field-hover);
+      }
     }
 
     :host([is-checked]) [part~='dot'] {
-      transform: scale(1);
-      transition: transform var(--duration-slow, 420ms) var(--ease-spring, ease-out);
+      background-color: var(--color-accent-fg);
+      scale: 0.4286;
+    }
+
+    :host([is-checked]) [part~='base']:active:not([data-disabled]) [part~='dot'] {
+      scale: 0.5714;
     }
 
     [part~='label'] {
@@ -99,7 +103,7 @@ export const radioStyles = [
     }
 
     :host([is-disabled]) {
-      opacity: 0.45;
+      opacity: var(--disabled-opacity, 0.5);
       cursor: not-allowed;
       pointer-events: none;
     }
@@ -108,6 +112,10 @@ export const radioStyles = [
       [part~='indicator'],
       [part~='dot'] {
         transition: none;
+      }
+
+      [part~='base']:active:not([data-disabled]) [part~='indicator'] {
+        transform: none;
       }
     }
   `,
@@ -126,26 +134,42 @@ export const radioGroupStyles = [
       display: none !important;
     }
 
+    /* Inherited by the slotted radios, which outline their circles in danger */
+    :host([is-invalid][data-touched]) {
+      --_control-ring: 0 0 0 1px var(--color-danger);
+    }
+
     [part~='base'] {
       display: flex;
       flex-direction: column;
-      gap: var(--spacing-2, 0.5rem);
+      gap: var(--spacing-1, 0.25rem);
     }
 
     [part~='label'] {
       font-size: var(--font-size-sm, 0.875rem);
-      font-weight: 500;
+      line-height: var(--line-height-sm, 1.25rem);
+      font-weight: var(--font-weight-medium, 500);
       color: var(--color-fg, inherit);
+    }
+
+    :host([is-invalid][data-touched]) [part~='label'] {
+      color: var(--color-danger);
     }
 
     [part~='description'] {
       font-size: var(--font-size-xs, 0.75rem);
-      color: var(--color-fg-subtle, #6b7280);
+      line-height: var(--line-height-xs, 1rem);
+      color: var(--color-muted);
     }
 
     [part~='group'] {
       display: flex;
-      gap: var(--spacing-3, 0.75rem);
+      gap: var(--spacing-4, 1rem);
+    }
+
+    [part~='label'] ~ [part~='group'],
+    [part~='description'] ~ [part~='group'] {
+      margin-top: var(--spacing-3, 0.75rem);
     }
 
     :host([orientation='vertical']) [part~='group'] {
@@ -158,9 +182,14 @@ export const radioGroupStyles = [
       align-items: center;
     }
 
+    /* Each radio dims itself; only the group's own text needs it here */
     :host([is-disabled]) {
-      opacity: 0.5;
       cursor: not-allowed;
+    }
+
+    :host([is-disabled]) [part~='label'],
+    :host([is-disabled]) [part~='description'] {
+      opacity: var(--disabled-opacity, 0.5);
     }
   `,
 ]

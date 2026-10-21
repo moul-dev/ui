@@ -6,6 +6,7 @@ export const separatorStyles = [
   css`
     :host {
       display: block;
+      flex-shrink: 0;
     }
 
     :host([orientation="vertical"]) {
@@ -15,9 +16,11 @@ export const separatorStyles = [
     }
 
     [part~="separator"] {
+      flex-shrink: 0;
       border: none;
       margin: 0;
-      background-color: var(--color-border, #e5e7eb);
+      border-radius: var(--radius-sm, 0.25rem);
+      background-color: var(--color-separator);
       box-sizing: border-box;
     }
 
@@ -30,7 +33,7 @@ export const separatorStyles = [
     :host([orientation="vertical"]) [part~="separator"] {
       width: 1px;
       height: 100%;
-      min-height: 1rem;
+      min-height: 0.5rem;
     }
   `,
 ]

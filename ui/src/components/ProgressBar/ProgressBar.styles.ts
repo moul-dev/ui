@@ -31,28 +31,31 @@ export const progressBarStyles = [
       justify-content: space-between;
       align-items: center;
       font-size: var(--font-size-sm, 0.875rem);
+      line-height: var(--line-height-sm, 1.25rem);
+      font-weight: var(--font-weight-medium, 500);
+      font-variant-numeric: tabular-nums;
       color: var(--color-fg, inherit);
     }
 
+    /* Flat neutral track, solid tone fill */
     [part~="track"] {
       width: 100%;
-      background-color: var(--color-fill-track);
-      box-shadow: inset 0 1px 1px light-dark(oklch(0 0 0 / 0.05), oklch(0 0 0 / 0.3));
+      background-color: var(--color-default);
       overflow: hidden;
       position: relative;
     }
 
     :host([size="sm"]) [part~="track"] {
-      height: 4px;
+      height: 0.25rem;
     }
 
     :host([size="md"]) [part~="track"],
     :host(:not([size])) [part~="track"] {
-      height: 8px;
+      height: 0.5rem;
     }
 
     :host([size="lg"]) [part~="track"] {
-      height: 12px;
+      height: 0.75rem;
     }
 
     :host([shape="square"]) [part~="track"],
@@ -60,8 +63,19 @@ export const progressBarStyles = [
       border-radius: var(--radius-none, 0);
     }
 
+    /* Rounded follows the size: 2px / 4px / 6px corners */
     :host([shape="rounded"]) [part~="track"],
     :host([shape="rounded"]) [part~="fill"] {
+      border-radius: var(--radius-sm, 0.25rem);
+    }
+
+    :host([shape="rounded"][size="sm"]) [part~="track"],
+    :host([shape="rounded"][size="sm"]) [part~="fill"] {
+      border-radius: var(--radius-xs, 0.125rem);
+    }
+
+    :host([shape="rounded"][size="lg"]) [part~="track"],
+    :host([shape="rounded"][size="lg"]) [part~="fill"] {
       border-radius: var(--radius-md, 0.375rem);
     }
 
@@ -75,29 +89,30 @@ export const progressBarStyles = [
     [part~="fill"] {
       height: 100%;
       width: 0%;
-      background:
-        linear-gradient(to bottom, oklch(1 0 0 / 0.22), oklch(1 0 0 / 0) 70%),
-        var(--_tone-solid-bg, var(--color-primary-solid, #3b82f6));
-      box-shadow: 0 0 8px -1px color-mix(in oklch, var(--_tone-solid-bg) 50%, transparent);
+      background-color: var(--_tone-solid-bg, var(--color-accent));
       border-radius: inherit;
-      transition: width var(--duration-slow, 420ms) var(--ease-out, ease);
+      transition: width 300ms var(--ease-out, ease-out);
     }
 
     :host([is-indeterminate]) [part~="fill"] {
       width: 40%;
-      animation: moul-progress-indeterminate 1.4s infinite var(--ease-sheet, ease-in-out);
+      animation: moul-progress-indeterminate 1.5s cubic-bezier(0.65, 0, 0.35, 1) infinite;
     }
 
     @keyframes moul-progress-indeterminate {
       0% {
-        translate: -100% 0;
+        transform: translateX(-100%);
       }
       100% {
-        translate: 250% 0;
+        transform: translateX(350%);
       }
     }
 
     @media (prefers-reduced-motion: reduce) {
+      [part~="fill"] {
+        transition: none;
+      }
+
       :host([is-indeterminate]) [part~="fill"] {
         animation: none;
         transform: none;

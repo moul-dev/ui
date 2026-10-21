@@ -484,7 +484,7 @@ export class MoulLineChart extends LitElement {
                     r="${isActive ? 6 : 4}"
                     stroke="${color}"
                     stroke-width="2"
-                    fill="var(--color-bg, #ffffff)"
+                    fill="var(--color-surface, #ffffff)"
                     @pointerenter="${(e: PointerEvent) =>
                       this.handlePointEnter(e, d, s, cx, cy, dIdx)}"
                     @pointerleave="${(e: PointerEvent) =>

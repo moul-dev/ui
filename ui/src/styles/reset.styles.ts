@@ -21,6 +21,7 @@ export const resetStyles: CSSResultGroup = css`
     color: var(--color-fg, inherit);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    -webkit-tap-highlight-color: transparent;
   }
 
   :host([hidden]),

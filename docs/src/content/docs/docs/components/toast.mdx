@@ -43,7 +43,7 @@ const id = toastQueue.add({
   title: 'Saved',
   description: 'Your settings were updated.',
   tone: 'success',   // primary | accent | success | warning | error
-  variant: 'glass',  // default
+  variant: 'flat',   // default
   duration: 5000,    // 0 keeps it open
 })
 toastQueue.close(id)
@@ -56,7 +56,7 @@ toastQueue.close(id)
 | Attribute | Property | Type | Default |
 | :-- | :-- | :-- | :-- |
 | `tone` | `tone` | `'primary' \| 'accent' \| 'success' \| 'warning' \| 'error'` | `'primary'` |
-| `variant` | `variant` | `'solid' \| 'flat' \| 'shadow' \| 'bordered' \| 'glass'` | `'solid'` |
+| `variant` | `variant` | `'solid' \| 'flat' \| 'shadow' \| 'bordered' \| 'glass'` | `'flat'` |
 | `duration` | `duration` | `number` | `5000` |
 | `title` | `title` | `string` | `''` |
 | `description` | `description` | `string` | `''` |

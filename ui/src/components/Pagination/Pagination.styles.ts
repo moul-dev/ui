@@ -20,33 +20,57 @@ export const paginationStyles = [
       font-size: var(--font-size-sm, 0.875rem);
     }
 
+    /* Ghost buttons; the current page gets the neutral fill of a tertiary button */
     [part~="button"],
     [part~="page"] {
+      --_bg: transparent;
+      position: relative;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-width: 2.25rem;
-      height: 2.25rem;
-      padding: 0 var(--spacing-2, 0.5rem);
-      border: 1px solid transparent;
-      background: transparent;
-      color: var(--color-fg, #111827);
-      font-weight: 500;
+      min-width: 2rem;
+      height: 2rem;
+      padding: 0 var(--spacing-1, 0.25rem);
+      border: none;
+      border-radius: var(--radius-3xl, 1.5rem);
+      background-color: var(--_bg);
+      color: var(--color-default-fg);
+      font-family: inherit;
       font-size: inherit;
+      font-weight: var(--font-weight-medium, 500);
+      line-height: 1;
+      white-space: nowrap;
       cursor: pointer;
       user-select: none;
-      border-radius: var(--radius-md, 0.375rem);
-      transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.1s ease;
+      -webkit-tap-highlight-color: transparent;
+      outline: none;
+      transform-origin: center;
+      transition:
+        transform 250ms var(--ease-smooth, ease),
+        background-color 100ms var(--ease-out, ease-out),
+        box-shadow 100ms var(--ease-out, ease-out);
+    }
+
+    [part~="page"][aria-current="page"] {
+      --_bg: var(--color-default);
+    }
+
+    @media (hover: hover) {
+      [part~="button"]:hover:not(:disabled),
+      [part~="page"]:hover:not(:disabled) {
+        background-color: var(--color-default-hover);
+      }
     }
 
     [part~="button"]:active:not(:disabled),
     [part~="page"]:active:not(:disabled) {
-      transform: scale(0.95);
+      background-color: var(--color-default-hover);
+      transform: scale(var(--press-scale, 0.97));
     }
 
     :host([shape="rounded"]) [part~="button"],
     :host([shape="rounded"]) [part~="page"] {
-      border-radius: var(--radius-md, 0.375rem);
+      border-radius: var(--radius-3xl, 1.5rem);
     }
 
     :host([shape="square"]) [part~="button"],
@@ -59,27 +83,15 @@ export const paginationStyles = [
       border-radius: var(--radius-full, 9999px);
     }
 
-    [part~="page"]:hover:not(:disabled):not([aria-current="page"]),
-    [part~="button"]:hover:not(:disabled) {
-      background-color: var(--color-bg-subtle, #f3f4f6);
-    }
-
-    [part~="page"][aria-current="page"] {
-      background-color: var(--color-primary-solid, #4f46e5);
-      color: var(--color-fg-on-primary, #ffffff);
-      font-weight: 600;
-      border-color: var(--color-primary-500, #4f46e5);
-    }
-
     [part~="button"]:focus-visible,
     [part~="page"]:focus-visible {
-      outline: 2px solid var(--color-border-focus, #3b82f6);
-      outline-offset: 2px;
+      outline: none;
+      box-shadow: var(--focus-ring);
     }
 
     [part~="button"]:disabled,
     [part~="button"][aria-disabled="true"] {
-      opacity: 0.35;
+      opacity: var(--disabled-opacity, 0.5);
       cursor: not-allowed;
       pointer-events: none;
     }
@@ -88,9 +100,10 @@ export const paginationStyles = [
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-width: 2.25rem;
-      height: 2.25rem;
-      color: var(--color-fg-subtle, #9ca3af);
+      min-width: 2rem;
+      height: 2rem;
+      font-size: var(--font-size-sm, 0.875rem);
+      color: var(--color-muted);
       user-select: none;
     }
 
@@ -100,9 +113,25 @@ export const paginationStyles = [
       height: 1rem;
     }
 
+    .icon:dir(rtl) {
+      rotate: 180deg;
+    }
+
     .icon svg {
       width: 100%;
       height: 100%;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      [part~="button"],
+      [part~="page"] {
+        transition: none;
+      }
+
+      [part~="button"]:active:not(:disabled),
+      [part~="page"]:active:not(:disabled) {
+        transform: none;
+      }
     }
   `,
 ]

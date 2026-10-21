@@ -65,18 +65,18 @@ export const semanticToneStyles: CSSResultGroup = css`
   :host,
   :host([tone="primary"]),
   [data-tone="primary"] {
-    --_tone-solid-bg: var(--color-primary-solid);
-    --_tone-solid-fg: var(--color-fg-on-primary);
-    --_tone-soft-bg: var(--color-primary-100);
-    --_tone-soft-fg: var(--color-primary-700);
-    --_tone-border: var(--color-primary-300);
+    --_tone-solid-bg: var(--color-accent);
+    --_tone-solid-fg: var(--color-accent-fg);
+    --_tone-soft-bg: var(--color-accent-soft);
+    --_tone-soft-fg: var(--color-accent-soft-fg);
+    --_tone-border: var(--color-alert-border-accent);
   }
 
   /* Accent Tone */
   :host([tone="accent"]),
   [data-tone="accent"] {
     --_tone-solid-bg: var(--color-primary-500);
-    --_tone-solid-fg: var(--color-fg-on-primary);
+    --_tone-solid-fg: var(--color-accent-fg);
     --_tone-soft-bg: var(--color-alert-bg-accent);
     --_tone-soft-fg: var(--color-primary-600);
     --_tone-border: var(--color-alert-border-accent);
@@ -85,30 +85,30 @@ export const semanticToneStyles: CSSResultGroup = css`
   /* Success Tone */
   :host([tone="success"]),
   [data-tone="success"] {
-    --_tone-solid-bg: var(--color-success-solid);
-    --_tone-solid-fg: var(--color-fg-on-primary);
-    --_tone-soft-bg: var(--color-alert-bg-success);
-    --_tone-soft-fg: var(--color-success-700);
+    --_tone-solid-bg: var(--color-success);
+    --_tone-solid-fg: var(--color-success-fg);
+    --_tone-soft-bg: var(--color-success-soft);
+    --_tone-soft-fg: var(--color-success-soft-fg);
     --_tone-border: var(--color-alert-border-success);
   }
 
   /* Warning Tone */
   :host([tone="warning"]),
   [data-tone="warning"] {
-    --_tone-solid-bg: var(--color-warning-solid);
-    --_tone-solid-fg: var(--color-fg-on-warning);
-    --_tone-soft-bg: var(--color-alert-bg-warning);
-    --_tone-soft-fg: var(--color-warning-700);
+    --_tone-solid-bg: var(--color-warning);
+    --_tone-solid-fg: var(--color-warning-fg);
+    --_tone-soft-bg: var(--color-warning-soft);
+    --_tone-soft-fg: var(--color-warning-soft-fg);
     --_tone-border: var(--color-alert-border-warning);
   }
 
   /* Error Tone */
   :host([tone="error"]),
   [data-tone="error"] {
-    --_tone-solid-bg: var(--color-error-solid);
-    --_tone-solid-fg: var(--color-fg-on-primary);
-    --_tone-soft-bg: var(--color-alert-bg-error);
-    --_tone-soft-fg: var(--color-error-700);
+    --_tone-solid-bg: var(--color-danger);
+    --_tone-solid-fg: var(--color-danger-fg);
+    --_tone-soft-bg: var(--color-danger-soft);
+    --_tone-soft-fg: var(--color-danger-soft-fg);
     --_tone-border: var(--color-alert-border-error);
   }
 
@@ -122,7 +122,7 @@ export const semanticToneStyles: CSSResultGroup = css`
     border: 1px solid transparent;
   }
 
-  /* Flat Variant */
+  /* Flat Variant - soft tint of the tone */
   :host([variant="flat"]),
   [data-variant="flat"] {
     background-color: var(--_tone-soft-bg);
@@ -138,12 +138,14 @@ export const semanticToneStyles: CSSResultGroup = css`
     border: 1px solid var(--_tone-border);
   }
 
-  /* Shadow Variant */
+  /* Shadow Variant - solid fill with a glow in its own color */
   :host([variant="shadow"]),
   [data-variant="shadow"] {
     background-color: var(--_tone-solid-bg);
     color: var(--_tone-solid-fg);
-    box-shadow: var(--shadow-md);
+    box-shadow:
+      0 6px 16px -4px color-mix(in oklab, var(--_tone-solid-bg) 45%, transparent),
+      var(--shadow-md);
     border: 1px solid transparent;
   }
 

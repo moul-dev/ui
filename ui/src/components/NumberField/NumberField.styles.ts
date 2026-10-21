@@ -2,6 +2,8 @@ import { css } from 'lit'
 import { fieldStyles } from '../../styles/field.styles'
 import { resetStyles } from '../../styles/reset.styles'
 
+/* Layout and inner bits only; the shell look (fill, radius, shadow, hover,
+   focus and invalid rings) comes from the shared fieldStyles appended last. */
 export const numberFieldStyles = [
   resetStyles,
   css`
@@ -23,40 +25,33 @@ export const numberFieldStyles = [
       width: 100%;
     }
 
+    /* Flex drops template whitespace so the required mark sits tight to the text */
     [part~='label'] {
-      display: block;
-      font-size: var(--font-size-sm, 0.875rem);
-      font-weight: 500;
-      color: var(--color-fg, inherit);
+      display: flex;
+      align-items: baseline;
+      width: fit-content;
+      line-height: var(--line-height-sm, 1.25rem);
     }
 
+    :host([is-required][label]:not([label=''])) [part~='label']::after {
+      content: '*';
+      margin-inline-start: 0.125rem;
+      color: var(--color-danger);
+    }
+
+    :host([is-invalid]:is([data-touched], [error-message]:not([error-message='']))) [part~='label'] {
+      color: var(--color-danger);
+    }
+
+    /* Stretch so the stepper column fills the shell; overflow clips it to the radius */
     [part~='input-container'] {
       display: flex;
       align-items: stretch;
       position: relative;
       width: 100%;
-      border: 1px solid var(--color-border, #d1d5db);
-      border-radius: var(--radius-md, 0.375rem);
-      background-color: var(--color-bg, #ffffff);
-      color: var(--color-fg, inherit);
-      transition: border-color 0.15s ease, box-shadow 0.15s ease;
-      box-shadow: var(--shadow-sm, 0 1px 2px 0 rgba(0, 0, 0, 0.05));
+      min-height: 2.25rem;
       overflow: hidden;
-    }
-
-    [part~='input-container']:hover:not([data-disabled='true']) {
-      border-color: var(--color-neutral-400, #9ca3af);
-    }
-
-    [part~='input-container']:focus-within:not([data-disabled='true']) {
-      border-color: var(--color-border-focus, #3b82f6);
-      outline: 2px solid var(--color-border-focus, #3b82f6);
-      outline-offset: 1px;
-    }
-
-    :host([is-invalid]) [part~='input-container'],
-    [part~='input-container'][data-invalid='true'] {
-      border-color: var(--color-error-500, #ef4444);
+      font-size: var(--font-size-sm, 0.875rem);
     }
 
     [part~='input'] {
@@ -64,54 +59,23 @@ export const numberFieldStyles = [
       width: 100%;
       min-width: 0;
       border: none;
+      border-radius: 0;
       outline: none;
       background: transparent;
+      box-shadow: none;
       color: inherit;
       font-family: inherit;
       font-size: var(--font-size-sm, 0.875rem);
       line-height: var(--line-height-sm, 1.25rem);
+      font-variant-numeric: tabular-nums;
       padding: var(--spacing-2, 0.5rem) var(--spacing-3, 0.75rem);
     }
 
-    [part~='input']::placeholder {
-      color: var(--color-fg-subtle, #9ca3af);
-    }
-
-    [part~='stepper-group'] {
-      display: flex;
-      flex-direction: column;
-      border-left: 1px solid var(--color-border, #d1d5db);
-      width: 1.75rem;
-      flex-shrink: 0;
-    }
-
-    [part~='stepper-btn'] {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex: 1;
-      border: none;
-      background: transparent;
-      color: var(--color-fg-subtle, #6b7280);
-      cursor: pointer;
-      padding: 0;
-      font-size: 0.65rem;
-      user-select: none;
-      transition: background-color 0.1s ease, color 0.1s ease;
-    }
-
-    [part~='stepper-btn']:hover:not(:disabled) {
-      background-color: var(--color-bg-subtle, #f3f4f6);
-      color: var(--color-fg, inherit);
-    }
-
-    [part~='stepper-btn']:disabled {
-      cursor: not-allowed;
-      opacity: 0.4;
-    }
-
-    [part~='stepper-btn-up'] {
-      border-bottom: 1px solid var(--color-border, #d1d5db);
+    [part~='input']:-webkit-autofill {
+      box-shadow: 0 0 0 1000px transparent inset;
+      -webkit-text-fill-color: var(--color-field-fg);
+      caret-color: var(--color-field-fg);
+      transition: background-color 9999s ease-in-out 0s;
     }
 
     [part~='prefix'],
@@ -119,28 +83,76 @@ export const numberFieldStyles = [
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      padding-inline: var(--spacing-2, 0.5rem);
-      color: var(--color-fg-subtle, #9ca3af);
+      flex-shrink: 0;
     }
 
-    [part~='description'] {
-      font-size: var(--font-size-xs, 0.75rem);
-      color: var(--color-fg-subtle, #6b7280);
+    /* Steppers: a flush column split by hairlines in the placeholder tint */
+    [part~='stepper-group'] {
+      display: flex;
+      flex-direction: column;
+      width: 2rem;
+      flex-shrink: 0;
+      border-inline-start: 1px solid
+        color-mix(in oklab, var(--color-field-placeholder) 15%, transparent);
     }
 
-    [part~='error'] {
-      font-size: var(--font-size-xs, 0.75rem);
-      color: var(--color-error-500, #ef4444);
+    [part~='stepper-btn'] {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      min-height: 0;
+      border: none;
+      border-radius: 0;
+      background: transparent;
+      color: var(--color-field-fg);
+      cursor: pointer;
+      padding: 0;
+      font-size: 0.5625rem;
+      line-height: 1;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      outline: none;
+      transition:
+        background-color var(--duration-fast, 150ms) var(--ease-smooth, ease),
+        color var(--duration-fast, 150ms) var(--ease-smooth, ease);
+    }
+
+    [part~='stepper-btn-up'] {
+      border-bottom: 1px solid
+        color-mix(in oklab, var(--color-field-placeholder) 15%, transparent);
+    }
+
+    @media (hover: hover) {
+      [part~='stepper-btn']:hover:not(:disabled) {
+        background-color: color-mix(in oklab, var(--color-field-fg) 5%, transparent);
+      }
+    }
+
+    [part~='stepper-btn']:active:not(:disabled) {
+      background-color: color-mix(in oklab, var(--color-field-fg) 10%, transparent);
+    }
+
+    [part~='stepper-btn']:disabled {
+      cursor: not-allowed;
+      opacity: var(--disabled-opacity, 0.5);
     }
 
     :host([is-disabled]) {
-      opacity: 0.5;
+      opacity: var(--disabled-opacity, 0.5);
       cursor: not-allowed;
       pointer-events: none;
     }
 
+    /* The host already dims; don't dim the steppers a second time */
+    :host([is-disabled]) [part~='stepper-btn']:disabled {
+      opacity: 1;
+    }
+
+    /* :host raises specificity past the shared shell's transition */
     @media (prefers-reduced-motion: reduce) {
-      [part~='input-container'] {
+      :host [part~='input-container'],
+      [part~='stepper-btn'] {
         transition: none;
       }
     }

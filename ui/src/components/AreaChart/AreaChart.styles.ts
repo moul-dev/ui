@@ -28,16 +28,17 @@ export const areaChartStyles: CSSResultGroup = [
     }
 
     .grid-line {
-      stroke: var(--color-border-subtle, oklch(0.84 0 0));
+      stroke: var(--color-separator, oklch(0.92 0.004 286.32));
       stroke-dasharray: 3 3;
       stroke-width: 1;
       shape-rendering: crispEdges;
     }
 
     .axis-label {
-      fill: var(--color-fg-subtle, oklch(0.42 0 0));
+      fill: var(--color-muted, oklch(0.55 0.014 285.94));
       font-size: var(--font-size-xs, 0.75rem);
       font-family: var(--font-family-base, inherit);
+      font-variant-numeric: tabular-nums;
     }
 
     .axis-label-x {
@@ -64,11 +65,14 @@ export const areaChartStyles: CSSResultGroup = [
       pointer-events: none;
     }
 
+    /* Charts usually sit on a card, so the dot ring matches the surface. */
     .point-marker {
-      stroke: var(--color-bg, #ffffff);
+      stroke: var(--color-surface, #ffffff);
       stroke-width: 2;
       cursor: pointer;
-      transition: r 150ms ease, transform 150ms ease;
+      transition:
+        r 150ms var(--ease-out, ease-out),
+        transform 150ms var(--ease-out, ease-out);
     }
 
     .point-marker:hover {
@@ -83,14 +87,21 @@ export const areaChartStyles: CSSResultGroup = [
       width: 100%;
       height: 100%;
       min-height: 200px;
-      color: var(--color-fg-subtle, #6b7280);
+      color: var(--color-muted, #71717a);
       font-size: var(--font-size-sm, 0.875rem);
+      line-height: var(--line-height-sm, 1.25rem);
       padding: var(--spacing-8, 2rem) var(--spacing-4, 1rem);
       text-align: center;
     }
 
     .empty-message {
       margin: 0;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .point-marker {
+        transition: none;
+      }
     }
   `,
 ]

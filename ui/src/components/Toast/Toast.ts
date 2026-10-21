@@ -21,7 +21,8 @@ export class MoulToast extends LitElement {
 
   static override properties = {
     tone: { type: String, reflect: true },
-    variant: { type: String, reflect: true },
+    // The default isn't reflected, so an unset variant renders the plain surface.
+    variant: { type: String, reflect: true, useDefault: true },
     duration: { type: Number, reflect: true },
     title: { type: String },
     description: { type: String, reflect: true },
@@ -43,7 +44,7 @@ export class MoulToast extends LitElement {
   constructor() {
     super()
     this.tone = 'primary'
-    this.variant = 'glass'
+    this.variant = 'flat'
     this.duration = 5000
     this.title = ''
     this.description = ''

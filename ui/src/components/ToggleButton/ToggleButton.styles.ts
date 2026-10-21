@@ -9,10 +9,23 @@ export const toggleButtonStyles = [
       vertical-align: middle;
       position: relative;
       font-family: var(--font-family-base, inherit);
-      border-radius: var(--radius-full, 9999px);
+      border-radius: var(--radius-3xl, 1.5rem);
       user-select: none;
       -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
       cursor: pointer;
+      --_press-scale: var(--press-scale, 0.97);
+      /* Unselected: neutral fill */
+      --_bg: var(--color-default);
+      --_bg-hover: var(--color-default-hover);
+      --_fg: var(--color-default-fg);
+    }
+
+    /* Selected: soft accent tint */
+    :host([is-selected]) {
+      --_bg: var(--color-accent-soft);
+      --_bg-hover: var(--color-accent-soft-hover);
+      --_fg: var(--color-accent-soft-fg);
     }
 
     [part~="button"] {
@@ -22,73 +35,60 @@ export const toggleButtonStyles = [
       width: 100%;
       height: 100%;
       box-sizing: border-box;
+      border: none;
       border-radius: inherit;
+      background-color: var(--_bg);
+      color: var(--_fg);
       font-family: inherit;
       font-weight: var(--font-weight-medium, 500);
       line-height: 1;
       text-decoration: none;
+      transform-origin: center;
+      transition:
+        transform 250ms var(--ease-smooth, ease),
+        background-color 100ms var(--ease-out, ease-out),
+        box-shadow 100ms var(--ease-out, ease-out),
+        color 100ms var(--ease-out, ease-out);
       cursor: pointer;
       position: relative;
       white-space: nowrap;
-      transition:
-        background-color var(--duration-fast, 140ms) ease,
-        box-shadow var(--duration-fast, 140ms) ease,
-        color var(--duration-base, 240ms) ease;
-      background-color: var(--glass-bg-thick);
-      color: var(--color-fg, oklch(0.15 0.01 250));
-      border: none;
-      box-shadow: var(--glass-highlight), 0 0 0 0.5px var(--glass-edge), var(--shadow-sm);
     }
 
-    :host(:not([data-in-group]):not([is-selected]):not([is-disabled])) [part~="button"]:hover {
-      background-color: light-dark(oklch(1 0 0 / 0.9), oklch(0.3 0 0 / 0.8));
+    @media (hover: hover) {
+      :host(:not([is-disabled])) [part~="button"]:hover {
+        background-color: var(--_bg-hover);
+      }
     }
 
-    /* Selected state: tinted glass, like an active toolbar toggle */
-    :host(:not([data-in-group])[is-selected]) [part~="button"] {
-      background-color: color-mix(in oklch, var(--color-primary-500) 16%, var(--glass-bg-thick));
-      color: var(--color-primary-600, oklch(0.55 0.22 250));
-      box-shadow:
-        inset 0 0 0 1px color-mix(in oklch, var(--color-primary-500) 30%, transparent),
-        var(--shadow-sm);
-    }
-
-    :host(:not([data-in-group])[is-selected]:not([is-disabled])) [part~="button"]:hover {
-      background-color: color-mix(in oklch, var(--color-primary-500) 22%, var(--glass-bg-thick));
+    :host(:not([is-disabled])) [part~="button"]:active {
+      background-color: var(--_bg-hover);
+      transform: scale(var(--_press-scale));
     }
 
     :host(:focus-visible) {
       outline: none;
     }
 
-    :host(:focus-visible) [part~="button"] {
-      box-shadow: var(--focus-ring);
-    }
-
-    /* Inside a group the group's sliding thumb carries the selection */
-    :host([data-in-group]) [part~="button"],
-    :host([data-in-group][is-selected]) [part~="button"],
-    :host([data-in-group]:not([is-selected]):not([is-disabled])) [part~="button"]:hover {
-      background-color: transparent;
-      box-shadow: none;
-      color: var(--color-fg-subtle, oklch(0.45 0 0));
-    }
-
-    :host([data-in-group][is-selected]) [part~="button"],
-    :host([data-in-group]:not([is-disabled])) [part~="button"]:hover {
-      color: var(--color-fg, oklch(0.15 0 0));
-    }
-
-    :host([data-in-group]:focus-visible) [part~="button"] {
+    :host(:focus-visible) [part~="button"],
+    [part~="button"]:focus-visible {
+      outline: none;
       box-shadow: var(--focus-ring);
     }
 
     /* Sizes */
+    :host([size="sm"]) {
+      --_press-scale: 0.98;
+    }
+
+    :host([size="lg"]) {
+      --_press-scale: 0.96;
+    }
+
     :host([size="sm"]) [part~="button"] {
       height: 2rem;
       padding: 0 var(--spacing-3, 0.75rem);
       font-size: var(--font-size-sm, 0.875rem);
-      gap: var(--spacing-1, 0.25rem);
+      gap: var(--spacing-2, 0.5rem);
     }
 
     :host([size="md"]) [part~="button"],
@@ -100,10 +100,33 @@ export const toggleButtonStyles = [
     }
 
     :host([size="lg"]) [part~="button"] {
-      height: 3rem;
-      padding: 0 var(--spacing-6, 1.5rem);
-      font-size: var(--font-size-lg, 1.125rem);
-      gap: var(--spacing-3, 0.75rem);
+      height: 2.5rem;
+      padding: 0 var(--spacing-4, 1rem);
+      font-size: var(--font-size-md, 1rem);
+      gap: var(--spacing-2, 0.5rem);
+    }
+
+    /*
+     * Inside a moul-toggle-button-group the group paints the neutral fill and
+     * slides the selected tint (its indicator) beneath the buttons, so the
+     * buttons themselves stay transparent and don't scale on press.
+     */
+    :host([data-in-group]) {
+      --_press-scale: 1;
+      --_bg: transparent;
+      --_bg-hover: var(--color-default-hover);
+    }
+
+    :host([data-in-group][is-selected]) {
+      --_bg: transparent;
+      /* Layered over the indicator's accent-soft, this lands near accent-soft-hover */
+      --_bg-hover: color-mix(in oklab, var(--color-accent) 6%, transparent);
+    }
+
+    /* Inset ring so it stays inside the group's clipped outline */
+    :host([data-in-group]:focus-visible) [part~="button"],
+    :host([data-in-group]) [part~="button"]:focus-visible {
+      box-shadow: inset 0 0 0 2px var(--color-focus);
     }
 
     /* Disabled State */
@@ -113,7 +136,7 @@ export const toggleButtonStyles = [
     }
 
     :host([is-disabled]) [part~="button"] {
-      opacity: 0.5;
+      opacity: var(--disabled-opacity, 0.5);
       cursor: not-allowed;
       pointer-events: none;
     }
@@ -122,6 +145,23 @@ export const toggleButtonStyles = [
       display: inline-flex;
       align-items: center;
       gap: inherit;
+    }
+
+    ::slotted(svg) {
+      width: 1rem;
+      height: 1rem;
+      flex-shrink: 0;
+      pointer-events: none;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      [part~="button"] {
+        transition: none;
+      }
+
+      :host(:not([is-disabled])) [part~="button"]:active {
+        transform: none;
+      }
     }
   `,
 ]

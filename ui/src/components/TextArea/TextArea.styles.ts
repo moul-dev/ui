@@ -2,6 +2,8 @@ import { css } from 'lit'
 import { fieldStyles } from '../../styles/field.styles'
 import { resetStyles } from '../../styles/reset.styles'
 
+/* Layout and inner bits only; the shell look (fill, radius, shadow, hover,
+   focus and invalid rings) comes from the shared fieldStyles appended last. */
 export const textAreaStyles = [
   resetStyles,
   css`
@@ -23,29 +25,33 @@ export const textAreaStyles = [
       width: 100%;
     }
 
+    /* Flex drops template whitespace so the required mark sits tight to the text */
     [part~='label'] {
-      display: block;
-      font-size: var(--font-size-sm, 0.875rem);
-      font-weight: 500;
-      color: var(--color-fg, inherit);
+      display: flex;
+      align-items: baseline;
+      line-height: var(--line-height-sm, 1.25rem);
+    }
+
+    :host([is-required][label]:not([label=''])) [part~='label']::after {
+      content: '*';
+      margin-inline-start: 0.125rem;
+      color: var(--color-danger);
+    }
+
+    :host([is-invalid]:is([data-touched], [error-message]:not([error-message='']))) [part~='label'] {
+      color: var(--color-danger);
     }
 
     [part~='textarea'] {
       display: block;
       width: 100%;
-      border: 1px solid var(--color-border, #d1d5db);
-      border-radius: var(--radius-md, 0.375rem);
-      background-color: var(--color-bg, #ffffff);
-      color: var(--color-fg, inherit);
+      min-height: 2.375rem;
+      margin: 0;
       font-family: inherit;
       font-size: var(--font-size-sm, 0.875rem);
       line-height: var(--line-height-sm, 1.25rem);
       padding: var(--spacing-2, 0.5rem) var(--spacing-3, 0.75rem);
-      outline: none;
-      box-shadow: var(--shadow-sm, 0 1px 2px 0 rgba(0, 0, 0, 0.05));
-      transition: border-color 0.15s ease, box-shadow 0.15s ease;
       resize: vertical;
-      min-height: 4.5rem;
     }
 
     :host([auto-resize]) [part~='textarea'] {
@@ -53,42 +59,8 @@ export const textAreaStyles = [
       resize: none;
     }
 
-    [part~='textarea']:hover:not(:disabled) {
-      border-color: var(--color-neutral-400, #9ca3af);
-    }
-
-    [part~='textarea']:focus:not(:disabled) {
-      border-color: var(--color-border-focus, #3b82f6);
-      outline: 2px solid var(--color-border-focus, #3b82f6);
-      outline-offset: 1px;
-    }
-
-    :host([is-invalid]) [part~='textarea'],
-    [part~='textarea'][data-invalid='true'] {
-      border-color: var(--color-error-500, #ef4444);
-    }
-
-    :host([is-invalid]) [part~='textarea']:focus,
-    [part~='textarea'][data-invalid='true']:focus {
-      outline-color: var(--color-error-500, #ef4444);
-    }
-
-    [part~='textarea']::placeholder {
-      color: var(--color-fg-subtle, #9ca3af);
-    }
-
-    [part~='description'] {
-      font-size: var(--font-size-xs, 0.75rem);
-      color: var(--color-fg-subtle, #6b7280);
-    }
-
-    [part~='error'] {
-      font-size: var(--font-size-xs, 0.75rem);
-      color: var(--color-error-500, #ef4444);
-    }
-
     :host([is-disabled]) {
-      opacity: 0.5;
+      opacity: var(--disabled-opacity, 0.5);
       cursor: not-allowed;
       pointer-events: none;
     }
@@ -97,8 +69,9 @@ export const textAreaStyles = [
       cursor: not-allowed;
     }
 
+    /* :host raises specificity past the shared shell's transition */
     @media (prefers-reduced-motion: reduce) {
-      [part~='textarea'] {
+      :host [part~='textarea'] {
         transition: none;
       }
     }

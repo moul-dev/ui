@@ -5,13 +5,13 @@ description: Surface container with header, body and footer.
 
 import ComponentPreview from '@/components/ComponentPreview.astro';
 
-`<moul-card>` groups related content. The `glass` variant is a liquid-glass panel that frosts whatever sits behind it.
+`<moul-card>` groups related content. By default it is a white surface lifted by a soft shadow. Tones and variants (`flat`, `bordered`, `shadow`, opt-in `glass`) restyle it.
 
 <ComponentPreview>
 <div class="demo-row" style="align-items: stretch">
-  <moul-card variant="glass" style="width: 16rem">
-    <moul-card-header><strong>Glass</strong></moul-card-header>
-    <moul-card-body>Frosted, tinted material with a specular rim.</moul-card-body>
+  <moul-card style="width: 16rem">
+    <moul-card-header><strong>Default</strong></moul-card-header>
+    <moul-card-body>White surface lifted by a soft shadow.</moul-card-body>
     <moul-card-footer><moul-button size="sm">Open</moul-button></moul-card-footer>
   </moul-card>
   <moul-card variant="bordered" style="width: 16rem">
@@ -28,9 +28,9 @@ import ComponentPreview from '@/components/ComponentPreview.astro';
 
 ```html
 <div class="demo-row" style="align-items: stretch">
-  <moul-card variant="glass" style="width: 16rem">
-    <moul-card-header><strong>Glass</strong></moul-card-header>
-    <moul-card-body>Frosted, tinted material with a specular rim.</moul-card-body>
+  <moul-card style="width: 16rem">
+    <moul-card-header><strong>Default</strong></moul-card-header>
+    <moul-card-body>White surface lifted by a soft shadow.</moul-card-body>
     <moul-card-footer><moul-button size="sm">Open</moul-button></moul-card-footer>
   </moul-card>
   <moul-card variant="bordered" style="width: 16rem">

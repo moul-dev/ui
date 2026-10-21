@@ -6,17 +6,19 @@ export const badgeStyles = [
   resetStyles,
   semanticToneStyles,
   css`
+    /* Chip-style label: soft tone fill (the default flat variant), 16px corners, xs medium text */
     :host {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: var(--spacing-1, 0.25rem);
-      font-weight: 500;
+      font-weight: var(--font-weight-medium, 500);
       white-space: nowrap;
-      border-radius: var(--radius-full, 9999px);
+      border-radius: var(--radius-2xl, 1rem);
       vertical-align: middle;
       box-sizing: border-box;
-      line-height: 1;
+      flex-shrink: 0;
+      line-height: var(--line-height-sm, 1.25rem);
     }
 
     [part~="base"] {
@@ -30,24 +32,24 @@ export const badgeStyles = [
 
     :host([size="sm"]) {
       height: 1.25rem;
-      padding: 0 var(--spacing-2, 0.5rem);
+      padding: 0 calc(var(--spacing-1, 0.25rem) + 0.125rem);
       font-size: var(--font-size-xs, 0.75rem);
     }
 
     :host([size="md"]),
     :host(:not([size])) {
       height: 1.5rem;
-      padding: 0 calc(var(--spacing-2, 0.5rem) + 2px);
-      font-size: var(--font-size-sm, 0.875rem);
+      padding: 0 calc(var(--spacing-2, 0.5rem) + 0.125rem);
+      font-size: var(--font-size-xs, 0.75rem);
     }
 
     :host([size="lg"]) {
       height: 1.75rem;
-      padding: 0 var(--spacing-3, 0.75rem);
-      font-size: var(--font-size-md, 1rem);
+      padding: 0 calc(var(--spacing-3, 0.75rem) + 0.125rem);
+      font-size: var(--font-size-sm, 0.875rem);
     }
 
-    /* Dot badge */
+    /* Dot badge: a solid tone fill so the dot reads at a few pixels */
     :host([is-dot]) {
       min-width: 0.5rem;
       width: 0.5rem;
@@ -55,6 +57,11 @@ export const badgeStyles = [
       padding: 0;
       border-radius: var(--radius-full, 9999px);
       overflow: hidden;
+    }
+
+    :host([is-dot][variant="flat"]),
+    :host([is-dot]:not([variant])) {
+      background-color: var(--_tone-solid-bg);
     }
 
     :host([is-dot][size="sm"]) {

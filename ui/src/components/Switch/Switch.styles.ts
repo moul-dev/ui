@@ -9,6 +9,7 @@ export const switchStyles = [
       font-family: var(--font-family-base, inherit);
       color: var(--color-fg, inherit);
       user-select: none;
+      -webkit-tap-highlight-color: transparent;
     }
 
     :host([hidden]) {
@@ -18,49 +19,73 @@ export const switchStyles = [
     [part~='base'] {
       display: inline-flex;
       align-items: center;
-      gap: 0.625rem;
+      gap: var(--spacing-3, 0.75rem);
       cursor: pointer;
       font-size: var(--font-size-sm, 0.875rem);
       line-height: var(--line-height-sm, 1.25rem);
+      font-weight: var(--font-weight-medium, 500);
       -webkit-tap-highlight-color: transparent;
     }
 
-    /* Geometry: thumb is a circle inset by --_pad; it stretches by --_stretch while pressed */
+    /* Geometry: a pill thumb, wider than tall, inset by --_pad from either end */
     :host {
-      --_track-w: 2.75rem;
-      --_track-h: 1.625rem;
-      --_pad: 2px;
-      --_stretch: 0.375rem;
+      --_track-w: 2.5rem;
+      --_track-h: 1.25rem;
+      --_track-radius: var(--radius-xl, 0.75rem);
+      --_thumb-w: 1.375rem;
+      --_thumb-h: 1rem;
+      --_thumb-radius: var(--radius-lg, 0.5rem);
+      --_pad: 0.125rem;
+      --_track-bg: var(--color-default);
+      --_track-bg-hover: color-mix(in oklab, var(--color-default) 80%, transparent);
     }
 
     :host([size='sm']) {
-      --_track-w: 2.125rem;
-      --_track-h: 1.25rem;
-      --_stretch: 0.25rem;
+      --_track-w: 2rem;
+      --_track-h: 1rem;
+      --_track-radius: var(--radius-lg, 0.5rem);
+      --_thumb-w: 1.03125rem;
+      --_thumb-h: 0.75rem;
+      --_thumb-radius: var(--radius-md, 0.375rem);
     }
 
     :host([size='lg']) {
-      --_track-w: 3.25rem;
-      --_track-h: 1.9375rem;
-      --_stretch: 0.5rem;
+      --_track-w: 3rem;
+      --_track-h: 1.5rem;
+      --_track-radius: var(--radius-xl, 0.75rem);
+      --_thumb-w: 1.71875rem;
+      --_thumb-h: 1.25rem;
+      --_thumb-radius: var(--radius-xl, 0.75rem);
+    }
+
+    :host([is-checked]) {
+      --_track-bg: var(--color-accent);
+      --_track-bg-hover: var(--color-accent-hover);
     }
 
     [part~='track'] {
       position: relative;
-      display: inline-flex;
+      display: flex;
       align-items: center;
+      flex-shrink: 0;
       width: var(--_track-w);
       height: var(--_track-h);
-      padding: var(--_pad);
-      border-radius: var(--radius-full, 9999px);
-      background-color: var(--color-fill-track-strong);
-      box-shadow: inset 0 0 0 0.5px light-dark(oklch(0 0 0 / 0.04), oklch(1 0 0 / 0.06));
-      transition: background-color var(--duration-base, 240ms) ease, box-shadow var(--duration-fast, 140ms) ease;
-      flex-shrink: 0;
+      overflow: hidden;
+      border-radius: var(--_track-radius);
+      background-color: var(--_track-bg);
+      transition:
+        background-color 250ms var(--ease-smooth, ease),
+        box-shadow 150ms var(--ease-out, ease-out);
     }
 
-    :host([is-checked]) [part~='track'] {
-      background-color: var(--color-primary-500, #3b82f6);
+    @media (hover: hover) {
+      [part~='base']:hover:not([data-disabled]) [part~='track'] {
+        background-color: var(--_track-bg-hover);
+      }
+    }
+
+    [part~='base']:active:not([data-disabled]) [part~='track'] {
+      background-color: var(--_track-bg-hover);
     }
 
     :host(:focus-visible) {
@@ -71,31 +96,29 @@ export const switchStyles = [
       box-shadow: var(--focus-ring);
     }
 
+    /* Margin, not translate, so the travel mirrors under RTL */
     [part~='thumb'] {
-      --_w: calc(var(--_track-h) - 2 * var(--_pad));
       display: block;
-      width: var(--_w);
-      height: calc(var(--_track-h) - 2 * var(--_pad));
-      border-radius: var(--radius-full, 9999px);
-      background-color: oklch(1 0 0);
-      box-shadow:
-        0 3px 8px oklch(0 0 0 / 0.15),
-        0 1px 1px oklch(0 0 0 / 0.16),
-        0 0 0 0.5px oklch(0 0 0 / 0.04);
-      translate: 0 0;
+      flex-shrink: 0;
+      width: var(--_thumb-w);
+      height: var(--_thumb-h);
+      margin-inline-start: var(--_pad);
+      border-radius: var(--_thumb-radius);
+      background-color: var(--color-white, #fff);
+      box-shadow: var(--shadow-field);
       transition:
-        translate var(--duration-slow, 420ms) var(--ease-spring, ease),
-        width var(--duration-base, 240ms) var(--ease-out, ease);
+        margin 300ms var(--ease-out-fluid, ease-out),
+        background-color 200ms var(--ease-out, ease-out);
       pointer-events: none;
     }
 
-    /* Press-and-hold stretches the thumb toward the travel direction, like iOS */
-    [part~='base']:active [part~='thumb'] {
-      --_w: calc(var(--_track-h) - 2 * var(--_pad) + var(--_stretch));
-    }
-
     :host([is-checked]) [part~='thumb'] {
-      translate: calc(var(--_track-w) - 2 * var(--_pad) - var(--_w)) 0;
+      margin-inline-start: calc(100% - var(--_thumb-w) - var(--_pad));
+      background-color: var(--color-accent-fg);
+      box-shadow:
+        0 0 5px 0 oklch(0 0 0 / 0.02),
+        0 2px 10px 0 oklch(0 0 0 / 0.06),
+        0 0 1px 0 oklch(0 0 0 / 0.3);
     }
 
     [part~='label'] {
@@ -105,9 +128,17 @@ export const switchStyles = [
     }
 
     :host([is-disabled]) {
-      opacity: 0.45;
+      opacity: var(--disabled-opacity, 0.5);
       cursor: not-allowed;
       pointer-events: none;
+    }
+
+    :host([is-disabled]:not([is-checked])) [part~='thumb'] {
+      background-color: color-mix(in oklab, var(--color-default-fg) 20%, transparent);
+    }
+
+    :host([is-disabled][is-checked]) [part~='thumb'] {
+      opacity: 0.4;
     }
 
     @media (prefers-reduced-motion: reduce) {

@@ -2,6 +2,8 @@ import { css } from 'lit'
 import { fieldStyles } from '../../styles/field.styles'
 import { resetStyles } from '../../styles/reset.styles'
 
+/* Layout and inner bits only; the shell look (fill, radius, shadow, hover,
+   focus and invalid rings) comes from the shared fieldStyles appended last. */
 export const searchFieldStyles = [
   resetStyles,
   css`
@@ -23,11 +25,22 @@ export const searchFieldStyles = [
       width: 100%;
     }
 
+    /* Flex drops template whitespace so the required mark sits tight to the text */
     [part~='label'] {
-      display: block;
-      font-size: var(--font-size-sm, 0.875rem);
-      font-weight: 500;
-      color: var(--color-fg, inherit);
+      display: flex;
+      align-items: baseline;
+      width: fit-content;
+      line-height: var(--line-height-sm, 1.25rem);
+    }
+
+    :host([is-required][label]:not([label=''])) [part~='label']::after {
+      content: '*';
+      margin-inline-start: 0.125rem;
+      color: var(--color-danger);
+    }
+
+    :host([is-invalid]:is([data-touched], [error-message]:not([error-message='']))) [part~='label'] {
+      color: var(--color-danger);
     }
 
     search,
@@ -43,38 +56,20 @@ export const searchFieldStyles = [
       align-items: center;
       position: relative;
       width: 100%;
-      border: 1px solid var(--color-border, #d1d5db);
-      border-radius: var(--radius-md, 0.375rem);
-      background-color: var(--color-bg, #ffffff);
-      color: var(--color-fg, inherit);
-      transition: border-color 0.15s ease, box-shadow 0.15s ease;
-      box-shadow: var(--shadow-sm, 0 1px 2px 0 rgba(0, 0, 0, 0.05));
-      padding-inline: var(--spacing-2, 0.5rem);
-    }
-
-    [part~='input-container']:hover:not([data-disabled='true']) {
-      border-color: var(--color-neutral-400, #9ca3af);
-    }
-
-    [part~='input-container']:focus-within:not([data-disabled='true']) {
-      border-color: var(--color-border-focus, #3b82f6);
-      outline: 2px solid var(--color-border-focus, #3b82f6);
-      outline-offset: 1px;
-    }
-
-    :host([is-invalid]) [part~='input-container'],
-    [part~='input-container'][data-invalid='true'] {
-      border-color: var(--color-error-500, #ef4444);
+      min-height: 2.25rem;
+      font-size: var(--font-size-sm, 0.875rem);
     }
 
     [part~='search-icon'] {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      color: var(--color-fg-subtle, #9ca3af);
+      color: var(--color-field-placeholder);
       width: 1rem;
       height: 1rem;
+      margin-inline-start: var(--spacing-3, 0.75rem);
       flex-shrink: 0;
+      pointer-events: none;
     }
 
     [part~='search-icon'] svg {
@@ -82,18 +77,26 @@ export const searchFieldStyles = [
       height: 100%;
     }
 
+    /* The icon sits on the leading edge, so the text tucks in closer to it */
     [part~='input'] {
       flex: 1;
       width: 100%;
       min-width: 0;
       border: none;
+      border-radius: 0;
       outline: none;
       background: transparent;
+      box-shadow: none;
       color: inherit;
       font-family: inherit;
       font-size: var(--font-size-sm, 0.875rem);
       line-height: var(--line-height-sm, 1.25rem);
-      padding: var(--spacing-2, 0.5rem) var(--spacing-2, 0.5rem);
+      padding-block: var(--spacing-2, 0.5rem);
+      padding-inline: var(--spacing-2, 0.5rem) var(--spacing-3, 0.75rem);
+    }
+
+    [part~='input-container']:has([part~='clear-btn']) [part~='input'] {
+      padding-inline-end: var(--spacing-2, 0.5rem);
     }
 
     [part~='input']::-webkit-search-cancel-button,
@@ -104,8 +107,11 @@ export const searchFieldStyles = [
       -webkit-appearance: none;
     }
 
-    [part~='input']::placeholder {
-      color: var(--color-fg-subtle, #9ca3af);
+    [part~='input']:-webkit-autofill {
+      box-shadow: 0 0 0 1000px transparent inset;
+      -webkit-text-fill-color: var(--color-field-fg);
+      caret-color: var(--color-field-fg);
+      transition: background-color 9999s ease-in-out 0s;
     }
 
     [part~='clear-btn'] {
@@ -114,18 +120,34 @@ export const searchFieldStyles = [
       justify-content: center;
       border: none;
       background: transparent;
-      color: var(--color-fg-subtle, #9ca3af);
+      color: var(--color-muted);
       cursor: pointer;
       padding: 0;
       width: 1.25rem;
       height: 1.25rem;
-      border-radius: var(--radius-full, 9999px);
+      margin-inline-end: var(--spacing-2, 0.5rem);
+      border-radius: var(--radius-xl, 0.75rem);
       flex-shrink: 0;
-      transition: color 0.1s ease, transform 0.1s ease;
+      -webkit-tap-highlight-color: transparent;
+      transition:
+        color var(--duration-fast, 150ms) var(--ease-out, ease-out),
+        background-color 100ms var(--ease-out, ease-out),
+        transform 250ms var(--ease-out, ease-out);
     }
 
-    [part~='clear-btn']:hover {
-      color: var(--color-fg, inherit);
+    @media (hover: hover) {
+      [part~='clear-btn']:hover {
+        color: var(--color-fg, inherit);
+      }
+    }
+
+    [part~='clear-btn']:active {
+      transform: scale(0.93);
+    }
+
+    [part~='clear-btn']:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
     }
 
     [part~='clear-btn'] svg {
@@ -133,25 +155,21 @@ export const searchFieldStyles = [
       height: 1rem;
     }
 
-    [part~='description'] {
-      font-size: var(--font-size-xs, 0.75rem);
-      color: var(--color-fg-subtle, #6b7280);
-    }
-
-    [part~='error'] {
-      font-size: var(--font-size-xs, 0.75rem);
-      color: var(--color-error-500, #ef4444);
-    }
-
     :host([is-disabled]) {
-      opacity: 0.5;
+      opacity: var(--disabled-opacity, 0.5);
       cursor: not-allowed;
       pointer-events: none;
     }
 
+    /* :host raises specificity past the shared shell's transition */
     @media (prefers-reduced-motion: reduce) {
-      [part~='input-container'] {
+      :host [part~='input-container'],
+      [part~='clear-btn'] {
         transition: none;
+      }
+
+      [part~='clear-btn']:active {
+        transform: none;
       }
     }
   `,

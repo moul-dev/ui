@@ -39,7 +39,8 @@ export class MoulStat extends LitElement {
     trend: { type: String },
     trendValue: { type: String, attribute: 'trend-value' },
     tone: { type: String, reflect: true },
-    variant: { type: String, reflect: true },
+    // The default isn't reflected, so an unset variant renders the plain surface.
+    variant: { type: String, reflect: true, useDefault: true },
     description: { type: String },
     valueFormatter: { attribute: false },
     sparklineData: { attribute: false },

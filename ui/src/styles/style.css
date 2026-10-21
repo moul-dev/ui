@@ -2,6 +2,10 @@
  * Moul UI Native CSS Design Token Layer
  * Defines all design tokens at :root using light-dark() and oklch().
  * Inherits across Shadow DOM boundaries for Lit Web Components.
+ *
+ * The default theme follows HeroUI v3: a zinc-tinted neutral ramp, an off-white
+ * page with white surfaces lifted by soft shadows instead of borders, borderless
+ * white fields, a 2px focus ring, and a 0.5rem radius scale.
  */
 
 :root {
@@ -16,273 +20,423 @@
   --brand-density-factor: 1;
   --brand-radius-factor: 1;
 
-  /* ── Neutral Scale (10 steps) ─────────────────────────────────── */
-  --color-neutral-50: light-dark(oklch(0.98 0 0), oklch(0.14 0 0));
-  --color-neutral-100: light-dark(oklch(0.96 0 0), oklch(0.18 0 0));
-  --color-neutral-200: light-dark(oklch(0.92 0 0), oklch(0.24 0 0));
-  --color-neutral-300: light-dark(oklch(0.84 0 0), oklch(0.32 0 0));
-  --color-neutral-400: light-dark(oklch(0.7 0 0), oklch(0.45 0 0));
-  --color-neutral-500: light-dark(oklch(0.55 0 0), oklch(0.55 0 0));
-  --color-neutral-600: light-dark(oklch(0.42 0 0), oklch(0.68 0 0));
-  --color-neutral-700: light-dark(oklch(0.32 0 0), oklch(0.78 0 0));
-  --color-neutral-800: light-dark(oklch(0.22 0 0), oklch(0.88 0 0));
-  --color-neutral-900: light-dark(oklch(0.14 0 0), oklch(0.96 0 0));
+  /* ── Primitives (identical in light and dark) ─────────────────── */
+  --color-white: oklch(1 0 0);
+  --color-black: oklch(0 0 0);
+  --color-snow: oklch(0.9911 0 0);
+  --color-eclipse: oklch(0.2103 0.0059 285.89);
 
-  /* ── Primary Scale (10 steps) ─────────────────────────────────── */
+  /* ── Neutral Scale (10 steps, zinc; mirrored in dark) ─────────── */
+  --color-neutral-50: light-dark(oklch(0.985 0 0), oklch(0.141 0.005 285.823));
+  --color-neutral-100: light-dark(
+    oklch(0.967 0.001 286.375),
+    oklch(0.21 0.006 285.885)
+  );
+  --color-neutral-200: light-dark(
+    oklch(0.92 0.004 286.32),
+    oklch(0.274 0.006 286.033)
+  );
+  --color-neutral-300: light-dark(
+    oklch(0.871 0.006 286.286),
+    oklch(0.37 0.013 285.805)
+  );
+  --color-neutral-400: light-dark(
+    oklch(0.705 0.015 286.067),
+    oklch(0.442 0.017 285.786)
+  );
+  --color-neutral-500: light-dark(
+    oklch(0.552 0.016 285.938),
+    oklch(0.552 0.016 285.938)
+  );
+  --color-neutral-600: light-dark(
+    oklch(0.442 0.017 285.786),
+    oklch(0.705 0.015 286.067)
+  );
+  --color-neutral-700: light-dark(
+    oklch(0.37 0.013 285.805),
+    oklch(0.871 0.006 286.286)
+  );
+  --color-neutral-800: light-dark(
+    oklch(0.274 0.006 286.033),
+    oklch(0.92 0.004 286.32)
+  );
+  --color-neutral-900: light-dark(
+    oklch(0.21 0.006 285.885),
+    oklch(0.967 0.001 286.375)
+  );
+
+  /* ── Primary Scale (10 steps, centered on the accent at 500) ──── */
   --color-primary-50: light-dark(
     oklch(
-      0.96 calc(0.025 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)
+      0.97 calc(0.014 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)
     ),
     oklch(
-      0.22 calc(0.05 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)
+      0.2 calc(0.04 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)
     )
   );
   --color-primary-100: light-dark(
     oklch(
-      0.92 calc(0.05 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)
+      0.932 calc(0.032 * var(--brand-chroma-multiplier, 1))
+        var(--brand-hue, 250)
     ),
     oklch(
-      0.28 calc(0.08 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)
+      0.25 calc(0.07 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)
     )
   );
   --color-primary-200: light-dark(
     oklch(
-      0.85 calc(0.09 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)
+      0.882 calc(0.059 * var(--brand-chroma-multiplier, 1))
+        var(--brand-hue, 250)
     ),
     oklch(
-      0.36 calc(0.12 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)
+      0.31 calc(0.1 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)
     )
   );
   --color-primary-300: light-dark(
     oklch(
-      0.77 calc(0.14 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)
+      0.809 calc(0.105 * var(--brand-chroma-multiplier, 1))
+        var(--brand-hue, 250)
     ),
     oklch(
-      0.45 calc(0.16 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)
+      0.4 calc(0.14 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)
     )
   );
   --color-primary-400: light-dark(
     oklch(
-      0.66 calc(0.19 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)
+      0.707 calc(0.165 * var(--brand-chroma-multiplier, 1))
+        var(--brand-hue, 250)
     ),
     oklch(
-      0.56 calc(0.2 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)
+      0.51 calc(0.18 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)
     )
   );
   --color-primary-500: light-dark(
     oklch(
-      0.55 calc(0.24 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)
+      0.6204 calc(0.195 * var(--brand-chroma-multiplier, 1))
+        var(--brand-hue, 250)
     ),
     oklch(
-      0.66 calc(0.22 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)
+      0.6204 calc(0.195 * var(--brand-chroma-multiplier, 1))
+        var(--brand-hue, 250)
     )
   );
   --color-primary-600: light-dark(
     oklch(
-      0.46 calc(0.22 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)
+      0.546 calc(0.2 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)
     ),
     oklch(
-      0.75 calc(0.19 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)
+      0.7 calc(0.16 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)
     )
   );
   --color-primary-700: light-dark(
     oklch(
-      0.38 calc(0.19 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)
+      0.488 calc(0.19 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)
     ),
     oklch(
-      0.83 calc(0.15 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)
+      0.78 calc(0.12 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)
     )
   );
   --color-primary-800: light-dark(
     oklch(
-      0.3 calc(0.15 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)
+      0.424 calc(0.16 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)
     ),
     oklch(
-      0.9 calc(0.09 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)
+      0.86 calc(0.08 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)
     )
   );
   --color-primary-900: light-dark(
     oklch(
-      0.22 calc(0.11 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)
+      0.379 calc(0.12 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)
     ),
     oklch(
-      0.95 calc(0.04 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)
+      0.93 calc(0.04 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)
     )
   );
 
-  /* ── Error Scale (5 steps, hue 27) ────────────────────────────── */
-  --color-error-300: light-dark(oklch(0.8 0.12 27), oklch(0.45 0.15 27));
-  --color-error-400: light-dark(oklch(0.68 0.17 27), oklch(0.58 0.18 27));
-  --color-error-500: light-dark(oklch(0.56 0.2 27), oklch(0.68 0.19 27));
-  --color-error-600: light-dark(oklch(0.46 0.19 27), oklch(0.78 0.15 27));
-  --color-error-700: light-dark(oklch(0.36 0.16 27), oklch(0.87 0.09 27));
+  /* ── Error Scale (5 steps, hue 25) ────────────────────────────── */
+  --color-error-300: light-dark(oklch(0.808 0.114 25), oklch(0.4 0.13 25));
+  --color-error-400: light-dark(oklch(0.704 0.191 25), oklch(0.5 0.18 25));
+  --color-error-500: light-dark(
+    oklch(0.6532 0.2328 25.74),
+    oklch(0.594 0.1967 24.63)
+  );
+  --color-error-600: light-dark(oklch(0.577 0.225 26), oklch(0.704 0.191 25));
+  --color-error-700: light-dark(oklch(0.505 0.2 27), oklch(0.808 0.114 25));
 
-  /* ── Warning Scale (5 steps, hue 85) ──────────────────────────── */
-  --color-warning-300: light-dark(oklch(0.85 0.13 85), oklch(0.48 0.14 85));
-  --color-warning-400: light-dark(oklch(0.78 0.16 85), oklch(0.6 0.165 85));
-  --color-warning-500: light-dark(oklch(0.7 0.175 85), oklch(0.72 0.165 85));
-  --color-warning-600: light-dark(oklch(0.6 0.165 85), oklch(0.82 0.13 85));
-  --color-warning-700: light-dark(oklch(0.48 0.14 85), oklch(0.9 0.08 85));
+  /* ── Warning Scale (5 steps, hue 72) ──────────────────────────── */
+  --color-warning-300: light-dark(oklch(0.88 0.12 80), oklch(0.45 0.1 65));
+  --color-warning-400: light-dark(oklch(0.83 0.15 76), oklch(0.66 0.14 70));
+  --color-warning-500: light-dark(
+    oklch(0.7819 0.1585 72.33),
+    oklch(0.8203 0.1388 76.34)
+  );
+  --color-warning-600: light-dark(oklch(0.666 0.16 58), oklch(0.87 0.11 80));
+  --color-warning-700: light-dark(oklch(0.555 0.15 49), oklch(0.92 0.07 85));
 
-  /* ── Success Scale (5 steps, hue 145) ─────────────────────────── */
-  --color-success-300: light-dark(oklch(0.82 0.12 145), oklch(0.44 0.13 145));
-  --color-success-400: light-dark(oklch(0.72 0.155 145), oklch(0.56 0.16 145));
-  --color-success-500: light-dark(oklch(0.62 0.175 145), oklch(0.68 0.17 145));
-  --color-success-600: light-dark(oklch(0.52 0.165 145), oklch(0.78 0.135 145));
-  --color-success-700: light-dark(oklch(0.4 0.135 145), oklch(0.87 0.085 145));
+  /* ── Success Scale (5 steps, hue 150) ─────────────────────────── */
+  --color-success-300: light-dark(oklch(0.871 0.15 154), oklch(0.42 0.1 150));
+  --color-success-400: light-dark(oklch(0.792 0.2 152), oklch(0.58 0.15 150));
+  --color-success-500: light-dark(
+    oklch(0.7329 0.1935 150.81),
+    oklch(0.7329 0.1935 150.81)
+  );
+  --color-success-600: light-dark(oklch(0.627 0.19 149), oklch(0.8 0.17 152));
+  --color-success-700: light-dark(oklch(0.527 0.154 150), oklch(0.87 0.12 154));
 
   /* ── Semantic Surface & Text Aliases (13 tokens) ─────────────── */
-  --color-bg: light-dark(oklch(1 0 0), oklch(0.12 0 0));
-  --color-bg-subtle: light-dark(oklch(0.97 0 0), oklch(0.16 0 0));
-  --color-bg-elevated: light-dark(oklch(1 0 0), oklch(0.2 0 0));
-  --color-fg: light-dark(oklch(0.14 0 0), oklch(0.96 0 0));
-  --color-fg-subtle: light-dark(oklch(0.42 0 0), oklch(0.68 0 0));
-  --color-fg-on-primary: oklch(1 0 0);
-  --color-border: light-dark(oklch(0.84 0 0), oklch(0.28 0 0));
-  --color-border-subtle: light-dark(oklch(0.92 0 0), oklch(0.22 0 0));
-  --color-border-focus: light-dark(
-    oklch(
-      0.55 calc(0.24 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)
-    ),
-    oklch(
-      0.66 calc(0.22 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)
-    )
+  /* Page background: off-white so white surfaces read as lifted. */
+  --color-bg: light-dark(oklch(0.9702 0 0), oklch(0.12 0.005 285.823));
+  --color-bg-subtle: light-dark(
+    oklch(0.9524 0.0013 286.37),
+    oklch(0.257 0.0037 286.14)
   );
+  /* Floating panels: popovers, menus, modals, tooltips. */
+  --color-bg-elevated: light-dark(
+    var(--color-white),
+    oklch(0.2103 0.0059 285.89)
+  );
+  --color-fg: light-dark(var(--color-eclipse), var(--color-snow));
+  --color-fg-subtle: light-dark(
+    oklch(0.5517 0.0138 285.94),
+    oklch(0.705 0.015 286.067)
+  );
+  --color-fg-on-primary: var(--color-snow);
+  --color-border: light-dark(
+    oklch(0.9 0.004 286.32),
+    oklch(0.28 0.006 286.033)
+  );
+  --color-border-subtle: light-dark(
+    oklch(0.92 0.004 286.32),
+    oklch(0.25 0.006 286.033)
+  );
+  --color-border-focus: var(--color-focus);
   --color-bg-glass: var(--glass-bg);
   --color-border-glass: light-dark(oklch(0 0 0 / 0.08), oklch(1 0 0 / 0.12));
-  --color-shadow: light-dark(oklch(0 0 0 / 0.12), oklch(0 0 0 / 0.5));
-  --color-overlay: light-dark(oklch(0 0 0 / 0.4), oklch(0 0 0 / 0.6));
+  --color-shadow: light-dark(oklch(0 0 0 / 0.08), oklch(0 0 0 / 0.4));
+  /* Modal scrim behind dialogs and drawers. */
+  --color-overlay: light-dark(oklch(0 0 0 / 0.5), oklch(0 0 0 / 0.6));
 
-  /* ── Solid Fills (stay saturated with white text in both schemes) ── */
-  --color-primary-solid: light-dark(
-    oklch(
-      0.56 calc(0.22 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)
-    ),
-    oklch(
-      0.62 calc(0.2 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)
-    )
+  /* ── Surface Layers ──────────────────────────────────────────── */
+  --color-background: var(--color-bg);
+  --color-foreground: var(--color-fg);
+  /* Non-floating containers: cards, alerts, tables, chart frames. */
+  --color-surface: light-dark(var(--color-white), oklch(0.2103 0.0059 285.89));
+  --color-surface-secondary: var(--color-bg-subtle);
+  --color-surface-tertiary: light-dark(
+    oklch(0.9373 0.0013 286.37),
+    oklch(0.2721 0.0024 247.91)
   );
-  --color-primary-solid-hover: light-dark(
-    oklch(
-      0.5 calc(0.22 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)
-    ),
-    oklch(
-      0.67 calc(0.19 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)
-    )
+  --color-surface-hover: color-mix(
+    in oklab,
+    var(--color-surface) 92%,
+    var(--color-fg) 8%
   );
-  --color-error-solid: light-dark(oklch(0.58 0.22 27), oklch(0.64 0.21 27));
-  --color-error-solid-hover: light-dark(
-    oklch(0.52 0.21 27),
-    oklch(0.69 0.19 27)
+  --color-muted: var(--color-fg-subtle);
+  --color-separator: var(--color-border-subtle);
+  --color-link: var(--color-fg);
+  /* Selected segment in tabs and segmented controls. */
+  --color-segment: light-dark(var(--color-white), oklch(0.3964 0.01 285.93));
+
+  /* ── Default (neutral) Fill ──────────────────────────────────── */
+  /* Secondary buttons, chips, tracks, hovered list rows. */
+  --color-default: light-dark(
+    oklch(0.94 0.001 286.375),
+    oklch(0.274 0.006 286.033)
   );
-  --color-success-solid: light-dark(oklch(0.6 0.17 150), oklch(0.66 0.17 150));
-  --color-warning-solid: light-dark(oklch(0.78 0.16 75), oklch(0.8 0.15 75));
-  --color-fg-on-warning: oklch(0.28 0.06 60);
+  --color-default-hover: color-mix(
+    in oklab,
+    var(--color-default) 96%,
+    var(--color-fg) 4%
+  );
+  --color-default-fg: var(--color-fg);
+  --color-default-soft: color-mix(
+    in oklab,
+    var(--color-default) 50%,
+    transparent
+  );
+  --color-default-soft-hover: color-mix(
+    in oklab,
+    var(--color-default) 60%,
+    transparent
+  );
+
+  /* ── Accent & Status Fills ───────────────────────────────────── */
+  /* Each tone has a solid fill, a hover, a readable foreground, and a soft tint. */
+  --color-accent: oklch(
+    0.6204 calc(0.195 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)
+  );
+  --color-accent-fg: var(--color-snow);
+  --color-accent-hover: color-mix(
+    in oklab,
+    var(--color-accent) 90%,
+    var(--color-accent-fg) 10%
+  );
+  --color-accent-soft: light-dark(
+    color-mix(in oklab, var(--color-accent) 15%, transparent),
+    color-mix(in oklab, var(--color-accent) 12%, transparent)
+  );
+  --color-accent-soft-hover: light-dark(
+    color-mix(in oklab, var(--color-accent) 20%, transparent),
+    color-mix(in oklab, var(--color-accent) 16%, transparent)
+  );
+  --color-accent-soft-fg: light-dark(
+    color-mix(in oklab, var(--color-accent) 70%, var(--color-fg) 30%),
+    color-mix(in oklab, var(--color-accent) 80%, var(--color-fg) 30%)
+  );
+
+  --color-success: oklch(0.7329 0.1935 150.81);
+  --color-success-fg: var(--color-eclipse);
+  --color-success-hover: color-mix(
+    in oklab,
+    var(--color-success) 90%,
+    var(--color-success-fg) 10%
+  );
+  --color-success-soft: light-dark(
+    color-mix(in oklab, var(--color-success) 15%, transparent),
+    color-mix(in oklab, var(--color-success) 12%, transparent)
+  );
+  --color-success-soft-hover: light-dark(
+    color-mix(in oklab, var(--color-success) 20%, transparent),
+    color-mix(in oklab, var(--color-success) 16%, transparent)
+  );
+  --color-success-soft-fg: light-dark(
+    color-mix(in oklab, var(--color-success) 80%, var(--color-fg) 60%),
+    color-mix(in oklab, var(--color-success) 80%, var(--color-fg) 30%)
+  );
+
+  --color-warning: light-dark(
+    oklch(0.7819 0.1585 72.33),
+    oklch(0.8203 0.1388 76.34)
+  );
+  --color-warning-fg: var(--color-eclipse);
+  --color-warning-hover: color-mix(
+    in oklab,
+    var(--color-warning) 90%,
+    var(--color-warning-fg) 10%
+  );
+  --color-warning-soft: light-dark(
+    color-mix(in oklab, var(--color-warning) 15%, transparent),
+    color-mix(in oklab, var(--color-warning) 12%, transparent)
+  );
+  --color-warning-soft-hover: light-dark(
+    color-mix(in oklab, var(--color-warning) 20%, transparent),
+    color-mix(in oklab, var(--color-warning) 16%, transparent)
+  );
+  --color-warning-soft-fg: light-dark(
+    color-mix(in oklab, var(--color-warning) 80%, var(--color-fg) 70%),
+    color-mix(in oklab, var(--color-warning) 80%, var(--color-fg) 30%)
+  );
+
+  --color-danger: light-dark(
+    oklch(0.6532 0.2328 25.74),
+    oklch(0.594 0.1967 24.63)
+  );
+  --color-danger-fg: var(--color-snow);
+  --color-danger-hover: color-mix(
+    in oklab,
+    var(--color-danger) 90%,
+    var(--color-danger-fg) 10%
+  );
+  --color-danger-soft: color-mix(
+    in oklab,
+    var(--color-danger) 15%,
+    transparent
+  );
+  --color-danger-soft-hover: color-mix(
+    in oklab,
+    var(--color-danger) 20%,
+    transparent
+  );
+  --color-danger-soft-fg: light-dark(
+    color-mix(in oklab, var(--color-danger) 70%, var(--color-fg) 40%),
+    color-mix(in oklab, var(--color-danger) 80%, var(--color-fg) 30%)
+  );
+
+  /* ── Solid Fills (legacy aliases of the tone fills above) ─────── */
+  --color-primary-solid: var(--color-accent);
+  --color-primary-solid-hover: var(--color-accent-hover);
+  --color-error-solid: var(--color-danger);
+  --color-error-solid-hover: var(--color-danger-hover);
+  --color-success-solid: var(--color-success);
+  --color-warning-solid: var(--color-warning);
+  --color-fg-on-success: var(--color-success-fg);
+  --color-fg-on-warning: var(--color-warning-fg);
+  --color-fg-on-error: var(--color-danger-fg);
+
+  /* ── Form Fields ─────────────────────────────────────────────── */
+  /* White, borderless, lifted by --shadow-field; a 2px ring on focus. */
+  --color-field: light-dark(var(--color-white), oklch(0.2103 0.0059 285.89));
+  --color-field-hover: color-mix(
+    in oklab,
+    var(--color-field) 90%,
+    var(--color-fg) 2%
+  );
+  --color-field-focus: var(--color-field);
+  --color-field-fg: var(--color-fg);
+  --color-field-placeholder: var(--color-muted);
+  --color-field-border: transparent;
 
   /* ── Alert / Status Variants (20 tokens) ──────────────────────── */
   /* Info */
-  --color-alert-bg-info: light-dark(oklch(0.97 0 0), oklch(0.16 0 0));
-  --color-alert-border-info: light-dark(oklch(0.92 0 0), oklch(0.22 0 0));
-  --color-alert-hover-info: light-dark(
-    oklch(
-      0.92 calc(0.01 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)
-    ),
-    oklch(
-      0.12 calc(0.01 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)
-    )
-  );
-  --color-alert-active-info: light-dark(
-    oklch(
-      0.88 calc(0.01 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)
-    ),
-    oklch(
-      0.08 calc(0.01 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)
-    )
-  );
+  --color-alert-bg-info: var(--color-default-soft);
+  --color-alert-border-info: var(--color-border);
+  --color-alert-hover-info: var(--color-default-soft-hover);
+  --color-alert-active-info: var(--color-default);
 
   /* Accent */
-  --color-alert-bg-accent: light-dark(
-    oklch(
-      0.97 calc(0.02 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)
-    ),
-    oklch(
-      0.19 calc(0.035 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)
-    )
+  --color-alert-bg-accent: var(--color-accent-soft);
+  --color-alert-border-accent: color-mix(
+    in oklab,
+    var(--color-accent) 30%,
+    transparent
   );
-  --color-alert-border-accent: light-dark(
-    oklch(
-      0.88 calc(0.04 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)
-    ),
-    oklch(
-      0.28 calc(0.06 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)
-    )
-  );
-  --color-alert-hover-accent: light-dark(
-    oklch(
-      0.92 calc(0.04 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)
-    ),
-    oklch(
-      0.14 calc(0.05 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)
-    )
-  );
-  --color-alert-active-accent: light-dark(
-    oklch(
-      0.87 calc(0.06 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)
-    ),
-    oklch(
-      0.1 calc(0.06 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)
-    )
+  --color-alert-hover-accent: var(--color-accent-soft-hover);
+  --color-alert-active-accent: color-mix(
+    in oklab,
+    var(--color-accent) 25%,
+    transparent
   );
 
   /* Success */
-  --color-alert-bg-success: light-dark(
-    oklch(0.97 0.02 145),
-    oklch(0.19 0.035 145)
+  --color-alert-bg-success: var(--color-success-soft);
+  --color-alert-border-success: color-mix(
+    in oklab,
+    var(--color-success) 35%,
+    transparent
   );
-  --color-alert-border-success: light-dark(
-    oklch(0.88 0.04 145),
-    oklch(0.28 0.06 145)
-  );
-  --color-alert-hover-success: light-dark(
-    oklch(0.92 0.04 145),
-    oklch(0.14 0.05 145)
-  );
-  --color-alert-active-success: light-dark(
-    oklch(0.87 0.06 145),
-    oklch(0.1 0.06 145)
+  --color-alert-hover-success: var(--color-success-soft-hover);
+  --color-alert-active-success: color-mix(
+    in oklab,
+    var(--color-success) 25%,
+    transparent
   );
 
   /* Warning */
-  --color-alert-bg-warning: light-dark(
-    oklch(0.98 0.02 85),
-    oklch(0.19 0.035 85)
+  --color-alert-bg-warning: var(--color-warning-soft);
+  --color-alert-border-warning: color-mix(
+    in oklab,
+    var(--color-warning) 40%,
+    transparent
   );
-  --color-alert-border-warning: light-dark(
-    oklch(0.9 0.05 85),
-    oklch(0.28 0.06 85)
-  );
-  --color-alert-hover-warning: light-dark(
-    oklch(0.93 0.04 85),
-    oklch(0.14 0.05 85)
-  );
-  --color-alert-active-warning: light-dark(
-    oklch(0.88 0.06 85),
-    oklch(0.1 0.06 85)
+  --color-alert-hover-warning: var(--color-warning-soft-hover);
+  --color-alert-active-warning: color-mix(
+    in oklab,
+    var(--color-warning) 25%,
+    transparent
   );
 
   /* Error */
-  --color-alert-bg-error: light-dark(oklch(0.97 0.02 27), oklch(0.19 0.035 27));
-  --color-alert-border-error: light-dark(
-    oklch(0.9 0.05 27),
-    oklch(0.28 0.06 27)
+  --color-alert-bg-error: var(--color-danger-soft);
+  --color-alert-border-error: color-mix(
+    in oklab,
+    var(--color-danger) 30%,
+    transparent
   );
-  --color-alert-hover-error: light-dark(
-    oklch(0.92 0.04 27),
-    oklch(0.14 0.05 27)
-  );
-  --color-alert-active-error: light-dark(
-    oklch(0.87 0.06 27),
-    oklch(0.1 0.06 27)
+  --color-alert-hover-error: var(--color-danger-soft-hover);
+  --color-alert-active-error: color-mix(
+    in oklab,
+    var(--color-danger) 25%,
+    transparent
   );
 
   /* ── Typography (21 tokens) ──────────────────────────────────── */
@@ -311,6 +465,8 @@
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
   --font-family-base: var(--brand-font-family, inherit);
+  --font-family-mono:
+    ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
 
   /* ── Spacing (8 steps, 4px base) ──────────────────────────────── */
   --spacing-1: calc(0.25rem * var(--brand-density-factor, 1));
@@ -322,22 +478,53 @@
   --spacing-7: calc(1.75rem * var(--brand-density-factor, 1));
   --spacing-8: calc(2rem * var(--brand-density-factor, 1));
 
-  /* ── Border Radius (5 steps) ─────────────────────────────────── */
+  /* ── Border Radius (0.5rem base, Tailwind-style steps) ────────── */
+  --radius-base: calc(0.5rem * var(--brand-radius-factor, 1));
   --radius-none: 0;
-  --radius-sm: calc(0.375rem * var(--brand-radius-factor, 1));
-  --radius-md: calc(0.75rem * var(--brand-radius-factor, 1));
-  --radius-lg: calc(1.25rem * var(--brand-radius-factor, 1));
+  --radius-xs: calc(var(--radius-base) * 0.25); /* 2px */
+  --radius-sm: calc(var(--radius-base) * 0.5); /* 4px */
+  --radius-md: calc(var(--radius-base) * 0.75); /* 6px */
+  --radius-lg: var(--radius-base); /* 8px */
+  --radius-xl: calc(var(--radius-base) * 1.5); /* 12px */
+  --radius-2xl: calc(var(--radius-base) * 2); /* 16px */
+  --radius-3xl: calc(var(--radius-base) * 3); /* 24px */
+  --radius-4xl: calc(var(--radius-base) * 4); /* 32px */
   --radius-full: 9999px;
+  /* Text inputs, selects, and other field shells. */
+  --radius-field: var(--radius-xl);
+  /* Cards, alerts, modals, popovers. */
+  --radius-surface: min(2rem, var(--radius-3xl));
 
-  /* ── Shadows (3 steps, referencing --color-shadow) ───────────── */
-  --shadow-sm: 0 1px 2px 0 var(--color-shadow), 0 0 1px 0 var(--color-shadow);
+  /* ── Shadows ─────────────────────────────────────────────────── */
+  --shadow-sm:
+    0 2px 4px 0 color-mix(in oklab, var(--color-shadow) 50%, transparent),
+    0 1px 2px 0 color-mix(in oklab, var(--color-shadow) 75%, transparent),
+    0 0 1px 0 color-mix(in oklab, var(--color-shadow) 75%, transparent);
   --shadow-md:
-    0 6px 16px -6px var(--color-shadow), 0 2px 4px -2px var(--color-shadow);
+    0 2px 8px 0 color-mix(in oklab, var(--color-shadow) 75%, transparent),
+    0 -6px 12px 0 color-mix(in oklab, var(--color-shadow) 38%, transparent),
+    0 14px 28px 0 var(--color-shadow);
   --shadow-lg:
-    0 24px 48px -12px var(--color-shadow), 0 8px 16px -8px var(--color-shadow);
+    0 4px 12px 0 color-mix(in oklab, var(--color-shadow) 75%, transparent),
+    0 24px 48px -8px var(--color-shadow);
+  /* Role-based shadows: flat in dark mode, where surfaces separate by lightness. */
+  --shadow-surface:
+    0 2px 4px 0 light-dark(oklch(0 0 0 / 0.04), transparent),
+    0 1px 2px 0 light-dark(oklch(0 0 0 / 0.06), transparent),
+    0 0 1px 0 light-dark(oklch(0 0 0 / 0.06), transparent);
+  /* Fields add a hairline so white controls stay defined on white surfaces
+     (and on dark ones, where --color-field equals --color-surface). */
+  --shadow-field:
+    var(--shadow-surface),
+    inset 0 0 0 1px light-dark(oklch(0 0 0 / 0.1), var(--color-border));
+  --shadow-overlay:
+    0 2px 8px 0 light-dark(oklch(0 0 0 / 0.06), transparent),
+    0 -6px 12px 0 light-dark(oklch(0 0 0 / 0.03), transparent),
+    0 14px 28px 0 light-dark(oklch(0 0 0 / 0.08), oklch(0 0 0 / 0.35)),
+    inset 0 0 1px 0 light-dark(transparent, oklch(1 0 0 / 0.3));
 
   /* ── Liquid Glass Materials ───────────────────────────────────── */
-  /* Translucent fills tuned for legibility over busy content; pair with --glass-filter. */
+  /* Opt-in material for the `glass` variant; pair fills with --glass-filter. */
   --glass-bg-thin: light-dark(oklch(1 0 0 / 0.42), oklch(0.32 0 0 / 0.32));
   --glass-bg: light-dark(oklch(1 0 0 / 0.64), oklch(0.26 0 0 / 0.52));
   --glass-bg-thick: light-dark(oklch(0.995 0 0 / 0.8), oklch(0.22 0 0 / 0.74));
@@ -364,27 +551,31 @@
     0 0 0 0.5px var(--glass-edge),
     0 12px 40px -12px light-dark(oklch(0 0 0 / 0.22), oklch(0 0 0 / 0.7)),
     0 3px 8px -3px light-dark(oklch(0 0 0 / 0.1), oklch(0 0 0 / 0.45));
-  /* Recessed track (switch, slider, segmented control). */
-  --color-fill-track: light-dark(oklch(0.5 0 0 / 0.12), oklch(1 0 0 / 0.12));
+
+  /* ── Interaction Fills ───────────────────────────────────────── */
+  /* Unfilled track (switch, slider, progress, segmented control). */
+  --color-fill-track: var(--color-default);
   --color-fill-track-strong: light-dark(
-    oklch(0.5 0 0 / 0.2),
-    oklch(1 0 0 / 0.18)
+    oklch(0.871 0.006 286.286),
+    oklch(0.37 0.013 285.805)
   );
-  --color-fill-hover: light-dark(oklch(0.5 0 0 / 0.07), oklch(1 0 0 / 0.08));
-  --color-fill-pressed: light-dark(oklch(0.5 0 0 / 0.12), oklch(1 0 0 / 0.13));
-  --focus-ring: 0 0 0 3px
-    light-dark(
-      oklch(
-        0.66 calc(0.19 * var(--brand-chroma-multiplier, 1))
-          var(--brand-hue, 250) /
-        0.4
-      ),
-      oklch(
-        0.66 calc(0.19 * var(--brand-chroma-multiplier, 1))
-          var(--brand-hue, 250) /
-        0.5
-      )
-    );
+  /* Hover and pressed wash for quiet controls (ghost buttons, list rows). */
+  --color-fill-hover: var(--color-default);
+  --color-fill-pressed: var(--color-default-hover);
+  --color-scrollbar-thumb: color-mix(
+    in oklch,
+    var(--color-fg) 15%,
+    transparent
+  );
+
+  /* ── Focus & State ───────────────────────────────────────────── */
+  --color-focus: var(--color-accent);
+  /* Offset ring for buttons, toggles, tabs, and other discrete controls. */
+  --focus-ring: 0 0 0 2px var(--color-bg), 0 0 0 4px var(--color-focus);
+  /* Flush ring for field shells, which already sit on their own fill. */
+  --focus-ring-field: 0 0 0 2px var(--color-focus);
+  --focus-ring-invalid: 0 0 0 2px var(--color-danger);
+  --disabled-opacity: 0.5;
 
   /* ── Motion ───────────────────────────────────────────────────── */
   /* Critically-damped-ish spring sampled into linear(); slight overshoot, fast settle. */
@@ -405,11 +596,16 @@
     0.998 63.6%,
     1
   );
+  --ease-smooth: ease;
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-  --ease-sheet: cubic-bezier(0.32, 0.72, 0, 1);
-  --duration-fast: 140ms;
-  --duration-base: 240ms;
-  --duration-slow: 420ms;
+  --ease-out-quad: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-out-fluid: cubic-bezier(0.32, 0.72, 0, 1);
+  --ease-sheet: var(--ease-out-fluid);
+  --duration-fast: 150ms;
+  --duration-base: 250ms;
+  --duration-slow: 400ms;
+  /* Press feedback: controls shrink slightly while held. */
+  --press-scale: 0.97;
 
   /* ── Z-Index (5 steps) ────────────────────────────────────────── */
   --z-base: 0;
@@ -419,18 +615,25 @@
   --z-toast: 1700;
 
   /* ── Chart Colors (8 steps) ───────────────────────────────────── */
-  --color-chart-1: light-dark(oklch(0.6 0.18 250), oklch(0.65 0.16 250));
+  --color-chart-1: light-dark(
+    oklch(0.6204 0.195 253.83),
+    oklch(0.66 0.17 253.83)
+  );
   --color-chart-2: light-dark(oklch(0.75 0.15 75), oklch(0.75 0.14 75));
   --color-chart-3: light-dark(oklch(0.65 0.18 5), oklch(0.68 0.16 5));
   --color-chart-4: light-dark(oklch(0.62 0.2 300), oklch(0.65 0.18 300));
   --color-chart-5: light-dark(oklch(0.68 0.16 195), oklch(0.7 0.14 195));
   --color-chart-6: light-dark(oklch(0.58 0.16 45), oklch(0.62 0.15 45));
   --color-chart-7: light-dark(oklch(0.64 0.17 145), oklch(0.68 0.15 145));
-  --color-chart-8: light-dark(oklch(0.6 0 0), oklch(0.65 0 0));
+  --color-chart-8: light-dark(
+    oklch(0.552 0.016 285.938),
+    oklch(0.705 0.015 286.067)
+  );
 }
 
 /* ── Theme Selectors ────────────────────────────────────────────── */
-[data-theme="light"] {
+[data-theme="light"],
+.light {
   color-scheme: light;
 }
 

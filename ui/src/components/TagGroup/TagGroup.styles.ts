@@ -9,21 +9,22 @@ export const tagStyles = [
     :host {
       display: inline-flex;
       align-items: center;
+      position: relative;
       gap: var(--spacing-1, 0.25rem);
-      border-radius: var(--radius-full, 9999px);
+      box-sizing: border-box;
+      border-radius: var(--radius-xl, 0.75rem);
+      font-family: var(--font-family-base, inherit);
+      font-weight: var(--font-weight-medium, 500);
+      line-height: 1;
+      vertical-align: middle;
       cursor: pointer;
       user-select: none;
-      vertical-align: middle;
-      box-sizing: border-box;
-      line-height: 1;
-      font-weight: 500;
-      transition: all 0.15s ease;
-    }
-
-    :host([is-disabled]) {
-      opacity: 0.5;
-      pointer-events: none;
-      cursor: not-allowed;
+      -webkit-tap-highlight-color: transparent;
+      transition:
+        color 100ms var(--ease-smooth, ease),
+        opacity 100ms var(--ease-smooth, ease),
+        background-color 100ms var(--ease-smooth, ease),
+        box-shadow 100ms var(--ease-out, ease-out);
     }
 
     [part~="base"] {
@@ -35,6 +36,14 @@ export const tagStyles = [
       height: 100%;
     }
 
+    ::slotted(svg) {
+      width: 0.75rem;
+      height: 0.75rem;
+      flex-shrink: 0;
+      pointer-events: none;
+    }
+
+    /* Sizes */
     :host([size="sm"]) {
       height: 1.25rem;
       padding: 0 var(--spacing-2, 0.5rem);
@@ -45,55 +54,108 @@ export const tagStyles = [
     :host(:not([size])) {
       height: 1.5rem;
       padding: 0 var(--spacing-2, 0.5rem);
-      font-size: var(--font-size-sm, 0.875rem);
+      font-size: var(--font-size-xs, 0.75rem);
     }
 
     :host([size="lg"]) {
-      height: 1.75rem;
-      padding: 0 var(--spacing-3, 0.75rem);
-      font-size: var(--font-size-md, 1rem);
+      height: 2rem;
+      padding: 0 0.625rem;
+      font-size: var(--font-size-sm, 0.875rem);
+      border-radius: var(--radius-2xl, 1rem);
     }
 
+    /* The default tag (flat + primary) is a neutral chip, as in HeroUI */
+    :host([variant="flat"][tone="primary"]) {
+      background-color: var(--color-default);
+      color: var(--color-default-fg);
+    }
+
+    @media (hover: hover) {
+      :host([variant="flat"][tone="primary"]:not([is-selected]):hover) {
+        background-color: var(--color-default-hover);
+      }
+    }
+
+    /* Selected: a neutral tag turns accent-soft; a toned tag fills solid */
     :host([is-selected]) {
-      background: var(--_tone-solid-bg);
+      background-color: var(--_tone-solid-bg);
       color: var(--_tone-solid-fg);
       border-color: transparent;
-      box-shadow:
-        inset 0 1px 0 oklch(1 0 0 / 0.25),
-        0 2px 6px -2px color-mix(in oklch, var(--_tone-solid-bg) 60%, transparent);
     }
 
-    :host {
-      transition:
-        background-color var(--duration-fast, 140ms) ease,
-        color var(--duration-fast, 140ms) ease,
-        box-shadow var(--duration-fast, 140ms) ease;
+    :host([is-selected][variant="flat"][tone="primary"]) {
+      background-color: var(--color-accent-soft);
+      color: var(--color-accent-soft-fg);
     }
 
+    @media (hover: hover) {
+      :host([is-selected][variant="flat"][tone="primary"]:hover) {
+        background-color: var(--color-accent-soft-hover);
+      }
+    }
+
+    :host(:focus-visible) {
+      outline: none;
+      box-shadow: var(--focus-ring);
+    }
+
+    :host([is-disabled]) {
+      opacity: var(--disabled-opacity, 0.5);
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    /* A 12px glyph with a 24px invisible hit area */
     .remove-button {
+      position: relative;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 1rem;
-      height: 1rem;
+      flex-shrink: 0;
+      width: 0.75rem;
+      height: 0.75rem;
       padding: 0;
       border: none;
       background: transparent;
-      color: currentColor;
+      color: inherit;
       border-radius: var(--radius-full, 9999px);
       cursor: pointer;
       opacity: 0.7;
-      margin-inline-start: 0.125rem;
+      transition: opacity 100ms var(--ease-smooth, ease);
     }
 
-    .remove-button:hover {
+    .remove-button::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 1.5rem;
+      height: 1.5rem;
+      translate: -50% -50%;
+    }
+
+    @media (hover: hover) {
+      .remove-button:hover {
+        opacity: 1;
+      }
+    }
+
+    .remove-button:focus-visible {
       opacity: 1;
-      background-color: rgba(0, 0, 0, 0.1);
+      outline: none;
+      box-shadow: var(--focus-ring);
     }
 
     .remove-button svg {
-      width: 0.75rem;
-      height: 0.75rem;
+      width: 100%;
+      height: 100%;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      :host,
+      .remove-button {
+        transition: none;
+      }
     }
   `,
 ]
@@ -104,20 +166,21 @@ export const tagGroupStyles = [
     :host {
       display: flex;
       flex-direction: column;
-      gap: var(--spacing-2, 0.5rem);
+      gap: var(--spacing-1, 0.25rem);
       box-sizing: border-box;
     }
 
-    .label {
+    [part~="label"] {
       font-size: var(--font-size-sm, 0.875rem);
-      font-weight: 500;
+      line-height: var(--line-height-sm, 1.25rem);
+      font-weight: var(--font-weight-medium, 500);
       color: var(--color-fg, inherit);
     }
 
-    .tag-container {
+    [part~="container"] {
       display: flex;
       flex-wrap: wrap;
-      gap: var(--spacing-2, 0.5rem);
+      gap: 0.375rem;
       align-items: center;
     }
   `,

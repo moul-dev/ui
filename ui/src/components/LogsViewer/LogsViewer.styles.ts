@@ -8,20 +8,20 @@ export const logsViewerStyles: CSSResultGroup = [
       display: block;
       box-sizing: border-box;
       width: 100%;
-      color: var(--color-fg, #0f172a);
+      color: var(--color-fg, #18181b);
       font-family: var(--font-family-base, inherit);
       font-size: var(--font-size-sm, 0.875rem);
       line-height: var(--line-height-sm, 1.25rem);
     }
 
+    /* HeroUI card surface: white fill lifted by a soft shadow, no border. */
     .container {
       display: flex;
       flex-direction: column;
-      background: var(--color-bg, #ffffff);
-      border: 1px solid var(--color-border, #e2e8f0);
-      border-radius: var(--radius-md, 8px);
+      background-color: var(--color-surface, #ffffff);
+      border-radius: var(--radius-surface, 1.5rem);
       overflow: hidden;
-      box-shadow: var(--shadow-sm, 0 1px 2px 0 rgba(0, 0, 0, 0.05));
+      box-shadow: var(--shadow-surface, 0 1px 2px 0 rgba(0, 0, 0, 0.06));
     }
 
     /* Toolbar */
@@ -30,10 +30,9 @@ export const logsViewerStyles: CSSResultGroup = [
       flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
-      gap: var(--spacing-2, 8px);
-      padding: var(--spacing-2, 8px) var(--spacing-3, 12px);
-      background: var(--color-bg-subtle, #f8fafc);
-      border-bottom: 1px solid var(--color-border, #e2e8f0);
+      gap: var(--spacing-2, 0.5rem);
+      padding: var(--spacing-3, 0.75rem);
+      border-bottom: 1px solid var(--color-separator, #e4e4e7);
       user-select: none;
     }
 
@@ -41,10 +40,11 @@ export const logsViewerStyles: CSSResultGroup = [
     .toolbar-right {
       display: flex;
       align-items: center;
-      gap: var(--spacing-2, 8px);
+      gap: var(--spacing-2, 0.5rem);
       flex-wrap: wrap;
     }
 
+    /* Search: HeroUI secondary search field (default fill, no shadow, used inside surfaces). */
     .search-box {
       position: relative;
       display: inline-flex;
@@ -53,72 +53,99 @@ export const logsViewerStyles: CSSResultGroup = [
 
     .search-icon {
       position: absolute;
-      left: 8px;
-      width: 14px;
-      height: 14px;
-      color: var(--color-fg-subtle, #64748b);
+      inset-inline-start: var(--spacing-3, 0.75rem);
+      width: 1rem;
+      height: 1rem;
+      color: var(--color-field-placeholder, #71717a);
       pointer-events: none;
     }
 
     .search-input {
-      height: 28px;
-      padding: 0 28px 0 28px;
-      font-size: 0.75rem;
-      border: 1px solid var(--color-border, #cbd5e1);
-      border-radius: var(--radius-sm, 4px);
-      background: var(--color-bg, #ffffff);
-      color: var(--color-fg, #0f172a);
-      transition: border-color 0.15s ease, box-shadow 0.15s ease;
-      min-width: 160px;
+      height: 2rem;
+      min-width: 10rem;
+      padding-block: 0;
+      padding-inline: 2.25rem 2rem;
+      font-size: var(--font-size-sm, 0.875rem);
+      line-height: var(--line-height-sm, 1.25rem);
+      border: none;
+      border-radius: var(--radius-field, 0.75rem);
+      background-color: var(--color-default, #f4f4f5);
+      color: var(--color-field-fg, #18181b);
+      outline: none;
+      transition:
+        background-color var(--duration-fast, 150ms) var(--ease-smooth, ease),
+        box-shadow var(--duration-fast, 150ms) var(--ease-out, ease-out);
     }
 
-    .search-input:focus {
+    .search-input::placeholder {
+      color: var(--color-field-placeholder, #71717a);
+    }
+
+    @media (hover: hover) {
+      .search-input:hover:not(:focus) {
+        background-color: var(--color-default-hover, #e4e4e7);
+      }
+    }
+
+    .search-input:focus,
+    .search-input:focus-visible {
       outline: none;
-      border-color: var(--color-border-focus, #3b82f6);
-      box-shadow: 0 0 0 1px var(--color-border-focus, #3b82f6);
+      background-color: var(--color-default, #f4f4f5);
+      box-shadow: var(--focus-ring-field);
     }
 
     .search-clear-btn {
       position: absolute;
-      right: 6px;
+      inset-inline-end: var(--spacing-2, 0.5rem);
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 16px;
-      height: 16px;
+      width: 1.25rem;
+      height: 1.25rem;
       padding: 0;
       border: none;
       background: transparent;
-      color: var(--color-fg-subtle, #64748b);
+      color: var(--color-muted, #71717a);
+      font-size: var(--font-size-xs, 0.75rem);
       cursor: pointer;
-      border-radius: 50%;
+      border-radius: var(--radius-full, 9999px);
+      transition:
+        background-color var(--duration-fast, 150ms) var(--ease-smooth, ease),
+        color var(--duration-fast, 150ms) var(--ease-smooth, ease);
     }
 
-    .search-clear-btn:hover {
-      color: var(--color-fg, #0f172a);
+    @media (hover: hover) {
+      .search-clear-btn:hover {
+        background-color: var(--color-default-hover, #e4e4e7);
+        color: var(--color-fg, #18181b);
+      }
     }
 
-    /* Filter pills group */
+    .search-clear-btn:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
+    }
+
+    /* Level filter: HeroUI tabs (default track, raised segment indicator). */
     .filter-group {
       position: relative;
+      isolation: isolate;
       display: inline-flex;
       align-items: center;
-      background: var(--color-bg, #ffffff);
-      border: 1px solid var(--color-border, #cbd5e1);
-      border-radius: var(--radius-md, 6px);
-      padding: 2px;
-      gap: 2px;
+      background-color: var(--color-default, #f4f4f5);
+      border-radius: var(--radius-3xl, 1.5rem);
+      padding: 0.125rem;
+      gap: 0;
     }
 
     .filter-indicator {
       position: absolute;
-      top: 2px;
-      bottom: 2px;
-      background: var(--color-bg-subtle, #f1f5f9);
-      border: 1px solid var(--color-border, #cbd5e1);
-      border-radius: var(--radius-sm, 4px);
+      top: 0.125rem;
+      bottom: 0.125rem;
+      background-color: var(--color-segment, #ffffff);
+      border-radius: var(--radius-3xl, 1.5rem);
       pointer-events: none;
-      box-shadow: var(--shadow-sm, 0 1px 2px 0 rgba(0, 0, 0, 0.05));
+      box-shadow: var(--shadow-surface, 0 1px 2px 0 rgba(0, 0, 0, 0.06));
       z-index: 0;
     }
 
@@ -128,73 +155,113 @@ export const logsViewerStyles: CSSResultGroup = [
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      padding: 2px 8px;
-      height: 24px;
+      height: 1.75rem;
+      padding: 0 var(--spacing-3, 0.75rem);
       border: none;
       background: transparent;
-      color: var(--color-fg-subtle, #64748b);
-      font-size: 0.6875rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      border-radius: var(--radius-sm, 4px);
+      color: var(--color-muted, #71717a);
+      font-size: var(--font-size-xs, 0.75rem);
+      font-weight: var(--font-weight-medium, 500);
+      line-height: var(--line-height-xs, 1rem);
+      text-transform: capitalize;
+      border-radius: var(--radius-3xl, 1.5rem);
       cursor: pointer;
-      transition: color 0.15s ease;
+      outline: none;
+      transition:
+        color var(--duration-fast, 150ms) var(--ease-smooth, ease),
+        opacity var(--duration-fast, 150ms) var(--ease-smooth, ease),
+        box-shadow var(--duration-fast, 150ms) var(--ease-out, ease-out);
     }
 
-    .filter-pill:hover {
-      color: var(--color-fg, #0f172a);
+    @media (hover: hover) {
+      .filter-pill:not([aria-pressed='true']):not(.active):hover {
+        opacity: 0.7;
+      }
     }
 
     .filter-pill[aria-pressed='true'],
     .filter-pill.active {
-      color: var(--color-fg, #0f172a);
-      font-weight: 700;
+      color: var(--color-fg, #18181b);
     }
 
-    /* Counts and toolbar buttons */
+    .filter-pill:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
+    }
+
+    /* Counts: HeroUI default chip. */
     .counts-badge {
-      font-size: 0.6875rem;
+      display: inline-flex;
+      align-items: center;
+      padding: 0.125rem var(--spacing-2, 0.5rem);
+      font-size: var(--font-size-xs, 0.75rem);
+      font-weight: var(--font-weight-medium, 500);
+      line-height: 1.25rem;
       font-variant-numeric: tabular-nums;
-      color: var(--color-fg-subtle, #64748b);
-      padding: 2px 6px;
-      background: var(--color-bg, #ffffff);
-      border: 1px solid var(--color-border-subtle, #e2e8f0);
-      border-radius: var(--radius-sm, 4px);
+      white-space: nowrap;
+      color: var(--color-muted, #71717a);
+      background-color: var(--color-default, #f4f4f5);
+      border-radius: var(--radius-2xl, 1rem);
     }
 
+    /* Toolbar buttons: HeroUI ghost buttons (sm); pressed toggles use accent-soft. */
     .tool-btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      height: 28px;
-      padding: 0 8px;
-      font-size: 0.6875rem;
-      font-weight: 500;
-      border: 1px solid var(--color-border, #cbd5e1);
-      border-radius: var(--radius-sm, 4px);
-      background: var(--color-bg, #ffffff);
-      color: var(--color-fg-subtle, #475569);
+      gap: var(--spacing-1, 0.25rem);
+      height: 2rem;
+      min-width: 2rem;
+      padding: 0 var(--spacing-2, 0.5rem);
+      font-size: var(--font-size-sm, 0.875rem);
+      font-weight: var(--font-weight-medium, 500);
+      line-height: 1;
+      border: none;
+      border-radius: var(--radius-3xl, 1.5rem);
+      background-color: transparent;
+      color: var(--color-default-fg, #18181b);
       cursor: pointer;
-      gap: 4px;
-      transition: all 0.15s ease;
+      outline: none;
+      transform-origin: center;
+      transition:
+        transform 250ms var(--ease-smooth, ease),
+        background-color 100ms var(--ease-out, ease-out),
+        box-shadow 100ms var(--ease-out, ease-out);
     }
 
-    .tool-btn:hover {
-      background: var(--color-bg-subtle, #f1f5f9);
-      color: var(--color-fg, #0f172a);
+    @media (hover: hover) {
+      .tool-btn:hover {
+        background-color: var(--color-default, #f4f4f5);
+      }
+    }
+
+    .tool-btn:active {
+      background-color: var(--color-default-hover, #e4e4e7);
+      transform: scale(var(--press-scale, 0.97));
     }
 
     .tool-btn[aria-pressed='true'],
     .tool-btn.active {
-      background: var(--color-primary-100, #dbeafe);
-      border-color: var(--color-primary-300, #93c5fd);
-      color: var(--color-primary-700, #1d4ed8);
+      background-color: var(--color-accent-soft);
+      color: var(--color-accent-soft-fg);
+    }
+
+    @media (hover: hover) {
+      .tool-btn[aria-pressed='true']:hover,
+      .tool-btn.active:hover {
+        background-color: var(--color-accent-soft-hover);
+      }
+    }
+
+    .tool-btn:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
     }
 
     .tool-btn svg {
-      width: 14px;
-      height: 14px;
+      width: 1rem;
+      height: 1rem;
+      flex-shrink: 0;
     }
 
     /* Logs viewport */
@@ -203,10 +270,12 @@ export const logsViewerStyles: CSSResultGroup = [
       overflow-y: auto;
       overflow-x: auto;
       max-height: var(--logs-max-height, 600px);
-      background: var(--color-bg, #ffffff);
+      background-color: var(--color-surface, #ffffff);
       font-family: var(--font-family-mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace);
-      font-size: 0.75rem;
+      font-size: var(--font-size-xs, 0.75rem);
       line-height: 1.5;
+      scrollbar-width: thin;
+      scrollbar-color: var(--color-scrollbar-thumb) transparent;
     }
 
     .logs-table {
@@ -216,39 +285,66 @@ export const logsViewerStyles: CSSResultGroup = [
       table-layout: auto;
     }
 
+    /* Rows: HeroUI table rows with separator dividers. */
     .row {
       display: table-row;
-      border-bottom: 1px solid var(--color-border-subtle, #f1f5f9);
+      border-bottom: 1px solid var(--color-separator, #e4e4e7);
       cursor: pointer;
-      transition: background-color 0.1s ease;
+      transition: background-color 100ms var(--ease-out, ease-out);
     }
 
-    .row:hover {
-      background-color: var(--color-bg-subtle, #f8fafc);
+    .row:last-child {
+      border-bottom-color: transparent;
+    }
+
+    @media (hover: hover) {
+      .row:hover {
+        background-color: var(--color-default-soft, rgba(244, 244, 245, 0.5));
+      }
     }
 
     .row.selected {
-      background-color: var(--color-primary-50, rgba(59, 130, 246, 0.08));
+      background-color: var(--color-accent-soft);
+    }
+
+    @media (hover: hover) {
+      .row.selected:hover {
+        background-color: var(--color-accent-soft-hover);
+      }
+    }
+
+    /* Inset ring so the scroll viewport never clips it. */
+    .row:focus-visible {
+      outline: 2px solid var(--color-focus, #3b82f6);
+      outline-offset: -2px;
     }
 
     .row.compact .cell {
-      padding-top: 1px;
-      padding-bottom: 1px;
+      padding-top: 0.125rem;
+      padding-bottom: 0.125rem;
     }
 
     /* Cells */
     .cell {
       display: table-cell;
-      padding: 3px 8px;
+      padding: 0.375rem var(--spacing-2, 0.5rem);
       vertical-align: top;
       white-space: nowrap;
+    }
+
+    .cell:first-child {
+      padding-inline-start: var(--spacing-3, 0.75rem);
+    }
+
+    .cell:last-child {
+      padding-inline-end: var(--spacing-3, 0.75rem);
     }
 
     .cell-line {
       width: 44px;
       min-width: 44px;
       text-align: right;
-      color: var(--color-fg-subtle, #94a3b8);
+      color: var(--color-muted, #71717a);
       user-select: none;
       font-variant-numeric: tabular-nums;
     }
@@ -256,54 +352,63 @@ export const logsViewerStyles: CSSResultGroup = [
     .cell-time {
       width: 170px;
       min-width: 170px;
-      color: var(--color-fg-subtle, #64748b);
+      color: var(--color-muted, #71717a);
       font-variant-numeric: tabular-nums;
     }
 
     .cell-level {
-      width: 60px;
-      min-width: 60px;
+      width: 4rem;
+      min-width: 4rem;
     }
 
+    /* Level badges: HeroUI soft chips (sm), sized to the log line box. */
     .level-badge {
-      display: inline-block;
-      min-width: 48px;
-      text-align: center;
-      padding: 1px 4px;
-      font-size: 0.625rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.03em;
-      border-radius: var(--radius-sm, 3px);
-      line-height: 1.2;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 3rem;
+      padding: 0 var(--spacing-2, 0.5rem);
+      font-family: var(--font-family-base, inherit);
+      font-size: var(--font-size-xs, 0.75rem);
+      font-weight: var(--font-weight-medium, 500);
+      line-height: inherit;
+      white-space: nowrap;
+      border-radius: var(--radius-2xl, 1rem);
+      background-color: var(--color-default, #f4f4f5);
+      color: var(--color-default-fg, #18181b);
     }
 
     .level-badge.level-info {
-      background: var(--color-primary-100, #dbeafe);
-      color: var(--color-primary-700, #1d4ed8);
+      background-color: var(--color-accent-soft);
+      color: var(--color-accent-soft-fg);
     }
 
     .level-badge.level-warn {
-      background: var(--color-alert-bg-warning, #fef3c7);
-      color: var(--color-warning-700, #b45309);
+      background-color: var(--color-warning-soft);
+      color: var(--color-warning-soft-fg);
     }
 
-    .level-badge.level-error,
+    .level-badge.level-error {
+      background-color: var(--color-danger-soft);
+      color: var(--color-danger-soft-fg);
+    }
+
+    /* Fatal escalates to the solid danger chip. */
     .level-badge.level-fatal {
-      background: var(--color-alert-bg-error, #fee2e2);
-      color: var(--color-error-700, #b91c1c);
+      background-color: var(--color-danger);
+      color: var(--color-danger-fg);
     }
 
     .level-badge.level-debug,
     .level-badge.level-trace {
-      background: var(--color-neutral-100, #f1f5f9);
-      color: var(--color-neutral-700, #475569);
+      background-color: var(--color-default, #f4f4f5);
+      color: var(--color-muted, #71717a);
     }
 
     .cell-message {
       width: 100%;
       word-break: break-word;
-      color: var(--color-fg, #0f172a);
+      color: var(--color-fg, #18181b);
     }
 
     /* Preserve whitespace in the log text only — not the template's own indentation */
@@ -323,54 +428,65 @@ export const logsViewerStyles: CSSResultGroup = [
       white-space: pre;
     }
 
-    /* Attribute chips */
+    /* Attribute chips: HeroUI default chips (sm). */
     .attribute-chip {
       display: inline-flex;
       align-items: center;
-      gap: 2px;
-      margin: 1px 4px 1px 0;
-      padding: 0 4px;
+      gap: 0.125rem;
+      margin: 1px var(--spacing-1, 0.25rem) 1px 0;
+      padding: 0 0.375rem;
       font-size: 0.6875rem;
-      border-radius: var(--radius-sm, 3px);
-      background: var(--color-bg-subtle, #f1f5f9);
-      border: 1px solid var(--color-border-subtle, #e2e8f0);
-      color: var(--color-fg-subtle, #475569);
+      border-radius: var(--radius-2xl, 1rem);
+      background-color: var(--color-default, #f4f4f5);
+      color: var(--color-muted, #71717a);
       vertical-align: middle;
       line-height: 1.4;
     }
 
     .attribute-key {
-      font-weight: 600;
-      color: var(--color-fg-subtle, #64748b);
+      font-weight: var(--font-weight-medium, 500);
+      color: var(--color-muted, #71717a);
+    }
+
+    /* Keep "key=" whole when a long value wraps inside the chip. */
+    .attribute-chip > .attribute-key {
+      flex-shrink: 0;
+      white-space: nowrap;
     }
 
     .attribute-val {
-      color: var(--color-fg, #1e293b);
+      color: var(--color-fg, #18181b);
     }
 
     /* Highlight */
     mark.highlight,
     .highlight {
-      background-color: var(--color-warning-200, #fde68a);
+      background-color: color-mix(
+        in oklab,
+        var(--color-warning, #f5a524) 35%,
+        transparent
+      );
       color: inherit;
       padding: 0 2px;
-      border-radius: 2px;
+      border-radius: var(--radius-xs, 2px);
     }
 
     /* Empty state */
     .empty-state {
-      padding: var(--spacing-8, 32px);
+      padding: var(--spacing-8, 2rem);
       text-align: center;
-      color: var(--color-fg-subtle, #64748b);
-      font-style: italic;
+      font-family: var(--font-family-base, inherit);
+      font-size: var(--font-size-sm, 0.875rem);
+      line-height: var(--line-height-sm, 1.25rem);
+      color: var(--color-muted, #71717a);
     }
 
-    /* Inspector drawer / panel */
+    /* Inspector panel: secondary surface with white tiles, like HeroUI's primary table. */
     .inspector {
-      border-top: 1px solid var(--color-border, #e2e8f0);
-      background: var(--color-bg-subtle, #f8fafc);
-      padding: var(--spacing-3, 12px) var(--spacing-4, 16px);
-      animation: inspectorEnter 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      border-top: 1px solid var(--color-separator, #e4e4e7);
+      background-color: var(--color-surface-secondary, #f4f4f5);
+      padding: var(--spacing-3, 0.75rem) var(--spacing-4, 1rem) var(--spacing-4, 1rem);
+      animation: inspectorEnter 200ms var(--ease-out, ease-out);
     }
 
     @keyframes inspectorEnter {
@@ -388,61 +504,106 @@ export const logsViewerStyles: CSSResultGroup = [
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: var(--spacing-2, 8px);
+      margin-bottom: var(--spacing-2, 0.5rem);
     }
 
     .inspector-title {
-      font-weight: 600;
-      font-size: 0.8125rem;
-      color: var(--color-fg, #0f172a);
+      font-weight: var(--font-weight-medium, 500);
+      font-size: var(--font-size-sm, 0.875rem);
+      line-height: var(--line-height-md, 1.5rem);
+      color: var(--color-fg, #18181b);
     }
 
     .inspector-close-btn {
-      border: none;
-      background: transparent;
-      color: var(--color-fg-subtle, #64748b);
-      cursor: pointer;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      padding: 2px;
-      border-radius: var(--radius-sm, 4px);
+      width: 1.75rem;
+      height: 1.75rem;
+      padding: 0;
+      border: none;
+      background: transparent;
+      color: var(--color-muted, #71717a);
+      cursor: pointer;
+      border-radius: var(--radius-full, 9999px);
+      outline: none;
+      transition:
+        background-color 100ms var(--ease-out, ease-out),
+        color 100ms var(--ease-out, ease-out),
+        box-shadow 100ms var(--ease-out, ease-out);
     }
 
-    .inspector-close-btn:hover {
-      color: var(--color-fg, #0f172a);
-      background: var(--color-border-subtle, #e2e8f0);
+    @media (hover: hover) {
+      .inspector-close-btn:hover {
+        color: var(--color-fg, #18181b);
+        background-color: var(--color-default, #f4f4f5);
+      }
+    }
+
+    .inspector-close-btn:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
     }
 
     .inspector-attrs {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: var(--spacing-2, 8px);
-      margin-bottom: var(--spacing-3, 12px);
+      gap: var(--spacing-2, 0.5rem);
+      margin-bottom: var(--spacing-3, 0.75rem);
     }
 
     .inspector-attr-row {
       display: flex;
       flex-direction: column;
-      font-size: 0.6875rem;
-      padding: 4px 8px;
-      background: var(--color-bg, #ffffff);
-      border: 1px solid var(--color-border-subtle, #e2e8f0);
-      border-radius: var(--radius-sm, 4px);
+      gap: 0.125rem;
+      font-size: var(--font-size-xs, 0.75rem);
+      line-height: var(--line-height-xs, 1rem);
+      padding: var(--spacing-2, 0.5rem) var(--spacing-3, 0.75rem);
+      background-color: var(--color-surface, #ffffff);
+      border-radius: var(--radius-xl, 0.75rem);
+      box-shadow: var(--shadow-surface, 0 1px 2px 0 rgba(0, 0, 0, 0.06));
       font-family: var(--font-family-mono, monospace);
     }
 
     .inspector-raw {
       position: relative;
-      background: var(--color-bg, #ffffff);
-      border: 1px solid var(--color-border-subtle, #e2e8f0);
-      border-radius: var(--radius-sm, 4px);
-      padding: 8px;
+      background-color: var(--color-surface, #ffffff);
+      border-radius: var(--radius-xl, 0.75rem);
+      box-shadow: var(--shadow-surface, 0 1px 2px 0 rgba(0, 0, 0, 0.06));
+      padding: var(--spacing-3, 0.75rem);
       font-family: var(--font-family-mono, monospace);
-      font-size: 0.6875rem;
+      font-size: var(--font-size-xs, 0.75rem);
+      line-height: 1.5;
       overflow-x: auto;
-      white-space: pre-wrap;
+      white-space: normal;
       word-break: break-all;
+      scrollbar-width: thin;
+      scrollbar-color: var(--color-scrollbar-thumb) transparent;
+    }
+
+    /* Preserve whitespace in the raw line only — not the template's own indentation */
+    .inspector-raw > code {
+      font-family: inherit;
+      white-space: pre-wrap;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .search-input,
+      .search-clear-btn,
+      .filter-pill,
+      .tool-btn,
+      .row,
+      .inspector-close-btn {
+        transition: none;
+      }
+
+      .tool-btn:active {
+        transform: none;
+      }
+
+      .inspector {
+        animation: none;
+      }
     }
   `,
 ]

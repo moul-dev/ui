@@ -10,6 +10,9 @@ export const emptyStateStyles = [
       width: 100%;
       box-sizing: border-box;
       font-family: var(--font-family-base, inherit);
+      font-size: var(--font-size-sm, 0.875rem);
+      line-height: var(--line-height-sm, 1.25rem);
+      color: var(--color-muted);
     }
 
     [part~="base"] {
@@ -17,7 +20,7 @@ export const emptyStateStyles = [
       flex-direction: column;
       width: 100%;
       box-sizing: border-box;
-      border-radius: var(--radius-lg, 0.75rem);
+      border-radius: var(--radius-surface, 1.5rem);
     }
 
     :host([align="center"]) [part~="base"],
@@ -48,50 +51,52 @@ export const emptyStateStyles = [
       gap: var(--spacing-4, 1rem);
     }
 
-    /* Variants */
+    /* Variants. Flat (the default) has no container: muted copy on whatever it sits in. */
     :host([variant="flat"]) [part~="base"],
     :host(:not([variant])) [part~="base"] {
-      background-color: var(--color-bg-subtle, #f3f4f6);
+      background-color: transparent;
     }
 
     :host([variant="bordered"]) [part~="base"] {
-      background-color: var(--color-bg, #ffffff);
-      border: 1px dashed var(--color-border, #e5e7eb);
+      background-color: transparent;
+      border: 1px dashed var(--color-border);
     }
 
+    /* Solid: a surface card lifted by the soft surface shadow */
     :host([variant="solid"]) [part~="base"] {
-      background-color: var(--color-bg-elevated, #ffffff);
-      border: 1px solid var(--color-border-subtle, #f3f4f6);
-      box-shadow: var(--shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.05));
+      background-color: var(--color-surface);
+      box-shadow: var(--shadow-surface);
     }
 
+    /* Glass: opt-in translucent material */
     :host([variant="glass"]) [part~="base"] {
-      background-color: var(--color-bg-glass, rgba(255, 255, 255, 0.7));
-      border: 1px solid var(--color-border-glass, rgba(255, 255, 255, 0.2));
+      background-color: var(--color-bg-glass);
+      border: 1px solid var(--color-border-glass);
       box-shadow: var(--glass-highlight), var(--shadow-glass);
-      backdrop-filter: var(--glass-filter, blur(12px));
       -webkit-backdrop-filter: var(--glass-filter, blur(12px));
+      backdrop-filter: var(--glass-filter, blur(12px));
     }
 
     [part~="icon"] {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      color: var(--color-fg-subtle, #6b7280);
-      font-size: 2.5rem;
+      color: var(--color-muted);
+      font-size: 2rem;
+      line-height: 1;
     }
 
     [part~="title"] {
-      font-size: var(--font-size-lg, 1.125rem);
-      font-weight: 600;
-      color: var(--color-fg, inherit);
-      line-height: var(--line-height-lg, 1.75rem);
+      font-size: var(--font-size-md, 1rem);
+      font-weight: var(--font-weight-medium, 500);
+      line-height: var(--line-height-md, 1.5rem);
+      color: var(--color-fg);
     }
 
     [part~="description"] {
       font-size: var(--font-size-sm, 0.875rem);
-      color: var(--color-fg-subtle, #6b7280);
       line-height: var(--line-height-sm, 1.25rem);
+      color: var(--color-muted);
       max-width: 48ch;
     }
 

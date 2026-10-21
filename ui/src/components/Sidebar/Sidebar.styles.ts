@@ -1,6 +1,10 @@
 /**
  * Moul UI - Compound Sidebar Element Suite Styles
  * Authored with Lit css + resetStyles and CSS design tokens.
+ *
+ * HeroUI look: the off-white page holds a white surface card (the framed aside
+ * or the framed main), and rows behave like HeroUI list-box items — rounded,
+ * a --color-default wash on hover, and the same neutral fill marks the current page.
  */
 
 import { type CSSResultGroup, css } from 'lit'
@@ -26,6 +30,7 @@ export const sidebarStyles: CSSResultGroup = [
 export const sidebarAsideStyles: CSSResultGroup = [
   resetStyles,
   css`
+    /* Unframed fallback: a full-height white rail with a separator hairline. */
     :host {
       display: flex;
       flex-direction: column;
@@ -35,28 +40,31 @@ export const sidebarAsideStyles: CSSResultGroup = [
       position: relative;
       width: var(--sidebar-width, 260px);
       height: 100%;
-      background-color: var(--color-bg-subtle);
-      border-inline-end: 1px solid var(--color-border);
-      transition: width 0.3s cubic-bezier(0.32, 0.72, 0, 1),
-        background-color 0.2s ease,
-        border-color 0.2s ease;
+      background-color: var(--color-surface);
+      border-inline-end: 1px solid var(--color-separator);
+      transition:
+        width 300ms var(--ease-out-fluid, cubic-bezier(0.32, 0.72, 0, 1)),
+        background-color 200ms var(--ease-smooth, ease);
     }
 
     :host([collapsed]) {
       width: var(--sidebar-collapsed-width, 72px);
     }
 
+    /* Sidebar-framed: the aside is a HeroUI card floating on the page. */
     :host([layout='sidebar-framed']) {
       margin-block: var(--spacing-3);
       margin-inline-start: var(--spacing-3);
       margin-inline-end: 0;
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--color-border);
+      border: none;
+      border-radius: var(--radius-surface);
+      box-shadow: var(--shadow-surface);
       height: calc(100% - var(--spacing-3) * 2);
     }
 
+    /* Main-framed: the aside sits directly on the page; the main is the card. */
     :host([layout='main-framed']) {
-      border-inline-end: 1px solid var(--color-border);
+      border: none;
       background-color: transparent;
     }
 
@@ -70,30 +78,52 @@ export const sidebarAsideStyles: CSSResultGroup = [
       overflow-x: hidden;
       position: relative;
       box-sizing: border-box;
+      scrollbar-width: thin;
+      scrollbar-color: var(--color-scrollbar-thumb) transparent;
     }
 
+    /* Collapse toggle: HeroUI tertiary icon button (sm). */
     .toggle-button {
       position: absolute;
       bottom: var(--spacing-4);
       right: var(--spacing-4);
-      width: var(--spacing-8, 32px);
-      height: var(--spacing-8, 32px);
+      width: 2rem;
+      height: 2rem;
+      padding: 0;
+      border: none;
       border-radius: var(--radius-full);
-      background-color: var(--color-bg-elevated);
-      border: 1px solid var(--color-border);
-      color: var(--color-fg-subtle);
+      background-color: var(--color-default);
+      color: var(--color-muted);
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      box-shadow: var(--shadow-sm);
       z-index: 10;
-      transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+      outline: none;
+      transition:
+        transform 200ms var(--ease-smooth, ease),
+        scale 250ms var(--ease-smooth, ease),
+        background-color 100ms var(--ease-out, ease-out),
+        color 100ms var(--ease-out, ease-out),
+        box-shadow 100ms var(--ease-out, ease-out);
     }
 
-    .toggle-button:hover {
-      background-color: var(--color-neutral-100, rgba(0, 0, 0, 0.05));
-      color: var(--color-fg);
+    @media (hover: hover) {
+      .toggle-button:hover {
+        background-color: var(--color-default-hover);
+        color: var(--color-fg);
+      }
+    }
+
+    /* scale (not transform) so it composes with the collapsed centering. */
+    .toggle-button:active {
+      background-color: var(--color-default-hover);
+      scale: var(--press-scale, 0.97);
+    }
+
+    .toggle-button:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
     }
 
     :host([collapsed]) .toggle-button {
@@ -105,6 +135,10 @@ export const sidebarAsideStyles: CSSResultGroup = [
       :host,
       .toggle-button {
         transition: none !important;
+      }
+
+      .toggle-button:active {
+        scale: none;
       }
     }
   `,
@@ -123,11 +157,12 @@ export const sidebarMainStyles: CSSResultGroup = [
       overflow: auto;
     }
 
+    /* Main-framed: the content area is a HeroUI card on the page. */
     :host([layout='main-framed']) {
       margin: var(--spacing-3);
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--color-border);
-      background-color: var(--color-bg-subtle);
+      border-radius: var(--radius-surface);
+      background-color: var(--color-surface);
+      box-shadow: var(--shadow-surface);
       padding: var(--spacing-4);
     }
 
@@ -198,7 +233,7 @@ export const sidebarBrandStyles: CSSResultGroup = [
       min-width: 0;
       overflow: hidden;
       box-sizing: border-box;
-      border-radius: var(--radius-md);
+      border-radius: var(--radius-xl);
       text-decoration: none;
       color: var(--color-fg);
       user-select: none;
@@ -222,7 +257,13 @@ export const sidebarBrandStyles: CSSResultGroup = [
       overflow: hidden;
       color: inherit;
       text-decoration: none;
-      border-radius: var(--radius-md);
+      border-radius: var(--radius-xl);
+    }
+
+    /* Flush ring: the header clips overflow, so an offset ring would be cut. */
+    .brand-link:focus-visible {
+      outline: 2px solid var(--color-focus);
+      outline-offset: -2px;
     }
 
     :host([collapsed]) .brand-link {
@@ -251,7 +292,8 @@ export const sidebarBrandStyles: CSSResultGroup = [
 
     .brand-title {
       font-size: var(--font-size-sm, 0.875rem);
-      font-weight: var(--font-weight-bold, 700);
+      font-weight: var(--font-weight-semibold, 600);
+      line-height: var(--line-height-sm, 1.25rem);
       color: var(--color-fg);
       overflow: hidden;
       text-overflow: ellipsis;
@@ -260,11 +302,11 @@ export const sidebarBrandStyles: CSSResultGroup = [
 
     .brand-subtitle {
       font-size: var(--font-size-xs, 0.75rem);
-      color: var(--color-fg-subtle);
+      line-height: var(--line-height-xs, 1rem);
+      color: var(--color-muted);
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-      margin-top: 2px;
     }
   `,
 ]
@@ -292,33 +334,37 @@ export const sidebarGroupStyles: CSSResultGroup = [
       align-items: center;
     }
 
+    /* Group label: HeroUI list-box section header (text-xs, medium, muted). */
     .group-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding-block: var(--spacing-2);
-      padding-inline: var(--spacing-3);
+      gap: var(--spacing-2);
+      padding-block: var(--spacing-1);
+      padding-inline: var(--spacing-2);
       font-size: var(--font-size-xs, 0.75rem);
-      font-weight: var(--font-weight-semibold, 600);
-      color: var(--color-fg-subtle);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
+      font-weight: var(--font-weight-medium, 500);
+      line-height: var(--line-height-xs, 1rem);
+      color: var(--color-muted);
       user-select: none;
       box-sizing: border-box;
-      height: var(--spacing-7, 28px);
+      height: var(--spacing-7, 1.75rem);
       background: none;
       border: none;
       width: 100%;
       text-align: left;
       cursor: default;
       outline: none;
-      border-radius: var(--radius-sm);
+      border-radius: var(--radius-xl);
       font-family: inherit;
+      transition:
+        background-color 150ms var(--ease-smooth, ease),
+        color 150ms var(--ease-smooth, ease);
     }
 
     :host([dense]) .group-header {
-      height: var(--spacing-6, 24px);
-      padding-block: var(--spacing-1);
+      height: var(--spacing-6, 1.5rem);
+      padding-block: 0;
       padding-inline: var(--spacing-2);
     }
 
@@ -326,9 +372,16 @@ export const sidebarGroupStyles: CSSResultGroup = [
       cursor: pointer;
     }
 
-    :host([collapsible]) .group-header:hover {
-      background-color: var(--color-neutral-100, rgba(0, 0, 0, 0.05));
-      color: var(--color-fg);
+    @media (hover: hover) {
+      :host([collapsible]) .group-header:hover {
+        background-color: var(--color-default);
+        color: var(--color-fg);
+      }
+    }
+
+    .group-header:focus-visible {
+      outline: 2px solid var(--color-focus);
+      outline-offset: -2px;
     }
 
     :host([collapsed-sidebar]) .group-header {
@@ -387,6 +440,7 @@ export const sidebarGroupStyles: CSSResultGroup = [
     }
 
     @media (prefers-reduced-motion: reduce) {
+      .group-header,
       .chevron,
       .group-items {
         transition: none !important;
@@ -405,24 +459,30 @@ export const sidebarItemStyles: CSSResultGroup = [
       width: 100%;
     }
 
+    /* Row: HeroUI list-box item / ghost button — h-9, rounded-xl, text-sm. */
     .item {
       display: flex;
       align-items: center;
       gap: var(--spacing-3);
-      padding-block: var(--spacing-2);
-      padding-inline: var(--spacing-3);
-      border-radius: var(--radius-md);
+      padding-block: 0;
+      padding-inline: var(--spacing-2);
+      border-radius: var(--radius-xl);
       font-size: var(--font-size-sm, 0.875rem);
-      font-weight: var(--font-weight-medium, 500);
+      font-weight: var(--font-weight-normal, 400);
+      line-height: var(--line-height-sm, 1.25rem);
       color: var(--color-fg);
       text-decoration: none;
       cursor: pointer;
       user-select: none;
+      -webkit-tap-highlight-color: transparent;
       outline: none;
       box-sizing: border-box;
-      height: 36px;
+      height: 2.25rem;
       width: 100%;
-      transition: background-color 0.15s ease, color 0.15s ease;
+      transition:
+        background-color 150ms var(--ease-smooth, ease),
+        color 150ms var(--ease-smooth, ease),
+        transform 250ms var(--ease-out, ease-out);
       position: relative;
       border: none;
       background: transparent;
@@ -431,28 +491,47 @@ export const sidebarItemStyles: CSSResultGroup = [
     }
 
     :host([dense]) .item {
-      height: 30px;
-      padding-block: var(--spacing-1);
+      height: 2rem;
       padding-inline: var(--spacing-2);
       gap: var(--spacing-2);
     }
 
-    :host(:not([is-selected]):not([is-disabled])) .item:hover {
-      background-color: var(--color-neutral-100, rgba(0, 0, 0, 0.05));
+    @media (hover: hover) {
+      :host(:not([is-selected]):not([is-disabled])) .item:hover {
+        background-color: var(--color-default);
+      }
     }
 
+    :host(:not([is-disabled])) .item:active {
+      transform: scale(0.98);
+    }
+
+    /* Current page: neutral --color-default fill, fg text, medium weight. */
     :host([is-selected]) .item {
-      color: var(--color-primary-600, var(--color-primary, #2563eb));
-      font-weight: var(--font-weight-semibold, 600);
+      color: var(--color-fg);
+      font-weight: var(--font-weight-medium, 500);
     }
 
     .indicator {
       position: absolute;
       inset: 0;
-      border-radius: var(--radius-md);
-      background-color: var(--color-primary-100, rgba(59, 130, 246, 0.12));
+      border-radius: inherit;
+      background-color: var(--color-default);
       pointer-events: none;
       z-index: 0;
+      transition: background-color 150ms var(--ease-smooth, ease);
+    }
+
+    @media (hover: hover) {
+      :host([is-selected]) .item:hover .indicator {
+        background-color: var(--color-default-hover);
+      }
+    }
+
+    /* Flush ring: group rows clip overflow, so an offset ring would be cut. */
+    .item:focus-visible {
+      outline: 2px solid var(--color-focus);
+      outline-offset: -2px;
     }
 
     .icon {
@@ -464,6 +543,12 @@ export const sidebarItemStyles: CSSResultGroup = [
       height: var(--spacing-4, 16px);
       position: relative;
       z-index: 1;
+      color: var(--color-muted);
+      transition: color 150ms var(--ease-smooth, ease);
+    }
+
+    :host([is-selected]) .icon {
+      color: var(--color-fg);
     }
 
     .label {
@@ -475,27 +560,46 @@ export const sidebarItemStyles: CSSResultGroup = [
       z-index: 1;
     }
 
+    /* Badge: HeroUI default chip (sm); lifts to the surface on a filled row. */
     .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 1.25rem;
       font-size: var(--font-size-xs, 0.75rem);
-      background-color: var(--color-neutral-200, rgba(0, 0, 0, 0.08));
-      padding: 1px 6px;
-      border-radius: var(--radius-full);
+      font-weight: var(--font-weight-medium, 500);
+      line-height: 1.25rem;
+      font-variant-numeric: tabular-nums;
+      color: var(--color-muted);
+      background-color: var(--color-default);
+      padding: 0 var(--spacing-2);
+      border-radius: var(--radius-2xl);
       margin-inline-start: auto;
       position: relative;
       z-index: 1;
     }
 
+    :host([is-selected]) .badge {
+      background-color: var(--color-surface);
+    }
+
+    @media (hover: hover) {
+      :host(:not([is-disabled])) .item:hover .badge {
+        background-color: var(--color-surface);
+      }
+    }
+
     :host([collapsed]) .item {
       justify-content: center;
       padding-inline: 0;
-      width: 36px;
-      height: 36px;
+      width: 2.25rem;
+      height: 2.25rem;
       margin-inline: auto;
     }
 
     :host([collapsed][dense]) .item {
-      width: 30px;
-      height: 30px;
+      width: 2rem;
+      height: 2rem;
     }
 
     :host([collapsed]) .label,
@@ -504,14 +608,21 @@ export const sidebarItemStyles: CSSResultGroup = [
     }
 
     :host([is-disabled]) {
-      opacity: 0.5;
+      opacity: var(--disabled-opacity, 0.5);
       pointer-events: none;
       cursor: not-allowed;
     }
 
-    :focus-visible {
-      outline: 2px solid var(--color-border-focus);
-      outline-offset: 2px;
+    @media (prefers-reduced-motion: reduce) {
+      .item,
+      .indicator,
+      .icon {
+        transition: none;
+      }
+
+      :host(:not([is-disabled])) .item:active {
+        transform: none;
+      }
     }
   `,
 ]
@@ -523,9 +634,10 @@ export const sidebarDividerStyles: CSSResultGroup = [
       display: block;
       box-sizing: border-box;
       margin-block: var(--spacing-3);
-      margin-inline: var(--spacing-4);
+      margin-inline: var(--spacing-3);
       height: 1px;
-      background-color: var(--color-border-subtle);
+      border-radius: var(--radius-sm);
+      background-color: var(--color-separator);
       border: none;
     }
 
@@ -545,8 +657,8 @@ export const sidebarFooterStyles: CSSResultGroup = [
     :host {
       display: flex;
       align-items: center;
-      padding-block: var(--spacing-4);
-      padding-inline: var(--spacing-4);
+      padding-block: var(--spacing-3);
+      padding-inline: var(--spacing-3);
       box-sizing: border-box;
       margin-top: auto;
       gap: var(--spacing-3);
@@ -556,13 +668,13 @@ export const sidebarFooterStyles: CSSResultGroup = [
     }
 
     :host([show-border]) {
-      border-block-start: 1px solid var(--color-border-subtle);
+      border-block-start: 1px solid var(--color-separator);
     }
 
     :host([dense]) {
       min-height: 48px;
       padding-block: var(--spacing-2);
-      padding-inline: var(--spacing-3);
+      padding-inline: var(--spacing-2);
       gap: var(--spacing-2);
     }
 
@@ -591,6 +703,7 @@ export const sidebarFooterStyles: CSSResultGroup = [
 export const sidebarUserStyles: CSSResultGroup = [
   resetStyles,
   css`
+    /* User row: card-header typography (title + muted description) in a list-box row. */
     :host {
       display: flex;
       align-items: center;
@@ -599,22 +712,31 @@ export const sidebarUserStyles: CSSResultGroup = [
       min-width: 0;
       overflow: hidden;
       box-sizing: border-box;
-      border-radius: var(--radius-md);
+      border-radius: var(--radius-xl);
       text-decoration: none;
       color: var(--color-fg);
       cursor: pointer;
       user-select: none;
-      padding-block: var(--spacing-1);
-      padding-inline: var(--spacing-2);
-      transition: background-color 0.15s ease;
+      -webkit-tap-highlight-color: transparent;
+      padding: var(--spacing-2);
+      transition:
+        background-color 150ms var(--ease-smooth, ease),
+        transform 250ms var(--ease-out, ease-out);
     }
 
-    :host(:hover) {
-      background-color: var(--color-neutral-100, rgba(0, 0, 0, 0.05));
+    @media (hover: hover) {
+      :host(:hover) {
+        background-color: var(--color-default);
+      }
+    }
+
+    :host(:active) {
+      transform: scale(0.98);
     }
 
     :host([dense]) {
       gap: var(--spacing-2);
+      padding: var(--spacing-1) var(--spacing-2);
     }
 
     :host([collapsed]) {
@@ -644,7 +766,8 @@ export const sidebarUserStyles: CSSResultGroup = [
 
     .user-name {
       font-size: var(--font-size-sm, 0.875rem);
-      font-weight: var(--font-weight-semibold, 600);
+      font-weight: var(--font-weight-medium, 500);
+      line-height: var(--line-height-sm, 1.25rem);
       color: var(--color-fg);
       overflow: hidden;
       text-overflow: ellipsis;
@@ -653,11 +776,11 @@ export const sidebarUserStyles: CSSResultGroup = [
 
     .user-email {
       font-size: var(--font-size-xs, 0.75rem);
-      color: var(--color-fg-subtle);
+      line-height: var(--line-height-xs, 1rem);
+      color: var(--color-muted);
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-      margin-top: 2px;
     }
 
     .user-action {
@@ -665,12 +788,22 @@ export const sidebarUserStyles: CSSResultGroup = [
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      color: var(--color-fg-subtle);
+      color: var(--color-muted);
       margin-inline-start: auto;
     }
 
     :host([collapsed]) .user-action {
       display: none !important;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      :host {
+        transition: none;
+      }
+
+      :host(:active) {
+        transform: none;
+      }
     }
   `,
 ]

@@ -7,21 +7,23 @@ export const skeletonStyles = [
     :host {
       display: block;
       box-sizing: border-box;
+      pointer-events: none;
     }
 
     [part~="base"] {
       display: block;
       box-sizing: border-box;
-      background-color: var(--color-fill-track);
+      background-color: color-mix(in oklab, var(--color-surface-tertiary) 70%, transparent);
       overflow: hidden;
       position: relative;
+      border-radius: var(--radius-sm, 0.25rem);
     }
 
     :host([shape="line"]) [part~="base"],
     :host(:not([shape])) [part~="base"] {
       width: 100%;
       height: 1rem;
-      border-radius: var(--radius-sm, 0.25rem);
+      border-radius: var(--radius-lg, 0.5rem);
     }
 
     :host([shape="circle"]) {
@@ -38,51 +40,50 @@ export const skeletonStyles = [
     :host([shape="rect"]) [part~="base"] {
       width: 100%;
       height: 6rem;
-      border-radius: var(--radius-md, 0.375rem);
+      border-radius: var(--radius-lg, 0.5rem);
     }
 
-    /* Pulse variant */
+    /* Pulse variant: the whole block breathes */
     :host([variant="pulse"]) [part~="base"],
     :host(:not([variant])) [part~="base"] {
-      animation: moul-skeleton-pulse 1.5s ease-in-out infinite;
+      animation: moul-skeleton-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
     }
 
     @keyframes moul-skeleton-pulse {
-      0%, 100% {
-        opacity: 1;
-      }
       50% {
-        opacity: 0.4;
+        opacity: 0.5;
       }
     }
 
-    /* Wave shimmer variant */
-    :host([variant="wave"]) [part~="base"] {
-      background:
-        linear-gradient(
-          100deg,
-          transparent 20%,
-          light-dark(oklch(1 0 0 / 0.7), oklch(1 0 0 / 0.08)) 50%,
-          transparent 80%
-        ),
-        var(--color-fill-track);
-      background-size: 200% 100%;
-      animation: moul-skeleton-wave 1.6s linear infinite;
+    /* Wave variant: a shimmer band sweeps across the block */
+    :host([variant="wave"]) [part~="base"]::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      transform: translateX(-100%);
+      background-image: linear-gradient(
+        to right,
+        transparent,
+        var(--color-surface-tertiary),
+        transparent
+      );
+      animation: moul-skeleton-shimmer 2s linear infinite;
     }
 
-    @keyframes moul-skeleton-wave {
-      0% {
-        background-position: 200% 0;
-      }
+    @keyframes moul-skeleton-shimmer {
       100% {
-        background-position: -200% 0;
+        transform: translateX(200%);
       }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      [part~="base"] {
+      [part~="base"],
+      [part~="base"]::after {
         animation: none !important;
-        opacity: 0.7;
+      }
+
+      :host([variant="wave"]) [part~="base"]::after {
+        content: none;
       }
     }
   `,

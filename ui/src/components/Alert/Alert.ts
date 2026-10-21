@@ -21,7 +21,8 @@ export class MoulAlert extends LitElement {
 
   static override properties = {
     tone: { type: String, reflect: true },
-    variant: { type: String, reflect: true },
+    // The default isn't reflected, so an unset variant renders the plain surface.
+    variant: { type: String, reflect: true, useDefault: true },
     title: { type: String, reflect: true },
     description: { type: String, reflect: true },
     isDismissible: {

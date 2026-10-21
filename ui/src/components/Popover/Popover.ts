@@ -41,6 +41,8 @@ export class MoulPopover extends LitElement {
     this.overlayPresence = new OverlayPresenceController(this, {
       preset: 'popover',
       popover: () => this.popoverEl,
+      // Animate the floating panel, not the host, which also holds the trigger.
+      target: () => this.popoverEl,
     })
   }
 

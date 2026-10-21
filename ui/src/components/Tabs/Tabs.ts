@@ -27,7 +27,7 @@ export class MoulTabs extends LitElement {
     super()
     this.selectedKey = ''
     this.orientation = 'horizontal'
-    this.variant = 'line'
+    this.variant = 'pill'
   }
 
   public override connectedCallback(): void {

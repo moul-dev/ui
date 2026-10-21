@@ -227,7 +227,7 @@ export class MoulDoughnutChart extends LitElement {
                     cx="0"
                     cy="0"
                     r="${(outerRadius + innerRadius) / 2}"
-                    stroke="var(--color-border-subtle, #e5e7eb)"
+                    stroke="var(--color-default, #f4f4f5)"
                     stroke-width="${Math.max(2, outerRadius - innerRadius)}"
                     fill="none"
                   />
@@ -258,7 +258,7 @@ export class MoulDoughnutChart extends LitElement {
                       data-value="${d.data.value}"
                       d="${pathD}"
                       fill="${color}"
-                      stroke="var(--color-bg, #ffffff)"
+                      stroke="var(--color-surface, #ffffff)"
                       stroke-width="1.5"
                       role="graphics-symbol"
                       aria-label="${d.data.name}: ${formattedValue}"

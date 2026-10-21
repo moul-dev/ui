@@ -37,28 +37,38 @@ export const chartTooltipStyles = [
       display: block;
     }
 
+    /* HeroUI tooltip surface: elevated fill lifted by the overlay shadow, no border */
     [part~="container"],
     .tooltip-container {
       display: inline-flex;
       flex-direction: column;
       gap: var(--spacing-1, 0.25rem);
-      padding: var(--spacing-2, 0.5rem) var(--spacing-3, 0.75rem);
-      background-color: var(--color-bg-elevated, #ffffff);
-      border: 1px solid var(--color-border-subtle, rgba(0, 0, 0, 0.1));
-      border-radius: var(--radius-md, 0.5rem);
-      box-shadow: var(--shadow-md, 0 4px 6px -1px rgba(0, 0, 0, 0.1));
+      padding: var(--spacing-2, 0.5rem);
+      background-color: var(--color-bg-elevated);
+      border: none;
+      border-radius: min(2rem, var(--radius-xl, 0.75rem));
+      box-shadow: var(--shadow-overlay);
       font-size: var(--font-size-xs, 0.75rem);
-      color: var(--color-fg, #111827);
+      line-height: var(--line-height-xs, 1rem);
+      color: var(--color-fg);
       white-space: nowrap;
       pointer-events: none;
     }
 
-    /* Glass progressive enhancement with 12px blur */
+    /*
+     * Opt-in glass (variant="glass"): a hairline-edged solid elevated fallback,
+     * frosted with a 12px blur where backdrop-filter is supported.
+     */
+    :host([variant="glass"]) [part~="container"],
+    :host([variant="glass"]) .tooltip-container {
+      border: 1px solid var(--color-border-subtle);
+    }
+
     @supports (backdrop-filter: blur(12px)) or (-webkit-backdrop-filter: blur(12px)) {
-      [part~="container"],
-      .tooltip-container {
-        background-color: var(--color-bg-glass, rgba(255, 255, 255, 0.75));
-        border-color: var(--color-border-glass, rgba(0, 0, 0, 0.1));
+      :host([variant="glass"]) [part~="container"],
+      :host([variant="glass"]) .tooltip-container {
+        background-color: var(--color-bg-glass, oklch(1 0 0 / 0.64));
+        border-color: var(--color-border-glass, oklch(0 0 0 / 0.08));
         -webkit-backdrop-filter: blur(12px);
         backdrop-filter: blur(12px);
       }
@@ -73,8 +83,8 @@ export const chartTooltipStyles = [
 
     [part~="title"],
     .tooltip-title {
-      font-weight: var(--font-weight-semibold, 600);
-      color: var(--color-fg, #111827);
+      font-weight: var(--font-weight-medium, 500);
+      color: var(--color-fg);
     }
 
     /* Multi-series list & item layout */
@@ -104,8 +114,8 @@ export const chartTooltipStyles = [
 
     [part~="indicator"],
     .indicator {
-      width: 8px;
-      height: 8px;
+      width: 0.5rem;
+      height: 0.5rem;
       border-radius: var(--radius-full, 9999px);
       flex-shrink: 0;
       display: inline-block;
@@ -113,14 +123,14 @@ export const chartTooltipStyles = [
 
     [part~="label"],
     .label {
-      color: var(--color-fg-subtle, #6b7280);
-      font-weight: var(--font-weight-medium, 500);
+      color: var(--color-muted);
     }
 
     [part~="value"],
     .value {
-      color: var(--color-fg, #111827);
-      font-weight: var(--font-weight-semibold, 600);
+      color: var(--color-fg);
+      font-weight: var(--font-weight-medium, 500);
+      font-variant-numeric: tabular-nums;
     }
   `,
 ]

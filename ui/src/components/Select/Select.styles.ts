@@ -2,6 +2,8 @@ import { css } from 'lit'
 import { fieldStyles } from '../../styles/field.styles'
 import { resetStyles } from '../../styles/reset.styles'
 
+/* Layout and inner bits only; the trigger's shell look (fill, radius, shadow,
+   hover, focus and invalid rings) comes from the shared fieldStyles appended last. */
 export const selectStyles = [
   resetStyles,
   css`
@@ -24,95 +26,101 @@ export const selectStyles = [
       width: 100%;
     }
 
+    /* Flex drops template whitespace so the required mark sits tight to the text */
     [part~='label'] {
-      display: block;
-      font-size: var(--font-size-sm, 0.875rem);
-      font-weight: 500;
-      color: var(--color-fg, inherit);
+      display: flex;
+      align-items: baseline;
+      width: fit-content;
+      line-height: var(--line-height-sm, 1.25rem);
     }
 
+    :host([is-required][label]:not([label=''])) [part~='label']::after {
+      content: '*';
+      margin-inline-start: 0.125rem;
+      color: var(--color-danger);
+    }
+
+    :host([is-invalid]:is([data-touched], [error-message]:not([error-message='']))) [part~='label'] {
+      color: var(--color-danger);
+    }
+
+    /* The chevron rides in the flow, so the end padding is shorter than the start */
     [part~='trigger'] {
-      display: inline-flex;
+      display: flex;
       align-items: center;
-      justify-content: space-between;
       width: 100%;
       min-width: 0;
-      padding: var(--spacing-2, 0.5rem) var(--spacing-3, 0.75rem);
-      border: 1px solid var(--color-border, #d1d5db);
-      border-radius: var(--radius-md, 0.375rem);
-      background-color: var(--color-bg, #ffffff);
-      color: var(--color-fg, inherit);
+      min-height: 2.25rem;
+      margin: 0;
+      padding-block: var(--spacing-2, 0.5rem);
+      padding-inline: var(--spacing-3, 0.75rem) var(--spacing-2, 0.5rem);
       font-family: inherit;
       font-size: var(--font-size-sm, 0.875rem);
       line-height: var(--line-height-sm, 1.25rem);
+      text-align: start;
       cursor: pointer;
-      outline: none;
-      box-shadow: var(--shadow-sm, 0 1px 2px 0 rgba(0, 0, 0, 0.05));
-      transition: border-color 0.15s ease, box-shadow 0.15s ease;
       user-select: none;
-    }
-
-    [part~='trigger']:hover:not(:disabled) {
-      border-color: var(--color-neutral-400, #9ca3af);
-    }
-
-    [part~='trigger']:focus-visible {
-      border-color: var(--color-border-focus, #3b82f6);
-      outline: 2px solid var(--color-border-focus, #3b82f6);
-      outline-offset: 1px;
-    }
-
-    :host([is-invalid]) [part~='trigger'] {
-      border-color: var(--color-error-500, #ef4444);
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
     }
 
     [part~='value'] {
       flex: 1;
-      text-align: left;
+      min-width: 0;
+      text-align: start;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
 
-    [part~='value'][data-placeholder='true'] {
-      color: var(--color-fg-subtle, #9ca3af);
+    [part~='value'][data-placeholder] {
+      color: var(--color-field-placeholder);
     }
 
     [part~='chevron'] {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      color: var(--color-fg-subtle, #9ca3af);
+      color: var(--color-field-placeholder);
       width: 1rem;
       height: 1rem;
       flex-shrink: 0;
-      margin-inline-start: var(--spacing-2, 0.5rem);
-      transition: transform 0.2s ease;
+      margin-inline-start: var(--spacing-1, 0.25rem);
+      transition: transform var(--duration-fast, 150ms) var(--ease-smooth, ease);
+    }
+
+    [part~='chevron'] svg {
+      width: 100%;
+      height: 100%;
     }
 
     :host([is-open]) [part~='chevron'] {
       transform: rotate(180deg);
     }
 
-    /* Glass menu; geometry is set by the overlay controller against the trigger */
+    /* Listbox panel: a solid overlay surface; geometry is set by the overlay
+       controller against the trigger */
     [part~='popover'] {
       margin: 0;
       border: none;
-      border-radius: calc(0.875rem * var(--brand-radius-factor, 1));
-      background-color: var(--glass-bg-thick);
-      -webkit-backdrop-filter: var(--glass-filter);
-      backdrop-filter: var(--glass-filter);
-      box-shadow: var(--glass-highlight), var(--shadow-glass);
+      border-radius: var(--radius-surface, 1.5rem);
+      background-color: var(--color-bg-elevated);
+      box-shadow: var(--shadow-overlay);
       color: var(--color-fg);
+      font-size: var(--font-size-sm, 0.875rem);
       z-index: var(--z-dropdown, 1000);
       outline: none;
       min-width: 8rem;
       max-height: 16rem;
       overflow-y: auto;
-      padding: 5px;
+      overscroll-behavior: contain;
+      scroll-padding-block: var(--spacing-1, 0.25rem);
+      scrollbar-width: thin;
+      scrollbar-color: var(--color-scrollbar-thumb) transparent;
+      padding: 0.375rem;
       display: flex;
       flex-direction: column;
-      gap: 1px;
+      gap: var(--spacing-1, 0.25rem);
     }
 
     [part~='popover'][hidden] {
@@ -120,14 +128,24 @@ export const selectStyles = [
     }
 
     :host([is-disabled]) {
-      opacity: 0.45;
+      opacity: var(--disabled-opacity, 0.5);
       cursor: not-allowed;
       pointer-events: none;
+    }
+
+    /* :host raises specificity past the shared shell's transition */
+    @media (prefers-reduced-motion: reduce) {
+      :host [part~='trigger'],
+      [part~='chevron'] {
+        transition: none;
+      }
     }
   `,
   fieldStyles,
 ]
 
+/* List rows: rounded, a neutral wash on hover, a focus ring for keyboard
+   navigation, and a trailing check on the selected row. */
 export const selectItemStyles = [
   resetStyles,
   css`
@@ -136,6 +154,8 @@ export const selectItemStyles = [
       font-family: var(--font-family-base, inherit);
       color: var(--color-fg, inherit);
       user-select: none;
+      -webkit-user-select: none;
+      outline: none;
     }
 
     :host([hidden]) {
@@ -143,44 +163,67 @@ export const selectItemStyles = [
     }
 
     [part~='item'] {
+      position: relative;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: var(--spacing-3, 0.75rem);
+      min-height: 2.25rem;
+      width: 100%;
       padding: 0.375rem 0.625rem;
-      border-radius: calc(0.5rem * var(--brand-radius-factor, 1));
-      cursor: default;
+      border-radius: var(--radius-2xl, 1rem);
+      cursor: pointer;
       font-size: var(--font-size-sm, 0.875rem);
       line-height: var(--line-height-sm, 1.25rem);
-      transition: none;
+      -webkit-tap-highlight-color: transparent;
+      transition:
+        transform 250ms var(--ease-out, ease-out),
+        background-color 100ms var(--ease-out, ease-out),
+        box-shadow var(--duration-fast, 150ms) var(--ease-out, ease-out);
     }
 
-    /* macOS menu highlight: solid accent row, white text (and check) */
-    [part~='item']:hover:not([data-disabled]),
+    @media (hover: hover) {
+      [part~='item']:hover:not([data-disabled]) {
+        background-color: var(--color-default);
+      }
+    }
+
     :host([is-active]) [part~='item'] {
-      background-color: var(--color-primary-solid, #3b82f6);
-      color: var(--color-fg-on-primary, #fff);
+      background-color: var(--color-default);
     }
 
-    :host([aria-selected='true']) [part~='item'] {
-      font-weight: 500;
+    :host(:focus-visible) [part~='item'] {
+      box-shadow: var(--focus-ring);
     }
 
-    [part~='item']:hover:not([data-disabled]) [part~='check'],
-    :host([is-active]) [part~='check'] {
-      color: inherit;
+    [part~='item']:active:not([data-disabled]) {
+      transform: scale(0.98);
     }
 
     [part~='check'] {
       display: inline-flex;
-      color: var(--color-primary-600, #2563eb);
-      width: 1rem;
-      height: 1rem;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: var(--color-default-fg);
+      width: 0.875rem;
+      height: 0.875rem;
     }
 
     :host([is-disabled]) {
-      opacity: 0.4;
+      opacity: var(--disabled-opacity, 0.5);
       cursor: not-allowed;
       pointer-events: none;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      [part~='item'] {
+        transition: none;
+      }
+
+      [part~='item']:active:not([data-disabled]) {
+        transform: none;
+      }
     }
   `,
 ]

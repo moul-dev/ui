@@ -9,8 +9,10 @@ export const buttonStyles = [
       vertical-align: middle;
       position: relative;
       font-family: var(--font-family-base, inherit);
-      border-radius: var(--radius-full, 9999px);
+      border-radius: var(--radius-3xl, 1.5rem);
       user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      --_press-scale: var(--press-scale, 0.97);
       -webkit-user-select: none;
       cursor: pointer;
     }
@@ -23,22 +25,33 @@ export const buttonStyles = [
       height: 100%;
       box-sizing: border-box;
       border-radius: inherit;
+      border: 1px solid transparent;
+      background-color: var(--_bg);
+      color: var(--_fg);
       font-family: inherit;
       font-weight: var(--font-weight-medium, 500);
       line-height: 1;
       text-decoration: none;
+      transform-origin: center;
       transition:
-        background-color var(--duration-fast, 140ms) ease,
-        box-shadow var(--duration-fast, 140ms) ease,
-        color var(--duration-fast, 140ms) ease,
-        opacity var(--duration-fast, 140ms) ease,
-        filter var(--duration-fast, 140ms) ease;
+        transform 250ms var(--ease-smooth, ease),
+        background-color 100ms var(--ease-out, ease-out),
+        box-shadow 100ms var(--ease-out, ease-out),
+        opacity var(--duration-fast, 150ms) ease;
       cursor: pointer;
       position: relative;
       white-space: nowrap;
     }
 
     /* Sizes */
+    :host([size="sm"]) {
+      --_press-scale: 0.98;
+    }
+
+    :host([size="lg"]) {
+      --_press-scale: 0.96;
+    }
+
     :host([size="sm"]) [part~="button"] {
       height: 2rem;
       padding: 0 var(--spacing-3, 0.75rem);
@@ -55,10 +68,10 @@ export const buttonStyles = [
     }
 
     :host([size="lg"]) [part~="button"] {
-      height: 2.75rem;
-      padding: 0 var(--spacing-6, 1.5rem);
+      height: 2.5rem;
+      padding: 0 var(--spacing-4, 1rem);
       font-size: var(--font-size-md, 1rem);
-      gap: var(--spacing-3, 0.75rem);
+      gap: var(--spacing-2, 0.5rem);
     }
 
     /* Icon-only size variants */
@@ -74,95 +87,66 @@ export const buttonStyles = [
     }
 
     :host([is-icon][size="lg"]) [part~="button"] {
-      width: 2.75rem;
+      width: 2.5rem;
       padding: 0;
     }
 
-    /* Variants */
-    /* Lit gem: brand fill, specular top edge, soft colored drop */
-    :host([variant="primary"]) [part~="button"],
-    :host(:not([variant])) [part~="button"],
-    :host([variant="danger"]) [part~="button"] {
-      --_fill: var(--color-primary-solid, oklch(0.56 0.22 250));
-      background:
-        linear-gradient(to bottom, oklch(1 0 0 / 0.16), oklch(1 0 0 / 0) 60%),
-        var(--_fill);
-      color: var(--color-fg-on-primary, #ffffff);
-      border: none;
-      box-shadow:
-        inset 0 1px 0 oklch(1 0 0 / 0.3),
-        inset 0 0 0 1px oklch(0 0 0 / 0.06),
-        0 1px 2px color-mix(in oklch, var(--_fill) 30%, transparent),
-        0 4px 12px -4px color-mix(in oklch, var(--_fill) 55%, transparent);
+    /* Variants: each sets the fill trio; the shared rules below apply it. */
+    :host([variant="primary"]),
+    :host(:not([variant])) {
+      --_bg: var(--color-accent);
+      --_bg-hover: var(--color-accent-hover);
+      --_fg: var(--color-accent-fg);
     }
 
-    :host([variant="danger"]) [part~="button"] {
-      --_fill: var(--color-error-solid, oklch(0.58 0.22 27));
+    :host([variant="secondary"]) {
+      --_bg: var(--color-default);
+      --_bg-hover: var(--color-default-hover);
+      --_fg: var(--color-accent-soft-fg);
     }
 
-    :host([variant="primary"]:not([is-disabled]):not([is-pending])) [part~="button"]:hover,
-    :host(:not([variant]):not([is-disabled]):not([is-pending])) [part~="button"]:hover,
-    :host([variant="danger"]:not([is-disabled]):not([is-pending])) [part~="button"]:hover {
-      filter: brightness(1.06) saturate(1.05);
+    :host([variant="tertiary"]) {
+      --_bg: var(--color-default);
+      --_bg-hover: var(--color-default-hover);
+      --_fg: var(--color-default-fg);
     }
 
-    /* Glass: translucent pane with rim light */
-    :host([variant="secondary"]) [part~="button"] {
-      background-color: var(--glass-bg-thick);
-      color: var(--color-fg, oklch(0.15 0 0));
-      border: none;
-      box-shadow: var(--glass-highlight), 0 0 0 0.5px var(--glass-edge), var(--shadow-sm);
-      -webkit-backdrop-filter: var(--glass-filter);
-      backdrop-filter: var(--glass-filter);
+    :host([variant="ghost"]),
+    :host([variant="outline"]) {
+      --_bg: transparent;
+      --_bg-hover: var(--color-default);
+      --_fg: var(--color-default-fg);
     }
 
-    :host([variant="secondary"]:not([is-disabled]):not([is-pending])) [part~="button"]:hover {
-      background-color: light-dark(oklch(1 0 0 / 0.92), oklch(0.32 0 0 / 0.82));
+    :host([variant="outline"]) {
+      --_bg-hover: color-mix(in srgb, var(--color-default) 60%, transparent);
     }
 
-    /* Tertiary: quiet tinted fill */
-    :host([variant="tertiary"]) [part~="button"] {
-      background-color: var(--color-fill-hover);
-      color: var(--color-primary-600, oklch(0.5 0.2 250));
-      border: none;
-    }
-
-    :host([variant="tertiary"]:not([is-disabled]):not([is-pending])) [part~="button"]:hover {
-      background-color: var(--color-fill-pressed);
-    }
-
-    /* Outline */
     :host([variant="outline"]) [part~="button"] {
-      background-color: transparent;
-      color: var(--color-fg, oklch(0.15 0 0));
-      border: none;
-      box-shadow: inset 0 0 0 1px var(--color-border, oklch(0.85 0 0));
+      border-color: var(--color-border);
     }
 
-    :host([variant="outline"]:not([is-disabled]):not([is-pending])) [part~="button"]:hover {
-      background-color: var(--color-fill-hover);
+    :host([variant="danger"]) {
+      --_bg: var(--color-danger);
+      --_bg-hover: var(--color-danger-hover);
+      --_fg: var(--color-danger-fg);
     }
 
-    /* Ghost */
-    :host([variant="ghost"]) [part~="button"] {
-      background-color: transparent;
-      color: var(--color-fg, oklch(0.15 0 0));
-      border: none;
+    :host([variant="danger-soft"]) {
+      --_bg: var(--color-danger-soft);
+      --_bg-hover: var(--color-danger-soft-hover);
+      --_fg: var(--color-danger-soft-fg);
     }
 
-    :host([variant="ghost"]:not([is-disabled]):not([is-pending])) [part~="button"]:hover {
-      background-color: var(--color-fill-hover);
+    @media (hover: hover) {
+      :host(:not([is-disabled]):not([is-pending])) [part~="button"]:hover {
+        background-color: var(--_bg-hover);
+      }
     }
 
-    /* Danger-Soft */
-    :host([variant="danger-soft"]) [part~="button"] {
-      background-color: color-mix(in oklch, var(--color-error-solid) 14%, transparent);
-      color: light-dark(var(--color-error-600), var(--color-error-600));
-      border: none;
-    }
-
-    :host([variant="danger-soft"]:not([is-disabled]):not([is-pending])) [part~="button"]:hover {
-      background-color: color-mix(in oklch, var(--color-error-solid) 22%, transparent);
+    :host(:not([is-disabled]):not([is-pending])) [part~="button"]:active {
+      background-color: var(--_bg-hover);
+      transform: scale(var(--_press-scale));
     }
 
     [part~="button"]:focus-visible {
@@ -177,7 +161,7 @@ export const buttonStyles = [
     }
 
     :host([is-disabled]) [part~="button"] {
-      opacity: 0.5;
+      opacity: var(--disabled-opacity, 0.5);
       cursor: not-allowed;
       pointer-events: none;
     }
@@ -215,6 +199,22 @@ export const buttonStyles = [
       display: inline-flex;
       align-items: center;
       justify-content: center;
+    }
+
+    ::slotted(svg) {
+      width: 1rem;
+      height: 1rem;
+      flex-shrink: 0;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      [part~="button"] {
+        transition: none;
+      }
+
+      :host(:not([is-disabled]):not([is-pending])) [part~="button"]:active {
+        transform: none;
+      }
     }
   `,
 ]

@@ -14,7 +14,8 @@ export class MoulCard extends LitElement {
 
   static override properties = {
     tone: { type: String, reflect: true },
-    variant: { type: String, reflect: true },
+    // The default isn't reflected, so an unset variant renders the plain surface.
+    variant: { type: String, reflect: true, useDefault: true },
     isInteractive: {
       type: Boolean,
       reflect: true,

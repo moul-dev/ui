@@ -8,8 +8,10 @@ export const spinnerStyles = [
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      flex-shrink: 0;
       vertical-align: middle;
       color: currentColor;
+      pointer-events: none;
     }
 
     [part~="base"] {
@@ -28,19 +30,19 @@ export const spinnerStyles = [
     }
 
     :host([size="sm"]) [part~="base"] {
-      width: var(--spacing-4, 1rem);
-      height: var(--spacing-4, 1rem);
+      width: 1rem;
+      height: 1rem;
     }
 
     :host([size="md"]) [part~="base"],
     :host(:not([size])) [part~="base"] {
-      width: var(--spacing-5, 1.25rem);
-      height: var(--spacing-5, 1.25rem);
+      width: 1.5rem;
+      height: 1.5rem;
     }
 
     :host([size="lg"]) [part~="base"] {
-      width: var(--spacing-7, 1.75rem);
-      height: var(--spacing-7, 1.75rem);
+      width: 2rem;
+      height: 2rem;
     }
 
     @keyframes moul-spin {
@@ -55,7 +57,6 @@ export const spinnerStyles = [
     @media (prefers-reduced-motion: reduce) {
       .spinner-svg {
         animation: none;
-        opacity: 0.8;
       }
     }
 

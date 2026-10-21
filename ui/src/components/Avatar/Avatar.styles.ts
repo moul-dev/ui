@@ -9,15 +9,10 @@ export const avatarStyles = [
       position: relative;
       align-items: center;
       justify-content: center;
-      /* Contacts-style monogram: soft graphite gradient, white initials */
-      background: linear-gradient(
-        to bottom,
-        light-dark(oklch(0.76 0.015 260), oklch(0.62 0.015 260)),
-        light-dark(oklch(0.62 0.02 260), oklch(0.48 0.02 260))
-      );
-      color: oklch(1 0 0);
-      box-shadow: inset 0 0 0 0.5px oklch(0 0 0 / 0.08);
-      font-weight: 600;
+      /* Neutral fill behind initials and the fallback glyph */
+      background-color: var(--color-default);
+      color: var(--color-default-fg);
+      font-weight: var(--font-weight-medium, 500);
       user-select: none;
       box-sizing: border-box;
       vertical-align: middle;
@@ -32,7 +27,7 @@ export const avatarStyles = [
     }
 
     :host([shape="square"]) {
-      border-radius: var(--radius-md, 0.375rem);
+      border-radius: var(--radius-xl, 0.75rem);
     }
 
     /* Sizes */
@@ -45,31 +40,32 @@ export const avatarStyles = [
     :host([size="sm"]) {
       width: 2rem;
       height: 2rem;
-      font-size: 0.75rem;
+      font-size: var(--font-size-xs, 0.75rem);
     }
 
     :host([size="md"]),
     :host(:not([size])) {
       width: 2.5rem;
       height: 2.5rem;
-      font-size: 0.875rem;
+      font-size: var(--font-size-sm, 0.875rem);
     }
 
     :host([size="lg"]) {
       width: 3rem;
       height: 3rem;
-      font-size: 1rem;
+      font-size: var(--font-size-md, 1rem);
     }
 
     :host([size="xl"]) {
       width: 4rem;
       height: 4rem;
-      font-size: 1.25rem;
+      font-size: var(--font-size-xl, 1.25rem);
     }
 
     [part~="image"] {
       width: 100%;
       height: 100%;
+      aspect-ratio: 1;
       object-fit: cover;
       border-radius: inherit;
       display: block;
@@ -82,7 +78,6 @@ export const avatarStyles = [
       width: 100%;
       height: 100%;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
     }
 
     [part~="fallback"] {
@@ -91,7 +86,7 @@ export const avatarStyles = [
       justify-content: center;
       width: 100%;
       height: 100%;
-      color: oklch(1 0 0 / 0.85);
+      color: var(--color-muted);
     }
 
     [part~="fallback"] svg {
@@ -99,7 +94,7 @@ export const avatarStyles = [
       height: 60%;
     }
 
-    /* Status indicator dot */
+    /* Status indicator dot, ringed in the surface color it usually sits on */
     [part~="status"] {
       position: absolute;
       bottom: 0;
@@ -109,25 +104,25 @@ export const avatarStyles = [
       min-width: 8px;
       min-height: 8px;
       border-radius: var(--radius-full, 9999px);
-      border: 2px solid var(--color-bg, #ffffff);
+      border: 2px solid var(--color-surface);
       box-sizing: content-box;
       z-index: 1;
     }
 
     .status-online {
-      background-color: var(--color-success-500, #22c55e);
+      background-color: var(--color-success);
     }
 
     .status-offline {
-      background-color: var(--color-fg-subtle, #9ca3af);
+      background-color: var(--color-muted);
     }
 
     .status-away {
-      background-color: var(--color-warning-500, #f59e0b);
+      background-color: var(--color-warning);
     }
 
     .status-busy {
-      background-color: var(--color-error-500, #ef4444);
+      background-color: var(--color-danger);
     }
   `,
 ]
@@ -139,32 +134,35 @@ export const avatarGroupStyles = [
       display: inline-flex;
       align-items: center;
       flex-direction: row;
+      --_overlap: 0.5rem;
+      --_seam: 2px;
+    }
+
+    /* Overlapping stack; a seam in the surface color separates neighbours */
+    ::slotted(moul-avatar) {
+      box-shadow: 0 0 0 var(--_seam) var(--color-surface);
     }
 
     ::slotted(moul-avatar:not(:first-child)) {
-      margin-inline-start: -0.625rem;
-      box-shadow: 0 0 0 2px var(--color-bg, #ffffff);
-      transition: transform 0.15s ease;
-    }
-
-    ::slotted(moul-avatar:first-child) {
-      box-shadow: 0 0 0 2px var(--color-bg, #ffffff);
+      margin-inline-start: calc(-1 * var(--_overlap));
     }
 
     ::slotted(moul-avatar:hover) {
       z-index: 2;
-      transform: translateY(-2px);
     }
 
     .overflow-badge {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      margin-inline-start: -0.625rem;
-      box-shadow: 0 0 0 2px var(--color-bg, #ffffff);
-      background-color: var(--color-bg-subtle, #e5e7eb);
-      color: var(--color-fg, #374151);
-      font-weight: 600;
+      flex-shrink: 0;
+      position: relative;
+      margin-inline-start: calc(-1 * var(--_overlap));
+      box-shadow: 0 0 0 var(--_seam) var(--color-surface);
+      background-color: var(--color-default);
+      color: var(--color-default-fg);
+      font-weight: var(--font-weight-medium, 500);
+      line-height: 1;
       border-radius: var(--radius-full, 9999px);
       z-index: 1;
     }
@@ -178,26 +176,26 @@ export const avatarGroupStyles = [
     :host([size="sm"]) .overflow-badge {
       width: 2rem;
       height: 2rem;
-      font-size: 0.75rem;
+      font-size: var(--font-size-xs, 0.75rem);
     }
 
     :host([size="md"]) .overflow-badge,
     :host(:not([size])) .overflow-badge {
       width: 2.5rem;
       height: 2.5rem;
-      font-size: 0.875rem;
+      font-size: var(--font-size-sm, 0.875rem);
     }
 
     :host([size="lg"]) .overflow-badge {
       width: 3rem;
       height: 3rem;
-      font-size: 1rem;
+      font-size: var(--font-size-md, 1rem);
     }
 
     :host([size="xl"]) .overflow-badge {
       width: 4rem;
       height: 4rem;
-      font-size: 1.25rem;
+      font-size: var(--font-size-xl, 1.25rem);
     }
   `,
 ]

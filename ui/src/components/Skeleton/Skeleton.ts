@@ -23,7 +23,7 @@ export class MoulSkeleton extends LitElement {
   constructor() {
     super()
     this.shape = 'line'
-    this.variant = 'pulse'
+    this.variant = 'wave'
     this.width = ''
     this.height = ''
   }

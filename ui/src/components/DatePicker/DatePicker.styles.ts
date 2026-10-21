@@ -2,6 +2,8 @@ import { css } from 'lit'
 import { fieldStyles } from '../../styles/field.styles'
 import { resetStyles } from '../../styles/reset.styles'
 
+/* Layout and inner bits only; the shell look (fill, radius, shadow, hover,
+   focus and invalid rings) comes from the shared fieldStyles appended last. */
 export const datePickerStyles = [
   resetStyles,
   css`
@@ -24,114 +26,119 @@ export const datePickerStyles = [
       width: 100%;
     }
 
+    /* Flex drops template whitespace so the required mark sits tight to the text */
     [part~='label'] {
-      display: block;
-      font-size: var(--font-size-sm, 0.875rem);
-      font-weight: 500;
-      color: var(--color-fg, inherit);
+      display: flex;
+      align-items: baseline;
+      width: fit-content;
+      line-height: var(--line-height-sm, 1.25rem);
+    }
+
+    :host([is-required][label]:not([label=''])) [part~='label']::after {
+      content: '*';
+      margin-inline-start: 0.125rem;
+      color: var(--color-danger);
+    }
+
+    :host([is-invalid]:is([data-touched], [error-message]:not([error-message='']))) [part~='label'] {
+      color: var(--color-danger);
     }
 
     [part~='input-container'] {
       display: flex;
       align-items: center;
-      justify-content: space-between;
       position: relative;
       width: 100%;
-      border: 1px solid var(--color-border, #d1d5db);
-      border-radius: var(--radius-md, 0.375rem);
-      background-color: var(--color-bg, #ffffff);
-      color: var(--color-fg, inherit);
-      transition: border-color 0.15s ease, box-shadow 0.15s ease;
-      box-shadow: var(--shadow-sm, 0 1px 2px 0 rgba(0, 0, 0, 0.05));
+      min-height: 2.25rem;
+      font-size: var(--font-size-sm, 0.875rem);
     }
 
-    [part~='input-container']:hover:not([data-disabled='true']) {
-      border-color: var(--color-neutral-400, #9ca3af);
-    }
-
-    [part~='input-container']:focus-within:not([data-disabled='true']) {
-      border-color: var(--color-border-focus, #3b82f6);
-      outline: 2px solid var(--color-border-focus, #3b82f6);
-      outline-offset: 1px;
-    }
-
-    :host([is-invalid]) [part~='input-container'],
-    [part~='input-container'][data-invalid='true'] {
-      border-color: var(--color-error-500, #ef4444);
-    }
-
+    /* The calendar button carries the end inset, so the text stops short of it */
     [part~='input'] {
       flex: 1;
       width: 100%;
       min-width: 0;
       border: none;
+      border-radius: 0;
       outline: none;
       background: transparent;
+      box-shadow: none;
       color: inherit;
       font-family: inherit;
       font-size: var(--font-size-sm, 0.875rem);
       line-height: var(--line-height-sm, 1.25rem);
-      padding: var(--spacing-2, 0.5rem) var(--spacing-3, 0.75rem);
-    }
-
-    [part~='input']::placeholder {
-      color: var(--color-fg-subtle, #9ca3af);
+      font-variant-numeric: tabular-nums;
+      padding-block: var(--spacing-2, 0.5rem);
+      padding-inline: var(--spacing-3, 0.75rem) var(--spacing-2, 0.5rem);
     }
 
     [part~='trigger-btn'] {
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      align-self: stretch;
+      flex-shrink: 0;
+      margin: 0;
       border: none;
       background: transparent;
-      color: var(--color-fg-subtle, #9ca3af);
+      color: var(--color-field-placeholder);
       cursor: pointer;
-      padding-inline: var(--spacing-3, 0.75rem);
-      height: 100%;
-      transition: color 0.1s ease;
+      padding-inline: var(--spacing-1, 0.25rem) var(--spacing-3, 0.75rem);
+      outline: none;
+      -webkit-tap-highlight-color: transparent;
+      transition: color var(--duration-fast, 150ms) var(--ease-smooth, ease);
     }
 
-    [part~='trigger-btn']:hover:not(:disabled) {
-      color: var(--color-fg, inherit);
+    @media (hover: hover) {
+      [part~='trigger-btn']:hover:not(:disabled) {
+        color: var(--color-field-fg);
+      }
+    }
+
+    :host([is-open]) [part~='trigger-btn'] {
+      color: var(--color-field-fg);
     }
 
     [part~='trigger-btn'] svg {
-      width: 1.125rem;
-      height: 1.125rem;
+      width: 1rem;
+      height: 1rem;
     }
 
+    /* Calendar panel: a solid overlay surface; the calendar itself is unframed.
+       The controller matches the panel to the field's width, so center it. */
     [part~='popover'] {
       margin: 0;
       border: none;
-      border-radius: calc(0.875rem * var(--brand-radius-factor, 1));
-      background-color: var(--glass-bg-thick);
-      -webkit-backdrop-filter: var(--glass-filter);
-      backdrop-filter: var(--glass-filter);
-      box-shadow: var(--glass-highlight), var(--shadow-glass);
+      border-radius: min(2rem, calc(var(--radius-base, 0.5rem) * 2.5));
+      background-color: var(--color-bg-elevated);
+      box-shadow: var(--shadow-overlay);
       color: var(--color-fg);
       z-index: var(--z-dropdown, 1000);
       outline: none;
-      padding: 6px;
+      width: fit-content;
+      text-align: center;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      scrollbar-width: none;
+      padding: var(--spacing-3, 0.75rem);
     }
 
     [part~='popover'][hidden] {
       display: none !important;
     }
 
-    [part~='description'] {
-      font-size: var(--font-size-xs, 0.75rem);
-      color: var(--color-fg-subtle, #6b7280);
-    }
-
-    [part~='error'] {
-      font-size: var(--font-size-xs, 0.75rem);
-      color: var(--color-error-500, #ef4444);
-    }
-
     :host([is-disabled]) {
-      opacity: 0.45;
+      opacity: var(--disabled-opacity, 0.5);
       cursor: not-allowed;
       pointer-events: none;
+    }
+
+    /* :host raises specificity past the shared shell's transition */
+    @media (prefers-reduced-motion: reduce) {
+      :host [part~='input-container'],
+      [part~='trigger-btn'] {
+        transition: none;
+      }
     }
   `,
   fieldStyles,

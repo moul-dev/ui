@@ -185,9 +185,9 @@ export class MoulSandbox extends LitElement {
       display: flex;
       flex-direction: column;
       gap: var(--spacing-3, 0.75rem);
-      background: var(--color-bg-subtle, rgba(255, 255, 255, 0.03));
-      border: 1px solid var(--color-border-subtle, rgba(255, 255, 255, 0.08));
-      border-radius: var(--radius-md, 0.75rem);
+      background: var(--color-surface, #ffffff);
+      box-shadow: var(--shadow-surface);
+      border-radius: var(--radius-surface, 1.5rem);
       padding: var(--spacing-4, 1rem);
     }
 
@@ -338,14 +338,15 @@ export class MoulSandbox extends LitElement {
         </div>
 
         <div class="demo-group">
-          <span class="group-label">Button Variants & Semantic Tones</span>
+          <span class="group-label">Button Variants</span>
           <div class="demo-row">
-            <moul-button variant="solid" tone="primary">Primary Solid</moul-button>
-            <moul-button variant="flat" tone="accent">Accent Flat</moul-button>
-            <moul-button variant="bordered" tone="success">Success Bordered</moul-button>
-            <moul-button variant="glass" tone="warning">Warning Glass</moul-button>
-            <moul-button variant="solid" tone="error">Error Solid</moul-button>
-            <moul-button variant="ghost">Ghost Button</moul-button>
+            <moul-button variant="primary">Primary</moul-button>
+            <moul-button variant="secondary">Secondary</moul-button>
+            <moul-button variant="tertiary">Tertiary</moul-button>
+            <moul-button variant="outline">Outline</moul-button>
+            <moul-button variant="ghost">Ghost</moul-button>
+            <moul-button variant="danger">Danger</moul-button>
+            <moul-button variant="danger-soft">Danger Soft</moul-button>
           </div>
         </div>
 
@@ -689,11 +690,11 @@ export class MoulSandbox extends LitElement {
                   }}
                 ></moul-switch>
 
-                <moul-checkbox label="Verify package signatures" checked></moul-checkbox>
+                <moul-checkbox label="Verify package signatures" is-checked></moul-checkbox>
 
                 <moul-radio-group label="Replication Strategy" value="multi-region">
-                  <moul-radio value="single" label="Single Zone"></moul-radio>
-                  <moul-radio value="multi-region" label="Multi-Region"></moul-radio>
+                  <moul-radio value="single">Single Zone</moul-radio>
+                  <moul-radio value="multi-region">Multi-Region</moul-radio>
                 </moul-radio-group>
               </div>
             </moul-card-body>

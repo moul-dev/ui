@@ -1652,7 +1652,7 @@ Class: `MoulTabs` · Source: `ui/src/components/Tabs/Tabs.ts`
 | :--- | :--- | :--- | :--- |
 | `selected-key` | `selectedKey` | `string` | `''` |
 | `orientation` | `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` |
-| `variant` | `variant` | `'line' \| 'pill' \| 'enclosed'` | `'line'` |
+| `variant` | `variant` | `'line' \| 'pill' \| 'enclosed'` | `'pill'` |
 
 **Events**
 
@@ -2144,7 +2144,7 @@ Class: `MoulSkeleton` · Source: `ui/src/components/Skeleton/Skeleton.ts`
 | Attribute | Property | Type | Default |
 | :--- | :--- | :--- | :--- |
 | `shape` | `shape` | `'line' \| 'circle' \| 'rect'` | `'line'` |
-| `variant` | `variant` | `'pulse' \| 'wave'` | `'pulse'` |
+| `variant` | `variant` | `'pulse' \| 'wave'` | `'wave'` |
 | `width` | `width` | `string` | `''` |
 | `height` | `height` | `string` | `''` |
 
@@ -2330,7 +2330,7 @@ Class: `MoulToast` · Source: `ui/src/components/Toast/Toast.ts`
 | Attribute | Property | Type | Default |
 | :--- | :--- | :--- | :--- |
 | `tone` | `tone` | `'primary' \| 'accent' \| 'success' \| 'warning' \| 'error'` | `'primary'` |
-| `variant` | `variant` | `'solid' \| 'flat' \| 'shadow' \| 'bordered' \| 'glass'` | `'glass'` |
+| `variant` | `variant` | `'solid' \| 'flat' \| 'shadow' \| 'bordered' \| 'glass'` | `'flat'` |
 | `duration` | `duration` | `number` | `5000` |
 | `title` | `title` | `string` | `''` |
 | `description` | `description` | `string` | `''` |

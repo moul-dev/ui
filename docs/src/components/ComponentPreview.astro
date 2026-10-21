@@ -5,7 +5,7 @@ interface Props {
   align?: 'center' | 'start' | 'stretch'
   /** Stack children vertically instead of wrapping them in a row. */
   stack?: boolean
-  /** `mesh` paints a soft color field behind the canvas so glass materials have something to refract. */
+  /** `mesh` paints a soft color field behind the canvas so glass variants have something to refract; default `plain`. */
   backdrop?: 'mesh' | 'plain'
   /** Minimum canvas height, e.g. `320px` for overlays and charts. */
   minHeight?: string
@@ -14,7 +14,7 @@ const {
   title,
   align = 'center',
   stack = false,
-  backdrop = 'mesh',
+  backdrop = 'plain',
   minHeight,
 } = Astro.props
 ---

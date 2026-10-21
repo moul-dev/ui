@@ -7,6 +7,20 @@ export const tooltipStyles = [
     :host {
       display: inline-block;
       position: relative;
+      /* Grow out of the trigger edge, nudged 4px toward it (default: top) */
+      --_origin: bottom center;
+    }
+
+    :host([placement="bottom"]) {
+      --_origin: top center;
+    }
+
+    :host([placement="left"]) {
+      --_origin: center right;
+    }
+
+    :host([placement="right"]) {
+      --_origin: center left;
     }
 
     [part~="trigger"] {
@@ -14,28 +28,29 @@ export const tooltipStyles = [
       anchor-name: --moul-tooltip-anchor;
     }
 
+    /* A light floating label: elevated fill and overlay shadow, not an inverted bubble */
     [part~="popover"],
     [part~="tooltip"] {
       margin: 0;
-      padding: 0.3125rem 0.625rem;
-      background-color: light-dark(oklch(0.22 0 0 / 0.86), oklch(0.36 0 0 / 0.86));
-      -webkit-backdrop-filter: blur(12px) saturate(160%);
-      backdrop-filter: blur(12px) saturate(160%);
-      color: oklch(1 0 0);
-      border-radius: calc(0.5rem * var(--brand-radius-factor, 1));
-      font-weight: var(--font-weight-medium, 500);
+      padding: var(--spacing-2, 0.5rem);
+      background-color: var(--color-bg-elevated);
+      color: var(--color-fg);
+      border: none;
+      border-radius: min(2rem, var(--radius-xl, 0.75rem));
+      box-shadow: var(--shadow-overlay);
       font-family: inherit;
+      font-weight: var(--font-weight-normal, 400);
       font-size: var(--font-size-xs, 0.75rem);
       line-height: var(--line-height-xs, 1rem);
-      box-shadow: inset 0 1px 0 oklch(1 0 0 / 0.12), var(--shadow-md);
-      border: none;
-      z-index: var(--z-tooltip, 2000);
+      z-index: var(--z-tooltip, 1500);
       pointer-events: none;
       position-anchor: --moul-tooltip-anchor;
       inset: auto;
-      max-width: 16rem;
+      max-width: 20rem;
       box-sizing: border-box;
       white-space: normal;
+      overflow-wrap: anywhere;
+      transform-origin: var(--_origin);
     }
 
     [part~="popover"]:not(:popover-open):not(.\:popover-open) {
@@ -47,6 +62,7 @@ export const tooltipStyles = [
       display: block;
     }
 
+    /* Enter/exit motion (fade + zoom) is driven by OverlayPresenceController on the panel. */
     @supports (anchor-name: --test) {
       :host([placement="top"]) [part~="popover"] {
         bottom: anchor(top);

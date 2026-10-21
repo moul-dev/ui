@@ -10,7 +10,7 @@ export const commandPaletteStyles = [
     }
 
     dialog {
-      padding: 0;
+      padding: 12vh var(--spacing-4, 1rem) var(--spacing-4, 1rem);
       border: none;
       background: transparent;
       overflow: visible;
@@ -24,8 +24,7 @@ export const commandPaletteStyles = [
       display: flex;
       align-items: flex-start;
       justify-content: center;
-      padding-top: 12vh;
-      z-index: var(--z-modal, 1000);
+      z-index: var(--z-modal, 1300);
       margin: 0;
       box-sizing: border-box;
     }
@@ -34,43 +33,54 @@ export const commandPaletteStyles = [
       display: none;
     }
 
-    dialog::backdrop {
-      background-color: var(--color-overlay, rgba(0, 0, 0, 0.5));
-      backdrop-filter: blur(4px);
-    }
-
+    /*
+     * Panel surface (fill, radius, shadow) comes from the shared overlay styles.
+     * The 8px inset keeps the field and row radii concentric with the panel's.
+     */
     [part~="base"] {
-      background-color: var(--color-bg-elevated, #ffffff);
-      border-radius: var(--radius-lg, 0.5rem);
-      border: 1px solid var(--color-border, #e5e7eb);
-      box-shadow: var(--shadow-lg, 0 10px 15px -3px rgb(0 0 0 / 0.1));
       width: 100%;
       max-width: 36rem;
-      max-height: 28rem;
+      max-height: min(28rem, 100%);
       display: flex;
       flex-direction: column;
+      padding: var(--spacing-2, 0.5rem);
       overflow: hidden;
       outline: none;
       box-sizing: border-box;
-      color: var(--color-fg, #111827);
     }
 
+    /* Search field (HeroUI secondary search field: soft fill, no shadow) */
     [part~="input-wrapper"] {
       display: flex;
       align-items: center;
-      gap: var(--spacing-3, 0.75rem);
-      padding: var(--spacing-3, 0.75rem) var(--spacing-4, 1rem);
-      border-bottom: 1px solid var(--color-border-subtle, #f3f4f6);
-      min-height: 3.25rem;
-      box-sizing: border-box;
+      flex-shrink: 0;
+      height: 2.25rem;
+      border-radius: var(--radius-field, 0.75rem);
+      background-color: var(--color-default);
+      color: var(--color-field-fg);
+      transition:
+        background-color 150ms var(--ease-smooth, ease),
+        box-shadow 150ms var(--ease-out, ease-out);
+    }
+
+    @media (hover: hover) {
+      [part~="input-wrapper"]:hover:not(:focus-within) {
+        background-color: var(--color-default-hover);
+      }
+    }
+
+    [part~="input-wrapper"]:focus-within {
+      box-shadow: var(--focus-ring-field);
     }
 
     .search-icon {
-      width: 1.25rem;
-      height: 1.25rem;
-      color: var(--color-fg-subtle, #9ca3af);
+      width: 1rem;
+      height: 1rem;
+      margin-inline-start: var(--spacing-3, 0.75rem);
+      color: var(--color-field-placeholder);
       flex-shrink: 0;
       display: inline-flex;
+      pointer-events: none;
     }
 
     .search-icon svg {
@@ -80,53 +90,91 @@ export const commandPaletteStyles = [
 
     [part~="input"] {
       flex: 1 1 auto;
+      min-width: 0;
+      height: 100%;
       border: none;
       outline: none;
       background: transparent;
-      color: var(--color-fg, #111827);
+      color: var(--color-field-fg);
       font-family: inherit;
+      /* 16px on touch screens avoids iOS focus zoom */
       font-size: var(--font-size-md, 1rem);
       line-height: var(--line-height-md, 1.5rem);
-      padding: 0;
+      padding: 0 var(--spacing-3, 0.75rem) 0 var(--spacing-2, 0.5rem);
+    }
+
+    @media (min-width: 640px) {
+      [part~="input"] {
+        font-size: var(--font-size-sm, 0.875rem);
+        line-height: var(--line-height-sm, 1.25rem);
+      }
     }
 
     [part~="input"]::placeholder {
-      color: var(--color-fg-subtle, #9ca3af);
+      color: var(--color-field-placeholder);
     }
 
+    /* List box */
     [part~="list"] {
+      flex: 0 1 auto;
+      min-height: 0;
       max-height: 20rem;
       overflow-y: auto;
-      padding: var(--spacing-2, 0.5rem);
+      overscroll-behavior: contain;
+      scrollbar-width: thin;
+      scrollbar-color: var(--color-scrollbar-thumb) transparent;
+      margin-top: var(--spacing-1, 0.25rem);
+      padding: var(--spacing-1, 0.25rem) 0;
       display: flex;
       flex-direction: column;
-      gap: 2px;
+      gap: var(--spacing-1, 0.25rem);
       outline: none;
     }
 
     [part~="item"] {
+      position: relative;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: var(--spacing-2, 0.5rem) var(--spacing-3, 0.75rem);
-      border-radius: var(--radius-sm, 0.25rem);
-      color: var(--color-fg, #111827);
+      gap: var(--spacing-3, 0.75rem);
+      min-height: 2.25rem;
+      padding: 0.375rem var(--spacing-2, 0.5rem);
+      border-radius: var(--radius-2xl, 1rem);
+      color: var(--color-fg);
       font-size: var(--font-size-sm, 0.875rem);
+      line-height: var(--line-height-sm, 1.25rem);
       cursor: pointer;
       user-select: none;
-      transition: background-color 0.12s ease;
-      gap: var(--spacing-3, 0.75rem);
+      -webkit-tap-highlight-color: transparent;
+      outline: none;
+      /* scale, not transform: the virtualizer positions rows with transform */
+      transition:
+        scale 250ms var(--ease-out, ease-out),
+        box-shadow 150ms var(--ease-out, ease-out);
     }
 
-    [part~="item"]:hover,
+    @media (hover: hover) {
+      [part~="item"]:hover {
+        background-color: var(--color-default);
+      }
+    }
+
     [part~="item-active"] {
-      background-color: var(--color-bg-subtle, #f3f4f6);
-      color: var(--color-primary-600, #4f46e5);
+      background-color: var(--color-default);
+    }
+
+    [part~="item"]:active {
+      scale: 0.98;
     }
 
     [part~="item"]:focus-visible {
-      outline: 2px solid var(--color-border-focus, #3b82f6);
-      outline-offset: -2px;
+      box-shadow: var(--focus-ring);
+    }
+
+    [part~="item"][aria-disabled="true"] {
+      opacity: var(--disabled-opacity, 0.5);
+      cursor: not-allowed;
+      pointer-events: none;
     }
 
     .item-content {
@@ -137,7 +185,7 @@ export const commandPaletteStyles = [
     }
 
     .item-title {
-      font-weight: 500;
+      font-weight: var(--font-weight-medium, 500);
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -145,19 +193,37 @@ export const commandPaletteStyles = [
 
     .item-description {
       font-size: var(--font-size-xs, 0.75rem);
-      color: var(--color-fg-subtle, #6b7280);
+      line-height: var(--line-height-xs, 1rem);
+      color: var(--color-muted);
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
 
+    /* Shortcut key cap (HeroUI kbd) */
     .item-shortcut {
-      font-size: var(--font-size-xs, 0.75rem);
-      color: var(--color-fg-subtle, #9ca3af);
-      background-color: var(--color-bg-subtle, #f3f4f6);
-      padding: 2px 6px;
-      border-radius: var(--radius-xs, 0.125rem);
+      display: inline-flex;
+      align-items: center;
       flex-shrink: 0;
+      height: 1.5rem;
+      padding: 0 var(--spacing-2, 0.5rem);
+      border-radius: var(--radius-lg, 0.5rem);
+      background-color: var(--color-default);
+      color: var(--color-muted);
+      font-size: var(--font-size-sm, 0.875rem);
+      font-weight: var(--font-weight-medium, 500);
+      white-space: nowrap;
+    }
+
+    /* Keep the key cap distinct on a highlighted row */
+    [part~="item-active"] .item-shortcut {
+      background-color: var(--color-bg-elevated);
+    }
+
+    @media (hover: hover) {
+      [part~="item"]:hover .item-shortcut {
+        background-color: var(--color-bg-elevated);
+      }
     }
 
     [part~="empty"] {
@@ -165,50 +231,76 @@ export const commandPaletteStyles = [
       align-items: center;
       justify-content: center;
       padding: var(--spacing-8, 2rem) var(--spacing-4, 1rem);
-      color: var(--color-fg-subtle, #9ca3af);
+      color: var(--color-muted);
       font-size: var(--font-size-sm, 0.875rem);
       text-align: center;
     }
 
     [part~="footer"] {
-      padding: var(--spacing-2, 0.5rem) var(--spacing-4, 1rem);
       display: flex;
       align-items: center;
       justify-content: flex-end;
+      flex-shrink: 0;
       gap: var(--spacing-4, 1rem);
-      border-top: 1px solid var(--color-border-subtle, #f3f4f6);
-      background-color: var(--color-bg-subtle, #f9fafb);
+      margin-top: var(--spacing-1, 0.25rem);
+      padding: var(--spacing-2, 0.5rem) var(--spacing-2, 0.5rem) 0;
+      border-top: 1px solid var(--color-separator);
       font-size: var(--font-size-xs, 0.75rem);
-      color: var(--color-fg-subtle, #9ca3af);
+      line-height: var(--line-height-xs, 1rem);
+      color: var(--color-muted);
+    }
+
+    /* Enter: fade + settle from 1.05; exit while closing: fade + shrink to .95 */
+    dialog[open] [part~="base"] {
+      animation: moul-palette-in 250ms var(--ease-out-quad, ease-out);
+    }
+
+    :host(:not([is-open])) dialog[open] [part~="base"] {
+      animation: moul-palette-out 100ms var(--ease-out-quad, ease-out) forwards;
+      pointer-events: none;
+    }
+
+    :host(:not([is-open])) dialog[open]::backdrop {
+      animation: moul-palette-backdrop-out 100ms var(--ease-out, ease-out)
+        forwards;
+    }
+
+    @keyframes moul-palette-in {
+      from {
+        opacity: 0;
+        transform: scale(1.05);
+      }
+    }
+
+    @keyframes moul-palette-out {
+      to {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+    }
+
+    @keyframes moul-palette-backdrop-out {
+      to {
+        opacity: 0;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      [part~="input-wrapper"],
+      [part~="item"] {
+        transition: none;
+      }
+
+      [part~="item"]:active {
+        scale: none;
+      }
+
+      dialog[open] [part~="base"],
+      :host(:not([is-open])) dialog[open] [part~="base"],
+      :host(:not([is-open])) dialog[open]::backdrop {
+        animation: none;
+      }
     }
   `,
   overlayStyles,
-  css`
-    [part~="base"] {
-      overflow: hidden;
-    }
-    [part~="input-wrapper"] {
-      background: transparent;
-      border-bottom: 1px solid var(--color-border-glass);
-    }
-    [part~="item"] {
-      border-radius: calc(0.625rem * var(--brand-radius-factor, 1));
-      transition: none;
-    }
-    [part~="item-active"] {
-      background-color: var(--color-primary-solid);
-      color: var(--color-fg-on-primary);
-    }
-    [part~="item-active"] * {
-      color: inherit !important;
-    }
-    [part~="item-active"] .item-shortcut {
-      background-color: oklch(1 0 0 / 0.2);
-      border-color: transparent;
-    }
-    [part~="footer"] {
-      background-color: transparent;
-      border-top: 1px solid var(--color-border-glass);
-    }
-  `,
 ]
