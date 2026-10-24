@@ -30,8 +30,8 @@ export class MoulToggleButton extends LitElement {
     this.size = 'md'
     this.isDisabled = false
 
+    // Press feedback is the stylesheet's :active scale; this tracks state only.
     this.pressController = new PressController(this, {
-      scaleOnPress: 0.97,
       disabled: () => this.isDisabled,
     })
   }

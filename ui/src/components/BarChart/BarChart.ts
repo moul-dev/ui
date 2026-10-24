@@ -113,13 +113,17 @@ export class MoulBarChart extends LitElement {
     }
   }
 
+  /** Charts fade in once; later data updates (often live) re-render in place. */
+  private hasPlayedEntrance = false
+
   private animateBars(): void {
-    if (prefersReducedMotion()) return
+    if (this.hasPlayedEntrance || prefersReducedMotion()) return
 
     const bars = this.renderRoot?.querySelectorAll<SVGRectElement>(
       'rect.chart-bar, [part="bar"]',
     )
     if (bars && bars.length > 0) {
+      this.hasPlayedEntrance = true
       subtleAnimate(
         bars,
         { opacity: [0, 1] },

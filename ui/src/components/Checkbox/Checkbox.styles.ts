@@ -67,8 +67,8 @@ export const checkboxStyles = [
       scale: 0.7;
       pointer-events: none;
       transition:
-        scale 100ms linear,
-        opacity 200ms linear,
+        scale var(--duration-fast, 150ms) var(--ease-out, ease-out),
+        opacity var(--duration-fast, 150ms) var(--ease-out, ease-out),
         background-color 200ms var(--ease-out, ease-out);
     }
 
@@ -128,7 +128,7 @@ export const checkboxStyles = [
     [part~='icon'] path {
       stroke-dasharray: 24;
       stroke-dashoffset: 24;
-      animation: moul-check-draw 150ms linear 15ms forwards;
+      animation: moul-check-draw 150ms var(--ease-out, ease-out) 15ms forwards;
     }
 
     @keyframes moul-check-draw {

@@ -43,7 +43,8 @@ export const sidebarAsideStyles: CSSResultGroup = [
       background-color: var(--color-surface);
       border-inline-end: 1px solid var(--color-separator);
       transition:
-        width 300ms var(--ease-out-fluid, cubic-bezier(0.32, 0.72, 0, 1)),
+        width var(--duration-base, 250ms)
+          var(--ease-out-fluid, cubic-bezier(0.32, 0.72, 0, 1)),
         background-color 200ms var(--ease-smooth, ease);
     }
 
@@ -101,8 +102,9 @@ export const sidebarAsideStyles: CSSResultGroup = [
       z-index: 10;
       outline: none;
       transition:
-        transform 200ms var(--ease-smooth, ease),
-        scale 250ms var(--ease-smooth, ease),
+        translate var(--duration-base, 250ms)
+          var(--ease-out-fluid, cubic-bezier(0.32, 0.72, 0, 1)),
+        scale var(--duration-fast, 150ms) var(--ease-out, ease-out),
         background-color 100ms var(--ease-out, ease-out),
         color 100ms var(--ease-out, ease-out),
         box-shadow 100ms var(--ease-out, ease-out);
@@ -126,9 +128,16 @@ export const sidebarAsideStyles: CSSResultGroup = [
       box-shadow: var(--focus-ring);
     }
 
+    /*
+     * Stay pinned to the right edge, which rides the width transition, and nudge into
+     * the rail's center with translate. Jumping right to 50% teleported the button
+     * across the still-wide rail before the collapse had started.
+     */
     :host([collapsed]) .toggle-button {
-      right: 50%;
-      transform: translateX(50%);
+      translate: calc(
+          var(--spacing-4) - (var(--sidebar-collapsed-width, 72px) - 2rem) / 2
+        )
+        0;
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -400,7 +409,7 @@ export const sidebarGroupStyles: CSSResultGroup = [
       width: var(--spacing-3, 12px);
       height: var(--spacing-3, 12px);
       flex-shrink: 0;
-      transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: transform 200ms var(--ease-out, ease-out);
     }
 
     :host([collapsed]) .chevron {
@@ -412,8 +421,9 @@ export const sidebarGroupStyles: CSSResultGroup = [
       display: grid;
       grid-template-rows: 1fr;
       opacity: 1;
-      transition: grid-template-rows 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-        opacity 0.25s ease;
+      transition:
+        grid-template-rows 200ms var(--ease-out, ease-out),
+        opacity 200ms var(--ease-out, ease-out);
       width: 100%;
       overflow: hidden;
       box-sizing: border-box;
@@ -482,7 +492,7 @@ export const sidebarItemStyles: CSSResultGroup = [
       transition:
         background-color 150ms var(--ease-smooth, ease),
         color 150ms var(--ease-smooth, ease),
-        transform 250ms var(--ease-out, ease-out);
+        transform var(--duration-fast, 150ms) var(--ease-out, ease-out);
       position: relative;
       border: none;
       background: transparent;
@@ -721,7 +731,7 @@ export const sidebarUserStyles: CSSResultGroup = [
       padding: var(--spacing-2);
       transition:
         background-color 150ms var(--ease-smooth, ease),
-        transform 250ms var(--ease-out, ease-out);
+        transform var(--duration-fast, 150ms) var(--ease-out, ease-out);
     }
 
     @media (hover: hover) {

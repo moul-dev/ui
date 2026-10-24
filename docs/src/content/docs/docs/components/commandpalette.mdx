@@ -5,7 +5,7 @@ description: Searchable command menu opened with ⌘K.
 
 import ComponentPreview from '@/components/ComponentPreview.astro';
 
-`<moul-command-palette>` opens with ⌘K / Ctrl+K (change it with `shortcut`), filters `items` as you type and fires `select`.
+`<moul-command-palette>` opens with ⌘K / Ctrl+K (change it with `shortcut`), filters `items` as you type and fires `select`. It appears and closes without animation, so the first keystroke after the shortcut lands in the search field.
 
 <ComponentPreview>
 <moul-button variant="secondary" data-open="demo-palette">Open palette <moul-kbd slot="suffix">⌘K</moul-kbd></moul-button>

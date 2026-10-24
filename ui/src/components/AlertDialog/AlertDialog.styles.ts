@@ -156,11 +156,11 @@ export const alertDialogStyles = [
 
     /* Enter: fade + settle from 1.05; exit while closing: fade + shrink to .95 */
     dialog[open] [part~="base"] {
-      animation: moul-alert-dialog-in 250ms var(--ease-out-quad, ease-out);
+      animation: moul-alert-dialog-in 250ms var(--ease-out, ease-out);
     }
 
     :host(:not([is-open])) dialog[open] [part~="base"] {
-      animation: moul-alert-dialog-out 100ms var(--ease-out-quad, ease-out)
+      animation: moul-alert-dialog-out 100ms var(--ease-out, ease-out)
         forwards;
       pointer-events: none;
     }

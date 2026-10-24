@@ -1,7 +1,6 @@
 import { html, LitElement, type PropertyValues, svg } from 'lit'
 import { FormInternalsController } from '../../controllers/form-internals.controller'
 import { defineElement } from '../../utils/define-element'
-import { SPRING_SNAPPY, subtleAnimate } from '../../utils/motion'
 import { warnMissingLabel } from '../../utils/warn-missing-label'
 import { checkboxStyles } from './Checkbox.styles'
 
@@ -65,13 +64,6 @@ export class MoulCheckbox extends LitElement {
     this.isIndeterminate = false
     this.isChecked = !this.isChecked
     this.syncFormValueAndValidity()
-
-    const indicator = this.renderRoot?.querySelector(
-      '[part="indicator"]',
-    ) as HTMLElement | null
-    if (indicator) {
-      subtleAnimate(indicator, { scale: [0.9, 1] }, SPRING_SNAPPY)
-    }
 
     this.dispatchEvent(
       new CustomEvent('change', {

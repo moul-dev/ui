@@ -132,7 +132,7 @@ export const searchFieldStyles = [
       transition:
         color var(--duration-fast, 150ms) var(--ease-out, ease-out),
         background-color 100ms var(--ease-out, ease-out),
-        transform 250ms var(--ease-out, ease-out);
+        transform var(--duration-fast, 150ms) var(--ease-out, ease-out);
     }
 
     @media (hover: hover) {
@@ -142,7 +142,7 @@ export const searchFieldStyles = [
     }
 
     [part~='clear-btn']:active {
-      transform: scale(0.93);
+      transform: scale(0.95);
     }
 
     [part~='clear-btn']:focus-visible {

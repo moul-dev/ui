@@ -65,6 +65,11 @@ export class MoulChartTooltip extends LitElement {
     this.overlayPresence = new OverlayPresenceController(this, {
       preset: 'tooltip',
       popover: () => this.popoverEl,
+      // The host's inline transform tracks the pointer; animate the surface inside it
+      // so the entrance can't overwrite that position.
+      target: () =>
+        this.renderRoot?.querySelector<HTMLElement>('[part="container"]') ??
+        null,
     })
   }
 

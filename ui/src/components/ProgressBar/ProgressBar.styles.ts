@@ -99,6 +99,12 @@ export const progressBarStyles = [
       animation: moul-progress-indeterminate 1.5s cubic-bezier(0.65, 0, 0.35, 1) infinite;
     }
 
+    @keyframes moul-progress-pulse {
+      50% {
+        opacity: 0.35;
+      }
+    }
+
     @keyframes moul-progress-indeterminate {
       0% {
         transform: translateX(-100%);
@@ -113,8 +119,9 @@ export const progressBarStyles = [
         transition: none;
       }
 
+      /* No sweep, but a slow pulse keeps the bar reading as in progress */
       :host([is-indeterminate]) [part~="fill"] {
-        animation: none;
+        animation: moul-progress-pulse 1.5s var(--ease-smooth, ease) infinite;
         transform: none;
         width: 100%;
         opacity: 0.7;

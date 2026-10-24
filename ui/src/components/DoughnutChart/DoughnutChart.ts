@@ -102,11 +102,15 @@ export class MoulDoughnutChart extends LitElement {
     }
   }
 
+  /** Charts fade in once; later data updates (often live) re-render in place. */
+  private hasPlayedEntrance = false
+
   private animateSlices(): void {
-    if (prefersReducedMotion()) return
+    if (this.hasPlayedEntrance || prefersReducedMotion()) return
 
     const slices = this.renderRoot?.querySelectorAll<SVGPathElement>('.slice')
     if (slices && slices.length > 0) {
+      this.hasPlayedEntrance = true
       subtleAnimate(
         slices,
         { opacity: [0, 1] },

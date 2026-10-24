@@ -1,7 +1,7 @@
 import { html, LitElement, type PropertyValues } from 'lit'
 import { FormInternalsController } from '../../controllers/form-internals.controller'
 import { defineElement } from '../../utils/define-element'
-import { SPRING_SNAPPY, subtleAnimate } from '../../utils/motion'
+import { EASE_OUT, subtleAnimate } from '../../utils/motion'
 import { warnMissingLabel } from '../../utils/warn-missing-label'
 import { inputOtpStyles } from './InputOTP.styles'
 
@@ -85,7 +85,13 @@ export class MoulInputOTP extends LitElement {
       '[part="group"]',
     ) as HTMLElement | null
     if (group) {
-      subtleAnimate(group, { x: [0, -6, 6, -4, 4, 0] }, { duration: 0.25 })
+      subtleAnimate(
+        group,
+        {
+          transform: [0, -6, 6, -4, 4, 0].map((x) => `translateX(${x}px)`),
+        },
+        { duration: 0.25, ease: EASE_OUT },
+      )
     }
   }
 
@@ -139,8 +145,6 @@ export class MoulInputOTP extends LitElement {
       chars[index] = char
       this.value = chars.join('').trimEnd()
       this.syncFormValueAndValidity()
-
-      subtleAnimate(input, { scale: [1.06, 1] }, SPRING_SNAPPY)
 
       this.dispatchEvent(
         new CustomEvent('input', {

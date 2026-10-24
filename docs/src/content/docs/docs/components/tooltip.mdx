@@ -5,7 +5,7 @@ description: Short label shown on hover or focus.
 
 import ComponentPreview from '@/components/ComponentPreview.astro';
 
-`<moul-tooltip>` describes its trigger through `aria-describedby`. It opens immediately on keyboard focus and after `delay` on hover.
+`<moul-tooltip>` describes its trigger through `aria-describedby`. It opens immediately on keyboard focus and after `delay` on hover. Once one tooltip has shown, its siblings open instantly for a moment after the pointer leaves it, so moving along a toolbar doesn't wait at every button.
 
 <ComponentPreview minHeight="200px">
 <div class="demo-row">

@@ -6,7 +6,6 @@ import {
   type VisualVariant,
 } from '../../styles/semantic-tones'
 import { defineElement } from '../../utils/define-element'
-import { SPRING_GENTLE, subtleAnimate } from '../../utils/motion'
 import { progressBarStyles } from './ProgressBar.styles'
 
 export type ProgressBarSize = 'sm' | 'md' | 'lg'
@@ -86,11 +85,6 @@ export class MoulProgressBar extends LitElement {
         this.removeAttribute('aria-valuenow')
       } else {
         this.setAttribute('aria-valuenow', String(this.clampedValue))
-        const fill =
-          this.shadowRoot?.querySelector<HTMLElement>('[part="fill"]')
-        if (fill) {
-          subtleAnimate(fill, { width: `${this.percentage}%` }, SPRING_GENTLE)
-        }
       }
     }
 

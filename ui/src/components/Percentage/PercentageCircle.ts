@@ -2,11 +2,6 @@ import { arc } from 'd3-shape'
 import { html, LitElement, type PropertyValues, svg } from 'lit'
 import { normalizeTone, type SemanticTone } from '../../styles/semantic-tones'
 import { defineElement } from '../../utils/define-element'
-import {
-  CHART_EASE,
-  prefersReducedMotion,
-  subtleAnimate,
-} from '../../utils/motion'
 import { percentageCircleStyles } from './Percentage.styles'
 
 export type PercentageCircleSize = 'sm' | 'md' | 'lg' | number
@@ -91,21 +86,6 @@ export class MoulPercentageCircle extends LitElement {
 
     if (changedProps.has('value')) {
       this.syncAria()
-    }
-  }
-
-  protected override updated(changedProps: PropertyValues): void {
-    super.updated(changedProps)
-
-    if (changedProps.has('value') && !prefersReducedMotion()) {
-      const fill = this.renderRoot?.querySelector('.circle-fill')
-      if (fill) {
-        subtleAnimate(
-          fill,
-          { opacity: [0.75, 1] },
-          { duration: 0.35, ease: CHART_EASE },
-        )
-      }
     }
   }
 

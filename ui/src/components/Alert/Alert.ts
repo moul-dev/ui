@@ -13,7 +13,7 @@ import {
   alertWarning,
   close,
 } from '../../utils/icons'
-import { SPRING_GENTLE, subtleAnimate } from '../../utils/motion'
+import { EASE_OUT, subtleAnimate } from '../../utils/motion'
 import { alertStyles } from './Alert.styles'
 
 export class MoulAlert extends LitElement {
@@ -72,7 +72,11 @@ export class MoulAlert extends LitElement {
   }
 
   protected override firstUpdated(): void {
-    subtleAnimate(this, { y: [-6, 0], opacity: [0, 1] }, SPRING_GENTLE)
+    subtleAnimate(
+      this,
+      { transform: ['translateY(-6px)', 'translateY(0px)'], opacity: [0, 1] },
+      { duration: 0.2, ease: EASE_OUT },
+    )
   }
 
   private updateRole(): void {
@@ -97,8 +101,8 @@ export class MoulAlert extends LitElement {
   private async handleDismiss(e: MouseEvent): Promise<void> {
     const controls = subtleAnimate(
       this,
-      { opacity: [1, 0], scale: [1, 0.96] },
-      { duration: 0.18 },
+      { opacity: [1, 0], transform: ['scale(1)', 'scale(0.96)'] },
+      { duration: 0.15, ease: EASE_OUT },
     )
     if (controls?.finished) {
       await controls.finished

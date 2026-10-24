@@ -1,7 +1,7 @@
 import { html, LitElement, type PropertyValues } from 'lit'
 import { FormInternalsController } from '../../controllers/form-internals.controller'
 import { defineElement } from '../../utils/define-element'
-import { SPRING_GENTLE, SPRING_SNAPPY, subtleAnimate } from '../../utils/motion'
+import { EASE_OUT, subtleAnimate } from '../../utils/motion'
 import { warnMissingLabel } from '../../utils/warn-missing-label'
 import { numberFieldStyles } from './NumberField.styles'
 
@@ -153,7 +153,14 @@ export class MoulNumberField extends LitElement {
         '[part="error"]',
       ) as HTMLElement | null
       if (errorEl) {
-        subtleAnimate(errorEl, { y: [-4, 0], opacity: [0, 1] }, SPRING_GENTLE)
+        subtleAnimate(
+          errorEl,
+          {
+            transform: ['translateY(-4px)', 'translateY(0px)'],
+            opacity: [0, 1],
+          },
+          { duration: 0.2, ease: EASE_OUT },
+        )
       }
     }
   }
@@ -276,10 +283,6 @@ export class MoulNumberField extends LitElement {
     this.syncFormValueAndValidity()
   }
 
-  private animateStepperPress(btn: HTMLElement): void {
-    subtleAnimate(btn, { scale: [0.94, 1] }, SPRING_SNAPPY)
-  }
-
   protected override render() {
     const isInvalid = this.hasAttribute('is-invalid')
     const displayValue =
@@ -325,10 +328,7 @@ export class MoulNumberField extends LitElement {
               aria-label="Increase value"
               tabindex="-1"
               ?disabled=${this.isDisabled || this.isReadonly}
-              @click=${(e: MouseEvent) => {
-                this.animateStepperPress(e.currentTarget as HTMLElement)
-                this.stepUp()
-              }}
+              @click=${() => this.stepUp()}
             >
               ▲
             </button>
@@ -338,10 +338,7 @@ export class MoulNumberField extends LitElement {
               aria-label="Decrease value"
               tabindex="-1"
               ?disabled=${this.isDisabled || this.isReadonly}
-              @click=${(e: MouseEvent) => {
-                this.animateStepperPress(e.currentTarget as HTMLElement)
-                this.stepDown()
-              }}
+              @click=${() => this.stepDown()}
             >
               ▼
             </button>

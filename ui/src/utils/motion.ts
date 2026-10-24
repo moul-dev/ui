@@ -22,7 +22,10 @@ export const SPRING_GENTLE: AnimationOptions = {
 
 export const IOS_SHEET_CURVE = [0.32, 0.72, 0, 1] as const
 
-export const CHART_EASE = [0.22, 1, 0.36, 1] as const
+/** Strong ease-out, the JS twin of the `--ease-out` token, for UI entrances and exits. */
+export const EASE_OUT = [0.22, 1, 0.36, 1] as const
+
+export const CHART_EASE = EASE_OUT
 
 /**
  * Checks whether the user has requested reduced motion via the OS accessibility settings.
@@ -45,14 +48,57 @@ const TRANSFORM_KEYS = new Set([
   'transform',
 ])
 
+/** A transform made only of identity functions: zero translates/rotations and unit scales. */
+const REST_TRANSFORM =
+  /^(\s*(translate[XYZ3d]*\((\s*0(px|%)?\s*,?)+\)|scale[XYZ3d]*\((\s*1\s*,?)+\)|rotate[XYZ]?\(\s*0(deg)?\s*\))\s*)+$/
+
 function isRestValue(key: string, value: unknown): boolean {
   if (key === 'opacity' || key.startsWith('scale')) return Number(value) === 1
   if (key === 'transform') {
-    return /^(\s*translate[XYZ3d]*\((\s*0(px|%)?\s*,?)+\)\s*)+$/.test(
-      String(value),
-    )
+    return value === 'none' || REST_TRANSFORM.test(String(value))
   }
   return parseFloat(String(value)) === 0
+}
+
+export interface Pose {
+  opacity: number
+  /** Vertical offset in px. */
+  y: number
+  scale: number
+}
+
+export const REST_POSE: Pose = { opacity: 1, y: 0, scale: 1 }
+
+/** Formats a pose as a transform string; every pose shares one shape so any two interpolate. */
+export function poseTransform(pose: Pose): string {
+  return `translateY(${pose.y}px) scale(${pose.scale})`
+}
+
+/**
+ * Reads where an element is right now (computed style includes running animations),
+ * so a new animation can start from that pose instead of jumping back to its first keyframe.
+ * Assumes no rotation; falls back to `fallback` for anything it can't parse.
+ */
+export function readPose(el: Element, fallback: Pose = REST_POSE): Pose {
+  if (typeof getComputedStyle !== 'function') return fallback
+  const style = getComputedStyle(el)
+  const opacity = Number.parseFloat(style.opacity)
+  const pose: Pose = {
+    opacity: Number.isFinite(opacity) ? opacity : fallback.opacity,
+    y: fallback.y,
+    scale: fallback.scale,
+  }
+  const transform = style.transform
+  if (transform === 'none') return { ...pose, y: 0, scale: 1 }
+  const match = /^matrix(3d)?\(([^)]+)\)$/.exec(transform ?? '')
+  if (match) {
+    const values = match[2].split(',').map(Number)
+    const scale = values[0]
+    const y = match[1] ? values[13] : values[5]
+    if (Number.isFinite(scale)) pose.scale = scale
+    if (Number.isFinite(y)) pose.y = y
+  }
+  return pose
 }
 
 /**
@@ -123,13 +169,15 @@ export function animateActiveIndicator(
   const dy = previousRect.top - nextRect.top
   const scaleX = previousRect.width / Math.max(nextRect.width, 1)
   const scaleY = previousRect.height / Math.max(nextRect.height, 1)
-  return animate(
+  // One transform string (not x/y/scaleX/scaleY) so the glide runs on the compositor
+  // while the click that triggered it re-renders a list or a route.
+  return subtleAnimate(
     indicator,
     {
-      x: [dx, 0],
-      y: [dy, 0],
-      scaleX: [scaleX, 1],
-      scaleY: [scaleY, 1],
+      transform: [
+        `translate(${dx}px, ${dy}px) scale(${scaleX}, ${scaleY})`,
+        'translate(0px, 0px) scale(1, 1)',
+      ],
     },
     SPRING_SNAPPY,
   )

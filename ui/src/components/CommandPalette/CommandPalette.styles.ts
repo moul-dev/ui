@@ -149,7 +149,7 @@ export const commandPaletteStyles = [
       outline: none;
       /* scale, not transform: the virtualizer positions rows with transform */
       transition:
-        scale 250ms var(--ease-out, ease-out),
+        scale var(--duration-fast, 150ms) var(--ease-out, ease-out),
         box-shadow 150ms var(--ease-out, ease-out);
     }
 
@@ -250,39 +250,13 @@ export const commandPaletteStyles = [
       color: var(--color-muted);
     }
 
-    /* Enter: fade + settle from 1.05; exit while closing: fade + shrink to .95 */
-    dialog[open] [part~="base"] {
-      animation: moul-palette-in 250ms var(--ease-out-quad, ease-out);
-    }
-
-    :host(:not([is-open])) dialog[open] [part~="base"] {
-      animation: moul-palette-out 100ms var(--ease-out-quad, ease-out) forwards;
-      pointer-events: none;
-    }
-
-    :host(:not([is-open])) dialog[open]::backdrop {
-      animation: moul-palette-backdrop-out 100ms var(--ease-out, ease-out)
-        forwards;
-    }
-
-    @keyframes moul-palette-in {
-      from {
-        opacity: 0;
-        transform: scale(1.05);
-      }
-    }
-
-    @keyframes moul-palette-out {
-      to {
-        opacity: 0;
-        transform: scale(0.95);
-      }
-    }
-
-    @keyframes moul-palette-backdrop-out {
-      to {
-        opacity: 0;
-      }
+    /*
+     * No open/close motion: the palette is summoned from the keyboard many times a
+     * day, and any entrance would stand between the shortcut and the first keystroke.
+     * :host outranks the shared backdrop fade appended after these styles.
+     */
+    :host dialog[open]::backdrop {
+      animation: none;
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -293,12 +267,6 @@ export const commandPaletteStyles = [
 
       [part~="item"]:active {
         scale: none;
-      }
-
-      dialog[open] [part~="base"],
-      :host(:not([is-open])) dialog[open] [part~="base"],
-      :host(:not([is-open])) dialog[open]::backdrop {
-        animation: none;
       }
     }
   `,

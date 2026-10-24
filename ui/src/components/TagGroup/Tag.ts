@@ -8,7 +8,7 @@ import {
 } from '../../styles/semantic-tones'
 import { defineElement } from '../../utils/define-element'
 import { close } from '../../utils/icons'
-import { subtleAnimate } from '../../utils/motion'
+import { EASE_OUT, subtleAnimate } from '../../utils/motion'
 import { tagStyles } from './TagGroup.styles'
 
 export type TagSize = 'sm' | 'md' | 'lg'
@@ -46,8 +46,8 @@ export class MoulTag extends LitElement {
     this.isRemovable = false
     this.isDisabled = false
 
+    // Press feedback is the stylesheet's :active scale; this tracks state only.
     this.pressController = new PressController(this, {
-      scaleOnPress: 0.96,
       disabled: () => this.isDisabled,
     })
   }
@@ -104,8 +104,8 @@ export class MoulTag extends LitElement {
 
     const controls = subtleAnimate(
       this,
-      { scale: [1, 0.85], opacity: [1, 0] },
-      { duration: 0.14 },
+      { transform: ['scale(1)', 'scale(0.9)'], opacity: [1, 0] },
+      { duration: 0.12, ease: EASE_OUT },
     )
     if (controls?.finished) {
       await controls.finished

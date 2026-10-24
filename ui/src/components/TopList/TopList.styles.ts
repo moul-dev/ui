@@ -41,7 +41,7 @@ export const topListStyles: CSSResultGroup = [
       outline: none;
       transition:
         background-color var(--duration-fast, 150ms) var(--ease-smooth, ease),
-        transform 250ms var(--ease-out, ease-out),
+        transform var(--duration-fast, 150ms) var(--ease-out, ease-out),
         box-shadow var(--duration-fast, 150ms) var(--ease-out, ease-out);
       user-select: none;
       -webkit-tap-highlight-color: transparent;

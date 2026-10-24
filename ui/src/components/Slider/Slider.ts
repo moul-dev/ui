@@ -1,7 +1,6 @@
 import { html, LitElement, type PropertyValues } from 'lit'
 import { FormInternalsController } from '../../controllers/form-internals.controller'
 import { defineElement } from '../../utils/define-element'
-import { SPRING_SNAPPY, subtleAnimate } from '../../utils/motion'
 import { warnMissingLabel } from '../../utils/warn-missing-label'
 import { sliderStyles } from './Slider.styles'
 
@@ -159,11 +158,6 @@ export class MoulSlider extends LitElement {
     const target = event.currentTarget as HTMLElement
     target.setPointerCapture?.(event.pointerId)
 
-    const thumb = this.thumbElement
-    if (thumb) {
-      subtleAnimate(thumb, { scale: 1.15 }, SPRING_SNAPPY)
-    }
-
     this.setValueFromPosition(event.clientX)
     this.focus()
   }
@@ -181,11 +175,6 @@ export class MoulSlider extends LitElement {
       target.releasePointerCapture?.(event.pointerId)
     } catch {
       // ignore
-    }
-
-    const thumb = this.thumbElement
-    if (thumb) {
-      subtleAnimate(thumb, { scale: 1 }, SPRING_SNAPPY)
     }
 
     this.dispatchEvent(

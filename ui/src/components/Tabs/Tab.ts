@@ -24,8 +24,8 @@ export class MoulTab extends LitElement {
     this.isDisabled = false
     this.isSelected = false
 
+    // No press scale: the selection indicator gliding over is the feedback.
     this.pressController = new PressController(this, {
-      scaleOnPress: 0.98,
       disabled: () => this.isDisabled,
     })
   }

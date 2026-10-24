@@ -19,8 +19,11 @@ export const cardStyles = [
       line-height: var(--line-height-sm, 1.25rem);
       /* Secondary copy in sections; variants swap it for a tint of their own text color */
       --_card-muted: var(--color-muted);
+      /* The hover lift and its shadow share one duration and curve so they move as one */
       transition:
-        box-shadow var(--duration-base, 250ms) var(--ease-smooth, ease),
+        box-shadow var(--duration-base, 250ms) var(--ease-out, ease-out),
+        translate var(--duration-base, 250ms) var(--ease-out, ease-out),
+        scale var(--duration-fast, 150ms) var(--ease-out, ease-out),
         background-color var(--duration-base, 250ms) var(--ease-smooth, ease);
     }
 
@@ -48,10 +51,16 @@ export const cardStyles = [
       user-select: none;
     }
 
-    @media (hover: hover) {
+    /* Lift only under a real cursor: touch fires hover on tap and would leave it raised */
+    @media (hover: hover) and (pointer: fine) {
       :host([is-interactive]:hover) {
         box-shadow: var(--shadow-overlay);
+        translate: 0 -2px;
       }
+    }
+
+    :host([is-interactive]:active) {
+      scale: 0.985;
     }
 
     :host([is-interactive]:focus-visible) {
@@ -94,6 +103,14 @@ export const cardStyles = [
     @media (prefers-reduced-motion: reduce) {
       :host {
         transition: none;
+      }
+
+      :host([is-interactive]:hover) {
+        translate: none;
+      }
+
+      :host([is-interactive]:active) {
+        scale: none;
       }
     }
   `,

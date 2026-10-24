@@ -1,7 +1,7 @@
 import { html, LitElement, type PropertyValues } from 'lit'
 import { defineElement } from '../../utils/define-element'
 import { calendarNavNext, calendarNavPrev } from '../../utils/icons'
-import { subtleAnimate } from '../../utils/motion'
+import { EASE_OUT, subtleAnimate } from '../../utils/motion'
 import { calendarStyles } from './Calendar.styles'
 
 export class MoulCalendar extends LitElement {
@@ -95,8 +95,11 @@ export class MoulCalendar extends LitElement {
     if (body) {
       subtleAnimate(
         body,
-        { x: [dir * 12, 0], opacity: [0.3, 1] },
-        { duration: 0.18 },
+        {
+          transform: [`translateX(${dir * 12}px)`, 'translateX(0px)'],
+          opacity: [0.3, 1],
+        },
+        { duration: 0.18, ease: EASE_OUT },
       )
     }
   }

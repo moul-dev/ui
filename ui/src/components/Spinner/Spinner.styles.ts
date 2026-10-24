@@ -54,9 +54,16 @@ export const spinnerStyles = [
       }
     }
 
+    @keyframes moul-spin-pulse {
+      50% {
+        opacity: 0.4;
+      }
+    }
+
+    /* Reduced motion: no rotation, but a slow pulse still says "working" */
     @media (prefers-reduced-motion: reduce) {
       .spinner-svg {
-        animation: none;
+        animation: moul-spin-pulse 1.5s var(--ease-smooth, ease) infinite;
       }
     }
 

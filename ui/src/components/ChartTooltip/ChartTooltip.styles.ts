@@ -53,6 +53,8 @@ export const chartTooltipStyles = [
       color: var(--color-fg);
       white-space: nowrap;
       pointer-events: none;
+      /* Sits above the hovered point, so it grows up out of it */
+      transform-origin: bottom center;
     }
 
     /*

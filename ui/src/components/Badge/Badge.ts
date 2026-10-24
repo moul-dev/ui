@@ -6,7 +6,6 @@ import {
   type VisualVariant,
 } from '../../styles/semantic-tones'
 import { defineElement } from '../../utils/define-element'
-import { SPRING_SNAPPY, subtleAnimate } from '../../utils/motion'
 import { badgeStyles } from './Badge.styles'
 
 export type BadgeSize = 'sm' | 'md' | 'lg'
@@ -48,10 +47,6 @@ export class MoulBadge extends LitElement {
         this.variant = normalized
       }
     }
-  }
-
-  protected override firstUpdated(): void {
-    subtleAnimate(this, { scale: [0.9, 1], opacity: [0, 1] }, SPRING_SNAPPY)
   }
 
   protected override render() {

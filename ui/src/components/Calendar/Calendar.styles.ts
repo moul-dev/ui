@@ -70,7 +70,7 @@ export const calendarStyles = [
       padding: 0;
       -webkit-tap-highlight-color: transparent;
       transition:
-        transform 250ms var(--ease-out, ease-out),
+        transform var(--duration-fast, 150ms) var(--ease-out, ease-out),
         background-color 100ms var(--ease-out, ease-out),
         box-shadow 100ms var(--ease-out, ease-out),
         opacity var(--duration-fast, 150ms) var(--ease-out, ease-out);
@@ -154,7 +154,7 @@ export const calendarStyles = [
       padding: 0;
       -webkit-tap-highlight-color: transparent;
       transition:
-        transform 250ms var(--ease-out, ease-out),
+        transform var(--duration-fast, 150ms) var(--ease-out, ease-out),
         background-color 100ms var(--ease-out, ease-out),
         box-shadow 100ms var(--ease-out, ease-out);
     }

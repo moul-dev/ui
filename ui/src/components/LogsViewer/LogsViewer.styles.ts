@@ -224,7 +224,7 @@ export const logsViewerStyles: CSSResultGroup = [
       outline: none;
       transform-origin: center;
       transition:
-        transform 250ms var(--ease-smooth, ease),
+        transform var(--duration-fast, 150ms) var(--ease-out, ease-out),
         background-color 100ms var(--ease-out, ease-out),
         box-shadow 100ms var(--ease-out, ease-out);
     }

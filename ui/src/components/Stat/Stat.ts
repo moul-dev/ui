@@ -126,7 +126,7 @@ export class MoulStat extends LitElement {
       if (badge) {
         subtleAnimate(
           badge,
-          { scale: [0.9, 1], opacity: [0, 1] },
+          { transform: ['scale(0.9)', 'scale(1)'], opacity: [0, 1] },
           SPRING_SNAPPY,
         )
       }

@@ -1,5 +1,5 @@
 import { html, LitElement } from 'lit'
-import { animate } from 'motion'
+import { type AnimationPlaybackControls, animate } from 'motion'
 import type { SemanticTone, VisualVariant } from '../../styles/semantic-tones'
 import { defineElement } from '../../utils/define-element'
 import { prefersReducedMotion, SPRING_GENTLE } from '../../utils/motion'
@@ -62,6 +62,12 @@ export class MoulToastRegion extends LitElement {
     this.observer = null
   }
 
+  /** Close-ranks glides in flight, so a second removal can retarget them. */
+  private readonly glides = new WeakMap<
+    HTMLElement,
+    AnimationPlaybackControls
+  >()
+
   /** True when toasts should enter from above (top placements). */
   public get isTop(): boolean {
     return this.placement.startsWith('top')
@@ -75,17 +81,33 @@ export class MoulToastRegion extends LitElement {
     const siblings = Array.from(this.children).filter(
       (el): el is HTMLElement => el !== toast && el instanceof HTMLElement,
     )
+    // Where each toast is on screen now, including a glide still in flight.
     const before = new Map(
       siblings.map((el) => [el, el.getBoundingClientRect()]),
     )
     toast.remove()
     if (prefersReducedMotion()) return
+    // Drop unfinished glides so the next reads see the new layout slots, not old offsets.
+    for (const el of siblings) {
+      if (!this.glides.has(el)) continue
+      this.glides.get(el)?.cancel()
+      this.glides.delete(el)
+      el.style.removeProperty('transform')
+    }
     for (const el of siblings) {
       const prev = before.get(el)
       if (!prev) continue
       const dy = prev.top - el.getBoundingClientRect().top
       if (Math.abs(dy) < 0.5) continue
-      animate(el, { y: [dy, 0] }, SPRING_GENTLE).then(() => {
+      const glide = animate(
+        el,
+        { transform: [`translateY(${dy}px)`, 'translateY(0px)'] },
+        SPRING_GENTLE,
+      )
+      this.glides.set(el, glide)
+      glide.then(() => {
+        if (this.glides.get(el) !== glide) return
+        this.glides.delete(el)
         el.style.removeProperty('transform')
       })
     }

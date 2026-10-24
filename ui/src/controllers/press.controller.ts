@@ -1,21 +1,28 @@
 import type { ReactiveController, ReactiveControllerHost } from 'lit'
 import { type AnimationPlaybackControls, animate } from 'motion'
 import {
+  EASE_OUT,
+  poseTransform,
   prefersReducedMotion,
-  SPRING_GENTLE,
-  SPRING_SNAPPY,
+  readPose,
 } from '../utils/motion'
+
+/** Press-in responds at once; the release eases back a touch slower. */
+const PRESS_IN_DURATION = 0.1
+const PRESS_OUT_DURATION = 0.16
 
 export interface PressControllerOptions {
   /**
    * Scale factor on press. If true, defaults to 0.97. If number, uses that scale.
-   * If false or undefined, press scaling is disabled.
+   * If false or undefined, press scaling is disabled. Keyboard presses update
+   * `isPressed` but don't animate.
    */
   scaleOnPress?: boolean | number
 
   /**
    * Hover lift in pixels (negative y). If true, defaults to -2. If number, uses that value.
-   * If false or undefined, hover lift is disabled.
+   * If false or undefined, hover lift is disabled. Only a mouse lifts the target: touch
+   * fires `pointerenter` on tap, which would leave the element floating.
    */
   hoverLift?: boolean | number
 
@@ -40,49 +47,55 @@ export class PressController implements ReactiveController {
   private options: PressControllerOptions
   private shouldSyncAriaPressed: boolean = false
   private isPointerFocus: boolean = false
-  private activePressAnimation: AnimationPlaybackControls | null = null
-  private activeHoverAnimation: AnimationPlaybackControls | null = null
+  private activeAnimation: AnimationPlaybackControls | null = null
+  private isPointerPress: boolean = false
+  private isMouseHover: boolean = false
 
   private readonly handlePointerDown = (e: PointerEvent): void => {
     this.isPointerFocus = true
     if (this.isDisabled() || e.button !== 0) return
     this.isPressed = true
+    this.isPointerPress = true
     this.syncAriaPressed()
-    this.animatePress(true)
+    this.animateTransform()
     this.host.requestUpdate()
   }
 
   private readonly handlePointerUp = (): void => {
     if (!this.isPressed) return
     this.isPressed = false
+    this.isPointerPress = false
     this.syncAriaPressed()
-    this.animatePress(false)
+    this.animateTransform()
     this.host.requestUpdate()
   }
 
   private readonly handlePointerCancel = (): void => {
     if (!this.isPressed) return
     this.isPressed = false
+    this.isPointerPress = false
     this.syncAriaPressed()
-    this.animatePress(false)
+    this.animateTransform()
     this.host.requestUpdate()
   }
 
-  private readonly handlePointerEnter = (): void => {
+  private readonly handlePointerEnter = (e: PointerEvent): void => {
     if (this.isDisabled()) return
     this.isHovered = true
-    this.animateHover(true)
+    this.isMouseHover = e.pointerType === 'mouse'
+    this.animateTransform()
     this.host.requestUpdate()
   }
 
   private readonly handlePointerLeave = (): void => {
     this.isHovered = false
+    this.isMouseHover = false
     if (this.isPressed) {
       this.isPressed = false
       this.syncAriaPressed()
-      this.animatePress(false)
     }
-    this.animateHover(false)
+    this.isPointerPress = false
+    this.animateTransform()
     this.host.requestUpdate()
   }
 
@@ -94,7 +107,6 @@ export class PressController implements ReactiveController {
         this.isPressed = true
         this.isFocusVisible = true
         this.syncAriaPressed()
-        this.animatePress(true)
         this.host.requestUpdate()
       }
     }
@@ -105,7 +117,6 @@ export class PressController implements ReactiveController {
       if (this.isPressed) {
         this.isPressed = false
         this.syncAriaPressed()
-        this.animatePress(false)
         this.host.requestUpdate()
       }
     }
@@ -128,7 +139,10 @@ export class PressController implements ReactiveController {
     if (this.isPressed) {
       this.isPressed = false
       this.syncAriaPressed()
-      this.animatePress(false)
+    }
+    if (this.isPointerPress) {
+      this.isPointerPress = false
+      this.animateTransform()
     }
     this.host.requestUpdate()
   }
@@ -176,13 +190,13 @@ export class PressController implements ReactiveController {
     h.removeEventListener?.('focusin', this.handleFocusIn)
     h.removeEventListener?.('focusout', this.handleFocusOut)
 
-    this.activePressAnimation?.stop()
-    this.activePressAnimation = null
-    this.activeHoverAnimation?.stop()
-    this.activeHoverAnimation = null
+    this.activeAnimation?.stop()
+    this.activeAnimation = null
 
     this.isPressed = false
+    this.isPointerPress = false
     this.isHovered = false
+    this.isMouseHover = false
     this.isFocusVisible = false
     this.isPointerFocus = false
   }
@@ -211,37 +225,49 @@ export class PressController implements ReactiveController {
     return this.host
   }
 
-  private animatePress(pressed: boolean): void {
-    if (!this.options.scaleOnPress || prefersReducedMotion()) return
+  /**
+   * Moves the target to the pose its pointer state implies (pressed scale, hover lift)
+   * as one compositor-friendly transform, starting from wherever it is mid-flight.
+   */
+  private animateTransform(): void {
+    const { scaleOnPress, hoverLift } = this.options
+    if ((!scaleOnPress && !hoverLift) || prefersReducedMotion()) return
     const target = this.getAnimationTarget()
     if (!target) return
 
-    this.activePressAnimation?.stop()
-    const targetScale = pressed
-      ? typeof this.options.scaleOnPress === 'number'
-        ? this.options.scaleOnPress
-        : 0.97
-      : 1
+    const isPressedIn =
+      Boolean(scaleOnPress) && this.isPressed && this.isPointerPress
+    const next = {
+      opacity: 1,
+      scale: isPressedIn
+        ? typeof scaleOnPress === 'number'
+          ? scaleOnPress
+          : 0.97
+        : 1,
+      y:
+        hoverLift && this.isHovered && this.isMouseHover
+          ? typeof hoverLift === 'number'
+            ? hoverLift
+            : -2
+          : 0,
+    }
+    const from = readPose(target)
+    if (
+      !this.activeAnimation &&
+      from.scale === next.scale &&
+      from.y === next.y
+    ) {
+      return
+    }
 
-    this.activePressAnimation = animate(
+    this.activeAnimation?.stop()
+    this.activeAnimation = animate(
       target,
-      { scale: targetScale },
-      SPRING_SNAPPY,
+      { transform: [poseTransform(from), poseTransform(next)] },
+      {
+        duration: isPressedIn ? PRESS_IN_DURATION : PRESS_OUT_DURATION,
+        ease: EASE_OUT,
+      },
     )
-  }
-
-  private animateHover(hovered: boolean): void {
-    if (!this.options.hoverLift || prefersReducedMotion()) return
-    const target = this.getAnimationTarget()
-    if (!target) return
-
-    this.activeHoverAnimation?.stop()
-    const targetY = hovered
-      ? typeof this.options.hoverLift === 'number'
-        ? this.options.hoverLift
-        : -2
-      : 0
-
-    this.activeHoverAnimation = animate(target, { y: targetY }, SPRING_GENTLE)
   }
 }

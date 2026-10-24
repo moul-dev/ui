@@ -76,14 +76,18 @@ export const skeletonStyles = [
       }
     }
 
+    /* Reduced motion: drop the moving shimmer; the opacity pulse is not movement, so every variant keeps it */
     @media (prefers-reduced-motion: reduce) {
-      [part~="base"],
       [part~="base"]::after {
         animation: none !important;
       }
 
       :host([variant="wave"]) [part~="base"]::after {
         content: none;
+      }
+
+      :host([variant="wave"]) [part~="base"] {
+        animation: moul-skeleton-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
       }
     }
   `,

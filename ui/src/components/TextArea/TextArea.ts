@@ -1,7 +1,7 @@
 import { html, LitElement, nothing, type PropertyValues } from 'lit'
 import { FormInternalsController } from '../../controllers/form-internals.controller'
 import { defineElement } from '../../utils/define-element'
-import { SPRING_GENTLE, subtleAnimate } from '../../utils/motion'
+import { EASE_OUT, subtleAnimate } from '../../utils/motion'
 import { warnMissingLabel } from '../../utils/warn-missing-label'
 import { textAreaStyles } from './TextArea.styles'
 
@@ -126,7 +126,14 @@ export class MoulTextArea extends LitElement {
         '[part="error"]',
       ) as HTMLElement | null
       if (errorEl) {
-        subtleAnimate(errorEl, { y: [-4, 0], opacity: [0, 1] }, SPRING_GENTLE)
+        subtleAnimate(
+          errorEl,
+          {
+            transform: ['translateY(-4px)', 'translateY(0px)'],
+            opacity: [0, 1],
+          },
+          { duration: 0.2, ease: EASE_OUT },
+        )
       }
     }
   }

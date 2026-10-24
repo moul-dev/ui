@@ -127,12 +127,16 @@ export class MoulLineChart extends LitElement {
     }
   }
 
+  /** Charts fade in once; later data updates (often live) re-render in place. */
+  private hasPlayedEntrance = false
+
   private animatePaths(): void {
-    if (prefersReducedMotion()) return
+    if (this.hasPlayedEntrance || prefersReducedMotion()) return
 
     const paths =
       this.renderRoot?.querySelectorAll<SVGPathElement>('.series-path')
     if (paths && paths.length > 0) {
+      this.hasPlayedEntrance = true
       subtleAnimate(
         paths,
         { opacity: [0, 1] },

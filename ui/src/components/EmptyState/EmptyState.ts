@@ -1,7 +1,7 @@
 import { html, LitElement } from 'lit'
 import type { VisualVariant } from '../../styles/semantic-tones'
 import { defineElement } from '../../utils/define-element'
-import { SPRING_GENTLE, stagger, subtleAnimate } from '../../utils/motion'
+import { EASE_OUT, stagger, subtleAnimate } from '../../utils/motion'
 import { emptyStateStyles } from './EmptyState.styles'
 
 export type EmptyStateSize = 'sm' | 'md' | 'lg'
@@ -44,8 +44,8 @@ export class MoulEmptyState extends LitElement {
     if (targets.length > 0) {
       subtleAnimate(
         targets,
-        { y: [8, 0], opacity: [0, 1] },
-        { ...SPRING_GENTLE, delay: stagger(0.05) },
+        { transform: ['translateY(8px)', 'translateY(0px)'], opacity: [0, 1] },
+        { duration: 0.25, ease: EASE_OUT, delay: stagger(0.05) },
       )
     }
   }

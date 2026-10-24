@@ -177,7 +177,7 @@ export const selectItemStyles = [
       line-height: var(--line-height-sm, 1.25rem);
       -webkit-tap-highlight-color: transparent;
       transition:
-        transform 250ms var(--ease-out, ease-out),
+        transform var(--duration-fast, 150ms) var(--ease-out, ease-out),
         background-color 100ms var(--ease-out, ease-out),
         box-shadow var(--duration-fast, 150ms) var(--ease-out, ease-out);
     }

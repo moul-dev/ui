@@ -24,7 +24,13 @@ export const tagStyles = [
         color 100ms var(--ease-smooth, ease),
         opacity 100ms var(--ease-smooth, ease),
         background-color 100ms var(--ease-smooth, ease),
-        box-shadow 100ms var(--ease-out, ease-out);
+        box-shadow 100ms var(--ease-out, ease-out),
+        scale var(--duration-fast, 150ms) var(--ease-out, ease-out);
+    }
+
+    /* scale, not transform: removal animates transform on the host */
+    :host(:not([is-disabled]):active) {
+      scale: var(--press-scale, 0.97);
     }
 
     [part~="base"] {
@@ -155,6 +161,10 @@ export const tagStyles = [
       :host,
       .remove-button {
         transition: none;
+      }
+
+      :host(:not([is-disabled]):active) {
+        scale: none;
       }
     }
   `,

@@ -77,11 +77,15 @@ export class MoulTopList extends LitElement {
     }
   }
 
+  /** Rows rise in once; later data updates (often live) re-render in place. */
+  private hasPlayedEntrance = false
+
   private animateEntrance(): void {
-    if (prefersReducedMotion()) return
+    if (this.hasPlayedEntrance || prefersReducedMotion()) return
 
     const items = this.renderRoot?.querySelectorAll<HTMLElement>('.item')
     if (items && items.length > 0) {
+      this.hasPlayedEntrance = true
       subtleAnimate(
         items,
         { transform: ['translateY(6px)', 'translateY(0px)'], opacity: [0, 1] },

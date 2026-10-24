@@ -2,11 +2,6 @@ import { scaleLinear } from 'd3-scale'
 import { html, LitElement, type PropertyValues } from 'lit'
 import { normalizeTone, type SemanticTone } from '../../styles/semantic-tones'
 import { defineElement } from '../../utils/define-element'
-import {
-  CHART_EASE,
-  prefersReducedMotion,
-  subtleAnimate,
-} from '../../utils/motion'
 import { percentageBarStyles } from './Percentage.styles'
 
 export type PercentageBarSize = 'sm' | 'md' | 'lg'
@@ -77,21 +72,6 @@ export class MoulPercentageBar extends LitElement {
 
     if (changedProps.has('value')) {
       this.syncAria()
-    }
-  }
-
-  protected override updated(changedProps: PropertyValues): void {
-    super.updated(changedProps)
-
-    if (changedProps.has('value') && !prefersReducedMotion()) {
-      const fill = this.renderRoot?.querySelector('.bar-fill')
-      if (fill) {
-        subtleAnimate(
-          fill,
-          { opacity: [0.8, 1] },
-          { duration: 0.35, ease: CHART_EASE },
-        )
-      }
     }
   }
 

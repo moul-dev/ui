@@ -36,9 +36,8 @@ export class MoulCard extends LitElement {
     this.variant = 'flat'
     this.isInteractive = false
 
+    // Hover lift and press feedback live in the stylesheet, gated to fine pointers.
     this.pressController = new PressController(this, {
-      scaleOnPress: 0.985,
-      hoverLift: -2,
       disabled: () => !this.isInteractive,
     })
   }

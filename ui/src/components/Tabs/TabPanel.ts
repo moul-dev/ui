@@ -1,6 +1,6 @@
 import { html, LitElement } from 'lit'
 import { defineElement } from '../../utils/define-element'
-import { subtleAnimate } from '../../utils/motion'
+import { EASE_OUT, subtleAnimate } from '../../utils/motion'
 import { tabPanelStyles } from './Tabs.styles'
 
 export class MoulTabPanel extends LitElement {
@@ -26,7 +26,7 @@ export class MoulTabPanel extends LitElement {
   public reveal(): void {
     if (!this.hasAttribute('hidden')) return
     this.removeAttribute('hidden')
-    subtleAnimate(this, { opacity: [0, 1], y: [4, 0] }, { duration: 0.16 })
+    subtleAnimate(this, { opacity: [0, 1] }, { duration: 0.15, ease: EASE_OUT })
   }
 
   public hide(): void {

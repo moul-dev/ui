@@ -112,7 +112,7 @@ export const alertStyles = [
       color: var(--color-muted);
       cursor: pointer;
       transition:
-        transform 250ms var(--ease-out, ease-out),
+        transform var(--duration-fast, 150ms) var(--ease-out, ease-out),
         color 150ms var(--ease-out, ease-out),
         background-color 100ms var(--ease-out, ease-out),
         box-shadow 150ms var(--ease-out, ease-out);
@@ -134,7 +134,7 @@ export const alertStyles = [
     }
 
     .dismiss-button:active {
-      transform: scale(0.93);
+      transform: scale(0.95);
     }
 
     .dismiss-button:focus-visible {

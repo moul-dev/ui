@@ -1,11 +1,37 @@
 import { html, LitElement, type PropertyValues } from 'lit'
-import { OverlayPresenceController } from '../../controllers/overlay-presence.controller'
+import {
+  OverlayPresenceController,
+  type OverlaySetOpenOptions,
+} from '../../controllers/overlay-presence.controller'
 import { defineElement } from '../../utils/define-element'
 import { tooltipStyles } from './Tooltip.styles'
 
 export type TooltipPlacement = 'top' | 'bottom' | 'left' | 'right'
 
 let tooltipCount = 0
+
+/**
+ * Once the pointer has read one tooltip, its siblings (tooltips sharing a parent, like a
+ * toolbar's buttons) open instantly for a moment after it leaves: no delay, no entrance.
+ */
+const WARM_WINDOW_MS = 300
+let warmTooltip: { tooltip: HTMLElement; leftAt: number } | null = null
+
+function isWarmFor(tooltip: HTMLElement): boolean {
+  if (!warmTooltip?.tooltip.isConnected) return false
+  return (
+    warmTooltip.tooltip.parentElement === tooltip.parentElement &&
+    performance.now() - warmTooltip.leftAt < WARM_WINDOW_MS
+  )
+}
+
+function isKeyboardFocus(target: EventTarget | null): boolean {
+  try {
+    return target instanceof Element && target.matches(':focus-visible')
+  } catch {
+    return false
+  }
+}
 
 export class MoulTooltip extends LitElement {
   static override styles = tooltipStyles
@@ -99,13 +125,16 @@ export class MoulTooltip extends LitElement {
     }
   }
 
-  public async setOpen(nextOpen: boolean): Promise<void> {
+  public async setOpen(
+    nextOpen: boolean,
+    options: OverlaySetOpenOptions = {},
+  ): Promise<void> {
     this.clearHoverTimer()
     if (this.isOpen === nextOpen && this.overlayPresence.isOpen === nextOpen)
       return
 
     this.isOpen = nextOpen
-    await this.overlayPresence.setOpen(nextOpen)
+    await this.overlayPresence.setOpen(nextOpen, null, options)
     this.dispatchEvent(
       new CustomEvent('openchange', {
         bubbles: true,
@@ -117,7 +146,9 @@ export class MoulTooltip extends LitElement {
 
   private readonly handlePointerEnter = (): void => {
     this.clearHoverTimer()
-    if (this.delay <= 0) {
+    if (isWarmFor(this)) {
+      this.setOpen(true, { instant: true })
+    } else if (this.delay <= 0) {
       this.setOpen(true)
     } else {
       this.hoverTimer = setTimeout(() => {
@@ -128,13 +159,15 @@ export class MoulTooltip extends LitElement {
 
   private readonly handlePointerLeave = (): void => {
     this.clearHoverTimer()
+    // Only a tooltip the pointer actually read warms its neighbors.
+    if (this.isOpen) warmTooltip = { tooltip: this, leftAt: performance.now() }
     this.setOpen(false)
   }
 
-  private readonly handleFocusIn = (): void => {
-    // Immediate display on focus per OV-TLP-02
+  private readonly handleFocusIn = (e: FocusEvent): void => {
+    // Immediate display on focus per OV-TLP-02; keyboard focus skips the entrance too
     this.clearHoverTimer()
-    this.setOpen(true)
+    this.setOpen(true, { instant: isKeyboardFocus(e.target) })
   }
 
   private readonly handleFocusOut = (): void => {

@@ -124,8 +124,11 @@ export class MoulAreaChart extends LitElement {
     }
   }
 
+  /** Charts fade in once; later data updates (often live) re-render in place. */
+  private hasPlayedEntrance = false
+
   private animateAreaPaths(): void {
-    if (prefersReducedMotion()) return
+    if (this.hasPlayedEntrance || prefersReducedMotion()) return
 
     const areaPaths = this.renderRoot?.querySelectorAll(
       '.area-path, .chart-area',
@@ -133,6 +136,7 @@ export class MoulAreaChart extends LitElement {
     const strokePaths = this.renderRoot?.querySelectorAll(
       '.stroke-path, .area-stroke, .chart-line',
     )
+    if (areaPaths?.length || strokePaths?.length) this.hasPlayedEntrance = true
 
     if (areaPaths && areaPaths.length > 0) {
       subtleAnimate(

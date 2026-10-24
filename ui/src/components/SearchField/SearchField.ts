@@ -2,7 +2,7 @@ import { html, LitElement, nothing, type PropertyValues } from 'lit'
 import { FormInternalsController } from '../../controllers/form-internals.controller'
 import { defineElement } from '../../utils/define-element'
 import { clear, search } from '../../utils/icons'
-import { SPRING_GENTLE, SPRING_SNAPPY, subtleAnimate } from '../../utils/motion'
+import { EASE_OUT, subtleAnimate } from '../../utils/motion'
 import { warnMissingLabel } from '../../utils/warn-missing-label'
 import { searchFieldStyles } from './SearchField.styles'
 
@@ -141,8 +141,8 @@ export class MoulSearchField extends LitElement {
       if (clearBtn) {
         subtleAnimate(
           clearBtn,
-          { scale: [0.8, 1], opacity: [0, 1] },
-          SPRING_SNAPPY,
+          { transform: ['scale(0.9)', 'scale(1)'], opacity: [0, 1] },
+          { duration: 0.15, ease: EASE_OUT },
         )
       }
     }
@@ -153,7 +153,14 @@ export class MoulSearchField extends LitElement {
         '[part="error"]',
       ) as HTMLElement | null
       if (errorEl) {
-        subtleAnimate(errorEl, { y: [-4, 0], opacity: [0, 1] }, SPRING_GENTLE)
+        subtleAnimate(
+          errorEl,
+          {
+            transform: ['translateY(-4px)', 'translateY(0px)'],
+            opacity: [0, 1],
+          },
+          { duration: 0.2, ease: EASE_OUT },
+        )
       }
     }
   }
