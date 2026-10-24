@@ -2,6 +2,7 @@ import { execSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 import starlight from '@astrojs/starlight'
 import { defineConfig } from 'astro/config'
+import { COMPONENT_CATEGORIES } from './src/categories.ts'
 
 try {
   execSync('bun ../scripts/verify-no-react.ts docs', { stdio: 'inherit' })
@@ -43,6 +44,33 @@ export default defineConfig({
         },
       },
       customCss: ['./src/styles/global.css'],
+      components: {
+        SiteTitle: './src/components/SiteTitle.astro',
+      },
+      // Code blocks sit on white surfaces lifted by a soft shadow, like the
+      // sandbox's demo groups; colors come from the Moul token layer.
+      expressiveCode: {
+        styleOverrides: {
+          borderRadius: 'var(--radius-2xl)',
+          borderColor: 'transparent',
+        },
+        // Runs after Starlight's own per-theme frame colors, which would
+        // otherwise win over the global styleOverrides.
+        customizeTheme: (theme) => {
+          // Contrast checks run against the real surface color.
+          theme.bg = theme.type === 'dark' ? '#18181b' : '#ffffff'
+          theme.styleOverrides.frames = {
+            ...theme.styleOverrides.frames,
+            editorBackground: 'var(--color-surface)',
+            terminalBackground: 'var(--color-surface)',
+            terminalTitlebarBackground: 'var(--color-surface)',
+            editorTabBarBackground: 'var(--color-surface)',
+            editorActiveTabBackground: 'var(--color-surface)',
+            frameBoxShadowCssValue: 'var(--shadow-surface)',
+          }
+          return theme
+        },
+      },
       sidebar: [
         {
           label: 'Getting Started',
@@ -51,14 +79,11 @@ export default defineConfig({
             { label: 'LLM & Agent Guide', slug: 'docs/llms' },
           ],
         },
-        {
-          label: 'Components',
-          autogenerate: { directory: 'docs/components' },
-        },
-        {
-          label: 'Blocks',
-          autogenerate: { directory: 'docs/blocks' },
-        },
+        ...COMPONENT_CATEGORIES.map(({ label, slugs }) => ({
+          label,
+          badge: { text: String(slugs.length), variant: 'default' },
+          items: slugs,
+        })),
         {
           label: 'Changelog',
           items: [

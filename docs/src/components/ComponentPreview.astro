@@ -5,8 +5,12 @@ interface Props {
   align?: 'center' | 'start' | 'stretch'
   /** Stack children vertically instead of wrapping them in a row. */
   stack?: boolean
-  /** `mesh` paints a soft color field behind the canvas so glass variants have something to refract; default `plain`. */
-  backdrop?: 'mesh' | 'plain'
+  /**
+   * Canvas fill. `plain` (default) is the white surface; `page` is the
+   * off-white page, for components that are white surfaces themselves;
+   * `mesh` paints a soft color field so glass variants have something to refract.
+   */
+  backdrop?: 'mesh' | 'page' | 'plain'
   /** Minimum canvas height, e.g. `320px` for overlays and charts. */
   minHeight?: string
 }

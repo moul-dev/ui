@@ -1,0 +1,66 @@
+---
+// Overrides Starlight's SiteTitle with the sandbox's brand lockup: an accent
+// "M" tile beside the title and a muted subtitle. The tile follows
+// --brand-hue, so it retints live in Theme Studio.
+// This tsconfig doesn't load Starlight's locals types; name the fields used.
+const { siteTitle, siteTitleHref } = (
+  Astro.locals as {
+    starlightRoute: { siteTitle: string; siteTitleHref: string }
+  }
+).starlightRoute
+---
+
+<a href={siteTitleHref} class="site-title" translate="no">
+  <span class="brand-mark" aria-hidden="true">M</span>
+  <span class="brand-info">
+    <span class="brand-title">{siteTitle}</span>
+    <span class="brand-subtitle">Lit Web Components</span>
+  </span>
+</a>
+
+<style>
+  .site-title {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    color: var(--color-fg);
+    text-decoration: none;
+    white-space: nowrap;
+    border-radius: var(--radius-xl);
+  }
+
+  .site-title:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+
+  .brand-mark {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: var(--radius-lg);
+    background: var(--color-accent);
+    color: var(--color-accent-fg);
+    font-weight: 700;
+    font-size: 0.875rem;
+  }
+
+  .brand-info {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+  }
+
+  .brand-title {
+    font-size: var(--sl-text-sm);
+    font-weight: 600;
+  }
+
+  .brand-subtitle {
+    font-size: var(--sl-text-2xs);
+    color: var(--color-muted);
+  }
+</style>

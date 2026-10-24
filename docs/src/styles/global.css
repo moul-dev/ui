@@ -1,5 +1,5 @@
 @import "@moul-dev/ui/style.css";
-@import url("https://fonts.googleapis.com/css2?family=Kantumruy+Pro:ital,wght@0,100..700;1,100..700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&family=Inter:wght@400;500;600;700&family=Kantumruy+Pro:ital,wght@0,100..700;1,100..700&display=swap");
 
 :lang(km),
 :lang(km) * {
@@ -14,26 +14,336 @@
   color-scheme: dark;
 }
 
+/* ── Starlight → Moul token bridge ───────────────────────────────── */
+/* Starlight keeps separate dark (:root) and light ([data-theme=light])
+   palettes; Moul's tokens already resolve both through light-dark(), so one
+   mapping covers both. `html:root` outranks Starlight's selectors. */
+html:root,
+html:root[data-theme] {
+  --sl-font: "Google Sans", "Inter", var(--sl-font-system);
+  --sl-font-mono: var(--font-family-mono);
+
+  /* Gray ramp: "white" is the strongest text, "black" the page. */
+  --sl-color-white: var(--color-fg);
+  --sl-color-gray-1: var(--color-neutral-800);
+  --sl-color-gray-2: var(--color-neutral-700);
+  --sl-color-gray-3: var(--color-neutral-500);
+  --sl-color-gray-4: var(--color-neutral-400);
+  --sl-color-gray-5: var(--color-neutral-200);
+  --sl-color-gray-6: var(--color-neutral-100);
+  --sl-color-gray-7: var(--color-neutral-50);
+  --sl-color-black: var(--color-bg);
+
+  --sl-color-accent-low: var(--color-primary-100);
+  --sl-color-accent: var(--color-accent);
+  --sl-color-accent-high: var(--color-primary-700);
+
+  --sl-color-text: var(--color-neutral-700);
+  --sl-color-text-accent: var(--color-primary-600);
+  --sl-color-text-invert: var(--color-accent-fg);
+  --sl-color-bg: var(--color-bg);
+  --sl-color-bg-nav: color-mix(in oklab, var(--color-bg) 82%, transparent);
+  --sl-color-bg-sidebar: var(--color-surface);
+  --sl-color-bg-inline-code: var(--color-default);
+  --sl-color-bg-accent: var(--color-accent);
+  --sl-color-hairline-light: var(--color-separator);
+  --sl-color-hairline: var(--color-separator);
+  --sl-color-hairline-shade: var(--color-separator);
+  --sl-color-backdrop-overlay: var(--color-overlay);
+
+  /* Asides, badges and cards pick up Moul's semantic tones. */
+  --sl-color-blue-low: var(--color-accent-soft);
+  --sl-color-blue: var(--color-accent);
+  --sl-color-blue-high: var(--color-accent-soft-fg);
+  --sl-color-green-low: var(--color-success-soft);
+  --sl-color-green: var(--color-success);
+  --sl-color-green-high: var(--color-success-soft-fg);
+  --sl-color-orange-low: var(--color-warning-soft);
+  --sl-color-orange: var(--color-warning);
+  --sl-color-orange-high: var(--color-warning-soft-fg);
+  --sl-color-red-low: var(--color-danger-soft);
+  --sl-color-red: var(--color-danger);
+  --sl-color-red-high: var(--color-danger-soft-fg);
+  --sl-color-purple-low: color-mix(
+    in oklab,
+    var(--color-chart-4) 15%,
+    transparent
+  );
+  --sl-color-purple: var(--color-chart-4);
+  --sl-color-purple-high: color-mix(
+    in oklab,
+    var(--color-chart-4) 70%,
+    var(--color-fg) 30%
+  );
+
+  --sl-shadow-sm: var(--shadow-sm);
+  --sl-shadow-md: var(--shadow-overlay);
+  --sl-shadow-lg: var(--shadow-overlay);
+}
+
+/* ── Header ──────────────────────────────────────────────────────── */
+:root .header {
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  backdrop-filter: blur(16px) saturate(180%);
+}
+
+/* Search reads as a Moul field: white, borderless, hairline shadow. */
+:root site-search > button[data-open-modal] {
+  border: none;
+  border-radius: var(--radius-field);
+  background-color: var(--color-field);
+  box-shadow: var(--shadow-field);
+  color: var(--color-muted);
+}
+
+:root site-search > button[data-open-modal]:hover {
+  color: var(--color-fg);
+}
+
+:root site-search > button[data-open-modal] kbd {
+  background-color: var(--color-default);
+  border-radius: var(--radius-md);
+}
+
+/* ── Sidebar: the sandbox's framed aside ─────────────────────────── */
+/* On desktop the nav is a white card floating on the off-white page; rows
+   are rounded list items with a neutral wash for hover and the current page. */
+@media (min-width: 50rem) {
+  :root .sidebar-pane {
+    inset-block: calc(var(--sl-nav-height) + 0.75rem) 0.75rem;
+    inset-inline-start: 0.75rem;
+    width: calc(var(--sl-sidebar-width) - 0.75rem);
+    border: none;
+    border-radius: var(--radius-surface);
+    background-color: var(--color-surface);
+    box-shadow: var(--shadow-surface);
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-scrollbar-thumb) transparent;
+  }
+}
+
+:root .sidebar-content {
+  padding: 0.75rem 0.75rem 0;
+}
+
+:root .sidebar-content ul ul {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  margin-top: 0.125rem;
+}
+
+:root .sidebar-content ul ul li {
+  margin-inline-start: 0;
+  padding-inline-start: 0;
+  border-inline-start: none;
+}
+
+:root .sidebar-content .top-level > li + li {
+  margin-top: 0.75rem;
+}
+
+:root .sidebar-content summary {
+  min-height: 1.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius-xl);
+  transition: background-color var(--duration-fast) var(--ease-smooth);
+}
+
+@media (hover: hover) {
+  :root .sidebar-content summary:hover {
+    background-color: var(--color-default);
+  }
+}
+
+:root .sidebar-content summary:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: -2px;
+}
+
+:root .sidebar-content .group-label {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+:root .sidebar-content summary .large {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-muted);
+}
+
+:root .sidebar-content summary .caret {
+  --sl-icon-size: 0.875rem;
+  color: var(--color-muted);
+  margin-inline-start: 0.375rem;
+}
+
+/* Count badge: the sandbox's sidebar chip. */
+:root .sidebar-content .sl-badge {
+  min-width: 1.25rem;
+  padding: 0 0.5rem;
+  border: none;
+  border-radius: var(--radius-2xl);
+  background-color: var(--color-default);
+  color: var(--color-muted);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.25rem;
+  text-align: center;
+}
+
+:root .sidebar-content a {
+  display: flex;
+  align-items: center;
+  min-height: 2rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius-xl);
+  color: var(--sl-color-gray-2);
+  transition:
+    background-color var(--duration-fast) var(--ease-smooth),
+    color var(--duration-fast) var(--ease-smooth);
+}
+
+@media (hover: hover) {
+  :root .sidebar-content a:hover {
+    background-color: var(--color-default);
+    color: var(--color-fg);
+  }
+}
+
+:root .sidebar-content a:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: -2px;
+}
+
+:root .sidebar-content a[aria-current="page"],
+:root .sidebar-content a[aria-current="page"]:hover,
+:root .sidebar-content a[aria-current="page"]:focus {
+  background-color: var(--color-default);
+  color: var(--color-fg);
+  font-weight: var(--font-weight-medium);
+}
+
+/* ── Content ─────────────────────────────────────────────────────── */
+:root .content-panel h1#_top {
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+:root .sl-markdown-content :is(h2, h3):not(:where(.not-content *)) {
+  letter-spacing: -0.02em;
+}
+
+:root .sl-markdown-content code:not(:where(.not-content *)) {
+  border-radius: var(--radius-md);
+}
+
+/* API tables become white surfaces, like the sandbox's table card. */
+:root .sl-markdown-content table:not(:where(.not-content *)) {
+  border-radius: var(--radius-2xl);
+  background-color: var(--color-surface);
+  box-shadow: var(--shadow-surface);
+  font-size: var(--sl-text-sm);
+}
+
+:root .sl-markdown-content :is(th, td):not(:where(.not-content *)) {
+  padding: 0.625rem 1rem;
+  border-bottom-color: var(--color-separator);
+}
+
+:root .sl-markdown-content th:not(:where(.not-content *)) {
+  color: var(--color-muted);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+}
+
+:root .sl-markdown-content tbody tr:last-child td:not(:where(.not-content *)) {
+  border-bottom: none;
+}
+
+/* Keep identifiers whole: break type unions at spaces, never mid-name. */
+:root .sl-markdown-content td code:not(:where(.not-content *)) {
+  overflow-wrap: normal;
+}
+
+:root .sl-markdown-content td:first-child code:not(:where(.not-content *)) {
+  white-space: nowrap;
+}
+
+/* Starlight cards: white surfaces with tone-tinted icon chips. */
+:root .card.sl-flex {
+  border: none;
+  border-radius: var(--radius-surface);
+  background-color: var(--color-surface);
+  box-shadow: var(--shadow-surface);
+}
+
+:root .card.sl-flex .icon {
+  border: none;
+  border-radius: var(--radius-lg);
+  padding: 0.25em;
+  color: var(--sl-card-border);
+}
+
+/* Link buttons (hero actions) match <moul-button> variants. */
+:root .sl-link-button {
+  font-weight: var(--font-weight-medium);
+  transition:
+    background-color var(--duration-fast) var(--ease-smooth),
+    transform var(--duration-fast) var(--ease-out);
+}
+
+:root .sl-link-button:active {
+  transform: scale(var(--press-scale));
+}
+
+:root .sl-link-button.primary {
+  border-color: transparent;
+  background-color: var(--color-accent);
+  color: var(--color-accent-fg);
+}
+
+:root .sl-link-button.primary:hover {
+  background-color: var(--color-accent-hover);
+}
+
+:root .sl-link-button.secondary {
+  border-color: transparent;
+  background-color: var(--color-default);
+  color: var(--color-fg);
+}
+
+:root .sl-link-button.secondary:hover {
+  background-color: var(--color-default-hover);
+}
+
 /* ── Component Preview ───────────────────────────────────────────── */
+/* The sandbox's demo group: a white surface lifted by a soft shadow, with an
+   optional uppercase label. A code block that directly follows a preview
+   attaches to it, so example and source read as one card. */
 .moul-preview {
-  --preview-radius: var(--radius-surface, 1.5rem);
   margin: 1.5rem 0;
-  border: 1px solid var(--color-separator);
-  border-radius: var(--preview-radius);
+  border-radius: var(--radius-surface);
   overflow: hidden;
-  background: var(--color-bg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-surface);
   isolation: isolate;
-  font-family: var(--sl-font-system, system-ui), sans-serif;
+  font-family: var(--__sl-font);
   color: var(--color-fg);
 }
 
 .moul-preview-header {
-  padding: 0.75rem 1.125rem;
-  font-size: 0.8125rem;
-  font-weight: 500;
-  border-bottom: 1px solid var(--color-separator);
-  background: var(--color-surface);
-  color: var(--color-muted);
+  padding: 1rem 1.25rem 0;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-fg-subtle);
 }
 
 .moul-preview-canvas {
@@ -47,6 +357,12 @@
   min-height: 160px;
   font-size: 0.9375rem;
   line-height: 1.5;
+}
+
+/* backdrop="page" sits components on the off-white page, for surfaces such as
+   cards that are themselves white. */
+.moul-preview[data-backdrop="page"] .moul-preview-canvas {
+  background: var(--color-bg);
 }
 
 /* Opt-in color field (backdrop="mesh") so glass variants have something to refract. */
@@ -94,6 +410,31 @@
 /* Hide elements until Lit upgrades them so previews never flash unstyled light DOM. */
 .moul-preview-canvas :not(:defined) {
   visibility: hidden;
+}
+
+/* Attach the following code block. In dev, Astro renders the preview's
+   <script> between the two, so allow for it. */
+.moul-preview:has(+ .expressive-code, + script + .expressive-code) {
+  margin-bottom: 0;
+  border-end-start-radius: 0;
+  border-end-end-radius: 0;
+}
+
+:root
+  .sl-markdown-content
+  :is(.moul-preview, .moul-preview + script)
+  + .expressive-code {
+  margin-top: 0;
+}
+
+:is(.moul-preview, .moul-preview + script) + .expressive-code .frame,
+:is(.moul-preview, .moul-preview + script) + .expressive-code .frame pre {
+  border-start-start-radius: 0;
+  border-start-end-radius: 0;
+}
+
+:is(.moul-preview, .moul-preview + script) + .expressive-code .frame pre {
+  border-top-color: var(--color-separator);
 }
 
 /* Helpers used inside preview markup */

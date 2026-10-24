@@ -11,7 +11,7 @@ hero:
       variant: primary
     - text: Theme Studio
       link: /theme
-      icon: seti:css
+      icon: pencil
       variant: secondary
     - text: GitHub
       link: https://github.com/moul-dev/ui
@@ -20,6 +20,13 @@ hero:
 ---
 
 import { Card, CardGrid } from '@astrojs/starlight/components';
+import CategoryShowcase from '@/components/CategoryShowcase.astro';
+
+## Components
+
+Every element, grouped by what it does. The tiles are live: press, type, and drag.
+
+<CategoryShowcase />
 
 ## Architectural Principles
 
