@@ -1,14 +1,14 @@
 ---
 title: Introduction
-description: Meet Moul UI. A standards-first, zero-React Web Components library built on Lit 3, CSS Tokens, and Native Browser APIs.
+description: Meet Moul UI, a library of accessible, themeable Web Components built on Lit 3, CSS tokens, and native browser APIs.
 ---
 
 import { Card, CardGrid, Tabs, TabItem, Steps } from '@astrojs/starlight/components';
 import ComponentPreview from '@/components/ComponentPreview.astro';
 
-Moul UI is a modular Web Components library designed for engineers who want a modern, consistent, and highly accessible baseline across any web stack.
+Moul UI is a library of accessible Web Components for teams that want one consistent, modern UI baseline across every web stack.
 
-Built on **Lit 3**, **Shadow DOM**, and a runtime-tunable **CSS Design Token Layer (`light-dark()` + `oklch()`)**, Moul UI delivers beautiful default styles with zero React runtime overhead.
+Each component is a standard custom element built on **Lit 3** and **Shadow DOM**, styled by a runtime-tunable **CSS design token layer (`light-dark()` + `oklch()`)**. Register the elements once, then use them anywhere HTML runs.
 
 ---
 
@@ -16,13 +16,16 @@ Built on **Lit 3**, **Shadow DOM**, and a runtime-tunable **CSS Design Token Lay
 
 <CardGrid>
   <Card title="Framework Agnostic" icon="puzzle">
-    Use seamlessly in Astro, Next.js, Remix, Svelte, Vue, or static HTML without adapter layers or hydration penalties.
+    Use the same custom elements in Astro, Next.js, Remix, Svelte, Vue, or static HTML, with no wrappers or adapter layers.
   </Card>
-  <Card title="Zero React Overhead" icon="rocket">
-    Shadow DOM encapsulation ensures component styles and internals never leak into or conflict with host application styles.
+  <Card title="Encapsulated, Themeable Styles" icon="pencil">
+    Shadow DOM keeps each component's styles and internals isolated from your app, while CSS tokens let you retheme everything from the outside.
   </Card>
   <Card title="Standards-First APIs" icon="laptop">
     Built directly on native browser primitives including `<dialog>`, Popover API, CSS Anchor Positioning, and `ElementInternals`.
+  </Card>
+  <Card title="Native Form Support" icon="approve-check">
+    Form controls are form-associated through `ElementInternals`, so they submit their values and report validity inside a regular `<form>`.
   </Card>
 </CardGrid>
 

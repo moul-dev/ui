@@ -1,14 +1,14 @@
 ---
 title: សេចក្តីផ្តើម (Introduction)
-description: ស្វែងយល់ពី Moul UI។ បណ្ណាល័យ Web Components ដោយគ្មាន React បង្កើតឡើងដោយ Lit 3 និង OKLCH CSS Tokens
+description: ស្វែងយល់ពី Moul UI បណ្ណាល័យ Web Components ដែលងាយស្រួលប្រើ (Accessible) និងអាចប្ដូរ Theme បាន បង្កើតឡើងដោយ Lit 3, CSS Tokens និង Native Browser APIs។
 ---
 
 import { Card, CardGrid, Tabs, TabItem, Steps } from '@astrojs/starlight/components';
 import ComponentPreview from '@/components/ComponentPreview.astro';
 
-Moul UI គឺជាបណ្ណាល័យ Web Components ទំនើបដែលផ្អែកលើស្តង់ដារវេប សម្រាប់វិស្វករកម្មវិធីដែលចង់បានសមាសភាគ UI ប្រកបដោយភាពងាយស្រួលប្រើប្រាស់ (Accessibility) និងដំណើរការលឿន។
+Moul UI គឺជាបណ្ណាល័យ Web Components ដែលងាយស្រួលប្រើ (Accessible) សម្រាប់ក្រុមការងារដែលចង់បាន UI ទំនើប និងស្របគ្នាតែមួយ នៅលើគ្រប់ Web Stack។
 
-បង្កើតឡើងលើ **Lit 3**, **Shadow DOM**, និង **CSS Design Token Layer (`light-dark()` + `oklch()`)**។
+Component នីមួយៗគឺជា Custom Element ស្តង់ដារ បង្កើតឡើងលើ **Lit 3** និង **Shadow DOM** ហើយរចនាដោយ **CSS Design Token Layer (`light-dark()` + `oklch()`)** ដែលអាចកែសម្រួលបានភ្លាមៗ។ គ្រាន់តែ Register Elements ម្ដង រួចប្រើវាបានគ្រប់ទីកន្លែងដែល HTML ដំណើរការ។
 
 ---
 
@@ -16,13 +16,16 @@ Moul UI គឺជាបណ្ណាល័យ Web Components ទំនើបដ�
 
 <CardGrid>
   <Card title="មិនអាស្រ័យលើ Framework" icon="puzzle">
-    អាចប្រើប្រាស់បានជាមួយ Astro, Next.js, Remix, Svelte, Vue ឬ HTML ធម្មតា។
+    ប្រើ Custom Elements ដដែលនៅក្នុង Astro, Next.js, Remix, Svelte, Vue ឬ HTML ធម្មតា ដោយមិនចាំបាច់មាន Wrapper ឬ Adapter ឡើយ។
   </Card>
-  <Card title="គ្មានបន្ទុក React Runtime" icon="rocket">
-    ប្រើប្រាស់ Shadow DOM ដែលជួយការពារកុំឱ្យ styles ជាន់គ្នាជាមួយកម្មវិធីរបស់អ្នក។
+  <Card title="Styles ដាច់ដោយឡែក និងប្ដូរ Theme បាន" icon="pencil">
+    Shadow DOM រក្សា Styles និងផ្នែកខាងក្នុងរបស់ Component នីមួយៗឱ្យដាច់ពីកម្មវិធីរបស់អ្នក ខណៈ CSS Tokens អនុញ្ញាតឱ្យអ្នកប្ដូរ Theme ទាំងមូលពីខាងក្រៅ។
   </Card>
   <Card title="ស្តង់ដារ Browser សុទ្ធ" icon="laptop">
     ដំណើរការដោយ native primitives រួមមាន `<dialog>`, Popover API, CSS Anchor Positioning, និង `ElementInternals`។
+  </Card>
+  <Card title="គាំទ្រ Native Forms" icon="approve-check">
+    Form Controls ភ្ជាប់ជាមួយ Form តាមរយៈ `ElementInternals` ដូច្នេះវាបញ្ជូនតម្លៃ និងរាយការណ៍ Validity នៅក្នុង `<form>` ធម្មតា។
   </Card>
 </CardGrid>
 
