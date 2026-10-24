@@ -1,13 +1,13 @@
 /**
  * Component categories, in the order and with the names the sandbox
- * (`ui/src/sandbox.ts`) uses. Drives the docs sidebar and the home-page
- * showcase so both stay in step with the kitchen sink.
+ * (`ui/src/sandbox.ts`) uses. Drives the docs sidebar so it stays in step
+ * with the kitchen sink.
  *
  * Slugs are locale-free; Starlight resolves them to the Khmer page under `/km/`.
  */
 
 export interface ComponentCategory {
-  /** Anchor id for the home-page showcase, matching the sandbox section id. */
+  /** The sandbox section id. */
   key: string
   label: string
   slugs: string[]

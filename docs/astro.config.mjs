@@ -45,6 +45,7 @@ export default defineConfig({
       },
       customCss: ['./src/styles/global.css'],
       components: {
+        Hero: './src/components/Hero.astro',
         SiteTitle: './src/components/SiteTitle.astro',
       },
       // Code blocks sit on white surfaces lifted by a soft shadow, like the

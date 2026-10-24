@@ -1,0 +1,117 @@
+---
+// Home-page "why" section: an eyebrow, heading and lead over a two-column
+// grid of <FeatureCard>s passed as children.
+interface Props {
+  eyebrow: string
+  title: string
+  lead?: string
+}
+
+const { eyebrow, title, lead } = Astro.props
+---
+
+<section class="features not-content">
+  <header class="features-header">
+    <p class="features-eyebrow">{eyebrow}</p>
+    <h2 class="features-title">{title}</h2>
+    {lead && <p class="features-lead">{lead}</p>}
+  </header>
+  <div class="features-grid">
+    <slot />
+  </div>
+</section>
+
+<style>
+  .features {
+    position: relative;
+    isolation: isolate;
+    max-width: 64rem;
+    margin: 0 auto;
+    padding-block: clamp(3rem, 2rem + 4vw, 5rem) clamp(4rem, 3rem + 5vw, 7rem);
+    border-top: 1px solid
+      color-mix(in oklab, var(--color-separator) 50%, transparent);
+  }
+
+  /* Soft brand glow drifting off the lower right, as on the hero. */
+  .features::after {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    right: -20rem;
+    bottom: -8rem;
+    width: min(56rem, 100vw);
+    aspect-ratio: 1155 / 678;
+    background: linear-gradient(
+      to top right,
+      oklch(
+        0.78 calc(0.14 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250) /
+          0.08
+      ),
+      oklch(
+        0.7 calc(0.12 * var(--brand-chroma-multiplier, 1))
+          calc(var(--brand-hue, 250) - 15) / 0.06
+      )
+    );
+    filter: blur(64px);
+    pointer-events: none;
+  }
+
+  .features-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 3.5rem;
+    text-align: center;
+  }
+
+  .features-eyebrow {
+    margin: 0;
+    color: light-dark(
+      oklch(
+        0.55 calc(0.16 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)
+      ),
+      oklch(
+        0.72 calc(0.14 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)
+      )
+    );
+    font-family: var(--font-family-mono);
+    font-size: var(--sl-text-sm);
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .features-title {
+    margin: 0;
+    color: var(--color-fg);
+    font-size: var(--sl-text-3xl);
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    line-height: 1.2;
+  }
+
+  .features-title:lang(km) {
+    letter-spacing: 0;
+    line-height: 1.5;
+  }
+
+  .features-lead {
+    max-width: 42rem;
+    margin: 0;
+    color: var(--color-muted);
+    font-size: var(--sl-text-base);
+    line-height: 1.7;
+  }
+
+  .features-grid {
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  @media (min-width: 40rem) {
+    .features-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>

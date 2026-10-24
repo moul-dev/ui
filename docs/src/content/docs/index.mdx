@@ -2,8 +2,10 @@
 title: Moul UI
 description: Standards-first, zero-React Web Components crafted with Lit 3, CSS tokens, and native browser APIs.
 template: splash
+heroBadge: Now available
 hero:
-  tagline: Standards-first, zero-React Web Components crafted with Lit 3, OKLCH design tokens, and native browser APIs.
+  title: 'Engineered for flow. <span>Crafted to scale.</span>'
+  tagline: 'Standards-first Web Components built on <strong>Lit 3</strong> and native browser APIs. Accessible, framework-agnostic, and made for <a href="https://moul.dev">moul.dev</a>.'
   actions:
     - text: Get Started
       link: /docs
@@ -15,32 +17,28 @@ hero:
       variant: secondary
     - text: GitHub
       link: https://github.com/moul-dev/ui
-      icon: external
+      icon: github
       variant: minimal
 ---
 
-import { Card, CardGrid } from '@astrojs/starlight/components';
-import CategoryShowcase from '@/components/CategoryShowcase.astro';
+import FeatureCard from '@/components/FeatureCard.astro';
+import Features from '@/components/Features.astro';
 
-## Components
-
-Every element, grouped by what it does. The tiles are live: press, type, and drag.
-
-<CategoryShowcase />
-
-## Architectural Principles
-
-<CardGrid stagger>
-  <Card title="Zero React, 100% Standards" icon="open-book">
+<Features
+  eyebrow="Why Moul UI"
+  title="Built different."
+  lead="The developer experience of a premium component library with the performance and accessibility of a custom-built solution."
+>
+  <FeatureCard title="Zero React, 100% standards" icon="code">
     Engineered with **Lit 3** and standard Web Components (`Shadow DOM`, `Custom Elements`). Runs in any framework—or none at all.
-  </Card>
-  <Card title="Perceptual CSS Tokens" icon="pencil">
+  </FeatureCard>
+  <FeatureCard title="Perceptual CSS tokens" icon="droplet">
     Powered by `light-dark()` and OKLCH color spaces. Tune hue, chroma, radius, and density factors dynamically at runtime.
-  </Card>
-  <Card title="Native Browser Primitives" icon="setting">
-    Leverages `<dialog>`, Popover API, CSS Anchor Positioning, and `ElementInternals` form-associated elements for zero bundle bloat.
-  </Card>
-  <Card title="Bilingual & Khmer Typography" icon="translate">
+  </FeatureCard>
+  <FeatureCard title="Native browser primitives" icon="zap">
+    Leverages `<dialog>`, the Popover API, CSS Anchor Positioning, and `ElementInternals` form-associated elements for zero bundle bloat.
+  </FeatureCard>
+  <FeatureCard title="Bilingual & Khmer typography" icon="languages">
     First-class internationalization for English and Khmer (`ភាសាខ្មែរ`) with proportional typography powered by **Kantumruy Pro**.
-  </Card>
-</CardGrid>
+  </FeatureCard>
+</Features>

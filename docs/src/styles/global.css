@@ -322,6 +322,13 @@ html:root[data-theme] {
   background-color: var(--color-default-hover);
 }
 
+/* ── Home ────────────────────────────────────────────────────────── */
+/* The hero backdrop and section glows bleed past the content column; clip
+   them at the viewport edge instead of scrolling sideways. */
+:root[data-has-hero] .main-frame {
+  overflow-x: clip;
+}
+
 /* ── Component Preview ───────────────────────────────────────────── */
 /* The sandbox's demo group: a white surface lifted by a soft shadow, with an
    optional uppercase label. A code block that directly follows a preview

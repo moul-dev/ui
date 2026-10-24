@@ -2,8 +2,10 @@
 title: Moul UI
 description: បណ្ណាល័យ Web Components ដោយគ្មាន React បង្កើតឡើងដោយ Lit 3 និង OKLCH CSS Tokens
 template: splash
+heroBadge: អាចប្រើប្រាស់បានហើយ
 hero:
-  tagline: រចនាឡើងសម្រាប់ភាពរលូន — Web Components បង្កើតឡើងដោយ Lit 3, OKLCH design tokens និង Native Browser APIs។
+  title: 'រចនាឡើងសម្រាប់ភាពរលូន <span>ផ្ចិតផ្ចង់ដើម្បីភាពរីកចម្រើន</span>'
+  tagline: 'Web Components ស្តង់ដារ បង្កើតឡើងដោយ <strong>Lit 3</strong> និង Native Browser APIs។ ងាយស្រួលប្រើប្រាស់ (Accessible) ដំណើរការលើគ្រប់ Framework និងរចនាឡើងសម្រាប់ <a href="https://moul.dev">moul.dev</a>។'
   actions:
     - text: ចាប់ផ្តើម
       link: /km/docs
@@ -15,30 +17,28 @@ hero:
       variant: secondary
     - text: GitHub
       link: https://github.com/moul-dev/ui
-      icon: external
+      icon: github
       variant: minimal
 ---
 
-import { Card, CardGrid } from '@astrojs/starlight/components';
-import CategoryShowcase from '@/components/CategoryShowcase.astro';
+import FeatureCard from '@/components/FeatureCard.astro';
+import Features from '@/components/Features.astro';
 
-## សមាសភាគ (Components)
-
-<CategoryShowcase />
-
-## គោលការណ៍រចនាសម្ព័ន្ធ
-
-<CardGrid stagger>
-  <Card title="គ្មាន React, ស្តង់ដារសុទ្ធ ១០០%" icon="open-book">
+<Features
+  eyebrow="ហេតុអ្វីជ្រើសរើស Moul UI"
+  title="រចនាសម្ព័ន្ធខុសប្លែកពីគេ"
+  lead="ផ្ដល់ជូននូវបទពិសោធន៍អភិវឌ្ឍន៍ដ៏រលូននៃបណ្ណាល័យសមាសភាគកម្រិតខ្ពស់ រួមជាមួយនឹងល្បឿន និងភាពងាយស្រួលប្រើប្រាស់នៃដំណោះស្រាយដែលបង្កើតឡើងដោយផ្ទាល់ដៃ។"
+>
+  <FeatureCard title="គ្មាន React, ស្តង់ដារសុទ្ធ ១០០%" icon="code">
     បង្កើតឡើងដោយ **Lit 3** និងស្តង់ដារ Web Components (`Shadow DOM`, `Custom Elements`) ដំណើរការលើគ្រប់ Framework ទាំងអស់។
-  </Card>
-  <Card title="Perceptual CSS Tokens" icon="pencil">
+  </FeatureCard>
+  <FeatureCard title="Perceptual CSS Tokens" icon="droplet">
     ដំណើរការដោយ `light-dark()` និង OKLCH color spaces អាចកែសម្រួល hue, chroma, radius, និង density ភ្លាមៗ។
-  </Card>
-  <Card title="Native Browser Primitives" icon="setting">
+  </FeatureCard>
+  <FeatureCard title="Native Browser Primitives" icon="zap">
     ប្រើប្រាស់ `<dialog>`, Popover API, CSS Anchor Positioning, និង `ElementInternals` ដោយផ្ទាល់។
-  </Card>
-  <Card title="គាំទ្រភាសាខ្មែរពេញលេញ" icon="translate">
+  </FeatureCard>
+  <FeatureCard title="គាំទ្រភាសាខ្មែរពេញលេញ" icon="languages">
     រចនាឡើងជាមួយពុម្ពអក្សរ **Kantumruy Pro** សម្រាប់គម្លាតបន្ទាត់ និងជើងអក្សរខ្មែរយ៉ាងច្បាស់លាស់។
-  </Card>
-</CardGrid>
+  </FeatureCard>
+</Features>
