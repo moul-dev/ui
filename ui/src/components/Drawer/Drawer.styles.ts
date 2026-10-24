@@ -15,7 +15,12 @@ export const drawerStyles = [
       padding: 0;
       border: none;
       background: transparent;
-      overflow: hidden;
+      /*
+       * clip, not hidden: a hidden box is still a scroll container, so focusing
+       * a control in a panel that is mid-slide scrolled the dialog toward it and
+       * the panel overshot as that scroll unwound (right and bottom placements).
+       */
+      overflow: clip;
       margin: 0;
       width: 100vw;
       height: 100vh;

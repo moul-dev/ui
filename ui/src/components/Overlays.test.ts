@@ -13,6 +13,7 @@ import type {
   MoulCommandPalette,
 } from './CommandPalette/CommandPalette'
 import type { MoulDrawer } from './Drawer/Drawer'
+import { drawerStyles } from './Drawer/Drawer.styles'
 import type { MoulModal } from './Modal/Modal'
 import type { MoulPopover } from './Popover/Popover'
 import type { MoulTooltip } from './Tooltip/Tooltip'
@@ -233,6 +234,19 @@ describe('Overlay Components (Phase 6)', () => {
 
       await simulateKey(drawer, 'Escape')
       expect(drawer.isOpen).toBe(false)
+    })
+
+    it('OV-DRW-02: Dialog clips without becoming a scroll container', () => {
+      // overflow: hidden let focus() scroll the dialog toward a control in a
+      // panel still sliding in from the right or bottom, which read as a bounce.
+      const stylesText = drawerStyles
+        .map((s: any) => s.cssText ?? String(s))
+        .join('\n')
+      const dialogRule = stylesText.match(/(?:^|\n)\s*dialog\s*\{[^}]*\}/)?.[0]
+
+      expect(dialogRule).toBeDefined()
+      expect(dialogRule).toMatch(/overflow:\s*clip/)
+      expect(dialogRule).not.toMatch(/overflow:\s*hidden/)
     })
   })
 

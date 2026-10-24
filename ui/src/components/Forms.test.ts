@@ -1,6 +1,7 @@
 import { html, type LitElement, render } from 'lit'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
+import './Button/Button'
 import './Form/Form'
 import './TextField/TextField'
 import './NumberField/NumberField'
@@ -197,6 +198,145 @@ describe('Input & Form Components (Phase 7)', () => {
 
       form.submit()
       expect(submitFired).toBe(true)
+    })
+
+    it('FRM-FRM-02: <moul-button type="submit"> and type="reset" drive the enclosing <moul-form>', async () => {
+      const form = await mount<MoulForm>(
+        html`
+          <moul-form>
+            <moul-text-field name="username" value="phearak"></moul-text-field>
+            <moul-button type="submit">Save</moul-button>
+            <moul-button type="reset">Clear</moul-button>
+          </moul-form>
+        `,
+      )
+
+      const submissions: FormData[] = []
+      form.addEventListener('submit', (e: Event) => {
+        if (e instanceof CustomEvent) submissions.push(e.detail.formData)
+      })
+      let resetCount = 0
+      form.addEventListener('reset', () => {
+        resetCount++
+      })
+
+      const [submitBtn, resetBtn] = Array.from(
+        form.querySelectorAll<HTMLElement>('moul-button'),
+      )
+
+      await simulatePress(submitBtn)
+      expect(submissions).toHaveLength(1)
+      expect(submissions[0].get('username')).toBe('phearak')
+
+      await simulatePress(resetBtn)
+      expect(resetCount).toBe(1)
+      expect(form.querySelector<MoulTextField>('moul-text-field')?.value).toBe(
+        '',
+      )
+    })
+
+    it('FRM-FRM-02b: keyboard activation of <moul-button type="submit"> submits once', async () => {
+      const form = await mount<MoulForm>(
+        html`
+          <moul-form>
+            <moul-text-field name="username" value="phearak"></moul-text-field>
+            <moul-button type="submit">Save</moul-button>
+          </moul-form>
+        `,
+      )
+
+      let submitCount = 0
+      form.addEventListener('submit', () => {
+        submitCount++
+      })
+      const submitBtn = form.querySelector<HTMLElement>('moul-button')!
+      const key = (type: string, key: string) =>
+        submitBtn.dispatchEvent(
+          new KeyboardEvent(type, { key, bubbles: true, cancelable: true }),
+        )
+
+      // Browsers activate a focused <button> with a click: on keydown for
+      // Enter, on keyup for Space. Replay both orders.
+      key('keydown', 'Enter')
+      submitBtn.click()
+      key('keyup', 'Enter')
+      await awaitNestedUpdates(form)
+      expect(submitCount).toBe(1)
+
+      key('keydown', ' ')
+      key('keyup', ' ')
+      submitBtn.click()
+      await awaitNestedUpdates(form)
+      expect(submitCount).toBe(2)
+    })
+
+    it('FRM-FRM-03: FormData includes <moul-select> and <moul-combobox> values', async () => {
+      const form = await mount<MoulForm>(
+        html`
+          <moul-form>
+            <moul-select name="role" selected-key="editor">
+              <moul-select-item key="viewer">Viewer</moul-select-item>
+              <moul-select-item key="editor">Editor</moul-select-item>
+            </moul-select>
+            <moul-select name="region">
+              <moul-select-item key="ap">Asia Pacific</moul-select-item>
+            </moul-select>
+            <moul-combobox name="country" selected-key="kh">
+              <moul-combobox-item key="kh">Cambodia</moul-combobox-item>
+            </moul-combobox>
+            <moul-combobox name="city" input-value="Phnom Penh"></moul-combobox>
+          </moul-form>
+        `,
+      )
+
+      let submitted: FormData | null = null
+      form.addEventListener('submit', (e: Event) => {
+        if (e instanceof CustomEvent) submitted = e.detail.formData
+      })
+      form.submit()
+
+      expect(submitted).not.toBeNull()
+      expect(submitted!.get('role')).toBe('editor')
+      expect(submitted!.get('country')).toBe('kh')
+      // Free text typed into a combobox submits like its native form value.
+      expect(submitted!.get('city')).toBe('Phnom Penh')
+      // An empty selection is omitted, like an unselected native <select> option.
+      expect(submitted!.has('region')).toBe(false)
+    })
+
+    it('FRM-FRM-04: is-required is enforced even when a value is cleared in the same tick as submit', async () => {
+      const form = await mount<MoulForm>(
+        html`
+          <moul-form>
+            <moul-text-field name="username" value="phearak" is-required></moul-text-field>
+            <moul-select name="role" selected-key="editor" is-required>
+              <moul-select-item key="editor">Editor</moul-select-item>
+            </moul-select>
+          </moul-form>
+        `,
+      )
+
+      let invalidErrors: Record<string, string> | null = null
+      form.addEventListener('invalid', (e: Event) => {
+        invalidErrors = (e as CustomEvent).detail.errors
+      })
+      let submitFired = false
+      form.addEventListener('submit', () => {
+        submitFired = true
+      })
+
+      const field = form.querySelector<MoulTextField>('moul-text-field')!
+      const select = form.querySelector<MoulSelect>('moul-select')!
+
+      // No await between the change and the submit: Lit has not re-rendered yet.
+      field.value = ''
+      select.selectedKey = ''
+      expect(form.checkValidity()).toBe(false)
+
+      form.submit()
+      expect(submitFired).toBe(false)
+      expect(invalidErrors).not.toBeNull()
+      expect(Object.keys(invalidErrors!)).toEqual(['username', 'role'])
     })
   })
 

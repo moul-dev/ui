@@ -88,6 +88,13 @@ export class MoulForm extends LitElement {
         if ((ctrl as HTMLInputElement).checked) {
           formData.append(name, (ctrl as HTMLInputElement).value)
         }
+      } else if ('selectedKey' in el) {
+        // Select and ComboBox hold their choice in `selectedKey`, not `value`;
+        // a ComboBox falls back to typed text, matching its native form value.
+        const selected = el.selectedKey || el.inputValue
+        if (selected) {
+          formData.append(name, String(selected))
+        }
       } else if (Array.isArray(el.value)) {
         for (const item of el.value) {
           formData.append(name, String(item))
@@ -104,9 +111,27 @@ export class MoulForm extends LitElement {
     return formData
   }
 
+  /**
+   * Controls recompute validity during Lit's async update, so a value set in
+   * the same tick as a submit would be validated against the previous value.
+   * Flushing pending updates keeps validation in step with getFormData().
+   */
+  private settleControls(controls: HTMLElement[]): void {
+    for (const ctrl of controls) {
+      const anyCtrl = ctrl as any
+      if (
+        anyCtrl.isUpdatePending &&
+        typeof anyCtrl.performUpdate === 'function'
+      ) {
+        anyCtrl.performUpdate()
+      }
+    }
+  }
+
   public checkValidity(): boolean {
     if (this.novalidate) return true
     const controls = this.getControls()
+    this.settleControls(controls)
     let valid = true
 
     for (const ctrl of controls) {
@@ -123,6 +148,7 @@ export class MoulForm extends LitElement {
   public reportValidity(): boolean {
     if (this.novalidate) return true
     const controls = this.getControls()
+    this.settleControls(controls)
     let valid = true
 
     for (const ctrl of controls) {
@@ -157,6 +183,7 @@ export class MoulForm extends LitElement {
       let isValid = true
 
       const controls = this.getControls()
+      this.settleControls(controls)
       for (const ctrl of controls) {
         const anyCtrl = ctrl as any
         let ctrlValid = true

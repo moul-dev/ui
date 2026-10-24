@@ -3,11 +3,11 @@
  *
  * Demonstrates all 6 component categories within a top-level <moul-sidebar> shell:
  * 1. Actions (Button, ButtonGroup, ToggleButton, ToggleButtonGroup)
- * 2. Surfaces & Feedback (Card, Alert, Badge, Avatar, Table, Toast, ProgressBar, Spinner, Skeleton, Kbd)
- * 3. Overlays & Navigation (Modal, AlertDialog, Popover, Tooltip, Tabs, Pagination, Breadcrumbs, Link)
- * 4. Forms & Inputs (TextField, NumberField, SearchField, Select, ComboBox, Switch, Slider, Checkbox, RadioGroup, DatePicker)
+ * 2. Surfaces & Feedback (Card, Alert, Badge, Avatar, Typography, Separator, Kbd, Spinner, Skeleton, ProgressBar, TagGroup, EmptyState, Table, Toast)
+ * 3. Overlays & Navigation (Modal, AlertDialog, Drawer, Popover, Tooltip, CommandPalette, Tabs, Breadcrumbs, Pagination, Link)
+ * 4. Forms & Inputs (Form, TextField, TextArea, NumberField, SearchField, InputOTP, Select, ComboBox, Switch, Slider, Checkbox, CheckboxGroup, RadioGroup, DatePicker, Calendar)
  * 5. Charts & Analytics (LineChart, AreaChart, BarChart, DoughnutChart, Stat, PercentageBar, PercentageCircle, TopList)
- * 6. Composite Blocks (Sidebar, Logs, LogsViewer)
+ * 6. Composite Blocks (Sidebar, SidebarUser, Logs, LogsViewer)
  *
  * Supports interactive light/dark theme toggling via document.documentElement.dataset.theme.
  * Zero React or JSX dependencies.
@@ -23,7 +23,12 @@ import {
 } from 'lit'
 import { defineElement } from './utils/define-element'
 import './index'
-import { SERVER_LOG_RAW, toastQueue } from './index'
+import {
+  type CommandPaletteItemData,
+  SERVER_LOG_RAW,
+  SERVER_LOGS,
+  toastQueue,
+} from './index'
 
 interface TableColumnItem {
   key: string
@@ -86,6 +91,30 @@ const TOP_LIST_DATA = [
   { label: 'Safari', value: 19 },
   { label: 'Firefox', value: 10 },
   { label: 'Edge', value: 6 },
+]
+
+const COMMAND_ITEMS: CommandPaletteItemData[] = [
+  { id: 'new', title: 'New project', group: 'Create', shortcut: '⌘N' },
+  { id: 'invite', title: 'Invite teammate', group: 'Create' },
+  {
+    id: 'deploy',
+    title: 'Deploy to production',
+    group: 'Actions',
+    description: 'Promote the latest preview',
+  },
+  { id: 'logs', title: 'Open logs', group: 'Actions', shortcut: '⌘L' },
+  { id: 'theme', title: 'Toggle theme', group: 'Preferences' },
+]
+
+type ToastPlacement = typeof toastQueue.placement
+
+const TOAST_PLACEMENTS: ToastPlacement[] = [
+  'top-start',
+  'top-center',
+  'top-end',
+  'bottom-start',
+  'bottom-center',
+  'bottom-end',
 ]
 
 export class MoulSandbox extends LitElement {
@@ -238,6 +267,8 @@ export class MoulSandbox extends LitElement {
     isPending: { type: Boolean, state: true },
     isModalOpen: { type: Boolean, state: true },
     isAlertModalOpen: { type: Boolean, state: true },
+    isCommandPaletteOpen: { type: Boolean, state: true },
+    activeDrawer: { type: String, state: true },
     toggleKey: { type: String, state: true },
     sliderValue: { type: Number, state: true },
     switchValue: { type: Boolean, state: true },
@@ -252,6 +283,8 @@ export class MoulSandbox extends LitElement {
   declare isPending: boolean
   declare isModalOpen: boolean
   declare isAlertModalOpen: boolean
+  declare isCommandPaletteOpen: boolean
+  declare activeDrawer: '' | 'left' | 'right' | 'bottom'
   declare toggleKey: string
   declare sliderValue: number
   declare switchValue: boolean
@@ -267,6 +300,8 @@ export class MoulSandbox extends LitElement {
     this.isPending = false
     this.isModalOpen = false
     this.isAlertModalOpen = false
+    this.isCommandPaletteOpen = false
+    this.activeDrawer = ''
     this.toggleKey = 'day'
     this.sliderValue = 42
     this.switchValue = true
@@ -319,12 +354,56 @@ export class MoulSandbox extends LitElement {
   }
 
   private triggerToast(
-    tone: 'primary' | 'success' | 'warning' | 'error',
+    tone: 'primary' | 'accent' | 'success' | 'warning' | 'error',
   ): void {
     toastQueue.add({
       title: `${tone.toUpperCase()} Notification`,
       description: `Dispatched toast notification with ${tone} semantic tone.`,
       tone,
+      duration: 3500,
+    })
+  }
+
+  private triggerPlacedToast(placement: ToastPlacement): void {
+    toastQueue.placement = placement
+    toastQueue.add({
+      title: `Placed at ${placement}`,
+      description: 'Bottom regions stack upward, top regions stack downward.',
+      tone: 'primary',
+      duration: 3500,
+    })
+  }
+
+  private handleCommandSelect(
+    e: CustomEvent<{ item: CommandPaletteItemData }>,
+  ): void {
+    const { item } = e.detail
+    if (item.id === 'theme') {
+      this.toggleTheme()
+      return
+    }
+    toastQueue.add({
+      title: item.title,
+      description: `Command "${item.id}" selected from the palette.`,
+      tone: 'primary',
+      duration: 2500,
+    })
+  }
+
+  private handleDrawerOpenChange(e: CustomEvent<{ isOpen: boolean }>): void {
+    if (!e.detail.isOpen) {
+      this.activeDrawer = ''
+    }
+  }
+
+  private handleFormSubmit(e: CustomEvent<{ formData: FormData }>): void {
+    const fields = Array.from(e.detail.formData.entries())
+      .map(([key, value]) => `${key}=${value}`)
+      .join(', ')
+    toastQueue.add({
+      title: 'Form Submitted',
+      description: fields || 'No named fields were submitted.',
+      tone: 'success',
       duration: 3500,
     })
   }
@@ -415,7 +494,7 @@ export class MoulSandbox extends LitElement {
       <div class="category-section" id="surfaces">
         <div class="section-header">
           <h3 class="section-title">2. Surfaces & Feedback</h3>
-          <p class="section-subtitle">moul-card, moul-alert, moul-badge, moul-avatar, moul-table, moul-toast, toastQueue</p>
+          <p class="section-subtitle">moul-card, moul-alert, moul-badge, moul-avatar, moul-typography, moul-separator, moul-skeleton, moul-tag-group, moul-empty-state, moul-table, moul-toast, toastQueue</p>
         </div>
 
         <div class="section-grid">
@@ -463,6 +542,24 @@ export class MoulSandbox extends LitElement {
         </div>
 
         <div class="demo-group">
+          <span class="group-label">Typography & Separators</span>
+          <moul-typography variant="h1">Display heading</moul-typography>
+          <moul-typography variant="h3">Section heading</moul-typography>
+          <moul-typography variant="body">
+            Body copy sits comfortably at 16px with a 1.5 line height.
+          </moul-typography>
+          <moul-typography variant="caption">Caption — secondary detail</moul-typography>
+          <moul-separator></moul-separator>
+          <div class="demo-row" style="height: 1.5rem;">
+            <moul-typography variant="code">bun add @moul-dev/ui</moul-typography>
+            <moul-separator orientation="vertical"></moul-separator>
+            <moul-typography variant="body" tone="success">Toned text</moul-typography>
+            <moul-separator orientation="vertical"></moul-separator>
+            <moul-typography variant="body" tone="error">Error tone</moul-typography>
+          </div>
+        </div>
+
+        <div class="demo-group">
           <span class="group-label">Semantic Alerts</span>
           <div class="demo-col">
             <moul-alert tone="primary" title="Information Note" description="System update scheduled for 02:00 UTC." is-dismissible></moul-alert>
@@ -499,6 +596,71 @@ export class MoulSandbox extends LitElement {
           <moul-progress-bar value="68" tone="primary" show-label label="Processing Pipeline"></moul-progress-bar>
         </div>
 
+        <div class="section-grid">
+          <div class="demo-group">
+            <span class="group-label">Skeleton Placeholders</span>
+            <div class="demo-row" style="flex-wrap: nowrap; align-items: flex-start;">
+              <moul-skeleton shape="circle" width="3rem" height="3rem"></moul-skeleton>
+              <div class="demo-col" style="flex: 1; gap: 0.5rem;">
+                <moul-skeleton shape="line" width="60%" variant="pulse"></moul-skeleton>
+                <moul-skeleton shape="line" width="90%" variant="wave"></moul-skeleton>
+                <moul-skeleton shape="rect" height="4rem" variant="wave"></moul-skeleton>
+              </div>
+            </div>
+          </div>
+
+          <div class="demo-group">
+            <span class="group-label">Tag Groups</span>
+            <moul-tag-group label="Stack" selection-mode="multiple">
+              <moul-tag key="astro">Astro</moul-tag>
+              <moul-tag key="lit" is-selected>Lit</moul-tag>
+              <moul-tag key="ts" is-selected>TypeScript</moul-tag>
+              <moul-tag key="bun">Bun</moul-tag>
+            </moul-tag-group>
+            <moul-tag-group label="Filters" is-removable>
+              <moul-tag key="prod" tone="success">production</moul-tag>
+              <moul-tag key="ap" tone="accent">ap-southeast</moul-tag>
+              <moul-tag key="err" tone="error">errors only</moul-tag>
+            </moul-tag-group>
+          </div>
+        </div>
+
+        <moul-empty-state variant="glass">
+          <span slot="icon" style="font-size: 1.75rem;">📦</span>
+          <span slot="title">No deployments yet</span>
+          <span slot="description">Push a commit or trigger a build to see it here.</span>
+          <div slot="actions" class="demo-row">
+            <moul-button size="sm" @click=${() => this.triggerToast('success')}>
+              New deployment
+            </moul-button>
+            <moul-button size="sm" variant="ghost">Read the docs</moul-button>
+          </div>
+        </moul-empty-state>
+
+        <div class="demo-group">
+          <span class="group-label">Toast Tones & Placement</span>
+          <div class="demo-row">
+            <moul-button variant="secondary" @click=${() => this.triggerToast('primary')}>Primary</moul-button>
+            <moul-button variant="secondary" @click=${() => this.triggerToast('accent')}>Accent</moul-button>
+            <moul-button variant="secondary" @click=${() => this.triggerToast('success')}>Success</moul-button>
+            <moul-button variant="secondary" @click=${() => this.triggerToast('warning')}>Warning</moul-button>
+            <moul-button variant="secondary" @click=${() => this.triggerToast('error')}>Error</moul-button>
+          </div>
+          <div class="demo-row">
+            ${TOAST_PLACEMENTS.map(
+              (placement) => html`
+                <moul-button
+                  variant="outline"
+                  size="sm"
+                  @click=${() => this.triggerPlacedToast(placement)}
+                >
+                  ${placement}
+                </moul-button>
+              `,
+            )}
+          </div>
+        </div>
+
         <moul-card>
           <moul-card-header>
             <h4 style="margin: 0;">Interactive Data Table</h4>
@@ -516,7 +678,7 @@ export class MoulSandbox extends LitElement {
       <div class="category-section" id="overlays">
         <div class="section-header">
           <h3 class="section-title">3. Overlays & Navigation</h3>
-          <p class="section-subtitle">moul-modal, moul-alert-dialog, moul-popover, moul-tooltip, moul-tabs, moul-pagination</p>
+          <p class="section-subtitle">moul-modal, moul-alert-dialog, moul-drawer, moul-popover, moul-tooltip, moul-command-palette, moul-tabs, moul-breadcrumbs, moul-pagination, moul-link</p>
         </div>
 
         <div class="demo-group">
@@ -557,6 +719,45 @@ export class MoulSandbox extends LitElement {
         </div>
 
         <div class="demo-group">
+          <span class="group-label">Drawers & Command Palette</span>
+          <div class="demo-row">
+            <moul-button
+              variant="secondary"
+              @click=${() => {
+                this.activeDrawer = 'right'
+              }}
+            >
+              Right Drawer
+            </moul-button>
+            <moul-button
+              variant="secondary"
+              @click=${() => {
+                this.activeDrawer = 'left'
+              }}
+            >
+              Left Drawer
+            </moul-button>
+            <moul-button
+              variant="secondary"
+              @click=${() => {
+                this.activeDrawer = 'bottom'
+              }}
+            >
+              Bottom Sheet
+            </moul-button>
+            <moul-button
+              variant="outline"
+              @click=${() => {
+                this.isCommandPaletteOpen = true
+              }}
+            >
+              Open Command Palette
+              <moul-kbd slot="suffix">⌘K</moul-kbd>
+            </moul-button>
+          </div>
+        </div>
+
+        <div class="demo-group">
           <span class="group-label">Tabs & Roving Focus</span>
           <moul-tabs
             selected-key=${this.selectedTab}
@@ -588,13 +789,21 @@ export class MoulSandbox extends LitElement {
         </div>
 
         <div class="demo-group">
-          <span class="group-label">Breadcrumbs & Pagination</span>
+          <span class="group-label">Breadcrumbs, Links & Pagination</span>
           <div class="demo-col">
             <moul-breadcrumbs>
               <moul-breadcrumb-item href="#">Workspace</moul-breadcrumb-item>
               <moul-breadcrumb-item href="#">Design System</moul-breadcrumb-item>
               <moul-breadcrumb-item is-current>Kitchen Sink</moul-breadcrumb-item>
             </moul-breadcrumbs>
+
+            <div class="demo-row">
+              <moul-link href="#">Default link</moul-link>
+              <moul-link href="#" variant="subtle">Subtle link</moul-link>
+              <moul-link href="#" variant="underline">Underlined</moul-link>
+              <moul-link href="https://developer.mozilla.org" is-external>MDN</moul-link>
+              <moul-link href="#" is-disabled>Disabled</moul-link>
+            </div>
 
             <moul-pagination
               total-pages="10"
@@ -614,7 +823,7 @@ export class MoulSandbox extends LitElement {
       <div class="category-section" id="forms">
         <div class="section-header">
           <h3 class="section-title">4. Forms & Inputs</h3>
-          <p class="section-subtitle">moul-text-field, moul-number-field, moul-select, moul-combobox, moul-switch, moul-slider, moul-date-picker</p>
+          <p class="section-subtitle">moul-form, moul-text-field, moul-text-area, moul-number-field, moul-input-otp, moul-select, moul-combobox, moul-switch, moul-slider, moul-checkbox-group, moul-date-picker, moul-calendar</p>
         </div>
 
         <div class="section-grid">
@@ -635,6 +844,13 @@ export class MoulSandbox extends LitElement {
                 <moul-text-field label="Email Address" type="email" placeholder="alex@example.com"></moul-text-field>
                 <moul-search-field label="Resource Query" placeholder="Search components..."></moul-search-field>
                 <moul-number-field label="Allocated Workers" value="4" min="1" max="64"></moul-number-field>
+                <moul-text-area
+                  label="Release notes"
+                  placeholder="Summarize what changed…"
+                  rows="3"
+                  auto-resize
+                  description="Markdown is supported."
+                ></moul-text-area>
               </div>
             </moul-card-body>
           </moul-card>
@@ -692,11 +908,60 @@ export class MoulSandbox extends LitElement {
 
                 <moul-checkbox label="Verify package signatures" is-checked></moul-checkbox>
 
+                <moul-checkbox-group label="Target Platforms" orientation="horizontal">
+                  <moul-checkbox value="web" is-checked>Web</moul-checkbox>
+                  <moul-checkbox value="ios">iOS</moul-checkbox>
+                  <moul-checkbox value="android">Android</moul-checkbox>
+                </moul-checkbox-group>
+
                 <moul-radio-group label="Replication Strategy" value="multi-region">
                   <moul-radio value="single">Single Zone</moul-radio>
                   <moul-radio value="multi-region">Multi-Region</moul-radio>
                 </moul-radio-group>
               </div>
+            </moul-card-body>
+          </moul-card>
+
+          <moul-card>
+            <moul-card-header>
+              <h4 style="margin: 0;">Calendar & One-Time Code</h4>
+            </moul-card-header>
+            <moul-card-body>
+              <div class="demo-col">
+                <moul-calendar value="2026-10-19" min-date="2026-10-05"></moul-calendar>
+                <moul-input-otp
+                  label="Verification code"
+                  length="6"
+                  @complete=${(e: CustomEvent<{ value: string }>) => {
+                    toastQueue.add({
+                      title: 'Code Entered',
+                      description: `Received one-time code ${e.detail.value}.`,
+                      tone: 'success',
+                      duration: 2500,
+                    })
+                  }}
+                ></moul-input-otp>
+              </div>
+            </moul-card-body>
+          </moul-card>
+
+          <moul-card>
+            <moul-card-header>
+              <h4 style="margin: 0;">Form Submission</h4>
+            </moul-card-header>
+            <moul-card-body>
+              <moul-form @submit=${this.handleFormSubmit}>
+                <div class="demo-col">
+                  <moul-text-field name="username" label="Username" placeholder="alice" is-required></moul-text-field>
+                  <moul-select name="role" label="Role" selected-key="editor">
+                    <moul-select-item key="viewer">Viewer</moul-select-item>
+                    <moul-select-item key="editor">Editor</moul-select-item>
+                    <moul-select-item key="admin">Admin</moul-select-item>
+                  </moul-select>
+                  <moul-switch name="notify" is-checked>Email me about activity</moul-switch>
+                  <moul-button type="submit">Create account</moul-button>
+                </div>
+              </moul-form>
             </moul-card-body>
           </moul-card>
         </div>
@@ -840,7 +1105,7 @@ export class MoulSandbox extends LitElement {
       <div class="category-section" id="blocks">
         <div class="section-header">
           <h3 class="section-title">6. Composite Blocks</h3>
-          <p class="section-subtitle">moul-logs-viewer, moul-logs, moul-sidebar</p>
+          <p class="section-subtitle">moul-logs-viewer, moul-logs, moul-sidebar, moul-sidebar-user</p>
         </div>
 
         <moul-card>
@@ -859,6 +1124,23 @@ export class MoulSandbox extends LitElement {
               wrap-lines
               max-height="340px"
             ></moul-logs>
+          </moul-card-body>
+        </moul-card>
+
+        <moul-card>
+          <moul-card-header>
+            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+              <h4 style="margin: 0;">Logs Viewer — Pre-Parsed Entries</h4>
+              <moul-badge tone="accent">.logs property</moul-badge>
+            </div>
+          </moul-card-header>
+          <moul-card-body>
+            <moul-logs-viewer
+              .logs=${SERVER_LOGS}
+              compact
+              max-height="300px"
+              search-placeholder="Filter parsed entries..."
+            ></moul-logs-viewer>
           </moul-card-body>
         </moul-card>
       </div>
@@ -892,13 +1174,13 @@ export class MoulSandbox extends LitElement {
             <moul-sidebar-item key="actions" label="Actions" badge="4">
               <span slot="icon">🔘</span>
             </moul-sidebar-item>
-            <moul-sidebar-item key="surfaces" label="Surfaces & Feedback" badge="16">
+            <moul-sidebar-item key="surfaces" label="Surfaces & Feedback" badge="20">
               <span slot="icon">🧱</span>
             </moul-sidebar-item>
-            <moul-sidebar-item key="overlays" label="Overlays & Nav" badge="10">
+            <moul-sidebar-item key="overlays" label="Overlays & Nav" badge="13">
               <span slot="icon">🧭</span>
             </moul-sidebar-item>
-            <moul-sidebar-item key="forms" label="Forms & Inputs" badge="15">
+            <moul-sidebar-item key="forms" label="Forms & Inputs" badge="18">
               <span slot="icon">📝</span>
             </moul-sidebar-item>
             <moul-sidebar-item key="charts" label="Charts & Analytics" badge="10">
@@ -912,14 +1194,7 @@ export class MoulSandbox extends LitElement {
           <moul-sidebar-divider></moul-sidebar-divider>
 
           <moul-sidebar-footer>
-            <moul-button
-              variant="ghost"
-              size="sm"
-              @click=${this.toggleTheme}
-              aria-label="Toggle Theme"
-            >
-              ${this.theme === 'dark' ? '☀️ Light Mode' : '🌙 Dark Mode'}
-            </moul-button>
+            <moul-sidebar-user name="Kim Ly" email="kim@example.com" status="online"></moul-sidebar-user>
           </moul-sidebar-footer>
         </moul-sidebar-aside>
 
@@ -1061,6 +1336,64 @@ export class MoulSandbox extends LitElement {
           </moul-button>
         </div>
       </moul-alert-dialog>
+
+      <!-- Interactive Drawers -->
+      <moul-drawer
+        placement="right"
+        aria-label="Settings"
+        ?is-open=${this.activeDrawer === 'right'}
+        @openchange=${this.handleDrawerOpenChange}
+      >
+        <h3 slot="header" style="margin: 0;">Settings</h3>
+        <div class="demo-col">
+          <moul-switch is-checked>Auto-deploy</moul-switch>
+          <moul-switch>Preview comments</moul-switch>
+        </div>
+        <moul-button
+          slot="footer"
+          @click=${() => {
+            this.activeDrawer = ''
+          }}
+        >
+          Done
+        </moul-button>
+      </moul-drawer>
+
+      <moul-drawer
+        placement="left"
+        size="sm"
+        aria-label="Navigation"
+        ?is-open=${this.activeDrawer === 'left'}
+        @openchange=${this.handleDrawerOpenChange}
+      >
+        <h3 slot="header" style="margin: 0;">Navigation</h3>
+        <p style="margin: 0; font-size: 0.875rem;">
+          Left-edge drawers suit app navigation on narrow screens.
+        </p>
+      </moul-drawer>
+
+      <moul-drawer
+        placement="bottom"
+        aria-label="Share"
+        ?is-open=${this.activeDrawer === 'bottom'}
+        @openchange=${this.handleDrawerOpenChange}
+      >
+        <h3 slot="header" style="margin: 0;">Share</h3>
+        <p style="margin: 0; font-size: 0.875rem;">
+          Bottom sheets work well for quick actions on touch devices.
+        </p>
+      </moul-drawer>
+
+      <!-- Command Palette (also opens with ⌘K / Ctrl+K) -->
+      <moul-command-palette
+        placeholder="Type a command…"
+        .items=${COMMAND_ITEMS}
+        ?is-open=${this.isCommandPaletteOpen}
+        @openchange=${(e: CustomEvent<{ isOpen: boolean }>) => {
+          this.isCommandPaletteOpen = e.detail.isOpen
+        }}
+        @select=${this.handleCommandSelect}
+      ></moul-command-palette>
     `
   }
 }

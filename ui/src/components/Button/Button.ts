@@ -2,6 +2,7 @@ import { html, LitElement, type PropertyValues } from 'lit'
 import { PressController } from '../../controllers/press.controller'
 import { defineElement } from '../../utils/define-element'
 import { warnMissingLabel } from '../../utils/warn-missing-label'
+import type { MoulForm } from '../Form/Form'
 import '../Spinner/Spinner'
 import { buttonStyles } from './Button.styles'
 
@@ -138,7 +139,8 @@ export class MoulButton extends LitElement {
     if (e.key === ' ' || e.key === 'Enter') {
       this.dispatchPressEvent(e)
       this.pressHandledInCycle = true
-      this.handleFormIntegration()
+      // No form integration here: Enter/Space on the inner <button> already
+      // fires a click, and handleClick submits; doing both submitted twice.
       queueMicrotask(() => {
         this.pressHandledInCycle = false
       })
@@ -156,13 +158,19 @@ export class MoulButton extends LitElement {
   }
 
   private handleFormIntegration(): void {
-    const form = this.closest('form')
+    // <moul-form> keeps its native <form> in its shadow root, out of reach of
+    // closest('form'), so match the wrapper too and take whichever is nearest.
+    const form = this.closest<HTMLFormElement | MoulForm>('form, moul-form')
     if (!form) return
 
     if (this.type === 'submit') {
-      if (typeof form.requestSubmit === 'function') {
+      if (
+        form instanceof HTMLFormElement &&
+        typeof form.requestSubmit === 'function'
+      ) {
         form.requestSubmit()
       } else {
+        // MoulForm.submit() validates first, like a native requestSubmit().
         form.submit()
       }
     } else if (this.type === 'reset') {
