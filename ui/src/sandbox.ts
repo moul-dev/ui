@@ -6,7 +6,7 @@
  * 2. Surfaces & Feedback (Card, Alert, Badge, Avatar, Typography, Separator, Kbd, Spinner, Skeleton, ProgressBar, TagGroup, EmptyState, Table, Toast)
  * 3. Overlays & Navigation (Modal, AlertDialog, Drawer, Popover, Tooltip, CommandPalette, Tabs, Breadcrumbs, Pagination, Link)
  * 4. Forms & Inputs (Form, TextField, TextArea, NumberField, SearchField, InputOTP, Select, ComboBox, Switch, Slider, Checkbox, CheckboxGroup, RadioGroup, DatePicker, Calendar)
- * 5. Charts & Analytics (LineChart, AreaChart, BarChart, DoughnutChart, Stat, PercentageBar, PercentageCircle, TopList)
+ * 5. Charts & Analytics (LineChart, AreaChart, BarChart, DoughnutChart, HeatmapChart, FunnelChart, Stat, PercentageBar, PercentageCircle, TopList)
  * 6. Composite Blocks (Sidebar, SidebarUser, Logs, LogsViewer)
  *
  * Supports interactive light/dark theme toggling via document.documentElement.dataset.theme.
@@ -94,6 +94,55 @@ const TOP_LIST_DATA = [
   { label: 'Safari', value: 19 },
   { label: 'Firefox', value: 10 },
   { label: 'Edge', value: 6 },
+]
+
+/** Seeded PRNG so the demo calendar looks the same on every reload. */
+function mulberry32(seed: number): () => number {
+  let a = seed
+  return () => {
+    a = (a + 0x6d2b79f5) | 0
+    let t = Math.imul(a ^ (a >>> 15), 1 | a)
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+  }
+}
+
+// A year of commit-like events ending today: busy weekdays, quiet weekends, a few idle weeks.
+const ACTIVITY_EVENTS = (() => {
+  const random = mulberry32(7)
+  const today = new Date()
+  const hours = [9, 10, 10, 11, 11, 13, 14, 14, 15, 15, 16, 17, 20, 22]
+  const events: { date: Date; value: number }[] = []
+  const idleWeeks = new Set(
+    Array.from({ length: 54 }, (_, week) => week).filter(() => random() < 0.1),
+  )
+  for (let back = 370; back >= 0; back--) {
+    const day = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate() - back,
+    )
+    const isWeekend = day.getDay() === 0 || day.getDay() === 6
+    if (idleWeeks.has(Math.floor(back / 7)) && random() < 0.85) continue
+    if (random() < (isWeekend ? 0.55 : 0.12)) continue
+    const count = Math.round(random() ** 1.6 * (isWeekend ? 6 : 13)) + 1
+    for (let i = 0; i < count; i++) {
+      const hour = hours[Math.floor(random() * hours.length)]
+      events.push({
+        date: new Date(day.getFullYear(), day.getMonth(), day.getDate(), hour),
+        value: 1,
+      })
+    }
+  }
+  return events
+})()
+
+const FUNNEL_DATA = [
+  { label: 'Visited site', value: 48200 },
+  { label: 'Signed up', value: 15840 },
+  { label: 'Created project', value: 9120 },
+  { label: 'Invited a teammate', value: 4210 },
+  { label: 'Started paid plan', value: 1380 },
 ]
 
 const COMMAND_ITEMS: CommandPaletteItemData[] = [
@@ -282,6 +331,7 @@ export class MoulSandbox extends LitElement {
     currentPage: { type: Number, state: true },
     selectedTab: { type: String, state: true },
     textValue: { type: String, state: true },
+    activityMode: { type: String, state: true },
   }
 
   declare selectedCategory: string
@@ -298,6 +348,7 @@ export class MoulSandbox extends LitElement {
   declare currentPage: number
   declare selectedTab: string
   declare textValue: string
+  declare activityMode: 'calendar' | 'hour'
 
   constructor() {
     super()
@@ -315,6 +366,7 @@ export class MoulSandbox extends LitElement {
     this.currentPage = 1
     this.selectedTab = 'overview'
     this.textValue = 'Hello Web Components'
+    this.activityMode = 'calendar'
   }
 
   override connectedCallback(): void {
@@ -981,7 +1033,7 @@ export class MoulSandbox extends LitElement {
       <div class="category-section" id="charts">
         <div class="section-header">
           <h3 class="section-title">5. Charts & Analytics</h3>
-          <p class="section-subtitle">moul-line-chart, moul-area-chart, moul-bar-chart, moul-doughnut-chart, moul-stat</p>
+          <p class="section-subtitle">moul-line-chart, moul-area-chart, moul-bar-chart, moul-doughnut-chart, moul-heatmap-chart, moul-funnel-chart, moul-stat</p>
         </div>
 
         <div class="section-grid stat-grid">
@@ -1029,6 +1081,24 @@ export class MoulSandbox extends LitElement {
             .sparklineLabels=${STAT_DAYS}
           ></moul-stat>
         </div>
+
+        <moul-chart-container title="Activity" description="Daily contributions">
+          <moul-tabs
+            slot="header"
+            selected-key=${this.activityMode}
+            @selectionchange=${(e: CustomEvent<{ selectedKey: string }>) => {
+              this.activityMode =
+                e.detail.selectedKey === 'hour' ? 'hour' : 'calendar'
+            }}
+          >
+            <moul-tab key="calendar">Calendar</moul-tab>
+            <moul-tab key="hour">By hour</moul-tab>
+          </moul-tabs>
+          <moul-heatmap-chart
+            .data=${ACTIVITY_EVENTS}
+            mode=${this.activityMode}
+          ></moul-heatmap-chart>
+        </moul-chart-container>
 
         <div class="section-grid">
           <moul-card>
@@ -1092,6 +1162,10 @@ export class MoulSandbox extends LitElement {
         </div>
 
         <div class="section-grid">
+          <moul-chart-container title="Signup funnel" description="Visit to paid, last 30 days">
+            <moul-funnel-chart .data=${FUNNEL_DATA}></moul-funnel-chart>
+          </moul-chart-container>
+
           <moul-card>
             <moul-card-header>
               <h4 style="margin: 0;">Resource Allocation & Capacity</h4>
@@ -1204,7 +1278,7 @@ export class MoulSandbox extends LitElement {
             <moul-sidebar-item key="forms" label="Forms & Inputs" badge="18">
               <span slot="icon">📝</span>
             </moul-sidebar-item>
-            <moul-sidebar-item key="charts" label="Charts & Analytics" badge="10">
+            <moul-sidebar-item key="charts" label="Charts & Analytics" badge="12">
               <span slot="icon">📊</span>
             </moul-sidebar-item>
             <moul-sidebar-item key="blocks" label="Composite Blocks" badge="12">

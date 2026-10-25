@@ -119,7 +119,7 @@ When generating or editing code that uses `@moul-dev/ui`:
 
 **Element index** (full API in `docs/public/llms-full.txt`):
 
-- **Charts & Data Visualization**: `<moul-area-chart>`, `<moul-bar-chart>`, `<moul-line-chart>`, `<moul-doughnut-chart>`, `<moul-top-list>`, `<moul-stat>`, `<moul-percentage-bar>`, `<moul-percentage-circle>`, `<moul-chart-container>`, `<moul-chart-tooltip>`
+- **Charts & Data Visualization**: `<moul-area-chart>`, `<moul-bar-chart>`, `<moul-line-chart>`, `<moul-doughnut-chart>`, `<moul-heatmap-chart>`, `<moul-funnel-chart>`, `<moul-top-list>`, `<moul-stat>`, `<moul-percentage-bar>`, `<moul-percentage-circle>`, `<moul-chart-container>`, `<moul-chart-tooltip>`
 - **Actions & Toggles**: `<moul-button>`, `<moul-button-group>`, `<moul-toggle-button>`, `<moul-toggle-button-group>`
 - **Inputs & Forms**: `<moul-text-field>`, `<moul-number-field>`, `<moul-search-field>`, `<moul-text-area>`, `<moul-checkbox>`, `<moul-checkbox-group>`, `<moul-radio-group>`, `<moul-radio>`, `<moul-switch>`, `<moul-slider>`, `<moul-select>`, `<moul-select-item>`, `<moul-combobox>`, `<moul-combobox-item>`, `<moul-date-picker>`, `<moul-calendar>`, `<moul-input-otp>`, `<moul-form>`
 - **Overlays & Navigation**: `<moul-modal>`, `<moul-alert-dialog>`, `<moul-drawer>`, `<moul-popover>`, `<moul-tooltip>`, `<moul-command-palette>`, `<moul-tabs>`, `<moul-tab>`, `<moul-tab-panel>`, `<moul-breadcrumbs>`, `<moul-breadcrumb-item>`, `<moul-pagination>`, `<moul-link>`

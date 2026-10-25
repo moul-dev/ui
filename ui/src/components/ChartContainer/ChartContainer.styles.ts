@@ -11,7 +11,7 @@ export const chartContainerStyles = [
       background-color: var(--color-surface, #ffffff);
       border-radius: var(--radius-surface, 1.5rem);
       box-shadow: var(--shadow-surface, 0 1px 2px 0 rgba(0, 0, 0, 0.06));
-      padding: var(--spacing-4, 1rem);
+      padding: var(--spacing-5, 1.25rem);
       color: var(--color-fg, #18181b);
       box-sizing: border-box;
       overflow: hidden;
@@ -24,7 +24,7 @@ export const chartContainerStyles = [
       justify-content: space-between;
       align-items: flex-start;
       gap: var(--spacing-4, 1rem);
-      margin-bottom: var(--spacing-3, 0.75rem);
+      margin-bottom: var(--spacing-5, 1.25rem);
     }
 
     .header-text {
@@ -35,7 +35,7 @@ export const chartContainerStyles = [
 
     [part~="title"],
     .title {
-      font-size: var(--font-size-sm, 0.875rem);
+      font-size: var(--font-size-md, 1rem);
       font-weight: var(--font-weight-medium, 500);
       color: var(--color-fg, #18181b);
       margin: 0;
@@ -96,6 +96,11 @@ export const chartContainerStyles = [
       font-weight: var(--font-weight-medium, 500);
       color: var(--color-muted, #71717a);
       line-height: var(--line-height-xs, 1rem);
+    }
+
+    .header[data-empty],
+    .legend[data-empty] {
+      display: none;
     }
 
     ::slotted([slot="legend"]) {

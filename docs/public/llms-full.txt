@@ -263,6 +263,120 @@ Class: `MoulDoughnutChart` · Source: `ui/src/components/DoughnutChart/DoughnutC
 
 **CSS Parts:** `empty`, `wrapper`, `svg`, `slice`, `center`, `center-label`, `center-sublabel`
 
+## HeatmapChart
+
+Contributions-style calendar of daily totals, or a weekday × hour punch card (`mode="hour"`) from the same timestamps. Docs: [/docs/components/charts/heatmapchart](/docs/components/charts/heatmapchart)
+
+```html
+<moul-chart-container title="Activity" description="Daily contributions">
+  <moul-tabs slot="header" selected-key="calendar">
+    <moul-tab key="calendar">Calendar</moul-tab>
+    <moul-tab key="hour">By hour</moul-tab>
+  </moul-tabs>
+  <moul-heatmap-chart id="activity" unit="contributions"></moul-heatmap-chart>
+</moul-chart-container>
+```
+
+```js
+const heatmap = document.querySelector('#activity')
+// One item per event (value defaults to 1), or one per day with a total.
+heatmap.data = [
+  { date: '2025-10-23', value: 6 },
+  { date: '2025-10-24T14:05:00', value: 17 },
+]
+document.querySelector('moul-tabs').addEventListener('selectionchange', (e) => {
+  heatmap.mode = e.detail.selectedKey
+})
+```
+
+### `<moul-heatmap-chart>`
+
+Class: `MoulHeatmapChart` · Source: `ui/src/components/HeatmapChart/HeatmapChart.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `mode` | `mode` | `'calendar' \| 'hour'` | `'calendar'` |
+| `weeks` | `weeks` | `number` | `53` |
+| `end-date` | `endDate` | `string` | `''` |
+| `week-start` | `weekStart` | `number` | `0` |
+| `unit` | `unit` | `string` | `'contributions'` |
+| `unit-singular` | `unitSingular` | `string` | `''` |
+| `color` | `color` | `string` | `''` |
+| `hide-summary` | `hideSummary` | `boolean` | `false` |
+| `hide-legend` | `hideLegend` | `boolean` | `false` |
+| `activeIndex` | `activeIndex` | `number` | `-1` |
+| `focusIndex` | `focusIndex` | `number` | `-1` |
+
+**Properties** (JavaScript only — set on the element instance)
+
+| Property | Type | Default |
+| :--- | :--- | :--- |
+| `data` | `HeatmapDataItem[]` | `[]` |
+| `valueFormatter` | `(value: number) => string \| undefined` | `undefined` |
+
+**Events**
+
+| Event | Type |
+| :--- | :--- |
+| `point-hover` | `CustomEvent` |
+| `point-leave` | `CustomEvent` |
+
+**CSS Parts:** `base`, `summary`, `total`, `peak`, `grid`, `cell`, `legend`, `tooltip`, `scroller`
+
+## FunnelChart
+
+Ordered conversion steps as centered bars with per-step drop-off and an overall-conversion summary. Docs: [/docs/components/charts/funnelchart](/docs/components/charts/funnelchart)
+
+```html
+<moul-chart-container title="Signup funnel" description="Visit to paid, last 30 days">
+  <moul-funnel-chart id="signups"></moul-funnel-chart>
+</moul-chart-container>
+```
+
+```js
+document.querySelector('#signups').data = [
+  { label: 'Visited site', value: 48200 },
+  { label: 'Signed up', value: 15840 },
+  { label: 'Started paid plan', value: 1380 },
+]
+```
+
+### `<moul-funnel-chart>`
+
+Class: `MoulFunnelChart` · Source: `ui/src/components/FunnelChart/FunnelChart.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `summary-label` | `summaryLabel` | `string` | `'overall conversion'` |
+| `hide-summary` | `hideSummary` | `boolean` | `false` |
+| `activeIndex` | `activeIndex` | `number` | `-1` |
+
+**Properties** (JavaScript only — set on the element instance)
+
+| Property | Type | Default |
+| :--- | :--- | :--- |
+| `data` | `FunnelStage[]` | `[]` |
+| `valueFormatter` | `(value: number) => string \| undefined` | `undefined` |
+
+**Events**
+
+| Event | Type |
+| :--- | :--- |
+| `point-hover` | `CustomEvent` |
+| `point-leave` | `CustomEvent` |
+
+**Slots**
+
+| Slot |
+| :--- |
+| `empty` |
+
+**CSS Parts:** `base`, `summary`, `conversion`, `biggest-drop`, `stages`, `stage`, `stage-label`, `bar`, `drop`, `tooltip`, `empty`
+
 ## TopList
 
 Ranked list with proportional value bars. Docs: [/docs/components/charts/toplist](/docs/components/charts/toplist)
@@ -433,7 +547,7 @@ Class: `MoulPercentageCircle` · Source: `ui/src/components/Percentage/Percentag
 
 ## ChartContainer
 
-Responsive chart frame with title, description, legend, and empty state slots. Docs: [/docs/components/charts/areachart](/docs/components/charts/areachart)
+Chart card with title, description, header actions, legend, and empty state slots; sizes to its chart unless `height` is set. Docs: [/docs/components/charts/areachart](/docs/components/charts/areachart)
 
 ```html
 <moul-chart-container title="Revenue" description="Last 30 days" height="320">
@@ -452,8 +566,10 @@ Class: `MoulChartContainer` · Source: `ui/src/components/ChartContainer/ChartCo
 | :--- | :--- | :--- | :--- |
 | `title` | `title` | `string` | `''` |
 | `description` | `description` | `string` | `''` |
-| `height` | `height` | `number` | `300` |
+| `height` | `height` | `number \| undefined` | `undefined` |
 | `is-empty` | `isEmpty` | `boolean` | `false` |
+| `hasHeaderContent` | `hasHeaderContent` | `boolean` | `false` |
+| `hasLegend` | `hasLegend` | `boolean` | `false` |
 
 **Events**
 
@@ -884,7 +1000,7 @@ Class: `MoulCheckbox` · Source: `ui/src/components/Checkbox/Checkbox.ts`
 | :--- |
 | (default) |
 
-**CSS Parts:** `indicator`, `base`, `icon`, `label`
+**CSS Parts:** `base`, `indicator`, `icon`, `label`
 
 ## CheckboxGroup
 
@@ -2184,7 +2300,7 @@ Class: `MoulProgressBar` · Source: `ui/src/components/ProgressBar/ProgressBar.t
 | :--- |
 | `label` |
 
-**CSS Parts:** `fill`, `header`, `track`
+**CSS Parts:** `header`, `track`, `fill`
 
 ## TagGroup
 

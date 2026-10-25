@@ -1,0 +1,104 @@
+---
+title: HeatmapChart
+description: Activity by day, or by hour of the week.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import ActivityHeatmap from '@/components/demos/ActivityHeatmap.astro';
+
+`<moul-heatmap-chart>` colors a grid of days by how much happened on each. The calendar covers the last 53 weeks, newest on the right. Set `mode="hour"` and the same timestamps fold into a weekday × hour-of-day punch card.
+
+Put it in a `<moul-chart-container>` for the title, and a `<moul-tabs>` in the container's `header` slot to switch modes.
+
+<ComponentPreview align="stretch" backdrop="page">
+  <ActivityHeatmap />
+</ComponentPreview>
+
+```html
+<moul-chart-container title="Activity" description="Daily contributions">
+  <moul-tabs slot="header" selected-key="calendar">
+    <moul-tab key="calendar">Calendar</moul-tab>
+    <moul-tab key="hour">By hour</moul-tab>
+  </moul-tabs>
+  <moul-heatmap-chart></moul-heatmap-chart>
+</moul-chart-container>
+```
+
+```js
+const heatmap = document.querySelector('moul-heatmap-chart')
+
+// One item per event. `value` defaults to 1, and items on the same day add up.
+heatmap.data = commits.map((commit) => ({ date: commit.createdAt }))
+
+document.querySelector('moul-tabs').addEventListener('selectionchange', (event) => {
+  heatmap.mode = event.detail.selectedKey
+})
+```
+
+## Data
+
+Each item has a `date` and an optional `value`. A `date` can be a `Date`, a timestamp, or an ISO string. Date-only strings such as `'2025-10-24'` are read as local days, never shifted by the time zone.
+
+Already have daily totals? Pass one item per day with its `value`:
+
+```js
+heatmap.data = [
+  { date: '2025-10-23', value: 6 },
+  { date: '2025-10-24', value: 17 },
+]
+```
+
+Hour mode needs a time on each item, so feed it events or hourly totals. A date without a time lands at midnight.
+
+## Range
+
+The last column ends on `end-date`, today by default; earlier days fill `weeks` columns before it. Items outside that range are ignored by both modes, so the totals always match.
+
+```html
+<moul-heatmap-chart end-date="2025-10-25" weeks="26" week-start="1"></moul-heatmap-chart>
+```
+
+## Levels and color
+
+Empty days use the neutral track. Active days split into four levels by quartile, so each level holds about a quarter of them and one huge day doesn't wash out the rest. The busiest days always reach the top level.
+
+Each level mixes more of one hue into the track, so the ramp stays readable in light and dark mode. The hue comes from the `--color-chart-sequential` token; `color` overrides it per chart.
+
+```html
+<moul-heatmap-chart color="var(--color-chart-1)"></moul-heatmap-chart>
+```
+
+## Summary
+
+The line above the grid totals the range and names the busiest cell. Change the noun with `unit` (and `unit-singular` when dropping the "s" isn't enough), format numbers with `valueFormatter`, or turn the line off with `hide-summary`.
+
+```html
+<moul-heatmap-chart unit="deploys" hide-legend></moul-heatmap-chart>
+```
+
+## Accessibility
+
+The grid is an ARIA `grid` with one tab stop. Arrow keys move by day and week, and Home and End jump to the ends of a row. Every cell carries its value and date as a label, and the hover readout follows keyboard focus.
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| — | `data` | `HeatmapDataItem[]` | `[]` |
+| `mode` | `mode` | `'calendar' \| 'hour'` | `'calendar'` |
+| `weeks` | `weeks` | `number` | `53` |
+| `end-date` | `endDate` | `string` | today |
+| `week-start` | `weekStart` | `0 \| 1` | `0` (Sunday) |
+| `unit` | `unit` | `string` | `'contributions'` |
+| `unit-singular` | `unitSingular` | `string` | derived from `unit` |
+| `color` | `color` | `string` | `--color-chart-sequential` |
+| `hide-summary` | `hideSummary` | `boolean` | `false` |
+| `hide-legend` | `hideLegend` | `boolean` | `false` |
+| — | `valueFormatter` | `(value: number) => string` | `Intl.NumberFormat` |
+
+| Event | Detail |
+| :-- | :-- |
+| `point-hover` | `{ point, value, label, x, y }` for the hovered or focused cell |
+| `point-leave` | — |
+
+**CSS parts:** `base`, `summary`, `total`, `peak`, `scroller`, `grid`, `cell`, `legend`, `tooltip`

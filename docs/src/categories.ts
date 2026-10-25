@@ -89,6 +89,8 @@ export const COMPONENT_CATEGORIES: ComponentCategory[] = [
       'docs/components/charts/areachart',
       'docs/components/charts/barchart',
       'docs/components/charts/doughnutchart',
+      'docs/components/charts/funnelchart',
+      'docs/components/charts/heatmapchart',
       'docs/components/charts/linechart',
       'docs/components/charts/percentage',
       'docs/components/stat',

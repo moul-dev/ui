@@ -629,6 +629,16 @@
     oklch(0.552 0.016 285.938),
     oklch(0.705 0.015 286.067)
   );
+
+  /* ── Ordered Chart Ramps ──────────────────────────────────────── */
+  /* Magnitude (heatmaps): one hue, mixed into the empty-cell track per level. */
+  --color-chart-sequential: light-dark(
+    oklch(0.76 0.15 163),
+    oklch(0.8 0.15 163)
+  );
+  /* Ordinal stages (funnels): first and last step of an indigo → teal sweep. */
+  --color-chart-ordinal-from: oklch(0.64 0.18 277);
+  --color-chart-ordinal-to: oklch(0.8 0.1 180);
 }
 
 /* ── Theme Selectors ────────────────────────────────────────────── */

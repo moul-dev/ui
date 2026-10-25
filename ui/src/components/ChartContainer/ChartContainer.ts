@@ -20,12 +20,17 @@ export class MoulChartContainer extends LitElement {
     description: { type: String, reflect: true },
     height: { type: Number, reflect: true },
     isEmpty: { type: Boolean, reflect: true, attribute: 'is-empty' },
+    hasHeaderContent: { state: true },
+    hasLegend: { state: true },
   }
 
   declare title: string
   declare description: string
-  declare height: number
+  /** Fixed content height in px; unset, the content sizes to the chart inside. */
+  declare height: number | undefined
   declare isEmpty: boolean
+  declare hasHeaderContent: boolean
+  declare hasLegend: boolean
 
   public layout: LayoutIndicatorController
 
@@ -37,8 +42,10 @@ export class MoulChartContainer extends LitElement {
     super()
     this.title = ''
     this.description = ''
-    this.height = 300
+    this.height = undefined
     this.isEmpty = false
+    this.hasHeaderContent = false
+    this.hasLegend = false
     this.layout = new LayoutIndicatorController(this, {
       observeDimensions: true,
     })
@@ -94,9 +101,33 @@ export class MoulChartContainer extends LitElement {
     }
   }
 
+  protected override firstUpdated(changedProps: PropertyValues): void {
+    super.firstUpdated(changedProps)
+    // slotchange covers later changes; read what's already slotted now.
+    this.syncSlots()
+  }
+
+  private syncSlots(): void {
+    const filled = (name: string) =>
+      (
+        this.renderRoot
+          .querySelector<HTMLSlotElement>(`slot[name="${name}"]`)
+          ?.assignedNodes({ flatten: true }) ?? []
+      ).length > 0 || !!this.querySelector(`:scope > [slot="${name}"]`)
+    this.hasHeaderContent = filled('header')
+    this.hasLegend = filled('legend')
+  }
+
+  private handleSlotChange = (): void => {
+    this.syncSlots()
+  }
+
   protected override render() {
+    // Empty header and legend rows collapse so they don't pad the card.
+    const hasHeader =
+      !!this.title || !!this.description || this.hasHeaderContent
     return html`
-      <header part="header" class="header">
+      <header part="header" class="header" ?data-empty=${!hasHeader}>
         <div part="header-text" class="header-text">
           <h3 part="title" class="title" ?hidden=${!this.title}>${this.title}</h3>
           <p part="description" class="description" ?hidden=${!this.description}>
@@ -104,11 +135,15 @@ export class MoulChartContainer extends LitElement {
           </p>
         </div>
         <div part="header-actions" class="header-actions">
-          <slot name="header"></slot>
+          <slot name="header" @slotchange=${this.handleSlotChange}></slot>
         </div>
       </header>
 
-      <div part="content" class="content" style="height: ${this.height}px;">
+      <div
+        part="content"
+        class="content"
+        style=${this.height && this.height > 0 ? `height: ${this.height}px;` : ''}
+      >
         ${
           this.isEmpty
             ? html`
@@ -122,8 +157,8 @@ export class MoulChartContainer extends LitElement {
         }
       </div>
 
-      <footer part="legend" class="legend">
-        <slot name="legend"></slot>
+      <footer part="legend" class="legend" ?data-empty=${!this.hasLegend}>
+        <slot name="legend" @slotchange=${this.handleSlotChange}></slot>
       </footer>
     `
   }

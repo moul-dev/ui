@@ -65,9 +65,15 @@ export {
 export type {
   ChartSeries,
   DoughnutDataItem,
+  FunnelStage,
+  HeatmapDataItem,
   PointHoverDetail,
 } from './components/ChartCommon'
-export { CHART_COLORS, getChartColor } from './components/ChartCommon'
+export {
+  CHART_COLORS,
+  getChartColor,
+  placeHoverCard,
+} from './components/ChartCommon'
 // Charts and Analytics Components
 export type { ViewportResizeDetail } from './components/ChartContainer'
 export {
@@ -128,6 +134,20 @@ export {
   MoulForm,
   MoulForm as Form,
 } from './components/Form'
+export type { FunnelChartProps } from './components/FunnelChart'
+export {
+  MoulFunnelChart,
+  MoulFunnelChart as FunnelChart,
+} from './components/FunnelChart'
+export type {
+  HeatmapCell,
+  HeatmapChartProps,
+  HeatmapMode,
+} from './components/HeatmapChart'
+export {
+  MoulHeatmapChart,
+  MoulHeatmapChart as HeatmapChart,
+} from './components/HeatmapChart'
 export {
   MoulInputOTP,
   MoulInputOTP as InputOTP,
@@ -417,6 +437,8 @@ import type { MoulDoughnutChart } from './components/DoughnutChart'
 import type { MoulDrawer } from './components/Drawer'
 import type { MoulEmptyState } from './components/EmptyState'
 import type { MoulForm } from './components/Form'
+import type { MoulFunnelChart } from './components/FunnelChart'
+import type { MoulHeatmapChart } from './components/HeatmapChart'
 import type { MoulInputOTP } from './components/InputOTP'
 import type { MoulKbd } from './components/Kbd'
 import type { MoulLineChart } from './components/LineChart'
@@ -536,6 +558,8 @@ declare global {
     'moul-area-chart': MoulAreaChart
     'moul-bar-chart': MoulBarChart
     'moul-doughnut-chart': MoulDoughnutChart
+    'moul-funnel-chart': MoulFunnelChart
+    'moul-heatmap-chart': MoulHeatmapChart
     'moul-top-list': MoulTopList
     'moul-stat': MoulStat
     'moul-percentage-bar': MoulPercentageBar

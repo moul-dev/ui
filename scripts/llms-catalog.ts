@@ -86,6 +86,44 @@ chart.valueFormatter = (v) => \`\${v} ms\``,
 ]`,
       },
       {
+        name: 'HeatmapChart',
+        docs: '/docs/components/charts/heatmapchart',
+        summary:
+          'Contributions-style calendar of daily totals, or a weekday × hour punch card (`mode="hour"`) from the same timestamps.',
+        tags: ['moul-heatmap-chart'],
+        snippet: `<moul-chart-container title="Activity" description="Daily contributions">
+  <moul-tabs slot="header" selected-key="calendar">
+    <moul-tab key="calendar">Calendar</moul-tab>
+    <moul-tab key="hour">By hour</moul-tab>
+  </moul-tabs>
+  <moul-heatmap-chart id="activity" unit="contributions"></moul-heatmap-chart>
+</moul-chart-container>`,
+        script: `const heatmap = document.querySelector('#activity')
+// One item per event (value defaults to 1), or one per day with a total.
+heatmap.data = [
+  { date: '2025-10-23', value: 6 },
+  { date: '2025-10-24T14:05:00', value: 17 },
+]
+document.querySelector('moul-tabs').addEventListener('selectionchange', (e) => {
+  heatmap.mode = e.detail.selectedKey
+})`,
+      },
+      {
+        name: 'FunnelChart',
+        docs: '/docs/components/charts/funnelchart',
+        summary:
+          'Ordered conversion steps as centered bars with per-step drop-off and an overall-conversion summary.',
+        tags: ['moul-funnel-chart'],
+        snippet: `<moul-chart-container title="Signup funnel" description="Visit to paid, last 30 days">
+  <moul-funnel-chart id="signups"></moul-funnel-chart>
+</moul-chart-container>`,
+        script: `document.querySelector('#signups').data = [
+  { label: 'Visited site', value: 48200 },
+  { label: 'Signed up', value: 15840 },
+  { label: 'Started paid plan', value: 1380 },
+]`,
+      },
+      {
         name: 'TopList',
         docs: '/docs/components/charts/toplist',
         summary: 'Ranked list with proportional value bars.',
@@ -116,7 +154,7 @@ chart.valueFormatter = (v) => \`\${v} ms\``,
         name: 'ChartContainer',
         docs: '/docs/components/charts/areachart',
         summary:
-          'Responsive chart frame with title, description, legend, and empty state slots.',
+          'Chart card with title, description, header actions, legend, and empty state slots; sizes to its chart unless `height` is set.',
         tags: ['moul-chart-container'],
         snippet: `<moul-chart-container title="Revenue" description="Last 30 days" height="320">
   <moul-area-chart x-key="month"></moul-area-chart>

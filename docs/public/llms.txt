@@ -106,6 +106,46 @@ document.querySelector('#traffic').data = [
 ]
 ```
 
+- [HeatmapChart](/docs/components/charts/heatmapchart): Contributions-style calendar of daily totals, or a weekday × hour punch card (`mode="hour"`) from the same timestamps. Elements: `<moul-heatmap-chart>`.
+
+```html
+<moul-chart-container title="Activity" description="Daily contributions">
+  <moul-tabs slot="header" selected-key="calendar">
+    <moul-tab key="calendar">Calendar</moul-tab>
+    <moul-tab key="hour">By hour</moul-tab>
+  </moul-tabs>
+  <moul-heatmap-chart id="activity" unit="contributions"></moul-heatmap-chart>
+</moul-chart-container>
+```
+
+```js
+const heatmap = document.querySelector('#activity')
+// One item per event (value defaults to 1), or one per day with a total.
+heatmap.data = [
+  { date: '2025-10-23', value: 6 },
+  { date: '2025-10-24T14:05:00', value: 17 },
+]
+document.querySelector('moul-tabs').addEventListener('selectionchange', (e) => {
+  heatmap.mode = e.detail.selectedKey
+})
+```
+
+- [FunnelChart](/docs/components/charts/funnelchart): Ordered conversion steps as centered bars with per-step drop-off and an overall-conversion summary. Elements: `<moul-funnel-chart>`.
+
+```html
+<moul-chart-container title="Signup funnel" description="Visit to paid, last 30 days">
+  <moul-funnel-chart id="signups"></moul-funnel-chart>
+</moul-chart-container>
+```
+
+```js
+document.querySelector('#signups').data = [
+  { label: 'Visited site', value: 48200 },
+  { label: 'Signed up', value: 15840 },
+  { label: 'Started paid plan', value: 1380 },
+]
+```
+
 - [TopList](/docs/components/charts/toplist): Ranked list with proportional value bars. Elements: `<moul-top-list>`.
 
 ```html
@@ -132,7 +172,7 @@ document.querySelector('#pages').data = [
 <moul-percentage-circle value="64" size="lg" label="Uptime"></moul-percentage-circle>
 ```
 
-- [ChartContainer](/docs/components/charts/areachart): Responsive chart frame with title, description, legend, and empty state slots. Elements: `<moul-chart-container>`.
+- [ChartContainer](/docs/components/charts/areachart): Chart card with title, description, header actions, legend, and empty state slots; sizes to its chart unless `height` is set. Elements: `<moul-chart-container>`.
 
 ```html
 <moul-chart-container title="Revenue" description="Last 30 days" height="320">
