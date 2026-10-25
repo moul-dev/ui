@@ -337,8 +337,10 @@ Class: `MoulStat` · Source: `ui/src/components/Stat/Stat.ts`
 | `suffix` | `suffix` | `string` | `''` |
 | `trend` | `trend` | `'up' \| 'down' \| 'neutral'` | `'neutral'` |
 | `trend-value` | `trendValue` | `string` | `''` |
+| `is-lower-better` | `isLowerBetter` | `boolean` | `false` |
 | `tone` | `tone` | `'primary' \| 'accent' \| 'success' \| 'warning' \| 'error'` | `'primary'` |
 | `variant` | `variant` | `'solid' \| 'flat' \| 'shadow' \| 'bordered' \| 'glass'` | `'flat'` |
+| `color` | `color` | `string` | `''` |
 | `description` | `description` | `string` | `''` |
 
 **Properties** (JavaScript only — set on the element instance)
@@ -347,6 +349,7 @@ Class: `MoulStat` · Source: `ui/src/components/Stat/Stat.ts`
 | :--- | :--- | :--- |
 | `valueFormatter` | `(value: number) => string \| undefined` | `undefined` |
 | `sparklineData` | `number[] \| undefined` | `undefined` |
+| `sparklineLabels` | `string[] \| undefined` | `undefined` |
 
 **Slots**
 
@@ -355,7 +358,7 @@ Class: `MoulStat` · Source: `ui/src/components/Stat/Stat.ts`
 | `icon` |
 | `footer` |
 
-**CSS Parts:** `header`, `label`, `icon`, `body`, `value-row`, `prefix`, `value`, `suffix`, `footer`, `trend-badge`, `description`
+**CSS Parts:** `sparkline`, `trend-badge`, `header`, `icon`, `label`, `body`, `value-row`, `prefix`, `value`, `suffix`, `description`, `footer`
 
 ## Percentage
 

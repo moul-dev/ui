@@ -5,20 +5,80 @@ description: ឯកសារណែនាំសម្រាប់សមាសភ�
 
 import ComponentPreview from '@/components/ComponentPreview.astro';
 
-`<moul-stat>` counts up to `value` with a spring and shows the trend beside it.
+`<moul-stat>` shows a metric with its trend in a pill and an optional sparkline that runs to the card's edges. Hover the sparkline to read any day. New `value`s count in with a spring; the sparkline draws in once and then updates in place.
 
-<ComponentPreview>
-<div class="demo-row" style="align-items: stretch">
-  <moul-stat label="Revenue" value="52400" prefix="$" trend="up" trend-value="+14.8%" description="vs last month" tone="success"></moul-stat>
-  <moul-stat label="Error rate" value="0.42" suffix="%" trend="down" trend-value="-0.1%" description="last 24h" variant="glass"></moul-stat>
+<ComponentPreview align="stretch" backdrop="page">
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem">
+  <moul-stat label="Revenue" value="45896" prefix="$" trend="up" trend-value="8.2%" description="Last 14 days" data-props='{"sparklineData":[38200,36900,37600,36400,39800,41000,42300,41400,41200,43500,43000,41600,44800,45896],"sparklineLabels":["Oct 7","Oct 8","Oct 9","Oct 10","Oct 11","Oct 12","Oct 13","Oct 14","Oct 15","Oct 16","Oct 17","Oct 18","Oct 19","Oct 20"]}'></moul-stat>
+  <moul-stat label="Active users" value="10067" trend="up" trend-value="20%" description="Last 14 days" color="var(--color-chart-5)" data-props='{"sparklineData":[8100,8150,8150,8300,8280,8450,8600,8700,9000,9050,9512,9600,9810,10067],"sparklineLabels":["Oct 7","Oct 8","Oct 9","Oct 10","Oct 11","Oct 12","Oct 13","Oct 14","Oct 15","Oct 16","Oct 17","Oct 18","Oct 19","Oct 20"]}'></moul-stat>
+  <moul-stat label="Conversion" value="3.26" suffix="%" trend="up" trend-value="6.7%" description="Last 14 days" color="var(--color-chart-2)" data-props='{"sparklineData":[2.62,2.66,2.64,2.86,2.98,3.02,3.28,3.22,3.3,3.12,3.24,3.08,3.2,3.26],"sparklineLabels":["Oct 7","Oct 8","Oct 9","Oct 10","Oct 11","Oct 12","Oct 13","Oct 14","Oct 15","Oct 16","Oct 17","Oct 18","Oct 19","Oct 20"]}'></moul-stat>
+  <moul-stat label="Churn" value="1.93" suffix="%" trend="down" trend-value="26%" is-lower-better description="Last 14 days" color="var(--color-chart-3)" data-props='{"sparklineData":[2.62,2.58,2.5,2.42,2.34,2.26,2.16,2.08,2.04,2.04,2.08,2.08,2.1,1.93],"sparklineLabels":["Oct 7","Oct 8","Oct 9","Oct 10","Oct 11","Oct 12","Oct 13","Oct 14","Oct 15","Oct 16","Oct 17","Oct 18","Oct 19","Oct 20"]}'></moul-stat>
 </div>
 </ComponentPreview>
 
 ```html
-<div class="demo-row" style="align-items: stretch">
-  <moul-stat label="Revenue" value="52400" prefix="$" trend="up" trend-value="+14.8%" description="vs last month" tone="success"></moul-stat>
-  <moul-stat label="Error rate" value="0.42" suffix="%" trend="down" trend-value="-0.1%" description="last 24h" variant="glass"></moul-stat>
+<moul-stat
+  label="Revenue"
+  value="45896"
+  prefix="$"
+  trend="up"
+  trend-value="8.2%"
+  description="Last 14 days"
+></moul-stat>
+```
+
+```js
+const stat = document.querySelector('moul-stat')
+stat.sparklineData = [38200, 36900, 37600, 36400, 39800, 41000, 42300, 41400, 41200, 43500, 43000, 41600, 44800, 45896]
+stat.sparklineLabels = ['Oct 7', 'Oct 8', 'Oct 9', /* … */ 'Oct 20']
+```
+
+The value keeps the decimal places it was given, so `3.26` shows as `3.26`. Assign `valueFormatter` for anything else, such as compact numbers or currency.
+
+## Scrubbing
+
+Hover or drag across the sparkline and the card follows the nearest point: the value shows that point's number and the description shows its label from `sparklineLabels`. Move away and it returns to `value` and `description`. Give the points the same units as `value`, so the number reads the same while you scrub.
+
+The sparkline is also a keyboard stop. Arrow keys step through the points from the latest, Home and End jump to either end, and Escape returns to the current value. Screen readers hear it as a slider whose value is the point's label and number.
+
+## Trend sentiment
+
+`trend` sets the triangle's direction. Its color says whether the change is good news: up is green, down is red. For metrics where lower is better, like churn, error rate, or latency, add `is-lower-better` and the colors swap.
+
+<ComponentPreview align="stretch" backdrop="page">
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem">
+  <moul-stat label="Churn" value="1.93" suffix="%" trend="down" trend-value="26%" is-lower-better description="Lower is better"></moul-stat>
+  <moul-stat label="p95 latency" value="412" suffix="ms" trend="up" trend-value="18%" is-lower-better description="Lower is better"></moul-stat>
+  <moul-stat label="Signups" value="842" trend="neutral" trend-value="0%" description="Flat week"></moul-stat>
 </div>
+</ComponentPreview>
+
+```html
+<moul-stat label="Churn" value="1.93" suffix="%" trend="down" trend-value="26%" is-lower-better></moul-stat>
+```
+
+## Sparkline color
+
+The sparkline follows `tone`. To color it outside the semantic tones, set `color` to any CSS color, such as a chart palette step.
+
+```html
+<moul-stat label="Active users" value="10067" color="var(--color-chart-5)"></moul-stat>
+```
+
+## Variants
+
+Set `variant` for a tinted card. The sparkline takes the card's text color on `flat`, `solid`, and `shadow`, and the tone color on `bordered` and `glass`.
+
+<ComponentPreview align="stretch" backdrop="page">
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem">
+  <moul-stat label="Error rate" value="0.42" suffix="%" trend="up" trend-value="0.1%" is-lower-better description="Last 24h" tone="error" variant="flat" data-props='{"sparklineData":[0.6,0.55,0.5,0.52,0.45,0.48,0.42]}'></moul-stat>
+  <moul-stat label="Uptime" value="99.98" suffix="%" trend="up" trend-value="0.04%" description="SLA" tone="success" variant="solid" data-props='{"sparklineData":[99.9,99.92,99.95,99.94,99.98]}'></moul-stat>
+  <moul-stat label="Deploys" value="128" trend="up" trend-value="12%" description="This month" variant="bordered" data-props='{"sparklineData":[96,104,99,112,118,128]}'></moul-stat>
+</div>
+</ComponentPreview>
+
+```html
+<moul-stat label="Error rate" value="0.42" suffix="%" tone="error" variant="flat"></moul-stat>
 ```
 
 ## API reference
@@ -31,13 +91,18 @@ import ComponentPreview from '@/components/ComponentPreview.astro';
 | `suffix` | `suffix` | `string` | `''` |
 | `trend` | `trend` | `'up' \| 'down' \| 'neutral'` | `'neutral'` |
 | `trend-value` | `trendValue` | `string` | `''` |
+| `is-lower-better` | `isLowerBetter` | `boolean` | `false` |
 | `tone` | `tone` | `'primary' \| 'accent' \| 'success' \| 'warning' \| 'error'` | `'primary'` |
 | `variant` | `variant` | `'solid' \| 'flat' \| 'shadow' \| 'bordered' \| 'glass'` | `'flat'` |
+| `color` | `color` | `string` | `''` |
 | `description` | `description` | `string` | `''` |
+| — | `sparklineData` | `number[]` | `undefined` |
+| — | `sparklineLabels` | `string[]` | `undefined` |
+| — | `valueFormatter` | `(value: number) => string` | `undefined` |
 
 | Slot | Description |
 | :-- | :-- |
-| `icon` | — |
-| `footer` | — |
+| `icon` | Leading icon before the label |
+| `footer` | Extra content under the description |
 
-**CSS parts:** `header`, `label`, `icon`, `body`, `value-row`, `prefix`, `value`, `suffix`, `footer`, `trend-badge`, `description`
+**CSS parts:** `header`, `label`, `icon`, `body`, `value-row`, `prefix`, `value`, `suffix`, `description`, `trend-badge`, `footer`, `sparkline`

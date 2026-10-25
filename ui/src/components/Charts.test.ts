@@ -2262,6 +2262,140 @@ describe('Milestone 3: Discrete & Categorical Charts Test Suite', () => {
         expect(path?.getAttribute('d')).toMatch(/^M/)
         expect(path?.getAttribute('d')).not.toContain('NaN')
       })
+
+      it('CHART-STAT-09: Trend sentiment flips with is-lower-better', async () => {
+        const el = await mount<MoulStat>(html`
+          <moul-stat label="Churn" .value=${1.93} trend="down" trend-value="26%"></moul-stat>
+        `)
+        const badge = () => el.shadowRoot?.querySelector('.trend-badge')
+        expect(badge()?.classList.contains('is-negative')).toBe(true)
+        expect(badge()?.textContent).toContain('Down')
+
+        el.isLowerBetter = true
+        await awaitNestedUpdates(el)
+        expect(el.hasAttribute('is-lower-better')).toBe(true)
+        expect(badge()?.classList.contains('trend-down')).toBe(true)
+        expect(badge()?.classList.contains('is-positive')).toBe(true)
+
+        el.trend = 'neutral'
+        await awaitNestedUpdates(el)
+        expect(badge()?.classList.contains('is-neutral')).toBe(true)
+      })
+
+      it('CHART-STAT-10: Default format keeps the value precision', async () => {
+        const el = await mount<MoulStat>(
+          html`<moul-stat label="Uptime" .value=${99.98}></moul-stat>`,
+        )
+        expect(
+          el.shadowRoot?.querySelector('[part="value"]')?.textContent,
+        ).toBe('99.98')
+      })
+
+      it('CHART-STAT-11: Sparkline end dot and color override', async () => {
+        const el = await mount<MoulStat>(html`
+          <moul-stat
+            label="Active users"
+            .value=${10}
+            color="var(--color-chart-5)"
+            .sparklineData=${[1, 3, 2, 4]}
+          ></moul-stat>
+        `)
+        const sparkline =
+          el.shadowRoot?.querySelector<HTMLElement>('[part="sparkline"]')
+        expect(sparkline?.getAttribute('style')).toContain(
+          '--_stat-chart: var(--color-chart-5)',
+        )
+        // The last point is the maximum, so the dot sits on the top padding line.
+        const dot = el.shadowRoot?.querySelector<HTMLElement>('.sparkline-dot')
+        expect(dot?.getAttribute('style')).toContain('top: 8%')
+
+        el.sparklineData = [5]
+        await awaitNestedUpdates(el)
+        expect(el.shadowRoot?.querySelector('[part="sparkline"]')).toBeNull()
+      })
+
+      it('CHART-STAT-12: Empty icon and footer wrappers stay hidden', async () => {
+        const el = await mount<MoulStat>(
+          html`<moul-stat label="Downloads" .value=${50}></moul-stat>`,
+        )
+        expect(
+          el.shadowRoot?.querySelector('[part="icon"]')?.hasAttribute('hidden'),
+        ).toBe(true)
+        expect(
+          el.shadowRoot
+            ?.querySelector('[part="footer"]')
+            ?.hasAttribute('hidden'),
+        ).toBe(true)
+      })
+
+      it('CHART-STAT-13: Keyboard scrubbing shows each point, Escape restores', async () => {
+        const el = await mount<MoulStat>(html`
+          <moul-stat
+            label="Active users"
+            .value=${10067}
+            description="Last 14 days"
+            .sparklineData=${[9000, 9512, 10067]}
+            .sparklineLabels=${['Oct 18', 'Oct 19', 'Oct 20']}
+          ></moul-stat>
+        `)
+        const root = el.shadowRoot
+        const sparkline = root?.querySelector<HTMLElement>('[part="sparkline"]')
+        const text = (part: string) =>
+          root?.querySelector(`[part="${part}"]`)?.textContent
+        expect(sparkline?.getAttribute('role')).toBe('slider')
+        expect(sparkline?.getAttribute('aria-valuetext')).toBe('Oct 20: 10,067')
+
+        const press = async (key: string) => {
+          sparkline?.dispatchEvent(new KeyboardEvent('keydown', { key }))
+          await awaitNestedUpdates(el)
+        }
+
+        await press('ArrowLeft')
+        expect(text('value')).toBe('9,512')
+        expect(text('description')).toBe('Oct 19')
+        expect(sparkline?.hasAttribute('data-active')).toBe(true)
+        expect(sparkline?.getAttribute('aria-valuenow')).toBe('1')
+
+        await press('Home')
+        expect(text('value')).toBe('9,000')
+        await press('ArrowLeft')
+        expect(text('description')).toBe('Oct 18')
+
+        await press('Escape')
+        expect(text('value')).toBe('10,067')
+        expect(text('description')).toBe('Last 14 days')
+        expect(sparkline?.hasAttribute('data-active')).toBe(false)
+      })
+
+      it('CHART-STAT-14: Pointer snaps to the nearest point and resets on leave', async () => {
+        const el = await mount<MoulStat>(html`
+          <moul-stat
+            label="Revenue"
+            .value=${30}
+            .sparklineData=${[10, 20, 30]}
+            .sparklineLabels=${['Mon', 'Tue', 'Wed']}
+          ></moul-stat>
+        `)
+        const root = el.shadowRoot
+        const sparkline = root?.querySelector<HTMLElement>('[part="sparkline"]')
+        const svgEl = root?.querySelector('.sparkline-svg') as SVGElement
+        svgEl.getBoundingClientRect = () =>
+          ({ left: 100, width: 200, top: 0, height: 64 }) as DOMRect
+
+        // 40% of the way across rounds to the middle point.
+        sparkline?.dispatchEvent(
+          new PointerEvent('pointermove', { clientX: 180 }),
+        )
+        await awaitNestedUpdates(el)
+        expect(root?.querySelector('[part="value"]')?.textContent).toBe('20')
+        expect(root?.querySelector('[part="description"]')?.textContent).toBe(
+          'Tue',
+        )
+
+        sparkline?.dispatchEvent(new PointerEvent('pointerleave'))
+        await awaitNestedUpdates(el)
+        expect(root?.querySelector('[part="value"]')?.textContent).toBe('30')
+      })
     })
 
     describe('MoulPercentageBar (`moul-percentage-bar`)', () => {

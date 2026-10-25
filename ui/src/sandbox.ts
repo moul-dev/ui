@@ -70,6 +70,9 @@ const TABLE_DATA: Record<string, unknown>[] = [
   },
 ]
 
+// Two weeks of daily points for the stat sparklines, ending Oct 20.
+const STAT_DAYS = Array.from({ length: 14 }, (_, i) => `Oct ${7 + i}`)
+
 const CHART_DATA: Record<string, unknown>[] = [
   { month: 'Jan', desktop: 186, mobile: 80, revenue: 2400 },
   { month: 'Feb', desktop: 305, mobile: 200, revenue: 3800 },
@@ -208,6 +211,10 @@ export class MoulSandbox extends LitElement {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
       gap: var(--spacing-4, 1rem);
+    }
+
+    .stat-grid {
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     }
 
     .demo-group {
@@ -977,35 +984,49 @@ export class MoulSandbox extends LitElement {
           <p class="section-subtitle">moul-line-chart, moul-area-chart, moul-bar-chart, moul-doughnut-chart, moul-stat</p>
         </div>
 
-        <div class="section-grid">
+        <div class="section-grid stat-grid">
           <moul-stat
-            label="Gross Monthly Volume"
-            value="52400"
+            label="Revenue"
+            value="45896"
             prefix="$"
             trend="up"
-            trend-value="+14.8%"
-            description="vs previous cycle"
-            tone="success"
-            .sparklineData=${[24, 30, 28, 38, 44, 52]}
+            trend-value="8.2%"
+            description="Last 14 days"
+            .sparklineData=${[38200, 36900, 37600, 36400, 39800, 41000, 42300, 41400, 41200, 43500, 43000, 41600, 44800, 45896]}
+            .sparklineLabels=${STAT_DAYS}
           ></moul-stat>
           <moul-stat
-            label="Concurrent Connections"
-            value="19420"
+            label="Active users"
+            value="10067"
             trend="up"
-            trend-value="+7.3%"
-            description="real-time active sockets"
-            tone="primary"
-            .sparklineData=${[140, 165, 158, 178, 194]}
+            trend-value="20%"
+            description="Last 14 days"
+            color="var(--color-chart-5)"
+            .sparklineData=${[8100, 8150, 8150, 8300, 8280, 8450, 8600, 8700, 9000, 9050, 9512, 9600, 9810, 10067]}
+            .sparklineLabels=${STAT_DAYS}
           ></moul-stat>
           <moul-stat
-            label="Service Error Budget"
-            value="99.98"
+            label="Conversion"
+            value="3.26"
             suffix="%"
             trend="up"
-            trend-value="+0.04%"
-            description="SLA compliance"
-            tone="accent"
-            .sparklineData=${[99.8, 99.85, 99.9, 99.95, 99.98]}
+            trend-value="6.7%"
+            description="Last 14 days"
+            color="var(--color-chart-2)"
+            .sparklineData=${[2.62, 2.66, 2.64, 2.86, 2.98, 3.02, 3.28, 3.22, 3.3, 3.12, 3.24, 3.08, 3.2, 3.26]}
+            .sparklineLabels=${STAT_DAYS}
+          ></moul-stat>
+          <moul-stat
+            label="Churn"
+            value="1.93"
+            suffix="%"
+            trend="down"
+            trend-value="26%"
+            is-lower-better
+            description="Last 14 days"
+            color="var(--color-chart-3)"
+            .sparklineData=${[2.62, 2.58, 2.5, 2.42, 2.34, 2.26, 2.16, 2.08, 2.04, 2.04, 2.08, 2.08, 2.1, 1.93]}
+            .sparklineLabels=${STAT_DAYS}
           ></moul-stat>
         </div>
 
