@@ -1,7 +1,7 @@
 # Technical Specification: `@moul-dev/ui` Lit Web Components & Astro Starlight Rebuild
 
 **Status:** Draft / Ready for Implementation  
-**Target Version:** CalVer (`YYYY.M.0`, then `YYYY.M.D`)  
+**Target Version:** CalVer (`YYYY.MM.MICRO`)  
 **Source Requirements:** [requirements.md](./requirements.md)
 
 ---
@@ -60,7 +60,7 @@ flowchart TD
 │   ├── dev.ts                            # Concurrent Vite + Astro dev runner
 │   ├── gen-component.ts                  # Lit component + test + MDX scaffolder
 │   ├── sync-llms.ts                      # CEM -> llms.txt / llms-full.txt validator & generator
-│   ├── bump-version.ts                   # UTC CalVer (YYYY.M.0 / YYYY.M.D) bumper
+│   ├── bump-version.ts                   # CalVer (YYYY.MM.MICRO) bumper
 │   └── verify-no-react.ts                # Disallowed dependency build guard
 ├── ui/
 │   ├── package.json                      # Zero-React Lit package manifest
@@ -947,10 +947,10 @@ Because steps are chained with `&&`, if any step exits with a non-zero code, exe
    - Supports `--write` to regenerate `docs/public/llms.txt` and `docs/public/llms-full.txt` directly from the CEM.
 3. **`scripts/bump-version.ts` (`bun run bump`, Requirement 15.10 & 15.11):**
    - Reads `version` from `ui/package.json`.
-   - Computes today's UTC monthly release `YYYY.M.0` and dated release `YYYY.M.D` (`${now.getUTCFullYear()}.${now.getUTCMonth() + 1}.${now.getUTCDate()}`), the Moul engine's `vYYYY.MM` and `vYYYY.MM.DD` tags in SemVer form.
-   - If `currentVersion` is from an earlier month (or is not CalVer), sets next version to `YYYY.M.0`.
-   - Otherwise, if `currentVersion` is older than today's `YYYY.M.D`, sets next version to `YYYY.M.D`.
-   - Otherwise exits with an error: a UTC day holds one release, and `YYYY.M.D.N` is not SemVer.
+   - Computes the UTC year and unpadded month (`${now.getUTCFullYear()}.${now.getUTCMonth() + 1}`), the scheme the Moul engine tags as `vYYYY.MM.MICRO`.
+   - If `currentVersion` is from the same month, increments `MICRO`.
+   - If it is from an earlier month (or is not CalVer), sets next version to `YYYY.MM.0`.
+   - If it is from a later month, exits with an error and leaves every file unchanged.
    - Writes the updated version to `ui/package.json` (and syncs root/`docs` `package.json` & `ui/src/index.ts`).
 
 ---

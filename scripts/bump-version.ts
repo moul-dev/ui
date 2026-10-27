@@ -37,22 +37,22 @@ function parseArgs(args: string[]): BumpOptions {
   for (const arg of args) {
     if (arg === '--help' || arg === '-h') {
       console.log(`
-${colors.bright}Moul UI — UTC CalVer Bump${colors.reset}
+${colors.bright}Moul UI — CalVer Bump (YYYY.MM.MICRO)${colors.reset}
 
 ${colors.yellow}Usage:${colors.reset}
   bun run bump [options] [version]
 
 ${colors.yellow}Options:${colors.reset}
-  [version]               Explicit version to set (YYYY.M.0 or YYYY.M.D, newer than the current one)
+  [version]               Explicit version to set (YYYY.MM.MICRO, newer than the current one)
   --date=<YYYY-MM-DD>     Compute the version as if today (UTC) were this date
-  --changelog, -c         Scaffold the release's changelog entry in docs/src/content/docs/changelog/
+  --changelog, -c         Scaffold docs/src/content/docs/changelog/<YYYY-MM-MICRO>.mdx
   --dry-run, -d           Preview changes without modifying any files
   --help, -h              Show this help message
 
-${colors.yellow}Rules${colors.reset} (the Moul engine's calendar, as SemVer npm accepts):
-  First release of a UTC month  -> YYYY.M.0   (e.g. 2026.11.0, engine tag v2026.11)
-  Later releases that month     -> YYYY.M.D   (e.g. 2026.11.14, engine tag v2026.11.14)
-  A second bump on one UTC day  -> refused: a day holds one release
+${colors.yellow}Rules${colors.reset} (shared with the Moul engine, whose tags add a leading v):
+  First release of a UTC month  -> YYYY.MM.0   (e.g. 2026.11.0)
+  Each later release that month -> MICRO + 1   (e.g. 2026.11.1, 2026.11.2)
+  MM is the unpadded month, so every version is valid SemVer.
 `)
       process.exit(0)
     } else if (arg === '--dry-run' || arg === '-d') {
@@ -103,7 +103,7 @@ function main() {
   if (options.explicitVersion) {
     if (!parseCalVer(options.explicitVersion)) {
       console.error(
-        `${colors.red}Error:${colors.reset} "${options.explicitVersion}" is not a CalVer version (YYYY.M.0 or YYYY.M.D, no zero padding).`,
+        `${colors.red}Error:${colors.reset} "${options.explicitVersion}" is not a CalVer version (YYYY.MM.MICRO, no zero padding).`,
       )
       process.exit(1)
     }

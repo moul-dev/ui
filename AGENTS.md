@@ -81,7 +81,7 @@ Run these commands from the root directory:
   ```bash
   bun run build:docs
   ```
-- **Bump UTC CalVer Version** on the Moul engine's calendar: the first release of a UTC month is `YYYY.M.0` (engine tag `vYYYY.MM`), later ones that month are `YYYY.M.D`, and a second bump on the same UTC day is refused. `--changelog` scaffolds the entry as `changelog/YYYY-MM.mdx` or `changelog/YYYY-MM-DD.mdx`:
+- **Bump CalVer Version** (`YYYY.MM.MICRO`, shared with the Moul engine): the first release of a UTC month is `YYYY.MM.0`, and each later release that month adds one to `MICRO`. `MM` is unpadded (`2026.9.0`, never `2026.09.0`) so the version stays valid SemVer. `--changelog` scaffolds `changelog/YYYY-MM-MICRO.mdx`:
   ```bash
   bun run bump
   ```

@@ -1,26 +1,22 @@
 /**
- * UTC CalVer helpers shared by `bun run bump` and its tests.
+ * CalVer helpers shared by `bun run bump` and its tests.
  *
- * Moul UI releases on the Moul engine's calendar. The engine tags the first
- * release of a month `v2026.10` and any later release that month by its date,
- * `v2026.10.27`. npm needs three SemVer parts without zero padding, so:
+ * Moul UI and the Moul engine both version as `YYYY.MM.MICRO`
+ * (https://calver.org): the UTC year, the UTC month, and a release counter
+ * for that month. `MM` is the unpadded month (calver.org writes the padded
+ * one as `0M`), which keeps every version valid SemVer for npm:
  *
- * - The first release of a UTC month is `YYYY.M.0`.
- * - Every later release that month is `YYYY.M.D`, its UTC day.
- *
- * Versions then sort in release order. A day holds one dated release, so a
- * second bump on the same UTC day is refused: `YYYY.M.D.N` is not SemVer and
- * npm rejects it.
+ * - The first release of a UTC month is `YYYY.MM.0`: `2026.11.0`.
+ * - Each later release that month adds one to `MICRO`: `2026.11.1`.
  */
 
 export interface CalVer {
   year: number
   month: number
-  /** `0` for the monthly release, otherwise the UTC day of the release. */
-  day: number
+  micro: number
 }
 
-const CALVER_PATTERN = /^(\d{4})\.([1-9]|1[0-2])\.(0|[1-9]|[12]\d|3[01])$/
+const CALVER_PATTERN = /^(\d{4})\.([1-9]|1[0-2])\.(0|[1-9]\d*)$/
 
 export function parseCalVer(version: string): CalVer | undefined {
   const match = version.match(CALVER_PATTERN)
@@ -28,7 +24,7 @@ export function parseCalVer(version: string): CalVer | undefined {
   return {
     year: Number(match[1]),
     month: Number(match[2]),
-    day: Number(match[3]),
+    micro: Number(match[3]),
   }
 }
 
@@ -38,43 +34,39 @@ export function compareCalVer(a: string, b: string): number {
   const right = parseCalVer(b)
   if (!left || !right) return (left ? 1 : 0) - (right ? 1 : 0)
   return (
-    left.year - right.year || left.month - right.month || left.day - right.day
+    left.year - right.year ||
+    left.month - right.month ||
+    left.micro - right.micro
   )
 }
 
 export function computeNextVersion(currentVersion: string, now: Date): string {
   const year = now.getUTCFullYear()
   const month = now.getUTCMonth() + 1
-  const day = now.getUTCDate()
-  const monthly = `${year}.${month}.0`
-  const dated = `${year}.${month}.${day}`
+  const current = parseCalVer(currentVersion)
 
-  if (compareCalVer(currentVersion, monthly) < 0) return monthly
-  if (compareCalVer(currentVersion, dated) < 0) return dated
-
-  if (currentVersion === dated) {
+  if (current?.year === year && current.month === month) {
+    return `${year}.${month}.${current.micro + 1}`
+  }
+  if (compareCalVer(currentVersion, `${year}.${month}.0`) > 0) {
     throw new Error(
-      `${currentVersion} is already the release for ${utcIsoDate(now)} (UTC), and a day holds one release. Bump again on the next UTC day.`,
+      `${currentVersion} is from a later month than ${utcIsoDate(now)}. Pass --date=<YYYY-MM-DD> for a later UTC date.`,
     )
   }
-  throw new Error(
-    `${currentVersion} is newer than today's release ${dated}. Pass --date=<YYYY-MM-DD> for a later UTC date.`,
-  )
+  return `${year}.${month}.0`
 }
 
 /**
- * Changelog slug for a release, zero-padded like the engine's changelog
- * files: `2026-11` for `2026.11.0`, `2026-10-28` for `2026.10.28`.
+ * Changelog slug for a release: the version with dashes, `2026-11-0` for
+ * `2026.11.0`. Dots would be dropped from the docs URL, and a date would
+ * collide when two releases land on the same day.
  */
 export function changelogSlug(version: string): string {
-  const calver = parseCalVer(version)
-  if (!calver) throw new Error(`${version} is not a CalVer version.`)
-  const month = String(calver.month).padStart(2, '0')
-  if (calver.day === 0) return `${calver.year}-${month}`
-  return `${calver.year}-${month}-${String(calver.day).padStart(2, '0')}`
+  if (!parseCalVer(version)) throw new Error(`${version} is not CalVer.`)
+  return version.replaceAll('.', '-')
 }
 
-/** `YYYY-MM-DD` in UTC, used for changelog dates. */
+/** `YYYY-MM-DD` in UTC, used for the changelog `date`. */
 export function utcIsoDate(now: Date): string {
   return now.toISOString().slice(0, 10)
 }

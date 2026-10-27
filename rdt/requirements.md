@@ -25,7 +25,7 @@ The rebuild covers 54 public components across six categories, 5 reactive contro
 - **Visual_Variant**: One of five visual styles — `solid`, `flat`, `shadow`, `bordered`, `glass`.
 - **Monorepo_Root**: The workspace root at `/` containing both `ui/` and `docs/` packages, managed with Bun workspaces.
 - **Vite_Build**: The `ui/` library build using Vite in library mode, producing `dist/moul-ui.js`, `dist/assets/style.css`, and `dist/src/index.d.ts`.
-- **CalVer**: Calendar versioning scheme used for package version bumping: `YYYY.M.0` for the first release of a UTC month and `YYYY.M.D` for later releases that month, matching the Moul engine's `vYYYY.MM` and `vYYYY.MM.DD` tags as valid SemVer.
+- **CalVer**: Calendar versioning scheme `YYYY.MM.MICRO` used for package version bumping and shared with the Moul engine: the UTC year, the unpadded UTC month, and a release counter that starts at `0` each month.
 - **Biome**: The formatter and linter used across the monorepo.
 - **LLM_Index**: The machine-readable context files (`llms.txt`, `llms-full.txt`, `AGENTS.md`) served at the docs root.
 
@@ -312,8 +312,8 @@ The rebuild covers 54 public components across six categories, 5 reactive contro
 7. WHEN `bun run build:ui` is invoked, THE Monorepo_Root SHALL run the Vite library build and CEM generation sequentially, where CEM generation starts only after the Vite build exits with code 0.
 8. IF any step in the `bun run build:ui` sequence exits with a non-zero code, THEN THE Monorepo_Root SHALL halt the remaining steps and exit with a non-zero code, emitting an error message indicating which step failed.
 9. THE Monorepo_Root SHALL provide a `bun run build:docs` script that runs the Astro static build.
-10. WHEN `bun run bump` is invoked, THE Monorepo_Root SHALL read the current version from `ui/package.json`, derive the next version from the current UTC date (`YYYY.M.0` when the current version is from an earlier month, otherwise `YYYY.M.D`), and write the updated version back to `ui/package.json`.
-11. IF the version already recorded in `ui/package.json` is the current UTC date's `YYYY.M.D` when `bun run bump` is invoked, THEN THE Monorepo_Root SHALL exit with a non-zero code and leave every file unchanged, because a fourth `.N` part is not valid SemVer.
+10. WHEN `bun run bump` is invoked, THE Monorepo_Root SHALL read the current version from `ui/package.json`, derive the next version from the current UTC month (`YYYY.MM.0` when the current version is from an earlier month), and write the updated version back to `ui/package.json`.
+11. IF the version already recorded in `ui/package.json` is from the current UTC month when `bun run bump` is invoked, THEN THE Monorepo_Root SHALL increment `MICRO` by 1, so every version stays valid SemVer and sorts after the one before.
 12. THE Vite_Build SHALL operate in library mode producing `dist/moul-ui.js` as the main bundle and `dist/src/index.d.ts` as the TypeScript declarations.
 13. THE Library SHALL include the `"use client";` directive as the first line of `dist/moul-ui.js` via a Rollup banner to prevent RSC import conflicts.
 
