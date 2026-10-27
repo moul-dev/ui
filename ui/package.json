@@ -52,7 +52,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "bun ../scripts/verify-no-react.ts ui && tsc -b && vite build && cem analyze --config custom-elements-manifest.config.mjs",
+    "build": "bun ../scripts/verify-no-react.ts ui && tsc -b && vite build && vite build --mode cdn && cem analyze --config custom-elements-manifest.config.mjs",
     "build:watch": "vite build --watch",
     "lint": "biome check",
     "format": "biome format --write",
