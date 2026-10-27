@@ -481,45 +481,30 @@ export const logsViewerStyles: CSSResultGroup = [
       color: var(--color-muted, #71717a);
     }
 
-    /* Inspector panel: secondary surface with white tiles, like HeroUI's primary table. */
-    .inspector {
-      border-top: 1px solid var(--color-separator, #e4e4e7);
-      background-color: var(--color-surface-secondary, #f4f4f5);
-      padding: var(--spacing-3, 0.75rem) var(--spacing-4, 1rem) var(--spacing-4, 1rem);
-      animation: inspectorEnter 200ms var(--ease-out, ease-out);
-    }
-
-    @keyframes inspectorEnter {
-      from {
-        opacity: 0;
-        transform: translateY(-4px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
+    /* Log detail drawer: content slotted into <moul-drawer>, styled from this shadow root. */
     .inspector-header {
       display: flex;
+      flex: 1;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: var(--spacing-2, 0.5rem);
+      gap: var(--spacing-3, 0.75rem);
+      min-width: 0;
     }
 
     .inspector-title {
-      font-weight: var(--font-weight-medium, 500);
-      font-size: var(--font-size-sm, 0.875rem);
+      font-size: var(--font-size-md, 1rem);
       line-height: var(--line-height-md, 1.5rem);
+      font-weight: var(--font-weight-medium, 500);
       color: var(--color-fg, #18181b);
     }
 
     .inspector-close-btn {
       display: inline-flex;
+      flex-shrink: 0;
       align-items: center;
       justify-content: center;
-      width: 1.75rem;
-      height: 1.75rem;
+      width: 2rem;
+      height: 2rem;
       padding: 0;
       border: none;
       background: transparent;
@@ -545,46 +530,135 @@ export const logsViewerStyles: CSSResultGroup = [
       box-shadow: var(--focus-ring);
     }
 
+    .inspector-body {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-5, 1.25rem);
+      padding-top: var(--spacing-2, 0.5rem);
+    }
+
+    /* Level, timestamp and line as a row of secondary tiles. */
+    .inspector-meta {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr));
+      gap: var(--spacing-2, 0.5rem);
+    }
+
+    .inspector-meta-item {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-1, 0.25rem);
+      padding: var(--spacing-2, 0.5rem) var(--spacing-3, 0.75rem);
+      background-color: var(--color-surface-secondary, #f4f4f5);
+      border-radius: var(--radius-xl, 0.75rem);
+    }
+
+    .inspector-meta-item > dt {
+      font-size: var(--font-size-xs, 0.75rem);
+      line-height: var(--line-height-xs, 1rem);
+      color: var(--color-muted, #71717a);
+    }
+
+    .inspector-meta-item > dd {
+      display: flex;
+      align-items: center;
+      min-height: 1.25rem;
+      font-family: var(--font-family-mono, monospace);
+      font-size: var(--font-size-xs, 0.75rem);
+      line-height: var(--line-height-xs, 1rem);
+      color: var(--color-fg, #18181b);
+      word-break: break-word;
+    }
+
+    .inspector-section {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-2, 0.5rem);
+    }
+
+    .inspector-section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--spacing-2, 0.5rem);
+    }
+
+    .inspector-section-header > .tool-btn {
+      height: 1.75rem;
+      font-size: var(--font-size-xs, 0.75rem);
+    }
+
+    .inspector-label {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacing-1, 0.25rem);
+      font-size: var(--font-size-xs, 0.75rem);
+      line-height: var(--line-height-xs, 1rem);
+      font-weight: var(--font-weight-medium, 500);
+      color: var(--color-muted, #71717a);
+    }
+
+    .inspector-count {
+      min-width: 1.125rem;
+      padding: 0 0.3125rem;
+      border-radius: var(--radius-full, 9999px);
+      background-color: var(--color-default, #f4f4f5);
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .inspector-message {
+      font-size: var(--font-size-sm, 0.875rem);
+      line-height: var(--line-height-md, 1.5rem);
+      color: var(--color-fg, #18181b);
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    /* Attribute table: keys share one column so values line up. */
     .inspector-attrs {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: var(--spacing-2, 0.5rem);
-      margin-bottom: var(--spacing-3, 0.75rem);
+      grid-template-columns: minmax(5rem, max-content) 1fr;
+      background-color: var(--color-surface-secondary, #f4f4f5);
+      border-radius: var(--radius-xl, 0.75rem);
+      overflow: hidden;
+      font-family: var(--font-family-mono, monospace);
+      font-size: var(--font-size-xs, 0.75rem);
+      line-height: var(--line-height-xs, 1rem);
     }
 
     .inspector-attr-row {
-      display: flex;
-      flex-direction: column;
-      gap: 0.125rem;
-      font-size: var(--font-size-xs, 0.75rem);
-      line-height: var(--line-height-xs, 1rem);
+      display: grid;
+      grid-column: 1 / -1;
+      grid-template-columns: subgrid;
+      gap: var(--spacing-3, 0.75rem);
       padding: var(--spacing-2, 0.5rem) var(--spacing-3, 0.75rem);
-      background-color: var(--color-surface, #ffffff);
-      border-radius: var(--radius-xl, 0.75rem);
-      box-shadow: var(--shadow-surface, 0 1px 2px 0 rgba(0, 0, 0, 0.06));
-      font-family: var(--font-family-mono, monospace);
+    }
+
+    .inspector-attr-row + .inspector-attr-row {
+      border-top: 1px solid var(--color-separator, #e4e4e7);
+    }
+
+    .inspector-attr-row > .attribute-val {
+      min-width: 0;
+      word-break: break-all;
     }
 
     .inspector-raw {
-      position: relative;
-      background-color: var(--color-surface, #ffffff);
-      border-radius: var(--radius-xl, 0.75rem);
-      box-shadow: var(--shadow-surface, 0 1px 2px 0 rgba(0, 0, 0, 0.06));
+      margin: 0;
       padding: var(--spacing-3, 0.75rem);
+      background-color: var(--color-surface-secondary, #f4f4f5);
+      border-radius: var(--radius-xl, 0.75rem);
       font-family: var(--font-family-mono, monospace);
       font-size: var(--font-size-xs, 0.75rem);
       line-height: 1.5;
-      overflow-x: auto;
-      white-space: normal;
+      color: var(--color-fg, #18181b);
+      white-space: pre-wrap;
       word-break: break-all;
-      scrollbar-width: thin;
-      scrollbar-color: var(--color-scrollbar-thumb) transparent;
     }
 
-    /* Preserve whitespace in the raw line only — not the template's own indentation */
     .inspector-raw > code {
       font-family: inherit;
-      white-space: pre-wrap;
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -599,10 +673,6 @@ export const logsViewerStyles: CSSResultGroup = [
 
       .tool-btn:active {
         transform: none;
-      }
-
-      .inspector {
-        animation: none;
       }
     }
   `,

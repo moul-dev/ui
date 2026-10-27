@@ -215,6 +215,20 @@ export function safeShowModal(
 }
 
 /**
+ * Returns the focused element, following open shadow roots down from the document.
+ * `document.activeElement` stops at the outermost shadow host, which is often not
+ * focusable itself (a row inside `<moul-logs-viewer>`, for instance).
+ */
+export function getDeepActiveElement(): HTMLElement | null {
+  if (typeof document === 'undefined') return null
+  let active = document.activeElement
+  while (active?.shadowRoot?.activeElement) {
+    active = active.shadowRoot.activeElement
+  }
+  return active as HTMLElement | null
+}
+
+/**
  * Restores focus to a previously active element upon modal/popover dismissal.
  */
 export function restoreFocus(previousActiveElement: HTMLElement | null): void {

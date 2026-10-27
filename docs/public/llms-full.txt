@@ -2530,7 +2530,7 @@ Class: `MoulEmptyState` · Source: `ui/src/components/EmptyState/EmptyState.ts`
 
 ## LogsViewer
 
-Virtualized log viewer with level filtering, search, and an inspector panel. Docs: [/docs/blocks/logs](/docs/blocks/logs)
+Virtualized log viewer with level filtering, search, and a log detail drawer. Docs: [/docs/blocks/logs](/docs/blocks/logs)
 
 ```html
 <moul-logs-viewer id="viewer" title="Build logs" filter-level="all" max-height="480px"></moul-logs-viewer>
@@ -2587,7 +2587,7 @@ Class: `MoulLogsViewer` · Source: `ui/src/components/LogsViewer/LogsViewer.ts`
 | `logselect` | `CustomEvent` |
 | `rowclick` | `CustomEvent` |
 
-**CSS Parts:** `row`, `cell-linenumber`, `cell-timestamp`, `cell-level`, `cell-message`, `attributes`, `inspector`, `inspector-header`, `inspector-attrs`, `inspector-raw`, `container`, `toolbar`, `search`, `filter-group`, `filter-indicator`, `filter-pill`, `counts`, `scroll-container`, `table`, `empty`
+**CSS Parts:** `row`, `cell-linenumber`, `cell-timestamp`, `cell-level`, `cell-message`, `attributes`, `inspector-header`, `inspector-meta`, `inspector-message`, `inspector-attrs`, `inspector-raw`, `container`, `toolbar`, `search`, `filter-group`, `filter-indicator`, `filter-pill`, `counts`, `scroll-container`, `table`, `empty`, `inspector`
 
 ### `<moul-logs>`
 

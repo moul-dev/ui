@@ -2,6 +2,7 @@ import { html, type LitElement, render } from 'lit'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { triggerResize } from '../../test-setup'
 import { defineElement } from '../../utils/define-element'
+import type { MoulDrawer } from '../Drawer/Drawer'
 import { SERVER_LOG_RAW, SERVER_LOGS } from './exampleLogs'
 import { MoulLogs } from './Logs'
 import type { LogFilterLevel } from './Logs.types'
@@ -293,10 +294,14 @@ describe('Milestone 1: Logs Viewer and Pure Parser Verification', () => {
       expect(scrollBox?.classList.contains('wrap-lines')).toBe(true)
     })
 
-    it('opens and closes inspector drawer on row click', async () => {
+    it('opens the log detail drawer on row click and closes it from the close button', async () => {
       const el = await mount<MoulLogsViewer>(
         html`<moul-logs-viewer .logs=${SERVER_LOGS}></moul-logs-viewer>`,
       )
+
+      const drawer = el.shadowRoot?.querySelector<MoulDrawer>('moul-drawer')
+      expect(drawer).not.toBeNull()
+      expect(drawer?.isOpen).toBe(false)
 
       const rows = el.shadowRoot?.querySelectorAll<HTMLElement>('.row')
       expect(rows?.[0]).toBeDefined()
@@ -306,11 +311,11 @@ describe('Milestone 1: Logs Viewer and Pure Parser Verification', () => {
 
       expect(el.isInspectorOpen).toBe(true)
       expect(el.selectedId).toBe('log-0')
-
-      const inspector = el.shadowRoot?.querySelector('.inspector')
-      expect(inspector).not.toBeNull()
-      expect(inspector?.textContent).toContain('Log Inspector: Line 1')
-      expect(inspector?.textContent).toContain('addr')
+      expect(drawer?.isOpen).toBe(true)
+      expect(drawer?.textContent).toContain('Log details')
+      expect(drawer?.textContent).toContain(SERVER_LOGS[0].message)
+      expect(drawer?.textContent).toContain('addr')
+      expect(drawer?.textContent).toContain('http://localhost:8090')
 
       const closeBtn = el.shadowRoot?.querySelector<HTMLButtonElement>(
         '.inspector-close-btn',
@@ -319,7 +324,52 @@ describe('Milestone 1: Logs Viewer and Pure Parser Verification', () => {
       await awaitUpdates(el)
 
       expect(el.isInspectorOpen).toBe(false)
-      expect(el.shadowRoot?.querySelector('.inspector')).toBeNull()
+      expect(el.selectedId).toBeNull()
+      expect(drawer?.isOpen).toBe(false)
+    })
+
+    it('opening another row swaps the drawer content', async () => {
+      const el = await mount<MoulLogsViewer>(
+        html`<moul-logs-viewer .logs=${SERVER_LOGS}></moul-logs-viewer>`,
+      )
+      const rows = el.shadowRoot?.querySelectorAll<HTMLElement>('.row')
+
+      rows?.[0].click()
+      await awaitUpdates(el)
+      rows?.[2].click()
+      await awaitUpdates(el)
+
+      const drawer = el.shadowRoot?.querySelector<MoulDrawer>('moul-drawer')
+      expect(el.selectedId).toBe(SERVER_LOGS[2].id)
+      expect(drawer?.isOpen).toBe(true)
+      expect(drawer?.textContent).toContain(SERVER_LOGS[2].message)
+      expect(drawer?.textContent).not.toContain(SERVER_LOGS[0].message)
+    })
+
+    it('closes the drawer on Escape without leaking openchange out of the viewer', async () => {
+      const el = await mount<MoulLogsViewer>(
+        html`<moul-logs-viewer .logs=${SERVER_LOGS}></moul-logs-viewer>`,
+      )
+      const openChangeSpy = vi.fn()
+      el.addEventListener('openchange', openChangeSpy)
+
+      el.shadowRoot?.querySelector<HTMLElement>('.row')?.click()
+      await awaitUpdates(el)
+
+      const drawer = el.shadowRoot?.querySelector<MoulDrawer>('moul-drawer')
+      drawer?.dispatchEvent(
+        new KeyboardEvent('keydown', {
+          key: 'Escape',
+          bubbles: true,
+          cancelable: true,
+        }),
+      )
+      await awaitUpdates(el)
+
+      expect(drawer?.isOpen).toBe(false)
+      expect(el.isInspectorOpen).toBe(false)
+      expect(el.selectedId).toBeNull()
+      expect(openChangeSpy).not.toHaveBeenCalled()
     })
 
     it('dispatches filterlevelchange and filterchange events on level change', async () => {

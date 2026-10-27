@@ -605,7 +605,7 @@ toastQueue.add({ title: 'Saved', description: 'Your profile was updated.', tone:
         name: 'LogsViewer',
         docs: '/docs/blocks/logs',
         summary:
-          'Virtualized log viewer with level filtering, search, and an inspector panel.',
+          'Virtualized log viewer with level filtering, search, and a log detail drawer.',
         tags: ['moul-logs-viewer', 'moul-logs'],
         snippet: `<moul-logs-viewer id="viewer" title="Build logs" filter-level="all" max-height="480px"></moul-logs-viewer>
 

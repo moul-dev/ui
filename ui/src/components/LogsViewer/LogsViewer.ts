@@ -8,6 +8,7 @@ import {
 } from 'lit'
 import { defineElement } from '../../utils/define-element'
 import { animateActiveIndicator } from '../../utils/motion'
+import '../Drawer/Drawer'
 import type {
   HighlightTextProps,
   LogAttributeChipProps,
@@ -51,6 +52,12 @@ export function HighlightText({
   )}`
 }
 
+function formatAttributeValue(value: LogAttributeChipProps['value']): string {
+  return typeof value === 'object' && value !== null
+    ? JSON.stringify(value)
+    : String(value)
+}
+
 /**
  * Pure template helper for an attribute key-value chip.
  */
@@ -58,15 +65,10 @@ export function LogAttributeChip({
   name,
   value,
 }: LogAttributeChipProps): TemplateResult {
-  const displayVal =
-    typeof value === 'object' && value !== null
-      ? JSON.stringify(value)
-      : String(value)
-
   return html`
     <span class="attribute-chip" part="attribute-chip">
       <span class="attribute-key">${name}=</span>
-      <span class="attribute-val">${displayVal}</span>
+      <span class="attribute-val">${formatAttributeValue(value)}</span>
     </span>
   `
 }
@@ -130,7 +132,7 @@ export function LogCopyIconButton({
 /**
  * MoulLogsViewer Custom Element (`moul-logs-viewer`).
  * Virtualized, interactive log viewer component with filtering, search, line wrapping,
- * active indicator animation, and attribute inspector.
+ * active indicator animation, and a log detail drawer opened by clicking a row.
  */
 export class MoulLogsViewer extends LitElement {
   static override styles: CSSResultGroup = logsViewerStyles
@@ -182,6 +184,8 @@ export class MoulLogsViewer extends LitElement {
   declare searchPlaceholder: string
 
   private previousIndicatorRect: DOMRect | null = null
+  /** Last log shown in the drawer, kept so its content stays put while the drawer slides out. */
+  private inspectedLog: LogItem | null = null
 
   constructor() {
     super()
@@ -440,13 +444,8 @@ export class MoulLogsViewer extends LitElement {
   }
 
   private readonly handleRowClick = (item: LogItem): void => {
-    if (this.selectedId === item.id && this.isInspectorOpen) {
-      this.isInspectorOpen = false
-      this.selectedId = null
-    } else {
-      this.selectedId = item.id
-      this.isInspectorOpen = true
-    }
+    this.selectedId = item.id
+    this.isInspectorOpen = true
 
     this.dispatchEvent(
       new CustomEvent('logselect', {
@@ -467,6 +466,14 @@ export class MoulLogsViewer extends LitElement {
   private readonly closeInspector = (): void => {
     this.isInspectorOpen = false
     this.selectedId = null
+  }
+
+  // The drawer reports Escape and backdrop dismissal here; keep its event inside the viewer.
+  private readonly handleInspectorOpenChange = (e: CustomEvent): void => {
+    e.stopPropagation()
+    if (!e.detail?.isOpen) {
+      this.closeInspector()
+    }
   }
 
   private readonly handleCopyAll = (): void => {
@@ -560,58 +567,114 @@ export class MoulLogsViewer extends LitElement {
     `
   }
 
-  private renderInspector(selectedItem: LogItem): TemplateResult {
-    const attrs = selectedItem.attributes || {}
-    const rawContent = selectedItem.raw || selectedItem.message
+  private get selectedLog(): LogItem | null {
+    if (this.selectedId === null) return null
+    return (
+      (this.logs || []).find(
+        (l) => l && String(l.id) === String(this.selectedId),
+      ) ?? null
+    )
+  }
+
+  protected override willUpdate(changedProperties: PropertyValues): void {
+    super.willUpdate(changedProperties)
+    this.inspectedLog = this.selectedLog ?? this.inspectedLog
+  }
+
+  private renderInspector(item: LogItem): TemplateResult {
+    const attrs = Object.entries(item.attributes || {})
+    const rawContent = item.raw || item.message
+    const level = (
+      typeof item.level === 'string' ? item.level : String(item.level || 'info')
+    ).toLowerCase()
 
     return html`
-      <div class="inspector" part="inspector" role="region" aria-label="Log Inspector">
-        <div class="inspector-header" part="inspector-header">
-          <div class="inspector-title">
-            Log Inspector: Line ${selectedItem.lineNumber ?? selectedItem.id}
-          </div>
-          <button
-            type="button"
-            class="inspector-close-btn"
-            aria-label="Close Inspector"
-            @click=${this.closeInspector}
+      <div slot="header" class="inspector-header" part="inspector-header">
+        <h2 class="inspector-title">Log details</h2>
+        <button
+          type="button"
+          class="inspector-close-btn"
+          aria-label="Close log details"
+          @click=${this.closeInspector}
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            width="16"
+            height="16"
+            aria-hidden="true"
           >
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              width="16"
-              height="16"
-              aria-hidden="true"
-            >
-              <path d="M18 6 6 18M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
+            <path d="M18 6 6 18M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="inspector-body">
+        <dl class="inspector-meta" part="inspector-meta">
+          <div class="inspector-meta-item">
+            <dt>Level</dt>
+            <dd>${LogLevelBadge({ level })}</dd>
+          </div>
+          ${
+            item.timestamp
+              ? html`
+                <div class="inspector-meta-item">
+                  <dt>Timestamp</dt>
+                  <dd>${item.timestamp}</dd>
+                </div>
+              `
+              : ''
+          }
+          ${
+            item.lineNumber !== undefined
+              ? html`
+                <div class="inspector-meta-item">
+                  <dt>Line</dt>
+                  <dd>${item.lineNumber}</dd>
+                </div>
+              `
+              : ''
+          }
+        </dl>
+
+        <section class="inspector-section">
+          <h3 class="inspector-label">Message</h3>
+          <p class="inspector-message" part="inspector-message">${item.message}</p>
+        </section>
 
         ${
-          Object.keys(attrs).length > 0
+          attrs.length > 0
             ? html`
-              <div class="inspector-attrs" part="inspector-attrs">
-                ${Object.entries(attrs).map(
-                  ([k, v]) => html`
-                    <div class="inspector-attr-row">
-                      <span class="attribute-key">${k}</span>
-                      <span class="attribute-val">${String(v)}</span>
-                    </div>
-                  `,
-                )}
-              </div>
+              <section class="inspector-section">
+                <h3 class="inspector-label">
+                  Attributes <span class="inspector-count">${attrs.length}</span>
+                </h3>
+                <dl class="inspector-attrs" part="inspector-attrs">
+                  ${attrs.map(
+                    ([k, v]) => html`
+                      <div class="inspector-attr-row">
+                        <dt class="attribute-key">${k}</dt>
+                        <dd class="attribute-val">${formatAttributeValue(v)}</dd>
+                      </div>
+                    `,
+                  )}
+                </dl>
+              </section>
             `
             : ''
         }
 
-        <div class="inspector-raw" part="inspector-raw">
-          <code>${rawContent}</code>
-        </div>
+        <section class="inspector-section">
+          <div class="inspector-section-header">
+            <h3 class="inspector-label">Raw</h3>
+            ${LogCopyIconButton({ content: rawContent, label: 'Copy' })}
+          </div>
+          <pre class="inspector-raw" part="inspector-raw"><code>${rawContent}</code></pre>
+        </section>
       </div>
     `
   }
@@ -620,12 +683,6 @@ export class MoulLogsViewer extends LitElement {
     const filtered = this.filteredLogs
     const totalCount = Array.isArray(this.logs) ? this.logs.length : 0
     const filteredCount = filtered.length
-    const selectedItem =
-      this.selectedId !== null
-        ? (this.logs || []).find(
-            (l) => l && String(l.id) === String(this.selectedId),
-          )
-        : null
 
     return html`
       <div class="container" part="container">
@@ -790,11 +847,15 @@ export class MoulLogsViewer extends LitElement {
           </div>
         </div>
 
-        ${
-          this.isInspectorOpen && selectedItem
-            ? this.renderInspector(selectedItem)
-            : ''
-        }
+        <moul-drawer
+          part="inspector"
+          placement="right"
+          size="lg"
+          .isOpen=${this.isInspectorOpen && this.selectedLog !== null}
+          @openchange=${this.handleInspectorOpenChange}
+        >
+          ${this.inspectedLog ? this.renderInspector(this.inspectedLog) : ''}
+        </moul-drawer>
       </div>
     `
   }

@@ -555,7 +555,7 @@ toastQueue.add({ title: 'Saved', description: 'Your profile was updated.', tone:
 
 ### Composite Blocks
 
-- [LogsViewer](/docs/blocks/logs): Virtualized log viewer with level filtering, search, and an inspector panel. Elements: `<moul-logs-viewer>`, `<moul-logs>`.
+- [LogsViewer](/docs/blocks/logs): Virtualized log viewer with level filtering, search, and a log detail drawer. Elements: `<moul-logs-viewer>`, `<moul-logs>`.
 
 ```html
 <moul-logs-viewer id="viewer" title="Build logs" filter-level="all" max-height="480px"></moul-logs-viewer>

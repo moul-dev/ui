@@ -630,8 +630,8 @@ describe('Empirical Challenge: Logs Viewer and MoulLogs Stress Tests', () => {
     })
   })
 
-  describe('6. Inspector Panel and Edge Cases', () => {
-    it('opens inspector on row click and renders attribute key-values and raw line', async () => {
+  describe('6. Log Detail Drawer and Edge Cases', () => {
+    it('opens the detail drawer on row click and renders attribute key-values and raw line', async () => {
       const el = await mount<MoulLogsViewer>(
         html`<moul-logs-viewer .logs=${SERVER_LOGS}></moul-logs-viewer>`,
       )
@@ -645,19 +645,28 @@ describe('Empirical Challenge: Logs Viewer and MoulLogs Stress Tests', () => {
       expect(firstRow?.classList.contains('selected')).toBe(true)
       expect(firstRow?.getAttribute('aria-selected')).toBe('true')
 
-      const inspector = el.shadowRoot?.querySelector('.inspector')
+      const inspector = el.shadowRoot?.querySelector('.inspector-body')
       expect(inspector).not.toBeNull()
       expect(inspector?.textContent).toContain('addr')
       expect(inspector?.textContent).toContain('http://localhost:8090')
+      expect(inspector?.querySelector('.inspector-raw')?.textContent).toBe(
+        SERVER_LOGS[0].raw,
+      )
 
-      // Clicking same row again closes inspector
+      // Clicking the same row again keeps the drawer open on that log
       firstRow?.click()
+      await awaitNestedUpdates(el)
+      expect(el.isInspectorOpen).toBe(true)
+      expect(el.selectedId).toBe('log-0')
+
+      el.shadowRoot
+        ?.querySelector<HTMLButtonElement>('.inspector-close-btn')
+        ?.click()
       await awaitNestedUpdates(el)
 
       expect(el.isInspectorOpen).toBe(false)
       expect(el.selectedId).toBeNull()
       expect(firstRow?.classList.contains('selected')).toBe(false)
-      expect(el.shadowRoot?.querySelector('.inspector')).toBeNull()
     })
 
     it('safely handles logs without attributes or with non-string values', async () => {
@@ -678,7 +687,7 @@ describe('Empirical Challenge: Logs Viewer and MoulLogs Stress Tests', () => {
       row?.click()
       await awaitNestedUpdates(el)
 
-      const inspector = el.shadowRoot?.querySelector('.inspector')
+      const inspector = el.shadowRoot?.querySelector('.inspector-body')
       expect(inspector).not.toBeNull()
       expect(inspector?.textContent).toContain('count')
       expect(inspector?.textContent).toContain('42')

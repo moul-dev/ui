@@ -603,10 +603,11 @@ describe('Adversarial Challenge: Milestone 1 Log Parsers & LogsViewer Logic', ()
 
       expect(el.isInspectorOpen).toBe(true)
       expect(el.selectedId).toBe('test-1')
-      const inspector = el.shadowRoot?.querySelector('.inspector')
-      expect(inspector).toBeDefined()
+      const inspector = el.shadowRoot?.querySelector('.inspector-body')
+      expect(inspector).not.toBeNull()
       expect(inspector?.textContent).toContain('payment')
       expect(inspector?.textContent).toContain('3')
+      expect(inspector?.textContent).toContain('full raw message here')
 
       // Close inspector via close button
       const closeBtn = el.shadowRoot?.querySelector<HTMLButtonElement>(

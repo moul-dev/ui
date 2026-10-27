@@ -6,6 +6,7 @@ import {
 import { defineElement } from '../../utils/define-element'
 import {
   focusFirstElement,
+  getDeepActiveElement,
   restoreFocus,
   trapFocus,
 } from '../../utils/focus-trap'
@@ -113,7 +114,7 @@ export class MoulDrawer extends LitElement {
   }
 
   private async openDrawer(): Promise<void> {
-    this.previousActiveElement = document.activeElement as HTMLElement | null
+    this.previousActiveElement = getDeepActiveElement()
 
     await this.overlayPresence.setOpen(true)
     const dialog = this.dialogEl

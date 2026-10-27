@@ -493,8 +493,8 @@ describe('Composite Block Components Suite (`ui/src/components/Blocks.test.ts`)'
       expect(viewer.isInspectorOpen).toBe(true)
       expect(viewer.selectedId).toBe('2')
 
-      const inspector = viewer.shadowRoot?.querySelector('.inspector')
-      expect(inspector).toBeDefined()
+      const inspector = viewer.shadowRoot?.querySelector('.inspector-body')
+      expect(inspector).not.toBeNull()
       expect(inspector?.textContent).toContain('endpoint')
       expect(inspector?.textContent).toContain('/api/v1/checkout')
     })
