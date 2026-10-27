@@ -1,5 +1,5 @@
 // Entrypoint for @moul-dev/ui component library
-export const version = '2026.10.17'
+export const version = '2026.10.27'
 
 // Phase 5: Surface & Feedback Components
 export { MoulAlert, MoulAlert as Alert } from './components/Alert'

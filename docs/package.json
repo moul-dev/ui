@@ -1,7 +1,7 @@
 {
   "name": "docs",
   "private": true,
-  "version": "2026.10.16",
+  "version": "2026.10.27",
   "type": "module",
   "scripts": {
     "dev": "astro dev",

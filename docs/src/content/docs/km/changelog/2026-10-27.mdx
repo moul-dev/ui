@@ -1,0 +1,152 @@
+---
+title: v2026.10.27 — Web Components Rewrite, Astro Starlight Docs, and Heatmap & Funnel Charts
+description: Every component rebuilt as a native Lit custom element on CSS tokens and browser primitives, documentation rebuilt on Astro Starlight, and new heatmap, funnel, and stat visualizations.
+date: 2026-10-27
+author: Phearak S. Tha
+avatar: https://github.com/thasophearak.png
+---
+
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import ActivityHeatmap from '@/components/demos/ActivityHeatmap.astro';
+
+Until this release, Moul UI only worked inside React. Its components were React components built on React Aria, styled by StyleX at compile time, and charted with Recharts. Any project that did not run React (an Astro site, a Vue app, a server-rendered admin page, a plain HTML form) could not use a single button from it.
+
+A design system meant to be one consistent baseline across every web stack cannot depend on one framework's component model. So this release replaces the entire implementation.
+
+Every component is now a standard custom element built on **Lit 3** and **Shadow DOM**. Styling comes from a runtime CSS token layer (`light-dark()` + `oklch()`), and behavior builds on native browser primitives. React, React Aria, StyleX, and Recharts are gone from both the library and the documentation site, which has been rebuilt on **Astro Starlight**.
+
+This is a breaking release. If you use Moul UI from React today, read [Migrating from v2026.9.28](#migrating-from-v2026928) before upgrading.
+
+---
+
+## Interactive Preview
+
+The same elements render in this page, which is now plain Astro with no React runtime. A row of `<moul-stat>` cards sits above a `<moul-funnel-chart>`:
+
+<ComponentPreview align="stretch" backdrop="page">
+<div style="display: grid; gap: 1rem; width: 100%">
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem">
+    <moul-stat label="Signups" value="15840" trend="up" trend-value="12%" description="Last 14 days" data-props='{"sparklineData":[920,980,1010,990,1080,1120,1090,1150,1180,1210,1160,1240,1260,1300],"sparklineLabels":["Oct 14","Oct 15","Oct 16","Oct 17","Oct 18","Oct 19","Oct 20","Oct 21","Oct 22","Oct 23","Oct 24","Oct 25","Oct 26","Oct 27"]}'></moul-stat>
+    <moul-stat label="Paid conversion" value="2.86" suffix="%" trend="up" trend-value="4.1%" description="Last 14 days" color="var(--color-chart-2)" data-props='{"sparklineData":[2.61,2.64,2.6,2.7,2.72,2.69,2.75,2.78,2.74,2.8,2.82,2.79,2.84,2.86],"sparklineLabels":["Oct 14","Oct 15","Oct 16","Oct 17","Oct 18","Oct 19","Oct 20","Oct 21","Oct 22","Oct 23","Oct 24","Oct 25","Oct 26","Oct 27"]}'></moul-stat>
+    <moul-stat label="Churn" value="1.93" suffix="%" trend="down" trend-value="26%" is-lower-better description="Last 14 days" color="var(--color-chart-3)" data-props='{"sparklineData":[2.62,2.58,2.5,2.42,2.34,2.26,2.16,2.08,2.04,2.04,2.08,2.08,2.1,1.93],"sparklineLabels":["Oct 14","Oct 15","Oct 16","Oct 17","Oct 18","Oct 19","Oct 20","Oct 21","Oct 22","Oct 23","Oct 24","Oct 25","Oct 26","Oct 27"]}'></moul-stat>
+  </div>
+  <moul-chart-container title="Signup funnel" description="Visit to paid, last 30 days">
+    <moul-funnel-chart data-props='{"data":[{"label":"Visited site","value":48200},{"label":"Signed up","value":15840},{"label":"Created project","value":9120},{"label":"Invited a teammate","value":4210},{"label":"Started paid plan","value":1380}]}'></moul-funnel-chart>
+  </moul-chart-container>
+</div>
+</ComponentPreview>
+
+---
+
+## Native Custom Elements on Lit 3
+
+The library now registers **79 custom elements**, all prefixed `moul-`. Import the package once and they work anywhere HTML runs:
+
+```ts
+import '@moul-dev/ui/style.css' // design tokens
+import '@moul-dev/ui'           // registers every <moul-*> element
+```
+
+```html
+<moul-button variant="primary">Deploy</moul-button>
+<moul-text-field label="Project name" description="Lowercase, no spaces" is-required></moul-text-field>
+```
+
+Simple values travel as reflected attributes (`is-disabled`, `error-message`, `trend-value`). Arrays and objects such as chart data are set as JavaScript properties (`chart.data = [...]`). Components report changes through standard DOM events such as `press`, `change`, `selectionchange`, and `inputchange`.
+
+Behavior that React Aria used to emulate now comes from the browser:
+
+- **Overlays:** Modal, alert dialog, drawer, and command palette are built on `<dialog>`. Popovers, tooltips, selects, combo boxes, the date picker, and toasts open through the Popover API in the top layer, without portals; popovers and tooltips position themselves with CSS Anchor Positioning.
+- **Forms:** Inputs are form-associated through `ElementInternals`. A `<moul-text-field>` or `<moul-checkbox>` inside a regular `<form>` submits its value and reports validity like a native input.
+- **Shared behavior:** Five Lit reactive controllers (`PressController`, `LayoutIndicatorController`, `OverlayPresenceController`, `NumberSpringController`, and `FormInternalsController`) carry press and hover state, breakpoints, enter and exit animation, spring-animated numbers, and form association across components. They are exported for building your own elements.
+- **Editor tooling:** The build emits a Custom Elements Manifest (`dist/custom-elements.json`), so editors and linters can autocomplete tags, attributes, and events.
+
+---
+
+## A Runtime Token Layer Instead of Compiled Styles
+
+StyleX resolved styles at build time, which meant theming required rebuilding. The new `@moul-dev/ui/style.css` defines every color, radius, shadow, and font as a CSS custom property on `:root`. Colors are authored in `oklch()` and resolved per scheme with `light-dark()`, so one declaration covers both themes[^1].
+
+Shadow DOM keeps each component's internals isolated from page styles, while the tokens pierce the boundary by design. Override a token on `:root` or any ancestor and every component below it follows:
+
+```css
+:root {
+  --brand-font-family: 'Inter', sans-serif;
+}
+
+.billing-panel {
+  --color-chart-sequential: var(--color-chart-5);
+}
+```
+
+Components draw from one shared set of five semantic tones (`primary`, `accent`, `success`, `warning`, `error`) and five visual variants (`solid`, `flat`, `shadow`, `bordered`, `glass`). Charts are drawn with `d3-scale` and `d3-shape` instead of Recharts, and read their palette from the same tokens.
+
+---
+
+## New Visualizations: Heatmap, Funnel, and Stat
+
+Three data components arrive or change substantially this cycle.
+
+**`<moul-heatmap-chart>`** colors a grid of days by activity: 53 weeks by default, newest on the right. Set `mode="hour"` and the same timestamps fold into a weekday-by-hour punch card. Active days split into four levels by quartile, so one exceptional day does not wash out the rest. The grid is an ARIA `grid` with a single tab stop and arrow-key navigation by day and week.
+
+<ComponentPreview align="stretch" backdrop="page">
+  <ActivityHeatmap />
+</ComponentPreview>
+
+**`<moul-funnel-chart>`** draws ordered steps as centered bars sized against the first. A narrowing neck between steps carries each step's drop-off, and a summary names the overall conversion and the steepest drop. Steps share one ordinal color ramp (`--color-chart-ordinal-from` to `--color-chart-ordinal-to`) instead of unrelated hues.
+
+**`<moul-stat>`** is rebuilt. New values count in with a spring. The sparkline runs to the card's edges and can be scrubbed by pointer or keyboard, and screen readers announce it as a slider. `is-lower-better` flips the trend colors for metrics like churn and latency.
+
+The logs viewer's detail drawer now opens on row click, swaps its content when you pick another row, and closes on Escape, with focus tracked through shadow roots back to the row you came from.
+
+---
+
+## Documentation on Astro Starlight
+
+The documentation site moved from Waku and Fumadocs to Astro Starlight:
+
+- **Previews from source:** Component previews import the library straight from `ui/src`, so the docs can never drift behind a stale `dist` build, and component edits hot-reload in the docs.
+- **Bilingual by default:** English and Khmer content migrated to Starlight's locale routing, and Khmer pages are now set in Noto Sans Khmer.
+- **Theme Studio:** The `/theme` page is rebuilt as a live inspector and palette tuner for the CSS token layer.
+- **One component order:** The docs sidebar reads its categories from the same list as the component sandbox, which is now plain HTML and Lit.
+- **AI context:** `/llms.txt`, `/llms-full.txt`, and `AGENTS.md` now describe custom elements, so assistants generate `<moul-*>` markup instead of React components.
+
+---
+
+## Migrating from v2026.9.28
+
+v2026.9.28 is the last React release. To stay on React, pin it:
+
+```bash
+bun add @moul-dev/ui@2026.9.28
+```
+
+To move to custom elements:
+
+- **Imports:** Import `@moul-dev/ui` once for registration and `@moul-dev/ui/style.css` for tokens. The `@moul-dev/ui/tokens`, `@moul-dev/ui/tokens.stylex`, `@moul-dev/ui/theme.css`, and `@moul-dev/ui/style` entry points are removed.
+- **Markup:** Replace PascalCase components with tags. Boolean props become attributes (`isDisabled` → `is-disabled`), and handlers become DOM listeners (`onPress` → a `press` event listener).
+- **Data:** Assign arrays and objects as properties (`chart.data = [...]`) rather than passing them as attributes.
+- **Field helpers:** `Label`, `Description`, `FieldError`, and `ErrorMessage` are gone. Fields take `label`, `description`, and `error-message` attributes directly.
+- **Removed components:** `Autocomplete` is covered by `<moul-combobox>`, which filters as you type and fires `inputchange` for remote suggestions. `ListBox` and `DateField` have no direct replacement yet; `<moul-date-picker>` covers date entry.
+- **React apps:** React 19 renders custom elements and passes them properties, so `<moul-button>` works in JSX without a wrapper. Moul UI no longer ships React adapters.
+
+---
+
+## Between Releases: The September React Line
+
+The React line kept shipping between v2026.09.07 and this rewrite (v2026.9.10 through v2026.9.28). It added an `Autocomplete` component, `onAction` on `ComboBox`, a `ListBox`, and the `--brand-font-family` token, along with tertiary tab updates, an SSR fix for `Sidebar`, and drawer and color fixes.
+
+`--brand-font-family` carries over to the new token layer. The rest stays with the React line.
+
+---
+
+## On Building on the Platform
+
+React Aria made accessible overlays, focus management, and form semantics dependable at a time when the browser offered little help. The platform has since caught up: `<dialog>`, the Popover API, anchor positioning, and `ElementInternals` now cover much of what that layer used to emulate.
+
+Building on them directly means less code between the browser and the person using it, and components that behave the way native controls already taught them to expect.
+
+---
+
+[^1]: `light-dark()` picks its first or second argument based on the element's computed `color-scheme`, so a token such as `--color-surface: light-dark(var(--color-white), oklch(0.2103 0.0059 285.89))` switches themes without duplicating selectors for dark mode.

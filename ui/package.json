@@ -1,6 +1,6 @@
 {
   "name": "@moul-dev/ui",
-  "version": "2026.10.16",
+  "version": "2026.10.27",
   "description": "Accessible, standards-first Web Components library built with Lit, Shadow DOM, and native CSS tokens",
   "license": "MIT",
   "type": "module",
