@@ -81,7 +81,7 @@ Run these commands from the root directory:
   ```bash
   bun run build:docs
   ```
-- **Bump UTC CalVer Version** (`YYYY.M.D`, then `YYYY.M.D.N` for same-day bumps):
+- **Bump UTC CalVer Version** on the Moul engine's calendar: the first release of a UTC month is `YYYY.M.0` (engine tag `vYYYY.MM`), later ones that month are `YYYY.M.D`, and a second bump on the same UTC day is refused. `--changelog` scaffolds the entry as `changelog/YYYY-MM.mdx` or `changelog/YYYY-MM-DD.mdx`:
   ```bash
   bun run bump
   ```

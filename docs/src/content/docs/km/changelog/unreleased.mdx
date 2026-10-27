@@ -1,6 +1,6 @@
 ---
 title: Unreleased — Buttons That Press Once, One Copy of Lit, and Enter Submits Forms
-description: Buttons and toggle buttons act once per click, the npm build stops inlining Lit, Enter in Moul text fields submits the surrounding form, surfaces default to the neutral look, table cells render templates, and the combobox shows a preselected option.
+description: Buttons and toggle buttons act once per click, the npm build stops inlining Lit, Enter in Moul text fields submits the surrounding form, surfaces default to the neutral look, table cells render templates, the combobox shows a preselected option, and versions follow the Moul engine's calendar.
 author: Phearak S. Tha
 avatar: https://github.com/thasophearak.png
 ---
@@ -124,6 +124,14 @@ table.columns = [
 ```
 
 **`<moul-combobox>` shows a preselected option.** Setting `selected-key` left the input empty, because only `selectItem()` filled in the text. The input now shows the matching item's text whenever the key changes, including when the items are slotted later. Reopening the list after a pick used to filter by the picked text, which left a single option. It now lists every option until you type.
+
+---
+
+## Versions on the Engine's Calendar
+
+Moul UI now numbers releases the way the Moul engine tags them. The engine's first release of a month is `v2026.10`, and a later release that month carries its date, as in `v2026.08.08`. npm needs three unpadded parts, so the first Moul UI release of a month is `2026.11.0` and a later one is `2026.11.14`.
+
+The old bump numbered a second release on the same day `2026.10.27.1`. That is not SemVer, and npm refuses to publish it. `bun run bump` now allows one release per UTC day and stops with an error on a second one. Every version it writes is valid SemVer and sorts after the last, so a range such as `^2026.10.27` picks up `2026.11.0`.
 
 ---
 
