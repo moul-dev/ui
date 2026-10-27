@@ -1,0 +1,76 @@
+---
+title: FunnelChart (សមាសភាគ)
+description: ឯកសារណែនាំសម្រាប់សមាសភាគ FunnelChart Web Component
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+`<moul-funnel-chart>` draws each step as a centered bar sized against the first, joined by a neck that narrows into the next step. Each neck carries that step's drop-off. Above the stages, a summary gives the overall conversion and the steepest drop.
+
+<ComponentPreview backdrop="page">
+<moul-chart-container title="Signup funnel" description="Visit to paid, last 30 days" style="width: min(100%, 32rem)">
+<moul-funnel-chart data-props='{"data":[{"label":"Visited site","value":48200},{"label":"Signed up","value":15840},{"label":"Created project","value":9120},{"label":"Invited a teammate","value":4210},{"label":"Started paid plan","value":1380}]}'></moul-funnel-chart>
+</moul-chart-container>
+</ComponentPreview>
+
+```html
+<moul-chart-container title="Signup funnel" description="Visit to paid, last 30 days">
+  <moul-funnel-chart></moul-funnel-chart>
+</moul-chart-container>
+```
+
+```js
+document.querySelector('moul-funnel-chart').data = [
+  { label: 'Visited site', value: 48200 },
+  { label: 'Signed up', value: 15840 },
+  { label: 'Created project', value: 9120 },
+  { label: 'Invited a teammate', value: 4210 },
+  { label: 'Started paid plan', value: 1380 },
+]
+```
+
+## Reading it
+
+The figure after each count is its share of the first step. The pill between two bars is the share lost on that step alone. Hovering a stage shows the step-to-step conversion and how many people dropped off.
+
+Shares under 10% keep one decimal (8.7%); larger ones round to whole percents (33%). A bar never gets narrower than it is tall, so the last steps stay visible.
+
+## Color
+
+Steps are ordered, so they step through one ramp rather than unrelated hues: indigo at the first step to teal at the last, set by `--color-chart-ordinal-from` and `--color-chart-ordinal-to`. Give a stage its own `color` to call it out.
+
+```js
+funnel.data = [
+  { label: 'Trial', value: 3200 },
+  { label: 'Activated', value: 1400 },
+  { label: 'Churned', value: 380, color: 'var(--color-danger)' },
+]
+```
+
+## Summary
+
+Rename the text after the conversion figure with `summary-label`, format counts with `valueFormatter`, or drop the summary with `hide-summary`.
+
+```html
+<moul-funnel-chart summary-label="trial to paid"></moul-funnel-chart>
+```
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| — | `data` | `FunnelStage[]` | `[]` |
+| `summary-label` | `summaryLabel` | `string` | `'overall conversion'` |
+| `hide-summary` | `hideSummary` | `boolean` | `false` |
+| — | `valueFormatter` | `(value: number) => string` | `Intl.NumberFormat` |
+
+| Event | Detail |
+| :-- | :-- |
+| `point-hover` | `{ point, value, label, x, y }` for the hovered stage |
+| `point-leave` | — |
+
+| Slot | Description |
+| :-- | :-- |
+| `empty` | Shown when `data` is empty |
+
+**CSS parts:** `base`, `summary`, `conversion`, `biggest-drop`, `stages`, `stage`, `stage-label`, `bar`, `drop`, `tooltip`, `empty`

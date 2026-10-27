@@ -38,4 +38,4 @@ Moul UI ផ្តល់ជូននូវឯកសារ Machine-Readable Contex
 1. **Native HTML Custom Elements**: បង្កើត tag `<moul-*>` (ឧ. `<moul-button>`, `<moul-card>`) ជានិច្ច ជំនួសឱ្យ React JSX។
 2. **Zero React Dependencies**: កុំ import `react` ឬ React adapters។ Import ត្រឹម `@moul-dev/ui` និង `@moul-dev/ui/style.css`។
 3. **Compound Structure**: ប្រើប្រាស់រចនាសម្ព័ន្ធ compound (ឧ. `<moul-card><moul-card-header>...</moul-card-header></moul-card>`)។
-4. **Standard DOM Events**: ប្រើ standard DOM event listeners (`click`, `input`, `change`)។
+4. **Standard DOM Events**: ប្រើ `addEventListener` ជាមួយ DOM events ដែលសមាសភាគនីមួយៗបញ្ចេញ (`press`, `change`, `input`, `openchange`, `selectionchange`) ហើយទិន្នន័យស្ថិតនៅក្នុង `event.detail`។

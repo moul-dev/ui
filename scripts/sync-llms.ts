@@ -338,7 +338,7 @@ const CORE_RULES = `- **Imports**: \`import '@moul-dev/ui'\` once registers ever
 - **Forms**: Inputs are form-associated via \`ElementInternals\`; give each a \`name\` and it submits with a native \`<form>\` / \`FormData\`.
 - **Semantic tones & variants**: \`tone\` is one of \`primary | accent | success | warning | error\`; surface \`variant\` is one of \`solid | flat | shadow | bordered | glass\`. \`<moul-button>\` has its own \`variant\` set (\`primary | secondary | tertiary | outline | ghost | danger | danger-soft\`).
 - **Accessibility**: Icon-only buttons (\`is-icon\`) and dot badges (\`is-dot\`) must have an \`aria-label\`.
-- **Theming**: Override \`--brand-hue\`, \`--brand-chroma-multiplier\`, \`--brand-radius-factor\`, and \`--brand-density-factor\` on \`:root\` (or any ancestor). Style internals through \`::part(...)\`.`
+- **Theming**: Override \`--brand-hue\`, \`--brand-chroma-multiplier\`, \`--brand-font-family\`, \`--brand-font-scale\`, \`--brand-radius-factor\`, and \`--brand-density-factor\` on \`:root\` (or any ancestor). Style internals through \`::part(...)\`.`
 
 function renderLlmsTxt(categories: ComponentCategory[], version: string) {
   const lines = [
@@ -558,6 +558,7 @@ export function SaveButton({ onSave }: { onSave: () => void }) {
 :root {
   --brand-hue: 160;
   --brand-chroma-multiplier: 1.1;
+  --brand-font-family: 'Inter', sans-serif;
   --brand-radius-factor: 1.25;
   --brand-density-factor: 0.9;
 }

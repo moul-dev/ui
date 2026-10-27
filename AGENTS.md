@@ -13,7 +13,7 @@ A multi-project monorepo workspace managed with **Bun**, featuring:
 ├── biome.json           # Lint & format rules (ui/ and docs/)
 ├── AGENTS.md            # This file
 ├── rdt/                 # Requirements, design, and task list for the Lit rebuild
-├── scripts/             # dev, gen:component, sync:llms, bump, verify-no-react
+├── scripts/             # dev, gen:component, sync:llms, bump, verify-no-react, setup-hooks
 ├── ui/                  # Component library package
 │   ├── package.json     # Library exports (`.` and `./style.css`)
 │   ├── vite.config.ts   # Vite library build + Vitest (happy-dom)
@@ -24,14 +24,16 @@ A multi-project monorepo workspace managed with **Bun**, featuring:
 │       ├── styles/      # style.css token layer, reset, semantic tones
 │       ├── controllers/ # Press, LayoutIndicator, OverlayPresence, NumberSpring, FormInternals
 │       ├── utils/       # defineElement, motion, focus trap, icons
+│       ├── sandbox.ts   # Sandbox sections (component order mirrored by the docs sidebar)
 │       └── components/  # <ComponentName>/<ComponentName>.ts, .styles.ts, index.ts
 └── docs/                # Astro Starlight site
-    ├── astro.config.mjs # Starlight config & bilingual routing
+    ├── astro.config.mjs # Locales, sidebar (incl. changelog list), source aliases
     ├── public/          # AGENTS.md, llms.txt, llms-full.txt (generated)
     └── src/
-        ├── components/  # ComponentPreview.astro, ThemeInspector.astro
-        ├── pages/       # theme.astro (/theme token inspector)
-        └── content/docs/# English (root) & Khmer (km/) MDX
+        ├── categories.ts # Component sidebar groups
+        ├── components/  # ComponentPreview, ThemeInspector, Hero, Features, demos/
+        ├── pages/       # theme.astro (/theme Theme Studio)
+        └── content/docs/ # English (root) & Khmer (km/) MDX
 ```
 
 ## Available Scripts
@@ -88,16 +90,17 @@ Run these commands from the root directory:
 
 ### 1. UI Library (`ui/`)
 - **Lit 3 Custom Elements**: Every component is a `LitElement` subclass registered with an idempotent `defineElement('moul-*', Class)` and an open Shadow Root.
-- **CSS Token Layer**: `ui/src/styles/style.css` defines `:root` custom properties (OKLCH + `light-dark()`), emitted to `dist/assets/style.css` and exported as `@moul-dev/ui/style.css`. Brand hooks: `--brand-hue`, `--brand-chroma-multiplier`, `--brand-radius-factor`, `--brand-density-factor`.
+- **CSS Token Layer**: `ui/src/styles/style.css` defines `:root` custom properties (OKLCH + `light-dark()`), emitted to `dist/assets/style.css` and exported as `@moul-dev/ui/style.css`. Brand hooks: `--brand-hue`, `--brand-chroma-multiplier`, `--brand-font-family`, `--brand-font-scale`, `--brand-radius-factor`, `--brand-density-factor`.
 - **Native Platform APIs**: `ElementInternals` for form association, `<dialog>` for modals, the Popover API + CSS anchor positioning for overlays.
 - **Vite Library Mode**: Emits `dist/moul-ui.js` (prefixed with a `"use client";` banner for RSC frameworks) and `dist/src/index.d.ts`.
 - **Custom Elements Manifest**: `cem analyze` writes `dist/custom-elements.json`, the source of truth for `sync:llms`.
 - **No React**: `scripts/verify-no-react.ts` fails the build if React, React Aria, StyleX, or `@lit/react` appear in `ui/` or `docs/` manifests.
 
 ### 2. Documentation Website (`docs/`)
-- **Astro Starlight**: Static output, bilingual i18n (`en` at the root with `hideLocale: 'root'`, `km` under `/km/`).
-- **Previews**: `ComponentPreview.astro` renders native `<moul-*>` tags directly in MDX and loads `@moul-dev/ui` client-side.
-- **Styling**: `docs/src/styles/global.css` imports `@moul-dev/ui/style.css` and applies `Kantumruy Pro` to Khmer content.
+- **Astro Starlight**: Static output, bilingual i18n (`defaultLocale: 'root'` for English at the root, `km` under `/km/`).
+- **Previews**: `ComponentPreview.astro` renders native `<moul-*>` tags directly in MDX and loads `@moul-dev/ui` client-side. `data-props='{…}'` assigns JSON as element properties. `astro.config.mjs` aliases `@moul-dev/ui` and `@moul-dev/ui/style.css` to `ui/src`, so previews track the library source.
+- **Styling**: `docs/src/styles/global.css` imports `@moul-dev/ui/style.css`, maps Starlight colors onto the tokens, and sets Khmer content (`:lang(km)`) in `Noto Sans Khmer`.
+- **Pages**: Add component slugs to `docs/src/categories.ts`. Every English page needs a Khmer page at the same path under `km/`; component pages keep the English body with a translated `title` and `description`. New changelog entries go in the `Changelog` sidebar group in `astro.config.mjs` and in both `changelog/index.mdx` files.
 
 ## AI Coding Agent Guidelines for `@moul-dev/ui`
 
@@ -115,7 +118,7 @@ When generating or editing code that uses `@moul-dev/ui`:
 - **Forms**: Inputs are form-associated via `ElementInternals`; give each a `name` and it submits with a native `<form>` / `FormData`.
 - **Semantic tones & variants**: `tone` is one of `primary | accent | success | warning | error`; surface `variant` is one of `solid | flat | shadow | bordered | glass`. `<moul-button>` has its own `variant` set (`primary | secondary | tertiary | outline | ghost | danger | danger-soft`).
 - **Accessibility**: Icon-only buttons (`is-icon`) and dot badges (`is-dot`) must have an `aria-label`.
-- **Theming**: Override `--brand-hue`, `--brand-chroma-multiplier`, `--brand-radius-factor`, and `--brand-density-factor` on `:root` (or any ancestor). Style internals through `::part(...)`.
+- **Theming**: Override `--brand-hue`, `--brand-chroma-multiplier`, `--brand-font-family`, `--brand-font-scale`, `--brand-radius-factor`, and `--brand-density-factor` on `:root` (or any ancestor). Style internals through `::part(...)`.
 
 **Element index** (full API in `docs/public/llms-full.txt`):
 

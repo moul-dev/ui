@@ -40,7 +40,7 @@ We host three standardized AI context files at the root of the documentation sit
 1. **Native HTML Custom Elements**: Always generate `<moul-*>` tags (e.g. `<moul-button>`, `<moul-card>`, `<moul-alert>`) rather than React JSX components.
 2. **Zero React Dependencies**: Never import `react`, `react-dom`, `@moul-dev/ui/react`, or React Aria adapters. Import `@moul-dev/ui` for side-effect element registration and `@moul-dev/ui/style.css` for styling.
 3. **Compound Structure**: Use compound elements as custom element trees (e.g., `<moul-card><moul-card-header>...</moul-card-header><moul-card-body>...</moul-card-body></moul-card>`).
-4. **Standard Event Listeners**: Listen to standard DOM events (`click`, `input`, `change`, `toggle`) rather than synthetic React handlers.
+4. **Standard Event Listeners**: Listen with `addEventListener` to the DOM events each element dispatches (`press`, `change`, `input`, `openchange`, `selectionchange`), with payloads on `event.detail`, rather than synthetic React handlers such as `onPress`.
 
 ---
 

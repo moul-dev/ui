@@ -1,146 +1,140 @@
 # @moul-dev/ui
 
-> Accessible, zero-runtime React component library built on React Aria and StyleX.
+> Accessible, themeable Web Components built on Lit 3 and native browser APIs.
 
 [![npm version](https://img.shields.io/npm/v/@moul-dev/ui.svg)](https://www.npmjs.com/package/@moul-dev/ui)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-**Moul UI** is a modular component library designed for product engineers who want a modern, consistent, and highly accessible baseline for React applications.
-
-By merging the robust, accessible interaction primitives of **React Aria** with the compile-time type safety and efficiency of **StyleX**, Moul UI delivers beautiful default styles with zero runtime styling overhead.
+**Moul UI** is a library of 79 `<moul-*>` custom elements for teams that want one consistent UI baseline across every web stack. Register the elements once, then use the same markup in plain HTML, Astro, Vue, Svelte, Lit, server-rendered templates, or React 19.
 
 ---
 
 ## ✨ Features
 
-- ♿ **Accessible by Default**: Full keyboard navigation, screen reader support, ARIA semantics, and robust interaction states powered by React Aria.
-- ⚡ **Zero-Runtime Styling**: Built with StyleX. Atomic CSS is extracted at build time, eliminating CSS-in-JS runtime overhead.
-- 🎨 **Dynamic OKLCH Theming**: Perceptually uniform color tokens with runtime hue and chroma customization for instant white-labeling.
-- 🌐 **RTL & Logical Properties**: Full bidirectional support using CSS logical properties (`marginBlock`, `paddingInline`, `insetInlineEnd`, etc.).
-- 🚀 **Server Component (RSC) Ready**: Fully compatible with modern React frameworks like Next.js, Remix, Waku, and Vite.
-- 📊 **Rich Analytics & Charts**: Production-grade data visualizations (AreaChart, BarChart, LineChart, DoughnutChart, TopList, Stat, Percentage) built on Recharts.
+- 🧩 **Standard custom elements**: Every component is a Lit 3 element with Shadow DOM. No framework runtime, wrappers, or adapters.
+- 🧱 **Native browser primitives**: Modals, drawers, and the command palette use `<dialog>`. Popovers, tooltips, selects, and combo boxes open in the top layer through the Popover API, positioned with CSS Anchor Positioning where supported.
+- 📝 **Real form controls**: Inputs are form-associated through `ElementInternals`, so they submit with a native `<form>` and `FormData` and report validity like built-in inputs.
+- 🎨 **Runtime theming**: A CSS token layer (`light-dark()` + `oklch()`) themes light and dark mode from one set of declarations. Retune hue, chroma, font, radius, and density at runtime, and style internals through `::part()`.
+- ♿ **Accessible by default**: Keyboard navigation, focus management, and ARIA semantics are built into each element.
+- 📊 **Charts and dashboards**: Area, bar, line, doughnut, heatmap, and funnel charts, plus stat cards, top lists, and percentage indicators, drawn with `d3-scale` and `d3-shape`.
+- 🧾 **Editor tooling**: Ships a Custom Elements Manifest (`dist/custom-elements.json`) and `HTMLElementTagNameMap` typings for tag, attribute, and event completion.
 
 ---
 
 ## 📦 Installation
 
-Install `@moul-dev/ui` and its peer dependencies in your React project:
-
 ```bash
-# Bun
-bun add @moul-dev/ui @stylexjs/stylex
-
-# npm
-npm install @moul-dev/ui @stylexjs/stylex
-
-# pnpm
-pnpm add @moul-dev/ui @stylexjs/stylex
-
-# yarn
-yarn add @moul-dev/ui @stylexjs/stylex
+bun add @moul-dev/ui
+# or: npm install @moul-dev/ui / pnpm add @moul-dev/ui / yarn add @moul-dev/ui
 ```
 
 ---
 
 ## 🚀 Quick Start
 
-### 1. Import the Stylesheet
+Import the design tokens and register the elements once, in your client entry point:
 
-Import the compiled StyleX CSS at the root of your application (e.g. `main.tsx`, `index.tsx`, or `globals.css`):
-
-```tsx
-import '@moul-dev/ui/style.css';
+```ts
+import '@moul-dev/ui/style.css' // design tokens
+import '@moul-dev/ui'           // registers every <moul-*> element
 ```
 
-### 2. (Optional) Wrap with `ThemeProvider`
+Then write the elements as HTML:
 
-Wrap your application tree or sections with `ThemeProvider` to control color schemes and custom brand variables:
+```html
+<moul-alert tone="success" title="Deployed" description="Release 2026.10 is live."></moul-alert>
 
-```tsx
-import { ThemeProvider } from '@moul-dev/ui';
+<moul-chart-container title="Active users" description="Last 6 months">
+  <moul-line-chart x-key="month" height="260"></moul-line-chart>
+</moul-chart-container>
 
-export function App({ children }: { children: React.ReactNode }) {
-  return (
-    <ThemeProvider colorScheme="light dark">
-      {children}
-    </ThemeProvider>
-  );
-}
+<moul-button variant="primary" id="save">Save</moul-button>
 ```
 
-### 3. Use Components
+Simple values are attributes (`is-disabled`, `x-key`, `variant`). Arrays, objects, and functions are JavaScript properties. Components report changes through standard DOM events, with payloads on `event.detail`:
+
+```js
+const chart = document.querySelector('moul-line-chart')
+chart.data = [
+  { month: 'Jan', users: 186 },
+  { month: 'Feb', users: 305 },
+  { month: 'Mar', users: 237 },
+]
+chart.series = [{ key: 'users', name: 'Users' }]
+
+document.querySelector('#save').addEventListener('press', () => {
+  // ...
+})
+```
+
+### React 19
+
+React 19 passes properties to custom elements and attaches listeners for `on<eventname>` props:
 
 ```tsx
-import { Button, Alert, Stat, LineChart, ChartContainer } from '@moul-dev/ui';
+import '@moul-dev/ui'
+import '@moul-dev/ui/style.css'
 
-export function Dashboard() {
-  const chartData = [
-    { time: '09:00', ActiveUsers: 120 },
-    { time: '12:00', ActiveUsers: 450 },
-    { time: '15:00', ActiveUsers: 890 },
-  ];
-
+export function SaveButton({ onSave }: { onSave: () => void }) {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', padding: '2rem' }}>
-      <Alert variant="info" title="System Notice">
-        Moul UI is running with zero runtime overhead.
-      </Alert>
-
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
-        <Stat
-          label="Total Revenue"
-          value="$45,231.89"
-          trend={{ direction: 'up', value: '+20.1% from last month' }}
-        />
-      </div>
-
-      <ChartContainer title="User Activity">
-        <LineChart
-          data={chartData}
-          indexKey="time"
-          categories={['ActiveUsers']}
-          height={260}
-        />
-      </ChartContainer>
-
-      <Button variant="primary" onPress={() => alert('Clicked!')}>
-        Get Started
-      </Button>
-    </div>
-  );
+    <moul-button variant="primary" onpress={onSave}>
+      Save
+    </moul-button>
+  )
 }
 ```
 
 ---
 
-## 📚 Documentation
+## 🎨 Theming
 
-For complete documentation, interactive previews, and component API references, visit:
+Override the brand hooks on `:root` or on any ancestor; every element below it follows:
 
-📖 **[https://moul.dev/ui](https://moul.dev/ui)**
+```css
+:root {
+  --brand-hue: 160;
+  --brand-chroma-multiplier: 1.1;
+  --brand-font-family: 'Inter', sans-serif;
+  --brand-font-scale: 1;
+  --brand-radius-factor: 1.25;
+  --brand-density-factor: 0.9;
+}
+```
+
+Try values live in the Theme Studio on the [documentation site](https://moul.dev/ui).
 
 ---
 
-## 🛠️ Monorepo & Development
+## 🧭 Components
 
-This repository is managed with **Bun**:
+- **Actions & toggles**: button, button group, toggle button, toggle button group
+- **Inputs & forms**: text field, number field, search field, text area, checkbox (+ group), radio group, switch, slider, select, combo box, date picker, calendar, input OTP, form
+- **Overlays & navigation**: modal, alert dialog, drawer, popover, tooltip, command palette, tabs, breadcrumbs, pagination, link
+- **Surfaces & feedback**: alert, card, badge, avatar (+ group), typography, kbd, separator, spinner, skeleton, progress bar, tag group, table, toast, empty state
+- **Charts**: area, bar, line, doughnut, heatmap, funnel, stat, top list, percentage bar and circle, chart container and tooltip
+- **Blocks**: logs viewer, sidebar
 
-```bash
-# Install dependencies
-bun install
+Every element, attribute, event, slot, and CSS part is documented at **[moul.dev/ui](https://moul.dev/ui)**.
 
-# Run UI sandbox
-bun run dev:ui
+---
 
-# Run documentation website
-bun run dev:docs
+## ↪️ Migrating from v2026.9.28 (React)
 
-# Run test suite
-bun --cwd ui test
+v2026.9.28 is the last React release. Pin it to stay on React (`@moul-dev/ui@2026.9.28`). To move to custom elements:
 
-# Build library
-bun run build:ui
-```
+- Replace `import { Button } from '@moul-dev/ui'` with a single `import '@moul-dev/ui'` and write `<moul-button>`.
+- Boolean props become attributes (`isDisabled` → `is-disabled`); handlers become DOM listeners (`onPress` → `press`).
+- `@moul-dev/ui/tokens`, `@moul-dev/ui/tokens.stylex`, `@moul-dev/ui/theme.css`, and `@moul-dev/ui/style` are removed; import `@moul-dev/ui/style.css`.
+- `ThemeProvider` is gone; theme with the CSS brand hooks above.
+- `Autocomplete` is covered by `<moul-combobox>`. `ListBox` and `DateField` have no direct replacement yet.
+
+The v2026.10.27 release notes in the [documentation site](https://moul.dev/ui) changelog walk through the full migration.
+
+---
+
+## 🛠️ Development
+
+This package lives in the [moul-dev/ui](https://github.com/moul-dev/ui) monorepo; see its README for the sandbox, docs site, and workspace scripts.
 
 ---
 
