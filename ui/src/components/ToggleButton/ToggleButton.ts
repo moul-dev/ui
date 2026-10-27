@@ -21,7 +21,6 @@ export class MoulToggleButton extends LitElement {
   declare isDisabled: boolean
 
   public pressController: PressController
-  private toggleHandledInCycle = false
 
   constructor() {
     super()
@@ -39,20 +38,12 @@ export class MoulToggleButton extends LitElement {
   public override connectedCallback(): void {
     super.connectedCallback()
     this.setAttribute('aria-pressed', this.isSelected ? 'true' : 'false')
-    this.addEventListener('pointerdown', this.handlePointerDown)
-    this.addEventListener('pointerup', this.handlePointerUp)
     this.addEventListener('click', this.handleClick)
-    this.addEventListener('keydown', this.handleKeyDown)
-    this.addEventListener('keyup', this.handleKeyUp)
   }
 
   public override disconnectedCallback(): void {
     super.disconnectedCallback()
-    this.removeEventListener('pointerdown', this.handlePointerDown)
-    this.removeEventListener('pointerup', this.handlePointerUp)
     this.removeEventListener('click', this.handleClick)
-    this.removeEventListener('keydown', this.handleKeyDown)
-    this.removeEventListener('keyup', this.handleKeyUp)
   }
 
   protected override updated(changedProperties: PropertyValues): void {
@@ -71,49 +62,16 @@ export class MoulToggleButton extends LitElement {
     }
   }
 
-  private readonly handlePointerDown = (e: PointerEvent): void => {
-    if (this.isDisabled || e.button !== 0) return
-    this.toggleHandledInCycle = false
-  }
-
-  private readonly handlePointerUp = (e: PointerEvent): void => {
-    if (this.isDisabled || e.button !== 0) return
-    this.toggle()
-    this.toggleHandledInCycle = true
-    queueMicrotask(() => {
-      this.toggleHandledInCycle = false
-    })
-  }
-
+  // Like <moul-button>: the inner <button> reports every pointer and keyboard
+  // activation as one click, so toggling on pointerup or keyup too flipped the
+  // state back.
   private readonly handleClick = (e: MouseEvent): void => {
     if (this.isDisabled) {
       e.preventDefault()
       e.stopImmediatePropagation()
       return
     }
-
-    if (!this.toggleHandledInCycle) {
-      this.toggle()
-    }
-    this.toggleHandledInCycle = false
-  }
-
-  private readonly handleKeyDown = (e: KeyboardEvent): void => {
-    if (this.isDisabled || e.repeat) return
-    if (e.key === ' ' || e.key === 'Enter') {
-      this.toggleHandledInCycle = false
-    }
-  }
-
-  private readonly handleKeyUp = (e: KeyboardEvent): void => {
-    if (this.isDisabled) return
-    if (e.key === ' ' || e.key === 'Enter') {
-      this.toggle()
-      this.toggleHandledInCycle = true
-      queueMicrotask(() => {
-        this.toggleHandledInCycle = false
-      })
-    }
+    this.toggle()
   }
 
   public toggle(): void {

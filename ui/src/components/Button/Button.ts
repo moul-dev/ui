@@ -39,7 +39,6 @@ export class MoulButton extends LitElement {
   declare isPending: boolean
 
   public pressController: PressController
-  private pressHandledInCycle = false
 
   constructor() {
     super()
@@ -58,20 +57,12 @@ export class MoulButton extends LitElement {
 
   public override connectedCallback(): void {
     super.connectedCallback()
-    this.addEventListener('pointerdown', this.handlePointerDown)
-    this.addEventListener('pointerup', this.handlePointerUp)
     this.addEventListener('click', this.handleClick)
-    this.addEventListener('keydown', this.handleKeyDown)
-    this.addEventListener('keyup', this.handleKeyUp)
   }
 
   public override disconnectedCallback(): void {
     super.disconnectedCallback()
-    this.removeEventListener('pointerdown', this.handlePointerDown)
-    this.removeEventListener('pointerup', this.handlePointerUp)
     this.removeEventListener('click', this.handleClick)
-    this.removeEventListener('keydown', this.handleKeyDown)
-    this.removeEventListener('keyup', this.handleKeyUp)
   }
 
   protected override updated(changedProperties: PropertyValues): void {
@@ -99,20 +90,11 @@ export class MoulButton extends LitElement {
     }
   }
 
-  private readonly handlePointerDown = (e: PointerEvent): void => {
-    if (this.isDisabled || this.isPending || e.button !== 0) return
-    this.pressHandledInCycle = false
-  }
-
-  private readonly handlePointerUp = (e: PointerEvent): void => {
-    if (this.isDisabled || this.isPending || e.button !== 0) return
-    this.dispatchPressEvent(e)
-    this.pressHandledInCycle = true
-    queueMicrotask(() => {
-      this.pressHandledInCycle = false
-    })
-  }
-
+  /**
+   * The inner `<button>` turns a pointer, touch, Enter, or Space activation
+   * into exactly one `click`, so `press` comes from `click` alone. Pressing on
+   * `pointerup` or `keyup` as well fired it twice per activation.
+   */
   private readonly handleClick = (e: MouseEvent): void => {
     if (this.isDisabled || this.isPending) {
       e.preventDefault()
@@ -120,31 +102,8 @@ export class MoulButton extends LitElement {
       return
     }
 
-    if (!this.pressHandledInCycle) {
-      this.dispatchPressEvent(e)
-    }
-    this.pressHandledInCycle = false
+    this.dispatchPressEvent(e)
     this.handleFormIntegration()
-  }
-
-  private readonly handleKeyDown = (e: KeyboardEvent): void => {
-    if (this.isDisabled || this.isPending || e.repeat) return
-    if (e.key === ' ' || e.key === 'Enter') {
-      this.pressHandledInCycle = false
-    }
-  }
-
-  private readonly handleKeyUp = (e: KeyboardEvent): void => {
-    if (this.isDisabled || this.isPending) return
-    if (e.key === ' ' || e.key === 'Enter') {
-      this.dispatchPressEvent(e)
-      this.pressHandledInCycle = true
-      // No form integration here: Enter/Space on the inner <button> already
-      // fires a click, and handleClick submits; doing both submitted twice.
-      queueMicrotask(() => {
-        this.pressHandledInCycle = false
-      })
-    }
   }
 
   private dispatchPressEvent(originalEvent?: Event): void {
