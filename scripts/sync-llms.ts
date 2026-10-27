@@ -322,12 +322,14 @@ import '@moul-dev/ui'
 import '@moul-dev/ui/style.css'
 \`\`\`
 
-Without a bundler:
+Without a bundler, load the self-contained CDN build (Lit and the other dependencies inlined):
 
 \`\`\`html
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@moul-dev/ui/dist/assets/style.css" />
-<script type="module" src="https://cdn.jsdelivr.net/npm/@moul-dev/ui/dist/moul-ui.js"></script>
-\`\`\``
+<script type="module" src="https://cdn.jsdelivr.net/npm/@moul-dev/ui/dist/cdn/moul-ui.js"></script>
+\`\`\`
+
+\`dist/moul-ui.js\` (the package entry) keeps \`lit\`, \`@lit/context\`, \`@lit-labs/virtualizer\`, \`motion\`, and \`d3-*\` as bare imports so a bundler shares one copy of Lit with your app. Do not load it directly in a \`<script>\` tag.`
 
 const CORE_RULES = `- **Imports**: \`import '@moul-dev/ui'\` once registers every \`<moul-*>\` element. Import design tokens with \`import '@moul-dev/ui/style.css'\`. There is no \`@moul-dev/ui/react\`, \`@moul-dev/ui/tokens\`, or \`@moul-dev/ui/tokens.stylex\` entry point.
 - **Markup, not JSX components**: Write native custom element tags (\`<moul-button>\`), never PascalCase components (\`<Button>\`). They work in plain HTML, Astro, Lit, Vue, Svelte, and React 19.
@@ -335,8 +337,8 @@ const CORE_RULES = `- **Imports**: \`import '@moul-dev/ui'\` once registers ever
 - **Rich data is set as properties**: Arrays, objects, and functions (\`data\`, \`series\`, \`columns\`, \`items\`, \`logs\`, \`valueFormatter\`) are assigned in JavaScript, not serialized into attributes.
 - **Events are DOM events**: Listen with \`addEventListener\` (\`press\`, \`change\`, \`input\`, \`openchange\`, \`selectionchange\`, \`pagechange\`, \`dismiss\`). Payloads live on \`event.detail\`. There is no \`onPress\` prop.
 - **Overlays**: Toggle \`is-open\` (or \`el.isOpen\`) on \`<moul-modal>\`, \`<moul-drawer>\`, \`<moul-alert-dialog>\`, \`<moul-popover>\`, \`<moul-tooltip>\`, \`<moul-command-palette>\`, and react to \`openchange\` (\`detail.isOpen\`).
-- **Forms**: Inputs are form-associated via \`ElementInternals\`; give each a \`name\` and it submits with a native \`<form>\` / \`FormData\`.
-- **Semantic tones & variants**: \`tone\` is one of \`primary | accent | success | warning | error\`; surface \`variant\` is one of \`solid | flat | shadow | bordered | glass\`. \`<moul-button>\` has its own \`variant\` set (\`primary | secondary | tertiary | outline | ghost | danger | danger-soft\`).
+- **Forms**: Inputs are form-associated via \`ElementInternals\`; give each a \`name\` and it submits with a native \`<form>\` / \`FormData\`. Enter in \`<moul-text-field>\`, \`<moul-number-field>\`, or \`<moul-search-field>\` submits its \`<form>\` or \`<moul-form>\` like a native input, so do not add your own Enter handler.
+- **Semantic tones & variants**: \`tone\` is one of \`primary | accent | success | warning | error\`; surface \`variant\` is one of \`solid | flat | shadow | bordered | glass\`. Omit \`variant\` for a neutral surface: an unset \`variant\` on \`<moul-card>\`, \`<moul-alert>\`, \`<moul-toast>\`, or \`<moul-stat>\` renders the plain \`--color-surface\` look, while \`variant="flat"\` tints it in the tone. \`<moul-button>\` has its own \`variant\` set (\`primary | secondary | tertiary | outline | ghost | danger | danger-soft\`).
 - **Accessibility**: Icon-only buttons (\`is-icon\`) and dot badges (\`is-dot\`) must have an \`aria-label\`.
 - **Theming**: Override \`--brand-hue\`, \`--brand-chroma-multiplier\`, \`--brand-font-family\`, \`--brand-font-scale\`, \`--brand-radius-factor\`, and \`--brand-density-factor\` on \`:root\` (or any ancestor). Style internals through \`::part(...)\`.`
 
