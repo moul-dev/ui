@@ -21,8 +21,7 @@ export class MoulAlert extends LitElement {
 
   static override properties = {
     tone: { type: String, reflect: true },
-    // The default isn't reflected, so an unset variant renders the plain surface.
-    variant: { type: String, reflect: true, useDefault: true },
+    variant: { type: String, reflect: true },
     title: { type: String, reflect: true },
     description: { type: String, reflect: true },
     isDismissible: {
@@ -33,7 +32,12 @@ export class MoulAlert extends LitElement {
   }
 
   declare tone: SemanticTone
-  declare variant: VisualVariant
+  /**
+   * Paints the alert in `tone`: `solid` and `shadow` fill it, `flat` tints it,
+   * `bordered` and `glass` frame it. Leave it unset for the neutral
+   * `--color-surface` alert.
+   */
+  declare variant: VisualVariant | undefined
   declare title: string
   declare description: string
   declare isDismissible: boolean
@@ -41,7 +45,6 @@ export class MoulAlert extends LitElement {
   constructor() {
     super()
     this.tone = 'primary'
-    this.variant = 'flat'
     this.title = ''
     this.description = ''
     this.isDismissible = false
@@ -63,7 +66,7 @@ export class MoulAlert extends LitElement {
       this.updateRole()
     }
 
-    if (changedProps.has('variant')) {
+    if (changedProps.has('variant') && this.variant != null) {
       const normalized = normalizeVariant(this.variant)
       if (this.variant !== normalized) {
         this.variant = normalized

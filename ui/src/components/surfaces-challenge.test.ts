@@ -6,8 +6,10 @@ import './Avatar/Avatar'
 import './Avatar/AvatarGroup'
 import './Badge/Badge'
 import './Card/Card'
+import './Stat/Stat'
 import './TagGroup/Tag'
 import './TagGroup/TagGroup'
+import './Toast/Toast'
 
 import type { MoulAlert } from './Alert/Alert'
 import type { MoulAvatar } from './Avatar/Avatar'
@@ -776,6 +778,42 @@ describe('Empirical Adversarial Challenge Suite: Surfaces & Feedback', () => {
 
       await card.updateComplete
       expect(cardPressCount).toBe(1)
+    })
+
+    it('CHAL-CRD-06: variant stays unset until chosen, so the neutral surface is the default', async () => {
+      for (const tag of [
+        'moul-card',
+        'moul-alert',
+        'moul-toast',
+        'moul-stat',
+      ]) {
+        const el = document.createElement(tag) as MoulCard
+        document.body.appendChild(el)
+        await el.updateComplete
+        // Styles key the neutral surface off :host(:not([variant])).
+        expect(el.variant).toBeUndefined()
+        expect(el.hasAttribute('variant')).toBe(false)
+
+        el.variant = 'flat'
+        await el.updateComplete
+        expect(el.getAttribute('variant')).toBe('flat')
+
+        el.variant = undefined
+        await el.updateComplete
+        expect(el.hasAttribute('variant')).toBe(false)
+
+        el.setAttribute('variant', 'unsupported')
+        await el.updateComplete
+        // Normalizing in updated() reflects on the following update.
+        await el.updateComplete
+        expect(el.getAttribute('variant')).toBe('flat')
+
+        el.removeAttribute('variant')
+        await el.updateComplete
+        expect(el.variant).toBeNull()
+        expect(el.hasAttribute('variant')).toBe(false)
+        el.remove()
+      }
     })
   })
 
