@@ -1,68 +1,80 @@
-import * as stylex from '@stylexjs/stylex'
-import { tokens } from '../../tokens/tokens.stylex'
+import { css } from 'lit'
+import { fieldStyles } from '../../styles/field.styles'
+import { resetStyles } from '../../styles/reset.styles'
 
-export const styles = stylex.create({
-  container: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: tokens.spacing1,
-    width: '100%',
-  },
-  textarea: {
-    display: 'block',
-    width: '100%',
-    minHeight: `calc(${tokens.spacing8} * 2)`, // 4rem (approx 64px)
-    resize: 'vertical',
-    paddingBlock: tokens.spacing2,
-    paddingInline: tokens.spacing3,
-    borderRadius: tokens.radiusMd,
-    borderWidth: '1px',
-    borderStyle: 'solid',
-    borderColor: tokens.colorBorder,
-    backgroundColor: tokens.colorBg,
-    color: tokens.colorFg,
-    fontFamily: tokens.fontFamilyBase,
-    fontSize: tokens.fontSizeMd,
-    lineHeight: tokens.lineHeightMd,
-    outline: 'none',
-    boxShadow: tokens.shadowSm,
-    transitionProperty: 'border-color, box-shadow',
-    transitionDuration: '0.15s',
-    transitionTimingFunction: 'ease-in-out',
-    ':hover': {
-      borderColor: tokens.colorNeutral400,
-    },
-    ':focus': {
-      borderColor: tokens.colorBorderFocus,
-      boxShadow: `0 0 0 1px ${tokens.colorBorderFocus}`,
-    },
-    '@media (prefers-reduced-motion: reduce)': {
-      transitionProperty: 'none',
-    },
-  },
-  primary: {
-    backgroundColor: tokens.colorBg,
-    borderColor: tokens.colorBorder,
-  },
-  secondary: {
-    backgroundColor: tokens.colorBgSubtle,
-    borderColor: tokens.colorBorderSubtle,
-  },
+/* Layout and inner bits only; the shell look (fill, radius, shadow, hover,
+   focus and invalid rings) comes from the shared fieldStyles appended last. */
+export const textAreaStyles = [
+  resetStyles,
+  css`
+    :host {
+      display: block;
+      width: 100%;
+      font-family: var(--font-family-base, inherit);
+      color: var(--color-fg, inherit);
+    }
 
-  textareaInvalid: {
-    borderColor: tokens.colorError500,
-    ':focus': {
-      borderColor: tokens.colorError500,
-      boxShadow: `0 0 0 1px ${tokens.colorError500}`,
-    },
-  },
-  textareaDisabled: {
-    opacity: 0.4,
-    backgroundColor: tokens.colorBgSubtle,
-    cursor: 'not-allowed',
-    boxShadow: 'none',
-    ':hover': {
-      borderColor: tokens.colorBorder,
-    },
-  },
-})
+    :host([hidden]) {
+      display: none !important;
+    }
+
+    [part~='base'] {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-1, 0.25rem);
+      width: 100%;
+    }
+
+    /* Flex drops template whitespace so the required mark sits tight to the text */
+    [part~='label'] {
+      display: flex;
+      align-items: baseline;
+      line-height: var(--line-height-sm, 1.25rem);
+    }
+
+    :host([is-required][label]:not([label=''])) [part~='label']::after {
+      content: '*';
+      margin-inline-start: 0.125rem;
+      color: var(--color-danger);
+    }
+
+    :host([is-invalid]:is([data-touched], [error-message]:not([error-message='']))) [part~='label'] {
+      color: var(--color-danger);
+    }
+
+    [part~='textarea'] {
+      display: block;
+      width: 100%;
+      min-height: 2.375rem;
+      margin: 0;
+      font-family: inherit;
+      font-size: var(--font-size-sm, 0.875rem);
+      line-height: var(--line-height-sm, 1.25rem);
+      padding: var(--spacing-2, 0.5rem) var(--spacing-3, 0.75rem);
+      resize: vertical;
+    }
+
+    :host([auto-resize]) [part~='textarea'] {
+      field-sizing: content;
+      resize: none;
+    }
+
+    :host([is-disabled]) {
+      opacity: var(--disabled-opacity, 0.5);
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    :host([is-disabled]) [part~='textarea'] {
+      cursor: not-allowed;
+    }
+
+    /* :host raises specificity past the shared shell's transition */
+    @media (prefers-reduced-motion: reduce) {
+      :host [part~='textarea'] {
+        transition: none;
+      }
+    }
+  `,
+  fieldStyles,
+]

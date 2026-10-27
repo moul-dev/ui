@@ -1,0 +1,49 @@
+---
+title: Switch (សមាសភាគ)
+description: ឯកសារណែនាំសម្រាប់សមាសភាគ Switch Web Component
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+`<moul-switch>` is an iOS-style toggle. The thumb stretches while pressed and glides across on a spring.
+
+<ComponentPreview>
+<div class="demo-stack">
+  <moul-switch is-checked>Auto-deploy on push</moul-switch>
+  <moul-switch>Debug logging</moul-switch>
+  <moul-switch size="sm" is-checked>Small</moul-switch>
+  <moul-switch size="lg">Large</moul-switch>
+  <moul-switch is-disabled>Disabled</moul-switch>
+</div>
+</ComponentPreview>
+
+```html
+<div class="demo-stack">
+  <moul-switch is-checked>Auto-deploy on push</moul-switch>
+  <moul-switch>Debug logging</moul-switch>
+  <moul-switch size="sm" is-checked>Small</moul-switch>
+  <moul-switch size="lg">Large</moul-switch>
+  <moul-switch is-disabled>Disabled</moul-switch>
+</div>
+```
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `name` | `name` | `string` | `''` |
+| `value` | `value` | `string` | `'on'` |
+| `is-checked` | `isChecked` | `boolean` | `false` |
+| `is-disabled` | `isDisabled` | `boolean` | `false` |
+| `label` | `label` | `string` | `''` |
+| `size` | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` |
+
+| Event | Type |
+| :-- | :-- |
+| `change` | `CustomEvent` |
+
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | — |
+
+**CSS parts:** `thumb`, `base`, `track`, `label`

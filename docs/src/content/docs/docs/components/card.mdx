@@ -1,0 +1,87 @@
+---
+title: Card
+description: Surface container with header, body and footer.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+`<moul-card>` groups related content. By default it is a white surface lifted by a soft shadow. Tones and variants (`flat`, `bordered`, `shadow`, opt-in `glass`) restyle it.
+
+<ComponentPreview backdrop="page">
+<div class="demo-row" style="align-items: stretch">
+  <moul-card style="width: 16rem">
+    <moul-card-header><strong>Default</strong></moul-card-header>
+    <moul-card-body>White surface lifted by a soft shadow.</moul-card-body>
+    <moul-card-footer><moul-button size="sm">Open</moul-button></moul-card-footer>
+  </moul-card>
+  <moul-card variant="bordered" style="width: 16rem">
+    <moul-card-header><strong>Bordered</strong></moul-card-header>
+    <moul-card-body>Quiet outline for dense layouts.</moul-card-body>
+    <moul-card-footer><moul-button size="sm" variant="secondary">Open</moul-button></moul-card-footer>
+  </moul-card>
+  <moul-card variant="shadow" tone="accent" is-interactive style="width: 16rem">
+    <moul-card-header><strong>Interactive</strong></moul-card-header>
+    <moul-card-body>Lifts on hover and fires press.</moul-card-body>
+  </moul-card>
+</div>
+</ComponentPreview>
+
+```html
+<div class="demo-row" style="align-items: stretch">
+  <moul-card style="width: 16rem">
+    <moul-card-header><strong>Default</strong></moul-card-header>
+    <moul-card-body>White surface lifted by a soft shadow.</moul-card-body>
+    <moul-card-footer><moul-button size="sm">Open</moul-button></moul-card-footer>
+  </moul-card>
+  <moul-card variant="bordered" style="width: 16rem">
+    <moul-card-header><strong>Bordered</strong></moul-card-header>
+    <moul-card-body>Quiet outline for dense layouts.</moul-card-body>
+    <moul-card-footer><moul-button size="sm" variant="secondary">Open</moul-button></moul-card-footer>
+  </moul-card>
+  <moul-card variant="shadow" tone="accent" is-interactive style="width: 16rem">
+    <moul-card-header><strong>Interactive</strong></moul-card-header>
+    <moul-card-body>Lifts on hover and fires press.</moul-card-body>
+  </moul-card>
+</div>
+```
+
+## API reference
+
+### `<moul-card>`
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `tone` | `tone` | `'primary' \| 'accent' \| 'success' \| 'warning' \| 'error'` | `'primary'` |
+| `variant` | `variant` | `'solid' \| 'flat' \| 'shadow' \| 'bordered' \| 'glass'` | `'flat'` |
+| `is-interactive` | `isInteractive` | `boolean` | `false` |
+
+| Event | Type |
+| :-- | :-- |
+| `press` | `CustomEvent` |
+
+| Slot | Description |
+| :-- | :-- |
+| `header` | — |
+| `body` | — |
+| `(default)` | — |
+| `footer` | — |
+
+**CSS parts:** `header`, `body`, `content`, `footer`
+
+### `<moul-card-header>`
+
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | — |
+
+### `<moul-card-body>`
+
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | — |
+
+### `<moul-card-footer>`
+
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | — |

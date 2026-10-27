@@ -1,0 +1,72 @@
+---
+title: ButtonGroup
+description: Visually joins related buttons into one control.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+`<moul-button-group>` fuses adjacent buttons into a single shape. Use `spacing` to keep them apart while still grouping them for assistive technology.
+
+## Attached
+
+<ComponentPreview>
+<moul-button-group spacing="none">
+  <moul-button variant="secondary">Day</moul-button>
+  <moul-button variant="secondary">Week</moul-button>
+  <moul-button variant="secondary">Month</moul-button>
+  <moul-button variant="secondary">Year</moul-button>
+</moul-button-group>
+</ComponentPreview>
+
+```html
+<moul-button-group spacing="none">
+  <moul-button variant="secondary">Day</moul-button>
+  <moul-button variant="secondary">Week</moul-button>
+  <moul-button variant="secondary">Month</moul-button>
+  <moul-button variant="secondary">Year</moul-button>
+</moul-button-group>
+```
+
+## Spaced and vertical
+
+<ComponentPreview>
+<div class="demo-row">
+  <moul-button-group spacing="sm">
+    <moul-button variant="outline">Cancel</moul-button>
+    <moul-button>Save</moul-button>
+  </moul-button-group>
+  <moul-button-group orientation="vertical" spacing="none">
+    <moul-button variant="secondary">Top</moul-button>
+    <moul-button variant="secondary">Middle</moul-button>
+    <moul-button variant="secondary">Bottom</moul-button>
+  </moul-button-group>
+</div>
+</ComponentPreview>
+
+```html
+<div class="demo-row">
+  <moul-button-group spacing="sm">
+    <moul-button variant="outline">Cancel</moul-button>
+    <moul-button>Save</moul-button>
+  </moul-button-group>
+  <moul-button-group orientation="vertical" spacing="none">
+    <moul-button variant="secondary">Top</moul-button>
+    <moul-button variant="secondary">Middle</moul-button>
+    <moul-button variant="secondary">Bottom</moul-button>
+  </moul-button-group>
+</div>
+```
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `orientation` | `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` |
+| `spacing` | `spacing` | `'none' \| 'sm' \| 'md'` | `'sm'` |
+| `is-disabled` | `isDisabled` | `boolean` | `false` |
+
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | — |
+
+**CSS parts:** `base`

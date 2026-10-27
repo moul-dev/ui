@@ -1,0 +1,88 @@
+---
+title: LineChart
+description: Trends over a continuous axis.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+`<moul-line-chart>` connects each series with a smooth curve.
+
+<ComponentPreview align="stretch">
+<moul-line-chart x-key="month" height="260" show-grid data-props='{"data":[{"month":"Jan","desktop":186,"mobile":80,"revenue":4200},{"month":"Feb","desktop":305,"mobile":200,"revenue":5100},{"month":"Mar","desktop":237,"mobile":120,"revenue":4800},{"month":"Apr","desktop":273,"mobile":190,"revenue":6100},{"month":"May","desktop":209,"mobile":130,"revenue":5600},{"month":"Jun","desktop":314,"mobile":240,"revenue":7300}],"series":[{"key":"desktop","name":"Desktop"},{"key":"mobile","name":"Mobile"}]}'></moul-line-chart>
+</ComponentPreview>
+
+```html
+<moul-line-chart x-key="month" height="260" show-grid></moul-line-chart>
+```
+
+```js
+const lineChart = document.querySelector('moul-line-chart')
+lineChart.data = [
+  {
+    "month": "Jan",
+    "desktop": 186,
+    "mobile": 80,
+    "revenue": 4200
+  },
+  {
+    "month": "Feb",
+    "desktop": 305,
+    "mobile": 200,
+    "revenue": 5100
+  },
+  {
+    "month": "Mar",
+    "desktop": 237,
+    "mobile": 120,
+    "revenue": 4800
+  },
+  {
+    "month": "Apr",
+    "desktop": 273,
+    "mobile": 190,
+    "revenue": 6100
+  },
+  {
+    "month": "May",
+    "desktop": 209,
+    "mobile": 130,
+    "revenue": 5600
+  },
+  {
+    "month": "Jun",
+    "desktop": 314,
+    "mobile": 240,
+    "revenue": 7300
+  }
+]
+lineChart.series = [
+  {
+    "key": "desktop",
+    "name": "Desktop"
+  },
+  {
+    "key": "mobile",
+    "name": "Mobile"
+  }
+]
+```
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `x-key` | `xKey` | `string` | `'name'` |
+| `height` | `height` | `number` | `300` |
+| `show-grid` | `showGrid` | `boolean` | `true` |
+| `curve` | `curve` | `string` | `'monotoneX'` |
+
+| Event | Type |
+| :-- | :-- |
+| `point-hover` | `CustomEvent` |
+| `point-leave` | `CustomEvent` |
+
+| Slot | Description |
+| :-- | :-- |
+| `empty` | — |
+
+**CSS parts:** `empty`, `grid`, `line`, `point`

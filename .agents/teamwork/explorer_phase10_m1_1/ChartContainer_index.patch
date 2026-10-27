@@ -1,0 +1,10 @@
+diff --git a/ui/src/components/ChartContainer/index.ts b/ui/src/components/ChartContainer/index.ts
+index 6ee6145..1c334fa 100644
+--- a/ui/src/components/ChartContainer/index.ts
++++ b/ui/src/components/ChartContainer/index.ts
+@@ -1,4 +1,4 @@
+-export type { ChartContainerProps, LegendItem } from './ChartContainer'
++export type { ViewportResizeDetail } from './ChartContainer'
+ export {
+   MoulChartContainer,
+   MoulChartContainer as ChartContainer,

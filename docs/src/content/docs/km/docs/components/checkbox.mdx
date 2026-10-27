@@ -1,0 +1,48 @@
+---
+title: Checkbox (សមាសភាគ)
+description: ឯកសារណែនាំសម្រាប់សមាសភាគ Checkbox Web Component
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+`<moul-checkbox>` toggles with click or Space. The fill grows in and the check mark draws itself.
+
+<ComponentPreview>
+<div class="demo-stack">
+  <moul-checkbox is-checked>Receive release notifications</moul-checkbox>
+  <moul-checkbox>Send weekly digest</moul-checkbox>
+  <moul-checkbox is-indeterminate>Select all regions</moul-checkbox>
+  <moul-checkbox is-disabled>Disabled option</moul-checkbox>
+</div>
+</ComponentPreview>
+
+```html
+<div class="demo-stack">
+  <moul-checkbox is-checked>Receive release notifications</moul-checkbox>
+  <moul-checkbox>Send weekly digest</moul-checkbox>
+  <moul-checkbox is-indeterminate>Select all regions</moul-checkbox>
+  <moul-checkbox is-disabled>Disabled option</moul-checkbox>
+</div>
+```
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `name` | `name` | `string` | `''` |
+| `value` | `value` | `string` | `'on'` |
+| `is-checked` | `isChecked` | `boolean` | `false` |
+| `is-indeterminate` | `isIndeterminate` | `boolean` | `false` |
+| `is-disabled` | `isDisabled` | `boolean` | `false` |
+| `is-required` | `isRequired` | `boolean` | `false` |
+| `label` | `label` | `string` | `''` |
+
+| Event | Type |
+| :-- | :-- |
+| `change` | `CustomEvent` |
+
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | — |
+
+**CSS parts:** `indicator`, `base`, `icon`, `label`

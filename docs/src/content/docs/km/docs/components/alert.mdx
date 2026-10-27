@@ -1,0 +1,61 @@
+---
+title: Alert (សមាសភាគ)
+description: ឯកសារណែនាំសម្រាប់សមាសភាគ Alert Web Component
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+`<moul-alert>` announces status inline. Warnings and errors use `role="alert"`; the rest use `role="status"`.
+
+## Tones
+
+<ComponentPreview align="stretch" backdrop="page">
+<moul-alert tone="primary" title="Heads up" description="A new version is ready to install."></moul-alert>
+<moul-alert tone="success" title="Deployed" description="Release 2026.10 is live on every region."></moul-alert>
+<moul-alert tone="warning" title="Usage at 84%" description="You are close to this month’s build minutes."></moul-alert>
+<moul-alert tone="error" title="Build failed" description="Type check failed in src/index.ts." is-dismissible></moul-alert>
+</ComponentPreview>
+
+```html
+<moul-alert tone="primary" title="Heads up" description="A new version is ready to install."></moul-alert>
+<moul-alert tone="success" title="Deployed" description="Release 2026.10 is live on every region."></moul-alert>
+<moul-alert tone="warning" title="Usage at 84%" description="You are close to this month’s build minutes."></moul-alert>
+<moul-alert tone="error" title="Build failed" description="Type check failed in src/index.ts." is-dismissible></moul-alert>
+```
+
+## Variants
+
+<ComponentPreview align="stretch">
+<moul-alert tone="accent" variant="glass" title="Glass" description="Frosted material over the page."></moul-alert>
+<moul-alert tone="accent" variant="bordered" title="Bordered" description="Outline only."></moul-alert>
+<moul-alert tone="accent" variant="solid" title="Solid" description="Highest emphasis."></moul-alert>
+</ComponentPreview>
+
+```html
+<moul-alert tone="accent" variant="glass" title="Glass" description="Frosted material over the page."></moul-alert>
+<moul-alert tone="accent" variant="bordered" title="Bordered" description="Outline only."></moul-alert>
+<moul-alert tone="accent" variant="solid" title="Solid" description="Highest emphasis."></moul-alert>
+```
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `tone` | `tone` | `'primary' \| 'accent' \| 'success' \| 'warning' \| 'error'` | `'primary'` |
+| `variant` | `variant` | `'solid' \| 'flat' \| 'shadow' \| 'bordered' \| 'glass'` | `'flat'` |
+| `title` | `title` | `string` | `''` |
+| `description` | `description` | `string` | `''` |
+| `is-dismissible` | `isDismissible` | `boolean` | `false` |
+
+| Event | Type |
+| :-- | :-- |
+| `dismiss` | `CustomEvent` |
+
+| Slot | Description |
+| :-- | :-- |
+| `icon` | — |
+| `title` | — |
+| `(default)` | — |
+| `action` | — |
+
+**CSS parts:** `base`, `icon`, `content`, `title`, `description`, `actions`, `dismiss-button`

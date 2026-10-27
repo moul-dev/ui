@@ -1,0 +1,74 @@
+---
+title: Select
+description: Choose one option from a floating list.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+`<moul-select>` opens a listbox in the top layer. Type to jump, arrow through options and press Enter to choose.
+
+<ComponentPreview align="start" minHeight="300px">
+<div style="width: min(100%, 18rem)">
+  <moul-select label="Environment" selected-key="staging" placeholder="Choose…">
+    <moul-select-item key="production">Production</moul-select-item>
+    <moul-select-item key="staging">Staging</moul-select-item>
+    <moul-select-item key="preview">Preview</moul-select-item>
+    <moul-select-item key="local" is-disabled>Local (offline)</moul-select-item>
+  </moul-select>
+</div>
+</ComponentPreview>
+
+```html
+<div style="width: min(100%, 18rem)">
+  <moul-select label="Environment" selected-key="staging" placeholder="Choose…">
+    <moul-select-item key="production">Production</moul-select-item>
+    <moul-select-item key="staging">Staging</moul-select-item>
+    <moul-select-item key="preview">Preview</moul-select-item>
+    <moul-select-item key="local" is-disabled>Local (offline)</moul-select-item>
+  </moul-select>
+</div>
+```
+
+## API reference
+
+### `<moul-select>`
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `name` | `name` | `string` | `''` |
+| `selected-key` | `selectedKey` | `string` | `''` |
+| `placeholder` | `placeholder` | `string` | `'Select an option'` |
+| `label` | `label` | `string` | `''` |
+| `is-disabled` | `isDisabled` | `boolean` | `false` |
+| `is-required` | `isRequired` | `boolean` | `false` |
+| `is-open` | `isOpen` | `boolean` | `false` |
+
+| Event | Type |
+| :-- | :-- |
+| `selectionchange` | `CustomEvent` |
+| `change` | `CustomEvent` |
+
+| Slot | Description |
+| :-- | :-- |
+| `label` | — |
+| `(default)` | — |
+
+**CSS parts:** `trigger`, `popover`, `base`, `label`, `value`, `chevron`
+
+### `<moul-select-item>`
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `key` | `key` | `string` | `''` |
+| `value` | `value` | `string` | `''` |
+| `is-disabled` | `isDisabled` | `boolean` | `false` |
+
+| Event | Type |
+| :-- | :-- |
+| `select-item-click` | `CustomEvent` |
+
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | — |
+
+**CSS parts:** `item`, `check`

@@ -1,0 +1,46 @@
+---
+title: Slider (សមាសភាគ)
+description: ឯកសារណែនាំសម្រាប់សមាសភាគ Slider Web Component
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+`<moul-slider>` is built on a native range input, so keyboard, touch and form submission work out of the box.
+
+<ComponentPreview>
+<div class="demo-stack" style="width: min(100%, 22rem)">
+  <moul-slider label="Volume" value="65" min="0" max="100" show-output></moul-slider>
+  <moul-slider label="Disabled" value="30" is-disabled></moul-slider>
+</div>
+</ComponentPreview>
+
+```html
+<div class="demo-stack" style="width: min(100%, 22rem)">
+  <moul-slider label="Volume" value="65" min="0" max="100" show-output></moul-slider>
+  <moul-slider label="Disabled" value="30" is-disabled></moul-slider>
+</div>
+```
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `name` | `name` | `string` | `''` |
+| `min` | `min` | `number` | `0` |
+| `max` | `max` | `number` | `100` |
+| `step` | `step` | `number` | `1` |
+| `value` | `value` | `number` | `0` |
+| `is-disabled` | `isDisabled` | `boolean` | `false` |
+| `label` | `label` | `string` | `''` |
+| `show-output` | `showOutput` | `boolean` | `true` |
+
+| Event | Type |
+| :-- | :-- |
+| `input` | `CustomEvent` |
+| `change` | `CustomEvent` |
+
+| Slot | Description |
+| :-- | :-- |
+| `label` | — |
+
+**CSS parts:** `thumb`, `track`, `base`, `header`, `label`, `output`, `track-container`, `fill`

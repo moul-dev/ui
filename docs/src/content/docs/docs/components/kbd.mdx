@@ -1,0 +1,38 @@
+---
+title: Kbd
+description: Keyboard key or shortcut.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+`<moul-kbd>` renders a keycap. Pass `keys` to render a whole chord.
+
+<ComponentPreview>
+<div class="demo-row">
+  <moul-kbd>⌘</moul-kbd>
+  <moul-kbd>K</moul-kbd>
+  <moul-kbd keys="Ctrl+Shift+P"></moul-kbd>
+  <span>Press <moul-kbd>Esc</moul-kbd> to close</span>
+</div>
+</ComponentPreview>
+
+```html
+<div class="demo-row">
+  <moul-kbd>⌘</moul-kbd>
+  <moul-kbd>K</moul-kbd>
+  <moul-kbd keys="Ctrl+Shift+P"></moul-kbd>
+  <span>Press <moul-kbd>Esc</moul-kbd> to close</span>
+</div>
+```
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `keys` | `keys` | `string` | `''` |
+
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | — |
+
+**CSS parts:** `key`

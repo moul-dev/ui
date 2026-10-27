@@ -1,0 +1,151 @@
+---
+title: BarChart
+description: Compare values across categories.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+`<moul-bar-chart>` draws grouped or `stacked` bars, vertically or with `layout="horizontal"`.
+
+<ComponentPreview align="stretch">
+<moul-bar-chart x-key="month" height="260" show-grid data-props='{"data":[{"month":"Jan","desktop":186,"mobile":80,"revenue":4200},{"month":"Feb","desktop":305,"mobile":200,"revenue":5100},{"month":"Mar","desktop":237,"mobile":120,"revenue":4800},{"month":"Apr","desktop":273,"mobile":190,"revenue":6100},{"month":"May","desktop":209,"mobile":130,"revenue":5600},{"month":"Jun","desktop":314,"mobile":240,"revenue":7300}],"series":[{"key":"desktop","name":"Desktop"},{"key":"mobile","name":"Mobile"}]}'></moul-bar-chart>
+</ComponentPreview>
+
+```html
+<moul-bar-chart x-key="month" height="260" show-grid></moul-bar-chart>
+```
+
+```js
+const barChart = document.querySelector('moul-bar-chart')
+barChart.data = [
+  {
+    "month": "Jan",
+    "desktop": 186,
+    "mobile": 80,
+    "revenue": 4200
+  },
+  {
+    "month": "Feb",
+    "desktop": 305,
+    "mobile": 200,
+    "revenue": 5100
+  },
+  {
+    "month": "Mar",
+    "desktop": 237,
+    "mobile": 120,
+    "revenue": 4800
+  },
+  {
+    "month": "Apr",
+    "desktop": 273,
+    "mobile": 190,
+    "revenue": 6100
+  },
+  {
+    "month": "May",
+    "desktop": 209,
+    "mobile": 130,
+    "revenue": 5600
+  },
+  {
+    "month": "Jun",
+    "desktop": 314,
+    "mobile": 240,
+    "revenue": 7300
+  }
+]
+barChart.series = [
+  {
+    "key": "desktop",
+    "name": "Desktop"
+  },
+  {
+    "key": "mobile",
+    "name": "Mobile"
+  }
+]
+```
+
+## Stacked
+
+<ComponentPreview align="stretch">
+<moul-bar-chart x-key="month" height="260" stacked data-props='{"data":[{"month":"Jan","desktop":186,"mobile":80,"revenue":4200},{"month":"Feb","desktop":305,"mobile":200,"revenue":5100},{"month":"Mar","desktop":237,"mobile":120,"revenue":4800},{"month":"Apr","desktop":273,"mobile":190,"revenue":6100},{"month":"May","desktop":209,"mobile":130,"revenue":5600},{"month":"Jun","desktop":314,"mobile":240,"revenue":7300}],"series":[{"key":"desktop","name":"Desktop"},{"key":"mobile","name":"Mobile"}]}'></moul-bar-chart>
+</ComponentPreview>
+
+```html
+<moul-bar-chart x-key="month" height="260" stacked></moul-bar-chart>
+```
+
+```js
+const barChart = document.querySelector('moul-bar-chart')
+barChart.data = [
+  {
+    "month": "Jan",
+    "desktop": 186,
+    "mobile": 80,
+    "revenue": 4200
+  },
+  {
+    "month": "Feb",
+    "desktop": 305,
+    "mobile": 200,
+    "revenue": 5100
+  },
+  {
+    "month": "Mar",
+    "desktop": 237,
+    "mobile": 120,
+    "revenue": 4800
+  },
+  {
+    "month": "Apr",
+    "desktop": 273,
+    "mobile": 190,
+    "revenue": 6100
+  },
+  {
+    "month": "May",
+    "desktop": 209,
+    "mobile": 130,
+    "revenue": 5600
+  },
+  {
+    "month": "Jun",
+    "desktop": 314,
+    "mobile": 240,
+    "revenue": 7300
+  }
+]
+barChart.series = [
+  {
+    "key": "desktop",
+    "name": "Desktop"
+  },
+  {
+    "key": "mobile",
+    "name": "Mobile"
+  }
+]
+```
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `x-key` | `xKey` | `string` | `'name'` |
+| `height` | `height` | `number` | `300` |
+| `layout` | `layout` | `'vertical' \| 'horizontal'` | `'vertical'` |
+| `stacked` | `stacked` | `boolean` | `false` |
+| `show-grid` | `showGrid` | `boolean` | `true` |
+
+| Event | Type |
+| :-- | :-- |
+| `point-hover` | `CustomEvent` |
+| `point-leave` | `CustomEvent` |
+
+| Slot | Description |
+| :-- | :-- |
+| `empty` | — |
+
+**CSS parts:** `empty`, `grid`, `bar`

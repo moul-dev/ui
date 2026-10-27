@@ -1,0 +1,442 @@
+---
+// Home-hero centerpiece: the Moul mark as four extruded glass facets, drawn
+// with WebGL2. Drag to spin it; it settles back into a slow idle turn. The
+// glass tint follows --brand-hue and --brand-chroma-multiplier, so Theme
+// Studio retints it live. Without WebGL2 the flat mark shows instead.
+import Logo from './Logo.astro'
+---
+
+<docs-logo-3d class="logo-3d" aria-hidden="true">
+  <canvas></canvas>
+  <Logo class="logo-3d-fallback" />
+</docs-logo-3d>
+
+<script>
+  type Mat4 = number[]
+  type Vec2 = [number, number]
+
+  // ── Matrix helpers (column-major, as WebGL expects) ─────────────────
+  function perspective(fov: number, aspect: number, near: number, far: number) {
+    const f = 1 / Math.tan(fov / 2)
+    const nf = 1 / (near - far)
+    return [
+      f / aspect, 0, 0, 0,
+      0, f, 0, 0,
+      0, 0, (far + near) * nf, -1,
+      0, 0, 2 * far * near * nf, 0,
+    ]
+  }
+
+  function multiply(a: Mat4, b: Mat4): Mat4 {
+    const out = new Array(16).fill(0)
+    for (let col = 0; col < 4; col++) {
+      for (let row = 0; row < 4; row++) {
+        for (let k = 0; k < 4; k++) {
+          out[col * 4 + row] += a[k * 4 + row]! * b[col * 4 + k]!
+        }
+      }
+    }
+    return out
+  }
+
+  function rotateX(rad: number): Mat4 {
+    const c = Math.cos(rad)
+    const s = Math.sin(rad)
+    return [1, 0, 0, 0, 0, c, s, 0, 0, -s, c, 0, 0, 0, 0, 1]
+  }
+
+  function rotateY(rad: number): Mat4 {
+    const c = Math.cos(rad)
+    const s = Math.sin(rad)
+    return [c, 0, -s, 0, 0, 1, 0, 0, s, 0, c, 0, 0, 0, 0, 1]
+  }
+
+  // Upper 3×3 of a rotation-only model matrix, for transforming normals.
+  const normalMatrix = (m: Mat4) => [
+    m[0]!, m[1]!, m[2]!, m[4]!, m[5]!, m[6]!, m[8]!, m[9]!, m[10]!,
+  ]
+
+  // ── OKLCH → sRGB, so the glass matches the CSS brand tokens ─────────
+  function oklchToRgb(l: number, c: number, hue: number) {
+    const h = (hue * Math.PI) / 180
+    const a = c * Math.cos(h)
+    const b = c * Math.sin(h)
+
+    const l3 = (l + 0.3963377774 * a + 0.2158017502 * b) ** 3
+    const m3 = (l - 0.1055613458 * a - 0.0638541728 * b) ** 3
+    const s3 = (l - 0.0894841775 * a - 1.291485548 * b) ** 3
+
+    const linear = [
+      4.0767416621 * l3 - 3.3077115913 * m3 + 0.2309699292 * s3,
+      -1.2684380046 * l3 + 2.6097574011 * m3 - 0.3413190065 * s3,
+      -0.0041960863 * l3 - 0.7034186147 * m3 + 1.707614614 * s3,
+    ]
+    return linear.map((x) => {
+      const v = x <= 0.0031308 ? 12.92 * x : 1.055 * x ** (1 / 2.4) - 0.055
+      return Math.min(1, Math.max(0, v))
+    })
+  }
+
+  // ── Shaders ─────────────────────────────────────────────────────────
+  const VERTEX_SHADER = `#version 300 es
+  in vec4 a_position;
+  in vec3 a_normal;
+
+  uniform mat4 u_model;
+  uniform mat4 u_viewProjection;
+  uniform mat3 u_normalMatrix;
+
+  out vec3 v_normal;
+  out vec3 v_worldPosition;
+
+  void main() {
+    vec4 world = u_model * a_position;
+    v_worldPosition = world.xyz;
+    v_normal = normalize(u_normalMatrix * a_normal);
+    gl_Position = u_viewProjection * world;
+  }`
+
+  // Glass: chromatic refraction of a virtual environment, a specular glint,
+  // and a brand-colored Fresnel rim that brightens at grazing angles.
+  const FRAGMENT_SHADER = `#version 300 es
+  precision highp float;
+
+  in vec3 v_normal;
+  in vec3 v_worldPosition;
+
+  uniform vec3 u_brand;
+  uniform vec3 u_viewPos;
+  uniform float u_time;
+
+  out vec4 outColor;
+
+  vec3 environment(vec3 dir) {
+    vec3 sky = mix(vec3(0.01, 0.01, 0.03), u_brand * 0.22, dir.y * 0.5 + 0.5);
+    sky += vec3(pow(max(0.0, dot(dir, normalize(vec3(1.5, 2.0, 1.0)))), 32.0)) * 0.55;
+    sky += u_brand * pow(max(0.0, dot(dir, normalize(vec3(-1.5, -1.0, -1.0)))), 16.0) * 0.45;
+    return sky;
+  }
+
+  void main() {
+    vec3 normal = normalize(v_normal);
+    vec3 viewDir = normalize(u_viewPos - v_worldPosition);
+
+    float fresnel = pow(1.0 - max(0.0, dot(normal, viewDir)), 3.0);
+
+    vec3 halfDir = normalize(normalize(vec3(2.0, 3.0, 4.0)) + viewDir);
+    vec3 specular = vec3(pow(max(0.0, dot(normal, halfDir)), 80.0) * 0.85);
+
+    vec3 rim = u_brand * fresnel * 0.8;
+    vec3 pulse = u_brand * (0.05 + 0.05 * (0.5 + 0.5 * sin(u_time * 1.5)));
+
+    vec3 refracted = vec3(
+      environment(refract(-viewDir, normal, 1.0 / 1.12)).r,
+      environment(refract(-viewDir, normal, 1.0 / 1.16)).g,
+      environment(refract(-viewDir, normal, 1.0 / 1.20)).b
+    );
+
+    vec3 color = refracted * 0.55 + specular + rim + pulse + u_brand * 0.12;
+    outColor = vec4(color, mix(0.45, 0.95, fresnel));
+  }`
+
+  // ── Geometry ────────────────────────────────────────────────────────
+  // The four facets of the mark, mapped from the SVG's 24×24 box to -1..1
+  // around its center. Each triangle is wound counter-clockwise.
+  const FACETS: [Vec2, Vec2, Vec2][] = [
+    [[-0.04, 0.975], [-0.85, 0.075], [-0.26, -0.15]], // top-left
+    [[0.04, 0.975], [-0.2, -0.15], [0.83, 0.075]], // top-right
+    [[-0.04, -0.985], [-0.26, -0.22], [-0.85, 0.005]], // bottom-left
+    [[0.04, -0.985], [0.83, 0.005], [-0.2, -0.22]], // bottom-right
+  ]
+  const DEPTH = 0.16
+
+  // Extrudes a 2D triangle into a prism: front and back caps plus three
+  // flat-shaded side quads.
+  function extrude([a, b, c]: [Vec2, Vec2, Vec2], positions: number[], normals: number[]) {
+    const front = (p: Vec2) => [p[0], p[1], DEPTH]
+    const back = (p: Vec2) => [p[0], p[1], -DEPTH]
+    const push = (normal: number[], ...vertices: number[][]) => {
+      for (const v of vertices) {
+        positions.push(...v)
+        normals.push(...normal)
+      }
+    }
+
+    push([0, 0, 1], front(a), front(b), front(c))
+    push([0, 0, -1], back(a), back(c), back(b))
+
+    for (const [from, to] of [[a, b], [b, c], [c, a]] as [Vec2, Vec2][]) {
+      const dx = to[0] - from[0]
+      const dy = to[1] - from[1]
+      const length = Math.hypot(dx, dy)
+      const outward = [dy / length, -dx / length, 0]
+      push(outward, front(from), back(from), front(to))
+      push(outward, front(to), back(from), back(to))
+    }
+  }
+
+  function compile(gl: WebGL2RenderingContext) {
+    const program = gl.createProgram()
+    for (const [type, source] of [
+      [gl.VERTEX_SHADER, VERTEX_SHADER],
+      [gl.FRAGMENT_SHADER, FRAGMENT_SHADER],
+    ] as const) {
+      const shader = gl.createShader(type)!
+      gl.shaderSource(shader, source)
+      gl.compileShader(shader)
+      gl.attachShader(program, shader)
+    }
+    gl.linkProgram(program)
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+      console.warn('[logo-3d]', gl.getProgramInfoLog(program))
+      return null
+    }
+    return program
+  }
+
+  // The camera sits on +Z looking down -Z at the origin.
+  const EYE = [0, 0, 3.2]
+  const VIEW = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, -EYE[2]!, 1]
+  const FOV = (40 * Math.PI) / 180
+  const DRAG_SPEED = 0.007
+  const DAMPING = 0.94
+  const IDLE_SPIN = 0.003
+
+  class Logo3D extends HTMLElement {
+    #teardown?: () => void
+
+    connectedCallback() {
+      if (this.#teardown) return
+      const canvas = this.querySelector('canvas')!
+      const gl = canvas.getContext('webgl2', { antialias: true, alpha: true })
+      const program = gl && compile(gl)
+      if (!gl || !program) {
+        this.toggleAttribute('data-fallback', true)
+        return
+      }
+      this.#teardown = this.#start(canvas, gl, program)
+    }
+
+    disconnectedCallback() {
+      this.#teardown?.()
+      this.#teardown = undefined
+    }
+
+    #start(canvas: HTMLCanvasElement, gl: WebGL2RenderingContext, program: WebGLProgram) {
+      const positions: number[] = []
+      const normals: number[] = []
+      for (const facet of FACETS) extrude(facet, positions, normals)
+
+      gl.useProgram(program)
+      gl.bindVertexArray(gl.createVertexArray())
+      for (const [name, data] of [
+        ['a_position', positions],
+        ['a_normal', normals],
+      ] as const) {
+        gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer())
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW)
+        const location = gl.getAttribLocation(program, name)
+        gl.enableVertexAttribArray(location)
+        gl.vertexAttribPointer(location, 3, gl.FLOAT, false, 0, 0)
+      }
+
+      const uniform = (name: string) => gl.getUniformLocation(program, name)
+      const u = {
+        model: uniform('u_model'),
+        viewProjection: uniform('u_viewProjection'),
+        normalMatrix: uniform('u_normalMatrix'),
+        brand: uniform('u_brand'),
+        viewPos: uniform('u_viewPos'),
+        time: uniform('u_time'),
+      }
+      gl.uniform3fv(u.viewPos, EYE)
+
+      gl.enable(gl.BLEND)
+      gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
+      gl.enable(gl.DEPTH_TEST)
+      gl.depthFunc(gl.LEQUAL)
+
+      // Brand tint, re-read whenever the root's inline tokens change.
+      const readBrand = () => {
+        const styles = getComputedStyle(document.documentElement)
+        const hue = Number.parseFloat(styles.getPropertyValue('--brand-hue'))
+        const chroma = Number.parseFloat(
+          styles.getPropertyValue('--brand-chroma-multiplier'),
+        )
+        gl.uniform3fv(
+          u.brand,
+          oklchToRgb(
+            0.7,
+            0.18 * (Number.isNaN(chroma) ? 1 : chroma),
+            Number.isNaN(hue) ? 250 : hue,
+          ),
+        )
+      }
+      readBrand()
+      const brandObserver = new MutationObserver(readBrand)
+      brandObserver.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['style', 'class', 'data-theme'],
+      })
+
+      const resize = () => {
+        const dpr = Math.min(window.devicePixelRatio || 1, 2)
+        canvas.width = Math.floor(canvas.clientWidth * dpr)
+        canvas.height = Math.floor(canvas.clientHeight * dpr)
+        gl.viewport(0, 0, canvas.width, canvas.height)
+      }
+      const resizeObserver = new ResizeObserver(resize)
+      resizeObserver.observe(canvas)
+      resize()
+
+      // ── Interaction: drag to spin, fling with inertia ──────────────
+      const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)')
+      const angle = { x: -0.15, y: -0.2 }
+      const spin = { x: 0, y: 0 }
+      const drag = { x: 0, y: 0 }
+      let pointer: { id: number; x: number; y: number } | null = null
+
+      const onDown = (event: PointerEvent) => {
+        pointer = { id: event.pointerId, x: event.clientX, y: event.clientY }
+        this.setPointerCapture(event.pointerId)
+      }
+      const onMove = (event: PointerEvent) => {
+        if (pointer?.id !== event.pointerId) return
+        drag.y += (event.clientX - pointer.x) * DRAG_SPEED
+        drag.x += (event.clientY - pointer.y) * DRAG_SPEED
+        pointer.x = event.clientX
+        pointer.y = event.clientY
+      }
+      const onUp = () => {
+        pointer = null
+      }
+      this.addEventListener('pointerdown', onDown)
+      this.addEventListener('pointermove', onMove)
+      this.addEventListener('pointerup', onUp)
+      this.addEventListener('pointercancel', onUp)
+
+      // ── Render loop, paused while the logo is off screen ───────────
+      const start = performance.now()
+      let frame = 0
+
+      const render = (now: number) => {
+        const seconds = (now - start) / 1000
+        const still = reducedMotion.matches
+
+        if (pointer) {
+          angle.x += drag.x
+          angle.y += drag.y
+          // The last frame's drag becomes the fling velocity on release.
+          spin.x = drag.x
+          spin.y = drag.y
+          drag.x = 0
+          drag.y = 0
+        } else {
+          angle.x += spin.x
+          angle.y += spin.y
+          spin.x *= DAMPING
+          spin.y *= DAMPING
+          if (!still) {
+            angle.y += IDLE_SPIN
+            angle.x += (Math.sin(seconds * 0.4) * 0.1 - angle.x) * 0.02
+          }
+        }
+
+        const model = multiply(rotateX(angle.x), rotateY(angle.y))
+        const aspect = canvas.width / Math.max(canvas.height, 1)
+        const viewProjection = multiply(
+          perspective(FOV, aspect, 0.1, 100),
+          VIEW,
+        )
+
+        gl.clearColor(0, 0, 0, 0)
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
+        gl.uniformMatrix4fv(u.model, false, model)
+        gl.uniformMatrix4fv(u.viewProjection, false, viewProjection)
+        gl.uniformMatrix3fv(u.normalMatrix, false, normalMatrix(model))
+        gl.uniform1f(u.time, still ? 0 : seconds)
+        gl.drawArrays(gl.TRIANGLES, 0, positions.length / 3)
+
+        frame = requestAnimationFrame(render)
+      }
+
+      const visibility = new IntersectionObserver(([entry]) => {
+        cancelAnimationFrame(frame)
+        if (entry?.isIntersecting) frame = requestAnimationFrame(render)
+      })
+      visibility.observe(this)
+
+      return () => {
+        cancelAnimationFrame(frame)
+        visibility.disconnect()
+        resizeObserver.disconnect()
+        brandObserver.disconnect()
+        this.removeEventListener('pointerdown', onDown)
+        this.removeEventListener('pointermove', onMove)
+        this.removeEventListener('pointerup', onUp)
+        this.removeEventListener('pointercancel', onUp)
+        gl.getExtension('WEBGL_lose_context')?.loseContext()
+      }
+    }
+  }
+
+  customElements.define('docs-logo-3d', Logo3D)
+</script>
+
+<style>
+  .logo-3d {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 100%;
+    max-width: 28rem;
+    aspect-ratio: 1;
+    margin-inline: auto;
+    cursor: grab;
+    user-select: none;
+    /* Horizontal drags spin the mark; vertical swipes still scroll the page. */
+    touch-action: pan-y;
+    /* Soft shadow pooled behind the glass so it reads on any page color. */
+    background: radial-gradient(
+      circle,
+      light-dark(rgb(0 0 0 / 0.07), rgb(0 0 0 / 0.4)) 0%,
+      light-dark(rgb(0 0 0 / 0.02), rgb(0 0 0 / 0.15)) 32%,
+      transparent 70%
+    );
+  }
+
+  .logo-3d:active {
+    cursor: grabbing;
+  }
+
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(
+      0 0 35px
+        oklch(
+          0.7 calc(0.18 * var(--brand-chroma-multiplier, 1))
+            var(--brand-hue, 250) / 0.2
+        )
+    );
+  }
+
+  .logo-3d :global(.logo-3d-fallback) {
+    display: none;
+    width: 55%;
+    color: var(--color-accent);
+  }
+
+  .logo-3d[data-fallback] {
+    cursor: auto;
+  }
+
+  .logo-3d[data-fallback] canvas {
+    display: none;
+  }
+
+  .logo-3d[data-fallback] :global(.logo-3d-fallback) {
+    display: block;
+  }
+</style>

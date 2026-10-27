@@ -1,0 +1,33 @@
+---
+title: Spinner (សមាសភាគ)
+description: ឯកសារណែនាំសម្រាប់សមាសភាគ Spinner Web Component
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+`<moul-spinner>` is an accessible `role="status"` indicator; `label` is read to screen readers.
+
+<ComponentPreview>
+<div class="demo-row">
+  <moul-spinner size="sm" label="Loading"></moul-spinner>
+  <moul-spinner size="md" label="Loading"></moul-spinner>
+  <moul-spinner size="lg" label="Loading"></moul-spinner>
+</div>
+</ComponentPreview>
+
+```html
+<div class="demo-row">
+  <moul-spinner size="sm" label="Loading"></moul-spinner>
+  <moul-spinner size="md" label="Loading"></moul-spinner>
+  <moul-spinner size="lg" label="Loading"></moul-spinner>
+</div>
+```
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `size` | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` |
+| `label` | `label` | `string` | `'Loading'` |
+
+**CSS parts:** `base`

@@ -1,0 +1,63 @@
+---
+title: Modal
+description: Dialog with focus containment, Escape and backdrop dismissal.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+`<moul-modal>` opens a native `<dialog>` in the top layer on a frosted backdrop. Focus is trapped inside and returns to the trigger on close.
+
+<ComponentPreview>
+<moul-button data-open="demo-modal">Open modal</moul-button>
+<moul-modal id="demo-modal" aria-label="Invite teammates">
+  <h3 slot="header">Invite teammates</h3>
+  <div class="demo-stack">
+    <p>New members get access to every project in this workspace.</p>
+    <moul-text-field label="Email" type="email" placeholder="name@company.com"></moul-text-field>
+  </div>
+  <div slot="footer" class="demo-row" style="justify-content: flex-end">
+    <moul-button variant="ghost" data-close="demo-modal">Cancel</moul-button>
+    <moul-button data-close="demo-modal">Send invite</moul-button>
+  </div>
+</moul-modal>
+</ComponentPreview>
+
+```html
+<moul-button id="invite">Open modal</moul-button>
+<moul-modal id="invite-modal" aria-label="Invite teammates">
+  <h3 slot="header">Invite teammates</h3>
+  <p>New members get access to every project in this workspace.</p>
+  <div slot="footer">
+    <moul-button variant="ghost">Cancel</moul-button>
+    <moul-button>Send invite</moul-button>
+  </div>
+</moul-modal>
+```
+
+```js
+const modal = document.querySelector('#invite-modal')
+document.querySelector('#invite').addEventListener('press', () => {
+  modal.isOpen = true
+})
+modal.addEventListener('openchange', (event) => console.log(event.detail.isOpen))
+```
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `is-open` | `isOpen` | `boolean` | `false` |
+| `size` | `size` | `'sm' \| 'md' \| 'lg' \| 'fullscreen'` | `'md'` |
+| `is-dismissable` | `isDismissable` | `boolean` | `true` |
+
+| Event | Type |
+| :-- | :-- |
+| `openchange` | `CustomEvent` |
+
+| Slot | Description |
+| :-- | :-- |
+| `header` | — |
+| `(default)` | — |
+| `footer` | — |
+
+**CSS parts:** `base`, `dialog`, `header`, `body`, `footer`

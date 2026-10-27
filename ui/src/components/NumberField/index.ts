@@ -1,2 +1,1 @@
-export type { NumberFieldProps } from './NumberField'
-export { NumberField } from './NumberField'
+export { MoulNumberField, MoulNumberField as NumberField } from './NumberField'

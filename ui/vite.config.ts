@@ -1,57 +1,54 @@
 /// <reference types="vitest" />
 import fs from 'node:fs'
 import { resolve } from 'node:path'
-import stylex from '@stylexjs/unplugin'
-import react from '@vitejs/plugin-react'
-import { Features } from 'lightningcss'
-import ts from 'typescript'
 import dts from 'vite-plugin-dts'
 import { defineConfig, type Plugin } from 'vitest/config'
 
-function preserveTokensStylexPlugin(): Plugin {
-  return {
-    name: 'preserve-tokens-stylex',
-    apply: 'build',
-    enforce: 'post',
-    async closeBundle() {
-      const outDir = resolve(__dirname, 'dist')
-      const stylexCssPath = resolve(outDir, 'assets/stylex.css')
-      const themeCssPath = resolve(__dirname, 'src/styles/theme.css')
-      const tokensTsPath = resolve(__dirname, 'src/tokens/tokens.stylex.ts')
+const BANNED_IMPORT_PREFIXES = [
+  'react',
+  'react-dom',
+  'react-aria',
+  'react-aria-components',
+  '@stylexjs/stylex',
+  '@lit/react',
+  'motion/react',
+] as const
 
-      // Emit dist/tokens.stylex.js with stylex.defineVars() intact for consumer apps
-      if (fs.existsSync(tokensTsPath)) {
-        const tokensTsCode = fs.readFileSync(tokensTsPath, 'utf-8')
-        const transpiled = ts.transpileModule(tokensTsCode, {
-          compilerOptions: {
-            module: ts.ModuleKind.ESNext,
-            target: ts.ScriptTarget.ESNext,
-          },
-        })
-        fs.writeFileSync(
-          resolve(outDir, 'tokens.stylex.js'),
-          `'use client';\n${transpiled.outputText}`,
-          'utf-8',
+export function banReactImportsPlugin(): Plugin {
+  return {
+    name: 'ban-react-imports',
+    enforce: 'pre',
+    resolveId(id: string, importer?: string) {
+      const isBanned = BANNED_IMPORT_PREFIXES.some(
+        (prefix) =>
+          id === prefix ||
+          id.startsWith(`${prefix}/`) ||
+          id.startsWith(`${prefix}-`),
+      )
+      if (isBanned) {
+        throw new Error(
+          `[banReactImportsPlugin] Prohibited import detected: "${id}"${
+            importer ? ` in "${importer}"` : ''
+          }. React, StyleX, and React-adapter modules are forbidden in @moul-dev/ui.`,
         )
       }
+      return null
+    },
+  }
+}
 
-      if (fs.existsSync(themeCssPath)) {
-        const themeCss = fs.readFileSync(themeCssPath, 'utf-8').trim()
+export function copyCssTokensPlugin(): Plugin {
+  return {
+    name: 'copy-css-tokens',
+    apply: 'build',
+    closeBundle() {
+      const srcPath = resolve(__dirname, 'src/styles/style.css')
+      const outDir = resolve(__dirname, 'dist/assets')
+      const destPath = resolve(outDir, 'style.css')
 
-        // Also write standalone dist/theme.css
-        fs.writeFileSync(resolve(outDir, 'theme.css'), `${themeCss}\n`, 'utf-8')
-
-        // Prepend theme.css into dist/assets/stylex.css
-        if (fs.existsSync(stylexCssPath)) {
-          const currentStylexCss = fs.readFileSync(stylexCssPath, 'utf-8')
-          if (!currentStylexCss.includes('[data-theme="light"]')) {
-            fs.writeFileSync(
-              stylexCssPath,
-              `${themeCss}\n\n${currentStylexCss}`,
-              'utf-8',
-            )
-          }
-        }
+      if (fs.existsSync(srcPath)) {
+        fs.mkdirSync(outDir, { recursive: true })
+        fs.copyFileSync(srcPath, destPath)
       }
     },
   }
@@ -60,45 +57,25 @@ function preserveTokensStylexPlugin(): Plugin {
 // https://vite.dev/config/
 export default defineConfig({
   test: {
-    environment: 'jsdom',
+    environment: 'happy-dom',
     globals: true,
     setupFiles: ['./src/test-setup.ts'],
   },
   plugins: [
-    stylex.vite({
-      useCSSLayers: true,
-      lightningcssOptions: {
-        exclude: Features.LightDark, // Prevents lowering to --lightningcss-light/dark
-      },
-      dev: process.env.NODE_ENV === 'development',
-      runtimeInjection: false,
-    }),
-    react(),
-    dts({ tsconfigPath: './tsconfig.app.json' }),
-    preserveTokensStylexPlugin(),
+    banReactImportsPlugin(),
+    dts({ tsconfigPath: './tsconfig.app.json' }) as any,
+    copyCssTokensPlugin(),
   ],
   build: {
     target: 'esnext',
     lib: {
-      entry: {
-        'moul-ui': resolve(__dirname, 'src/index.ts'),
-      },
+      entry: resolve(__dirname, 'src/index.ts'),
       formats: ['es'],
+      fileName: () => 'moul-ui.js',
     },
     rollupOptions: {
-      external: [
-        'react',
-        'react-dom',
-        'react/jsx-runtime',
-        'react/jsx-dev-runtime',
-        'react-aria-components',
-        '@stylexjs/stylex',
-        'recharts',
-        'react-aria',
-        'input-otp',
-      ],
       output: {
-        banner: "'use client';",
+        banner: '"use client";',
       },
     },
   },

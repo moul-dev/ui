@@ -1,2 +1,2 @@
-export type { TextFieldProps } from './TextField'
-export { TextField } from './TextField'
+export type { TextFieldType } from './TextField'
+export { MoulTextField, MoulTextField as TextField } from './TextField'

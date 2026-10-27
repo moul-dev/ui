@@ -1,0 +1,50 @@
+---
+title: EmptyState (សមាសភាគ)
+description: ឯកសារណែនាំសម្រាប់សមាសភាគ EmptyState Web Component
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+`<moul-empty-state>` explains why a view is empty and offers the next step. Its parts rise in with a short stagger.
+
+<ComponentPreview>
+<moul-empty-state variant="glass" style="width: min(100%, 28rem)">
+  <span slot="icon" style="font-size: 1.75rem">📦</span>
+  <span slot="title">No deployments yet</span>
+  <span slot="description">Push a commit or trigger a build to see it here.</span>
+  <div slot="actions" class="demo-row">
+    <moul-button size="sm">New deployment</moul-button>
+    <moul-button size="sm" variant="ghost">Read the docs</moul-button>
+  </div>
+</moul-empty-state>
+</ComponentPreview>
+
+```html
+<moul-empty-state variant="glass" style="width: min(100%, 28rem)">
+  <span slot="icon" style="font-size: 1.75rem">📦</span>
+  <span slot="title">No deployments yet</span>
+  <span slot="description">Push a commit or trigger a build to see it here.</span>
+  <div slot="actions" class="demo-row">
+    <moul-button size="sm">New deployment</moul-button>
+    <moul-button size="sm" variant="ghost">Read the docs</moul-button>
+  </div>
+</moul-empty-state>
+```
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `size` | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` |
+| `align` | `align` | `'start' \| 'center'` | `'center'` |
+| `variant` | `variant` | `'solid' \| 'flat' \| 'shadow' \| 'bordered' \| 'glass'` | `'flat'` |
+
+| Slot | Description |
+| :-- | :-- |
+| `icon` | — |
+| `title` | — |
+| `description` | — |
+| `(default)` | — |
+| `actions` | — |
+
+**CSS parts:** `icon`, `title`, `description`, `actions`, `base`

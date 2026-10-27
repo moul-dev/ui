@@ -1,0 +1,32 @@
+---
+title: Calendar
+description: Month grid for picking a single date.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+`<moul-calendar>` renders an accessible month grid. Months slide as you page, and arrow keys move the focused day.
+
+<ComponentPreview>
+<moul-calendar value="2026-10-19" min-date="2026-10-05"></moul-calendar>
+</ComponentPreview>
+
+```html
+<moul-calendar value="2026-10-19" min-date="2026-10-05"></moul-calendar>
+```
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `value` | `value` | `string` | `''` |
+| `locale` | `locale` | `string` | `'en-US'` |
+| `min-date` | `minDate` | `string` | `''` |
+| `max-date` | `maxDate` | `string` | `''` |
+| `is-disabled` | `isDisabled` | `boolean` | `false` |
+
+| Event | Type |
+| :-- | :-- |
+| `change` | `CustomEvent` |
+
+**CSS parts:** `base`, `header`, `nav-btn`, `nav-btn-prev`, `heading`, `nav-btn-next`, `grid`, `grid-header`, `grid-cell`, `day-btn`

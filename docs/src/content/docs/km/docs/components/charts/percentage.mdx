@@ -1,0 +1,70 @@
+---
+title: PercentageBar (សមាសភាគ)
+description: ឯកសារណែនាំសម្រាប់សមាសភាគ PercentageBar Web Component
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+`<moul-percentage-bar>` and `<moul-percentage-circle>` show one ratio at a glance.
+
+<ComponentPreview>
+<div class="demo-stack" style="width: min(100%, 24rem)">
+  <moul-percentage-bar label="Memory" value="74" show-label></moul-percentage-bar>
+  <moul-percentage-bar label="Storage" value="89" tone="warning" show-label></moul-percentage-bar>
+  <div class="demo-row">
+    <moul-percentage-circle value="84" tone="success" show-label></moul-percentage-circle>
+    <moul-percentage-circle value="52" tone="accent" show-label size="lg"></moul-percentage-circle>
+  </div>
+</div>
+</ComponentPreview>
+
+```html
+<div class="demo-stack" style="width: min(100%, 24rem)">
+  <moul-percentage-bar label="Memory" value="74" show-label></moul-percentage-bar>
+  <moul-percentage-bar label="Storage" value="89" tone="warning" show-label></moul-percentage-bar>
+  <div class="demo-row">
+    <moul-percentage-circle value="84" tone="success" show-label></moul-percentage-circle>
+    <moul-percentage-circle value="52" tone="accent" show-label size="lg"></moul-percentage-circle>
+  </div>
+</div>
+```
+
+## API reference
+
+### `<moul-percentage-bar>`
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `value` | `value` | `number` | `0` |
+| `size` | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` |
+| `tone` | `tone` | `'primary' \| 'accent' \| 'success' \| 'warning' \| 'error'` | `'primary'` |
+| `show-label` | `showLabel` | `boolean` | `true` |
+| `label` | `label` | `string` | `''` |
+| `show-value-text` | `showValueText` | `boolean` | `true` |
+| `color` | `color` | `string` | `''` |
+
+| Slot | Description |
+| :-- | :-- |
+| `label` | — |
+
+**CSS parts:** `container`, `header`, `label`, `value`, `svg`
+
+### `<moul-percentage-circle>`
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `value` | `value` | `number` | `0` |
+| `size` | `size` | `'sm' \| 'md' \| 'lg' \| number` | `'md'` |
+| `tone` | `tone` | `'primary' \| 'accent' \| 'success' \| 'warning' \| 'error'` | `'primary'` |
+| `show-label` | `showLabel` | `boolean` | `true` |
+| `stroke-width` | `strokeWidth` | `number` | `8` |
+| `label` | `label` | `string` | `''` |
+| `show-value-text` | `showValueText` | `boolean` | `true` |
+| `color` | `color` | `string` | `''` |
+
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | — |
+| `label` | — |
+
+**CSS parts:** `wrapper`, `svg`, `center`, `value`, `label`

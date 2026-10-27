@@ -1,117 +1,115 @@
-import * as stylex from '@stylexjs/stylex'
-import { tokens } from '../../tokens/tokens.stylex'
+import { css } from 'lit'
+import { resetStyles } from '../../styles/reset.styles'
 
-export const styles = stylex.create({
-  container: {
-    padding: tokens.spacing6,
-    gap: tokens.spacing4,
-    fontFamily: tokens.fontFamilyBase,
-    position: 'relative',
-    color: tokens.colorFg,
-  },
-  containerEdgeToEdge: {
-    padding: 0,
-    gap: 0,
-  },
-  header: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    gap: tokens.spacing4,
-    borderBottomWidth: '1px',
-    borderBottomStyle: 'solid',
-    borderBottomColor: 'transparent',
-    paddingBlockEnd: tokens.spacing2,
-  },
-  headerEdgeToEdge: {
-    paddingBlockStart: tokens.spacing5,
-    paddingBlockEnd: tokens.spacing4,
-    paddingInline: tokens.spacing6,
-  },
-  headerDivider: {
-    borderBottomColor: tokens.colorBorderSubtle,
-  },
-  title: {
-    fontSize: tokens.fontSizeLg,
-    fontWeight: tokens.fontWeightSemibold,
-    lineHeight: tokens.lineHeightLg,
-    color: tokens.colorFg,
-    margin: 0,
-  },
-  description: {
-    fontSize: tokens.fontSizeXs,
-    color: tokens.colorFgSubtle,
-    marginBlockStart: tokens.spacing1,
-  },
-  actions: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: tokens.spacing2,
-  },
-  legend: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    alignItems: 'center',
-    gap: tokens.spacing3,
-    fontSize: tokens.fontSizeSm,
-    color: tokens.colorFgSubtle,
-    lineHeight: tokens.lineHeightSm,
-  },
-  legendItem: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: tokens.spacing2,
-  },
-  legendDot: {
-    width: '10px',
-    height: '10px',
-    borderRadius: tokens.radiusFull,
-    display: 'inline-block',
-    flexShrink: 0,
-  },
-  legendName: {
-    color: tokens.colorFgSubtle,
-  },
-  legendValue: {
-    fontWeight: tokens.fontWeightSemibold,
-    color: tokens.colorFg,
-    marginInlineStart: tokens.spacing1,
-  },
-  legendMore: {
-    fontWeight: tokens.fontWeightSemibold,
-    color: tokens.colorFg,
-    fontSize: tokens.fontSizeSm,
-  },
-  body: {
-    position: 'relative',
-    minHeight: '260px',
-    width: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  bodyEdgeToEdge: {
-    minHeight: 'auto',
-    display: 'block',
-  },
-  loadingContainer: {
-    position: 'absolute',
-    inset: 0,
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: tokens.colorBgGlass,
-    zIndex: 10,
-  },
-  emptyContainer: {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: tokens.spacing2,
-    color: tokens.colorFgSubtle,
-    fontSize: tokens.fontSizeSm,
-    paddingBlock: tokens.spacing8,
-  },
-})
+export const chartContainerStyles = [
+  resetStyles,
+  css`
+    /* HeroUI card surface: white fill lifted by a soft shadow, no border. */
+    :host {
+      display: block;
+      position: relative;
+      background-color: var(--color-surface, #ffffff);
+      border-radius: var(--radius-surface, 1.5rem);
+      box-shadow: var(--shadow-surface, 0 1px 2px 0 rgba(0, 0, 0, 0.06));
+      padding: var(--spacing-5, 1.25rem);
+      color: var(--color-fg, #18181b);
+      box-sizing: border-box;
+      overflow: hidden;
+      font-family: var(--font-family-base, inherit);
+    }
+
+    [part~="header"],
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: var(--spacing-4, 1rem);
+      margin-bottom: var(--spacing-5, 1.25rem);
+    }
+
+    .header-text {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    [part~="title"],
+    .title {
+      font-size: var(--font-size-md, 1rem);
+      font-weight: var(--font-weight-medium, 500);
+      color: var(--color-fg, #18181b);
+      margin: 0;
+      line-height: var(--line-height-md, 1.5rem);
+    }
+
+    [part~="description"],
+    .description {
+      font-size: var(--font-size-sm, 0.875rem);
+      color: var(--color-muted, #71717a);
+      margin: 0;
+      line-height: var(--line-height-sm, 1.25rem);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+      gap: var(--spacing-2, 0.5rem);
+    }
+
+    [part~="content"],
+    .content {
+      position: relative;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    [part~="empty"],
+    .empty-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+      min-height: 200px;
+      gap: var(--spacing-2, 0.5rem);
+      color: var(--color-muted, #71717a);
+      font-size: var(--font-size-sm, 0.875rem);
+      line-height: var(--line-height-sm, 1.25rem);
+      padding: var(--spacing-8, 2rem) var(--spacing-4, 1rem);
+      text-align: center;
+    }
+
+    .empty-message {
+      margin: 0;
+    }
+
+    /* Legend: a wrapping row of muted, chip-sized entries. */
+    [part~="legend"],
+    .legend {
+      margin-top: var(--spacing-3, 0.75rem);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--spacing-2, 0.5rem) var(--spacing-4, 1rem);
+      font-size: var(--font-size-xs, 0.75rem);
+      font-weight: var(--font-weight-medium, 500);
+      color: var(--color-muted, #71717a);
+      line-height: var(--line-height-xs, 1rem);
+    }
+
+    .header[data-empty],
+    .legend[data-empty] {
+      display: none;
+    }
+
+    ::slotted([slot="legend"]) {
+      display: inline-flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--spacing-2, 0.5rem) var(--spacing-4, 1rem);
+    }
+  `,
+]
+
+export const styles = chartContainerStyles

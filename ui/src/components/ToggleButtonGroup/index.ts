@@ -1,2 +1,5 @@
-export type { ToggleButtonGroupProps } from './ToggleButtonGroup'
-export { ToggleButtonGroup } from './ToggleButtonGroup'
+export {
+  MoulToggleButtonGroup,
+  MoulToggleButtonGroup as ToggleButtonGroup,
+  type ToggleButtonGroupOrientation,
+} from './ToggleButtonGroup'

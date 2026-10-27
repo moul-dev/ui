@@ -21,8 +21,8 @@ const hookContent = `#!/usr/bin/env bash
 
 echo "🔍 Running pre-commit checks..."
 
-# Run Biome check on staged files
-if ! bun x @biomejs/biome check --staged; then
+# Run Biome check on staged files; a commit of only files Biome skips (e.g. MDX) passes
+if ! bun x @biomejs/biome check --staged --no-errors-on-unmatched; then
   echo ""
   echo "❌ \x1b[31mPre-commit check failed!\x1b[0m"
   echo "👉 Run '\x1b[36mbun run format\x1b[0m' or '\x1b[36mbun run lint\x1b[0m' to fix issues before committing."

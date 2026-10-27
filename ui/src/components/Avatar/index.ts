@@ -1,13 +1,3 @@
-export type {
-  AvatarProps,
-  AvatarShape,
-  AvatarSize,
-  AvatarStatus,
-  AvatarStatusPosition,
-} from './Avatar'
-export { Avatar } from './Avatar'
-export type {
-  AvatarGroupContextValue,
-  AvatarGroupProps,
-} from './AvatarGroup'
-export { AvatarGroup, AvatarGroupContext } from './AvatarGroup'
+export type { AvatarShape, AvatarSize, AvatarStatus } from './Avatar'
+export { MoulAvatar, MoulAvatar as Avatar } from './Avatar'
+export { MoulAvatarGroup, MoulAvatarGroup as AvatarGroup } from './AvatarGroup'

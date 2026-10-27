@@ -1,0 +1,85 @@
+---
+title: LLMs & AI Agents
+description: Context files, rules, and best practices for using Moul UI Web Components with Cursor, Claude, Windsurf, Copilot, and AI coding assistants.
+---
+
+import { Card, CardGrid, Tabs, TabItem, Steps } from '@astrojs/starlight/components';
+
+Moul UI provides dedicated machine-readable context files optimized for LLMs and AI coding assistants such as **Cursor**, **Windsurf**, **Claude Projects**, **GitHub Copilot**, **ChatGPT**, and **Antigravity**.
+
+By providing your AI assistant with the curated context files below, the model will accurately generate standard HTML custom elements (`<moul-*>`), correctly configure attributes, and adhere to the OKLCH CSS token architecture without inventing hallucinated React APIs.
+
+---
+
+## Machine-Readable Context Files
+
+We host three standardized AI context files at the root of the documentation site:
+
+<CardGrid>
+  <Card title="llms.txt" icon="document">
+    Concise documentation index, package quickstart, and component HTML snippets following the llmstxt.org specification.
+    <br />
+    [View /llms.txt](/llms.txt)
+  </Card>
+  <Card title="llms-full.txt" icon="open-book">
+    Complete documentation, API signatures, attributes, properties, events, and slots for all components in a single file.
+    <br />
+    [View /llms-full.txt](/llms-full.txt)
+  </Card>
+  <Card title="AGENTS.md" icon="seti:markdown">
+    System rules, code generation recipes, Custom Element conventions, and anti-patterns specifically formatted for coding agents.
+    <br />
+    [View /AGENTS.md](/AGENTS.md)
+  </Card>
+</CardGrid>
+
+---
+
+## Core Guidelines for AI Coding Agents
+
+1. **Native HTML Custom Elements**: Always generate `<moul-*>` tags (e.g. `<moul-button>`, `<moul-card>`, `<moul-alert>`) rather than React JSX components.
+2. **Zero React Dependencies**: Never import `react`, `react-dom`, `@moul-dev/ui/react`, or React Aria adapters. Import `@moul-dev/ui` for side-effect element registration and `@moul-dev/ui/style.css` for styling.
+3. **Compound Structure**: Use compound elements as custom element trees (e.g., `<moul-card><moul-card-header>...</moul-card-header><moul-card-body>...</moul-card-body></moul-card>`).
+4. **Standard Event Listeners**: Listen to standard DOM events (`click`, `input`, `change`, `toggle`) rather than synthetic React handlers.
+
+---
+
+## Tool Integration Guides
+
+<Tabs>
+  <TabItem label="Cursor">
+    ### Setting Up Cursor
+    
+    Add `.cursor/rules/moul-ui.mdc` to your workspace:
+
+    ```markdown
+    ---
+    description: Guidelines for building with @moul-dev/ui Web Components
+    globs: "**/*.{html,astro,vue,svelte,ts,js}"
+    ---
+
+    Always use @moul-dev/ui standard HTML custom elements:
+    - Import `@moul-dev/ui` in your client bundle.
+    - Import `@moul-dev/ui/style.css` for design tokens.
+    - Render `<moul-button>`, `<moul-card>`, `<moul-alert>`, etc.
+    - Reference /llms.txt and /llms-full.txt for component APIs.
+    ```
+  </TabItem>
+
+  <TabItem label="Windsurf">
+    ### Setting Up Windsurf
+    
+    Add rule instructions in `.windsurfrules`:
+
+    ```markdown
+    When authoring UI with Moul UI, use native Web Components (`<moul-button>`, `<moul-alert>`, etc.).
+    Do not use React Aria or React JSX components. Reference https://moul.dev/llms.txt.
+    ```
+  </TabItem>
+
+  <TabItem label="Claude & ChatGPT">
+    ### Claude Projects & Custom GPTs
+    
+    Attach `llms-full.txt` directly to your Claude Project Knowledge or Custom GPT knowledge files for comprehensive, zero-hallucination code generation.
+  </TabItem>
+</Tabs>

@@ -1,0 +1,78 @@
+---
+/**
+ * Activity heatmap demo: a year of seeded, commit-like events (so the calendar
+ * looks the same on every visit) and a Calendar / By hour toggle.
+ */
+interface Props {
+  /** Start in the punch-card view instead of the calendar. */
+  mode?: 'calendar' | 'hour'
+}
+const { mode = 'calendar' } = Astro.props
+---
+
+<moul-chart-container
+  data-activity-demo
+  title="Activity"
+  description="Daily contributions"
+  style="width: 100%"
+>
+  <moul-tabs slot="header" selected-key={mode}>
+    <moul-tab key="calendar">Calendar</moul-tab>
+    <moul-tab key="hour">By hour</moul-tab>
+  </moul-tabs>
+  <moul-heatmap-chart mode={mode}></moul-heatmap-chart>
+</moul-chart-container>
+
+<script>
+  import type { HeatmapDataItem, MoulHeatmapChart } from '@moul-dev/ui'
+
+  function mulberry32(seed: number): () => number {
+    let a = seed
+    return () => {
+      a = (a + 0x6d2b79f5) | 0
+      let t = Math.imul(a ^ (a >>> 15), 1 | a)
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+    }
+  }
+
+  // Busy weekdays, quiet weekends, a few idle weeks, mostly working hours.
+  function activityEvents(): HeatmapDataItem[] {
+    const random = mulberry32(7)
+    const today = new Date()
+    const hours = [9, 10, 10, 11, 11, 13, 14, 14, 15, 15, 16, 17, 20, 22]
+    const idleWeeks = new Set(
+      Array.from({ length: 54 }, (_, week) => week).filter(() => random() < 0.1),
+    )
+    const events: HeatmapDataItem[] = []
+    for (let back = 370; back >= 0; back--) {
+      const day = new Date(
+        today.getFullYear(),
+        today.getMonth(),
+        today.getDate() - back,
+      )
+      const isWeekend = day.getDay() === 0 || day.getDay() === 6
+      if (idleWeeks.has(Math.floor(back / 7)) && random() < 0.85) continue
+      if (random() < (isWeekend ? 0.55 : 0.12)) continue
+      const count = Math.round(random() ** 1.6 * (isWeekend ? 6 : 13)) + 1
+      for (let i = 0; i < count; i++) {
+        const hour = hours[Math.floor(random() * hours.length)]
+        events.push({
+          date: new Date(day.getFullYear(), day.getMonth(), day.getDate(), hour),
+        })
+      }
+    }
+    return events
+  }
+
+  const events = activityEvents()
+  for (const demo of document.querySelectorAll('[data-activity-demo]')) {
+    const heatmap = demo.querySelector<MoulHeatmapChart>('moul-heatmap-chart')
+    if (!heatmap) continue
+    heatmap.data = events
+    demo.querySelector('moul-tabs')?.addEventListener('selectionchange', (event) => {
+      const { selectedKey } = (event as CustomEvent<{ selectedKey: string }>).detail
+      heatmap.mode = selectedKey === 'hour' ? 'hour' : 'calendar'
+    })
+  }
+</script>

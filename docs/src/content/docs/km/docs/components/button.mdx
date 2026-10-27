@@ -1,0 +1,95 @@
+---
+title: Button (សមាសភាគ)
+description: ឯកសារណែនាំសម្រាប់សមាសភាគ Button Web Component
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+`<moul-button>` triggers an action. It dips slightly under a pointer press, exposes a pending state that keeps its width, and fires a `press` event for pointer and keyboard activation alike.
+
+## Variants
+
+<ComponentPreview>
+<div class="demo-row">
+  <moul-button variant="primary">Primary</moul-button>
+  <moul-button variant="secondary">Secondary</moul-button>
+  <moul-button variant="tertiary">Tertiary</moul-button>
+  <moul-button variant="outline">Outline</moul-button>
+  <moul-button variant="ghost">Ghost</moul-button>
+  <moul-button variant="danger">Danger</moul-button>
+  <moul-button variant="danger-soft">Danger soft</moul-button>
+</div>
+</ComponentPreview>
+
+```html
+<div class="demo-row">
+  <moul-button variant="primary">Primary</moul-button>
+  <moul-button variant="secondary">Secondary</moul-button>
+  <moul-button variant="tertiary">Tertiary</moul-button>
+  <moul-button variant="outline">Outline</moul-button>
+  <moul-button variant="ghost">Ghost</moul-button>
+  <moul-button variant="danger">Danger</moul-button>
+  <moul-button variant="danger-soft">Danger soft</moul-button>
+</div>
+```
+
+## Sizes
+
+<ComponentPreview>
+<div class="demo-row">
+  <moul-button size="sm">Small</moul-button>
+  <moul-button size="md">Medium</moul-button>
+  <moul-button size="lg">Large</moul-button>
+</div>
+</ComponentPreview>
+
+```html
+<div class="demo-row">
+  <moul-button size="sm">Small</moul-button>
+  <moul-button size="md">Medium</moul-button>
+  <moul-button size="lg">Large</moul-button>
+</div>
+```
+
+## States
+
+Pending buttons show a spinner and ignore presses; disabled buttons are skipped by focus.
+
+<ComponentPreview>
+<div class="demo-row">
+  <moul-button is-pending>Saving</moul-button>
+  <moul-button variant="secondary" is-disabled>Disabled</moul-button>
+  <moul-button variant="outline" is-icon aria-label="Add item">+</moul-button>
+</div>
+</ComponentPreview>
+
+```html
+<div class="demo-row">
+  <moul-button is-pending>Saving</moul-button>
+  <moul-button variant="secondary" is-disabled>Disabled</moul-button>
+  <moul-button variant="outline" is-icon aria-label="Add item">+</moul-button>
+</div>
+```
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `variant` | `variant` | `'primary' \| 'secondary' \| 'tertiary' \| 'outline' \| 'ghost' \| 'danger' \| 'danger-soft'` | `'primary'` |
+| `size` | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` |
+| `type` | `type` | `'button' \| 'submit' \| 'reset'` | `'button'` |
+| `is-icon` | `isIcon` | `boolean` | `false` |
+| `is-disabled` | `isDisabled` | `boolean` | `false` |
+| `is-pending` | `isPending` | `boolean` | `false` |
+
+| Event | Type |
+| :-- | :-- |
+| `press` | `CustomEvent` |
+
+| Slot | Description |
+| :-- | :-- |
+| `prefix` | — |
+| `(default)` | — |
+| `suffix` | — |
+
+**CSS parts:** `button`, `spinner`, `prefix`, `content`, `suffix`

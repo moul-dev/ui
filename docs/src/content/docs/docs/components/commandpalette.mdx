@@ -1,0 +1,76 @@
+---
+title: CommandPalette
+description: Searchable command menu opened with ⌘K.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+`<moul-command-palette>` opens with ⌘K / Ctrl+K (change it with `shortcut`), filters `items` as you type and fires `select`. It appears and closes without animation, so the first keystroke after the shortcut lands in the search field.
+
+<ComponentPreview>
+<moul-button variant="secondary" data-open="demo-palette">Open palette <moul-kbd slot="suffix">⌘K</moul-kbd></moul-button>
+<moul-command-palette id="demo-palette" placeholder="Type a command…" data-props='{"items":[{"id":"new","title":"New project","group":"Create","shortcut":"\u2318N"},{"id":"invite","title":"Invite teammate","group":"Create"},{"id":"deploy","title":"Deploy to production","group":"Actions","description":"Promote the latest preview"},{"id":"logs","title":"Open logs","group":"Actions","shortcut":"\u2318L"},{"id":"theme","title":"Toggle theme","group":"Preferences"}]}'></moul-command-palette>
+</ComponentPreview>
+
+```html
+<moul-button variant="secondary">Open palette <moul-kbd slot="suffix">⌘K</moul-kbd></moul-button>
+<moul-command-palette id="demo-palette" placeholder="Type a command…"></moul-command-palette>
+```
+
+```js
+const commandPalette = document.querySelector('#demo-palette')
+commandPalette.items = [
+  {
+    "id": "new",
+    "title": "New project",
+    "group": "Create",
+    "shortcut": "\u2318N"
+  },
+  {
+    "id": "invite",
+    "title": "Invite teammate",
+    "group": "Create"
+  },
+  {
+    "id": "deploy",
+    "title": "Deploy to production",
+    "group": "Actions",
+    "description": "Promote the latest preview"
+  },
+  {
+    "id": "logs",
+    "title": "Open logs",
+    "group": "Actions",
+    "shortcut": "\u2318L"
+  },
+  {
+    "id": "theme",
+    "title": "Toggle theme",
+    "group": "Preferences"
+  }
+]
+```
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `is-open` | `isOpen` | `boolean` | `false` |
+| `placeholder` | `placeholder` | `string` | `'Type a command or search...'` |
+| `shortcut` | `shortcut` | `string` | `'k'` |
+| `virtualized` | `virtualized` | `boolean` | `false` |
+| `query` | `query` | `string` | `''` |
+| `activeIndex` | `activeIndex` | `number` | `0` |
+
+| Event | Type |
+| :-- | :-- |
+| `openchange` | `CustomEvent` |
+| `select` | `CustomEvent` |
+
+| Slot | Description |
+| :-- | :-- |
+| `header` | — |
+| `empty` | — |
+| `footer` | — |
+
+**CSS parts:** `input`, `dialog`, `base`, `input-wrapper`, `list`, `empty`, `footer`

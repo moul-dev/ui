@@ -1,0 +1,41 @@
+---
+title: Skeleton
+description: Placeholder shapes while content loads.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+`<moul-skeleton>` mirrors the shape of incoming content. `wave` sweeps a highlight; `pulse` breathes.
+
+<ComponentPreview>
+<div class="demo-row" style="width: min(100%, 22rem); justify-content: flex-start; flex-wrap: nowrap">
+  <moul-skeleton shape="circle" width="3rem" height="3rem"></moul-skeleton>
+  <div class="demo-stack" style="flex: 1; gap: 0.5rem">
+    <moul-skeleton shape="line" width="60%"></moul-skeleton>
+    <moul-skeleton shape="line" width="90%" variant="wave"></moul-skeleton>
+    <moul-skeleton shape="rect" height="4rem" variant="wave"></moul-skeleton>
+  </div>
+</div>
+</ComponentPreview>
+
+```html
+<div class="demo-row" style="width: min(100%, 22rem); justify-content: flex-start; flex-wrap: nowrap">
+  <moul-skeleton shape="circle" width="3rem" height="3rem"></moul-skeleton>
+  <div class="demo-stack" style="flex: 1; gap: 0.5rem">
+    <moul-skeleton shape="line" width="60%"></moul-skeleton>
+    <moul-skeleton shape="line" width="90%" variant="wave"></moul-skeleton>
+    <moul-skeleton shape="rect" height="4rem" variant="wave"></moul-skeleton>
+  </div>
+</div>
+```
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `shape` | `shape` | `'line' \| 'circle' \| 'rect'` | `'line'` |
+| `variant` | `variant` | `'pulse' \| 'wave'` | `'wave'` |
+| `width` | `width` | `string` | `''` |
+| `height` | `height` | `string` | `''` |
+
+**CSS parts:** `base`

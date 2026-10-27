@@ -1,0 +1,64 @@
+---
+title: ToggleButtonGroup (សមាសភាគ)
+description: ឯកសារណែនាំសម្រាប់សមាសភាគ ToggleButtonGroup Web Component
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+`<moul-toggle-button-group>` is a segmented control. The selected segment's accent tint slides between buttons; arrow keys move the selection.
+
+## Segmented control
+
+<ComponentPreview>
+<moul-toggle-button-group selected-key="week" aria-label="Range">
+  <moul-toggle-button value="day">Day</moul-toggle-button>
+  <moul-toggle-button value="week">Week</moul-toggle-button>
+  <moul-toggle-button value="month">Month</moul-toggle-button>
+  <moul-toggle-button value="year">Year</moul-toggle-button>
+</moul-toggle-button-group>
+</ComponentPreview>
+
+```html
+<moul-toggle-button-group selected-key="week" aria-label="Range">
+  <moul-toggle-button value="day">Day</moul-toggle-button>
+  <moul-toggle-button value="week">Week</moul-toggle-button>
+  <moul-toggle-button value="month">Month</moul-toggle-button>
+  <moul-toggle-button value="year">Year</moul-toggle-button>
+</moul-toggle-button-group>
+```
+
+## Vertical
+
+<ComponentPreview>
+<moul-toggle-button-group selected-key="left" orientation="vertical" aria-label="Alignment">
+  <moul-toggle-button value="left" size="sm">Left</moul-toggle-button>
+  <moul-toggle-button value="center" size="sm">Center</moul-toggle-button>
+  <moul-toggle-button value="right" size="sm">Right</moul-toggle-button>
+</moul-toggle-button-group>
+</ComponentPreview>
+
+```html
+<moul-toggle-button-group selected-key="left" orientation="vertical" aria-label="Alignment">
+  <moul-toggle-button value="left" size="sm">Left</moul-toggle-button>
+  <moul-toggle-button value="center" size="sm">Center</moul-toggle-button>
+  <moul-toggle-button value="right" size="sm">Right</moul-toggle-button>
+</moul-toggle-button-group>
+```
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `selected-key` | `selectedKey` | `string` | `''` |
+| `orientation` | `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` |
+| `is-disabled` | `isDisabled` | `boolean` | `false` |
+
+| Event | Type |
+| :-- | :-- |
+| `selectionchange` | `CustomEvent` |
+
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | — |
+
+**CSS parts:** `base`, `indicator`

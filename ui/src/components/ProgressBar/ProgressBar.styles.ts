@@ -1,91 +1,131 @@
-import * as stylex from '@stylexjs/stylex'
-import { tokens } from '../../tokens/tokens.stylex'
+import { css } from 'lit'
+import { resetStyles } from '../../styles/reset.styles'
+import { semanticToneStyles } from '../../styles/semantic-tones'
 
-const indeterminate = stylex.keyframes({
-  '0%': {
-    transform: 'translateX(-100%) scaleX(0.2)',
-  },
-  '50%': {
-    transform: 'translateX(0%) scaleX(0.7)',
-  },
-  '100%': {
-    transform: 'translateX(100%) scaleX(0.2)',
-  },
-})
+export const progressBarStyles = [
+  resetStyles,
+  semanticToneStyles,
+  css`
+    :host {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-1, 0.25rem);
+      width: 100%;
+      box-sizing: border-box;
+      font-family: var(--font-family-base, inherit);
+    }
 
-export const styles = stylex.create({
-  container: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: tokens.spacing1,
-    width: '100%',
-    fontFamily: tokens.fontFamilyBase,
-    fontSize: tokens.fontSizeSm,
-  },
-  header: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    color: tokens.colorFg,
-  },
-  label: {
-    fontWeight: tokens.fontWeightMedium,
-    color: tokens.colorFgSubtle,
-    fontSize: tokens.fontSizeSm,
-  },
-  value: {
-    fontWeight: tokens.fontWeightSemibold,
-    color: tokens.colorFg,
-    fontSize: tokens.fontSizeSm,
-    fontVariantNumeric: 'tabular-nums',
-  },
-  track: {
-    width: '100%',
-    backgroundColor: tokens.colorNeutral200,
-    overflow: 'hidden',
-    position: 'relative',
-  },
-  trackSm: { height: '4px' },
-  trackMd: { height: '8px' },
-  trackLg: { height: '12px' },
+    /* Tone/variant drive the fill only — never paint the host surface */
+    :host,
+    :host([variant]) {
+      background: none;
+      border: none;
+      box-shadow: none;
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+      color: var(--color-fg, inherit);
+    }
 
-  shapePill: { borderRadius: tokens.radiusFull },
-  shapeSquare: { borderRadius: tokens.radiusNone },
+    [part~="header"] {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: var(--font-size-sm, 0.875rem);
+      line-height: var(--line-height-sm, 1.25rem);
+      font-weight: var(--font-weight-medium, 500);
+      font-variant-numeric: tabular-nums;
+      color: var(--color-fg, inherit);
+    }
 
-  fill: {
-    height: '100%',
-    transition: 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-    borderRadius: 'inherit',
-  },
-  fillIndeterminate: {
-    width: '100%',
-    transformOrigin: 'left center',
-    animationName: indeterminate,
-    animationDuration: '1.5s',
-    animationIterationCount: 'infinite',
-    animationTimingFunction: 'easeInOut',
-    '@media (prefers-reduced-motion: reduce)': {
-      animationPlayState: 'paused',
-    },
-  },
+    /* Flat neutral track, solid tone fill */
+    [part~="track"] {
+      width: 100%;
+      background-color: var(--color-default);
+      overflow: hidden;
+      position: relative;
+    }
 
-  // Color Variants
-  primary: {
-    backgroundColor: tokens.colorPrimary500,
-  },
-  accent: {
-    backgroundColor: tokens.colorPrimary600,
-  },
-  success: {
-    backgroundColor: tokens.colorSuccess500,
-  },
-  warning: {
-    backgroundColor: tokens.colorWarning500,
-  },
-  error: {
-    backgroundColor: tokens.colorError500,
-  },
-  neutral: {
-    backgroundColor: tokens.colorNeutral600,
-  },
-})
+    :host([size="sm"]) [part~="track"] {
+      height: 0.25rem;
+    }
+
+    :host([size="md"]) [part~="track"],
+    :host(:not([size])) [part~="track"] {
+      height: 0.5rem;
+    }
+
+    :host([size="lg"]) [part~="track"] {
+      height: 0.75rem;
+    }
+
+    :host([shape="square"]) [part~="track"],
+    :host([shape="square"]) [part~="fill"] {
+      border-radius: var(--radius-none, 0);
+    }
+
+    /* Rounded follows the size: 2px / 4px / 6px corners */
+    :host([shape="rounded"]) [part~="track"],
+    :host([shape="rounded"]) [part~="fill"] {
+      border-radius: var(--radius-sm, 0.25rem);
+    }
+
+    :host([shape="rounded"][size="sm"]) [part~="track"],
+    :host([shape="rounded"][size="sm"]) [part~="fill"] {
+      border-radius: var(--radius-xs, 0.125rem);
+    }
+
+    :host([shape="rounded"][size="lg"]) [part~="track"],
+    :host([shape="rounded"][size="lg"]) [part~="fill"] {
+      border-radius: var(--radius-md, 0.375rem);
+    }
+
+    :host([shape="pill"]) [part~="track"],
+    :host(:not([shape])) [part~="track"],
+    :host([shape="pill"]) [part~="fill"],
+    :host(:not([shape])) [part~="fill"] {
+      border-radius: var(--radius-full, 9999px);
+    }
+
+    [part~="fill"] {
+      height: 100%;
+      width: 0%;
+      background-color: var(--_tone-solid-bg, var(--color-accent));
+      border-radius: inherit;
+      transition: width 300ms var(--ease-out, ease-out);
+    }
+
+    :host([is-indeterminate]) [part~="fill"] {
+      width: 40%;
+      animation: moul-progress-indeterminate 1.5s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+    }
+
+    @keyframes moul-progress-pulse {
+      50% {
+        opacity: 0.35;
+      }
+    }
+
+    @keyframes moul-progress-indeterminate {
+      0% {
+        transform: translateX(-100%);
+      }
+      100% {
+        transform: translateX(350%);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      [part~="fill"] {
+        transition: none;
+      }
+
+      /* No sweep, but a slow pulse keeps the bar reading as in progress */
+      :host([is-indeterminate]) [part~="fill"] {
+        animation: moul-progress-pulse 1.5s var(--ease-smooth, ease) infinite;
+        transform: none;
+        width: 100%;
+        opacity: 0.7;
+      }
+    }
+  `,
+]

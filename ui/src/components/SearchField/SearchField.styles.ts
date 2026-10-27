@@ -1,180 +1,177 @@
-import * as stylex from '@stylexjs/stylex'
-import { tokens } from '../../tokens/tokens.stylex'
+import { css } from 'lit'
+import { fieldStyles } from '../../styles/field.styles'
+import { resetStyles } from '../../styles/reset.styles'
 
-export const styles = stylex.create({
-  container: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: tokens.spacing1,
-    width: '100%',
-  },
-  group: {
-    display: 'flex',
-    alignItems: 'center',
-    borderWidth: '1px',
-    borderStyle: 'solid',
-    borderColor: tokens.colorBorder,
-    backgroundColor: tokens.colorBg,
-    boxShadow: tokens.shadowSm,
-    boxSizing: 'border-box',
-    outline: 'none',
-    transitionProperty: 'border-color, box-shadow',
-    transitionDuration: '0.15s',
-    transitionTimingFunction: 'ease-in-out',
-    '@media (prefers-reduced-motion: reduce)': {
-      transitionProperty: 'none',
-    },
-  },
-  groupSm: {
-    height: `calc(${tokens.spacing1} * 2 + ${tokens.lineHeightXs})`,
-    borderRadius: tokens.radiusSm,
-    paddingInline: tokens.spacing2,
-  },
-  groupMd: {
-    height: `calc(${tokens.spacing2} * 2 + ${tokens.lineHeightSm})`,
-    borderRadius: tokens.radiusMd,
-    paddingInline: tokens.spacing3,
-  },
-  groupLg: {
-    height: `calc(${tokens.spacing2} * 2 + ${tokens.lineHeightMd})`,
-    borderRadius: tokens.radiusMd,
-    paddingInline: tokens.spacing4,
-  },
-  primary: {
-    backgroundColor: tokens.colorBg,
-    borderColor: tokens.colorBorder,
-  },
-  secondary: {
-    backgroundColor: tokens.colorBgSubtle,
-    borderColor: tokens.colorBorderSubtle,
-  },
+/* Layout and inner bits only; the shell look (fill, radius, shadow, hover,
+   focus and invalid rings) comes from the shared fieldStyles appended last. */
+export const searchFieldStyles = [
+  resetStyles,
+  css`
+    :host {
+      display: block;
+      width: 100%;
+      font-family: var(--font-family-base, inherit);
+      color: var(--color-fg, inherit);
+    }
 
-  groupHover: {
-    borderColor: tokens.colorNeutral400,
-  },
-  groupFocused: {
-    borderColor: {
-      default: tokens.colorBorderFocus,
-      ':hover': tokens.colorBorderFocus,
-    },
-    boxShadow: `0 0 0 1px ${tokens.colorBorderFocus}`,
-    outline: 'none',
-  },
-  groupInvalid: {
-    borderColor: tokens.colorError500,
-  },
-  groupFocusedInvalid: {
-    borderColor: {
-      default: tokens.colorError500,
-      ':hover': tokens.colorError500,
-    },
-    boxShadow: `0 0 0 1px ${tokens.colorError500}`,
-    outline: 'none',
-  },
-  groupDisabled: {
-    opacity: 0.4,
-    backgroundColor: tokens.colorBgSubtle,
-    cursor: 'not-allowed',
-    ':hover': {
-      borderColor: tokens.colorBorder,
-    },
-  },
-  icon: {
-    color: tokens.colorFgSubtle,
-    flexShrink: 0,
-  },
-  iconSm: {
-    width: tokens.spacing3,
-    height: tokens.spacing3,
-  },
-  iconMd: {
-    width: tokens.spacing4,
-    height: tokens.spacing4,
-  },
-  iconLg: {
-    width: tokens.spacing4,
-    height: tokens.spacing4,
-  },
-  input: {
-    flexGrow: 1,
-    width: '100%',
-    height: '100%',
-    borderWidth: 0,
-    borderStyle: 'none',
-    backgroundColor: 'transparent',
-    color: tokens.colorFg,
-    fontFamily: tokens.fontFamilyBase,
-    outline: 'none',
-    boxSizing: 'border-box',
-    '::-webkit-search-cancel-button': {
-      display: 'none',
-      WebkitAppearance: 'none',
-    },
-    '::-webkit-search-decoration': {
-      display: 'none',
-      WebkitAppearance: 'none',
-    },
-    '::-webkit-search-results-button': {
-      display: 'none',
-    },
-    '::-webkit-search-results-decoration': {
-      display: 'none',
-    },
-  },
-  inputSm: {
-    paddingBlock: 0,
-    paddingInline: tokens.spacing1,
-    fontSize: tokens.fontSizeXs,
-    lineHeight: tokens.lineHeightXs,
-  },
-  inputMd: {
-    paddingBlock: 0,
-    paddingInline: tokens.spacing2,
-    fontSize: tokens.fontSizeSm,
-    lineHeight: tokens.lineHeightSm,
-  },
-  inputLg: {
-    paddingBlock: 0,
-    paddingInline: tokens.spacing2,
-    fontSize: tokens.fontSizeMd,
-    lineHeight: tokens.lineHeightMd,
-  },
-  clearButton: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderStyle: 'none',
-    backgroundColor: 'transparent',
-    color: tokens.colorFgSubtle,
-    cursor: 'pointer',
-    padding: 0,
-    borderRadius: tokens.radiusFull,
-    flexShrink: 0,
-    transitionProperty: 'background-color, color',
-    transitionDuration: '0.1s',
-    transitionTimingFunction: 'ease-in-out',
-    ':hover': {
-      backgroundColor: tokens.colorBgSubtle,
-      color: tokens.colorFg,
-    },
-  },
-  clearButtonSm: {
-    width: tokens.spacing3,
-    height: tokens.spacing3,
-    fontSize: tokens.fontSizeXs,
-  },
-  clearButtonMd: {
-    width: tokens.spacing4,
-    height: tokens.spacing4,
-    fontSize: tokens.fontSizeSm,
-  },
-  clearButtonLg: {
-    width: tokens.spacing4,
-    height: tokens.spacing4,
-    fontSize: tokens.fontSizeSm,
-  },
-  clearButtonHidden: {
-    visibility: 'hidden',
-    pointerEvents: 'none',
-  },
-})
+    :host([hidden]) {
+      display: none !important;
+    }
+
+    [part~='base'] {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-1, 0.25rem);
+      width: 100%;
+    }
+
+    /* Flex drops template whitespace so the required mark sits tight to the text */
+    [part~='label'] {
+      display: flex;
+      align-items: baseline;
+      width: fit-content;
+      line-height: var(--line-height-sm, 1.25rem);
+    }
+
+    :host([is-required][label]:not([label=''])) [part~='label']::after {
+      content: '*';
+      margin-inline-start: 0.125rem;
+      color: var(--color-danger);
+    }
+
+    :host([is-invalid]:is([data-touched], [error-message]:not([error-message='']))) [part~='label'] {
+      color: var(--color-danger);
+    }
+
+    search,
+    [part~='search'] {
+      display: block;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    [part~='input-container'] {
+      display: flex;
+      align-items: center;
+      position: relative;
+      width: 100%;
+      min-height: 2.25rem;
+      font-size: var(--font-size-sm, 0.875rem);
+    }
+
+    [part~='search-icon'] {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-field-placeholder);
+      width: 1rem;
+      height: 1rem;
+      margin-inline-start: var(--spacing-3, 0.75rem);
+      flex-shrink: 0;
+      pointer-events: none;
+    }
+
+    [part~='search-icon'] svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* The icon sits on the leading edge, so the text tucks in closer to it */
+    [part~='input'] {
+      flex: 1;
+      width: 100%;
+      min-width: 0;
+      border: none;
+      border-radius: 0;
+      outline: none;
+      background: transparent;
+      box-shadow: none;
+      color: inherit;
+      font-family: inherit;
+      font-size: var(--font-size-sm, 0.875rem);
+      line-height: var(--line-height-sm, 1.25rem);
+      padding-block: var(--spacing-2, 0.5rem);
+      padding-inline: var(--spacing-2, 0.5rem) var(--spacing-3, 0.75rem);
+    }
+
+    [part~='input-container']:has([part~='clear-btn']) [part~='input'] {
+      padding-inline-end: var(--spacing-2, 0.5rem);
+    }
+
+    [part~='input']::-webkit-search-cancel-button,
+    [part~='input']::-webkit-search-decoration,
+    [part~='input']::-webkit-search-results-button,
+    [part~='input']::-webkit-search-results-decoration {
+      display: none;
+      -webkit-appearance: none;
+    }
+
+    [part~='input']:-webkit-autofill {
+      box-shadow: 0 0 0 1000px transparent inset;
+      -webkit-text-fill-color: var(--color-field-fg);
+      caret-color: var(--color-field-fg);
+      transition: background-color 9999s ease-in-out 0s;
+    }
+
+    [part~='clear-btn'] {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      background: transparent;
+      color: var(--color-muted);
+      cursor: pointer;
+      padding: 0;
+      width: 1.25rem;
+      height: 1.25rem;
+      margin-inline-end: var(--spacing-2, 0.5rem);
+      border-radius: var(--radius-xl, 0.75rem);
+      flex-shrink: 0;
+      -webkit-tap-highlight-color: transparent;
+      transition:
+        color var(--duration-fast, 150ms) var(--ease-out, ease-out),
+        background-color 100ms var(--ease-out, ease-out),
+        transform var(--duration-fast, 150ms) var(--ease-out, ease-out);
+    }
+
+    @media (hover: hover) {
+      [part~='clear-btn']:hover {
+        color: var(--color-fg, inherit);
+      }
+    }
+
+    [part~='clear-btn']:active {
+      transform: scale(0.95);
+    }
+
+    [part~='clear-btn']:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
+    }
+
+    [part~='clear-btn'] svg {
+      width: 1rem;
+      height: 1rem;
+    }
+
+    :host([is-disabled]) {
+      opacity: var(--disabled-opacity, 0.5);
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    /* :host raises specificity past the shared shell's transition */
+    @media (prefers-reduced-motion: reduce) {
+      :host [part~='input-container'],
+      [part~='clear-btn'] {
+        transition: none;
+      }
+
+      [part~='clear-btn']:active {
+        transform: none;
+      }
+    }
+  `,
+  fieldStyles,
+]

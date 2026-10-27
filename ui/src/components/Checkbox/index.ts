@@ -1,2 +1,6 @@
-export type { CheckboxProps } from './Checkbox'
-export { Checkbox } from './Checkbox'
+export { MoulCheckbox, MoulCheckbox as Checkbox } from './Checkbox'
+export {
+  type CheckboxGroupOrientation,
+  MoulCheckboxGroup,
+  MoulCheckboxGroup as CheckboxGroup,
+} from './CheckboxGroup'

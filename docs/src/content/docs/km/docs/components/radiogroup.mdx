@@ -1,0 +1,86 @@
+---
+title: RadioGroup (សមាសភាគ)
+description: ឯកសារណែនាំសម្រាប់សមាសភាគ RadioGroup Web Component
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+`<moul-radio-group>` holds one value. Arrow keys move both focus and selection, and the dot springs into the newly chosen radio.
+
+<ComponentPreview>
+<moul-radio-group label="Plan" value="pro">
+  <moul-radio value="free">Free</moul-radio>
+  <moul-radio value="pro">Pro — $29/mo</moul-radio>
+  <moul-radio value="enterprise">Enterprise</moul-radio>
+  <moul-radio value="legacy" is-disabled>Legacy (unavailable)</moul-radio>
+</moul-radio-group>
+</ComponentPreview>
+
+```html
+<moul-radio-group label="Plan" value="pro">
+  <moul-radio value="free">Free</moul-radio>
+  <moul-radio value="pro">Pro — $29/mo</moul-radio>
+  <moul-radio value="enterprise">Enterprise</moul-radio>
+  <moul-radio value="legacy" is-disabled>Legacy (unavailable)</moul-radio>
+</moul-radio-group>
+```
+
+## Horizontal
+
+<ComponentPreview>
+<moul-radio-group label="Density" value="comfortable" orientation="horizontal">
+  <moul-radio value="compact">Compact</moul-radio>
+  <moul-radio value="comfortable">Comfortable</moul-radio>
+  <moul-radio value="spacious">Spacious</moul-radio>
+</moul-radio-group>
+</ComponentPreview>
+
+```html
+<moul-radio-group label="Density" value="comfortable" orientation="horizontal">
+  <moul-radio value="compact">Compact</moul-radio>
+  <moul-radio value="comfortable">Comfortable</moul-radio>
+  <moul-radio value="spacious">Spacious</moul-radio>
+</moul-radio-group>
+```
+
+## API reference
+
+### `<moul-radio-group>`
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `name` | `name` | `string` | `''` |
+| `value` | `value` | `string` | `''` |
+| `label` | `label` | `string` | `''` |
+| `is-disabled` | `isDisabled` | `boolean` | `false` |
+| `is-required` | `isRequired` | `boolean` | `false` |
+| `orientation` | `orientation` | `'horizontal' \| 'vertical'` | `'vertical'` |
+
+| Event | Type |
+| :-- | :-- |
+| `change` | `CustomEvent` |
+
+| Slot | Description |
+| :-- | :-- |
+| `label` | — |
+| `(default)` | — |
+
+**CSS parts:** `base`, `label`, `group`
+
+### `<moul-radio>`
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `value` | `value` | `string` | `''` |
+| `is-checked` | `isChecked` | `boolean` | `false` |
+| `is-disabled` | `isDisabled` | `boolean` | `false` |
+
+| Event | Type |
+| :-- | :-- |
+| `radio-select` | `CustomEvent` |
+
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | — |
+
+**CSS parts:** `dot`, `base`, `indicator`, `label`

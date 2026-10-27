@@ -1,0 +1,39 @@
+---
+title: Typography (សមាសភាគ)
+description: ឯកសារណែនាំសម្រាប់សមាសភាគ Typography Web Component
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+`<moul-typography>` maps `variant` onto the token type scale so text stays consistent across shadow roots.
+
+<ComponentPreview align="start" stack>
+<moul-typography variant="h1">Display heading</moul-typography>
+<moul-typography variant="h3">Section heading</moul-typography>
+<moul-typography variant="body">Body copy sits comfortably at 16px with a 1.5 line height.</moul-typography>
+<moul-typography variant="caption">Caption — secondary detail</moul-typography>
+<moul-typography variant="code">bun add @moul-dev/ui</moul-typography>
+<moul-typography variant="body" tone="success">Toned text</moul-typography>
+</ComponentPreview>
+
+```html
+<moul-typography variant="h1">Display heading</moul-typography>
+<moul-typography variant="h3">Section heading</moul-typography>
+<moul-typography variant="body">Body copy sits comfortably at 16px with a 1.5 line height.</moul-typography>
+<moul-typography variant="caption">Caption — secondary detail</moul-typography>
+<moul-typography variant="code">bun add @moul-dev/ui</moul-typography>
+<moul-typography variant="body" tone="success">Toned text</moul-typography>
+```
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `variant` | `variant` | `'h1' \| 'h2' \| 'h3' \| 'h4' \| 'h5' \| 'h6' \| 'body' \| 'caption' \| 'code'` | `'body'` |
+| `tone` | `tone` | `'primary' \| 'accent' \| 'success' \| 'warning' \| 'error' \| undefined` | — |
+
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | — |
+
+**CSS parts:** `root`

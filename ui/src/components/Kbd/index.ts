@@ -1,2 +1,1 @@
-export type { KbdProps } from './Kbd'
-export { Kbd } from './Kbd'
+export { MoulKbd, MoulKbd as Kbd } from './Kbd'

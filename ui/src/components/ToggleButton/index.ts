@@ -1,2 +1,5 @@
-export type { ToggleButtonProps } from './ToggleButton'
-export { ToggleButton } from './ToggleButton'
+export {
+  MoulToggleButton,
+  MoulToggleButton as ToggleButton,
+  type ToggleButtonSize,
+} from './ToggleButton'

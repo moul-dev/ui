@@ -1,0 +1,84 @@
+---
+title: TagGroup (សមាសភាគ)
+description: ឯកសារណែនាំសម្រាប់សមាសភាគ TagGroup Web Component
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+`<moul-tag-group>` manages selection across `<moul-tag>` children. Removable tags shrink out before leaving the DOM.
+
+<ComponentPreview>
+<div class="demo-stack">
+  <moul-tag-group label="Stack" selection-mode="multiple">
+    <moul-tag key="astro">Astro</moul-tag>
+    <moul-tag key="lit" is-selected>Lit</moul-tag>
+    <moul-tag key="ts" is-selected>TypeScript</moul-tag>
+    <moul-tag key="bun">Bun</moul-tag>
+  </moul-tag-group>
+  <moul-tag-group label="Filters" is-removable>
+    <moul-tag key="prod" tone="success">production</moul-tag>
+    <moul-tag key="ap" tone="accent">ap-southeast</moul-tag>
+    <moul-tag key="err" tone="error">errors only</moul-tag>
+  </moul-tag-group>
+</div>
+</ComponentPreview>
+
+```html
+<div class="demo-stack">
+  <moul-tag-group label="Stack" selection-mode="multiple">
+    <moul-tag key="astro">Astro</moul-tag>
+    <moul-tag key="lit" is-selected>Lit</moul-tag>
+    <moul-tag key="ts" is-selected>TypeScript</moul-tag>
+    <moul-tag key="bun">Bun</moul-tag>
+  </moul-tag-group>
+  <moul-tag-group label="Filters" is-removable>
+    <moul-tag key="prod" tone="success">production</moul-tag>
+    <moul-tag key="ap" tone="accent">ap-southeast</moul-tag>
+    <moul-tag key="err" tone="error">errors only</moul-tag>
+  </moul-tag-group>
+</div>
+```
+
+## API reference
+
+### `<moul-tag-group>`
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `selected-keys` | `selectedKeys` | `string[]` | `[]` |
+| `selection-mode` | `selectionMode` | `'none' \| 'single' \| 'multiple'` | `'none'` |
+| `is-removable` | `isRemovable` | `boolean` | `false` |
+| `label` | `label` | `string` | `''` |
+
+| Event | Type |
+| :-- | :-- |
+| `selectionchange` | `CustomEvent` |
+
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | — |
+
+**CSS parts:** `label`, `container`
+
+### `<moul-tag>`
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `key` | `key` | `string` | `''` |
+| `tone` | `tone` | `'primary' \| 'accent' \| 'success' \| 'warning' \| 'error'` | `'primary'` |
+| `variant` | `variant` | `'solid' \| 'flat' \| 'shadow' \| 'bordered' \| 'glass'` | `'flat'` |
+| `size` | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` |
+| `is-selected` | `isSelected` | `boolean` | `false` |
+| `is-removable` | `isRemovable` | `boolean` | `false` |
+| `is-disabled` | `isDisabled` | `boolean` | `false` |
+
+| Event | Type |
+| :-- | :-- |
+| `press` | `CustomEvent` |
+| `remove` | `CustomEvent` |
+
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | — |
+
+**CSS parts:** `base`, `remove-button`

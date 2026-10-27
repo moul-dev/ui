@@ -1,0 +1,38 @@
+---
+title: Pagination
+description: Navigate between pages of results.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+`<moul-pagination>` collapses long ranges with ellipses and fires `pagechange` with the new page.
+
+<ComponentPreview>
+<div class="demo-stack" style="align-items: center">
+  <moul-pagination total-pages="12" current-page="4"></moul-pagination>
+  <moul-pagination total-pages="5" current-page="2" shape="pill"></moul-pagination>
+</div>
+</ComponentPreview>
+
+```html
+<div class="demo-stack" style="align-items: center">
+  <moul-pagination total-pages="12" current-page="4"></moul-pagination>
+  <moul-pagination total-pages="5" current-page="2" shape="pill"></moul-pagination>
+</div>
+```
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `total-pages` | `totalPages` | `number` | `1` |
+| `current-page` | `currentPage` | `number` | `1` |
+| `page-size` | `pageSize` | `number` | `10` |
+| `shape` | `shape` | `'square' \| 'rounded' \| 'pill'` | `'rounded'` |
+| `sibling-count` | `siblingCount` | `number` | `1` |
+
+| Event | Type |
+| :-- | :-- |
+| `pagechange` | `CustomEvent` |
+
+**CSS parts:** `base`, `button`, `prev`, `ellipsis`, `next`

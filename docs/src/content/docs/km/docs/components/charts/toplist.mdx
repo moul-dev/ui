@@ -1,0 +1,64 @@
+---
+title: TopList (សមាសភាគ)
+description: ឯកសារណែនាំសម្រាប់សមាសភាគ TopList Web Component
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+`<moul-top-list>` ranks items by value, scaling each bar against the largest.
+
+<ComponentPreview align="stretch">
+<moul-top-list show-rank multi-color data-props='{"data":[{"label":"Chrome","value":6420},{"label":"Safari","value":3810},{"label":"Firefox","value":1290},{"label":"Edge","value":980},{"label":"Arc","value":410}]}'></moul-top-list>
+</ComponentPreview>
+
+```html
+<moul-top-list show-rank multi-color></moul-top-list>
+```
+
+```js
+const topList = document.querySelector('moul-top-list')
+topList.data = [
+  {
+    "label": "Chrome",
+    "value": 6420
+  },
+  {
+    "label": "Safari",
+    "value": 3810
+  },
+  {
+    "label": "Firefox",
+    "value": 1290
+  },
+  {
+    "label": "Edge",
+    "value": 980
+  },
+  {
+    "label": "Arc",
+    "value": 410
+  }
+]
+```
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `max` | `max` | `number \| undefined` | `undefined` |
+| `max-value` | `maxValue` | `number \| undefined` | `undefined` |
+| `max-items` | `maxItems` | `number` | `10` |
+| `show-rank` | `showRank` | `boolean` | `true` |
+| `multi-color` | `multiColor` | `boolean` | `false` |
+| `bar-color` | `barColor` | `string` | `'var(--color-chart-1)'` |
+| `interactive` | `interactive` | `boolean` | `false` |
+
+| Event | Type |
+| :-- | :-- |
+| `item-press` | `CustomEvent` |
+
+| Slot | Description |
+| :-- | :-- |
+| `empty` | — |
+
+**CSS parts:** `empty`, `container`, `list`, `item`, `rank`, `label`, `track`, `bar`, `value`

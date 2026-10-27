@@ -1,0 +1,46 @@
+---
+title: ToggleButton (សមាសភាគ)
+description: ឯកសារណែនាំសម្រាប់សមាសភាគ ToggleButton Web Component
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+`<moul-toggle-button>` keeps a pressed state. Selection gives it a soft accent tint and is announced through `aria-pressed`.
+
+<ComponentPreview>
+<div class="demo-row">
+  <moul-toggle-button value="pin" is-selected>Pinned</moul-toggle-button>
+  <moul-toggle-button value="star">Star</moul-toggle-button>
+  <moul-toggle-button value="mute" size="sm">Mute</moul-toggle-button>
+  <moul-toggle-button value="off" is-disabled>Disabled</moul-toggle-button>
+</div>
+</ComponentPreview>
+
+```html
+<div class="demo-row">
+  <moul-toggle-button value="pin" is-selected>Pinned</moul-toggle-button>
+  <moul-toggle-button value="star">Star</moul-toggle-button>
+  <moul-toggle-button value="mute" size="sm">Mute</moul-toggle-button>
+  <moul-toggle-button value="off" is-disabled>Disabled</moul-toggle-button>
+</div>
+```
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `value` | `value` | `string` | `''` |
+| `is-selected` | `isSelected` | `boolean` | `false` |
+| `size` | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` |
+| `is-disabled` | `isDisabled` | `boolean` | `false` |
+
+| Event | Type |
+| :-- | :-- |
+| `change` | `CustomEvent` |
+| `press` | `CustomEvent` |
+
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | — |
+
+**CSS parts:** `button`, `content`

@@ -1,0 +1,73 @@
+---
+title: Logs
+description: Parses raw log text into a filterable viewer.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+`<moul-logs>` parses plain-text logs (logfmt-style key/values included) and renders them in the virtualized logs viewer with level filters and search. Click a row, or press Enter on it, to open that entry in a side drawer with its level, timestamp, message, attributes and raw line.
+
+<ComponentPreview align="stretch">
+<moul-logs show-toolbar show-timestamps show-levels max-height="320px" data-props='{"raw":"2026/10/19 09:14:02 INFO Starting server addr=\"http://localhost:8090\" env=\"production\"\n2026/10/19 09:14:03 DEBU Loaded 42 routes component=\"router\"\n2026/10/19 09:14:09 INFO HTTP request method=\"GET\" path=\"/api/health\" status=200 latency=\"182\u00b5s\"\n2026/10/19 09:14:12 WARN Slow query detected table=\"orders\" duration=\"1.42s\"\n2026/10/19 09:14:18 INFO HTTP request method=\"POST\" path=\"/api/orders\" status=201 latency=\"12.8ms\"\n2026/10/19 09:14:21 ERRO Webhook delivery failed url=\"https://hooks.example.com\" error=\"context deadline exceeded\"\n2026/10/19 09:14:30 INFO Cleaned up expired sessions count=17"}'></moul-logs>
+</ComponentPreview>
+
+```html
+<moul-logs show-toolbar show-timestamps show-levels max-height="320px"></moul-logs>
+```
+
+```js
+const logs = document.querySelector('moul-logs')
+logs.raw = "2026/10/19 09:14:02 INFO Starting server addr=\"http://localhost:8090\" env=\"production\"\n2026/10/19 09:14:03 DEBU Loaded 42 routes component=\"router\"\n2026/10/19 09:14:09 INFO HTTP request method=\"GET\" path=\"/api/health\" status=200 latency=\"182\u00b5s\"\n2026/10/19 09:14:12 WARN Slow query detected table=\"orders\" duration=\"1.42s\"\n2026/10/19 09:14:18 INFO HTTP request method=\"POST\" path=\"/api/orders\" status=201 latency=\"12.8ms\"\n2026/10/19 09:14:21 ERRO Webhook delivery failed url=\"https://hooks.example.com\" error=\"context deadline exceeded\"\n2026/10/19 09:14:30 INFO Cleaned up expired sessions count=17"
+```
+
+## API reference
+
+### `<moul-logs>`
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `raw` | `raw` | `string` | `''` |
+| `filter-level` | `filterLevel` | `'all' \| 'trace' \| 'debug' \| 'info' \| 'warn' \| 'error' \| 'fatal'` | `'all'` |
+| `search-query` | `searchQuery` | `string` | `''` |
+| `show-timestamps` | `showTimestamps` | `boolean` | `true` |
+| `show-line-numbers` | `showLineNumbers` | `boolean` | `true` |
+| `show-levels` | `showLevels` | `boolean` | `true` |
+| `show-toolbar` | `showToolbar` | `boolean` | `true` |
+| `wrap-lines` | `wrapLines` | `boolean` | `false` |
+| `compact` | `compact` | `boolean` | `false` |
+| `virtualized` | `virtualized` | `boolean` | `true` |
+| `max-height` | `maxHeight` | `string` | `'600px'` |
+
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | — |
+
+### `<moul-logs-viewer>`
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `filter-level` | `filterLevel` | `'all' \| 'trace' \| 'debug' \| 'info' \| 'warn' \| 'error' \| 'fatal'` | `'all'` |
+| `search-query` | `searchQuery` | `string` | `''` |
+| `show-timestamps` | `showTimestamps` | `boolean` | `true` |
+| `show-line-numbers` | `showLineNumbers` | `boolean` | `true` |
+| `show-levels` | `showLevels` | `boolean` | `true` |
+| `show-toolbar` | `showToolbar` | `boolean` | `true` |
+| `wrap-lines` | `wrapLines` | `boolean` | `false` |
+| `compact` | `compact` | `boolean` | `false` |
+| `virtualized` | `virtualized` | `boolean` | `true` |
+| `max-height` | `maxHeight` | `string` | `'600px'` |
+| `selected-id` | `selectedId` | `string \| number \| null` | `null` |
+| `is-inspector-open` | `isInspectorOpen` | `boolean` | `false` |
+| `title` | `title` | `string` | `''` |
+| `search-placeholder` | `searchPlaceholder` | `string` | `'Filter logs...'` |
+
+| Event | Type |
+| :-- | :-- |
+| `filterlevelchange` | `CustomEvent` |
+| `filterchange` | `CustomEvent` |
+| `searchchange` | `CustomEvent` |
+| `clear` | `CustomEvent` |
+| `logselect` | `CustomEvent` |
+| `rowclick` | `CustomEvent` |
+
+**CSS parts:** `row`, `cell-linenumber`, `cell-timestamp`, `cell-level`, `cell-message`, `attributes`, `inspector`, `inspector-header`, `inspector-meta`, `inspector-message`, `inspector-attrs`, `inspector-raw`, `container`, `toolbar`, `search`, `filter-group`, `filter-indicator`, `filter-pill`, `counts`, `scroll-container`, `table`, `empty`

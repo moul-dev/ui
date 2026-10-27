@@ -1,0 +1,11 @@
+diff --git a/ui/src/components/DoughnutChart/index.ts b/ui/src/components/DoughnutChart/index.ts
+index 234c15c..7be158a 100644
+--- a/ui/src/components/DoughnutChart/index.ts
++++ b/ui/src/components/DoughnutChart/index.ts
+@@ -1,4 +1,5 @@
+-export type { DoughnutChartProps, DoughnutDataItem } from './DoughnutChart'
++export type { DoughnutDataItem } from '../ChartCommon'
++export type { DoughnutChartProps } from './DoughnutChart'
+ export {
+   MoulDoughnutChart,
+   MoulDoughnutChart as DoughnutChart,

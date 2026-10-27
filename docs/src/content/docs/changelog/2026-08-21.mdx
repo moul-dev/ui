@@ -1,0 +1,132 @@
+---
+title: v2026.08.21 — Logs Stream Viewer, Drawer Component, and Design Tokens Export
+description: High-throughput log streaming with drawer inspection, accessible multi-directional slide-overs, public OKLCH CSS tokens tokens, and CalVer automation.
+date: 2026-08-21
+author: Phearak S. Tha
+avatar: https://github.com/thasophearak.png
+---
+
+Inspecting live telemetry in a web browser usually degrades into choppy rendering and lost scroll positions. This release introduces a dedicated `Logs` viewer with slide-out drawer inspection, a multi-directional `Drawer` primitive, direct `OKLCH CSS tokens` token exports, and automated versioning tooling.
+
+When debugging distributed services during an incident, you need clarity under pressure. You cannot afford browser tabs freezing while parsing thousands of incoming log lines or losing your place every time a background worker emits a trace.
+
+It needs to handle high throughput. It needs to stay responsive.
+
+---
+
+## Logs Viewer
+
+Telemetry interfaces require predictable scrolling, rapid filtering, and granular detail inspection. The `Logs` and `LogsViewer` components (`/docs/components/logs` and `/docs/blocks/logs`) provide a structured log stream viewer built on top of Web Components table grids:
+
+- **Follow Mode & Scroll Lock:** Automatically tails incoming log streams with smooth auto-scrolling. It pauses follow mode immediately when you scroll up to inspect a line, and resumes when you return to the bottom.
+- **Severity Level Filtering:** Instant filter buttons for `All`, `Errors`, `Warnings`, `Info`, `Debug`, and `Trace` with live event count badges.
+- **Search & Substring Highlighting:** Real-time query matching across message bodies, timestamps, and structured attributes.
+- **Key-Value Attribute Extraction:** Automatic detection of structured key-value pairs (such as `status=200`, `latency="182.4µs"`, `path="/api/..."`).
+- **Slide-out Drawer Inspector:** Integrated side drawer displaying structured field tables, raw terminal text, formatted JSON views, and one-click clipboard copying.
+
+```html
+export function ServerLogsConsole() {
+  return (
+    <moul-logs
+      data={SERVER_LOGS}
+      title="Cluster Server Logs"
+      inspectorMode="drawer"
+      drawerPlacement="right"
+      maxHeight="480px"
+    />
+  );
+}
+```
+
+---
+
+## Multi-Directional Drawer Component
+
+Side sheets and slide-over panels are essential for secondary tasks like viewing record details, inspecting telemetry, or editing preferences without losing page context.
+
+The `Drawer` primitive (`/docs/components/drawer`) builds on Web Components dialog primitives with hardware-accelerated OKLCH CSS tokens transitions:
+
+- **Multi-Directional Placements:** Slide-in transitions from `right`, `left`, `top`, or `bottom`.
+- **Responsive Sizing:** Sizing presets (`sm`, `md`, `lg`, `full`) with automatic full-screen adaptation on smaller viewports.
+- **Compound Architecture:** Declarative subcomponents (`DrawerOverlay`, `Drawer`, `DrawerDialog`, `DrawerHeader`, `DrawerTitle`, `DrawerCloseButton`, `DrawerBody`, `DrawerFooter`).
+- **Focus Trapping & Escape Dismissal:** Strict focus boundaries and keyboard escape handling to ensure accessibility compliance.
+
+```html
+export function DrawerExample() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <>
+      <moul-button >Open Drawer</moul-button>
+      <DrawerOverlay isOpen={isOpen} onOpenChange={setIsOpen} placement="right" size="md" isDismissable>
+        <moul-drawer placement="right" size="md">
+          <DrawerDialog>
+            <DrawerHeader>
+              <DrawerTitle>Account Settings</DrawerTitle>
+              <DrawerCloseButton />
+            </DrawerHeader>
+            <DrawerBody>
+              <p>Manage your workspace preferences and profile settings.</p>
+            </DrawerBody>
+            <DrawerFooter>
+              <moul-button variant="secondary" >Cancel</moul-button>
+              <moul-button variant="primary" >Save Changes</moul-button>
+            </DrawerFooter>
+          </DrawerDialog>
+        </moul-drawer>
+      </DrawerOverlay>
+    </>
+  );
+}
+```
+
+---
+
+## Public OKLCH CSS tokens Tokens Export
+
+You can now import the core OKLCH CSS tokens tokens directly from `@moul-dev/ui`:
+
+```tsx
+
+import * as stylex from '@stylexjs/stylex';
+
+const styles = stylex.create({
+  card: {
+    backgroundColor: tokens.surfaceElevated,
+    borderColor: tokens.borderSubtle,
+    borderRadius: tokens.radiusLg,
+    padding: tokens.space4,
+    color: tokens.textPrimary,
+  },
+});
+```
+
+This allows custom application components to stay aligned with the color system, typography scale, spacing, and radius tokens without duplicating CSS custom property definitions.
+
+---
+
+## Component Refinements
+
+- **Sidebar:** Refined layout padding, active navigation state indicators, and added a dedicated unit test suite.
+- **Button & ToggleButton:** Added size tokens and alignment helpers for compact toolbar groupings.
+- **ChartContainer & Card:** Improved theme token inheritance and chart resize responsiveness.
+- **Form Inputs:** Sharpened focus ring contrast and hover feedback on `SearchField`, `NumberField`, `ComboBox`, `TextField`, and `TextArea`.
+
+---
+
+## Tooling and Versioning Automation
+
+- **Automated CalVer Bump Script:** Added `bun run bump` (`scripts/bump-version.ts`) to handle synchronized version bumps across package manifests, TypeScript entry points, documentation badges, and AI agent context files.
+- **Dynamic Open Graph Cards:** Implemented server-side Open Graph image generation for documentation pages and changelog posts.
+
+---
+
+## On Developer Tooling and Calm Focus
+
+Internal operational tools often get treated as second-class citizens. Teams ship rough, unstyled log dumps because "it is just for developers."
+
+When you are debugging an outage at 2 AM, legible typography, stable scroll tracking, and intuitive keyboard navigation make a real difference[^1].
+
+Treat internal tools with the same respect as user-facing software.
+
+[^1]: The log follow mode uses passive scroll event listeners and `requestAnimationFrame` batching to keep main-thread CPU overhead near zero during heavy bursts.

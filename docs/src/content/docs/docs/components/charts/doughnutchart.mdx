@@ -1,0 +1,61 @@
+---
+title: DoughnutChart
+description: Part-to-whole breakdown.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+`<moul-doughnut-chart>` shows shares of a total with an optional center label.
+
+<ComponentPreview>
+<moul-doughnut-chart height="260" center-label="990" center-sublabel="Visitors" style="width: min(100%, 22rem)" data-props='{"data":[{"name":"Organic","value":420},{"name":"Referral","value":260},{"name":"Social","value":190},{"name":"Email","value":120}]}'></moul-doughnut-chart>
+</ComponentPreview>
+
+```html
+<moul-doughnut-chart height="260" center-label="990" center-sublabel="Visitors" style="width: min(100%, 22rem)"></moul-doughnut-chart>
+```
+
+```js
+const doughnutChart = document.querySelector('moul-doughnut-chart')
+doughnutChart.data = [
+  {
+    "name": "Organic",
+    "value": 420
+  },
+  {
+    "name": "Referral",
+    "value": 260
+  },
+  {
+    "name": "Social",
+    "value": 190
+  },
+  {
+    "name": "Email",
+    "value": 120
+  }
+]
+```
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `inner-radius-ratio` | `innerRadiusRatio` | `number` | `0.6` |
+| `height` | `height` | `number` | `300` |
+| `center-label` | `centerLabel` | `string` | `''` |
+| `center-sublabel` | `centerSublabel` | `string` | `''` |
+| `pad-angle` | `padAngle` | `number` | `0.02` |
+| `corner-radius` | `cornerRadius` | `number` | `4` |
+
+| Event | Type |
+| :-- | :-- |
+| `point-hover` | `CustomEvent` |
+| `point-leave` | `CustomEvent` |
+
+| Slot | Description |
+| :-- | :-- |
+| `empty` | — |
+| `center` | — |
+
+**CSS parts:** `empty`, `wrapper`, `svg`, `slice`, `center`, `center-label`, `center-sublabel`

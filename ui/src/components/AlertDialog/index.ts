@@ -1,10 +1,5 @@
 export {
-  AlertDialog,
-  AlertDialogBody,
-  type AlertDialogBodyProps,
-  AlertDialogFooter,
-  type AlertDialogFooterProps,
-  AlertDialogHeader,
-  type AlertDialogHeaderProps,
-  type AlertDialogProps,
+  type AlertDialogSize,
+  MoulAlertDialog,
+  MoulAlertDialog as AlertDialog,
 } from './AlertDialog'

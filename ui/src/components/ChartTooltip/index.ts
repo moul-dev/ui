@@ -1,2 +1,8 @@
-export type { CustomTooltipProps } from './ChartTooltip'
-export { ChartTooltip } from './ChartTooltip'
+export type {
+  ChartTooltipPayloadEntry,
+  ChartTooltipShowOptions,
+} from './ChartTooltip'
+export {
+  MoulChartTooltip,
+  MoulChartTooltip as ChartTooltip,
+} from './ChartTooltip'

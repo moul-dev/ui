@@ -1,0 +1,55 @@
+---
+title: AlertDialog (សមាសភាគ)
+description: ឯកសារណែនាំសម្រាប់សមាសភាគ AlertDialog Web Component
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+`<moul-alert-dialog>` asks for an explicit decision. Buttons marked `data-action="confirm"` or `"cancel"` fire the matching event and close it; focus starts on Cancel.
+
+<ComponentPreview>
+<moul-button variant="danger" data-open="demo-alert-dialog">Delete workspace</moul-button>
+<moul-alert-dialog id="demo-alert-dialog" tone="error" aria-label="Delete workspace">
+  <h3 slot="header">Delete this workspace?</h3>
+  <p slot="body">All projects, deployments and logs will be permanently removed. This can’t be undone.</p>
+  <div slot="footer" class="demo-row" style="justify-content: flex-end">
+    <moul-button variant="ghost" data-action="cancel">Cancel</moul-button>
+    <moul-button variant="danger" data-action="confirm">Delete</moul-button>
+  </div>
+</moul-alert-dialog>
+</ComponentPreview>
+
+```html
+<moul-button variant="danger">Delete workspace</moul-button>
+<moul-alert-dialog id="demo-alert-dialog" tone="error" aria-label="Delete workspace">
+  <h3 slot="header">Delete this workspace?</h3>
+  <p slot="body">All projects, deployments and logs will be permanently removed. This can’t be undone.</p>
+  <div slot="footer" class="demo-row" style="justify-content: flex-end">
+    <moul-button variant="ghost" data-action="cancel">Cancel</moul-button>
+    <moul-button variant="danger" data-action="confirm">Delete</moul-button>
+  </div>
+</moul-alert-dialog>
+```
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `is-open` | `isOpen` | `boolean` | `false` |
+| `tone` | `tone` | `'primary' \| 'accent' \| 'success' \| 'warning' \| 'error'` | `'error'` |
+| `size` | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` |
+
+| Event | Type |
+| :-- | :-- |
+| `openchange` | `CustomEvent` |
+| `confirm` | `CustomEvent` |
+| `cancel` | `CustomEvent` |
+
+| Slot | Description |
+| :-- | :-- |
+| `header` | — |
+| `body` | — |
+| `(default)` | — |
+| `footer` | — |
+
+**CSS parts:** `base`, `dialog`, `header`, `body`, `footer`

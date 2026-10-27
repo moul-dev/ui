@@ -1,0 +1,56 @@
+---
+title: TextField (សមាសភាគ)
+description: ឯកសារណែនាំសម្រាប់សមាសភាគ TextField Web Component
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+`<moul-text-field>` wraps a native input with a label, helper text and an animated error message. It participates in forms through `ElementInternals`.
+
+<ComponentPreview>
+<div class="demo-stack" style="width: min(100%, 22rem)">
+  <moul-text-field label="Project name" placeholder="moul-portal" description="Lowercase letters, numbers and dashes."></moul-text-field>
+  <moul-text-field label="Email" type="email" value="alex@example" error-message="Enter a complete email address." is-required></moul-text-field>
+  <moul-text-field label="API key" value="sk_live_••••" is-readonly></moul-text-field>
+  <moul-text-field label="Disabled" placeholder="Unavailable" is-disabled></moul-text-field>
+</div>
+</ComponentPreview>
+
+```html
+<div class="demo-stack" style="width: min(100%, 22rem)">
+  <moul-text-field label="Project name" placeholder="moul-portal" description="Lowercase letters, numbers and dashes."></moul-text-field>
+  <moul-text-field label="Email" type="email" value="alex@example" error-message="Enter a complete email address." is-required></moul-text-field>
+  <moul-text-field label="API key" value="sk_live_••••" is-readonly></moul-text-field>
+  <moul-text-field label="Disabled" placeholder="Unavailable" is-disabled></moul-text-field>
+</div>
+```
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `name` | `name` | `string` | `''` |
+| `value` | `value` | `string` | `''` |
+| `type` | `type` | `'text' \| 'email' \| 'password' \| 'tel' \| 'url'` | `'text'` |
+| `placeholder` | `placeholder` | `string` | `''` |
+| `label` | `label` | `string` | `''` |
+| `description` | `description` | `string` | `''` |
+| `error-message` | `errorMessage` | `string` | `''` |
+| `is-disabled` | `isDisabled` | `boolean` | `false` |
+| `is-required` | `isRequired` | `boolean` | `false` |
+| `is-readonly` | `isReadonly` | `boolean` | `false` |
+
+| Event | Type |
+| :-- | :-- |
+| `input` | `CustomEvent` |
+| `change` | `CustomEvent` |
+
+| Slot | Description |
+| :-- | :-- |
+| `label` | — |
+| `prefix` | — |
+| `suffix` | — |
+| `description` | — |
+| `error` | — |
+
+**CSS parts:** `error`, `base`, `label`, `input-container`, `prefix`, `input`, `suffix`, `description`

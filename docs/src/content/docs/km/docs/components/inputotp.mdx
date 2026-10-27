@@ -1,0 +1,41 @@
+---
+title: InputOTP (សមាសភាគ)
+description: ឯកសារណែនាំសម្រាប់សមាសភាគ InputOTP Web Component
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+`<moul-input-otp>` splits a code across boxes, supports paste, and fires `complete` once every slot is filled.
+
+<ComponentPreview>
+<moul-input-otp label="Verification code" length="6"></moul-input-otp>
+</ComponentPreview>
+
+```html
+<moul-input-otp label="Verification code" length="6"></moul-input-otp>
+```
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `name` | `name` | `string` | `''` |
+| `length` | `length` | `number` | `6` |
+| `value` | `value` | `string` | `''` |
+| `pattern` | `pattern` | `string` | `'^\\d+$'` |
+| `is-disabled` | `isDisabled` | `boolean` | `false` |
+| `is-required` | `isRequired` | `boolean` | `false` |
+| `label` | `label` | `string` | `''` |
+
+| Event | Type |
+| :-- | :-- |
+| `input` | `CustomEvent` |
+| `change` | `CustomEvent` |
+| `complete` | `CustomEvent` |
+
+| Slot | Description |
+| :-- | :-- |
+| `label` | — |
+| `separator` | — |
+
+**CSS parts:** `group`, `base`, `label`, `slot`, `separator`

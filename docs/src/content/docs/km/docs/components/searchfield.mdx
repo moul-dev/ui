@@ -1,0 +1,49 @@
+---
+title: SearchField (សមាសភាគ)
+description: ឯកសារណែនាំសម្រាប់សមាសភាគ SearchField Web Component
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+`<moul-search-field>` shows a clear button once there is text and fires `submit` when Enter is pressed.
+
+<ComponentPreview>
+<div style="width: min(100%, 22rem)">
+  <moul-search-field label="Repositories" placeholder="Filter repositories…" value="moul"></moul-search-field>
+</div>
+</ComponentPreview>
+
+```html
+<div style="width: min(100%, 22rem)">
+  <moul-search-field label="Repositories" placeholder="Filter repositories…" value="moul"></moul-search-field>
+</div>
+```
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `name` | `name` | `string` | `''` |
+| `value` | `value` | `string` | `''` |
+| `placeholder` | `placeholder` | `string` | `'Search...'` |
+| `label` | `label` | `string` | `''` |
+| `description` | `description` | `string` | `''` |
+| `error-message` | `errorMessage` | `string` | `''` |
+| `is-disabled` | `isDisabled` | `boolean` | `false` |
+| `is-required` | `isRequired` | `boolean` | `false` |
+| `is-readonly` | `isReadonly` | `boolean` | `false` |
+
+| Event | Type |
+| :-- | :-- |
+| `clear` | `CustomEvent` |
+| `input` | `Event` |
+| `change` | `Event` |
+| `submit` | `CustomEvent` |
+
+| Slot | Description |
+| :-- | :-- |
+| `label` | — |
+| `description` | — |
+| `error` | — |
+
+**CSS parts:** `clear-btn`, `error`, `base`, `label`, `search`, `input-container`, `search-icon`, `input`, `description`

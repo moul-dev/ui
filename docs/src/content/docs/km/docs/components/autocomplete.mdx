@@ -1,0 +1,60 @@
+---
+title: Autocomplete (សមាសភាគ)
+description: ឯកសារណែនាំសម្រាប់សមាសភាគ Autocomplete Web Component
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+There is no separate autocomplete element: `<moul-combobox>` already filters its items against the typed text. Give it suggestions and listen for `inputchange` to fetch more.
+
+<ComponentPreview align="start" minHeight="300px">
+<div style="width: min(100%, 20rem)">
+  <moul-combobox label="Country" placeholder="Start typing…">
+    <moul-combobox-item key="kh">Cambodia</moul-combobox-item>
+    <moul-combobox-item key="ca">Canada</moul-combobox-item>
+    <moul-combobox-item key="jp">Japan</moul-combobox-item>
+    <moul-combobox-item key="th">Thailand</moul-combobox-item>
+    <moul-combobox-item key="vn">Vietnam</moul-combobox-item>
+  </moul-combobox>
+</div>
+</ComponentPreview>
+
+```html
+<div style="width: min(100%, 20rem)">
+  <moul-combobox label="Country" placeholder="Start typing…">
+    <moul-combobox-item key="kh">Cambodia</moul-combobox-item>
+    <moul-combobox-item key="ca">Canada</moul-combobox-item>
+    <moul-combobox-item key="jp">Japan</moul-combobox-item>
+    <moul-combobox-item key="th">Thailand</moul-combobox-item>
+    <moul-combobox-item key="vn">Vietnam</moul-combobox-item>
+  </moul-combobox>
+</div>
+```
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `name` | `name` | `string` | `''` |
+| `selected-key` | `selectedKey` | `string` | `''` |
+| `input-value` | `inputValue` | `string` | `''` |
+| `placeholder` | `placeholder` | `string` | `''` |
+| `label` | `label` | `string` | `''` |
+| `is-disabled` | `isDisabled` | `boolean` | `false` |
+| `is-required` | `isRequired` | `boolean` | `false` |
+| `is-open` | `isOpen` | `boolean` | `false` |
+
+| Event | Type |
+| :-- | :-- |
+| `selectionchange` | `CustomEvent` |
+| `inputchange` | `CustomEvent` |
+| `change` | `CustomEvent` |
+| `input` | `CustomEvent` |
+
+| Slot | Description |
+| :-- | :-- |
+| `label` | — |
+| `(default)` | — |
+| `empty` | — |
+
+**CSS parts:** `popover`, `base`, `label`, `input-container`, `input`, `toggle-btn`, `empty`

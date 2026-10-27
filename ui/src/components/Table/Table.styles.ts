@@ -1,257 +1,178 @@
-import * as stylex from '@stylexjs/stylex'
-import { tokens } from '../../tokens/tokens.stylex'
+import { css } from 'lit'
+import { resetStyles } from '../../styles/reset.styles'
 
-const pulse = stylex.keyframes({
-  '0%': { opacity: 0.4 },
-  '50%': { opacity: 0.85 },
-  '100%': { opacity: 0.4 },
-})
+export const tableStyles = [
+  resetStyles,
+  css`
+    /* Secondary-surface frame; header sits on the frame, the body is a white card inside it */
+    :host {
+      display: block;
+      width: 100%;
+      overflow-x: auto;
+      box-sizing: border-box;
+      font-family: var(--font-family-base, inherit);
+      padding: 0 var(--spacing-1, 0.25rem) var(--spacing-1, 0.25rem);
+      border-radius: min(2rem, calc(var(--radius-base, 0.5rem) * 2.5));
+      background-color: var(--color-surface-secondary);
+      scrollbar-width: thin;
+      scrollbar-color: var(--color-scrollbar-thumb) transparent;
+      /* HeroUI separator-tertiary at 50%: the hairline between body rows */
+      --_row-separator: color-mix(
+        in oklab,
+        color-mix(in oklab, var(--color-surface) 81%, var(--color-fg) 19%) 50%,
+        transparent
+      );
+      --_body-radius: var(--radius-2xl, 1rem);
+    }
 
-export const styles = stylex.create({
-  wrapper: {
-    position: 'relative',
-    width: '100%',
-    overflowX: 'auto',
-    backgroundColor: tokens.colorBg,
-    borderWidth: '1px',
-    borderStyle: 'solid',
-    borderColor: tokens.colorBorder,
-    borderRadius: tokens.radiusMd,
-  },
-  table: {
-    borderCollapse: 'collapse',
-    width: '100%',
-    textAlign: 'start',
-    fontFamily: tokens.fontFamilyBase,
-    fontSize: tokens.fontSizeSm,
-    lineHeight: tokens.lineHeightSm,
-    color: tokens.colorFg,
-  },
-  tableFixed: {
-    tableLayout: 'fixed',
-  },
-  tableAuto: {
-    tableLayout: 'auto',
-  },
-  header: {
-    backgroundColor: tokens.colorBgSubtle,
-    borderBottomWidth: '1px',
-    borderBottomStyle: 'solid',
-    borderBottomColor: tokens.colorBorder,
-  },
-  headerSticky: {
-    position: 'sticky',
-    insetBlockStart: 0,
-    zIndex: 10,
-    backgroundColor: tokens.colorBgSubtle,
-  },
-  footer: {
-    backgroundColor: tokens.colorBgSubtle,
-    borderTopWidth: '1px',
-    borderTopStyle: 'solid',
-    borderTopColor: tokens.colorBorder,
-    fontWeight: tokens.fontWeightMedium,
-    color: tokens.colorFgSubtle,
-  },
-  footerSticky: {
-    position: 'sticky',
-    insetBlockEnd: 0,
-    zIndex: 10,
-    backgroundColor: tokens.colorBgSubtle,
-  },
-  body: {
-    backgroundColor: tokens.colorBg,
-    outline: 'none',
-  },
-  row: {
-    borderBottomWidth: '1px',
-    borderBottomStyle: 'solid',
-    borderBottomColor: tokens.colorBorderSubtle,
-    backgroundColor: 'transparent',
-    transitionProperty: 'background-color, color',
-    transitionDuration: '0.15s',
-    transitionTimingFunction: 'ease-in-out',
-    ':last-child': {
-      borderBottomWidth: 0,
-    },
-    '@media (prefers-reduced-motion: reduce)': {
-      transitionProperty: 'none',
-    },
-  },
-  rowHoverable: {
-    ':hover': {
-      backgroundColor: tokens.colorNeutral100,
-    },
-  },
-  rowStriped: {
-    ':nth-child(even)': {
-      backgroundColor: tokens.colorNeutral50,
-    },
-  },
-  rowSelected: {
-    backgroundColor: tokens.colorPrimary50,
-    color: tokens.colorPrimary700,
-  },
-  rowInteractive: {
-    cursor: 'pointer',
-  },
-  head: {
-    paddingBlock: tokens.spacing3,
-    paddingInline: tokens.spacing4,
-    fontWeight: tokens.fontWeightSemibold,
-    color: tokens.colorFgSubtle,
-    borderBottomWidth: '1px',
-    borderBottomStyle: 'solid',
-    borderBottomColor: tokens.colorBorder,
-    verticalAlign: 'middle',
-    outline: 'none',
-  },
-  headBordered: {
-    borderInlineEndWidth: '1px',
-    borderInlineEndStyle: 'solid',
-    borderInlineEndColor: tokens.colorBorder,
-    ':last-child': {
-      borderInlineEndWidth: 0,
-    },
-  },
-  headDense: {
-    paddingBlock: tokens.spacing2,
-    paddingInline: tokens.spacing3,
-    fontSize: tokens.fontSizeXs,
-  },
-  headSortable: {
-    cursor: 'pointer',
-    userSelect: 'none',
-    ':hover': {
-      color: tokens.colorFg,
-      backgroundColor: tokens.colorNeutral100,
-    },
-  },
-  headContent: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: tokens.spacing2,
-    width: '100%',
-  },
-  headContentAlignLeft: {
-    justifyContent: 'flex-start',
-  },
-  headContentAlignCenter: {
-    justifyContent: 'center',
-  },
-  headContentAlignRight: {
-    justifyContent: 'flex-end',
-  },
-  sortIndicator: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexShrink: 0,
-    color: tokens.colorFgSubtle,
-    transitionProperty: 'color, transform',
-    transitionDuration: '0.15s',
-  },
-  sortIndicatorActive: {
-    color: tokens.colorPrimary500,
-  },
-  cell: {
-    paddingBlock: tokens.spacing3,
-    paddingInline: tokens.spacing4,
-    color: 'inherit',
-    verticalAlign: 'middle',
-    outline: 'none',
-  },
-  cellBordered: {
-    borderInlineEndWidth: '1px',
-    borderInlineEndStyle: 'solid',
-    borderInlineEndColor: tokens.colorBorderSubtle,
-    ':last-child': {
-      borderInlineEndWidth: 0,
-    },
-  },
-  cellDense: {
-    paddingBlock: tokens.spacing2,
-    paddingInline: tokens.spacing3,
-    fontSize: tokens.fontSizeXs,
-  },
-  cellTabular: {
-    fontVariantNumeric: 'tabular-nums',
-  },
-  alignLeft: {
-    textAlign: 'start',
-  },
-  alignCenter: {
-    textAlign: 'center',
-  },
-  alignRight: {
-    textAlign: 'end',
-  },
-  alignNumeric: {
-    textAlign: 'end',
-    fontVariantNumeric: 'tabular-nums',
-  },
-  pinnedLeft: {
-    position: 'sticky',
-    insetInlineStart: 0,
-    zIndex: 2,
-    backgroundColor: tokens.colorBg,
-  },
-  pinnedRight: {
-    position: 'sticky',
-    insetInlineEnd: 0,
-    zIndex: 2,
-    backgroundColor: tokens.colorBg,
-    boxShadow: `inset 1px 0 0 ${tokens.colorBorderSubtle}`,
-  },
-  pinnedLeftHead: {
-    position: 'sticky',
-    insetInlineStart: 0,
-    zIndex: 12,
-    backgroundColor: tokens.colorBgSubtle,
-  },
-  pinnedRightHead: {
-    position: 'sticky',
-    insetInlineEnd: 0,
-    zIndex: 12,
-    backgroundColor: tokens.colorBgSubtle,
-    boxShadow: `inset 1px 0 0 ${tokens.colorBorderSubtle}`,
-  },
-  caption: {
-    paddingBlock: tokens.spacing2,
-    paddingInline: tokens.spacing4,
-    fontSize: tokens.fontSizeXs,
-    color: tokens.colorFgSubtle,
-    textAlign: 'start',
-    captionSide: 'bottom',
-    borderTopWidth: '1px',
-    borderTopStyle: 'solid',
-    borderTopColor: tokens.colorBorderSubtle,
-  },
-  captionTop: {
-    captionSide: 'top',
-    borderTopWidth: 0,
-    borderBottomWidth: '1px',
-    borderBottomStyle: 'solid',
-    borderBottomColor: tokens.colorBorderSubtle,
-  },
-  emptyCell: {
-    paddingBlock: tokens.spacing8,
-    paddingInline: tokens.spacing4,
-    textAlign: 'center',
-    color: tokens.colorFgSubtle,
-  },
-  skeletonCell: {
-    paddingBlock: tokens.spacing3,
-    paddingInline: tokens.spacing4,
-  },
-  skeletonBar: {
-    height: '14px',
-    width: '100%',
-    borderRadius: tokens.radiusSm,
-    backgroundColor: tokens.colorNeutral200,
-    animationName: pulse,
-    animationDuration: '1.6s',
-    animationIterationCount: 'infinite',
-    animationTimingFunction: 'ease-in-out',
-  },
-})
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      text-align: start;
+      font-size: var(--font-size-sm, 0.875rem);
+      line-height: var(--line-height-sm, 1.25rem);
+      color: var(--color-fg, inherit);
+    }
+
+    thead {
+      background-color: transparent;
+    }
+
+    /* Column headers: small muted labels with a short separator between columns */
+    th {
+      position: relative;
+      padding: 0.625rem var(--spacing-4, 1rem);
+      font-size: var(--font-size-xs, 0.75rem);
+      line-height: var(--line-height-xs, 1rem);
+      font-weight: var(--font-weight-medium, 500);
+      color: var(--color-muted);
+      user-select: none;
+      text-align: start;
+      white-space: nowrap;
+      transition: color var(--duration-fast, 150ms) var(--ease-out, ease-out);
+    }
+
+    th::after {
+      content: "";
+      position: absolute;
+      inset-inline-end: 0;
+      top: 50%;
+      width: 1px;
+      height: 1rem;
+      transform: translateY(-50%);
+      border-radius: var(--radius-sm, 0.25rem);
+      background-color: var(--color-separator);
+      pointer-events: none;
+    }
+
+    th:last-child::after {
+      content: none;
+    }
+
+    th[aria-sort] {
+      cursor: pointer;
+    }
+
+    @media (hover: hover) {
+      th[aria-sort]:hover {
+        color: var(--color-fg);
+      }
+    }
+
+    .th-content {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacing-1, 0.25rem);
+    }
+
+    .sort-icon {
+      display: inline-grid;
+      place-content: center;
+      width: 0.75rem;
+      height: 0.75rem;
+      transition: transform 100ms var(--ease-out, ease-out);
+    }
+
+    .sort-icon.desc {
+      transform: rotate(180deg);
+    }
+
+    .sort-icon svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Body cells carry the surface so the card's corners can be rounded per cell */
+    td {
+      padding: var(--spacing-3, 0.75rem) var(--spacing-4, 1rem);
+      vertical-align: middle;
+      background-color: var(--color-surface);
+      border-bottom: 1px solid var(--_row-separator);
+    }
+
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    tbody tr:first-child td:first-child {
+      border-start-start-radius: var(--_body-radius);
+    }
+
+    tbody tr:first-child td:last-child {
+      border-start-end-radius: var(--_body-radius);
+    }
+
+    tbody tr:last-child td:first-child {
+      border-end-start-radius: var(--_body-radius);
+    }
+
+    tbody tr:last-child td:last-child {
+      border-end-end-radius: var(--_body-radius);
+    }
+
+    /* Hover and selection thin the surface so the frame shows through */
+    @media (hover: hover) {
+      tbody tr[part~="row"]:hover td {
+        background-color: color-mix(in oklab, var(--color-surface) 40%, transparent);
+      }
+    }
+
+    tbody tr[part~="row"][aria-selected="true"] td {
+      background-color: color-mix(in oklab, var(--color-surface) 10%, transparent);
+    }
+
+    .checkbox-cell {
+      width: 2.5rem;
+      padding-inline: var(--spacing-2, 0.5rem);
+      text-align: center;
+    }
+
+    .empty-cell {
+      padding: var(--spacing-8, 2rem);
+      text-align: center;
+      color: var(--color-muted);
+    }
+
+    /* Footer sits on the frame, below the body card */
+    tfoot {
+      background-color: transparent;
+    }
+
+    ::slotted([slot="footer"]) {
+      padding: 0.625rem var(--spacing-4, 1rem);
+    }
+
+    input[type="checkbox"] {
+      cursor: pointer;
+      accent-color: var(--color-accent);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      th,
+      .sort-icon {
+        transition: none;
+      }
+    }
+  `,
+]

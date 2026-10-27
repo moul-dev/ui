@@ -1,0 +1,54 @@
+---
+title: NumberField (សមាសភាគ)
+description: ឯកសារណែនាំសម្រាប់សមាសភាគ NumberField Web Component
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+`<moul-number-field>` clamps to `min`/`max` and steps with the buttons or arrow keys.
+
+<ComponentPreview>
+<div class="demo-row">
+  <moul-number-field label="Replicas" value="3" min="1" max="10"></moul-number-field>
+  <moul-number-field label="Opacity" value="0.5" min="0" max="1" step="0.1"></moul-number-field>
+</div>
+</ComponentPreview>
+
+```html
+<div class="demo-row">
+  <moul-number-field label="Replicas" value="3" min="1" max="10"></moul-number-field>
+  <moul-number-field label="Opacity" value="0.5" min="0" max="1" step="0.1"></moul-number-field>
+</div>
+```
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `name` | `name` | `string` | `''` |
+| `value` | `value` | `number \| null` | `null` |
+| `min` | `min` | `number \| undefined` | — |
+| `max` | `max` | `number \| undefined` | — |
+| `step` | `step` | `number` | `1` |
+| `placeholder` | `placeholder` | `string` | `''` |
+| `label` | `label` | `string` | `''` |
+| `description` | `description` | `string` | `''` |
+| `error-message` | `errorMessage` | `string` | `''` |
+| `is-disabled` | `isDisabled` | `boolean` | `false` |
+| `is-required` | `isRequired` | `boolean` | `false` |
+| `is-readonly` | `isReadonly` | `boolean` | `false` |
+
+| Event | Type |
+| :-- | :-- |
+| `input` | `Event` |
+| `change` | `Event` |
+
+| Slot | Description |
+| :-- | :-- |
+| `label` | — |
+| `prefix` | — |
+| `suffix` | — |
+| `description` | — |
+| `error` | — |
+
+**CSS parts:** `error`, `base`, `label`, `input-container`, `prefix`, `input`, `suffix`, `stepper-group`, `stepper-btn`, `stepper-btn-up`, `stepper-btn-down`, `description`

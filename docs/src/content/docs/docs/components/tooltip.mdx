@@ -1,0 +1,62 @@
+---
+title: Tooltip
+description: Short label shown on hover or focus.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+`<moul-tooltip>` describes its trigger through `aria-describedby`. It opens immediately on keyboard focus and after `delay` on hover. Once one tooltip has shown, its siblings open instantly for a moment after the pointer leaves it, so moving along a toolbar doesn't wait at every button.
+
+<ComponentPreview minHeight="200px">
+<div class="demo-row">
+  <moul-tooltip content="Copy link" placement="top">
+    <moul-button variant="secondary">Top</moul-button>
+  </moul-tooltip>
+  <moul-tooltip content="Opens in a new tab" placement="bottom">
+    <moul-button variant="secondary">Bottom</moul-button>
+  </moul-tooltip>
+  <moul-tooltip content="Previous" placement="left">
+    <moul-button variant="secondary">Left</moul-button>
+  </moul-tooltip>
+  <moul-tooltip content="Next" placement="right">
+    <moul-button variant="secondary">Right</moul-button>
+  </moul-tooltip>
+</div>
+</ComponentPreview>
+
+```html
+<div class="demo-row">
+  <moul-tooltip content="Copy link" placement="top">
+    <moul-button variant="secondary">Top</moul-button>
+  </moul-tooltip>
+  <moul-tooltip content="Opens in a new tab" placement="bottom">
+    <moul-button variant="secondary">Bottom</moul-button>
+  </moul-tooltip>
+  <moul-tooltip content="Previous" placement="left">
+    <moul-button variant="secondary">Left</moul-button>
+  </moul-tooltip>
+  <moul-tooltip content="Next" placement="right">
+    <moul-button variant="secondary">Right</moul-button>
+  </moul-tooltip>
+</div>
+```
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `content` | `content` | `string` | `''` |
+| `placement` | `placement` | `'top' \| 'bottom' \| 'left' \| 'right'` | `'top'` |
+| `delay` | `delay` | `number` | `300` |
+| `is-open` | `isOpen` | `boolean` | `false` |
+
+| Event | Type |
+| :-- | :-- |
+| `openchange` | `CustomEvent` |
+
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | — |
+| `content` | — |
+
+**CSS parts:** `popover`, `trigger`, `tooltip`

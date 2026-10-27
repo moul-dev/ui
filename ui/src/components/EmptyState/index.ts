@@ -1,17 +1,2 @@
-export type {
-  EmptyStateActionsProps,
-  EmptyStateAlign,
-  EmptyStateDescriptionProps,
-  EmptyStateIconProps,
-  EmptyStateProps,
-  EmptyStateSize,
-  EmptyStateTitleProps,
-  EmptyStateVariant,
-} from './EmptyState'
-export {
-  EmptyState,
-  EmptyStateActions,
-  EmptyStateDescription,
-  EmptyStateIcon,
-  EmptyStateTitle,
-} from './EmptyState'
+export type { EmptyStateAlign, EmptyStateSize } from './EmptyState'
+export { MoulEmptyState, MoulEmptyState as EmptyState } from './EmptyState'

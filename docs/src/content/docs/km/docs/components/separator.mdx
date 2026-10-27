@@ -1,0 +1,44 @@
+---
+title: Separator (សមាសភាគ)
+description: ឯកសារណែនាំសម្រាប់សមាសភាគ Separator Web Component
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+`<moul-separator>` draws a hairline divider with `role="separator"`.
+
+<ComponentPreview>
+<div class="demo-stack" style="width: min(100%, 20rem)">
+  <span>Account</span>
+  <moul-separator></moul-separator>
+  <div class="demo-row" style="justify-content: flex-start; height: 1.5rem">
+    <span>Profile</span>
+    <moul-separator orientation="vertical"></moul-separator>
+    <span>Billing</span>
+    <moul-separator orientation="vertical"></moul-separator>
+    <span>Security</span>
+  </div>
+</div>
+</ComponentPreview>
+
+```html
+<div class="demo-stack" style="width: min(100%, 20rem)">
+  <span>Account</span>
+  <moul-separator></moul-separator>
+  <div class="demo-row" style="justify-content: flex-start; height: 1.5rem">
+    <span>Profile</span>
+    <moul-separator orientation="vertical"></moul-separator>
+    <span>Billing</span>
+    <moul-separator orientation="vertical"></moul-separator>
+    <span>Security</span>
+  </div>
+</div>
+```
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `orientation` | `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` |
+
+**CSS parts:** `separator`

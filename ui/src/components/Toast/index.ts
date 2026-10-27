@@ -1,9 +1,8 @@
+export { MoulToast, MoulToast as Toast } from './Toast'
 export {
-  Toast,
-  ToastContainer,
-  type ToastContainerProps,
-  type ToastContent,
-  type ToastProps,
+  MoulToastRegion,
+  MoulToastRegion as ToastRegion,
+  type ToastOptions,
+  type ToastPlacement,
   toastQueue,
-  useToast,
-} from './Toast'
+} from './ToastQueue'

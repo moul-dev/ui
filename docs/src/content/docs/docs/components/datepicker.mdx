@@ -1,0 +1,48 @@
+---
+title: DatePicker
+description: Date input with a calendar popover.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+`<moul-date-picker>` pairs a formatted field with a calendar in the top layer. Values are ISO `YYYY-MM-DD` strings.
+
+<ComponentPreview align="start" minHeight="420px">
+<div style="width: min(100%, 18rem)">
+  <moul-date-picker label="Launch date" value="2026-10-24"></moul-date-picker>
+</div>
+</ComponentPreview>
+
+```html
+<div style="width: min(100%, 18rem)">
+  <moul-date-picker label="Launch date" value="2026-10-24"></moul-date-picker>
+</div>
+```
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `name` | `name` | `string` | `''` |
+| `value` | `value` | `string` | `''` |
+| `locale` | `locale` | `string` | `'en-US'` |
+| `placeholder` | `placeholder` | `string` | `'YYYY-MM-DD'` |
+| `label` | `label` | `string` | `''` |
+| `is-disabled` | `isDisabled` | `boolean` | `false` |
+| `is-required` | `isRequired` | `boolean` | `false` |
+| `min-date` | `minDate` | `string` | `''` |
+| `max-date` | `maxDate` | `string` | `''` |
+| `is-open` | `isOpen` | `boolean` | `false` |
+
+| Event | Type |
+| :-- | :-- |
+| `change` | `CustomEvent` |
+| `input` | `CustomEvent` |
+
+| Slot | Description |
+| :-- | :-- |
+| `label` | — |
+| `description` | — |
+| `error` | — |
+
+**CSS parts:** `popover`, `base`, `label`, `input-container`, `input`, `trigger-btn`

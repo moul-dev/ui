@@ -1,0 +1,12 @@
+---
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro'
+import ThemeInspector from '../components/ThemeInspector.astro'
+---
+
+<StarlightPage frontmatter={{
+  title: 'Theme Studio',
+  description: 'Interactive CSS Design Token Inspector & Live Palette Tuning for Moul UI Web Components',
+  template: 'splash'
+}}>
+  <ThemeInspector />
+</StarlightPage>

@@ -1,2 +1,2 @@
-export type { SkeletonProps, SkeletonShape, SkeletonVariant } from './Skeleton'
-export { Skeleton } from './Skeleton'
+export type { SkeletonShape, SkeletonVariant } from './Skeleton'
+export { MoulSkeleton, MoulSkeleton as Skeleton } from './Skeleton'

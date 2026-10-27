@@ -1,0 +1,97 @@
+---
+title: Table (សមាសភាគ)
+description: ឯកសារណែនាំសម្រាប់សមាសភាគ Table Web Component
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+`<moul-table>` renders `data` against `columns`. Turn on `is-sortable` and `is-selectable` for click-to-sort headers and row checkboxes.
+
+<ComponentPreview align="stretch">
+<moul-table is-sortable is-selectable data-props='{"columns":[{"key":"name","title":"Service","sortable":true},{"key":"region","title":"Region"},{"key":"status","title":"Status"},{"key":"latency","title":"p95 (ms)","sortable":true,"align":"right"}],"data":[{"id":"1","name":"api-gateway","region":"us-east","status":"Healthy","latency":42},{"id":"2","name":"auth-worker","region":"ap-southeast","status":"Degraded","latency":188},{"id":"3","name":"billing","region":"eu-west","status":"Healthy","latency":67},{"id":"4","name":"search","region":"us-west","status":"Healthy","latency":95}]}'></moul-table>
+</ComponentPreview>
+
+```html
+<moul-table is-sortable is-selectable></moul-table>
+```
+
+```js
+const table = document.querySelector('moul-table')
+table.columns = [
+  {
+    "key": "name",
+    "title": "Service",
+    "sortable": true
+  },
+  {
+    "key": "region",
+    "title": "Region"
+  },
+  {
+    "key": "status",
+    "title": "Status"
+  },
+  {
+    "key": "latency",
+    "title": "p95 (ms)",
+    "sortable": true,
+    "align": "right"
+  }
+]
+table.data = [
+  {
+    "id": "1",
+    "name": "api-gateway",
+    "region": "us-east",
+    "status": "Healthy",
+    "latency": 42
+  },
+  {
+    "id": "2",
+    "name": "auth-worker",
+    "region": "ap-southeast",
+    "status": "Degraded",
+    "latency": 188
+  },
+  {
+    "id": "3",
+    "name": "billing",
+    "region": "eu-west",
+    "status": "Healthy",
+    "latency": 67
+  },
+  {
+    "id": "4",
+    "name": "search",
+    "region": "us-west",
+    "status": "Healthy",
+    "latency": 95
+  }
+]
+```
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `data` | `data` | `Record<string, unknown>[]` | `[]` |
+| `columns` | `columns` | `TableColumn[]` | `[]` |
+| `is-sortable` | `isSortable` | `boolean` | `false` |
+| `is-selectable` | `isSelectable` | `boolean` | `false` |
+| `is-loading` | `isLoading` | `boolean` | `false` |
+| `selected-keys` | `selectedKeys` | `string[]` | `[]` |
+| `sort-column` | `sortColumn` | `string` | `''` |
+| `sort-direction` | `sortDirection` | `'asc' \| 'desc'` | `'asc'` |
+
+| Event | Type |
+| :-- | :-- |
+| `sortchange` | `CustomEvent` |
+| `selectionchange` | `CustomEvent` |
+
+| Slot | Description |
+| :-- | :-- |
+| `caption` | — |
+| `empty` | — |
+| `footer` | — |
+
+**CSS parts:** `caption`, `header-checkbox`, `th`, `loading-row`, `row`, `footer`

@@ -1,0 +1,70 @@
+---
+title: Popover (សមាសភាគ)
+description: ឯកសារណែនាំសម្រាប់សមាសភាគ Popover Web Component
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+`<moul-popover>` anchors a floating panel to its trigger with CSS anchor positioning and the Popover API. It closes on outside click or Escape.
+
+<ComponentPreview minHeight="260px">
+<div class="demo-row">
+  <moul-popover placement="bottom">
+    <moul-button slot="trigger" variant="secondary">Bottom</moul-button>
+    <div class="demo-stack" style="width: 14rem">
+      <strong>Deployment</strong>
+      <p>Built 2 minutes ago from main.</p>
+      <moul-button size="sm">View logs</moul-button>
+    </div>
+  </moul-popover>
+  <moul-popover placement="top">
+    <moul-button slot="trigger" variant="secondary">Top</moul-button>
+    <p>Anchored above the trigger.</p>
+  </moul-popover>
+  <moul-popover placement="right">
+    <moul-button slot="trigger" variant="secondary">Right</moul-button>
+    <p>Anchored to the right.</p>
+  </moul-popover>
+</div>
+</ComponentPreview>
+
+```html
+<div class="demo-row">
+  <moul-popover placement="bottom">
+    <moul-button slot="trigger" variant="secondary">Bottom</moul-button>
+    <div class="demo-stack" style="width: 14rem">
+      <strong>Deployment</strong>
+      <p>Built 2 minutes ago from main.</p>
+      <moul-button size="sm">View logs</moul-button>
+    </div>
+  </moul-popover>
+  <moul-popover placement="top">
+    <moul-button slot="trigger" variant="secondary">Top</moul-button>
+    <p>Anchored above the trigger.</p>
+  </moul-popover>
+  <moul-popover placement="right">
+    <moul-button slot="trigger" variant="secondary">Right</moul-button>
+    <p>Anchored to the right.</p>
+  </moul-popover>
+</div>
+```
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `is-open` | `isOpen` | `boolean` | `false` |
+| `trigger` | `trigger` | `'click' \| 'manual'` | `'click'` |
+| `placement` | `placement` | `'top' \| 'bottom' \| 'left' \| 'right'` | `'bottom'` |
+| `offset` | `offset` | `number` | `8` |
+
+| Event | Type |
+| :-- | :-- |
+| `openchange` | `CustomEvent` |
+
+| Slot | Description |
+| :-- | :-- |
+| `trigger` | — |
+| `(default)` | — |
+
+**CSS parts:** `popover`, `trigger`

@@ -1,0 +1,88 @@
+---
+title: AreaChart (សមាសភាគ)
+description: ឯកសារណែនាំសម្រាប់សមាសភាគ AreaChart Web Component
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+`<moul-area-chart>` plots `series` keys from `data` against `x-key`. Hover a point for the tooltip.
+
+<ComponentPreview align="stretch">
+<moul-area-chart x-key="month" height="260" show-grid data-props='{"data":[{"month":"Jan","desktop":186,"mobile":80,"revenue":4200},{"month":"Feb","desktop":305,"mobile":200,"revenue":5100},{"month":"Mar","desktop":237,"mobile":120,"revenue":4800},{"month":"Apr","desktop":273,"mobile":190,"revenue":6100},{"month":"May","desktop":209,"mobile":130,"revenue":5600},{"month":"Jun","desktop":314,"mobile":240,"revenue":7300}],"series":[{"key":"desktop","name":"Desktop"},{"key":"mobile","name":"Mobile"}]}'></moul-area-chart>
+</ComponentPreview>
+
+```html
+<moul-area-chart x-key="month" height="260" show-grid></moul-area-chart>
+```
+
+```js
+const areaChart = document.querySelector('moul-area-chart')
+areaChart.data = [
+  {
+    "month": "Jan",
+    "desktop": 186,
+    "mobile": 80,
+    "revenue": 4200
+  },
+  {
+    "month": "Feb",
+    "desktop": 305,
+    "mobile": 200,
+    "revenue": 5100
+  },
+  {
+    "month": "Mar",
+    "desktop": 237,
+    "mobile": 120,
+    "revenue": 4800
+  },
+  {
+    "month": "Apr",
+    "desktop": 273,
+    "mobile": 190,
+    "revenue": 6100
+  },
+  {
+    "month": "May",
+    "desktop": 209,
+    "mobile": 130,
+    "revenue": 5600
+  },
+  {
+    "month": "Jun",
+    "desktop": 314,
+    "mobile": 240,
+    "revenue": 7300
+  }
+]
+areaChart.series = [
+  {
+    "key": "desktop",
+    "name": "Desktop"
+  },
+  {
+    "key": "mobile",
+    "name": "Mobile"
+  }
+]
+```
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `x-key` | `xKey` | `string` | `'name'` |
+| `height` | `height` | `number` | `300` |
+| `stacked` | `stacked` | `boolean` | `false` |
+| `show-grid` | `showGrid` | `boolean` | `true` |
+
+| Event | Type |
+| :-- | :-- |
+| `point-hover` | `CustomEvent` |
+| `point-leave` | `CustomEvent` |
+
+| Slot | Description |
+| :-- | :-- |
+| `empty` | — |
+
+**CSS parts:** `empty`, `container`, `svg`, `grid`, `x-axis`, `series`, `area`, `line`, `stroke`, `points`, `point`

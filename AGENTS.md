@@ -1,58 +1,77 @@
 # Moul UI Workspace
 
 A multi-project monorepo workspace managed with **Bun**, featuring:
-- **`@moul-dev/ui`**: React component library/sandbox built with Vite, TypeScript, React Aria, and StyleX.
-- **`docs`**: Documentation site built with Fumadocs on the Waku framework.
+- **`@moul-dev/ui`**: Standards-first Web Components library (`<moul-*>` custom elements) built with Lit 3, Shadow DOM, and a native CSS token layer.
+- **`docs`**: Documentation site built with Astro Starlight (English at the root, Khmer under `/km/`).
 
 ## Monorepo Layout
 
 ```
 .
-├── package.json         # Workspace root package.json config
+├── package.json         # Workspace root scripts
 ├── bun.lock             # Bun workspace lockfile
+├── biome.json           # Lint & format rules (ui/ and docs/)
 ├── AGENTS.md            # This file
+├── rdt/                 # Requirements, design, and task list for the Lit rebuild
+├── scripts/             # dev, gen:component, sync:llms, bump, verify-no-react
 ├── ui/                  # Component library package
-│   ├── package.json     # Library exports & configs
-│   ├── vite.config.ts   # Vite library build & StyleX configs
-│   └── src/             # Component source code
-│       ├── components/  # React Aria + StyleX components
-│       └── App.tsx      # Sandbox sandbox app
-└── docs/                # Fumadocs website package
-    ├── package.json     # App configs & dependencies
-    ├── content/docs/    # MDX documentation source files
-    └── src/             # Waku application code
+│   ├── package.json     # Library exports (`.` and `./style.css`)
+│   ├── vite.config.ts   # Vite library build + Vitest (happy-dom)
+│   ├── custom-elements-manifest.config.mjs
+│   ├── index.html       # Kitchen-sink sandbox (`bun run dev:ui`)
+│   └── src/
+│       ├── index.ts     # Single public entry point
+│       ├── styles/      # style.css token layer, reset, semantic tones
+│       ├── controllers/ # Press, LayoutIndicator, OverlayPresence, NumberSpring, FormInternals
+│       ├── utils/       # defineElement, motion, focus trap, icons
+│       └── components/  # <ComponentName>/<ComponentName>.ts, .styles.ts, index.ts
+└── docs/                # Astro Starlight site
+    ├── astro.config.mjs # Starlight config & bilingual routing
+    ├── public/          # AGENTS.md, llms.txt, llms-full.txt (generated)
+    └── src/
+        ├── components/  # ComponentPreview.astro, ThemeInspector.astro
+        ├── pages/       # theme.astro (/theme token inspector)
+        └── content/docs/# English (root) & Khmer (km/) MDX
 ```
 
 ## Available Scripts
 
 Run these commands from the root directory:
 
-- **Run Dev Server (Both Projects)**:
+- **Run Dev Servers (sandbox + docs, concurrently)**:
   ```bash
   bun dev
   ```
-- **Run UI Sandbox Dev Server**:
+- **Run UI Sandbox Dev Server (Vite)**:
   ```bash
   bun run dev:ui
   ```
-- **Run Docs Dev Server**:
+- **Run Docs Dev Server (Astro)**:
   ```bash
   bun run dev:docs
   ```
-- **Scaffold New Component**:
+- **Scaffold New Lit Component** (class, styles, test, index, docs MDX stub):
   ```bash
   bun run gen:component <ComponentName>
   ```
-- **Sync & Validate LLM Context**:
+- **Validate LLM Context Files** (fails if any custom element is undocumented):
   ```bash
   bun run sync:llms
+  ```
+- **Regenerate LLM Context Files** from `ui/dist/custom-elements.json`:
+  ```bash
+  bun run sync:llms --write
+  ```
+- **Run Tests (Vitest)**:
+  ```bash
+  bun run test
   ```
 - **Run Lint / Format (Biome)**:
   ```bash
   bun run lint
   bun run format
   ```
-- **Build UI Library**:
+- **Build UI Library** (verify-no-react → `tsc -b` → `vite build` → `cem analyze`):
   ```bash
   bun run build:ui
   ```
@@ -60,7 +79,7 @@ Run these commands from the root directory:
   ```bash
   bun run build:docs
   ```
-- **Bump CalVer Version**:
+- **Bump UTC CalVer Version** (`YYYY.M.D`, then `YYYY.M.D.N` for same-day bumps):
   ```bash
   bun run bump
   ```
@@ -68,37 +87,57 @@ Run these commands from the root directory:
 ## Tech Stack & Configurations
 
 ### 1. UI Library (`ui/`)
-- **React Aria Components**: Headless components used for accessible structure and behavior.
-- **StyleX**: Compile-time CSS-in-JS utility. The compiler extracts styles to `ui/dist/assets/stylex.css` at build time.
-- **Vite & TS**: Compiles in library mode, generating `ui/dist/moul-ui.js` and `ui/dist/src/index.d.ts`.
-- **RSC Support**: Includes the `"use client";` banner in the Rollup output options to prevent import conflicts in Server Component frameworks.
+- **Lit 3 Custom Elements**: Every component is a `LitElement` subclass registered with an idempotent `defineElement('moul-*', Class)` and an open Shadow Root.
+- **CSS Token Layer**: `ui/src/styles/style.css` defines `:root` custom properties (OKLCH + `light-dark()`), emitted to `dist/assets/style.css` and exported as `@moul-dev/ui/style.css`. Brand hooks: `--brand-hue`, `--brand-chroma-multiplier`, `--brand-radius-factor`, `--brand-density-factor`.
+- **Native Platform APIs**: `ElementInternals` for form association, `<dialog>` for modals, the Popover API + CSS anchor positioning for overlays.
+- **Vite Library Mode**: Emits `dist/moul-ui.js` (prefixed with a `"use client";` banner for RSC frameworks) and `dist/src/index.d.ts`.
+- **Custom Elements Manifest**: `cem analyze` writes `dist/custom-elements.json`, the source of truth for `sync:llms`.
+- **No React**: `scripts/verify-no-react.ts` fails the build if React, React Aria, StyleX, or `@lit/react` appear in `ui/` or `docs/` manifests.
 
 ### 2. Documentation Website (`docs/`)
-- **Waku**: React Server Components (RSC) framework.
-- **Fumadocs**: Custom MDX compilation engine and layouts for rich developer docs.
-- **Styling**: Loads Tailwind CSS along with Fumadocs styling, and imports the compiled UI library CSS with `@import '@moul-dev/ui/style.css'` in `docs/src/styles/globals.css`.
-- **Global Components**: The UI `Button` is imported from the `@moul-dev/ui` workspace package and registered inside `docs/src/components/mdx.tsx` to be used directly in `.mdx` files as `<Button>`.
+- **Astro Starlight**: Static output, bilingual i18n (`en` at the root with `hideLocale: 'root'`, `km` under `/km/`).
+- **Previews**: `ComponentPreview.astro` renders native `<moul-*>` tags directly in MDX and loads `@moul-dev/ui` client-side.
+- **Styling**: `docs/src/styles/global.css` imports `@moul-dev/ui/style.css` and applies `Kantumruy Pro` to Khmer content.
 
 ## AI Coding Agent Guidelines for `@moul-dev/ui`
 
-When generating or editing React code using `@moul-dev/ui` components:
+<!-- sync:llms:start -->
+<!-- Generated by `bun run sync:llms --write`. Edit scripts/sync-llms.ts instead. -->
 
-1. **Imports**: Always import components directly from `@moul-dev/ui` (e.g. `import { Button, TextField, Modal, Card, AreaChart, Pagination, ProgressBar, EmptyState } from '@moul-dev/ui'`) and design tokens from `@moul-dev/ui/tokens.stylex`.
-2. **Event Handlers**: Use React Aria's `onPress` instead of `onClick` on `<Button>`, `<Link>`, and interactive triggers.
-3. **Selection & Collections**: Use `selectedKey` / `defaultSelectedKey` or `selectedKeys` and `onSelectionChange` for collection components (`Select`, `ComboBox`, `Tabs`, `Table`, `TagGroup`, `Sidebar`, `Pagination`).
-4. **Dialogs & Overlays**: Use `isOpen` and `onOpenChange` on `<ModalOverlay>` / `<Popover>` / `<AlertDialog>`.
-5. **Accessibility**: Always provide an `aria-label` when rendering icon-only buttons.
-6. **Compound Structure**: Follow compound component patterns (e.g., `<Modal><ModalOverlay><ModalDialog><ModalHeader>...`).
+When generating or editing code that uses `@moul-dev/ui`:
+
+- **Imports**: `import '@moul-dev/ui'` once registers every `<moul-*>` element. Import design tokens with `import '@moul-dev/ui/style.css'`. There is no `@moul-dev/ui/react`, `@moul-dev/ui/tokens`, or `@moul-dev/ui/tokens.stylex` entry point.
+- **Markup, not JSX components**: Write native custom element tags (`<moul-button>`), never PascalCase components (`<Button>`). They work in plain HTML, Astro, Lit, Vue, Svelte, and React 19.
+- **Attributes are kebab-case**: Boolean state uses presence attributes such as `is-disabled`, `is-open`, `is-checked`, `is-required`. The matching JS property is camelCase (`el.isDisabled = true`).
+- **Rich data is set as properties**: Arrays, objects, and functions (`data`, `series`, `columns`, `items`, `logs`, `valueFormatter`) are assigned in JavaScript, not serialized into attributes.
+- **Events are DOM events**: Listen with `addEventListener` (`press`, `change`, `input`, `openchange`, `selectionchange`, `pagechange`, `dismiss`). Payloads live on `event.detail`. There is no `onPress` prop.
+- **Overlays**: Toggle `is-open` (or `el.isOpen`) on `<moul-modal>`, `<moul-drawer>`, `<moul-alert-dialog>`, `<moul-popover>`, `<moul-tooltip>`, `<moul-command-palette>`, and react to `openchange` (`detail.isOpen`).
+- **Forms**: Inputs are form-associated via `ElementInternals`; give each a `name` and it submits with a native `<form>` / `FormData`.
+- **Semantic tones & variants**: `tone` is one of `primary | accent | success | warning | error`; surface `variant` is one of `solid | flat | shadow | bordered | glass`. `<moul-button>` has its own `variant` set (`primary | secondary | tertiary | outline | ghost | danger | danger-soft`).
+- **Accessibility**: Icon-only buttons (`is-icon`) and dot badges (`is-dot`) must have an `aria-label`.
+- **Theming**: Override `--brand-hue`, `--brand-chroma-multiplier`, `--brand-radius-factor`, and `--brand-density-factor` on `:root` (or any ancestor). Style internals through `::part(...)`.
+
+**Element index** (full API in `docs/public/llms-full.txt`):
+
+- **Charts & Data Visualization**: `<moul-area-chart>`, `<moul-bar-chart>`, `<moul-line-chart>`, `<moul-doughnut-chart>`, `<moul-heatmap-chart>`, `<moul-funnel-chart>`, `<moul-top-list>`, `<moul-stat>`, `<moul-percentage-bar>`, `<moul-percentage-circle>`, `<moul-chart-container>`, `<moul-chart-tooltip>`
+- **Actions & Toggles**: `<moul-button>`, `<moul-button-group>`, `<moul-toggle-button>`, `<moul-toggle-button-group>`
+- **Inputs & Forms**: `<moul-text-field>`, `<moul-number-field>`, `<moul-search-field>`, `<moul-text-area>`, `<moul-checkbox>`, `<moul-checkbox-group>`, `<moul-radio-group>`, `<moul-radio>`, `<moul-switch>`, `<moul-slider>`, `<moul-select>`, `<moul-select-item>`, `<moul-combobox>`, `<moul-combobox-item>`, `<moul-date-picker>`, `<moul-calendar>`, `<moul-input-otp>`, `<moul-form>`
+- **Overlays & Navigation**: `<moul-modal>`, `<moul-alert-dialog>`, `<moul-drawer>`, `<moul-popover>`, `<moul-tooltip>`, `<moul-command-palette>`, `<moul-tabs>`, `<moul-tab>`, `<moul-tab-panel>`, `<moul-breadcrumbs>`, `<moul-breadcrumb-item>`, `<moul-pagination>`, `<moul-link>`
+- **Surfaces & Feedback**: `<moul-alert>`, `<moul-card>`, `<moul-card-header>`, `<moul-card-body>`, `<moul-card-footer>`, `<moul-badge>`, `<moul-avatar>`, `<moul-avatar-group>`, `<moul-typography>`, `<moul-kbd>`, `<moul-separator>`, `<moul-spinner>`, `<moul-skeleton>`, `<moul-progress-bar>`, `<moul-tag-group>`, `<moul-tag>`, `<moul-table>`, `<moul-toast>`, `<moul-toast-region>`, `<moul-empty-state>`
+- **Composite Blocks**: `<moul-logs-viewer>`, `<moul-logs>`, `<moul-sidebar>`, `<moul-sidebar-aside>`, `<moul-sidebar-header>`, `<moul-sidebar-brand>`, `<moul-sidebar-group>`, `<moul-sidebar-item>`, `<moul-sidebar-divider>`, `<moul-sidebar-footer>`, `<moul-sidebar-user>`, `<moul-sidebar-main>`
+<!-- sync:llms:end -->
 
 ### Machine-Readable Context Files
 - **Public Agent Rules & Recipes**: `docs/public/AGENTS.md` (served at `/AGENTS.md`)
 - **LLM Index Specification**: `docs/public/llms.txt` (served at `/llms.txt`)
 - **Full LLM Single-File Reference**: `docs/public/llms-full.txt` (served at `/llms-full.txt`)
-- **Docs Guide**: `docs/content/docs/llms.mdx` (served at `/docs/llms`)
+- **Docs Guide**: `docs/src/content/docs/docs/llms.mdx` (served at `/docs/llms`)
+
+All three files in `docs/public/` and the generated block above are produced by `bun run sync:llms --write`. Edit `scripts/sync-llms.ts` or `scripts/llms-catalog.ts`, never the outputs.
 
 ## Changelog Writing Guidelines
 
-When writing or updating changelog entries in `docs/content/changelog/`:
+When writing or updating changelog entries in `docs/src/content/docs/changelog/`:
 
 1. **Role & Voice:** Write as a highly experienced software engineer, open-source maintainer, and tech craftsman. Quiet authority, humble peer, direct and plainspoken. Use an honest, reflective "I" (Phearak S. Tha), never corporate "we".
 2. **Banned Language:** Never use marketing buzzwords ("game-changing", "revolutionary", "seamless", "next-generation", "thrilled to announce", "lightning-fast"). Use precise, empirical context.

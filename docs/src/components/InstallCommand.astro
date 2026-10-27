@@ -1,0 +1,439 @@
+---
+// Install snippet with a package-manager switcher. Switching slides the tab
+// pill and rolls the command prefix; clicking the bar copies the command.
+interface Props {
+  packageName: string
+}
+
+const { packageName } = Astro.props
+
+const MANAGERS = [
+  { id: 'pnpm', prefix: 'pnpm add' },
+  { id: 'yarn', prefix: 'yarn add' },
+  { id: 'bun', prefix: 'bun add' },
+  { id: 'npm', prefix: 'npm i' },
+]
+---
+
+<docs-install-command class="install" data-package={packageName}>
+  <div class="install-tabs" role="tablist" aria-label="Package manager">
+    <span class="install-tab-pill" aria-hidden="true"></span>
+    {
+      MANAGERS.map(({ id }, index) => (
+        <button
+          type="button"
+          role="tab"
+          class="install-tab"
+          data-manager={id}
+          aria-selected={index === 0 ? 'true' : 'false'}
+          tabindex={index === 0 ? 0 : -1}
+        >
+          {id}
+        </button>
+      ))
+    }
+  </div>
+
+  <div class="install-bar">
+    <code class="install-command">
+      <span class="install-prompt" aria-hidden="true">$</span>
+      <span class="install-prefixes">
+        {
+          MANAGERS.map(({ id, prefix }, index) => (
+            <span
+              class:list={['install-prefix', index === 0 && 'is-active']}
+              data-manager={id}
+              aria-hidden={index === 0 ? undefined : 'true'}
+            >
+              {prefix}
+            </span>
+          ))
+        }
+      </span>
+      <span class="install-package">{packageName}</span>
+    </code>
+    <button type="button" class="install-copy" aria-label="Copy install command">
+      <svg class="icon-copy" viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+      </svg>
+      <svg class="icon-check" viewBox="0 0 24 24" aria-hidden="true">
+        <polyline points="20 6 9 17 4 12"></polyline>
+      </svg>
+      <span class="install-toast" role="status"></span>
+    </button>
+  </div>
+</docs-install-command>
+
+<script>
+  class InstallCommand extends HTMLElement {
+    #timer?: ReturnType<typeof setTimeout>
+    #ready = false
+
+    connectedCallback() {
+      if (this.#ready) return
+      this.#ready = true
+
+      this.querySelector('.install-tabs')!.addEventListener('click', (event) => {
+        const tab = (event.target as Element).closest<HTMLElement>('[role=tab]')
+        if (tab) this.#select(tab)
+      })
+      this.querySelector('.install-tabs')!.addEventListener('keydown', (event) => {
+        const { key } = event as KeyboardEvent
+        const step = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[
+          key
+        ]
+        if (!step) return
+        event.preventDefault()
+        const tabs = this.#tabs
+        const next = tabs[(this.#selected + step + tabs.length) % tabs.length]!
+        this.#select(next)
+        next.focus()
+      })
+      this.querySelector('.install-bar')!.addEventListener('click', () =>
+        this.#copy(),
+      )
+
+      // Measure once fonts settle, so the pill and prefix width are exact.
+      document.fonts.ready.then(() => this.#layout())
+      new ResizeObserver(() => this.#layout()).observe(this)
+    }
+
+    get #tabs() {
+      return [...this.querySelectorAll<HTMLElement>('[role=tab]')]
+    }
+
+    get #selected() {
+      return this.#tabs.findIndex(
+        (tab) => tab.getAttribute('aria-selected') === 'true',
+      )
+    }
+
+    get #command() {
+      const prefix = this.querySelector('.install-prefix.is-active')!
+      return `${prefix.textContent!.trim()} ${this.dataset.package}`
+    }
+
+    #select(tab: HTMLElement) {
+      const tabs = this.#tabs
+      const from = this.#selected
+      const to = tabs.indexOf(tab)
+      if (from === to) return
+
+      for (const t of tabs) {
+        t.setAttribute('aria-selected', String(t === tab))
+        t.tabIndex = t === tab ? 0 : -1
+      }
+      // Moving right, the old prefix exits upward while the new one rises in
+      // from below; moving left, both travel down.
+      for (const prefix of this.querySelectorAll<HTMLElement>('.install-prefix')) {
+        const active = prefix.dataset.manager === tab.dataset.manager
+        const leaving = prefix.classList.contains('is-active')
+        prefix.classList.toggle('is-active', active)
+        prefix.classList.toggle('is-exit-up', leaving && to > from)
+        if (active) prefix.removeAttribute('aria-hidden')
+        else prefix.setAttribute('aria-hidden', 'true')
+      }
+      this.#layout()
+    }
+
+    #layout() {
+      const tab = this.#tabs[this.#selected]
+      const prefix = this.querySelector<HTMLElement>('.install-prefix.is-active')
+      if (tab) {
+        this.style.setProperty('--pill-x', `${tab.offsetLeft}px`)
+        this.style.setProperty('--pill-width', `${tab.offsetWidth}px`)
+      }
+      if (prefix) {
+        this.style.setProperty('--prefix-width', `${prefix.offsetWidth}px`)
+      }
+    }
+
+    async #copy() {
+      const command = this.#command
+      try {
+        await navigator.clipboard.writeText(command)
+      } catch {
+        // Embedded frames can deny the async clipboard; copy a selection instead.
+        const field = Object.assign(document.createElement('textarea'), {
+          value: command,
+        })
+        document.body.append(field)
+        field.select()
+        const copied = document.execCommand('copy')
+        field.remove()
+        if (!copied) return
+      }
+      this.querySelector('.install-toast')!.textContent = 'Copied!'
+      this.toggleAttribute('data-copied', true)
+      clearTimeout(this.#timer)
+      this.#timer = setTimeout(() => {
+        this.removeAttribute('data-copied')
+        this.querySelector('.install-toast')!.textContent = ''
+      }, 2000)
+    }
+  }
+
+  customElements.define('docs-install-command', InstallCommand)
+</script>
+
+<style>
+  .install {
+    --ease-glide: cubic-bezier(0.16, 1, 0.3, 1);
+    --install-brand: light-dark(
+      oklch(0.6 calc(0.17 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250)),
+      oklch(0.8 calc(0.16 * var(--brand-chroma-multiplier, 1)) var(--brand-hue, 250))
+    );
+    --install-success: oklch(0.65 0.18 145);
+
+    display: inline-flex;
+    flex-direction: column;
+    max-width: 100%;
+    border: 1px solid light-dark(oklch(0.9 0.008 260), oklch(0.26 0.01 260));
+    border-radius: 0.875rem;
+    background: light-dark(rgb(255 255 255 / 0.7), rgb(18 18 22 / 0.75));
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+    box-shadow: light-dark(
+      0 4px 20px -2px rgb(0 0 0 / 0.04),
+      0 4px 24px -2px rgb(0 0 0 / 0.35)
+    );
+    text-align: start;
+    transition:
+      border-color 0.3s var(--ease-glide),
+      box-shadow 0.3s var(--ease-glide);
+  }
+
+  .install:hover {
+    border-color: color-mix(in oklab, var(--install-brand) 45%, transparent);
+    box-shadow: 0 8px 30px -4px
+      color-mix(in oklab, var(--install-brand) 15%, transparent);
+  }
+
+  .install[data-copied] {
+    border-color: color-mix(in oklab, var(--install-success) 60%, transparent);
+    box-shadow: 0 0 20px -2px
+      color-mix(in oklab, var(--install-success) 20%, transparent);
+  }
+
+  /* ── Tabs ── */
+  .install-tabs {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(4, 3.25rem);
+    gap: 2px;
+    padding: 0.5rem 0.625rem 0.375rem;
+    border-bottom: 1px solid
+      light-dark(oklch(0.92 0.005 260 / 0.6), oklch(0.24 0.008 260 / 0.6));
+  }
+
+  .install-tab-pill {
+    position: absolute;
+    inset-block: 0.5rem 0.375rem;
+    left: 0;
+    width: var(--pill-width, 0);
+    transform: translateX(var(--pill-x, 0));
+    border: 1px solid light-dark(oklch(0.9 0.008 260 / 0.8), transparent);
+    border-radius: 0.375rem;
+    background: light-dark(#fff, oklch(0.3 0.01 260));
+    box-shadow: light-dark(0 1px 3px rgb(0 0 0 / 0.06), 0 1px 4px rgb(0 0 0 / 0.4));
+    transition:
+      transform 0.25s var(--ease-glide),
+      width 0.25s var(--ease-glide);
+    pointer-events: none;
+  }
+
+  .install-tab {
+    position: relative;
+    padding: 0.25rem;
+    border: none;
+    border-radius: 0.375rem;
+    background: none;
+    color: light-dark(oklch(0.55 0.01 260), oklch(0.6 0.01 260));
+    font: 500 0.75rem/1.25rem var(--font-family-mono);
+    cursor: pointer;
+    transition: color 0.18s ease;
+  }
+
+  .install-tab:hover {
+    color: light-dark(oklch(0.25 0.01 260), oklch(0.85 0.01 260));
+  }
+
+  .install-tab[aria-selected='true'] {
+    color: var(--color-fg);
+    font-weight: 600;
+  }
+
+  .install-tab:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 1px;
+  }
+
+  /* ── Command bar ── */
+  .install-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.875rem;
+    padding: 0.625rem 0.875rem 0.625rem 1rem;
+    cursor: pointer;
+  }
+
+  .install-command {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 0;
+    overflow: hidden;
+    padding: 0;
+    background: none;
+    font: 0.875rem/1.5rem var(--font-family-mono);
+    white-space: nowrap;
+  }
+
+  .install-prompt {
+    color: light-dark(oklch(0.55 0.01 260), oklch(0.5 0.01 260));
+    font-weight: 600;
+    user-select: none;
+  }
+
+  .install-prefixes {
+    display: inline-grid;
+    width: var(--prefix-width, auto);
+    overflow: hidden;
+    transition: width 0.28s var(--ease-glide);
+  }
+
+  .install-prefix {
+    grid-area: 1 / 1;
+    justify-self: start;
+    color: light-dark(oklch(0.3 0.01 260), oklch(0.85 0.01 260));
+    font-weight: 500;
+    opacity: 0;
+    filter: blur(4px);
+    transform: translateY(12px);
+    transition:
+      transform 0.28s var(--ease-glide),
+      opacity 0.24s var(--ease-glide),
+      filter 0.24s var(--ease-glide);
+  }
+
+  .install-prefix.is-active {
+    opacity: 1;
+    filter: none;
+    transform: none;
+  }
+
+  .install-prefix.is-exit-up {
+    transform: translateY(-12px);
+  }
+
+  .install-package {
+    color: var(--install-brand);
+    font-weight: 600;
+  }
+
+  .install-copy {
+    position: relative;
+    display: inline-grid;
+    flex-shrink: 0;
+    place-items: center;
+    padding: 0.3125rem;
+    border: 1px solid transparent;
+    border-radius: 0.4375rem;
+    background: none;
+    color: light-dark(oklch(0.55 0.01 260), oklch(0.6 0.01 260));
+    cursor: pointer;
+    transition:
+      color 0.15s ease,
+      background-color 0.15s ease,
+      border-color 0.15s ease,
+      transform 0.15s var(--ease-glide);
+  }
+
+  .install-copy:hover {
+    border-color: light-dark(oklch(0.88 0.005 260), oklch(0.32 0.01 260));
+    background: light-dark(oklch(0.92 0.005 260 / 0.8), oklch(0.24 0.008 260 / 0.8));
+    color: var(--color-fg);
+    transform: scale(1.04);
+  }
+
+  .install-copy:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 1px;
+  }
+
+  .install-copy svg {
+    grid-area: 1 / 1;
+    width: 1rem;
+    height: 1rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .icon-check,
+  [data-copied] .icon-copy {
+    visibility: hidden;
+  }
+
+  [data-copied] .install-copy {
+    border-color: color-mix(in oklab, var(--install-success) 30%, transparent);
+    background: color-mix(in oklab, var(--install-success) 12%, transparent);
+    color: var(--install-success);
+  }
+
+  [data-copied] .icon-check {
+    visibility: visible;
+    animation: copy-pop 0.3s var(--ease-glide);
+  }
+
+  .install-toast {
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    padding: 0.2rem 0.5rem;
+    border-radius: 0.375rem;
+    background: light-dark(oklch(0.2 0.01 260), oklch(0.3 0.01 260));
+    color: #fff;
+    font: 600 0.6875rem / 1.4 var(--sl-font);
+    white-space: nowrap;
+    translate: -50% 0;
+    pointer-events: none;
+  }
+
+  .install-toast:empty {
+    display: none;
+  }
+
+  .install-toast:not(:empty) {
+    animation: toast-in 0.2s var(--ease-glide);
+  }
+
+  @keyframes copy-pop {
+    0% {
+      opacity: 0;
+      transform: scale(0.6) rotate(-15deg);
+    }
+    60% {
+      opacity: 1;
+      transform: scale(1.18) rotate(3deg);
+    }
+  }
+
+  @keyframes toast-in {
+    from {
+      opacity: 0;
+      transform: translateY(4px) scale(0.92);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .install * {
+      transition-duration: 0s !important;
+      animation: none !important;
+    }
+  }
+</style>

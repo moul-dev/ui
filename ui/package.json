@@ -1,12 +1,17 @@
 {
   "name": "@moul-dev/ui",
-  "version": "2026.9.28",
-  "description": "Accessible, zero-runtime React component library built on React Aria and StyleX",
+  "version": "2026.10.16",
+  "description": "Accessible, standards-first Web Components library built with Lit, Shadow DOM, and native CSS tokens",
   "license": "MIT",
   "type": "module",
   "main": "./dist/moul-ui.js",
   "module": "./dist/moul-ui.js",
   "types": "./dist/src/index.d.ts",
+  "customElements": "dist/custom-elements.json",
+  "sideEffects": [
+    "./dist/moul-ui.js",
+    "./dist/assets/style.css"
+  ],
   "files": [
     "dist",
     "README.md",
@@ -25,44 +30,29 @@
     "url": "https://github.com/moul-dev/ui/issues"
   },
   "keywords": [
-    "react",
-    "react-aria",
-    "stylex",
+    "lit",
+    "web-components",
+    "custom-elements",
+    "shadow-dom",
     "components",
     "accessible",
     "design-system",
-    "zero-runtime",
     "ui"
   ],
   "exports": {
     ".": {
       "types": "./dist/src/index.d.ts",
-      "import": "./dist/moul-ui.js"
-    },
-    "./tokens": {
-      "types": "./dist/src/tokens/tokens.stylex.d.ts",
-      "import": "./dist/tokens.stylex.js"
-    },
-    "./tokens.stylex": {
-      "types": "./dist/src/tokens/tokens.stylex.d.ts",
-      "import": "./dist/tokens.stylex.js"
-    },
-    "./theme.css": {
-      "style": "./dist/theme.css",
-      "default": "./dist/theme.css"
-    },
-    "./style": {
-      "style": "./dist/assets/stylex.css",
-      "default": "./dist/assets/stylex.css"
+      "import": "./dist/moul-ui.js",
+      "default": "./dist/moul-ui.js"
     },
     "./style.css": {
-      "style": "./dist/assets/stylex.css",
-      "default": "./dist/assets/stylex.css"
+      "style": "./dist/assets/style.css",
+      "default": "./dist/assets/style.css"
     }
   },
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "bun ../scripts/verify-no-react.ts ui && tsc -b && vite build && cem analyze --config custom-elements-manifest.config.mjs",
     "build:watch": "vite build --watch",
     "lint": "biome check",
     "format": "biome format --write",
@@ -70,35 +60,24 @@
     "preview": "vite preview",
     "test": "vitest run"
   },
-  "peerDependencies": {
-    "@stylexjs/stylex": "^0.19.0",
-    "react": "^18.0.0 || ^19.0.0",
-    "react-dom": "^18.0.0 || ^19.0.0"
-  },
   "dependencies": {
-    "@phosphor-icons/react": "^2.1.10",
-    "@stylexjs/stylex": "^0.19.0",
-    "input-otp": "^1.4.2",
-    "motion": "^13.4.1",
-    "react-aria": "^3.50.0",
-    "react-aria-components": "^1.19.0",
-    "recharts": "^3.9.2"
+    "@lit-labs/virtualizer": "^2.1.0",
+    "@lit/context": "^1.1.3",
+    "d3-scale": "^4.0.2",
+    "d3-shape": "^3.2.0",
+    "lit": "^3.2.1",
+    "motion": "^13.4.1"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.0",
-    "@stylexjs/unplugin": "^0.19.0",
-    "@testing-library/jest-dom": "^6.6.3",
-    "@testing-library/react": "^16.1.0",
+    "@custom-elements-manifest/analyzer": "^0.10.4",
+    "@open-wc/testing-helpers": "^2.2.0",
+    "@types/d3-scale": "^4.0.8",
+    "@types/d3-shape": "^3.1.6",
     "@types/node": "^24.12.3",
-    "@types/react": "^19.2.14",
-    "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react": "^6.0.1",
     "fast-check": "^3.23.2",
     "glob": "^11.0.0",
-    "jsdom": "^25.0.1",
-    "lightningcss": "^1.33.0",
-    "react": "^19.2.6",
-    "react-dom": "^19.2.6",
+    "happy-dom": "^16.8.1",
     "typescript": "~6.0.2",
     "vite": "^8.0.12",
     "vite-plugin-dts": "^5.0.2",

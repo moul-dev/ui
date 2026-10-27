@@ -1,0 +1,226 @@
+---
+title: Sidebar
+description: Collapsible application sidebar.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+`<moul-sidebar>` lays out navigation beside your main content. The selection pill glides between items and the aside collapses to an icon rail.
+
+<ComponentPreview align="stretch" backdrop="plain">
+<div style="height: 420px; border-radius: 1rem; overflow: hidden; border: 1px solid var(--color-border-subtle)">
+  <moul-sidebar layout="sidebar-framed" selected-key="overview" style="height: 100%">
+    <moul-sidebar-aside show-collapse-toggle aria-label="Workspace">
+      <moul-sidebar-header>
+        <moul-sidebar-brand title="Moul" subtitle="Workspace"></moul-sidebar-brand>
+      </moul-sidebar-header>
+      <moul-sidebar-group label="Project">
+        <moul-sidebar-item key="overview" label="Overview"><span slot="icon">◎</span></moul-sidebar-item>
+        <moul-sidebar-item key="deployments" label="Deployments" badge="3"><span slot="icon">⇪</span></moul-sidebar-item>
+        <moul-sidebar-item key="logs" label="Logs"><span slot="icon">≡</span></moul-sidebar-item>
+        <moul-sidebar-item key="settings" label="Settings"><span slot="icon">⚙</span></moul-sidebar-item>
+      </moul-sidebar-group>
+      <moul-sidebar-divider></moul-sidebar-divider>
+      <moul-sidebar-footer>
+        <moul-sidebar-user name="Kim Ly" email="kim@example.com" status="online"></moul-sidebar-user>
+      </moul-sidebar-footer>
+    </moul-sidebar-aside>
+    <moul-sidebar-main>
+      <div style="padding: 1.5rem">Main content</div>
+    </moul-sidebar-main>
+  </moul-sidebar>
+</div>
+</ComponentPreview>
+
+```html
+<div style="height: 420px; border-radius: 1rem; overflow: hidden; border: 1px solid var(--color-border-subtle)">
+  <moul-sidebar layout="sidebar-framed" selected-key="overview" style="height: 100%">
+    <moul-sidebar-aside show-collapse-toggle aria-label="Workspace">
+      <moul-sidebar-header>
+        <moul-sidebar-brand title="Moul" subtitle="Workspace"></moul-sidebar-brand>
+      </moul-sidebar-header>
+      <moul-sidebar-group label="Project">
+        <moul-sidebar-item key="overview" label="Overview"><span slot="icon">◎</span></moul-sidebar-item>
+        <moul-sidebar-item key="deployments" label="Deployments" badge="3"><span slot="icon">⇪</span></moul-sidebar-item>
+        <moul-sidebar-item key="logs" label="Logs"><span slot="icon">≡</span></moul-sidebar-item>
+        <moul-sidebar-item key="settings" label="Settings"><span slot="icon">⚙</span></moul-sidebar-item>
+      </moul-sidebar-group>
+      <moul-sidebar-divider></moul-sidebar-divider>
+      <moul-sidebar-footer>
+        <moul-sidebar-user name="Kim Ly" email="kim@example.com" status="online"></moul-sidebar-user>
+      </moul-sidebar-footer>
+    </moul-sidebar-aside>
+    <moul-sidebar-main>
+      <div style="padding: 1.5rem">Main content</div>
+    </moul-sidebar-main>
+  </moul-sidebar>
+</div>
+```
+
+## API reference
+
+### `<moul-sidebar>`
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `layout` | `layout` | `'sidebar-framed' \| 'main-framed'` | `'sidebar-framed'` |
+| `dense` | `dense` | `boolean` | `false` |
+| `collapsed` | `collapsed` | `boolean` | `false` |
+| `selected-key` | `selectedKey` | `string` | `''` |
+
+| Event | Type |
+| :-- | :-- |
+| `selectionchange` | `CustomEvent` |
+| `collapsechange` | `CustomEvent` |
+
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | — |
+
+### `<moul-sidebar-aside>`
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `aria-label` | `ariaLabel` | `string` | `'Main Navigation'` |
+| `show-collapse-toggle` | `showCollapseToggle` | `boolean` | `false` |
+| `dense` | `dense` | `boolean` | `false` |
+| `collapsed` | `collapsed` | `boolean` | `false` |
+| `layout` | `layout` | `string` | `'sidebar-framed'` |
+
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | — |
+
+**CSS parts:** `aside`, `toggle-button`
+
+### `<moul-sidebar-header>`
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `dense` | `dense` | `boolean` | `false` |
+| `collapsed` | `collapsed` | `boolean` | `false` |
+
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | — |
+
+**CSS parts:** `header`
+
+### `<moul-sidebar-brand>`
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `logo` | `logo` | `string` | `''` |
+| `title` | `title` | `string` | `''` |
+| `subtitle` | `subtitle` | `string` | `''` |
+| `href` | `href` | `string` | `''` |
+| `dense` | `dense` | `boolean` | `false` |
+| `collapsed` | `collapsed` | `boolean` | `false` |
+
+| Slot | Description |
+| :-- | :-- |
+| `logo` | — |
+| `title` | — |
+| `subtitle` | — |
+| `(default)` | — |
+
+**CSS parts:** `logo`, `info`, `title`, `subtitle`, `link`
+
+### `<moul-sidebar-group>`
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `label` | `label` | `string` | `''` |
+| `collapsible` | `collapsible` | `boolean` | `true` |
+| `collapsed` | `collapsed` | `boolean` | `false` |
+| `dense` | `dense` | `boolean` | `false` |
+| `collapsed-sidebar` | `collapsedSidebar` | `boolean` | `false` |
+
+| Event | Type |
+| :-- | :-- |
+| `collapsechange` | `CustomEvent` |
+
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | — |
+
+**CSS parts:** `group-header`, `group-title`, `chevron`, `items`, `items-inner`
+
+### `<moul-sidebar-item>`
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `key` | `key` | `string` | `''` |
+| `id` | `id` | `string` | `''` |
+| `href` | `href` | `string` | `''` |
+| `label` | `label` | `string` | `''` |
+| `badge` | `badge` | `string` | `''` |
+| `is-disabled` | `isDisabled` | `boolean` | `false` |
+| `is-selected` | `isSelected` | `boolean` | `false` |
+| `dense` | `dense` | `boolean` | `false` |
+| `collapsed` | `collapsed` | `boolean` | `false` |
+
+| Event | Type |
+| :-- | :-- |
+| `selectionchange` | `CustomEvent` |
+
+| Slot | Description |
+| :-- | :-- |
+| `icon` | — |
+| `(default)` | — |
+
+**CSS parts:** `indicator`, `item`, `icon`, `label`, `badge`
+
+### `<moul-sidebar-divider>`
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `dense` | `dense` | `boolean` | `false` |
+| `collapsed` | `collapsed` | `boolean` | `false` |
+
+### `<moul-sidebar-footer>`
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `dense` | `dense` | `boolean` | `false` |
+| `collapsed` | `collapsed` | `boolean` | `false` |
+| `show-border` | `showBorder` | `boolean` | `true` |
+
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | — |
+
+**CSS parts:** `footer`
+
+### `<moul-sidebar-user>`
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `name` | `name` | `string` | `''` |
+| `email` | `email` | `string` | `''` |
+| `avatar-src` | `avatarSrc` | `string` | `''` |
+| `status` | `status` | `string` | `''` |
+| `dense` | `dense` | `boolean` | `false` |
+| `collapsed` | `collapsed` | `boolean` | `false` |
+
+| Slot | Description |
+| :-- | :-- |
+| `avatar` | — |
+| `name` | — |
+| `email` | — |
+| `action` | — |
+| `(default)` | — |
+
+**CSS parts:** `avatar`, `info`, `name`, `email`, `action`
+
+### `<moul-sidebar-main>`
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `layout` | `layout` | `string` | `'sidebar-framed'` |
+
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | — |
+
+**CSS parts:** `main`

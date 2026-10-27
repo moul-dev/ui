@@ -1,0 +1,58 @@
+---
+title: Form (សមាសភាគ)
+description: ឯកសារណែនាំសម្រាប់សមាសភាគ Form Web Component
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+`<moul-form>` collects every form-associated Moul input by `name`, runs constraint validation on submit and fires `submit` with the `FormData`.
+
+<ComponentPreview>
+<moul-form style="width: min(100%, 22rem)">
+  <div class="demo-stack">
+    <moul-text-field name="username" label="Username" placeholder="alice" is-required></moul-text-field>
+    <moul-select name="role" label="Role" selected-key="editor">
+      <moul-select-item key="viewer">Viewer</moul-select-item>
+      <moul-select-item key="editor">Editor</moul-select-item>
+      <moul-select-item key="admin">Admin</moul-select-item>
+    </moul-select>
+    <moul-switch name="notify" is-checked>Email me about activity</moul-switch>
+    <moul-button type="submit">Create account</moul-button>
+  </div>
+</moul-form>
+</ComponentPreview>
+
+```html
+<moul-form style="width: min(100%, 22rem)">
+  <div class="demo-stack">
+    <moul-text-field name="username" label="Username" placeholder="alice" is-required></moul-text-field>
+    <moul-select name="role" label="Role" selected-key="editor">
+      <moul-select-item key="viewer">Viewer</moul-select-item>
+      <moul-select-item key="editor">Editor</moul-select-item>
+      <moul-select-item key="admin">Admin</moul-select-item>
+    </moul-select>
+    <moul-switch name="notify" is-checked>Email me about activity</moul-switch>
+    <moul-button type="submit">Create account</moul-button>
+  </div>
+</moul-form>
+```
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `action` | `action` | `string` | `''` |
+| `method` | `method` | `'get' \| 'post' \| 'dialog'` | `'post'` |
+| `novalidate` | `novalidate` | `boolean` | `false` |
+
+| Event | Type |
+| :-- | :-- |
+| `submit` | `CustomEvent` |
+| `reset` | `CustomEvent` |
+| `invalid` | `CustomEvent` |
+
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | — |
+
+**CSS parts:** `base`

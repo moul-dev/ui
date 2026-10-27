@@ -1,0 +1,80 @@
+---
+title: ComboBox
+description: Text input that filters a list of options.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+`<moul-combobox>` filters options as you type and commits the highlighted one on Enter.
+
+<ComponentPreview align="start" minHeight="300px">
+<div style="width: min(100%, 18rem)">
+  <moul-combobox label="Framework" placeholder="Search frameworks…">
+    <moul-combobox-item key="astro">Astro</moul-combobox-item>
+    <moul-combobox-item key="lit">Lit</moul-combobox-item>
+    <moul-combobox-item key="svelte">Svelte</moul-combobox-item>
+    <moul-combobox-item key="vue">Vue</moul-combobox-item>
+    <moul-combobox-item key="waku">Waku</moul-combobox-item>
+  </moul-combobox>
+</div>
+</ComponentPreview>
+
+```html
+<div style="width: min(100%, 18rem)">
+  <moul-combobox label="Framework" placeholder="Search frameworks…">
+    <moul-combobox-item key="astro">Astro</moul-combobox-item>
+    <moul-combobox-item key="lit">Lit</moul-combobox-item>
+    <moul-combobox-item key="svelte">Svelte</moul-combobox-item>
+    <moul-combobox-item key="vue">Vue</moul-combobox-item>
+    <moul-combobox-item key="waku">Waku</moul-combobox-item>
+  </moul-combobox>
+</div>
+```
+
+## API reference
+
+### `<moul-combobox>`
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `name` | `name` | `string` | `''` |
+| `selected-key` | `selectedKey` | `string` | `''` |
+| `input-value` | `inputValue` | `string` | `''` |
+| `placeholder` | `placeholder` | `string` | `''` |
+| `label` | `label` | `string` | `''` |
+| `is-disabled` | `isDisabled` | `boolean` | `false` |
+| `is-required` | `isRequired` | `boolean` | `false` |
+| `is-open` | `isOpen` | `boolean` | `false` |
+
+| Event | Type |
+| :-- | :-- |
+| `selectionchange` | `CustomEvent` |
+| `inputchange` | `CustomEvent` |
+| `change` | `CustomEvent` |
+| `input` | `CustomEvent` |
+
+| Slot | Description |
+| :-- | :-- |
+| `label` | — |
+| `(default)` | — |
+| `empty` | — |
+
+**CSS parts:** `popover`, `base`, `label`, `input-container`, `input`, `toggle-btn`, `empty`
+
+### `<moul-combobox-item>`
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `key` | `key` | `string` | `''` |
+| `text-value` | `textValue` | `string` | `''` |
+| `is-disabled` | `isDisabled` | `boolean` | `false` |
+
+| Event | Type |
+| :-- | :-- |
+| `combobox-item-click` | `CustomEvent` |
+
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | — |
+
+**CSS parts:** `item`

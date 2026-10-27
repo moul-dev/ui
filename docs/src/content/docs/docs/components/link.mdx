@@ -1,0 +1,49 @@
+---
+title: Link
+description: Inline navigation with external-link affordance.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+`<moul-link>` renders an anchor. `is-external` opens a new tab with safe `rel` defaults and adds an arrow glyph.
+
+<ComponentPreview>
+<div class="demo-row">
+  <moul-link href="#">Default link</moul-link>
+  <moul-link href="#" variant="subtle">Subtle link</moul-link>
+  <moul-link href="#" variant="underline">Underlined</moul-link>
+  <moul-link href="https://developer.mozilla.org" is-external>MDN</moul-link>
+  <moul-link href="#" is-disabled>Disabled</moul-link>
+</div>
+</ComponentPreview>
+
+```html
+<div class="demo-row">
+  <moul-link href="#">Default link</moul-link>
+  <moul-link href="#" variant="subtle">Subtle link</moul-link>
+  <moul-link href="#" variant="underline">Underlined</moul-link>
+  <moul-link href="https://developer.mozilla.org" is-external>MDN</moul-link>
+  <moul-link href="#" is-disabled>Disabled</moul-link>
+</div>
+```
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `href` | `href` | `string` | `''` |
+| `target` | `target` | `string` | `''` |
+| `rel` | `rel` | `string` | `''` |
+| `is-external` | `isExternal` | `boolean` | `false` |
+| `variant` | `variant` | `'default' \| 'subtle' \| 'underline'` | `'default'` |
+| `is-disabled` | `isDisabled` | `boolean` | `false` |
+
+| Event | Type |
+| :-- | :-- |
+| `press` | `CustomEvent` |
+
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | — |
+
+**CSS parts:** `base`, `external-icon`

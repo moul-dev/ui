@@ -1,0 +1,44 @@
+---
+title: Moul UI
+description: Web Components ដែលងាយស្រួលប្រើ (Accessible) និងអាចប្ដូរ Theme បាន បង្កើតឡើងដោយ Lit 3 និង Native Browser APIs។ ប្រើបានលើគ្រប់ Framework ឬ HTML ធម្មតា។
+template: splash
+heroBadge: អាចប្រើប្រាស់បានហើយ
+hero:
+  title: 'Web Components <span>សម្រាប់គ្រប់ Stack</span>'
+  tagline: 'Custom Elements ដែលងាយស្រួលប្រើ (Accessible) និងអាចប្ដូរ Theme បាន បង្កើតឡើងដោយ <strong>Lit 3</strong> និង Native Browser APIs។ ប្រើ Component ដដែលនៅក្នុងគ្រប់ Framework, Server Template ឬ HTML ធម្មតា។ រចនាឡើងសម្រាប់ <a href="https://moul.dev">moul.dev</a>។'
+  actions:
+    - text: ចាប់ផ្តើម
+      link: /km/docs
+      icon: right-arrow
+      variant: primary
+    - text: បន្ទប់ពិសោធន៍ Theme
+      link: /theme
+      icon: pencil
+      variant: secondary
+    - text: GitHub
+      link: https://github.com/moul-dev/ui
+      icon: github
+      variant: minimal
+---
+
+import FeatureCard from '@/components/FeatureCard.astro';
+import Features from '@/components/Features.astro';
+
+<Features
+  eyebrow="ហេតុអ្វីជ្រើសរើស Web Components"
+  title="បង្កើតម្ដង ប្រើបានគ្រប់ទីកន្លែង"
+  lead="Component នីមួយៗរបស់ Moul UI គឺជា Custom Element ស្តង់ដារ។ គ្រាន់តែ Import Package ម្ដង នោះ Markup ដដែលនឹងដំណើរការគ្រប់ទីកន្លែងដែល HTML ដំណើរការ ដោយមិនចាំបាច់មាន Wrapper, Adapter ឬជាប់នឹង Framework ណាមួយឡើយ។"
+>
+  <FeatureCard title="Element តែមួយ សម្រាប់គ្រប់ Framework" icon="code">
+    Component ទាំងអស់ចេញជា **Custom Elements** ជាមួយ **Shadow DOM**។ ដាក់ប្រើក្នុង Astro, Vue, Svelte, Server-rendered Template ឬទំព័រ Static ហើយវាដំណើរការដូចគ្នា។
+  </FeatureCard>
+  <FeatureCard title="Native Browser Primitives" icon="zap">
+    បង្កើតឡើងលើ `<dialog>`, Popover API, CSS Anchor Positioning និង Form-associated `ElementInternals` ដូច្នេះ Browser ជាអ្នកធ្វើការងារធ្ងន់ ហើយ Field ទាំងអស់ដំណើរការក្នុង `<form>` ធម្មតា។
+  </FeatureCard>
+  <FeatureCard title="ប្ដូរ Theme ពីខាងក្រៅបាន" icon="droplet">
+    Shadow DOM រក្សាផ្នែកខាងក្នុងឱ្យនៅដាច់ដោយឡែក ខណៈ CSS Tokens ដែលប្រើ `light-dark()` និង OKLCH អនុញ្ញាតឱ្យអ្នកកែសម្រួល hue, chroma, radius និង density ភ្លាមៗ។
+  </FeatureCard>
+  <FeatureCard title="គាំទ្រភាសាអង់គ្លេស និងខ្មែរ" icon="languages">
+    គាំទ្រពីរភាសាតាំងពីដំបូង ជាមួយពុម្ពអក្សរខ្មែរដែលកែសម្រួលសម្រាប់គម្លាតបន្ទាត់ច្បាស់លាស់ និងជើងអក្សរ។
+  </FeatureCard>
+</Features>

@@ -1,0 +1,91 @@
+---
+interface Props {
+  title?: string
+  /** How children sit on the canvas. `stretch` makes every direct child full width. */
+  align?: 'center' | 'start' | 'stretch'
+  /** Stack children vertically instead of wrapping them in a row. */
+  stack?: boolean
+  /**
+   * Canvas fill. `plain` (default) is the white surface; `page` is the
+   * off-white page, for components that are white surfaces themselves;
+   * `mesh` paints a soft color field so glass variants have something to refract.
+   */
+  backdrop?: 'mesh' | 'page' | 'plain'
+  /** Minimum canvas height, e.g. `320px` for overlays and charts. */
+  minHeight?: string
+}
+const {
+  title,
+  align = 'center',
+  stack = false,
+  backdrop = 'plain',
+  minHeight,
+} = Astro.props
+---
+
+<section
+  class="moul-preview not-content"
+  data-align={align}
+  data-stack={stack ? '' : undefined}
+  data-backdrop={backdrop}
+>
+  {title && <header class="moul-preview-header">{title}</header>}
+  <div
+    class="moul-preview-canvas"
+    style={minHeight ? `min-height: ${minHeight}` : undefined}
+  >
+    <slot />
+  </div>
+</section>
+
+<script>
+  import { toastQueue, type ToastOptions } from '@moul-dev/ui'
+
+  /**
+   * Declarative demo wiring so MDX previews stay plain markup:
+   *   data-props='{"data": [...]}'      → assigned as JS properties (arrays, objects)
+   *   data-open="modal-id"              → click toggles `isOpen` on #modal-id
+   *   data-close="modal-id"             → click sets `isOpen = false` on #modal-id
+   *   data-toast='{"title": "Saved"}'   → click enqueues a toast (optional "placement")
+   */
+  function hydrateProps(root: ParentNode): void {
+    for (const el of root.querySelectorAll<HTMLElement>('[data-props]')) {
+      try {
+        Object.assign(el, JSON.parse(el.dataset.props ?? '{}'))
+      } catch (error) {
+        console.error('[ComponentPreview] invalid data-props JSON', el, error)
+      }
+    }
+  }
+
+  document.addEventListener('click', (event) => {
+    const trigger = (event.target as Element | null)?.closest?.<HTMLElement>(
+      '[data-open], [data-close], [data-toast]',
+    )
+    if (!trigger) return
+
+    if (trigger.dataset.open) {
+      const target = document.getElementById(trigger.dataset.open) as
+        | (HTMLElement & { isOpen?: boolean })
+        | null
+      if (target) target.isOpen = !target.isOpen
+    }
+
+    if (trigger.dataset.close) {
+      const target = document.getElementById(trigger.dataset.close) as
+        | (HTMLElement & { isOpen?: boolean })
+        | null
+      if (target) target.isOpen = false
+    }
+
+    if (trigger.dataset.toast) {
+      const { placement, ...options } = JSON.parse(trigger.dataset.toast) as
+        ToastOptions & { placement?: string }
+      if (placement) toastQueue.placement = placement as typeof toastQueue.placement
+      toastQueue.add(options)
+    }
+  })
+
+  hydrateProps(document)
+  document.addEventListener('astro:page-load', () => hydrateProps(document))
+</script>

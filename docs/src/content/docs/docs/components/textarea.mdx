@@ -1,0 +1,49 @@
+---
+title: TextArea
+description: Multi-line text input that can grow with its content.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+`<moul-text-area>` accepts longer text. Set `auto-resize` to let it grow as the user types.
+
+<ComponentPreview>
+<div class="demo-stack" style="width: min(100%, 26rem)">
+  <moul-text-area label="Release notes" placeholder="Summarize what changed…" rows="3" auto-resize description="Markdown is supported."></moul-text-area>
+</div>
+</ComponentPreview>
+
+```html
+<div class="demo-stack" style="width: min(100%, 26rem)">
+  <moul-text-area label="Release notes" placeholder="Summarize what changed…" rows="3" auto-resize description="Markdown is supported."></moul-text-area>
+</div>
+```
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `name` | `name` | `string` | `''` |
+| `value` | `value` | `string` | `''` |
+| `rows` | `rows` | `number` | `3` |
+| `auto-resize` | `autoResize` | `boolean` | `false` |
+| `placeholder` | `placeholder` | `string` | `''` |
+| `label` | `label` | `string` | `''` |
+| `description` | `description` | `string` | `''` |
+| `error-message` | `errorMessage` | `string` | `''` |
+| `is-disabled` | `isDisabled` | `boolean` | `false` |
+| `is-required` | `isRequired` | `boolean` | `false` |
+| `is-readonly` | `isReadonly` | `boolean` | `false` |
+
+| Event | Type |
+| :-- | :-- |
+| `input` | `CustomEvent` |
+| `change` | `CustomEvent` |
+
+| Slot | Description |
+| :-- | :-- |
+| `label` | — |
+| `description` | — |
+| `error` | — |
+
+**CSS parts:** `error`, `base`, `label`, `textarea`, `description`

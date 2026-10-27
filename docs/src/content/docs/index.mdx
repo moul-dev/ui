@@ -1,0 +1,44 @@
+---
+title: Moul UI
+description: Accessible, themeable Web Components built on Lit 3 and native browser APIs. One set of custom elements for any framework, or plain HTML.
+template: splash
+heroBadge: Now available
+hero:
+  title: 'Web Components <span>for every stack.</span>'
+  tagline: 'Accessible, themeable custom elements built on <strong>Lit 3</strong> and native browser APIs. Use the same components in any framework, server template, or plain HTML. Made for <a href="https://moul.dev">moul.dev</a>.'
+  actions:
+    - text: Get Started
+      link: /docs
+      icon: right-arrow
+      variant: primary
+    - text: Theme Studio
+      link: /theme
+      icon: pencil
+      variant: secondary
+    - text: GitHub
+      link: https://github.com/moul-dev/ui
+      icon: github
+      variant: minimal
+---
+
+import FeatureCard from '@/components/FeatureCard.astro';
+import Features from '@/components/Features.astro';
+
+<Features
+  eyebrow="Why Web Components"
+  title="Build once. Use it anywhere."
+  lead="Every Moul UI component is a standard custom element. Import it once, and the same markup works wherever HTML does, with no wrappers or framework lock-in."
+>
+  <FeatureCard title="One element, every framework" icon="code">
+    Components ship as **Custom Elements** with **Shadow DOM**. Drop them into Astro, Vue, Svelte, server-rendered templates, or a static page and they behave the same.
+  </FeatureCard>
+  <FeatureCard title="Native browser primitives" icon="zap">
+    Built on `<dialog>`, the Popover API, CSS Anchor Positioning, and form-associated `ElementInternals`, so the browser does the heavy lifting and fields work inside a regular `<form>`.
+  </FeatureCard>
+  <FeatureCard title="Themeable from the outside" icon="droplet">
+    Shadow DOM keeps internals isolated, while CSS tokens built on `light-dark()` and OKLCH let you retune hue, chroma, radius, and density at runtime.
+  </FeatureCard>
+  <FeatureCard title="English and Khmer, built in" icon="languages">
+    Bilingual from the start, with Khmer (`ភាសាខ្មែរ`) typography tuned for clear line spacing and stacked subscript consonants.
+  </FeatureCard>
+</Features>
