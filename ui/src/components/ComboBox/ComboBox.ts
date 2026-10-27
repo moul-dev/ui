@@ -89,6 +89,11 @@ export class MoulComboBox extends LitElement {
     return this.items.filter((item) => !item.hidden && !item.isDisabled)
   }
 
+  private get selectedItem(): MoulComboBoxItem | undefined {
+    if (!this.selectedKey) return undefined
+    return this.items.find((item) => item.key === this.selectedKey)
+  }
+
   public override focus(options?: FocusOptions): void {
     this.inputElement?.focus(options)
   }
@@ -139,6 +144,10 @@ export class MoulComboBox extends LitElement {
   protected override willUpdate(changedProperties: PropertyValues): void {
     super.willUpdate(changedProperties)
 
+    if (changedProperties.has('selectedKey')) {
+      this.syncSelection()
+    }
+
     if (
       changedProperties.has('selectedKey') ||
       changedProperties.has('inputValue') ||
@@ -184,8 +193,30 @@ export class MoulComboBox extends LitElement {
     }
   }
 
+  /**
+   * Shows the selected item's text in the input when `selectedKey` comes from
+   * an attribute, a property, or items slotted later, not only from
+   * `selectItem()`. Typing clears `selectedKey`, so this never overwrites a
+   * query.
+   */
+  private syncSelection(): void {
+    const selected = this.selectedItem
+    if (selected) this.inputValue = selected.text
+    for (const item of this.items) {
+      item.setAttribute('aria-selected', item === selected ? 'true' : 'false')
+    }
+  }
+
+  private handleSlotChange = (): void => {
+    this.syncSelection()
+    this.filterItems()
+  }
+
   private filterItems(): void {
-    const query = this.inputValue.toLowerCase().trim()
+    // While the input still shows the selection, opening lists every item;
+    // filtering starts once the user types.
+    const showingSelection = this.inputValue === this.selectedItem?.text
+    const query = showingSelection ? '' : this.inputValue.toLowerCase().trim()
     for (const item of this.items) {
       const text = item.text.toLowerCase()
       const matches = !query || text.includes(query)
@@ -346,7 +377,7 @@ export class MoulComboBox extends LitElement {
           ?hidden=${!this.overlayController.isMounted}
           @combobox-item-click=${this.handleItemClick}
         >
-          <slot @slotchange=${this.filterItems}></slot>
+          <slot @slotchange=${this.handleSlotChange}></slot>
           ${
             !hasVisible
               ? html`<slot name="empty"><div part="empty">No results found</div></slot>`
