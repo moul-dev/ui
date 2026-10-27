@@ -545,6 +545,52 @@ describe('Empirical Adversarial Challenge Suite: MoulTable & MoulToast', () => {
       )
       expect(topScore).toBeGreaterThanOrEqual(nextScore)
     })
+
+    it('CHAL-TBL-08: column render() puts templates and nodes in cells; plain columns stay text', async () => {
+      interface Member {
+        id: string
+        name: string
+        status: 'active' | 'invited'
+      }
+      const table = await mount<MoulTable>(html`<moul-table></moul-table>`)
+      const onRemove = vi.fn()
+      const columns: TableColumn<Member>[] = [
+        { key: 'name', title: 'Name' },
+        {
+          key: 'status',
+          title: 'Status',
+          render: (row) => html`<a href="/members/${row.id}">${row.status}</a>`,
+        },
+        {
+          key: 'actions',
+          title: '',
+          render: (row, index) => {
+            const button = document.createElement('button')
+            button.textContent = `Remove ${index}`
+            button.addEventListener('click', () => onRemove(row.id))
+            return button
+          },
+        },
+      ]
+      table.columns = columns
+      table.data = [
+        { id: 'u1', name: 'Dara', status: 'active' },
+        { id: 'u2', name: '<b>Sok</b>', status: 'invited' },
+      ]
+      await table.updateComplete
+
+      const rows = table.shadowRoot!.querySelectorAll('tbody tr')
+      const cells = (row: number) => rows[row].querySelectorAll('td')
+      expect(cells(1)[0].textContent).toBe('<b>Sok</b>')
+      expect(cells(1)[0].querySelector('b')).toBeNull()
+      expect(cells(0)[1].querySelector('a')?.getAttribute('href')).toBe(
+        '/members/u1',
+      )
+      const remove = cells(1)[2].querySelector('button')!
+      expect(remove.textContent).toBe('Remove 1')
+      remove.click()
+      expect(onRemove).toHaveBeenCalledWith('u2')
+    })
   })
 
   // =========================================================================
