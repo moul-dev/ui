@@ -566,12 +566,16 @@ palette.addEventListener('select', (e) => console.log(e.detail.item))`,
   <span slot="caption">Team members</span>
   <span slot="empty">No members yet</span>
 </moul-table>`,
-        script: `const table = document.querySelector('#users')
+        script: `import { html } from 'lit'
+
+const table = document.querySelector('#users')
 table.columns = [
   { key: 'name', title: 'Name', sortable: true },
   { key: 'role', title: 'Role' },
+  // render() puts markup in the cell; it runs inside the table's shadow root.
+  { key: 'status', title: 'Status', render: (row) => html\`<moul-badge tone="success">\${row.status}</moul-badge>\` },
 ]
-table.data = [{ id: '1', name: 'Dara', role: 'Admin' }]`,
+table.data = [{ id: '1', name: 'Dara', role: 'Admin', status: 'Active' }]`,
       },
       {
         name: 'Toast',

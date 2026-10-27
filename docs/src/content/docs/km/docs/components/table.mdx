@@ -70,6 +70,30 @@ table.data = [
 ]
 ```
 
+## Custom cells
+
+Give a column a `render(row, index)` function to put markup in its cells instead of the plain value. It can return a string, a DOM node, or a Lit template. Cells render inside the table's shadow root, where page stylesheets do not reach, so build them from `<moul-*>` elements or inline styles. `sortchange` still reports the column `key`, so sort by the underlying value.
+
+```js
+import { html } from 'lit'
+
+table.columns = [
+  { key: 'name', title: 'Service' },
+  {
+    key: 'status',
+    title: 'Status',
+    render: (row) =>
+      html`<moul-badge tone=${row.status === 'Healthy' ? 'success' : 'warning'}>${row.status}</moul-badge>`,
+  },
+  {
+    key: 'actions',
+    title: '',
+    render: (row) =>
+      html`<moul-button size="sm" variant="ghost" @press=${() => restart(row.id)}>Restart</moul-button>`,
+  },
+]
+```
+
 ## API reference
 
 | Attribute | Property | Type | Default |

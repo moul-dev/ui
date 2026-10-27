@@ -1,15 +1,33 @@
 ---
-title: Unreleased — One Copy of Lit, Enter Submits Forms, and Neutral Surface Defaults
-description: The npm build stops inlining Lit and its other dependencies, Enter in Moul text fields submits the surrounding form, and surfaces document an unset variant as the neutral look.
+title: Unreleased — Buttons That Press Once, One Copy of Lit, and Enter Submits Forms
+description: Buttons and toggle buttons act once per click, the npm build stops inlining Lit, Enter in Moul text fields submits the surrounding form, surfaces default to the neutral look, table cells render templates, and the combobox shows a preselected option.
 author: Phearak S. Tha
 avatar: https://github.com/thasophearak.png
 ---
 
 import ComponentPreview from '@/components/ComponentPreview.astro';
 
-Porting the Moul admin console onto v2026.10.27 turned up three problems on its first day. The app loaded two copies of Lit, its forms ignored the Enter key, and the docs gave the wrong default for `<moul-card>`.
+Porting the Moul admin console onto v2026.10.27 turned up a run of problems in its first days. The worst: every click on a `<moul-button>` fired `press` twice. The app also loaded two copies of Lit, its forms ignored the Enter key, and the docs gave the wrong default for `<moul-card>`.
 
-None of them could show up in this repository. The docs site and the sandbox import the library from source, neither has a Lit of its own, and no unit test pressed Enter inside a form. An app had to lean on the library before any of it showed.
+None of it could show up in this repository. The docs site and the sandbox import the library from source, and neither has a Lit of its own. The unit tests dispatched pointer and keyboard events back to back, without the gap a real browser leaves before `click`, and none pressed Enter inside a form. An app had to lean on the library before any of it showed.
+
+---
+
+## Buttons Press Once
+
+`<moul-button>` pressed on `pointerup`, set a flag so the following `click` would be skipped, and cleared that flag in a microtask. The browser dispatches `click` in a later task, after that microtask has run, so `click` pressed again. Enter and Space doubled the same way through `keyup`.
+
+`<moul-toggle-button>` had the same structure. A click toggled it on and straight back off.
+
+Both now act on `click` alone. The inner native `<button>` already turns a mouse click, a tap, Enter, or Space into exactly one `click`, and disabled or pending buttons still ignore it. A `type="submit"` button submits once per activation.
+
+```js
+button.addEventListener('press', (event) => {
+  event.detail.originalEvent.type // always 'click'
+})
+```
+
+The tests now replay input the way a browser delivers it, with `click` arriving a task after `pointerup`. A regression fails the press count instead of passing quietly.
 
 ---
 
@@ -86,11 +104,35 @@ The agent rules in `AGENTS.md` and `/llms.txt` now say it directly: omit `varian
 
 ---
 
+## Table Cells and ComboBox Selection
+
+Two smaller gaps came out of the same port.
+
+**`<moul-table>` cells can hold markup.** A column's new `render(row, index)` returns a string, a DOM node, or a Lit template, so a status column can show a `<moul-badge>` and an actions column a `<moul-button>`. Cells render in the table's shadow root, so style them with Moul elements or inline styles. In TypeScript, `TableColumn<Row>` types `row`.
+
+```js
+import { html } from 'lit'
+
+table.columns = [
+  { key: 'name', title: 'Name' },
+  {
+    key: 'status',
+    title: 'Status',
+    render: (row) => html`<moul-badge tone="success">${row.status}</moul-badge>`,
+  },
+]
+```
+
+**`<moul-combobox>` shows a preselected option.** Setting `selected-key` left the input empty, because only `selectItem()` filled in the text. The input now shows the matching item's text whenever the key changes, including when the items are slotted later. Reopening the list after a pick used to filter by the picked text, which left a single option. It now lists every option until you type.
+
+---
+
 ## Upgrading
 
 - **CDN users:** Change `dist/moul-ui.js` to `dist/cdn/moul-ui.js`. The old path now needs a bundler or an import map.
 - **Enter handlers:** Remove any `keydown` listener you added to submit forms. One that calls `preventDefault()` before submitting keeps working; one that does not will submit twice.
 - **Search inside forms:** Listen for the form's `submit` instead of the field's.
+- **`press` handlers:** `detail.originalEvent` is always the `click` event now. If you switched to `@click` to dodge double presses, `@press` is safe again.
 - **Reading `variant`:** Code that compared `el.variant === 'flat'` to detect the default look should check for an unset value.
 
 ---
@@ -99,7 +141,7 @@ The agent rules in `AGENTS.md` and `/llms.txt` now say it directly: omit `varian
 
 A component library is only tested for real when someone else's app depends on it. Their bundler, their framework version, and their users' keyboards all exercise paths a sandbox never reaches.
 
-All three fixes came from one honest porting session, written down where the library pushed back. That is the loop I want for Moul UI: small, specific reports from working apps, fixed at the source, so the next app never needs the workaround.
+Every fix here came from one honest porting session, written down where the library pushed back. That is the loop I want for Moul UI: small, specific reports from working apps, fixed at the source, so the next app never needs the workaround.
 
 ---
 
