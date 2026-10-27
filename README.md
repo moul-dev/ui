@@ -74,7 +74,7 @@ bun run dev:docs   # Astro dev server
 | `bun run gen:component <Name>` | Scaffolds a component: class, styles, test, index, and docs page |
 | `bun run sync:llms` | Verifies every custom element is documented in the LLM context files |
 | `bun run sync:llms --write` | Regenerates `llms.txt`, `llms-full.txt`, and both `AGENTS.md` files from the manifest |
-| `bun run bump` | Bumps the UTC CalVer version (`YYYY.M.D`, then `.N` for same-day releases); `--changelog` scaffolds a changelog entry |
+| `bun run bump` | Bumps the CalVer version `YYYY.MM.MICRO`: `YYYY.MM.0` for a UTC month's first release, then `MICRO` + 1; `--changelog` scaffolds a changelog entry |
 | `bun run lint` | Runs Biome checks |
 | `bun run format` | Applies Biome formatting |
 

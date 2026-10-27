@@ -2,6 +2,11 @@ import { html, LitElement, nothing, type PropertyValues } from 'lit'
 import { FormInternalsController } from '../../controllers/form-internals.controller'
 import { defineElement } from '../../utils/define-element'
 import { clear, search } from '../../utils/icons'
+import {
+  findImplicitSubmissionForm,
+  isImplicitSubmissionKey,
+  submitOnEnter,
+} from '../../utils/implicit-submission'
 import { EASE_OUT, subtleAnimate } from '../../utils/motion'
 import { warnMissingLabel } from '../../utils/warn-missing-label'
 import { searchFieldStyles } from './SearchField.styles'
@@ -201,14 +206,25 @@ export class MoulSearchField extends LitElement {
   }
 
   private handleKeyDown = (event: KeyboardEvent): void => {
-    if (event.key === 'Enter') {
-      this.dispatchEvent(
-        new CustomEvent('submit', {
-          detail: { value: this.value },
-          bubbles: true,
-          composed: true,
-        }),
+    if (isImplicitSubmissionKey(event)) {
+      const form = findImplicitSubmissionForm(
+        this,
+        this.internalsController.form,
       )
+      if (form) {
+        // Inside a form, Enter submits the form like a native search input.
+        // A bubbling `submit` from here would also reach the form's own
+        // submit listeners, so the field's event is reserved for standalone use.
+        submitOnEnter(event, form)
+      } else {
+        this.dispatchEvent(
+          new CustomEvent('submit', {
+            detail: { value: this.value },
+            bubbles: true,
+            composed: true,
+          }),
+        )
+      }
     } else if (event.key === 'Escape') {
       if (this.value) {
         event.preventDefault()

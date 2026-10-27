@@ -14,8 +14,7 @@ export class MoulCard extends LitElement {
 
   static override properties = {
     tone: { type: String, reflect: true },
-    // The default isn't reflected, so an unset variant renders the plain surface.
-    variant: { type: String, reflect: true, useDefault: true },
+    variant: { type: String, reflect: true },
     isInteractive: {
       type: Boolean,
       reflect: true,
@@ -24,7 +23,12 @@ export class MoulCard extends LitElement {
   }
 
   declare tone: SemanticTone
-  declare variant: VisualVariant
+  /**
+   * Paints the card in `tone`: `solid` and `shadow` fill it, `flat` tints it,
+   * `bordered` and `glass` frame it. Leave it unset for the neutral
+   * `--color-surface` card.
+   */
+  declare variant: VisualVariant | undefined
   declare isInteractive: boolean
 
   public pressController: PressController
@@ -33,7 +37,6 @@ export class MoulCard extends LitElement {
   constructor() {
     super()
     this.tone = 'primary'
-    this.variant = 'flat'
     this.isInteractive = false
 
     // Hover lift and press feedback live in the stylesheet, gated to fine pointers.
@@ -84,7 +87,7 @@ export class MoulCard extends LitElement {
       }
     }
 
-    if (changedProps.has('variant')) {
+    if (changedProps.has('variant') && this.variant != null) {
       const normalized = normalizeVariant(this.variant)
       if (this.variant !== normalized) {
         this.variant = normalized

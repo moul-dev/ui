@@ -89,8 +89,7 @@ export class MoulStat extends LitElement {
       attribute: 'is-lower-better',
     },
     tone: { type: String, reflect: true },
-    // The default isn't reflected, so an unset variant renders the plain surface.
-    variant: { type: String, reflect: true, useDefault: true },
+    variant: { type: String, reflect: true },
     color: { type: String },
     description: { type: String },
     valueFormatter: { attribute: false },
@@ -106,7 +105,12 @@ export class MoulStat extends LitElement {
   declare trendValue: string
   declare isLowerBetter: boolean
   declare tone: SemanticTone
-  declare variant: VisualVariant
+  /**
+   * Paints the stat in `tone`: `solid` and `shadow` fill it, `flat` tints it,
+   * `bordered` and `glass` frame it. Leave it unset for the neutral
+   * `--color-surface` stat.
+   */
+  declare variant: VisualVariant | undefined
   declare color: string
   declare description: string
   declare valueFormatter?: (value: number) => string
@@ -135,7 +139,6 @@ export class MoulStat extends LitElement {
     this.trendValue = ''
     this.isLowerBetter = false
     this.tone = 'primary'
-    this.variant = 'flat'
     this.color = ''
     this.description = ''
     this.valueFormatter = undefined
@@ -178,7 +181,7 @@ export class MoulStat extends LitElement {
       }
     }
 
-    if (changedProps.has('variant')) {
+    if (changedProps.has('variant') && this.variant != null) {
       const normalized = normalizeVariant(this.variant)
       if (this.variant !== normalized) {
         this.variant = normalized

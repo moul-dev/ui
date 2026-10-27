@@ -5,7 +5,7 @@ description: ឯកសារណែនាំសម្រាប់សមាសភ�
 
 import ComponentPreview from '@/components/ComponentPreview.astro';
 
-`<moul-search-field>` shows a clear button once there is text and fires `submit` when Enter is pressed.
+`<moul-search-field>` shows a clear button once there is text. Outside a form, Enter fires `submit` with the query in `event.detail.value`. Inside a `<form>` or `<moul-form>`, Enter submits that form instead, like a native search input, and the field fires no `submit` of its own.
 
 <ComponentPreview>
 <div style="width: min(100%, 22rem)">

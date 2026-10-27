@@ -32,45 +32,72 @@ async function mount<T extends HTMLElement>(template: unknown): Promise<T> {
   return element
 }
 
+/** Lets queued microtasks run, as they do between the browser's input tasks. */
+const nextTask = () => new Promise((resolve) => setTimeout(resolve))
+
+/** Pointer and keyboard input land on the focused inner `<button>`. */
+function activationTarget(element: HTMLElement): HTMLElement {
+  return element.shadowRoot?.querySelector('button') ?? element
+}
+
+/** The browser never fires `click` at a disabled native button. */
+function clickTarget(target: HTMLElement): void {
+  if (target instanceof HTMLButtonElement && target.disabled) return
+  target.dispatchEvent(
+    new MouseEvent('click', {
+      button: 0,
+      bubbles: true,
+      composed: true,
+      cancelable: true,
+    }),
+  )
+}
+
+/**
+ * Mirrors a mouse click: pointerdown and pointerup, then `click` in a later
+ * task, so anything queued on pointerup has already run when it lands.
+ */
 async function simulatePress(element: HTMLElement): Promise<void> {
-  element.dispatchEvent(
-    new PointerEvent('pointerdown', {
-      button: 0,
-      bubbles: true,
-      cancelable: true,
-    }),
-  )
-  element.dispatchEvent(
-    new PointerEvent('pointerup', {
-      button: 0,
-      bubbles: true,
-      cancelable: true,
-    }),
-  )
+  const target = activationTarget(element)
+  for (const type of ['pointerdown', 'pointerup']) {
+    target.dispatchEvent(
+      new PointerEvent(type, {
+        button: 0,
+        bubbles: true,
+        composed: true,
+        cancelable: true,
+      }),
+    )
+  }
+  await nextTask()
+  clickTarget(target)
   await awaitNestedUpdates(element)
 }
 
+/**
+ * Mirrors keyboard activation of a native button: Enter clicks on keydown,
+ * Space on keyup. Synthetic key events never activate a button themselves,
+ * so the click is dispatched here the way the browser would.
+ */
 async function simulateKey(
   element: HTMLElement,
   key: string,
   options: Partial<KeyboardEventInit> = {},
 ): Promise<void> {
-  element.dispatchEvent(
-    new KeyboardEvent('keydown', {
-      key,
-      bubbles: true,
-      cancelable: true,
-      ...options,
-    }),
-  )
-  element.dispatchEvent(
-    new KeyboardEvent('keyup', {
-      key,
-      bubbles: true,
-      cancelable: true,
-      ...options,
-    }),
-  )
+  const target = activationTarget(element)
+  const init = {
+    key,
+    bubbles: true,
+    composed: true,
+    cancelable: true,
+    ...options,
+  }
+  target.dispatchEvent(new KeyboardEvent('keydown', init))
+  await nextTask()
+  if (key === 'Enter') clickTarget(target)
+  target.dispatchEvent(new KeyboardEvent('keyup', init))
+  await nextTask()
+  if (key === ' ') clickTarget(target)
   await awaitNestedUpdates(element)
 }
 

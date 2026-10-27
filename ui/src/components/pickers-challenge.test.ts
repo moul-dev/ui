@@ -943,6 +943,80 @@ describe('Empirical Adversarial Stress Suite: Pickers & Selection Controls (Phas
       expect(combobox.isOpen).toBe(false)
       expect(combobox.selectedKey).toBe('opt2')
     })
+
+    it('CHAL-CMB-06: a preselected key shows its item text and reopening lists every item', async () => {
+      const combobox = await mount<MoulComboBox>(
+        html`
+          <moul-combobox label="Region" selected-key="sg">
+            <moul-combobox-item key="kh">Cambodia</moul-combobox-item>
+            <moul-combobox-item key="sg">Singapore</moul-combobox-item>
+            <moul-combobox-item key="th">Thailand</moul-combobox-item>
+          </moul-combobox>
+        `,
+      )
+      const input = combobox.inputElement!
+      const visibleKeys = () => combobox.visibleItems.map((item) => item.key)
+
+      expect(combobox.inputValue).toBe('Singapore')
+      expect(input.value).toBe('Singapore')
+      expect(combobox.items[1].getAttribute('aria-selected')).toBe('true')
+
+      combobox.open()
+      await combobox.updateComplete
+      expect(visibleKeys()).toEqual(['kh', 'sg', 'th'])
+      combobox.close()
+
+      // Setting the property later updates the text too.
+      combobox.selectedKey = 'kh'
+      await combobox.updateComplete
+      expect(input.value).toBe('Cambodia')
+
+      // Typing clears the selection and filters again.
+      input.value = 'thai'
+      input.dispatchEvent(new Event('input', { bubbles: true, composed: true }))
+      await combobox.updateComplete
+      expect(combobox.selectedKey).toBe('')
+      expect(visibleKeys()).toEqual(['th'])
+    })
+
+    it('CHAL-CMB-07: after picking an item, reopening shows all items instead of only the pick', async () => {
+      const combobox = await mount<MoulComboBox>(
+        html`
+          <moul-combobox label="Framework">
+            <moul-combobox-item key="lit">Lit</moul-combobox-item>
+            <moul-combobox-item key="vue">Vue</moul-combobox-item>
+          </moul-combobox>
+        `,
+      )
+      combobox.selectItem('vue', 'Vue')
+      await combobox.updateComplete
+      combobox.open()
+      await combobox.updateComplete
+      expect(combobox.visibleItems.map((item) => item.key)).toEqual([
+        'lit',
+        'vue',
+      ])
+    })
+
+    it('CHAL-CMB-08: items slotted after the key is set still fill in the text', async () => {
+      const combobox = await mount<MoulComboBox>(
+        html`<moul-combobox label="Plan" selected-key="pro"></moul-combobox>`,
+      )
+      expect(combobox.inputValue).toBe('')
+
+      for (const [key, text] of [
+        ['free', 'Free'],
+        ['pro', 'Pro'],
+      ]) {
+        const item = document.createElement('moul-combobox-item')
+        item.setAttribute('key', key)
+        item.textContent = text
+        combobox.append(item)
+      }
+      await new Promise((resolve) => setTimeout(resolve, 0))
+      await combobox.updateComplete
+      expect(combobox.inputValue).toBe('Pro')
+    })
   })
 
   // ===========================================================================

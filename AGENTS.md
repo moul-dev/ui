@@ -16,7 +16,7 @@ A multi-project monorepo workspace managed with **Bun**, featuring:
 ├── scripts/             # dev, gen:component, sync:llms, bump, verify-no-react, setup-hooks
 ├── ui/                  # Component library package
 │   ├── package.json     # Library exports (`.` and `./style.css`)
-│   ├── vite.config.ts   # Vite library build + Vitest (happy-dom)
+│   ├── vite.config.ts   # Vite library + CDN builds, Vitest (happy-dom)
 │   ├── custom-elements-manifest.config.mjs
 │   ├── index.html       # Kitchen-sink sandbox (`bun run dev:ui`)
 │   └── src/
@@ -81,7 +81,7 @@ Run these commands from the root directory:
   ```bash
   bun run build:docs
   ```
-- **Bump UTC CalVer Version** (`YYYY.M.D`, then `YYYY.M.D.N` for same-day bumps):
+- **Bump CalVer Version** (`YYYY.MM.MICRO`, shared with the Moul engine): the first release of a UTC month is `YYYY.MM.0`, and each later release that month adds one to `MICRO`. `MM` is unpadded (`2026.9.0`, never `2026.09.0`) so the version stays valid SemVer. `--changelog` scaffolds `changelog/YYYY-MM-MICRO.mdx`:
   ```bash
   bun run bump
   ```
@@ -92,7 +92,7 @@ Run these commands from the root directory:
 - **Lit 3 Custom Elements**: Every component is a `LitElement` subclass registered with an idempotent `defineElement('moul-*', Class)` and an open Shadow Root.
 - **CSS Token Layer**: `ui/src/styles/style.css` defines `:root` custom properties (OKLCH + `light-dark()`), emitted to `dist/assets/style.css` and exported as `@moul-dev/ui/style.css`. Brand hooks: `--brand-hue`, `--brand-chroma-multiplier`, `--brand-font-family`, `--brand-font-scale`, `--brand-radius-factor`, `--brand-density-factor`.
 - **Native Platform APIs**: `ElementInternals` for form association, `<dialog>` for modals, the Popover API + CSS anchor positioning for overlays.
-- **Vite Library Mode**: Emits `dist/moul-ui.js` (prefixed with a `"use client";` banner for RSC frameworks) and `dist/src/index.d.ts`.
+- **Vite Library Mode**: Emits `dist/moul-ui.js` (prefixed with a `"use client";` banner for RSC frameworks) and `dist/src/index.d.ts`. Every runtime `dependency` stays a bare import so consumers load one copy of Lit; the build fails if anything from `node_modules` is inlined. A second pass (`vite build --mode cdn`) emits the self-contained, minified `dist/cdn/moul-ui.js` for `<script type="module">` use from a CDN.
 - **Custom Elements Manifest**: `cem analyze` writes `dist/custom-elements.json`, the source of truth for `sync:llms`.
 - **No React**: `scripts/verify-no-react.ts` fails the build if React, React Aria, StyleX, or `@lit/react` appear in `ui/` or `docs/` manifests.
 
@@ -115,8 +115,8 @@ When generating or editing code that uses `@moul-dev/ui`:
 - **Rich data is set as properties**: Arrays, objects, and functions (`data`, `series`, `columns`, `items`, `logs`, `valueFormatter`) are assigned in JavaScript, not serialized into attributes.
 - **Events are DOM events**: Listen with `addEventListener` (`press`, `change`, `input`, `openchange`, `selectionchange`, `pagechange`, `dismiss`). Payloads live on `event.detail`. There is no `onPress` prop.
 - **Overlays**: Toggle `is-open` (or `el.isOpen`) on `<moul-modal>`, `<moul-drawer>`, `<moul-alert-dialog>`, `<moul-popover>`, `<moul-tooltip>`, `<moul-command-palette>`, and react to `openchange` (`detail.isOpen`).
-- **Forms**: Inputs are form-associated via `ElementInternals`; give each a `name` and it submits with a native `<form>` / `FormData`.
-- **Semantic tones & variants**: `tone` is one of `primary | accent | success | warning | error`; surface `variant` is one of `solid | flat | shadow | bordered | glass`. `<moul-button>` has its own `variant` set (`primary | secondary | tertiary | outline | ghost | danger | danger-soft`).
+- **Forms**: Inputs are form-associated via `ElementInternals`; give each a `name` and it submits with a native `<form>` / `FormData`. Enter in `<moul-text-field>`, `<moul-number-field>`, or `<moul-search-field>` submits its `<form>` or `<moul-form>` like a native input, so do not add your own Enter handler.
+- **Semantic tones & variants**: `tone` is one of `primary | accent | success | warning | error`; surface `variant` is one of `solid | flat | shadow | bordered | glass`. Omit `variant` for a neutral surface: an unset `variant` on `<moul-card>`, `<moul-alert>`, `<moul-toast>`, or `<moul-stat>` renders the plain `--color-surface` look, while `variant="flat"` tints it in the tone. `<moul-button>` has its own `variant` set (`primary | secondary | tertiary | outline | ghost | danger | danger-soft`).
 - **Accessibility**: Icon-only buttons (`is-icon`) and dot badges (`is-dot`) must have an `aria-label`.
 - **Theming**: Override `--brand-hue`, `--brand-chroma-multiplier`, `--brand-font-family`, `--brand-font-scale`, `--brand-radius-factor`, and `--brand-density-factor` on `:root` (or any ancestor). Style internals through `::part(...)`.
 

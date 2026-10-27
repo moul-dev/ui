@@ -1,6 +1,10 @@
 import { html, LitElement, type PropertyValues } from 'lit'
 import { FormInternalsController } from '../../controllers/form-internals.controller'
 import { defineElement } from '../../utils/define-element'
+import {
+  findImplicitSubmissionForm,
+  submitOnEnter,
+} from '../../utils/implicit-submission'
 import { EASE_OUT, subtleAnimate } from '../../utils/motion'
 import { warnMissingLabel } from '../../utils/warn-missing-label'
 import { numberFieldStyles } from './NumberField.styles'
@@ -251,6 +255,11 @@ export class MoulNumberField extends LitElement {
   }
 
   private handleKeyDown = (event: KeyboardEvent): void => {
+    // A read-only input still submits its form on Enter.
+    submitOnEnter(
+      event,
+      findImplicitSubmissionForm(this, this.internalsController.form),
+    )
     if (this.isDisabled || this.isReadonly) return
 
     if (event.key === 'ArrowUp') {

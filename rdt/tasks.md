@@ -234,7 +234,7 @@ _Covers: Requirement 14, Requirement 15_
 
 - [x] **12.1 Update Monorepo Developer Scripts (`scripts/`)**
   - `scripts/gen-component.ts`: Scaffold `<ComponentName>.ts`, `<ComponentName>.styles.ts`, `<ComponentName>.test.ts`, and `<ComponentName>.mdx` (_Req 15.4_).
-  - `scripts/bump-version.ts`: Compute UTC CalVer `YYYY.M.D` and increment `YYYY.M.D.N` patch suffix when bumping on the same UTC date (_Req 15.10, 15.11_).
+  - `scripts/bump-version.ts`: Compute CalVer `YYYY.MM.MICRO`: `YYYY.MM.0` for a UTC month's first release, then `MICRO` + 1 (_Req 15.10, 15.11_).
   - `scripts/dev.ts`: Run `bun run dev:ui` and `bun run dev:docs` concurrently (_Req 15.1–15.3_).
 - [x] **12.2 Update `scripts/sync-llms.ts` and Regenerate LLM Context Files**
   - Parse `ui/dist/custom-elements.json` and cross-reference/generate `docs/public/llms.txt` (with `<moul-*>` HTML snippets), `docs/public/llms-full.txt` (full CEM attributes, properties, events, slots), `docs/public/AGENTS.md`, and root `AGENTS.md` (_Req 13.6, 14.1–14.5, 15.5_).

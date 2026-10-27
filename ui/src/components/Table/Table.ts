@@ -4,12 +4,21 @@ import { chevronDown } from '../../utils/icons'
 import '../Skeleton/Skeleton'
 import { tableStyles } from './Table.styles'
 
-export interface TableColumn {
+// `Row` defaults to `any` so `TableColumn<Member>[]` assigns to `columns` even
+// when `Member` is an interface without an index signature.
+export interface TableColumn<Row = any> {
   key: string
   title: string
   sortable?: boolean
   width?: string
   align?: 'left' | 'center' | 'right'
+  /**
+   * Cell content in place of `String(row[key])`: a string, a DOM node, or a
+   * Lit template, so cells can hold badges, links, or buttons. It renders in
+   * the table's shadow root, where page stylesheets do not reach; style it
+   * with `<moul-*>` elements, inline styles, or `::part`.
+   */
+  render?(row: Row, index: number): unknown
 }
 
 const safeJsonConverter = {
@@ -261,7 +270,10 @@ export class MoulTable extends LitElement {
                           `
                           : ''
                       }
-                      ${cols.map((col) => html`<td>${String(item[col.key] ?? '')}</td>`)}
+                      ${cols.map(
+                        (col) =>
+                          html`<td>${col.render ? col.render(item, index) : String(item[col.key] ?? '')}</td>`,
+                      )}
                     </tr>
                   `
                   })

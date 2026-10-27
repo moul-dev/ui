@@ -1,0 +1,156 @@
+---
+title: Unreleased — Buttons That Press Once, One Copy of Lit, and Enter Submits Forms
+description: Buttons and toggle buttons act once per click, the npm build stops inlining Lit, Enter in Moul text fields submits the surrounding form, surfaces default to the neutral look, table cells render templates, the combobox shows a preselected option, and versions follow `YYYY.MM.MICRO`, shared with the Moul engine.
+author: Phearak S. Tha
+avatar: https://github.com/thasophearak.png
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+Porting the Moul admin console onto v2026.10.27 turned up a run of problems in its first days. The worst: every click on a `<moul-button>` fired `press` twice. The app also loaded two copies of Lit, its forms ignored the Enter key, and the docs gave the wrong default for `<moul-card>`.
+
+None of it could show up in this repository. The docs site and the sandbox import the library from source, and neither has a Lit of its own. The unit tests dispatched pointer and keyboard events back to back, without the gap a real browser leaves before `click`, and none pressed Enter inside a form. An app had to lean on the library before any of it showed.
+
+---
+
+## Buttons Press Once
+
+`<moul-button>` pressed on `pointerup`, set a flag so the following `click` would be skipped, and cleared that flag in a microtask. The browser dispatches `click` in a later task, after that microtask has run, so `click` pressed again. Enter and Space doubled the same way through `keyup`.
+
+`<moul-toggle-button>` had the same structure. A click toggled it on and straight back off.
+
+Both now act on `click` alone. The inner native `<button>` already turns a mouse click, a tap, Enter, or Space into exactly one `click`, and disabled or pending buttons still ignore it. A `type="submit"` button submits once per activation.
+
+```js
+button.addEventListener('press', (event) => {
+  event.detail.originalEvent.type // always 'click'
+})
+```
+
+The tests now replay input the way a browser delivers it, with `click` arriving a task after `pointerup`. A regression fails the press count instead of passing quietly.
+
+---
+
+## One Copy of Lit
+
+`dist/moul-ui.js` used to inline everything it imported: `lit`, `@lit/context`, `@lit-labs/virtualizer`, `motion`, `d3-scale`, and `d3-shape`. The same packages are listed as `dependencies`, so a Lit app that installed Moul UI got Lit twice, once from its own `node_modules` and once baked into the bundle.
+
+Two copies means two `ReactiveElement` base classes, two template caches, and an app whose `instanceof LitElement` checks answer false for every Moul element. Lit's development build notices and warns "Multiple versions of Lit loaded"[^1].
+
+The npm build now leaves every runtime dependency as a bare import, so your bundler resolves the copy your app already has:
+
+```js
+// dist/moul-ui.js
+import { LitElement, css, html, nothing, svg } from 'lit'
+import { animate, stagger } from 'motion'
+import { scaleBand, scaleLinear, scalePoint } from 'd3-scale'
+```
+
+The externals come straight from `ui/package.json`. A build check also fails if any module from `node_modules` lands in the file again. An import someone forgets to declare now breaks the build instead of shipping a second copy.
+
+Bare imports do not resolve in a plain `<script type="module">`, so the CDN snippet moves to a separate, self-contained, minified build:
+
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@moul-dev/ui/dist/assets/style.css" />
+<script type="module" src="https://cdn.jsdelivr.net/npm/@moul-dev/ui/dist/cdn/moul-ui.js"></script>
+```
+
+---
+
+## Enter Submits the Form
+
+A native `<input>` inside a `<form>` submits it on Enter. `<moul-text-field>` renders its `<input>` in shadow DOM, where the browser cannot see that it belongs to a form. Enter did nothing, and the workaround was a `keydown` listener on every form.
+
+The browser's rule is called implicit submission. `<moul-text-field>`, `<moul-number-field>`, and `<moul-search-field>` now run it themselves. On Enter, a field finds its form (the native form owner from `ElementInternals`, or the nearest `<moul-form>`) and follows the steps a native input would:
+
+1. If the form has a submit button, the first one is clicked, so its `click` and `press` handlers run. A native `<button>` is reported as `event.submitter`. A disabled or pending button submits nothing.
+2. Without a submit button, the form submits only when it has a single text field. Two fields and no button do nothing, as in the browser.
+3. Submission goes through `requestSubmit()`, or `<moul-form>`'s validating `submit()`, so constraint validation runs first.
+
+<ComponentPreview>
+<moul-form style="width: min(100%, 22rem)">
+  <div class="demo-stack">
+    <moul-text-field name="email" label="Email" type="email" is-required></moul-text-field>
+    <moul-text-field name="password" label="Password" type="password" is-required></moul-text-field>
+    <moul-button type="submit">Sign in</moul-button>
+  </div>
+</moul-form>
+</ComponentPreview>
+
+Enter in either field presses **Sign in**.
+
+Two details matter for anyone typing through an input method. Enter that commits an IME composition never submits, including in Safari, which reports that keypress with `isComposing` already false and `keyCode` 229. Submission also waits until the `keydown` has finished dispatching, so a listener anywhere on the page can still cancel it with `preventDefault()`.
+
+`<moul-search-field>` changes in one way. It used to fire its own bubbling `submit` event on Enter, which reached the surrounding form's `submit` listeners as a stray second event. It now fires that event only when it sits outside a form. Inside one, Enter submits the form.
+
+---
+
+## Surfaces Without a Variant
+
+`<moul-card>`, `<moul-alert>`, `<moul-toast>`, and `<moul-stat>` have always rendered the neutral `--color-surface` look when the `variant` attribute is absent. `variant="flat"` paints them in a soft tint of their tone instead.
+
+The property said otherwise. It defaulted to `'flat'` without reflecting it, so `card.variant` read `'flat'` on a neutral card, and the manifest and `llms-full.txt` documented `'flat'` as the default. Anyone who wanted the default look, coding agents included, wrote `variant="flat"` and got a tinted card.
+
+`variant` now stays unset until you choose one. The manifest types it as optional with no default, and clearing it returns the element to the neutral surface:
+
+```js
+const card = document.createElement('moul-card')
+card.variant // undefined: neutral surface
+card.variant = 'flat' // tinted in the tone
+card.variant = undefined // neutral again
+```
+
+The agent rules in `AGENTS.md` and `/llms.txt` now say it directly: omit `variant` for a neutral surface.
+
+---
+
+## Table Cells and ComboBox Selection
+
+Two smaller gaps came out of the same port.
+
+**`<moul-table>` cells can hold markup.** A column's new `render(row, index)` returns a string, a DOM node, or a Lit template, so a status column can show a `<moul-badge>` and an actions column a `<moul-button>`. Cells render in the table's shadow root, so style them with Moul elements or inline styles. In TypeScript, `TableColumn<Row>` types `row`.
+
+```js
+import { html } from 'lit'
+
+table.columns = [
+  { key: 'name', title: 'Name' },
+  {
+    key: 'status',
+    title: 'Status',
+    render: (row) => html`<moul-badge tone="success">${row.status}</moul-badge>`,
+  },
+]
+```
+
+**`<moul-combobox>` shows a preselected option.** Setting `selected-key` left the input empty, because only `selectItem()` filled in the text. The input now shows the matching item's text whenever the key changes, including when the items are slotted later. Reopening the list after a pick used to filter by the picked text, which left a single option. It now lists every option until you type.
+
+---
+
+## Versions Are `YYYY.MM.MICRO`
+
+Moul UI and the Moul engine now share one [CalVer](https://calver.org) scheme, `YYYY.MM.MICRO`: the UTC year, the UTC month, and a release counter for that month. The first release of November is `2026.11.0`, the next `2026.11.1`. The month is never zero-padded (`2026.9.0`, not `2026.09.0`), which keeps every version valid SemVer.
+
+The old bump put the day in the third number and numbered a second release on the same day `2026.10.27.1`. That is not SemVer, and npm refuses to publish it. `MICRO` is a counter, so any number of releases fit in a day, and each sorts after the last: a range such as `^2026.10.27` picks up `2026.11.0`. The rest of October continues from the current number, `2026.10.28`, before November starts again at `.0`.
+
+---
+
+## Upgrading
+
+- **CDN users:** Change `dist/moul-ui.js` to `dist/cdn/moul-ui.js`. The old path now needs a bundler or an import map.
+- **Enter handlers:** Remove any `keydown` listener you added to submit forms. One that calls `preventDefault()` before submitting keeps working; one that does not will submit twice.
+- **Search inside forms:** Listen for the form's `submit` instead of the field's.
+- **`press` handlers:** `detail.originalEvent` is always the `click` event now. If you switched to `@click` to dodge double presses, `@press` is safe again.
+- **Reading `variant`:** Code that compared `el.variant === 'flat'` to detect the default look should check for an unset value.
+
+---
+
+## On Building for the App Next Door
+
+A component library is only tested for real when someone else's app depends on it. Their bundler, their framework version, and their users' keyboards all exercise paths a sandbox never reaches.
+
+Every fix here came from one honest porting session, written down where the library pushed back. That is the loop I want for Moul UI: small, specific reports from working apps, fixed at the source, so the next app never needs the workaround.
+
+---
+
+[^1]: Each copy of Lit pushes its version onto a registry on `globalThis`, and the development build warns once that registry holds more than one entry. Production builds stay silent, so a duplicate can ship unnoticed.

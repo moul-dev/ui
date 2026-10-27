@@ -21,8 +21,7 @@ export class MoulToast extends LitElement {
 
   static override properties = {
     tone: { type: String, reflect: true },
-    // The default isn't reflected, so an unset variant renders the plain surface.
-    variant: { type: String, reflect: true, useDefault: true },
+    variant: { type: String, reflect: true },
     duration: { type: Number, reflect: true },
     title: { type: String },
     description: { type: String, reflect: true },
@@ -30,7 +29,12 @@ export class MoulToast extends LitElement {
   }
 
   declare tone: SemanticTone
-  declare variant: VisualVariant
+  /**
+   * Paints the toast in `tone`: `solid` and `shadow` fill it, `flat` tints it,
+   * `bordered` and `glass` frame it. Leave it unset for the neutral
+   * `--color-surface` toast.
+   */
+  declare variant: VisualVariant | undefined
   declare duration: number
   declare title: string
   declare description: string
@@ -44,7 +48,6 @@ export class MoulToast extends LitElement {
   constructor() {
     super()
     this.tone = 'primary'
-    this.variant = 'flat'
     this.duration = 5000
     this.title = ''
     this.description = ''
@@ -105,7 +108,7 @@ export class MoulToast extends LitElement {
       }
     }
 
-    if (changedProps.has('variant')) {
+    if (changedProps.has('variant') && this.variant != null) {
       const normalized = normalizeVariant(this.variant)
       if (this.variant !== normalized) {
         this.variant = normalized

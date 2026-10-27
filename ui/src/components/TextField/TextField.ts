@@ -1,6 +1,10 @@
 import { html, LitElement, nothing, type PropertyValues } from 'lit'
 import { FormInternalsController } from '../../controllers/form-internals.controller'
 import { defineElement } from '../../utils/define-element'
+import {
+  findImplicitSubmissionForm,
+  submitOnEnter,
+} from '../../utils/implicit-submission'
 import { EASE_OUT, subtleAnimate } from '../../utils/motion'
 import { warnMissingLabel } from '../../utils/warn-missing-label'
 import { textFieldStyles } from './TextField.styles'
@@ -160,6 +164,13 @@ export class MoulTextField extends LitElement {
     )
   }
 
+  private handleKeyDown = (event: KeyboardEvent): void => {
+    submitOnEnter(
+      event,
+      findImplicitSubmissionForm(this, this.internalsController.form),
+    )
+  }
+
   protected override render() {
     const isInvalid = this.hasAttribute('is-invalid')
     const describedBy = [
@@ -194,6 +205,7 @@ export class MoulTextField extends LitElement {
             aria-describedby=${describedBy || nothing}
             @input=${this.handleInput}
             @change=${this.handleChange}
+            @keydown=${this.handleKeyDown}
           />
           <span part="suffix"><slot name="suffix"></slot></span>
         </div>
