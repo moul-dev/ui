@@ -71,7 +71,7 @@ export class MoulPopover extends LitElement {
     if (!supportsNativePopoverAndAnchor() && !MoulPopover.warnedFallback) {
       MoulPopover.warnedFallback = true
       console.warn(
-        '[@moul-dev/ui] Native Popover or Anchor Positioning not supported; applying fallback fixed positioning.',
+        '[@moul-dev/web-component] Native Popover or Anchor Positioning not supported; applying fallback fixed positioning.',
       )
     }
   }

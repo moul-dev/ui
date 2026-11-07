@@ -24,7 +24,7 @@ export function warnMissingLabel(
   if (!hasAriaLabel && !hasVisibleLabel) {
     const tagName = host.tagName ? host.tagName.toLowerCase() : 'element'
     console.warn(
-      `[@moul-dev/ui] <${tagName}> is missing an accessible label (${description}). Provide an "aria-label" or "aria-labelledby" attribute.`,
+      `[@moul-dev/web-component] <${tagName}> is missing an accessible label (${description}). Provide an "aria-label" or "aria-labelledby" attribute.`,
     )
   }
 }

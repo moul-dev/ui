@@ -22,10 +22,10 @@ export default defineConfig({
     resolve: {
       alias: [
         {
-          find: /^@moul-dev\/ui\/style\.css$/,
+          find: /^@moul-dev\/web-component\/style\.css$/,
           replacement: uiSrc('styles/style.css'),
         },
-        { find: /^@moul-dev\/ui$/, replacement: uiSrc('index.ts') },
+        { find: /^@moul-dev\/web-component$/, replacement: uiSrc('index.ts') },
       ],
     },
   },

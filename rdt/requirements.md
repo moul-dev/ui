@@ -2,18 +2,18 @@
 
 ## Introduction
 
-`@moul-dev/ui` is currently a React component library (v2026.9.28) built on React Aria Components, StyleX, and Recharts. This feature replaces the entire implementation with Lit Web Components: native Custom Elements with Shadow DOM, CSS custom properties (`light-dark()` + `oklch()`), native browser APIs (Popover API, `<dialog>`, CSS Anchor Positioning, ElementInternals), and d3-scale/d3-shape for charts. Concurrently, the documentation site (`docs/`) is rebuilt from Waku + Fumadocs to Astro Starlight. The library's public API surface is exposed exclusively as HTML custom elements. React is removed from both `ui/` and `docs/` — no React wrappers are shipped.
+`@moul-dev/ui` (now `@moul-dev/web-component`) was a React component library up to v2026.9.28, built on React Aria Components, StyleX, and Recharts. This feature replaces the entire implementation with Lit Web Components: native Custom Elements with Shadow DOM, CSS custom properties (`light-dark()` + `oklch()`), native browser APIs (Popover API, `<dialog>`, CSS Anchor Positioning, ElementInternals), and d3-scale/d3-shape for charts. Concurrently, the documentation site (`docs/`) is rebuilt from Waku + Fumadocs to Astro Starlight. The library's public API surface is exposed exclusively as HTML custom elements. React is removed from both `ui/` and `docs/` — no React wrappers are shipped.
 
 The rebuild covers 54 public components across six categories, 5 reactive controllers, a CSS design-token layer, an Astro Starlight docs site, and all monorepo developer tooling scripts.
 
 ## Glossary
 
-- **Library**: The `@moul-dev/ui` npm package living in `ui/`.
+- **Library**: The `@moul-dev/web-component` npm package living in `ui/`.
 - **Docs_Site**: The documentation website living in `docs/`, rebuilt with Astro Starlight.
 - **LitElement**: A base class from `lit` for authoring native Web Components with reactive properties and Shadow DOM.
 - **Custom_Element**: A browser-native HTML element registered via `customElements.define()`.
 - **Shadow_DOM**: An encapsulated DOM subtree attached to a Custom_Element that scopes styles and markup.
-- **CSS_Token_Layer**: The `style.css` file exported from `@moul-dev/ui/style.css`, containing `:root` CSS custom properties using `light-dark()` and `oklch()`.
+- **CSS_Token_Layer**: The `style.css` file exported from `@moul-dev/web-component/style.css`, containing `:root` CSS custom properties using `light-dark()` and `oklch()`.
 - **CEM**: Custom Elements Manifest — a `custom-elements.json` file produced by `@custom-elements-manifest/analyzer` that describes the element API (schema v2).
 - **Reactive_Controller**: A Lit Reactive Controller class that manages a cross-cutting concern (press, layout, overlay, spring animation, form internals) and is composed into LitElements.
 - **PressController**: A Reactive_Controller providing accessible press/hover/focus event state.
@@ -25,7 +25,7 @@ The rebuild covers 54 public components across six categories, 5 reactive contro
 - **Visual_Variant**: One of five visual styles — `solid`, `flat`, `shadow`, `bordered`, `glass`.
 - **Monorepo_Root**: The workspace root at `/` containing both `ui/` and `docs/` packages, managed with Bun workspaces.
 - **Vite_Build**: The `ui/` library build using Vite in library mode, producing `dist/moul-ui.js`, `dist/assets/style.css`, and `dist/src/index.d.ts`.
-- **CalVer**: Calendar versioning scheme `YYYY.MM.MICRO` used for package version bumping and shared with the Moul engine: the UTC year, the unpadded UTC month, and a release counter that starts at `0` each month.
+- **SemVer**: Semantic Versioning 2.0.0 (`MAJOR.MINOR.PATCH[-prerelease]`) used for package version bumping and shared with the Moul engine, starting at `1.0.0-alpha.1`. Prerelease counters start at `1` within a channel (`alpha`, `beta`, `rc`).
 - **Biome**: The formatter and linter used across the monorepo.
 - **LLM_Index**: The machine-readable context files (`llms.txt`, `llms-full.txt`, `AGENTS.md`) served at the docs root.
 
@@ -44,7 +44,7 @@ The rebuild covers 54 public components across six categories, 5 reactive contro
 3. THE Library (`ui/`) SHALL list `lit` and `@lit/context` as entries under the `dependencies` field in `ui/package.json`.
 4. THE Library (`ui/`) SHALL list `@lit-labs/virtualizer`, `@custom-elements-manifest/analyzer`, `d3-scale`, and `d3-shape` as entries under the `dependencies` or `devDependencies` field in `ui/package.json`.
 5. THE Vite_Build SHALL complete without resolving any import whose specifier begins with `react`, `react-dom`, `react-aria-components`, `react-aria`, `@stylexjs/stylex`, or `@lit/react`.
-6. WHEN a consumer installs `@moul-dev/ui` with no version of `react` present in their dependency tree, THE Library SHALL register all exported Custom_Elements via `customElements.define` and expose their APIs without throwing a runtime error.
+6. WHEN a consumer installs `@moul-dev/web-component` with no version of `react` present in their dependency tree, THE Library SHALL register all exported Custom_Elements via `customElements.define` and expose their APIs without throwing a runtime error.
 7. IF `ui/package.json` or `docs/package.json` retains any of the removed package names after the migration, THEN THE build process for that package SHALL exit with a non-zero status code and emit an error message listing which disallowed dependency is present.
 
 ---
@@ -85,7 +85,7 @@ The rebuild covers 54 public components across six categories, 5 reactive contro
 10. THE CSS_Token_Layer SHALL define 8 chart color tokens `--color-chart-1` through `--color-chart-8` using `light-dark()` oklch values.
 11. THE CSS_Token_Layer SHALL define alert/status color tokens for the `info`, `accent`, `success`, `warning`, and `error` variants: `--color-alert-bg-{variant}`, `--color-alert-border-{variant}`, `--color-alert-hover-{variant}`, and `--color-alert-active-{variant}`, preserving oklch values from the existing `tokens.stylex.ts` source.
 12. THE Vite_Build SHALL emit the token stylesheet as `dist/assets/style.css`, and the `./style.css` package export SHALL resolve to this file.
-13. WHEN a consumer imports `@moul-dev/ui/style.css`, THE CSS_Token_Layer SHALL apply all `:root` tokens to the document without any JavaScript execution.
+13. WHEN a consumer imports `@moul-dev/web-component/style.css`, THE CSS_Token_Layer SHALL apply all `:root` tokens to the document without any JavaScript execution.
 
 ---
 
@@ -254,7 +254,7 @@ The rebuild covers 54 public components across six categories, 5 reactive contro
 
 1. THE Library SHALL implement `moul-logs-viewer` as a LitElement with `logs` property (array of LogItem objects), using `@lit-labs/virtualizer` for virtualized rendering of large log lists.
 2. THE Library SHALL implement `moul-logs` as a LitElement companion that accepts a raw log string, parses it via an internal parser, and passes the result to `moul-logs-viewer`.
-3. THE Library SHALL preserve the existing log parsing logic (line-level parsing, attribute chip extraction, log level normalization) as pure functions importable from `@moul-dev/ui`.
+3. THE Library SHALL preserve the existing log parsing logic (line-level parsing, attribute chip extraction, log level normalization) as pure functions importable from `@moul-dev/web-component`.
 4. THE Library SHALL implement `moul-sidebar` as a LitElement with `layout` (sidebar-framed, main-framed), `dense` boolean, `selected-key`, and a `selectionchange` event.
 5. THE Library SHALL implement the full Sidebar compound structure: `moul-sidebar-aside`, `moul-sidebar-main`, `moul-sidebar-header`, `moul-sidebar-brand`, `moul-sidebar-group`, `moul-sidebar-item`, `moul-sidebar-divider`, `moul-sidebar-footer`, `moul-sidebar-user`.
 6. WHEN `dense` is true on `moul-sidebar`, THE Library SHALL propagate `dense` to all child sidebar compound elements via `@lit/context` rather than requiring each child to be explicitly configured.
@@ -272,11 +272,11 @@ The rebuild covers 54 public components across six categories, 5 reactive contro
 1. THE Docs_Site SHALL be built with Astro and `@astrojs/starlight`, replacing the current Waku + Fumadocs setup in `docs/`.
 2. THE Docs_Site SHALL preserve the existing documentation content structure: English content serves at root paths `/docs/components/...`, `/docs/blocks/...`, and `/changelog/...` with no locale prefix; Khmer content serves at `/km/docs/components/...`, `/km/docs/blocks/...`, and `/km/changelog/...`.
 3. THE Docs_Site SHALL preserve bilingual support for English (en) and Khmer (km) by configuring Astro Starlight's built-in i18n locale routing with `hideLocale: 'root'` for English.
-4. THE Docs_Site SHALL provide a `<ComponentPreview>` Astro component that renders Web Component previews by importing `@moul-dev/ui/style.css` and using custom element tags (e.g., `<moul-button>`) directly in MDX, without any React integration or client-side framework adapter.
+4. THE Docs_Site SHALL provide a `<ComponentPreview>` Astro component that renders Web Component previews by importing `@moul-dev/web-component/style.css` and using custom element tags (e.g., `<moul-button>`) directly in MDX, without any React integration or client-side framework adapter.
 5. THE Docs_Site SHALL include a `/theme` page with a live CSS variable inspector where controls update `--brand-hue`, `--brand-chroma-multiplier`, `--brand-radius-factor`, and `--brand-density-factor` values in real time, causing a visible re-render of any component preview on the same page.
 6. THE Docs_Site SHALL serve LLM_Index files `public/AGENTS.md`, `public/llms.txt`, and `public/llms-full.txt` at their respective root URL paths.
 7. THE Docs_Site SHALL include a Starlight navigation group titled "Changelog" containing an index page listing all dated entries, with each entry linking to its corresponding MDX page under `/changelog/...`.
-8. THE Docs_Site SHALL import `@moul-dev/ui/style.css` in the global stylesheet so CSS_Token_Layer custom properties are available to component previews.
+8. THE Docs_Site SHALL import `@moul-dev/web-component/style.css` in the global stylesheet so CSS_Token_Layer custom properties are available to component previews.
 9. WHEN the Astro build completes, THE Docs_Site SHALL produce a fully static HTML output where navigating between documentation pages does not require client-side routing.
 10. THE Docs_Site SHALL apply the Kantumruy Pro font family as the first `font-family` value for all text elements rendered inside Khmer-locale content, loaded via the global stylesheet.
 11. THE Docs_Site SHALL NOT depend on `@astrojs/react`, `react`, `react-dom`, or any React-ecosystem package in `docs/package.json`.
@@ -293,7 +293,7 @@ The rebuild covers 54 public components across six categories, 5 reactive contro
 2. WHEN a Custom_Element is present in the CEM but absent from `llms.txt`, THE `sync:llms` script SHALL exit with a non-zero status code and print a list of undocumented elements.
 3. THE `llms.txt` file SHALL include an HTML usage snippet (e.g., `<moul-button variant="primary">Click</moul-button>`) for each component.
 4. THE `llms-full.txt` file SHALL include full component API documentation (all attributes, properties, events, and slots) derived from the CEM for every component.
-5. THE `AGENTS.md` file SHALL document the updated import patterns: HTML custom elements from `@moul-dev/ui` and CSS tokens from `@moul-dev/ui/style.css`.
+5. THE `AGENTS.md` file SHALL document the updated import patterns: HTML custom elements from `@moul-dev/web-component` and CSS tokens from `@moul-dev/web-component/style.css`.
 
 ---
 
@@ -312,8 +312,8 @@ The rebuild covers 54 public components across six categories, 5 reactive contro
 7. WHEN `bun run build:ui` is invoked, THE Monorepo_Root SHALL run the Vite library build and CEM generation sequentially, where CEM generation starts only after the Vite build exits with code 0.
 8. IF any step in the `bun run build:ui` sequence exits with a non-zero code, THEN THE Monorepo_Root SHALL halt the remaining steps and exit with a non-zero code, emitting an error message indicating which step failed.
 9. THE Monorepo_Root SHALL provide a `bun run build:docs` script that runs the Astro static build.
-10. WHEN `bun run bump` is invoked, THE Monorepo_Root SHALL read the current version from `ui/package.json`, derive the next version from the current UTC month (`YYYY.MM.0` when the current version is from an earlier month), and write the updated version back to `ui/package.json`.
-11. IF the version already recorded in `ui/package.json` is from the current UTC month when `bun run bump` is invoked, THEN THE Monorepo_Root SHALL increment `MICRO` by 1, so every version stays valid SemVer and sorts after the one before.
+10. WHEN `bun run bump <major|minor|patch>` is invoked, THE Monorepo_Root SHALL read the current version from `ui/package.json`, increment that part and reset the lower ones (a prerelease graduates to the version it leads up to), and write the updated version back to `ui/package.json`; with `--preid=<id>` it SHALL write a prerelease of that version numbered `1`.
+11. WHEN `bun run bump prerelease` is invoked, THE Monorepo_Root SHALL increment the prerelease counter of the current channel, or start the `--preid` channel at `1`; IF the result would not sort after the current version under SemVer precedence, THEN it SHALL exit with an error and leave every file unchanged.
 12. THE Vite_Build SHALL operate in library mode producing `dist/moul-ui.js` as the main bundle and `dist/src/index.d.ts` as the TypeScript declarations.
 13. THE Library SHALL include the `"use client";` directive as the first line of `dist/moul-ui.js` via a Rollup banner to prevent RSC import conflicts.
 
@@ -321,13 +321,13 @@ The rebuild covers 54 public components across six categories, 5 reactive contro
 
 ### Requirement 16: Package Exports Contract
 
-**User Story:** As a library consumer, I want the `@moul-dev/ui` package exports to expose exactly two stable entry points, so that I can confidently import only what I need without pulling in React.
+**User Story:** As a library consumer, I want the `@moul-dev/web-component` package exports to expose exactly two stable entry points, so that I can confidently import only what I need without pulling in React.
 
 #### Acceptance Criteria
 
-1. THE Library SHALL export the Custom_Element bundle from the `.` entry point (`@moul-dev/ui`), providing `dist/moul-ui.js` as the module and `dist/src/index.d.ts` as the types.
-2. THE Library SHALL export the CSS_Token_Layer from the `./style.css` entry point (`@moul-dev/ui/style.css`), resolving to `dist/assets/style.css`.
+1. THE Library SHALL export the Custom_Element bundle from the `.` entry point (`@moul-dev/web-component`), providing `dist/moul-ui.js` as the module and `dist/src/index.d.ts` as the types.
+2. THE Library SHALL export the CSS_Token_Layer from the `./style.css` entry point (`@moul-dev/web-component/style.css`), resolving to `dist/assets/style.css`.
 3. THE Library SHALL NOT expose a `./react` entry point in `ui/package.json`.
-4. WHEN a consumer imports from `@moul-dev/ui`, every exported Custom_Element's tag name SHALL be resolvable in the browser's Custom Elements registry before any consumer code executes.
-5. WHEN a consumer imports from `@moul-dev/ui` twice in the same application (e.g., via two separate bundles), every Custom_Element tag name registered by the first import SHALL remain unchanged in the Custom Elements registry after the second import (verifiable via `customElements.get()` before and after).
-6. IF a consumer attempts to import from `@moul-dev/ui/react`, `@moul-dev/ui/tokens`, or `@moul-dev/ui/tokens.stylex`, THEN the module resolver SHALL resolve with a module-not-found error, as these export entries are removed.
+4. WHEN a consumer imports from `@moul-dev/web-component`, every exported Custom_Element's tag name SHALL be resolvable in the browser's Custom Elements registry before any consumer code executes.
+5. WHEN a consumer imports from `@moul-dev/web-component` twice in the same application (e.g., via two separate bundles), every Custom_Element tag name registered by the first import SHALL remain unchanged in the Custom Elements registry after the second import (verifiable via `customElements.get()` before and after).
+6. IF a consumer attempts to import from `@moul-dev/web-component/react`, `@moul-dev/web-component/tokens`, or `@moul-dev/web-component/tokens.stylex`, THEN the module resolver SHALL resolve with a module-not-found error, as these export entries are removed.

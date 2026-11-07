@@ -2,12 +2,14 @@
 import { existsSync, readFileSync, writeFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import {
+  bumpVersion,
   changelogSlug,
-  compareCalVer,
-  computeNextVersion,
-  parseCalVer,
+  compareSemVer,
+  isReleaseType,
+  parseSemVer,
+  type ReleaseType,
   utcIsoDate,
-} from './calver'
+} from './semver'
 
 // ANSI colors for clean console logging
 const colors = {
@@ -21,63 +23,105 @@ const colors = {
   red: '\x1b[31m',
 }
 
+const USAGE = `
+${colors.bright}Moul Web Component — SemVer Bump${colors.reset}
+
+${colors.yellow}Usage:${colors.reset}
+  bun run bump <major|minor|patch|prerelease> [options]
+  bun run bump <version> [options]
+
+${colors.yellow}Release types:${colors.reset}
+  major        Breaking changes        1.4.2 -> 2.0.0    1.0.0-alpha.3 -> 1.0.0
+  minor        New, compatible API     1.4.2 -> 1.5.0    1.5.0-beta.1  -> 1.5.0
+  patch        Compatible fixes        1.4.2 -> 1.4.3    1.4.3-rc.2    -> 1.4.3
+  prerelease   Next build of channel   1.0.0-alpha.1 -> 1.0.0-alpha.2
+
+${colors.yellow}Options:${colors.reset}
+  --preid=<id>         With major, minor or patch: open a prerelease of that version
+                       (1.4.2 + minor --preid=beta -> 1.5.0-beta.1).
+                       With prerelease: switch channel (1.0.0-alpha.2 -> 1.0.0-beta.1),
+                       or start one from a release (1.0.0 -> 1.0.1-rc.1).
+  [version]            Explicit SemVer to set; it must sort after the current version
+  --changelog, -c      Scaffold docs/src/content/docs/changelog/<version-with-dashes>.mdx
+  --dry-run, -d        Preview changes without modifying any files
+  --help, -h           Show this help message
+
+The Moul engine tags the same versions with a leading v (v1.0.0-alpha.1).
+`
+
 interface BumpOptions {
+  releaseType?: ReleaseType
   explicitVersion?: string
-  now: Date
+  preid?: string
   dryRun: boolean
   scaffoldChangelog: boolean
 }
 
+function fail(message: string): never {
+  console.error(`${colors.red}Error:${colors.reset} ${message}`)
+  process.exit(1)
+}
+
 function parseArgs(args: string[]): BumpOptions {
-  let explicitVersion: string | undefined
-  let now = new Date()
-  let dryRun = false
-  let scaffoldChangelog = false
+  const options: BumpOptions = { dryRun: false, scaffoldChangelog: false }
 
   for (const arg of args) {
     if (arg === '--help' || arg === '-h') {
-      console.log(`
-${colors.bright}Moul UI — CalVer Bump (YYYY.MM.MICRO)${colors.reset}
-
-${colors.yellow}Usage:${colors.reset}
-  bun run bump [options] [version]
-
-${colors.yellow}Options:${colors.reset}
-  [version]               Explicit version to set (YYYY.MM.MICRO, newer than the current one)
-  --date=<YYYY-MM-DD>     Compute the version as if today (UTC) were this date
-  --changelog, -c         Scaffold docs/src/content/docs/changelog/<YYYY-MM-MICRO>.mdx
-  --dry-run, -d           Preview changes without modifying any files
-  --help, -h              Show this help message
-
-${colors.yellow}Rules${colors.reset} (shared with the Moul engine, whose tags add a leading v):
-  First release of a UTC month  -> YYYY.MM.0   (e.g. 2026.11.0)
-  Each later release that month -> MICRO + 1   (e.g. 2026.11.1, 2026.11.2)
-  MM is the unpadded month, so every version is valid SemVer.
-`)
+      console.log(USAGE)
       process.exit(0)
     } else if (arg === '--dry-run' || arg === '-d') {
-      dryRun = true
+      options.dryRun = true
     } else if (arg === '--changelog' || arg === '-c') {
-      scaffoldChangelog = true
-    } else if (arg.startsWith('--date=')) {
-      const value = arg.slice('--date='.length)
-      const parsed = new Date(`${value}T00:00:00Z`)
-      if (
-        !/^\d{4}-\d{2}-\d{2}$/.test(value) ||
-        Number.isNaN(parsed.getTime())
-      ) {
-        console.error(
-          `${colors.red}Error:${colors.reset} Invalid --date "${value}". Use YYYY-MM-DD.`,
-        )
-        process.exit(1)
-      }
-      now = parsed
-    } else if (!arg.startsWith('-')) {
-      explicitVersion = arg
+      options.scaffoldChangelog = true
+    } else if (arg.startsWith('--preid=')) {
+      options.preid = arg.slice('--preid='.length)
+    } else if (arg.startsWith('-')) {
+      fail(`Unknown option "${arg}". Run \`bun run bump --help\`.`)
+    } else if (options.releaseType || options.explicitVersion) {
+      fail(`Unexpected argument "${arg}": pass one release type or version.`)
+    } else if (isReleaseType(arg)) {
+      options.releaseType = arg
+    } else {
+      options.explicitVersion = arg
     }
   }
 
-  return { explicitVersion, now, dryRun, scaffoldChangelog }
+  if (!options.releaseType && !options.explicitVersion) {
+    console.log(USAGE)
+    fail('Pass a release type (major, minor, patch, prerelease) or a version.')
+  }
+  if (options.explicitVersion && options.preid !== undefined) {
+    fail('--preid only applies to a release type, not an explicit version.')
+  }
+  return options
+}
+
+function nextVersionFor(currentVersion: string, options: BumpOptions): string {
+  if (!parseSemVer(currentVersion)) {
+    fail(`ui/package.json has "${currentVersion}", which is not SemVer.`)
+  }
+  if (options.explicitVersion) {
+    if (!parseSemVer(options.explicitVersion)) {
+      fail(
+        `"${options.explicitVersion}" is not SemVer (MAJOR.MINOR.PATCH with an optional -prerelease, no leading v).`,
+      )
+    }
+    if (compareSemVer(options.explicitVersion, currentVersion) <= 0) {
+      fail(
+        `${options.explicitVersion} does not sort after the current ${currentVersion}.`,
+      )
+    }
+    return options.explicitVersion
+  }
+  try {
+    return bumpVersion(
+      currentVersion,
+      options.releaseType as ReleaseType,
+      options.preid,
+    )
+  } catch (error) {
+    fail((error as Error).message)
+  }
 }
 
 function main() {
@@ -85,45 +129,17 @@ function main() {
   const options = parseArgs(process.argv.slice(2))
 
   console.log(
-    `\n${colors.bright}${colors.cyan}◆ Moul UI — CalVer Version Bump${colors.reset}\n`,
+    `\n${colors.bright}${colors.cyan}◆ Moul Web Component — SemVer Version Bump${colors.reset}\n`,
   )
 
   const uiPkgPath = join(rootDir, 'ui', 'package.json')
   if (!existsSync(uiPkgPath)) {
-    console.error(
-      `${colors.red}Error:${colors.reset} Cannot find ui/package.json at ${uiPkgPath}`,
-    )
-    process.exit(1)
+    fail(`Cannot find ui/package.json at ${uiPkgPath}`)
   }
 
   const currentVersion: string =
     JSON.parse(readFileSync(uiPkgPath, 'utf8')).version ?? '0.0.0'
-
-  let nextVersion: string
-  if (options.explicitVersion) {
-    if (!parseCalVer(options.explicitVersion)) {
-      console.error(
-        `${colors.red}Error:${colors.reset} "${options.explicitVersion}" is not a CalVer version (YYYY.MM.MICRO, no zero padding).`,
-      )
-      process.exit(1)
-    }
-    if (compareCalVer(options.explicitVersion, currentVersion) <= 0) {
-      console.error(
-        `${colors.red}Error:${colors.reset} ${options.explicitVersion} is not newer than the current ${currentVersion}.`,
-      )
-      process.exit(1)
-    }
-    nextVersion = options.explicitVersion
-  } else {
-    try {
-      nextVersion = computeNextVersion(currentVersion, options.now)
-    } catch (error) {
-      console.error(
-        `${colors.red}Error:${colors.reset} ${(error as Error).message}`,
-      )
-      process.exit(1)
-    }
-  }
+  const nextVersion = nextVersionFor(currentVersion, options)
 
   console.log(
     `  Current Version: ${colors.yellow}${currentVersion}${colors.reset}`,
@@ -184,7 +200,7 @@ function main() {
   )
 
   if (options.scaffoldChangelog) {
-    const isoDate = utcIsoDate(options.now)
+    const isoDate = utcIsoDate(new Date())
     const changelogDir = 'docs/src/content/docs/changelog'
     const slug = changelogSlug(nextVersion)
     const relativePath = `${changelogDir}/${slug}.mdx`
@@ -202,7 +218,7 @@ function main() {
     } else {
       const template = `---
 title: v${nextVersion} — Release Summary
-description: Release notes for Moul UI v${nextVersion}.
+description: Release notes for @moul-dev/web-component v${nextVersion}.
 date: ${isoDate}
 author: Phearak S. Tha
 avatar: https://github.com/thasophearak.png

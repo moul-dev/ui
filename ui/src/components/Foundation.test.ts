@@ -1,5 +1,5 @@
 /**
- * @moul-dev/ui Foundation & Contract Test Suite
+ * @moul-dev/web-component Foundation & Contract Test Suite
  *
  * Verifies public library contracts for Milestone 3 (Phase 10):
  * 1. Export Contracts: All 54 component classes, companion elements (77 custom elements),
@@ -21,7 +21,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import * as MoulUI from '../index'
 import { defineElement } from '../utils/define-element'
 
-// Complete metadata catalog of all 77 custom elements in @moul-dev/ui
+// Complete metadata catalog of all 77 custom elements in @moul-dev/web-component
 interface ElementContract {
   tag: keyof HTMLElementTagNameMap
   moulName: keyof typeof MoulUI
@@ -717,9 +717,11 @@ describe('Foundation Contract Verification Suite (`ui/src/components/Foundation.
     })
 
     it('FND-EXP-05: exports design tokens, semantic tones, chart color utilities, and version', () => {
-      // Version string
+      // Version string: SemVer, optionally a prerelease such as 1.0.0-alpha.1
       expect(typeof MoulUI.version).toBe('string')
-      expect(MoulUI.version).toMatch(/^\d{4}\.\d{2}\.\d{2}$/)
+      expect(MoulUI.version).toMatch(
+        /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(-[0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*)?$/,
+      )
 
       // Chart Colors
       expect(Array.isArray(MoulUI.CHART_COLORS)).toBe(true)
@@ -887,7 +889,7 @@ describe('Foundation Contract Verification Suite (`ui/src/components/Foundation.
       for (const item of ALL_77_ELEMENTS) {
         expect(warnSpy).toHaveBeenCalledWith(
           expect.stringContaining(
-            `[@moul-dev/ui] Custom element "${item.tag}" is already registered. Skipping duplicate registration.`,
+            `[@moul-dev/web-component] Custom element "${item.tag}" is already registered. Skipping duplicate registration.`,
           ),
         )
       }

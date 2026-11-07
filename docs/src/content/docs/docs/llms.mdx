@@ -38,7 +38,7 @@ We host three standardized AI context files at the root of the documentation sit
 ## Core Guidelines for AI Coding Agents
 
 1. **Native HTML Custom Elements**: Always generate `<moul-*>` tags (e.g. `<moul-button>`, `<moul-card>`, `<moul-alert>`) rather than React JSX components.
-2. **Zero React Dependencies**: Never import `react`, `react-dom`, `@moul-dev/ui/react`, or React Aria adapters. Import `@moul-dev/ui` for side-effect element registration and `@moul-dev/ui/style.css` for styling.
+2. **Zero React Dependencies**: Never import `react`, `react-dom`, `@moul-dev/web-component/react`, or React Aria adapters. Import `@moul-dev/web-component` for side-effect element registration and `@moul-dev/web-component/style.css` for styling.
 3. **Compound Structure**: Use compound elements as custom element trees (e.g., `<moul-card><moul-card-header>...</moul-card-header><moul-card-body>...</moul-card-body></moul-card>`).
 4. **Standard Event Listeners**: Listen with `addEventListener` to the DOM events each element dispatches (`press`, `change`, `input`, `openchange`, `selectionchange`), with payloads on `event.detail`, rather than synthetic React handlers such as `onPress`.
 
@@ -54,13 +54,13 @@ We host three standardized AI context files at the root of the documentation sit
 
     ```markdown
     ---
-    description: Guidelines for building with @moul-dev/ui Web Components
+    description: Guidelines for building with @moul-dev/web-component Web Components
     globs: "**/*.{html,astro,vue,svelte,ts,js}"
     ---
 
-    Always use @moul-dev/ui standard HTML custom elements:
-    - Import `@moul-dev/ui` in your client bundle.
-    - Import `@moul-dev/ui/style.css` for design tokens.
+    Always use @moul-dev/web-component standard HTML custom elements:
+    - Import `@moul-dev/web-component` in your client bundle.
+    - Import `@moul-dev/web-component/style.css` for design tokens.
     - Render `<moul-button>`, `<moul-card>`, `<moul-alert>`, etc.
     - Reference /llms.txt and /llms-full.txt for component APIs.
     ```

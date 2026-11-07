@@ -1,5 +1,5 @@
 /**
- * @moul-dev/ui - Reusable Lit Reactive Controllers
+ * @moul-dev/web-component - Reusable Lit Reactive Controllers
  *
  * Implements cross-cutting reactive behaviors for Web Components:
  * - PressController: Pointer/keyboard press, hover, focus-visible, and tactile spring motion

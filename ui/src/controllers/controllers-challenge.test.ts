@@ -310,7 +310,7 @@ describe('Adversarial Challenge Suite: NumberSpringController & FormInternalsCon
       const controller = new FormInternalsController(host)
 
       expect(warnSpy).toHaveBeenCalledWith(
-        '[@moul-dev/ui] ElementInternals is not supported in this environment.',
+        '[@moul-dev/web-component] ElementInternals is not supported in this environment.',
       )
       expect(controller.internals).toBeNull()
 
@@ -369,7 +369,7 @@ describe('Adversarial Challenge Suite: NumberSpringController & FormInternalsCon
       const controller = new FormInternalsController(host)
 
       expect(warnSpy).toHaveBeenCalledWith(
-        '[@moul-dev/ui] Failed to attach ElementInternals:',
+        '[@moul-dev/web-component] Failed to attach ElementInternals:',
         expect.any(Error),
       )
       expect(controller.internals).toBeNull()
@@ -403,7 +403,7 @@ describe('Adversarial Challenge Suite: NumberSpringController & FormInternalsCon
         new FormInternalsController(host)
 
         expect(warnSpy).toHaveBeenCalledWith(
-          `[@moul-dev/ui] Form-associated element <${tag}> is not connected to a <form>.`,
+          `[@moul-dev/web-component] Form-associated element <${tag}> is not connected to a <form>.`,
         )
         warnSpy.mockRestore()
       })
@@ -417,7 +417,7 @@ describe('Adversarial Challenge Suite: NumberSpringController & FormInternalsCon
       new FormInternalsController(host)
 
       expect(warnSpy).toHaveBeenCalledWith(
-        '[@moul-dev/ui] Form-associated element <uppercase-input-field> is not connected to a <form>.',
+        '[@moul-dev/web-component] Form-associated element <uppercase-input-field> is not connected to a <form>.',
       )
       warnSpy.mockRestore()
     })
@@ -435,7 +435,7 @@ describe('Adversarial Challenge Suite: NumberSpringController & FormInternalsCon
       new FormInternalsController(host)
 
       expect(warnSpy).toHaveBeenCalledWith(
-        '[@moul-dev/ui] Form-associated element <element> is not connected to a <form>.',
+        '[@moul-dev/web-component] Form-associated element <element> is not connected to a <form>.',
       )
       warnSpy.mockRestore()
     })

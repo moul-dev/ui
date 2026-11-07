@@ -1,6 +1,6 @@
 ---
-title: Unreleased — Buttons That Press Once, One Copy of Lit, and Enter Submits Forms
-description: Buttons and toggle buttons act once per click, the npm build stops inlining Lit, Enter in Moul text fields submits the surrounding form, surfaces default to the neutral look, table cells render templates, the combobox shows a preselected option, and versions follow `YYYY.MM.MICRO`, shared with the Moul engine.
+title: Unreleased — A New Package Name, Buttons That Press Once, and One Copy of Lit
+description: Buttons and toggle buttons act once per click, the npm build stops inlining Lit, Enter in Moul text fields submits the surrounding form, surfaces default to the neutral look, table cells render templates, the combobox shows a preselected option, and the package becomes `@moul-dev/web-component`, versioned with SemVer from `1.0.0-alpha.1` alongside the Moul engine.
 author: Phearak S. Tha
 avatar: https://github.com/thasophearak.png
 ---
@@ -51,8 +51,8 @@ The externals come straight from `ui/package.json`. A build check also fails if 
 Bare imports do not resolve in a plain `<script type="module">`, so the CDN snippet moves to a separate, self-contained, minified build:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@moul-dev/ui/dist/assets/style.css" />
-<script type="module" src="https://cdn.jsdelivr.net/npm/@moul-dev/ui/dist/cdn/moul-ui.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@moul-dev/web-component/dist/assets/style.css" />
+<script type="module" src="https://cdn.jsdelivr.net/npm/@moul-dev/web-component/dist/cdn/moul-ui.js"></script>
 ```
 
 ---
@@ -127,16 +127,31 @@ table.columns = [
 
 ---
 
-## Versions Are `YYYY.MM.MICRO`
+## `@moul-dev/web-component`, Versioned With SemVer
 
-Moul UI and the Moul engine now share one [CalVer](https://calver.org) scheme, `YYYY.MM.MICRO`: the UTC year, the UTC month, and a release counter for that month. The first release of November is `2026.11.0`, the next `2026.11.1`. The month is never zero-padded (`2026.9.0`, not `2026.09.0`), which keeps every version valid SemVer.
+The package is now `@moul-dev/web-component`. The `<moul-*>` tags, their attributes and events, the `style.css` export, and the `moul-ui.js` bundle paths are unchanged. Only the name you install and import changes.
 
-The old bump put the day in the third number and numbered a second release on the same day `2026.10.27.1`. That is not SemVer, and npm refuses to publish it. `MICRO` is a counter, so any number of releases fit in a day, and each sorts after the last: a range such as `^2026.10.27` picks up `2026.11.0`. The rest of October continues from the current number, `2026.10.28`, before November starts again at `.0`.
+```js
+import '@moul-dev/web-component/style.css'
+import '@moul-dev/web-component'
+```
+
+Versions change scheme with the name. A calendar version said when a release shipped, not what it did to your code: `2026.10.27` to `2026.11.0` read the same for a renamed attribute as for a typo fix. The library and the Moul engine now follow [SemVer](https://semver.org). A major release breaks something, a minor one adds API, and a patch only fixes.
+
+Numbering starts at `1.0.0-alpha.1`. The new name means nothing has to sort after `2026.10.27`, and the alphas count up until the API settles into `1.0.0`. The engine tags the same releases with a leading `v`, `v1.0.0-alpha.1`.
+
+```bash
+bun run bump prerelease               # 1.0.0-alpha.1 -> 1.0.0-alpha.2
+bun run bump prerelease --preid=beta  # 1.0.0-alpha.2 -> 1.0.0-beta.1
+bun run bump major                    # 1.0.0-beta.1  -> 1.0.0
+bun run bump minor                    # 1.0.0         -> 1.1.0
+```
 
 ---
 
 ## Upgrading
 
+- **Package name:** Run `bun remove @moul-dev/ui && bun add @moul-dev/web-component`, then replace `@moul-dev/ui` with `@moul-dev/web-component` in imports and CDN URLs. A range such as `^2026.10.27` will not pick up the new package. `@moul-dev/ui` stays at `2026.10.27`.
 - **CDN users:** Change `dist/moul-ui.js` to `dist/cdn/moul-ui.js`. The old path now needs a bundler or an import map.
 - **Enter handlers:** Remove any `keydown` listener you added to submit forms. One that calls `preventDefault()` before submitting keeps working; one that does not will submit twice.
 - **Search inside forms:** Listen for the form's `submit` instead of the field's.

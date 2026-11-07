@@ -1,5 +1,5 @@
 /**
- * @moul-dev/ui Test Environment Setup
+ * @moul-dev/web-component Test Environment Setup
  *
  * Configures happy-dom environment with standards-compliant shims for:
  * 1. ElementInternals (Form-associated custom elements)

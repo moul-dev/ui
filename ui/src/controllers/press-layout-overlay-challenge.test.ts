@@ -518,7 +518,7 @@ describe('Adversarial Challenger Test Suite: Press, LayoutIndicator, OverlayPres
       // Emitted console.warn containing disconnected warning
       expect(warnSpy).toHaveBeenCalledWith(
         expect.stringContaining(
-          '[@moul-dev/ui] Failed to call dialog.showModal()',
+          '[@moul-dev/web-component] Failed to call dialog.showModal()',
         ),
         expect.any(DOMException),
       )

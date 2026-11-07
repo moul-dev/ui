@@ -47,7 +47,7 @@ export function banReactImportsPlugin(): Plugin {
         throw new Error(
           `[banReactImportsPlugin] Prohibited import detected: "${id}"${
             importer ? ` in "${importer}"` : ''
-          }. React, StyleX, and React-adapter modules are forbidden in @moul-dev/ui.`,
+          }. React, StyleX, and React-adapter modules are forbidden in @moul-dev/web-component.`,
         )
       }
       return null
@@ -91,7 +91,7 @@ export function noInlinedDependenciesPlugin(): Plugin {
       )
       if (inlined.length > 0) {
         this.error(
-          `[noInlinedDependenciesPlugin] Third-party modules were bundled into @moul-dev/ui:\n  ${inlined.join(
+          `[noInlinedDependenciesPlugin] Third-party modules were bundled into @moul-dev/web-component:\n  ${inlined.join(
             '\n  ',
           )}\nImport only packages listed in ui/package.json "dependencies"; they are kept external.`,
         )

@@ -14,7 +14,7 @@ export function defineElement(
   const existing = customElements.get(tagName)
   if (existing) {
     console.warn(
-      `[@moul-dev/ui] Custom element "${tagName}" is already registered. Skipping duplicate registration.`,
+      `[@moul-dev/web-component] Custom element "${tagName}" is already registered. Skipping duplicate registration.`,
     )
     return
   }

@@ -1,14 +1,14 @@
-# Technical Specification: `@moul-dev/ui` Lit Web Components & Astro Starlight Rebuild
+# Technical Specification: `@moul-dev/web-component` Lit Web Components & Astro Starlight Rebuild
 
 **Status:** Draft / Ready for Implementation  
-**Target Version:** CalVer (`YYYY.MM.MICRO`)  
+**Target Version:** SemVer (`MAJOR.MINOR.PATCH[-prerelease]`), starting at `1.0.0-alpha.1`  
 **Source Requirements:** [requirements.md](./requirements.md)
 
 ---
 
 ## 1. Executive Summary & Architecture Overview
 
-`@moul-dev/ui` is transitioning from a React + React Aria + StyleX + Recharts component library and a Waku + Fumadocs documentation site to a **zero-React, standards-first Web Components architecture** built on **Lit 3**, **Shadow DOM**, a **CSS Design Token Layer (`light-dark()` + `oklch()`)**, **native browser APIs** (`<dialog>`, Popover API, CSS Anchor Positioning, `ElementInternals`), **d3-scale / d3-shape / motion**, and an **Astro Starlight** documentation site.
+`@moul-dev/web-component` is transitioning from a React + React Aria + StyleX + Recharts component library and a Waku + Fumadocs documentation site to a **zero-React, standards-first Web Components architecture** built on **Lit 3**, **Shadow DOM**, a **CSS Design Token Layer (`light-dark()` + `oklch()`)**, **native browser APIs** (`<dialog>`, Popover API, CSS Anchor Positioning, `ElementInternals`), **d3-scale / d3-shape / motion**, and an **Astro Starlight** documentation site.
 
 ### 1.1 High-Level Monorepo Architecture
 
@@ -19,7 +19,7 @@ flowchart TD
     Biome["Biome Linter & Formatter"]
   end
 
-  subgraph UI["ui/ (@moul-dev/ui)"]
+  subgraph UI["ui/ (@moul-dev/web-component)"]
     Tokens["CSS Token Layer\n(ui/src/styles/style.css)"]
     Tones["Semantic Tone & Variant System\n(ui/src/styles/semantic-tones.ts)"]
     Controllers["5 Reactive Controllers\n(ui/src/controllers/)"]
@@ -60,7 +60,7 @@ flowchart TD
 │   ├── dev.ts                            # Concurrent Vite + Astro dev runner
 │   ├── gen-component.ts                  # Lit component + test + MDX scaffolder
 │   ├── sync-llms.ts                      # CEM -> llms.txt / llms-full.txt validator & generator
-│   ├── bump-version.ts                   # CalVer (YYYY.MM.MICRO) bumper
+│   ├── bump-version.ts                   # SemVer bumper (major, minor, patch, prerelease)
 │   └── verify-no-react.ts                # Disallowed dependency build guard
 ├── ui/
 │   ├── package.json                      # Zero-React Lit package manifest
@@ -106,7 +106,7 @@ flowchart TD
         │   ├── ComponentPreview.astro    # Native Web Component live preview wrapper
         │   └── ThemeInspector.astro      # Interactive brand token sliders
         ├── styles/
-        │   └── global.css                # Imports @moul-dev/ui/style.css + Kantumruy Pro font
+        │   └── global.css                # Imports @moul-dev/web-component/style.css + Kantumruy Pro font
         ├── pages/
         │   └── theme.astro               # /theme interactive token playground
         └── content/
@@ -128,7 +128,7 @@ Both `ui/package.json` and `docs/package.json` are strictly prohibited from cont
 
 ```json
 {
-  "name": "@moul-dev/ui",
+  "name": "@moul-dev/web-component",
   "version": "2026.10.16",
   "description": "Accessible, standards-first Web Components library built with Lit, Shadow DOM, and native CSS tokens",
   "license": "MIT",
@@ -213,7 +213,7 @@ Both `ui/package.json` and `docs/package.json` are strictly prohibited from cont
   },
   "dependencies": {
     "@astrojs/starlight": "^0.32.0",
-    "@moul-dev/ui": "workspace:*",
+    "@moul-dev/web-component": "workspace:*",
     "@phosphor-icons/web": "^2.1.1",
     "astro": "^5.5.0",
     "sharp": "^0.33.5"
@@ -246,7 +246,7 @@ export function defineElement(
   const existing = customElements.get(tagName)
   if (existing) {
     console.warn(
-      `[@moul-dev/ui] Custom element "${tagName}" is already registered. Skipping duplicate registration.`,
+      `[@moul-dev/web-component] Custom element "${tagName}" is already registered. Skipping duplicate registration.`,
     )
     return
   }
@@ -278,7 +278,7 @@ export function warnMissingLabel(
     Boolean(host.getAttribute('aria-labelledby')?.trim())
   if (!hasAriaLabel && !hasVisibleLabel) {
     console.warn(
-      `[@moul-dev/ui] <${host.tagName.toLowerCase()}> is missing an accessible label (${description}). Provide an "aria-label" or "aria-labelledby" attribute.`,
+      `[@moul-dev/web-component] <${host.tagName.toLowerCase()}> is missing an accessible label (${description}). Provide an "aria-label" or "aria-labelledby" attribute.`,
     )
   }
 }
@@ -286,7 +286,7 @@ export function warnMissingLabel(
 
 ### 3.4 Internal Icons Strategy
 
-Internal component affordances (close `×` icon, select chevron, search magnifier, clear button, external link arrow, alert status icons, spinner ring, calendar navigation arrows) are implemented in `ui/src/utils/icons.ts` as pure Lit `svg\`...\`` template functions with `aria-hidden="true"` and `focusable="false"`. This guarantees zero external icon runtime dependencies in `@moul-dev/ui`.
+Internal component affordances (close `×` icon, select chevron, search magnifier, clear button, external link arrow, alert status icons, spinner ring, calendar navigation arrows) are implemented in `ui/src/utils/icons.ts` as pure Lit `svg\`...\`` template functions with `aria-hidden="true"` and `focusable="false"`. This guarantees zero external icon runtime dependencies in `@moul-dev/web-component`.
 
 ---
 
@@ -294,7 +294,7 @@ Internal component affordances (close `×` icon, select chevron, search magnifie
 
 ### 4.1 Token Architecture (`ui/src/styles/style.css`)
 
-The stylesheet `ui/src/styles/style.css` is emitted to `dist/assets/style.css` and exported as `@moul-dev/ui/style.css`. Because CSS custom properties inherit across Shadow DOM boundaries, defining all tokens on `:root` makes them immediately available inside every `<moul-*>` Shadow Root without JavaScript runtime injection.
+The stylesheet `ui/src/styles/style.css` is emitted to `dist/assets/style.css` and exported as `@moul-dev/web-component/style.css`. Because CSS custom properties inherit across Shadow DOM boundaries, defining all tokens on `:root` makes them immediately available inside every `<moul-*>` Shadow Root without JavaScript runtime injection.
 
 Following modern CSS best practices:
 - `:root` sets `color-scheme: light dark;` so `light-dark()` resolves automatically to the user's OS preference.
@@ -461,9 +461,9 @@ All five controllers implement `ReactiveController` from `lit` and are exported 
 - **Behavior (Requirements 5.7, 5.8, 5.9, 6.7, 9.2, 9.12):**
   - In `hostConnected()`:
     - Checks `typeof this.host.attachInternals === 'function'`.
-    - If unavailable, logs `console.warn('[@moul-dev/ui] ElementInternals is not supported in this environment.')`, sets `this.internals = null`, and returns without throwing.
+    - If unavailable, logs `console.warn('[@moul-dev/web-component] ElementInternals is not supported in this environment.')`, sets `this.internals = null`, and returns without throwing.
     - Otherwise attaches internals once (`this.internals ??= this.host.attachInternals()`).
-    - **Detached Form Warning (Requirement 9.12):** If the host has a `name` attribute (or `options.requireFormConnection` is set) and `this.internals.form === null` after connection, emits `console.warn('[@moul-dev/ui] Form-associated element <...> is not connected to a <form>.')`.
+    - **Detached Form Warning (Requirement 9.12):** If the host has a `name` attribute (or `options.requireFormConnection` is set) and `this.internals.form === null` after connection, emits `console.warn('[@moul-dev/web-component] Form-associated element <...> is not connected to a <form>.')`.
   - `setValue(value: string | File | FormData | null)`:
     - Synchronously invokes `this.internals?.setFormValue(value)` before the next browser repaint (Requirement 6.7).
   - `setValidity(flags: ValidityStateFlags, message?: string, anchor?: HTMLElement)`:
@@ -611,7 +611,7 @@ Used by: `moul-modal`, `moul-alert-dialog`, `moul-drawer`, `moul-command-palette
        }
      } catch (err) {
        console.warn(
-         '[@moul-dev/ui] Failed to call dialog.showModal() (element may be disconnected):',
+         '[@moul-dev/web-component] Failed to call dialog.showModal() (element may be disconnected):',
          err,
        )
        return false
@@ -734,7 +734,7 @@ All form-associated components declare `static formAssociated = true` and compos
 #### 53. Logs Viewer (`moul-logs-viewer` & `moul-logs`)
 
 - **Pure Parser Exports (Requirement 12.3):**
-  Preserves and exports from `@moul-dev/ui`:
+  Preserves and exports from `@moul-dev/web-component`:
   - `parseLogs(raw: string): LogItem[]`
   - `parseLogLine(line: string, index?: number): LogItem`
   - `parseAttributes(message: string): Record<string, string>`
@@ -848,7 +848,7 @@ export default defineConfig({
 Satisfies **Requirements 13.8 & 13.10**:
 
 ```css
-@import '@moul-dev/ui/style.css';
+@import '@moul-dev/web-component/style.css';
 @import url('https://fonts.googleapis.com/css2?family=Kantumruy+Pro:ital,wght@0,100..700;1,100..700&display=swap');
 
 :lang(km),
@@ -878,7 +878,7 @@ const { title, align = 'center' } = Astro.props
 </section>
 
 <script>
-  import '@moul-dev/ui'
+  import '@moul-dev/web-component'
 </script>
 ```
 
@@ -946,12 +946,11 @@ Because steps are chained with `&&`, if any step exits with a non-zero code, exe
    - If any CEM custom element is missing from `llms.txt` or `llms-full.txt`, prints the list of undocumented elements and exits with code `1` (Requirement 14.2).
    - Supports `--write` to regenerate `docs/public/llms.txt` and `docs/public/llms-full.txt` directly from the CEM.
 3. **`scripts/bump-version.ts` (`bun run bump`, Requirement 15.10 & 15.11):**
-   - Reads `version` from `ui/package.json`.
-   - Computes the UTC year and unpadded month (`${now.getUTCFullYear()}.${now.getUTCMonth() + 1}`), the scheme the Moul engine tags as `vYYYY.MM.MICRO`.
-   - If `currentVersion` is from the same month, increments `MICRO`.
-   - If it is from an earlier month (or is not CalVer), sets next version to `YYYY.MM.0`.
-   - If it is from a later month, exits with an error and leaves every file unchanged.
-   - Writes the updated version to `ui/package.json` (and syncs root/`docs` `package.json` & `ui/src/index.ts`).
+   - Reads `version` from `ui/package.json` and takes a release type: `major`, `minor`, `patch`, or `prerelease` (or an explicit SemVer version).
+   - `major`, `minor`, and `patch` increment that part and reset the lower ones; a prerelease graduates to the version it leads up to (`1.0.0-alpha.3` + `major` = `1.0.0`).
+   - `prerelease` increments the channel counter (`1.0.0-alpha.1` → `1.0.0-alpha.2`). `--preid=<id>` switches channel (`→ 1.0.0-beta.1`), or, with `major`, `minor`, or `patch`, opens a prerelease of that version (`1.0.0` + `minor --preid=beta` = `1.1.0-beta.1`). Counters start at `1`.
+   - Refuses any result that does not sort after the current version (SemVer precedence), and leaves every file unchanged.
+   - Writes the updated version to `ui/package.json` (and syncs root/`docs` `package.json`, `ui/src/index.ts` & `bun.lock`). The Moul engine tags the same versions as `vMAJOR.MINOR.PATCH`.
 
 ---
 

@@ -39,7 +39,7 @@ export class FormInternalsController implements ReactiveController {
     this.host.addEventListener('invalid', this.markTouched)
     if (typeof this.host.attachInternals !== 'function') {
       console.warn(
-        '[@moul-dev/ui] ElementInternals is not supported in this environment.',
+        '[@moul-dev/web-component] ElementInternals is not supported in this environment.',
       )
       this.internals = null
       return
@@ -49,7 +49,10 @@ export class FormInternalsController implements ReactiveController {
       try {
         this.internals = this.host.attachInternals()
       } catch (err) {
-        console.warn('[@moul-dev/ui] Failed to attach ElementInternals:', err)
+        console.warn(
+          '[@moul-dev/web-component] Failed to attach ElementInternals:',
+          err,
+        )
         this.internals = null
         return
       }
@@ -65,7 +68,7 @@ export class FormInternalsController implements ReactiveController {
       if (!isConnectedToForm) {
         const tagName = (this.host.tagName ?? 'element').toLowerCase()
         console.warn(
-          `[@moul-dev/ui] Form-associated element <${tagName}> is not connected to a <form>.`,
+          `[@moul-dev/web-component] Form-associated element <${tagName}> is not connected to a <form>.`,
         )
       }
     }

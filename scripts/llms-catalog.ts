@@ -585,7 +585,7 @@ table.data = [{ id: '1', name: 'Dara', role: 'Admin', status: 'Active' }]`,
         tags: ['moul-toast', 'moul-toast-region'],
         snippet: `<moul-toast-region></moul-toast-region>
 <moul-toast tone="success" title="Saved" description="Your profile was updated."></moul-toast>`,
-        script: `import { toastQueue } from '@moul-dev/ui'
+        script: `import { toastQueue } from '@moul-dev/web-component'
 
 toastQueue.add({ title: 'Saved', description: 'Your profile was updated.', tone: 'success' })`,
       },

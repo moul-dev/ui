@@ -1,4 +1,4 @@
-# Implementation Plan & Task List: `@moul-dev/ui` Lit Web Components & Astro Starlight Rebuild
+# Implementation Plan & Task List: `@moul-dev/web-component` Lit Web Components & Astro Starlight Rebuild
 
 **References:**
 - Requirements: [requirements.md](./requirements.md)
@@ -16,7 +16,7 @@ _Covers: Requirement 1, Requirement 2, Requirement 15, Requirement 16_
   - Remove all React, StyleX, Recharts, `input-otp`, Waku, Fumadocs, and `@tanstack/react-*` packages (_Req 1.1, 1.2, 13.11_).
   - Add `lit`, `@lit/context`, `@lit-labs/virtualizer`, `d3-scale`, `d3-shape`, `motion` to `ui/package.json` `dependencies` and `@custom-elements-manifest/analyzer`, `@open-wc/testing-helpers`, `happy-dom`, `@types/d3-scale`, `@types/d3-shape` to `devDependencies` (_Req 1.3, 1.4_).
   - Configure `ui/package.json` `exports` to expose strictly `.` (`./dist/moul-ui.js` + `./dist/src/index.d.ts`) and `./style.css` (`./dist/assets/style.css`), removing `./react`, `./tokens`, and `./tokens.stylex` (_Req 16.1–16.3, 16.6_).
-  - Configure `docs/package.json` with `astro`, `@astrojs/starlight`, `@moul-dev/ui` (`workspace:*`), and `@phosphor-icons/web` (_Req 13.1, 13.11_).
+  - Configure `docs/package.json` with `astro`, `@astrojs/starlight`, `@moul-dev/web-component` (`workspace:*`), and `@phosphor-icons/web` (_Req 13.1, 13.11_).
 - [x] **1.3 Reconfigure `ui/vite.config.ts` and `ui/custom-elements-manifest.config.mjs`**
   - Configure Vite library mode outputting `dist/moul-ui.js` with `"use client";` Rollup banner and `dist/src/index.d.ts` via `vite-plugin-dts` (_Req 15.12, 15.13_).
   - Add `banReactImportsPlugin()` to fail builds if any specifier starts with `react`, `react-dom`, `react-aria`, `react-aria-components`, `@stylexjs/stylex`, `@lit/react`, or `motion/react` (_Req 1.5_).
@@ -220,9 +220,9 @@ _Covers: Requirement 13_
   - Configure Starlight with bilingual i18n (`root` for English `en` with `hideLocale: 'root'`, `km` for Khmer) preserving `/docs/components/...`, `/docs/blocks/...`, `/changelog/...` and `/km/...` equivalents (_Req 13.1–13.3_).
   - Configure Starlight "Changelog" navigation group and `/changelog` index page (_Req 13.7_).
 - [x] **11.2 Author Global Stylesheet (`docs/src/styles/global.css`)**
-  - Import `@moul-dev/ui/style.css` and configure `Kantumruy Pro` as the primary `font-family` for `:lang(km)` content (_Req 13.8, 13.10_).
+  - Import `@moul-dev/web-component/style.css` and configure `Kantumruy Pro` as the primary `font-family` for `:lang(km)` content (_Req 13.8, 13.10_).
 - [x] **11.3 Implement `<ComponentPreview.astro>` and `/theme` Live Token Inspector (`docs/src/pages/theme.astro`)**
-  - Build `ComponentPreview.astro` rendering native `<moul-*>` custom elements with client-side `<script>import '@moul-dev/ui'</script>` (_Req 13.4_).
+  - Build `ComponentPreview.astro` rendering native `<moul-*>` custom elements with client-side `<script>import '@moul-dev/web-component'</script>` (_Req 13.4_).
   - Build `/theme` page with real-time sliders for `--brand-hue`, `--brand-chroma-multiplier`, `--brand-radius-factor`, and `--brand-density-factor` updating live `<moul-*>` component previews on the page (_Req 13.5_).
 - [x] **11.4 Migrate English & Khmer MDX Documentation Content (`docs/src/content/docs/`)**
   - Update component, block, and changelog MDX files to use `<ComponentPreview>` and native `<moul-*>` HTML custom elements instead of React JSX components (_Req 13.2, 13.4, 13.9_).
@@ -234,7 +234,7 @@ _Covers: Requirement 14, Requirement 15_
 
 - [x] **12.1 Update Monorepo Developer Scripts (`scripts/`)**
   - `scripts/gen-component.ts`: Scaffold `<ComponentName>.ts`, `<ComponentName>.styles.ts`, `<ComponentName>.test.ts`, and `<ComponentName>.mdx` (_Req 15.4_).
-  - `scripts/bump-version.ts`: Compute CalVer `YYYY.MM.MICRO`: `YYYY.MM.0` for a UTC month's first release, then `MICRO` + 1 (_Req 15.10, 15.11_).
+  - `scripts/bump-version.ts`: Compute the next SemVer for `major`, `minor`, `patch`, or `prerelease` (`--preid` for a channel), refusing anything that does not sort after the current version (_Req 15.10, 15.11_).
   - `scripts/dev.ts`: Run `bun run dev:ui` and `bun run dev:docs` concurrently (_Req 15.1–15.3_).
 - [x] **12.2 Update `scripts/sync-llms.ts` and Regenerate LLM Context Files**
   - Parse `ui/dist/custom-elements.json` and cross-reference/generate `docs/public/llms.txt` (with `<moul-*>` HTML snippets), `docs/public/llms-full.txt` (full CEM attributes, properties, events, slots), `docs/public/AGENTS.md`, and root `AGENTS.md` (_Req 13.6, 14.1–14.5, 15.5_).

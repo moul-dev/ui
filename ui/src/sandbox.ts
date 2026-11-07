@@ -610,7 +610,7 @@ export class MoulSandbox extends LitElement {
           <moul-typography variant="caption">Caption — secondary detail</moul-typography>
           <moul-separator></moul-separator>
           <div class="demo-row" style="height: 1.5rem;">
-            <moul-typography variant="code">bun add @moul-dev/ui</moul-typography>
+            <moul-typography variant="code">bun add @moul-dev/web-component</moul-typography>
             <moul-separator orientation="vertical"></moul-separator>
             <moul-typography variant="body" tone="success">Toned text</moul-typography>
             <moul-separator orientation="vertical"></moul-separator>

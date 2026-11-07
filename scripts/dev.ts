@@ -106,7 +106,7 @@ ${colors.cyan}========================================${colors.reset}
 ${colors.dim}Press Ctrl+C to terminate all services cleanly.${colors.reset}
 `)
 
-// The docs site resolves `@moul-dev/ui` through the package exports, which
+// The docs site resolves `@moul-dev/web-component` through the package exports, which
 // point at `ui/dist`. Build once up front so a fresh clone can start docs.
 if (!existsSync(join(rootDir, 'ui', 'dist', 'moul-ui.js'))) {
   console.log(

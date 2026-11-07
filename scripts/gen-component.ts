@@ -330,8 +330,8 @@ The \`<${tagName}>\` component is a standards-first Web Component built with Lit
 ## Import
 
 \`\`\`ts
-import '@moul-dev/ui';
-import '@moul-dev/ui/style.css';
+import '@moul-dev/web-component';
+import '@moul-dev/web-component/style.css';
 \`\`\`
 
 ## HTML Usage

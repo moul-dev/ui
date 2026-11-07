@@ -1,8 +1,8 @@
-# @moul-dev/ui
+# @moul-dev/web-component
 
 > Accessible, themeable Web Components built on Lit 3 and native browser APIs.
 
-[![npm version](https://img.shields.io/npm/v/@moul-dev/ui.svg)](https://www.npmjs.com/package/@moul-dev/ui)
+[![npm version](https://img.shields.io/npm/v/@moul-dev/web-component.svg)](https://www.npmjs.com/package/@moul-dev/web-component)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 **Moul UI** is a library of 79 `<moul-*>` custom elements for teams that want one consistent UI baseline across every web stack. Register the elements once, then use the same markup in plain HTML, Astro, Vue, Svelte, Lit, server-rendered templates, or React 19.
@@ -24,8 +24,8 @@
 ## 📦 Installation
 
 ```bash
-bun add @moul-dev/ui
-# or: npm install @moul-dev/ui / pnpm add @moul-dev/ui / yarn add @moul-dev/ui
+bun add @moul-dev/web-component
+# or: npm install @moul-dev/web-component / pnpm add @moul-dev/web-component / yarn add @moul-dev/web-component
 ```
 
 ---
@@ -35,8 +35,8 @@ bun add @moul-dev/ui
 Import the design tokens and register the elements once, in your client entry point:
 
 ```ts
-import '@moul-dev/ui/style.css' // design tokens
-import '@moul-dev/ui'           // registers every <moul-*> element
+import '@moul-dev/web-component/style.css' // design tokens
+import '@moul-dev/web-component'           // registers every <moul-*> element
 ```
 
 Then write the elements as HTML:
@@ -72,8 +72,8 @@ document.querySelector('#save').addEventListener('press', () => {
 React 19 passes properties to custom elements and attaches listeners for `on<eventname>` props:
 
 ```tsx
-import '@moul-dev/ui'
-import '@moul-dev/ui/style.css'
+import '@moul-dev/web-component'
+import '@moul-dev/web-component/style.css'
 
 export function SaveButton({ onSave }: { onSave: () => void }) {
   return (
@@ -120,11 +120,12 @@ Every element, attribute, event, slot, and CSS part is documented at **[moul.dev
 
 ## ↪️ Migrating from v2026.9.28 (React)
 
-v2026.9.28 is the last React release. Pin it to stay on React (`@moul-dev/ui@2026.9.28`). To move to custom elements:
+v2026.9.28 is the last React release, published as `@moul-dev/ui`. Pin it to stay on React (`@moul-dev/ui@2026.9.28`). To move to custom elements:
 
-- Replace `import { Button } from '@moul-dev/ui'` with a single `import '@moul-dev/ui'` and write `<moul-button>`.
+- Swap the package: `bun remove @moul-dev/ui && bun add @moul-dev/web-component`.
+- Replace `import { Button } from '@moul-dev/ui'` with a single `import '@moul-dev/web-component'` and write `<moul-button>`.
 - Boolean props become attributes (`isDisabled` → `is-disabled`); handlers become DOM listeners (`onPress` → `press`).
-- `@moul-dev/ui/tokens`, `@moul-dev/ui/tokens.stylex`, `@moul-dev/ui/theme.css`, and `@moul-dev/ui/style` are removed; import `@moul-dev/ui/style.css`.
+- `@moul-dev/ui/tokens`, `@moul-dev/ui/tokens.stylex`, `@moul-dev/ui/theme.css`, and `@moul-dev/ui/style` are removed; import `@moul-dev/web-component/style.css`.
 - `ThemeProvider` is gone; theme with the CSS brand hooks above.
 - `Autocomplete` is covered by `<moul-combobox>`. `ListBox` and `DateField` have no direct replacement yet.
 

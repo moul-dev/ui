@@ -205,7 +205,7 @@ export function safeShowModal(
     }
   } catch (err) {
     console.warn(
-      '[@moul-dev/ui] Failed to call dialog.showModal() (element may be disconnected):',
+      '[@moul-dev/web-component] Failed to call dialog.showModal() (element may be disconnected):',
       err,
     )
     return false
