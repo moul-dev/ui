@@ -476,6 +476,28 @@ describe('Milestone 2: 10-Element Sidebar Compound Element Suite', () => {
       expect(uncollapsedTooltip).toBeNull()
     })
 
+    it('names the collapsed row after its label, which is no longer rendered', async () => {
+      const root = await mount<MoulSidebar>(html`
+        <moul-sidebar .collapsed=${true}>
+          <moul-sidebar-aside>
+            <moul-sidebar-item key="analytics" label="Analytics" href="/analytics"></moul-sidebar-item>
+          </moul-sidebar-aside>
+        </moul-sidebar>
+      `)
+
+      const item = root.querySelector('moul-sidebar-item[key="analytics"]')!
+      const row = () => item.shadowRoot!.querySelector('.item')!
+      expect(row().getAttribute('aria-label')).toBe('Analytics')
+      expect(item.shadowRoot!.querySelector('.label')).toBeNull()
+
+      root.collapsed = false
+      await awaitTreeUpdates(root)
+
+      // Expanded, the visible label names the row.
+      expect(row().hasAttribute('aria-label')).toBe(false)
+      expect(item.shadowRoot!.querySelector('.label')).not.toBeNull()
+    })
+
     it('wraps moul-sidebar-user in moul-tooltip when collapsed', async () => {
       const root = await mount<MoulSidebar>(html`
         <moul-sidebar .collapsed=${true}>
@@ -519,6 +541,28 @@ describe('Milestone 2: 10-Element Sidebar Compound Element Suite', () => {
       expect(root.collapsed).toBe(true)
       expect(aside.collapsed).toBe(true)
       expect(toggleBtn.getAttribute('aria-label')).toBe('Expand sidebar')
+    })
+
+    it('labels the collapse toggle with a tooltip that follows its state', async () => {
+      const root = await mount<MoulSidebar>(html`
+        <moul-sidebar>
+          <moul-sidebar-aside show-collapse-toggle></moul-sidebar-aside>
+        </moul-sidebar>
+      `)
+
+      const aside = root.querySelector('moul-sidebar-aside')!
+      const tooltip = aside.shadowRoot!.querySelector<MoulTooltip>(
+        'moul-tooltip.toggle',
+      )!
+      expect(tooltip).not.toBeNull()
+      expect(tooltip.querySelector('.toggle-button')).not.toBeNull()
+      expect(tooltip.content).toBe('Collapse sidebar')
+      expect(tooltip.placement).toBe('right')
+
+      root.collapsed = true
+      await awaitTreeUpdates(root)
+
+      expect(tooltip.content).toBe('Expand sidebar')
     })
   })
 

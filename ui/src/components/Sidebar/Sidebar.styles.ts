@@ -83,11 +83,19 @@ export const sidebarAsideStyles: CSSResultGroup = [
       scrollbar-color: var(--color-scrollbar-thumb) transparent;
     }
 
-    /* Collapse toggle: HeroUI tertiary icon button (sm). */
-    .toggle-button {
+    /* The toggle's tooltip wrapper is what sits pinned to the rail's bottom corner. */
+    .toggle {
       position: absolute;
       bottom: var(--spacing-4);
       right: var(--spacing-4);
+      display: flex;
+      z-index: 10;
+      transition: translate var(--duration-base, 250ms)
+        var(--ease-out-fluid, cubic-bezier(0.32, 0.72, 0, 1));
+    }
+
+    /* Collapse toggle: HeroUI tertiary icon button (sm). */
+    .toggle-button {
       width: 2rem;
       height: 2rem;
       padding: 0;
@@ -99,11 +107,8 @@ export const sidebarAsideStyles: CSSResultGroup = [
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      z-index: 10;
       outline: none;
       transition:
-        translate var(--duration-base, 250ms)
-          var(--ease-out-fluid, cubic-bezier(0.32, 0.72, 0, 1)),
         scale var(--duration-fast, 150ms) var(--ease-out, ease-out),
         background-color 100ms var(--ease-out, ease-out),
         color 100ms var(--ease-out, ease-out),
@@ -117,7 +122,6 @@ export const sidebarAsideStyles: CSSResultGroup = [
       }
     }
 
-    /* scale (not transform) so it composes with the collapsed centering. */
     .toggle-button:active {
       background-color: var(--color-default-hover);
       scale: var(--press-scale, 0.97);
@@ -133,7 +137,7 @@ export const sidebarAsideStyles: CSSResultGroup = [
      * the rail's center with translate. Jumping right to 50% teleported the button
      * across the still-wide rail before the collapse had started.
      */
-    :host([collapsed]) .toggle-button {
+    :host([collapsed]) .toggle {
       translate: calc(
           var(--spacing-4) - (var(--sidebar-collapsed-width, 72px) - 2rem) / 2
         )
@@ -142,6 +146,7 @@ export const sidebarAsideStyles: CSSResultGroup = [
 
     @media (prefers-reduced-motion: reduce) {
       :host,
+      .toggle,
       .toggle-button {
         transition: none !important;
       }
@@ -610,6 +615,16 @@ export const sidebarItemStyles: CSSResultGroup = [
     :host([collapsed][dense]) .item {
       width: 2rem;
       height: 2rem;
+    }
+
+    /*
+     * A collapsed row renders inside a <moul-tooltip>, which is inline-block and
+     * shrink-wraps the square row, so margin-inline: auto can't center it. Let the
+     * tooltip span the rail and center the row instead.
+     */
+    :host([collapsed]) moul-tooltip {
+      display: flex;
+      justify-content: center;
     }
 
     :host([collapsed]) .label,

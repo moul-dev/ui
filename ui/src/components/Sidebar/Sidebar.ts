@@ -200,6 +200,7 @@ export class MoulSidebarAside extends LitElement {
   }
 
   protected override render(): TemplateResult {
+    const toggleLabel = this.collapsed ? 'Expand sidebar' : 'Collapse sidebar'
     return html`
       <aside
         part="aside"
@@ -211,17 +212,22 @@ export class MoulSidebarAside extends LitElement {
         ${
           this.showCollapseToggle
             ? html`
-              <button
-                type="button"
-                class="toggle-button"
-                part="toggle-button"
-                aria-label=${
-                  this.collapsed ? 'Expand sidebar' : 'Collapse sidebar'
-                }
-                @click=${this.handleToggleClick}
+              <moul-tooltip
+                class="toggle"
+                content=${toggleLabel}
+                placement="right"
+                delay="200"
               >
-                ${this.collapsed ? chevronRightIcon() : chevronLeftIcon()}
-              </button>
+                <button
+                  type="button"
+                  class="toggle-button"
+                  part="toggle-button"
+                  aria-label=${toggleLabel}
+                  @click=${this.handleToggleClick}
+                >
+                  ${this.collapsed ? chevronRightIcon() : chevronLeftIcon()}
+                </button>
+              </moul-tooltip>
             `
             : ''
         }
@@ -652,6 +658,10 @@ export class MoulSidebarItem extends LitElement {
   }
 
   protected override render(): TemplateResult {
+    // Collapsed rows drop their visible label, so it moves to aria-label and a tooltip.
+    const collapsedLabel = this.collapsed
+      ? this.label || this.textContent?.trim() || ''
+      : ''
     const itemContent = this.href
       ? html`
         <a
@@ -659,6 +669,7 @@ export class MoulSidebarItem extends LitElement {
           part="item"
           class="item"
           aria-current=${this.isSelected ? 'page' : nothing}
+          aria-label=${collapsedLabel || nothing}
           @click=${this.handleClick}
           @keydown=${this.handleKeyDown}
         >
@@ -690,6 +701,7 @@ export class MoulSidebarItem extends LitElement {
           part="item"
           class="item"
           aria-selected=${this.isSelected ? 'true' : 'false'}
+          aria-label=${collapsedLabel || nothing}
           ?disabled=${this.isDisabled}
           @click=${this.handleClick}
           @keydown=${this.handleKeyDown}
@@ -717,15 +729,12 @@ export class MoulSidebarItem extends LitElement {
         </button>
       `
 
-    if (this.collapsed) {
-      const tooltipText = this.label || this.textContent?.trim() || ''
-      if (tooltipText) {
-        return html`
-          <moul-tooltip content=${tooltipText} placement="right" delay="200">
-            ${itemContent}
-          </moul-tooltip>
-        `
-      }
+    if (collapsedLabel) {
+      return html`
+        <moul-tooltip content=${collapsedLabel} placement="right" delay="200">
+          ${itemContent}
+        </moul-tooltip>
+      `
     }
 
     return itemContent
