@@ -89,7 +89,8 @@ export default defineConfig({
           label: 'Changelog',
           items: [
             { label: 'All Releases', slug: 'changelog' },
-            { label: 'Unreleased', slug: 'changelog/unreleased' },
+            { label: 'v1.0.0-alpha.2', slug: 'changelog/1-0-0-alpha-2' },
+            { label: 'v1.0.0-alpha.1', slug: 'changelog/1-0-0-alpha-1' },
             { label: '2026-10-27', slug: 'changelog/2026-10-27' },
             { label: '2026-09-07', slug: 'changelog/2026-09-07' },
             { label: '2026-08-25', slug: 'changelog/2026-08-25' },

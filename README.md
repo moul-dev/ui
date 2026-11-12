@@ -97,6 +97,15 @@ bun publish
 
 Versions follow [SemVer](https://semver.org). Until `1.0.0`, releases are prereleases (`1.0.0-alpha.1`, `1.0.0-alpha.2`, …): `bun run bump prerelease` advances the counter, and `bun run bump major` releases `1.0.0`. Run `bun run bump --help` for every release type.
 
+After committing the bump, tag the commit and push the tag:
+
+```bash
+git tag -a v1.0.0-alpha.2 -m "Release v1.0.0-alpha.2"
+git push origin v1.0.0-alpha.2
+```
+
+The tag starts `.github/workflows/release.yml`. It refuses a tag that is not SemVer or does not match `ui/package.json`, runs the tests, builds the library, and publishes a GitHub release with the npm tarball attached. Publishing to npm (`bun publish`) stays a manual step.
+
 ---
 
 ## 📄 License

@@ -1,0 +1,51 @@
+---
+title: v1.0.0-alpha.2 — A Centered Collapsed Sidebar and Labeled Rail Controls
+description: Collapsed `<moul-sidebar-item>` rows center in the rail and keep an accessible name, and the sidebar's collapse toggle gets a tooltip.
+date: 2026-11-12
+author: Phearak S. Tha
+avatar: https://github.com/thasophearak.png
+---
+
+A collapsed `<moul-sidebar>` drew its icon rows against the rail's start edge, not its center. The Moul admin console had to center them with CSS of its own, and its collapse toggle was an unlabeled chevron.
+
+---
+
+## Why the Rows Sat Off-Center
+
+A collapsed row hides its label and wraps itself in a `<moul-tooltip>`, so hovering still shows the name. That tooltip is `inline-block` and shrink-wraps the square row, which leaves `margin-inline: auto` nothing to center within.
+
+The tooltip now spans the rail as a flex container and centers the row. If your app centered collapsed rows itself, that rule can go.
+
+---
+
+## Names for Collapsed Rows and the Toggle
+
+With its label hidden, a collapsed row's link or button had no text left for a screen reader. It now takes an `aria-label` from the row's `label`, or from its text when there is no `label`. The tooltip shows the same name.
+
+The collapse toggle sits inside a tooltip that reads "Collapse sidebar" or "Expand sidebar", matching its `aria-label`. The tooltip wrapper now carries the toggle's position and its slide toward the collapsed rail's center.
+
+```html
+<moul-sidebar layout="sidebar-framed">
+  <moul-sidebar-aside show-collapse-toggle collapsed aria-label="Workspace">
+    <moul-sidebar-group label="Project">
+      <!-- Collapsed: centered icon, aria-label="Logs", and a "Logs" tooltip -->
+      <moul-sidebar-item key="logs" label="Logs"><span slot="icon">≡</span></moul-sidebar-item>
+    </moul-sidebar-group>
+  </moul-sidebar-aside>
+  <moul-sidebar-main>…</moul-sidebar-main>
+</moul-sidebar>
+```
+
+---
+
+## Upgrading
+
+- **Install:** `bun add @moul-dev/web-component@1.0.0-alpha.2`.
+- **Centering workarounds:** remove CSS that centered collapsed `<moul-sidebar-item>` rows.
+- **Styling the toggle:** `::part(toggle-button)` still styles the button, but its position moved to the wrapper. Rules on the part that set `bottom`, `right`, or `translate` no longer move it.
+
+---
+
+## On Small Corrections
+
+An off-center icon is a few pixels, and it is also the first thing a person sees when they collapse the rail. I would rather ship these as their own small release than let an app carry the patch.

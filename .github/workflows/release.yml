@@ -1,0 +1,63 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Test, Build & Publish GitHub Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check SemVer Tag
+        run: |
+          # Releases are tagged vMAJOR.MINOR.PATCH with an optional prerelease, e.g. v1.0.0-alpha.2.
+          if ! [[ "$GITHUB_REF_NAME" =~ ^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(-[0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*)?$ ]]; then
+            echo "::error::Tag $GITHUB_REF_NAME is not SemVer vMAJOR.MINOR.PATCH[-prerelease] (e.g. v1.0.0-alpha.2). Bump with 'bun run bump <major|minor|patch|prerelease>'."
+            exit 1
+          fi
+
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Check Tag Matches ui/package.json
+        run: |
+          version="$(jq -r .version ui/package.json)"
+          if [ "v$version" != "$GITHUB_REF_NAME" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match ui/package.json version $version. Run 'bun run bump' and commit before tagging."
+            exit 1
+          fi
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install Dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Run Tests
+        run: bun run test
+
+      - name: Build Library
+        run: bun run build:ui
+
+      - name: Pack npm Tarball
+        run: |
+          mkdir -p release
+          cd ui && bun pm pack --destination ../release
+
+      # npm publishing stays manual (`cd ui && bun publish`); this attaches the same tarball.
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release/*.tgz
+          draft: false
+          # Alphas stay ordinary releases, like the Moul engine's, so the repository shows the
+          # newest one as Latest; npm's latest dist-tag also follows the alphas until 1.0.0.
+          prerelease: false
+          generate_release_notes: true
