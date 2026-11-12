@@ -15,10 +15,32 @@ try {
 const uiSrc = (path) =>
   fileURLToPath(new URL(`../ui/src/${path}`, import.meta.url))
 
+/**
+ * Components register themselves at import time (`defineElement(...)`), but
+ * ui/package.json's `sideEffects` lists only the dist build, and Vite applies
+ * that list to every file in the package, ui/src included. Without this, the
+ * production build treats each component module as side-effect free and drops
+ * every registration, so previews render as inert tags (dev never tree-shakes,
+ * which hides it). The source is marked side-effectful as a whole, the same way
+ * `dist/moul-ui.js` is for npm consumers.
+ */
+function keepLibrarySourceSideEffects() {
+  const uiSrcDir = uiSrc('')
+  return {
+    name: 'moul:keep-library-source-side-effects',
+    apply: 'build',
+    enforce: 'post',
+    transform(_code, id) {
+      if (id.startsWith(uiSrcDir)) return { moduleSideEffects: true }
+    },
+  }
+}
+
 export default defineConfig({
   site: 'https://moul.dev',
   output: 'static',
   vite: {
+    plugins: [keepLibrarySourceSideEffects()],
     resolve: {
       alias: [
         {
