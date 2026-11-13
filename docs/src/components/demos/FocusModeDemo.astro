@@ -1,0 +1,21 @@
+---
+/**
+ * Focus mode demo wiring, so the MDX previews stay plain markup:
+ *   data-focus-toggle="id"  → click calls `toggle()` on #id
+ */
+---
+
+<script>
+  type FocusMode = HTMLElement & { toggle(): Promise<void> }
+
+  document.addEventListener('click', (event) => {
+    const button = (event.target as Element | null)?.closest?.<HTMLElement>(
+      '[data-focus-toggle]',
+    )
+    if (!button) return
+    const focus = document.getElementById(
+      button.dataset.focusToggle ?? '',
+    ) as FocusMode | null
+    void focus?.toggle()
+  })
+</script>

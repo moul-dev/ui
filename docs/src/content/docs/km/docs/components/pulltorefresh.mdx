@@ -1,0 +1,97 @@
+---
+title: PullToRefresh (សមាសភាគ)
+description: ឯកសារណែនាំសម្រាប់សមាសភាគ PullToRefresh Web Component
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import PullToRefreshDemo from '@/components/demos/PullToRefreshDemo.astro';
+
+`<moul-pull-to-refresh>` is a scroll container that reloads its content when pulled down from the top, as mail and feed apps do. While the content is scrolled to its top, pulling down drags it with resistance and reveals an arrow that turns as the pull nears the threshold. Let go past it and a spinner holds the content open while `refresh` runs; when the work is done the content springs back.
+
+Pull the list down with a finger, a pen or the mouse. Each refresh adds a message to the top.
+
+<ComponentPreview>
+  <moul-pull-to-refresh data-pull-demo class="pull-demo" style="height: 18rem; width: min(100%, 22rem); border: 1px solid var(--color-border); border-radius: var(--radius-xl); background: var(--color-surface)">
+    <ul>
+      <li><strong>Sokha</strong><span>Lunch on Friday?</span></li>
+      <li><strong>Dara</strong><span>The build is green again</span></li>
+      <li><strong>Vanna</strong><span>Invoice #1042 is paid</span></li>
+      <li><strong>Bopha</strong><span>Notes from the design review</span></li>
+      <li><strong>Rithy</strong><span>Welcome to the team</span></li>
+      <li><strong>Chenda</strong><span>Your report is ready</span></li>
+      <li><strong>Sokha</strong><span>Photos from the trip</span></li>
+    </ul>
+  </moul-pull-to-refresh>
+  <PullToRefreshDemo />
+</ComponentPreview>
+
+```html
+<moul-pull-to-refresh style="height: 100%">
+  <ul id="inbox">…</ul>
+</moul-pull-to-refresh>
+```
+
+```js
+const feed = document.querySelector('moul-pull-to-refresh')
+
+feed.addEventListener('refresh', (event) => {
+  event.detail.waitUntil(loadNewMessages())
+})
+```
+
+Give the element a height; its content scrolls inside it. Pass the work to `event.detail.waitUntil(promise)` while the event is being dispatched, as many times as you like: the spinner stays until every promise has settled, rejected ones included, and for at least half a second so a fast response does not flash. `refresh()` runs the same thing from code and returns a promise that resolves once the content has closed again; while one refresh runs, it returns that one.
+
+## When a pull starts
+
+Only a downward pull with the content scrolled to its very top starts one; any other drag scrolls as usual. A press that starts on a text field never pulls, so the caret and selection still work there. Mouse pulls are allowed too, so the gesture works on a desktop, but dragging down from the top of the content with the mouse pulls instead of selecting text. Trackpad and wheel scrolling never refresh.
+
+`threshold` sets how far the content must travel before letting go refreshes, `72` pixels by default. The content follows the pointer at half speed, so the finger travels about twice that.
+
+## Labels
+
+The indicator and the announcements are in English unless you set `pull-label`, `release-label`, `refreshing-label`, `done-label` and `refresh-label`.
+
+```html
+<moul-pull-to-refresh
+  pull-label="ទាញដើម្បីផ្ទុកឡើងវិញ"
+  release-label="លែងដើម្បីផ្ទុកឡើងវិញ"
+  refreshing-label="កំពុងផ្ទុក…"
+  done-label="បានធ្វើបច្ចុប្បន្នភាព"
+  refresh-label="ផ្ទុកឡើងវិញ"
+>
+  …
+</moul-pull-to-refresh>
+```
+
+## Accessibility
+
+- Pulling is a pointer gesture, so the scroll container starts with a "Refresh" button. It is visually hidden until it has focus, like a skip link, and `Tab` reaches it before the content. Pressing it runs `refresh()`; you can also call `refresh()` from a button of your own.
+- A polite live region announces `refreshing-label` when a refresh starts and `done-label` when it ends. The arrow, spinner and their text are hidden from screen readers.
+- Under reduced motion the content snaps open and closed instead of springing. A pull still follows the pointer, and the spinner pulses instead of spinning.
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `threshold` | `threshold` | `number` | `72` |
+| `is-refreshing` | `isRefreshing` (read-only) | `boolean` | `false` |
+| `is-disabled` | `isDisabled` | `boolean` | `false` |
+| `pull-label` | `pullLabel` | `string` | `'Pull to refresh'` |
+| `release-label` | `releaseLabel` | `string` | `'Release to refresh'` |
+| `refreshing-label` | `refreshingLabel` | `string` | `'Refreshing…'` |
+| `done-label` | `doneLabel` | `string` | `'Updated'` |
+| `refresh-label` | `refreshLabel` | `string` | `'Refresh'` |
+
+| Method | Description |
+| :-- | :-- |
+| `refresh()` | Opens the spinner, fires `refresh`, and closes once every `waitUntil` promise has settled. Returns a promise that resolves when it has closed. |
+
+| Event | Type |
+| :-- | :-- |
+| `refresh` | `CustomEvent<{ waitUntil(promise: PromiseLike<unknown>): void }>` |
+
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | The scrollable content. |
+
+**CSS parts:** `indicator`, `scroller`, `refresh-button`, `content`

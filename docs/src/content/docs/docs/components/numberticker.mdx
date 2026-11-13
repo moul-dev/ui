@@ -1,0 +1,129 @@
+---
+title: NumberTicker
+description: Number that rolls or counts to its new value.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import NumberTickerDemo from '@/components/demos/NumberTickerDemo.astro';
+
+<NumberTickerDemo />
+
+`<moul-number-ticker>` shows a number and animates to each new `value`. By default it rolls like an odometer: each digit slides up when the number grows and down when it shrinks, a new leading digit slides in, and one that is dropped leaves. Separators, signs and currency symbols stay put.
+
+<ComponentPreview stack>
+  <span style="font-size: 3rem; font-weight: 600; line-height: 1.1">
+    <moul-number-ticker id="ticker-roll" value="1280" locale="en-US"></moul-number-ticker>
+  </span>
+  <div class="demo-row">
+    <moul-button variant="secondary" size="sm" data-number-target="ticker-roll" data-number-by="-1"><span>−1</span></moul-button>
+    <moul-button variant="secondary" size="sm" data-number-target="ticker-roll" data-number-by="1"><span>+1</span></moul-button>
+    <moul-button variant="secondary" size="sm" data-number-target="ticker-roll" data-number-by="250"><span>+250</span></moul-button>
+    <moul-button variant="secondary" size="sm" data-number-target="ticker-roll" data-number-random data-number-max="99999"><span>Random</span></moul-button>
+  </div>
+</ComponentPreview>
+
+```html
+<moul-number-ticker value="1280"></moul-number-ticker>
+```
+
+```js
+document.querySelector('moul-number-ticker').value = 1530
+```
+
+The ticker takes its size, weight, colour and line height from the text around it, and sets its digits in tabular figures so the number does not change width as it rolls. Setting a new `value` mid-roll is safe: each digit carries on from where it is.
+
+## Count mode
+
+`mode="count"` springs the whole number through the values in between instead, the way a scoreboard counts up. Values in between keep the final value's fraction digits, so `40.25` never flickers through `40.2531`.
+
+<ComponentPreview stack>
+  <span style="font-size: 3rem; font-weight: 600; line-height: 1.1">
+    <moul-number-ticker id="ticker-count" mode="count" value="42.5" locale="en-US" data-props='{"formatOptions": {"minimumFractionDigits": 2}}'></moul-number-ticker>
+  </span>
+  <div class="demo-row">
+    <moul-button variant="secondary" size="sm" data-number-target="ticker-count" data-number-by="10" data-number-decimals="2"><span>+10</span></moul-button>
+    <moul-button variant="secondary" size="sm" data-number-target="ticker-count" data-number-random data-number-max="1000" data-number-decimals="2"><span>Random</span></moul-button>
+  </div>
+</ComponentPreview>
+
+```html
+<moul-number-ticker mode="count" value="42.5"></moul-number-ticker>
+```
+
+## Formatting
+
+The number is formatted with [`Intl.NumberFormat`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat). Set `locale` and pass options as the `formatOptions` property for currency, percentages, compact notation or fixed fraction digits. Digits in another numbering system roll too: `numberingSystem: 'khmr'` rolls Khmer numerals.
+
+<ComponentPreview stack>
+  <div class="demo-row" style="font-size: 1.75rem; font-weight: 600; gap: 2rem">
+    <moul-number-ticker id="ticker-usd" value="1249.9" locale="en-US" data-props='{"formatOptions": {"style": "currency", "currency": "USD"}}'></moul-number-ticker>
+    <moul-number-ticker id="ticker-compact" value="48200" locale="en-US" data-props='{"formatOptions": {"notation": "compact", "maximumFractionDigits": 1}}'></moul-number-ticker>
+    <moul-number-ticker id="ticker-khmer" value="2026" locale="km" data-props='{"formatOptions": {"numberingSystem": "khmr", "useGrouping": false}}'></moul-number-ticker>
+  </div>
+  <div class="demo-row">
+    <moul-button variant="secondary" size="sm" data-number-target="ticker-usd" data-number-random data-number-max="5000" data-number-decimals="2"><span>Price</span></moul-button>
+    <moul-button variant="secondary" size="sm" data-number-target="ticker-compact" data-number-random data-number-max="999999"><span>Followers</span></moul-button>
+    <moul-button variant="secondary" size="sm" data-number-target="ticker-khmer" data-number-by="1"><span>Next year</span></moul-button>
+  </div>
+</ComponentPreview>
+
+```js
+const price = document.querySelector('#price')
+price.locale = 'en-US'
+price.formatOptions = { style: 'currency', currency: 'USD' }
+price.value = 1249.9
+```
+
+```js
+const year = document.querySelector('#year')
+year.locale = 'km'
+year.formatOptions = { numberingSystem: 'khmr', useGrouping: false }
+year.value = 2026
+```
+
+For text that is not part of the format, such as a unit, use the `prefix` and `suffix` slots.
+
+```html
+<moul-number-ticker value="12">
+  <span slot="suffix">&nbsp;GB</span>
+</moul-number-ticker>
+```
+
+## Counting up on view
+
+Set `from` and the ticker shows that number until it first scrolls into view, then animates to `value`. It is the stats-band effect: numbers that count up as the reader reaches them.
+
+<ComponentPreview>
+<div class="demo-row" style="gap: 3rem; font-size: 2.25rem; font-weight: 600">
+  <moul-number-ticker from="0" value="2480" locale="en-US"></moul-number-ticker>
+  <moul-number-ticker from="0" value="99.9" mode="count" locale="en-US"><span slot="suffix">%</span></moul-number-ticker>
+  <moul-number-ticker from="0" value="64" locale="en-US"><span slot="suffix">&nbsp;ms</span></moul-number-ticker>
+</div>
+</ComponentPreview>
+
+```html
+<moul-number-ticker from="0" value="2480"></moul-number-ticker>
+```
+
+## Accessibility
+
+The moving digits are hidden from screen readers. A visually hidden copy of the final, formatted value is read in their place, so a screen reader never reads `1,2,8` on its way to `1,530`. The ticker is not a live region: a changed value is not announced. To announce it, put the ticker in an element with `aria-live="polite"`.
+
+Under reduced motion the number jumps to each new value, and `from` is ignored.
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `value` | `value` | `number` | `0` |
+| `mode` | `mode` | `'roll' \| 'count'` | `'roll'` |
+| `from` | `from` | `number \| undefined` | `undefined` |
+| `locale` | `locale` | `string \| undefined` | the browser's |
+| — | `formatOptions` | `Intl.NumberFormatOptions \| undefined` | `undefined` |
+
+| Slot | Description |
+| :-- | :-- |
+| `prefix` | Content before the number. |
+| `suffix` | Content after the number, such as a unit. |
+
+**CSS parts:** `digits` (the visible number), `digit` (each rolling digit), `symbol` (each static character).

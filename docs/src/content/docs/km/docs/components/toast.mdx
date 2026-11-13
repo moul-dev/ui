@@ -4,8 +4,11 @@ description: ឯកសារណែនាំសម្រាប់សមាសភ�
 ---
 
 import ComponentPreview from '@/components/ComponentPreview.astro';
+import ToastDemo from '@/components/demos/ToastDemo.astro';
 
-Toasts are queued with `toastQueue.add()`. They stack inside one `<moul-toast-region>` in the top layer, pause while hovered, and the remaining toasts glide together when one leaves.
+<ToastDemo />
+
+Toasts are queued with `toastQueue.add()`. They stack inside one `<moul-toast-region>` in the top layer and arrive with a little momentum, overshooting their place before they settle. Their timer pauses while the pointer is over them or keyboard focus is inside, a sideways swipe throws them away, and the remaining toasts glide together when one leaves.
 
 ## Tones
 
@@ -33,6 +36,84 @@ Set `toastQueue.placement` (or the `placement` attribute on `<moul-toast-region>
 </div>
 </ComponentPreview>
 
+## Swipe to dismiss
+
+Drag a toast sideways. It follows the finger and fades as it goes; let go past 40% of its width, or flick it faster than 500 px/s, and it flies off that way and is dismissed. A shorter, slower swipe, or a flick back toward the middle, springs it back. While it is held the timer waits.
+
+<ComponentPreview>
+<div class="demo-row">
+  <moul-button variant="secondary" data-toast='{"title":"Swipe me","description":"Left or right, past 40% of my width.","duration":0}'>Toast that stays</moul-button>
+</div>
+</ComponentPreview>
+
+Swiping is a pointer gesture. The dismiss button, which shows on hover and focus (and always on touch screens), is the keyboard path to the same result. Taps on a button inside a toast still press it: a press only turns into a swipe after it has moved a few pixels.
+
+## Undo
+
+A delete that can be taken back is better than a confirmation dialog. Remove the item at once, then offer Undo for a few seconds. Give the toast an `action` and `showCountdown`: the button presses `onAction` and closes the toast, and a thin bar along the bottom edge shows how long the offer stands.
+
+<ComponentPreview>
+<div class="demo-row">
+  <moul-button variant="danger-soft" data-toast-undo>Delete rows</moul-button>
+</div>
+</ComponentPreview>
+
+```js
+import { toastQueue } from '@moul-dev/web-component'
+
+const rows = table.selectedRows
+await api.deleteRows(rows)
+table.remove(rows)
+
+toastQueue.add({
+  title: `${rows.length} rows deleted`,
+  duration: 8000,
+  showCountdown: true,
+  action: {
+    label: 'Undo',
+    onAction: async () => {
+      await api.restoreRows(rows)
+      table.restore(rows)
+    },
+  },
+})
+```
+
+The bar pauses whenever the timer does: while the pointer is over the toast, while it is being swiped, and while keyboard focus is inside it, so someone tabbing to Undo is never cut off mid-reach. Give an undo toast a longer `duration` than an informational one; eight seconds is a good start.
+
+In markup, put your own button in `slot="action"`. A click on a button or link in that slot fires `action` (with `detail.id`) and closes the toast; cancel the event to keep it open.
+
+```html
+<moul-toast title="3 rows deleted" duration="8000" show-countdown>
+  <moul-button slot="action" size="sm" variant="secondary">Undo</moul-button>
+</moul-toast>
+```
+
+```js
+toast.addEventListener('action', () => restoreRows())
+```
+
+## Stacked
+
+Set `toastQueue.isStacked = true` (or `is-stacked` on `<moul-toast-region>`) to collapse the toasts into a deck: the newest in front, two behind it peeking out, smaller and dimmer, and the rest out of sight. Hovering the deck, or moving keyboard focus into it, fans it out into the plain list and holds every toast's timer, so none leaves while you read.
+
+<ComponentPreview>
+<div class="demo-row">
+  <moul-button variant="secondary" data-toast-burst="stacked">Send three, stacked</moul-button>
+  <moul-button variant="outline" data-toast-burst="list">Send three, listed</moul-button>
+</div>
+</ComponentPreview>
+
+```js
+toastQueue.isStacked = true
+```
+
+A deck suits apps that send bursts of updates, such as builds and uploads. Every toast in it is still in the reading order and keeps its own live region, so screen readers announce each one as it arrives.
+
+## Reduced motion
+
+When the user asks for reduced motion, toasts appear and disappear at once, and a deck collapses and fans out without gliding. A swipe still follows the finger, because the finger moves it, but on release the toast is removed or snaps back at once. The countdown bar keeps shrinking, linearly: it is the only sign of how much time is left.
+
 ## Usage
 
 ```js
@@ -45,8 +126,11 @@ const id = toastQueue.add({
   tone: 'success',   // primary | accent | success | warning | error
   variant: 'flat',   // omit for the neutral surface
   duration: 5000,    // 0 keeps it open
+  showCountdown: false,
+  action: { label: 'Undo', onAction: () => {} },  // optional
 })
 toastQueue.close(id)
+toastQueue.isStacked = true
 ```
 
 ## API reference
@@ -61,22 +145,50 @@ toastQueue.close(id)
 | `title` | `title` | `string` | `''` |
 | `description` | `description` | `string` | `''` |
 | `is-open` | `isOpen` | `boolean` | `true` |
+| `show-countdown` | `showCountdown` | `boolean` | `false` |
 
-| Event | Type |
-| :-- | :-- |
-| `dismiss` | `CustomEvent` |
+`isPaused` (read-only) is true while a hover, a swipe or keyboard focus holds the timer. `close()` plays the exit and fires `dismiss`.
+
+| Event | Detail | When |
+| :-- | :-- | :-- |
+| `dismiss` | `{ id }` | After the toast has closed, by its timer, a swipe, the dismiss button, an action or `close()` |
+| `action` | `{ id }` | A button or link in the `action` slot was clicked; cancel it to keep the toast open |
 
 | Slot | Description |
 | :-- | :-- |
-| `icon` | — |
-| `title` | — |
-| `(default)` | — |
-| `action` | — |
+| `icon` | Replaces the tone icon. |
+| `title` | Replaces the `title` text. |
+| `(default)` | The description; falls back to `description`. |
+| `action` | An action such as Undo. |
 
-**CSS parts:** `base`, `icon`, `content`, `title`, `description`, `actions`, `dismiss-button`
+**CSS parts:** `base`, `icon`, `content`, `title`, `description`, `actions`, `dismiss-button`, `countdown`
+
+### `ToastOptions`
+
+| Option | Type | Description |
+| :-- | :-- | :-- |
+| `id` | `string` | Defaults to `toast-<n>`. |
+| `title` | `string` | Required. |
+| `description` | `string` | |
+| `tone` | `SemanticTone` | |
+| `variant` | `VisualVariant` | Omit for the neutral surface. |
+| `duration` | `number` | Milliseconds; `0` keeps it open. |
+| `action` | `{ label: string; onAction?: () => void }` | Adds a small button; pressing it calls `onAction` and closes the toast. |
+| `showCountdown` | `boolean` | Shows the countdown bar. |
+
+### `toastQueue`
+
+`add(options)` returns the id, `close(id)` closes one toast, `clear()` closes them all. `placement` and `isStacked` set the shared region, now and for when it is created.
 
 ### `<moul-toast-region>`
 
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `placement` | `placement` | `'top-start' \| 'top-center' \| 'top-end' \| 'bottom-start' \| 'bottom-center' \| 'bottom-end'` | `'bottom-end'` |
+| `is-stacked` | `isStacked` | `boolean` | `false` |
+
 | Slot | Description |
 | :-- | :-- |
-| `(default)` | — |
+| `(default)` | The `<moul-toast>` elements, oldest first. |
+
+`removeToast(toast)` removes a toast and closes ranks around it; `toastQueue` calls it on `dismiss`.

@@ -1,0 +1,108 @@
+---
+title: Confetti
+description: Burst of confetti, or a rocket that bursts, to celebrate a success.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import ConfettiDemo from '@/components/demos/ConfettiDemo.astro';
+
+`<moul-confetti>` celebrates a success, such as a first payment or a finished onboarding, with a burst of confetti or a small rocket that bursts at the top of its flight. Wrap the button the success comes from and call `fire()`; the confetti flies from the button's centre.
+
+<ComponentPreview minHeight="200px">
+  <div class="demo-row">
+    <moul-confetti>
+      <moul-button data-confetti="burst"><span>Burst</span></moul-button>
+    </moul-confetti>
+    <moul-confetti variant="rocket">
+      <moul-button variant="secondary" data-confetti="rocket"><span>Rocket</span></moul-button>
+    </moul-confetti>
+  </div>
+  <ConfettiDemo />
+</ComponentPreview>
+
+It lives in the effects entry, so an app that never celebrates ships none of it:
+
+```js
+import '@moul-dev/web-component/effects'
+```
+
+```html
+<moul-confetti>
+  <moul-button id="pay">Pay $120</moul-button>
+</moul-confetti>
+```
+
+```js
+const confetti = document.querySelector('moul-confetti')
+
+document.querySelector('#pay').addEventListener('press', async () => {
+  await submitPayment()
+  toastQueue.add({ title: 'Payment sent', tone: 'success' })
+  confetti.fire()
+})
+```
+
+The confetti is drawn on a canvas that covers the viewport in the top layer, so it shows above an open dialog too, and clicks pass straight through it. The canvas only exists on screen, and the drawing loop only runs, while confetti is in flight. `fire()` returns a promise that resolves once every piece has fallen away.
+
+## Without markup
+
+`fireConfetti(options)` creates one `<moul-confetti>` at the end of `<body>` the first time and reuses it after that.
+
+```js
+import { fireConfetti } from '@moul-dev/web-component/effects'
+
+fireConfetti({ origin: document.querySelector('#finish'), variant: 'rocket' })
+```
+
+## Options
+
+`fire()` and `fireConfetti()` take the same options. Every one is optional.
+
+| Option | Type | Default |
+| :-- | :-- | :-- |
+| `origin` | `Element \| { x: number; y: number }` | The element's centre, or the middle of the viewport when it has no box. A point is in viewport pixels. |
+| `variant` | `'burst' \| 'rocket'` | The `variant` attribute |
+| `count` | `number` | `80`, at most `500` |
+| `angle` | `number` | `90` degrees, straight up; `0` is to the right |
+| `spread` | `number` | `70` degrees around `angle`; a rocket's burst goes every way |
+| `velocity` | `number` | `900` pixels per second |
+| `gravity` | `number` | `900` pixels per second squared |
+| `colors` | `string[]` | The theme's accent, success, warning and danger colours |
+| `shapes` | `Array<'square' \| 'circle' \| 'strip'>` | All three |
+
+`colors` takes any CSS colour, `var(--token)` included, and resolves it against the element, so the default confetti follows the brand hue and the light or dark theme.
+
+```js
+confetti.fire({
+  angle: 60,
+  spread: 50,
+  count: 120,
+  colors: ['var(--color-success)', 'var(--color-accent)'],
+  shapes: ['strip'],
+})
+```
+
+## Accessibility
+
+- Confetti is decoration. The canvas is hidden from screen readers and never takes focus, and the element adds no role, so wrapped content keeps its own semantics. Always say the success in words as well, in a toast, an alert or a result card.
+- Under reduced motion `fire()` draws nothing and resolves at once, and turning reduced motion on while confetti is falling clears it.
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `variant` | `variant` | `'burst' \| 'rocket'` | `'burst'` |
+
+| Method | Description |
+| :-- | :-- |
+| `fire(options?)` | Throws a burst, or launches a rocket. Returns a promise that resolves when all of it has fallen away. |
+
+| Function | Description |
+| :-- | :-- |
+| `fireConfetti(options?)` | Fires from a shared element appended to `<body>`. Same promise as `fire()`. |
+
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | Optional content to burst from, such as a button. |
+
+**CSS parts:** `canvas`

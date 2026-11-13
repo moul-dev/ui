@@ -1,11 +1,11 @@
 ---
 title: Tooltip
-description: Short label shown on hover or focus.
+description: Short label shown on hover or focus that slides out of its trigger, can follow the pointer and can hold a small card.
 ---
 
 import ComponentPreview from '@/components/ComponentPreview.astro';
 
-`<moul-tooltip>` describes its trigger through `aria-describedby`. It opens immediately on keyboard focus and after `delay` on hover. Once one tooltip has shown, its siblings open instantly for a moment after the pointer leaves it, so moving along a toolbar doesn't wait at every button.
+`<moul-tooltip>` labels its trigger on hover and focus. It opens immediately on keyboard focus and after `delay` on hover, sliding a few pixels out of the trigger edge as it fades in. Once one tooltip has shown, its siblings open instantly for a moment after the pointer leaves it, so moving along a toolbar doesn't wait at every button.
 
 <ComponentPreview minHeight="200px">
 <div class="demo-row">
@@ -41,6 +41,66 @@ import ComponentPreview from '@/components/ComponentPreview.astro';
 </div>
 ```
 
+## Follow the pointer
+
+`follow="pointer"` makes the tip trail the pointer along the trigger on a light spring, leaning a little into the movement and stopping at the trigger's ends. It suits wide triggers and rows of faces, where a centred tip would sit far from where you are looking. Keyboard focus shows it centred, a touch never moves it, and under reduced motion it stays centred and upright.
+
+<ComponentPreview minHeight="200px">
+<div class="demo-row">
+  <moul-tooltip content="Sophea Chan · Design" follow="pointer" delay="0">
+    <moul-avatar name="Sophea Chan" size="lg" tabindex="0"></moul-avatar>
+  </moul-tooltip>
+  <moul-tooltip content="Dara Kim · Engineering" follow="pointer" delay="0">
+    <moul-avatar name="Dara Kim" size="lg" tabindex="0"></moul-avatar>
+  </moul-tooltip>
+  <moul-tooltip content="Vanna Sok · Support" follow="pointer" delay="0">
+    <moul-avatar name="Vanna Sok" size="lg" tabindex="0"></moul-avatar>
+  </moul-tooltip>
+  <moul-tooltip content="Trails the pointer along a wide trigger" follow="pointer">
+    <moul-button variant="secondary" style="width: 18rem"><span>Wide trigger</span></moul-button>
+  </moul-tooltip>
+</div>
+</ComponentPreview>
+
+```html
+<moul-tooltip content="Sophea Chan · Design" follow="pointer" delay="0">
+  <moul-avatar name="Sophea Chan" size="lg" tabindex="0"></moul-avatar>
+</moul-tooltip>
+```
+
+## Tooltip card
+
+`is-rich` presents the tip as a small card with more room, and `slot="media"` puts an image above the text in `slot="content"`. A tooltip is never interactive, even as a card: the pointer cannot reach it and focus never moves into it. For a preview with links or buttons, use [`<moul-hover-card>`](/docs/components/hovercard/).
+
+<ComponentPreview minHeight="300px">
+<div class="demo-row">
+  <moul-tooltip is-rich placement="bottom">
+    <moul-button variant="secondary"><span>Angkor Wat</span></moul-button>
+    <div slot="media" aria-hidden="true" style="aspect-ratio: 16 / 9; background: linear-gradient(135deg, var(--color-primary-solid), var(--color-accent))"></div>
+    <div slot="content"><strong>Angkor Wat</strong><br /><span>A temple complex in Siem Reap, built in the early 12th century.</span></div>
+  </moul-tooltip>
+</div>
+</ComponentPreview>
+
+```html
+<moul-tooltip is-rich placement="bottom">
+  <moul-button variant="secondary">Angkor Wat</moul-button>
+  <img slot="media" src="/images/angkor-wat.jpg" alt="" />
+  <div slot="content">
+    <strong>Angkor Wat</strong><br />
+    A temple complex in Siem Reap, built in the early 12th century.
+  </div>
+</moul-tooltip>
+```
+
+The media fills the card's width up to 10rem tall, cropped to fit, with corners that follow the card's.
+
+## Keyboard and screen readers
+
+The tip opens at once when its trigger gets keyboard focus and closes when focus leaves; `Escape` closes it and stops there, so it does not also close a surrounding dialog. The panel has `role="tooltip"`, and each slotted trigger without its own `aria-describedby` gets one pointing at the panel. That panel lives in the tooltip's shadow root, though, so the reference does not resolve and screen readers do not read the tip as a description yet: give an icon-only trigger its name with its own `aria-label`, and keep the tip to a visual hint.
+
+Under reduced motion the tip appears and disappears at once, in place, instead of sliding out of the trigger edge while fading and growing; it does not follow the pointer or lean.
+
 ## API reference
 
 | Attribute | Property | Type | Default |
@@ -48,6 +108,8 @@ import ComponentPreview from '@/components/ComponentPreview.astro';
 | `content` | `content` | `string` | `''` |
 | `placement` | `placement` | `'top' \| 'bottom' \| 'left' \| 'right'` | `'top'` |
 | `delay` | `delay` | `number` | `300` |
+| `follow` | `follow` | `'none' \| 'pointer'` | `'none'` |
+| `is-rich` | `isRich` | `boolean` | `false` |
 | `is-open` | `isOpen` | `boolean` | `false` |
 
 | Event | Type |
@@ -56,7 +118,8 @@ import ComponentPreview from '@/components/ComponentPreview.astro';
 
 | Slot | Description |
 | :-- | :-- |
-| `(default)` | — |
-| `content` | — |
+| `(default)` | The trigger the tip describes. |
+| `content` | Rich tip content, in place of the `content` attribute. |
+| `media` | An image or video shown above the content, mostly with `is-rich`. |
 
 **CSS parts:** `popover`, `trigger`, `tooltip`

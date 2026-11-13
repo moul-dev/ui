@@ -23,11 +23,19 @@ import {
 } from 'lit'
 import { defineElement } from './utils/define-element'
 import './index'
+import { fireConfetti } from './effects'
 import {
   type CommandPaletteItemData,
   type FileUploadContext,
+  type MoulAnimatedList,
   type MoulButton,
+  type MoulFocusMode,
+  type MoulNotificationBell,
+  type MoulNumberTicker,
+  type MoulResultCard,
+  type MoulSlideToConfirm,
   type MoulStepper,
+  type MoulTour,
   SERVER_LOG_RAW,
   SERVER_LOGS,
   type TableColumn,
@@ -324,6 +332,13 @@ export class MoulSandbox extends LitElement {
       gap: var(--spacing-3, 0.75rem);
     }
 
+    .feed-item {
+      padding: var(--spacing-2, 0.5rem) var(--spacing-3, 0.75rem);
+      border-radius: var(--radius-md, 0.5rem);
+      background: var(--color-bg-subtle);
+      font-size: var(--font-size-sm, 0.875rem);
+    }
+
     .logo-box {
       width: 28px;
       height: 28px;
@@ -433,6 +448,74 @@ export class MoulSandbox extends LitElement {
     })
   }
 
+  private triggerUndoToast(): void {
+    toastQueue.add({
+      title: '3 rows deleted',
+      description: 'They stay in the trash for 30 days.',
+      duration: 8000,
+      showCountdown: true,
+      action: {
+        label: 'Undo',
+        onAction: () =>
+          toastQueue.add({
+            title: 'Rows restored',
+            tone: 'success',
+            duration: 2500,
+          }),
+      },
+    })
+  }
+
+  private triggerStackedToasts(): void {
+    toastQueue.isStacked = true
+    ;['Build queued', 'Preview ready', 'Tests passed'].forEach((title, i) => {
+      setTimeout(() => toastQueue.add({ title, duration: 5000 }), i * 180)
+    })
+  }
+
+  /** Pretends to take a payment: pending for a moment, then success and confetti. */
+  private async runPayment(): Promise<void> {
+    const card = this.renderRoot.querySelector<MoulResultCard>('#sb-result')
+    if (!card) return
+    card.status = 'pending'
+    card.heading = 'Processing payment'
+    card.description = 'This takes a few seconds.'
+    await new Promise((resolve) => setTimeout(resolve, 1600))
+    card.status = 'success'
+    card.heading = 'Payment sent'
+    card.description = '$42.00 to Dara Sok.'
+    void fireConfetti({ origin: card })
+  }
+
+  private sandboxEventCount = 0
+
+  /** Adds a made-up event to the top of the sandbox feed and the bell. */
+  private addSandboxEvent(): void {
+    const events = [
+      'Invoice #1043 paid',
+      'New sign-up from Battambang',
+      'Backup finished',
+      'Deploy to production succeeded',
+    ]
+    const text = events[this.sandboxEventCount++ % events.length]
+    const feed = this.renderRoot.querySelector<MoulAnimatedList>('#sb-feed')
+    const bell = this.renderRoot.querySelector<MoulNotificationBell>('#sb-bell')
+    if (feed) {
+      const item = document.createElement('div')
+      item.className = 'feed-item'
+      item.textContent = text
+      feed.prepend(item)
+      const extra = feed.items.slice(4)
+      for (const old of extra) void feed.removeItem(old)
+    }
+    if (bell) {
+      const item = document.createElement('div')
+      item.textContent = text
+      bell.prepend(item)
+      bell.count += 1
+    }
+  }
+
   private handleSidebarSelect(e: CustomEvent<{ selectedKey: string }>): void {
     if (e.detail?.selectedKey) {
       this.selectedCategory = e.detail.selectedKey
@@ -499,7 +582,7 @@ export class MoulSandbox extends LitElement {
       <div class="category-section" id="actions">
         <div class="section-header">
           <h3 class="section-title">1. Actions & Toggles</h3>
-          <p class="section-subtitle">moul-button, moul-button-group, moul-toggle-button, moul-toggle-button-group</p>
+          <p class="section-subtitle">moul-button, moul-button-group, moul-split-button, moul-theme-toggle, moul-slide-to-confirm, moul-toggle-button, moul-toggle-button-group</p>
         </div>
 
         <div class="demo-group">
@@ -640,6 +723,20 @@ export class MoulSandbox extends LitElement {
             </moul-toggle-button-group>
           </div>
         </div>
+
+        <div class="demo-group">
+          <span class="group-label">Slide to Confirm</span>
+          <moul-slide-to-confirm
+            tone="error"
+            label="Slide to delete project"
+            confirmed-label="Deleted"
+            style="max-width: 22rem;"
+            @confirm=${(e: Event) => {
+              const slider = e.currentTarget as MoulSlideToConfirm
+              setTimeout(() => slider.reset(), 1500)
+            }}
+          ></moul-slide-to-confirm>
+        </div>
       </div>
     `
   }
@@ -649,7 +746,7 @@ export class MoulSandbox extends LitElement {
       <div class="category-section" id="surfaces">
         <div class="section-header">
           <h3 class="section-title">2. Surfaces & Feedback</h3>
-          <p class="section-subtitle">moul-card, moul-alert, moul-badge, moul-avatar, moul-typography, moul-separator, moul-skeleton, moul-tag-group, moul-empty-state, moul-accordion, moul-icon-morph, moul-table, moul-toast, toastQueue</p>
+          <p class="section-subtitle">moul-card, moul-alert, moul-badge, moul-avatar, moul-typography, moul-separator, moul-skeleton, moul-tag-group, moul-empty-state, moul-accordion, moul-icon-morph, moul-number-ticker, moul-spinner, moul-animated-list, moul-notification-bell, moul-step-loader, moul-result-card, moul-pull-to-refresh, moul-expandable-card, moul-table, moul-toast, toastQueue</p>
         </div>
 
         <div class="section-grid">
@@ -873,6 +970,148 @@ export class MoulSandbox extends LitElement {
           </div>
         </div>
 
+        <div class="section-grid">
+          <div class="demo-group">
+            <span class="group-label">Number Ticker & Badge Counts</span>
+            <div class="demo-row">
+              <moul-number-ticker
+                id="sb-ticker"
+                value="1280"
+                from="0"
+                style="font-size: 2rem; font-weight: 600;"
+              ></moul-number-ticker>
+              <moul-badge id="sb-count" tone="error" variant="solid" count="3"></moul-badge>
+              <moul-badge count="120"></moul-badge>
+              <moul-badge tone="success" is-live>Live</moul-badge>
+              <moul-badge tone="success" is-dot is-live aria-label="Online"></moul-badge>
+            </div>
+            <div class="demo-row">
+              <moul-button
+                size="sm"
+                variant="secondary"
+                @click=${() => {
+                  const ticker =
+                    this.renderRoot.querySelector<MoulNumberTicker>(
+                      '#sb-ticker',
+                    )
+                  const badge = this.renderRoot.querySelector<
+                    HTMLElement & { count?: number }
+                  >('#sb-count')
+                  if (ticker) ticker.value += Math.round(Math.random() * 400)
+                  if (badge) badge.count = (badge.count ?? 0) + 1
+                }}
+              >
+                Bump
+              </moul-button>
+            </div>
+          </div>
+
+          <div class="demo-group">
+            <span class="group-label">Loaders & Step Loader</span>
+            <div class="demo-row" style="color: var(--color-accent);">
+              <moul-spinner variant="ring"></moul-spinner>
+              <moul-spinner variant="dots"></moul-spinner>
+              <moul-spinner variant="shape"></moul-spinner>
+              <moul-spinner variant="orbit"></moul-spinner>
+            </div>
+            <moul-step-loader
+              label="Publishing site"
+              interval="1200"
+              loop
+              style="max-height: 7rem;"
+              .steps=${['Checking files', 'Uploading', 'Building', 'Publishing']}
+            ></moul-step-loader>
+          </div>
+
+          <div class="demo-group">
+            <span class="group-label">Result Card & Confetti</span>
+            <moul-result-card
+              id="sb-result"
+              heading="Payment sent"
+              description="$42.00 to Dara Sok."
+            >
+              <moul-button slot="actions" variant="primary" @click=${() => this.runPayment()}>
+                Pay again
+              </moul-button>
+            </moul-result-card>
+          </div>
+
+          <div class="demo-group">
+            <span class="group-label">Undo & Stacked Toasts</span>
+            <div class="demo-row">
+              <moul-button variant="danger-soft" @click=${() => this.triggerUndoToast()}>
+                Delete rows
+              </moul-button>
+              <moul-button variant="secondary" @click=${() => this.triggerStackedToasts()}>
+                Send three, stacked
+              </moul-button>
+            </div>
+          </div>
+
+          <div class="demo-group">
+            <span class="group-label">Animated List & Notification Bell</span>
+            <div class="demo-row">
+              <moul-button size="sm" variant="secondary" @click=${() => this.addSandboxEvent()}>
+                Add event
+              </moul-button>
+              <moul-notification-bell id="sb-bell" count="2">
+                <moul-button slot="header-actions" size="sm" variant="ghost">Mark all read</moul-button>
+                <div>Deploy finished</div>
+                <div>New sign-up</div>
+              </moul-notification-bell>
+            </div>
+            <moul-animated-list id="sb-feed" delay="400" is-live>
+              <div class="feed-item">Payment received</div>
+              <div class="feed-item">New sign-up</div>
+              <div class="feed-item">Deploy finished</div>
+            </moul-animated-list>
+          </div>
+
+          <div class="demo-group">
+            <span class="group-label">Pull to Refresh</span>
+            <moul-pull-to-refresh
+              style="height: 12rem; border: 1px solid var(--color-border); border-radius: var(--radius-lg, 0.75rem);"
+              @refresh=${(
+                e: CustomEvent<{ waitUntil(p: Promise<unknown>): void }>,
+              ) =>
+                e.detail.waitUntil(
+                  new Promise((resolve) => setTimeout(resolve, 1200)),
+                )}
+            >
+              <ul style="margin: 0; padding: var(--spacing-3, 0.75rem) var(--spacing-6, 1.5rem);">
+                <li>Invoice #1042 paid</li>
+                <li>New sign-up from Siem Reap</li>
+                <li>Backup finished</li>
+                <li>Deploy to staging succeeded</li>
+              </ul>
+            </moul-pull-to-refresh>
+          </div>
+
+          <div class="demo-group">
+            <span class="group-label">Expandable Card</span>
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr)); gap: var(--spacing-3, 0.75rem);">
+              <moul-expandable-card size="sm">
+                <div slot="media" style="background: var(--color-accent);"></div>
+                <h3 style="margin: 0;">Koh Rong Samloem</h3>
+                <span>Island · 3 nights</span>
+                <div slot="details">
+                  <p>Quiet island off Sihanoukville, with a long white beach and no cars.</p>
+                  <moul-button variant="primary">Book</moul-button>
+                </div>
+              </moul-expandable-card>
+              <moul-expandable-card size="sm">
+                <div slot="media" style="background: var(--color-success-solid);"></div>
+                <h3 style="margin: 0;">Kampot</h3>
+                <span>River town · 2 nights</span>
+                <div slot="details">
+                  <p>Pepper farms, a slow river and the old French quarter.</p>
+                  <moul-button variant="primary">Book</moul-button>
+                </div>
+              </moul-expandable-card>
+            </div>
+          </div>
+        </div>
+
         <moul-card>
           <moul-card-header>
             <h4 style="margin: 0;">Interactive Data Table</h4>
@@ -907,7 +1146,7 @@ export class MoulSandbox extends LitElement {
       <div class="category-section" id="overlays">
         <div class="section-header">
           <h3 class="section-title">3. Overlays & Navigation</h3>
-          <p class="section-subtitle">moul-modal, moul-alert-dialog, moul-drawer, moul-popover, moul-tooltip, moul-command-palette, moul-dropdown-menu, moul-stepper, moul-tree, moul-tabs, moul-breadcrumbs, moul-pagination, moul-link</p>
+          <p class="section-subtitle">moul-modal, moul-alert-dialog, moul-drawer, moul-popover, moul-tooltip, moul-command-palette, moul-dropdown-menu, moul-stepper, moul-tree, moul-hover-card, moul-tour, moul-focus-mode, moul-tabs, moul-breadcrumbs, moul-pagination, moul-link</p>
         </div>
 
         <div class="demo-group">
@@ -1121,6 +1360,63 @@ export class MoulSandbox extends LitElement {
                 this.currentPage = e.detail.page
               }}
             ></moul-pagination>
+          </div>
+        </div>
+
+        <div class="section-grid">
+          <div class="demo-group">
+            <span class="group-label">Tooltip & Hover Card</span>
+            <div class="demo-row">
+              <moul-tooltip content="Follows the pointer" follow="pointer">
+                <moul-button variant="secondary" style="width: 14rem;">Wide trigger</moul-button>
+              </moul-tooltip>
+              <moul-hover-card>
+                <a slot="trigger" href="#">@sophea</a>
+                <div style="width: 14rem;">
+                  <strong>Sophea Chan</strong>
+                  <p style="margin: var(--spacing-1, 0.25rem) 0 var(--spacing-3, 0.75rem);">
+                    Designer in Phnom Penh
+                  </p>
+                  <moul-button size="sm">Follow</moul-button>
+                </div>
+              </moul-hover-card>
+            </div>
+          </div>
+
+          <div class="demo-group">
+            <span class="group-label">Tour & Focus Mode</span>
+            <div class="demo-row">
+              <moul-button id="sb-tour-new">New project</moul-button>
+              <moul-button
+                id="sb-tour-start"
+                variant="outline"
+                @click=${() =>
+                  this.renderRoot.querySelector<MoulTour>('#sb-tour')?.start()}
+              >
+                Take the tour
+              </moul-button>
+              <moul-button
+                variant="secondary"
+                @click=${() =>
+                  this.renderRoot
+                    .querySelector<MoulFocusMode>('#sb-focus')
+                    ?.toggle()}
+              >
+                Focus
+              </moul-button>
+            </div>
+            <moul-tour id="sb-tour">
+              <moul-tour-step heading="Welcome">A quick look around.</moul-tour-step>
+              <moul-tour-step target="#sb-tour-new" heading="Start a project">
+                Everything lives in a project.
+              </moul-tour-step>
+              <moul-tour-step target="#sb-focus" heading="Write without distraction" placement="top">
+                Focus mode dims everything else.
+              </moul-tour-step>
+            </moul-tour>
+            <moul-focus-mode id="sb-focus">
+              <moul-text-area label="Draft"></moul-text-area>
+            </moul-focus-mode>
           </div>
         </div>
       </div>

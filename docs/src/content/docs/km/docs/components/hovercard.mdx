@@ -1,0 +1,91 @@
+---
+title: HoverCard (សមាសភាគ)
+description: កាតមើលជាមុនដែលបើកក្បែរតំណ ឬឈ្មោះ ពេលទស្សន៍ទ្រនិចសម្រាកលើវា ហើយអាចមានតំណ និងប៊ូតុង។
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import HoverCardDemo from '@/components/demos/HoverCardDemo.astro';
+
+`<moul-hover-card>` opens a card beside a link or a name while the pointer rests on it: a profile behind an @mention, a summary behind a link. Unlike a [tooltip](/km/docs/components/tooltip/), the card can hold links and buttons. The pointer can move from the trigger into the card, and the card stays open while it is there.
+
+<ComponentPreview minHeight="320px">
+  <HoverCardDemo />
+</ComponentPreview>
+
+```html
+<p>
+  Reviewed by
+  <moul-hover-card>
+    <a slot="trigger" href="/people/sophea">@sophea</a>
+    <div class="profile">
+      <moul-avatar name="Sophea Chan" size="lg" status="online"></moul-avatar>
+      <moul-button size="sm" variant="secondary">Follow</moul-button>
+      <strong>Sophea Chan</strong>
+      <span>@sophea · Phnom Penh</span>
+    </div>
+  </moul-hover-card>
+  and merged into main.
+</p>
+```
+
+Put the link or name in the `trigger` slot and the card's content in the default slot. The card brings its own padding, surface and shadow; size and lay out the content inside it yourself.
+
+## Timing
+
+The card opens once the pointer has rested on the trigger for `open-delay` (500 ms), so a pointer passing over a paragraph of names opens nothing. It closes `close-delay` (300 ms) after the pointer has left both the trigger and the card, which is time enough to cross the gap between them; an invisible bridge over the gap means the pointer is already inside the card as it crosses.
+
+<ComponentPreview minHeight="300px">
+  <HoverCardDemo mode="link" />
+</ComponentPreview>
+
+```html
+<moul-hover-card placement="top" open-delay="300">
+  <a slot="trigger" href="/docs/theming">the theming guide</a>
+  <img src="/covers/theming.png" alt="" />
+  <strong>Theming</strong>
+  <p>Six brand variables set the hue, chroma, font, scale, radius and density of every element.</p>
+  <a href="/docs/theming">Open the guide</a>
+</moul-hover-card>
+```
+
+`placement` picks the side the card opens on. Where the browser supports CSS anchor positioning, the card flips to the other side when there is no room; elsewhere it is placed with fixed coordinates when it opens.
+
+## Touch
+
+Touch screens have no hover. A tap on the trigger follows the link and the card never opens, so the card must only repeat what the link leads to: never put the only way to an action in a hover card.
+
+## Keyboard and screen readers
+
+Keyboard focus on the trigger opens the card at once, without the delay. While it is open, its content comes right after the trigger in `Tab` order, so `Tab` moves into the card; it stays open while focus is in either and closes when focus leaves both. `Escape` closes it, returns focus to the trigger if it was in the card, and stops there, so it does not also close a surrounding dialog.
+
+The card has no role and the trigger gets no `aria-expanded` or `aria-haspopup`. A screen reader reads the card's content as ordinary content when it reaches it and is not told that it opened, which suits content that only previews where the link goes.
+
+Under reduced motion the card appears and disappears at once instead of fading and growing out of the trigger edge.
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `placement` | `placement` | `'top' \| 'bottom' \| 'left' \| 'right'` | `'bottom'` |
+| `open-delay` | `openDelay` | `number` (ms) | `500` |
+| `close-delay` | `closeDelay` | `number` (ms) | `300` |
+| `is-open` | `isOpen` | `boolean` | `false` |
+
+| Method | Description |
+| :-- | :-- |
+| `setOpen(isOpen)` | Opens or closes the card and fires `openchange`. Setting `isOpen` directly does not fire it. |
+
+| Event | Detail |
+| :-- | :-- |
+| `openchange` | `{ isOpen: boolean }` |
+
+| Slot | Description |
+| :-- | :-- |
+| `trigger` | The link, name or avatar the card previews. |
+| (default) | The card's content; links and buttons are fine. |
+
+| CSS custom property | Default | Description |
+| :-- | :-- | :-- |
+| `--hover-card-offset` | `8px` | Gap between the trigger and the card. |
+
+**CSS parts:** `trigger`, `card`

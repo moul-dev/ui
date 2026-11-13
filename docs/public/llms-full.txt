@@ -35,7 +35,7 @@ Without a bundler, load the self-contained CDN build (Lit and the other dependen
 - **Attributes are kebab-case**: Boolean state uses presence attributes such as `is-disabled`, `is-open`, `is-checked`, `is-required`. The matching JS property is camelCase (`el.isDisabled = true`).
 - **Rich data is set as properties**: Arrays, objects, and functions (`data`, `series`, `columns`, `items`, `logs`, `valueFormatter`) are assigned in JavaScript, not serialized into attributes.
 - **Events are DOM events**: Listen with `addEventListener` (`press`, `change`, `input`, `openchange`, `selectionchange`, `pagechange`, `dismiss`). Payloads live on `event.detail`. There is no `onPress` prop.
-- **Overlays**: Toggle `is-open` (or `el.isOpen`) on `<moul-modal>`, `<moul-drawer>`, `<moul-alert-dialog>`, `<moul-popover>`, `<moul-tooltip>`, `<moul-command-palette>`, and react to `openchange` (`detail.isOpen`).
+- **Overlays**: Toggle `is-open` (or `el.isOpen`) on `<moul-modal>`, `<moul-drawer>`, `<moul-alert-dialog>`, `<moul-popover>`, `<moul-tooltip>`, `<moul-hover-card>`, `<moul-command-palette>`, `<moul-notification-bell>`, `<moul-expandable-card>`, `<moul-focus-mode>`, and react to `openchange` (`detail.isOpen`). Start a `<moul-tour>` with `start()`; its `openchange` also carries `detail.isComplete`.
 - **Forms**: Inputs are form-associated via `ElementInternals`; give each a `name` and it submits with a native `<form>` / `FormData`. Enter in `<moul-text-field>`, `<moul-number-field>`, or `<moul-search-field>` submits its `<form>` or `<moul-form>` like a native input, so do not add your own Enter handler.
 - **Semantic tones & variants**: `tone` is one of `primary | accent | success | warning | error`; surface `variant` is one of `solid | flat | shadow | bordered | glass`. Omit `variant` for a neutral surface: an unset `variant` on `<moul-card>`, `<moul-alert>`, `<moul-toast>`, or `<moul-stat>` renders the plain `--color-surface` look, while `variant="flat"` tints it in the tone. `<moul-button>` has its own `variant` set (`primary | secondary | tertiary | outline | ghost | danger | danger-soft`).
 - **Accessibility**: Icon-only buttons (`is-icon`) and dot badges (`is-dot`) must have an `aria-label`.
@@ -722,6 +722,45 @@ Class: `MoulButtonGroup` · Source: `ui/src/components/ButtonGroup/ButtonGroup.t
 | (default) |
 
 **CSS Parts:** `base`
+
+## SlideToConfirm
+
+Drag a handle across a track to confirm a risky action; a keyboard slider (arrows, `End`) reaches the same result. Docs: [/docs/components/slidetoconfirm](/docs/components/slidetoconfirm)
+
+```html
+<moul-slide-to-confirm tone="error" label="Slide to delete project" confirmed-label="Deleting"></moul-slide-to-confirm>
+```
+
+```js
+slider.addEventListener('confirm', async () => {
+  slider.isPending = true
+  try { await deleteProject() } catch { slider.reset() } finally { slider.isPending = false }
+})
+```
+
+### `<moul-slide-to-confirm>`
+
+Class: `MoulSlideToConfirm` · Source: `ui/src/components/SlideToConfirm/SlideToConfirm.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `label` | `label` | `string` | `'Slide to confirm'` |
+| `confirmed-label` | `confirmedLabel` | `string` | `'Confirmed'` |
+| `tone` | `tone` | `'primary' \| 'accent' \| 'success' \| 'warning' \| 'error'` | `'primary'` |
+| `is-confirmed` | `isConfirmed` | `boolean` | `false` |
+| `is-pending` | `isPending` | `boolean` | `false` |
+| `is-disabled` | `isDisabled` | `boolean` | `false` |
+| `percent` | `percent` | `number` | `0` |
+
+**Events**
+
+| Event | Type |
+| :--- | :--- |
+| `confirm` | `CustomEvent` |
+
+**CSS Parts:** `track`, `fill`, `label`, `handle`
 
 ## SplitButton
 
@@ -2083,11 +2122,16 @@ Class: `MoulPopover` · Source: `ui/src/components/Popover/Popover.ts`
 
 ## Tooltip
 
-Hover/focus tooltip wired with `aria-describedby`. Docs: [/docs/components/tooltip](/docs/components/tooltip)
+Hover/focus label that slides out of its trigger; `follow="pointer"` trails the pointer, `is-rich` makes a small non-interactive card with a `media` slot. Docs: [/docs/components/tooltip](/docs/components/tooltip)
 
 ```html
 <moul-tooltip content="Copy to clipboard" placement="top">
   <moul-button is-icon aria-label="Copy">⧉</moul-button>
+</moul-tooltip>
+<moul-tooltip is-rich follow="pointer">
+  <moul-avatar name="Sophea Chan" tabindex="0"></moul-avatar>
+  <img slot="media" src="/sophea.jpg" alt="" />
+  <span slot="content">Sophea Chan · Design</span>
 </moul-tooltip>
 ```
 
@@ -2102,6 +2146,8 @@ Class: `MoulTooltip` · Source: `ui/src/components/Tooltip/Tooltip.ts`
 | `content` | `content` | `string` | `''` |
 | `placement` | `placement` | `'top' \| 'bottom' \| 'left' \| 'right'` | `'top'` |
 | `delay` | `delay` | `number` | `300` |
+| `follow` | `follow` | `'none' \| 'pointer'` | `'none'` |
+| `is-rich` | `isRich` | `boolean` | `false` |
 | `is-open` | `isOpen` | `boolean` | `false` |
 
 **Events**
@@ -2116,8 +2162,223 @@ Class: `MoulTooltip` · Source: `ui/src/components/Tooltip/Tooltip.ts`
 | :--- |
 | (default) |
 | `content` |
+| `media` |
 
 **CSS Parts:** `trigger`, `popover`, `tooltip`
+
+## HoverCard
+
+Preview card beside a link or name on hover or keyboard focus; may hold links and buttons and stays open while the pointer is in it. Touch never opens it. Docs: [/docs/components/hovercard](/docs/components/hovercard)
+
+```html
+<moul-hover-card placement="bottom" open-delay="500" close-delay="300">
+  <a slot="trigger" href="/people/sophea">@sophea</a>
+  <strong>Sophea Chan</strong>
+  <moul-button size="sm" variant="secondary">Follow</moul-button>
+</moul-hover-card>
+```
+
+```js
+card.addEventListener('openchange', (e) => console.log(e.detail.isOpen))
+```
+
+### `<moul-hover-card>`
+
+Class: `MoulHoverCard` · Source: `ui/src/components/HoverCard/HoverCard.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `placement` | `placement` | `'top' \| 'bottom' \| 'left' \| 'right'` | `'bottom'` |
+| `open-delay` | `openDelay` | `number` | `500` |
+| `close-delay` | `closeDelay` | `number` | `300` |
+| `is-open` | `isOpen` | `boolean` | `false` |
+
+**Events**
+
+| Event | Type |
+| :--- | :--- |
+| `openchange` | `CustomEvent` |
+
+**Slots**
+
+| Slot |
+| :--- |
+| `trigger` |
+| (default) |
+
+**CSS Parts:** `trigger`, `card`
+
+## Notification Bell
+
+Bell button with an unread badge that swings when `count` rises and opens a panel listing its children. Docs: [/docs/components/notificationbell](/docs/components/notificationbell)
+
+```html
+<moul-notification-bell id="inbox" count="2">
+  <moul-button slot="header-actions" size="sm" variant="ghost">Mark all read</moul-button>
+  <div>Deploy finished</div>
+  <div>New sign-up</div>
+  <a slot="footer" href="/notifications">View all</a>
+</moul-notification-bell>
+```
+
+```js
+const bell = document.querySelector('#inbox')
+bell.prepend(item)
+bell.count += 1
+await bell.removeItem(item)
+```
+
+### `<moul-notification-bell>`
+
+Class: `MoulNotificationBell` · Source: `ui/src/components/NotificationBell/NotificationBell.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `count` | `count` | `number` | `0` |
+| `max` | `max` | `number` | `99` |
+| `label` | `label` | `string` | `'Notifications'` |
+| `unread-label` | `unreadLabel` | `string` | `'unread'` |
+| `is-open` | `isOpen` | `boolean` | `false` |
+| `placement` | `placement` | `'bottom-start' \| 'bottom-end' \| 'top-start' \| 'top-end'` | `'bottom-end'` |
+| `hasItems` | `hasItems` | `boolean` | `false` |
+| `hasFooter` | `hasFooter` | `boolean` | `false` |
+
+**Events**
+
+| Event | Type |
+| :--- | :--- |
+| `openchange` | `CustomEvent` |
+
+**Slots**
+
+| Slot |
+| :--- |
+| (default) |
+| `header` |
+| `header-actions` |
+| `empty` |
+| `footer` |
+
+**CSS Parts:** `button`, `icon`, `badge`, `popover`, `panel`, `header`, `title`, `body`, `list`, `empty`, `footer`
+
+## Tour
+
+Product walkthrough in a modal dialog: the page dims except a cutout around each step's target, with a card of heading, body, progress and Back/Next/Done. Docs: [/docs/components/tour](/docs/components/tour)
+
+```html
+<moul-tour id="welcome">
+  <moul-tour-step heading="Welcome">A quick look around.</moul-tour-step>
+  <moul-tour-step target="#new" heading="Start a project">Everything lives in a project.</moul-tour-step>
+  <moul-tour-step target="#invite" heading="Bring your team" placement="right">Invite people by email.</moul-tour-step>
+</moul-tour>
+```
+
+```js
+const tour = document.querySelector('#welcome')
+tour.start()
+tour.addEventListener('openchange', (e) => {
+  if (!e.detail.isOpen && e.detail.isComplete) localStorage.setItem('tour', 'done')
+})
+```
+
+### `<moul-tour>`
+
+Class: `MoulTour` · Source: `ui/src/components/Tour/Tour.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `is-open` | `isOpen` | `boolean` | `false` |
+| `current` | `current` | `number` | `0` |
+| `padding` | `padding` | `number` | `8` |
+| `radius` | `radius` | `number \| undefined` | `undefined` |
+| `next-label` | `nextLabel` | `string` | `'Next'` |
+| `previous-label` | `previousLabel` | `string` | `'Back'` |
+| `done-label` | `doneLabel` | `string` | `'Done'` |
+| `skip-label` | `skipLabel` | `string` | `'Skip tour'` |
+| `progress-label` | `progressLabel` | `string` | `'{current} of {total}'` |
+| `announcement` | `announcement` | `string` | `''` |
+
+**Events**
+
+| Event | Type |
+| :--- | :--- |
+| `openchange` | `CustomEvent` |
+| `stepchange` | — |
+
+**Slots**
+
+| Slot |
+| :--- |
+| (default) |
+
+**CSS Parts:** `dialog`, `overlay`, `card`, `header`, `heading`, `close-button`, `body`, `footer`, `progress`, `previous-button`, `next-button`
+
+### `<moul-tour-step>`
+
+Class: `MoulTourStep` · Source: `ui/src/components/Tour/TourStep.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `target` | `target` | `string \| Element \| null` | `null` |
+| `heading` | `heading` | `string` | `''` |
+| `placement` | `placement` | `TourPlacement` | `'auto'` |
+| `is-active` | `isActive` | `boolean` | `false` |
+
+**Slots**
+
+| Slot |
+| :--- |
+| (default) |
+
+## FocusMode
+
+Dims the page around the region it wraps (or `target`); clicks pass through the cutout, and a click on the dim or `Escape` ends it. Visual only, not modal. Docs: [/docs/components/focusmode](/docs/components/focusmode)
+
+```html
+<moul-focus-mode id="draft">
+  <moul-text-area label="Release notes"></moul-text-area>
+</moul-focus-mode>
+```
+
+```js
+document.querySelector('#draft').toggle()
+```
+
+### `<moul-focus-mode>`
+
+Class: `MoulFocusMode` · Source: `ui/src/components/FocusMode/FocusMode.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `is-open` | `isOpen` | `boolean` | `false` |
+| `target` | `target` | `string \| Element \| null` | `null` |
+| `padding` | `padding` | `number` | `8` |
+| `radius` | `radius` | `number \| undefined` | `undefined` |
+| `is-blurred` | `isBlurred` | `boolean` | `false` |
+
+**Events**
+
+| Event | Type |
+| :--- | :--- |
+| `openchange` | `CustomEvent` |
+
+**Slots**
+
+| Slot |
+| :--- |
+| (default) |
+
+**CSS Parts:** `overlay`
 
 ## CommandPalette
 
@@ -2492,6 +2753,42 @@ Class: `MoulAlert` · Source: `ui/src/components/Alert/Alert.ts`
 
 **CSS Parts:** `base`, `icon`, `content`, `title`, `description`, `actions`, `dismiss-button`
 
+## Animated List
+
+Feed whose new children grow in and push the others along; `removeItem()` shrinks one away while the rest close ranks, and `is-live` announces arrivals. Docs: [/docs/components/animatedlist](/docs/components/animatedlist)
+
+```html
+<moul-animated-list id="feed" is-live>
+  <div class="event">Deploy finished</div>
+  <div class="event">New sign-up</div>
+</moul-animated-list>
+```
+
+```js
+const feed = document.querySelector('#feed')
+feed.prepend(newEventElement) // animates in
+await feed.removeItem(feed.items.at(-1))
+```
+
+### `<moul-animated-list>`
+
+Class: `MoulAnimatedList` · Source: `ui/src/components/AnimatedList/AnimatedList.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `delay` | `delay` | `number` | `0` |
+| `is-live` | `isLive` | `boolean` | `false` |
+
+**Slots**
+
+| Slot |
+| :--- |
+| (default) |
+
+**CSS Parts:** `base`
+
 ## Card
 
 Surface container with header, body, and footer regions. Docs: [/docs/components/card](/docs/components/card)
@@ -2565,11 +2862,12 @@ Class: `MoulCardFooter` · Source: `ui/src/components/Card/Card.ts`
 
 ## Badge
 
-Compact status chip or dot indicator. Docs: [/docs/components/badge](/docs/components/badge)
+Compact status chip or dot indicator; `count` rolls to each new value (`99+` past `max`) and `is-live` pulses a live dot. Docs: [/docs/components/badge](/docs/components/badge)
 
 ```html
 <moul-badge tone="success" variant="flat">Active</moul-badge>
-<moul-badge tone="error" is-dot aria-label="Offline"></moul-badge>
+<moul-badge tone="error" variant="solid" count="3"></moul-badge>
+<moul-badge tone="success" is-dot is-live aria-label="Online"></moul-badge>
 ```
 
 ### `<moul-badge>`
@@ -2584,16 +2882,61 @@ Class: `MoulBadge` · Source: `ui/src/components/Badge/Badge.ts`
 | `variant` | `variant` | `'solid' \| 'flat' \| 'shadow' \| 'bordered' \| 'glass'` | `'flat'` |
 | `size` | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` |
 | `is-dot` | `isDot` | `boolean` | `false` |
+| `count` | `count` | `number \| undefined` | `undefined` |
+| `max` | `max` | `number` | `99` |
+| `is-live` | `isLive` | `boolean` | `false` |
+
+**Slots**
+
+| Slot |
+| :--- |
+| (default) |
+| `prefix` |
+| `suffix` |
+
+**CSS Parts:** `base`, `prefix`, `content`, `suffix`, `count`, `live-dot`, `pulse`
+
+## NumberTicker
+
+Number that rolls like an odometer (or counts with `mode="count"`) to each new `value`; Intl formatting via `locale` and `formatOptions`, and `from` counts up on first view. Docs: [/docs/components/numberticker](/docs/components/numberticker)
+
+```html
+<moul-number-ticker value="1280" from="0"></moul-number-ticker>
+```
+
+```js
+const ticker = document.querySelector('moul-number-ticker')
+ticker.formatOptions = { style: 'currency', currency: 'USD' }
+ticker.value = 1530
+```
+
+### `<moul-number-ticker>`
+
+Class: `MoulNumberTicker` · Source: `ui/src/components/NumberTicker/NumberTicker.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `value` | `value` | `number` | `0` |
+| `from` | `from` | `number \| undefined` | `undefined` |
+| `mode` | `mode` | `'roll' \| 'count'` | `'roll'` |
+| `locale` | `locale` | `string \| undefined` | `undefined` |
+
+**Properties** (JavaScript only — set on the element instance)
+
+| Property | Type | Default |
+| :--- | :--- | :--- |
+| `formatOptions` | `Intl.NumberFormatOptions \| undefined` | `undefined` |
 
 **Slots**
 
 | Slot |
 | :--- |
 | `prefix` |
-| (default) |
 | `suffix` |
 
-**CSS Parts:** `base`, `prefix`, `content`, `suffix`
+**CSS Parts:** `digits`, `digit`, `symbol`
 
 ## Avatar
 
@@ -2762,10 +3105,11 @@ Class: `MoulIconMorph` · Source: `ui/src/components/IconMorph/IconMorph.ts`
 
 ## Spinner
 
-Indeterminate loading indicator with accessible label. Docs: [/docs/components/spinner](/docs/components/spinner)
+Indeterminate loading indicator with accessible label; `variant` is `ring`, `dots`, `shape` or `orbit`. Docs: [/docs/components/spinner](/docs/components/spinner)
 
 ```html
 <moul-spinner size="sm" label="Loading projects"></moul-spinner>
+<moul-spinner variant="dots" label="Saving"></moul-spinner>
 ```
 
 ### `<moul-spinner>`
@@ -2777,9 +3121,55 @@ Class: `MoulSpinner` · Source: `ui/src/components/Spinner/Spinner.ts`
 | Attribute | Property | Type | Default |
 | :--- | :--- | :--- | :--- |
 | `size` | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` |
+| `variant` | `variant` | `'ring' \| 'dots' \| 'shape' \| 'orbit'` | `'ring'` |
 | `label` | `label` | `string` | `'Loading'` |
 
 **CSS Parts:** `base`
+
+## StepLoader
+
+Checklist that ticks off the steps of a long task: drawn checks for done steps, a spinner on the current one; `interval` advances it by itself and `is-error` marks a failure. Docs: [/docs/components/steploader](/docs/components/steploader)
+
+```html
+<moul-step-loader id="publish" label="Publishing site"></moul-step-loader>
+```
+
+```js
+const loader = document.querySelector('#publish')
+loader.steps = ['Checking files', { label: 'Uploading', description: '12 files' }, 'Publishing']
+loader.addEventListener('complete', () => console.log('done'))
+loader.current = 1 // or loader.isError = true
+```
+
+### `<moul-step-loader>`
+
+Class: `MoulStepLoader` · Source: `ui/src/components/StepLoader/StepLoader.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `current` | `current` | `number` | `0` |
+| `interval` | `interval` | `number` | `0` |
+| `loop` | `loop` | `boolean` | `false` |
+| `is-error` | `isError` | `boolean` | `false` |
+| `label` | `label` | `string` | `'Progress'` |
+
+**Properties** (JavaScript only — set on the element instance)
+
+| Property | Type | Default |
+| :--- | :--- | :--- |
+| `steps` | `StepLoaderStep[]` | `[]` |
+| `labels` | `Partial<StepLoaderLabels>` | `{}` |
+
+**Events**
+
+| Event | Type |
+| :--- | :--- |
+| `complete` | `CustomEvent` |
+| `stepchange` | `CustomEvent` |
+
+**CSS Parts:** `list`, `step`, `indicator`, `label`, `description`
 
 ## Skeleton
 
@@ -2837,6 +3227,49 @@ Class: `MoulProgressBar` · Source: `ui/src/components/ProgressBar/ProgressBar.t
 | `label` |
 
 **CSS Parts:** `header`, `track`, `fill`
+
+## ResultCard
+
+Success or failure card whose ring and check (or cross) draw themselves; start it `pending` and set `status` when the task ends so the outcome is announced. Docs: [/docs/components/resultcard](/docs/components/resultcard)
+
+```html
+<moul-result-card status="pending" heading="Processing payment" description="This takes a few seconds.">
+  <moul-button slot="actions" variant="primary">Done</moul-button>
+</moul-result-card>
+```
+
+```js
+const card = document.querySelector('moul-result-card')
+card.status = 'success'
+card.heading = 'Payment sent'
+```
+
+### `<moul-result-card>`
+
+Class: `MoulResultCard` · Source: `ui/src/components/ResultCard/ResultCard.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `status` | `status` | `'success' \| 'error' \| 'pending'` | `'success'` |
+| `heading` | `heading` | `string` | `''` |
+| `description` | `description` | `string` | `''` |
+| `heading-level` | `headingLevel` | `number` | `2` |
+| `hasActions` | `hasActions` | `boolean` | `false` |
+| `hasDetails` | `hasDetails` | `boolean` | `false` |
+| `politeText` | `politeText` | `string` | `''` |
+| `alertText` | `alertText` | `string` | `''` |
+
+**Slots**
+
+| Slot |
+| :--- |
+| (default) |
+| `actions` |
+| `icon` |
+
+**CSS Parts:** `base`, `icon`, `heading`, `description`, `details`, `actions`
 
 ## TagGroup
 
@@ -3033,17 +3466,24 @@ Class: `MoulSelectionToolbar` · Source: `ui/src/components/SelectionToolbar/Sel
 
 ## Toast
 
-Transient notifications managed by the `toastQueue` singleton. Docs: [/docs/components/toast](/docs/components/toast)
+Transient notifications queued with `toastQueue.add()`: swipe to dismiss, an optional stacked deck (`is-stacked`, `toastQueue.isStacked`), and undo toasts with an `action` button and a `showCountdown` bar. Timers pause on hover, swipe and keyboard focus. Docs: [/docs/components/toast](/docs/components/toast)
 
 ```html
-<moul-toast-region></moul-toast-region>
-<moul-toast tone="success" title="Saved" description="Your profile was updated."></moul-toast>
+<moul-toast-region is-stacked></moul-toast-region>
+<moul-toast title="3 rows deleted" duration="8000" show-countdown>
+  <moul-button slot="action" size="sm" variant="secondary">Undo</moul-button>
+</moul-toast>
 ```
 
 ```js
 import { toastQueue } from '@moul-dev/web-component'
 
-toastQueue.add({ title: 'Saved', description: 'Your profile was updated.', tone: 'success' })
+toastQueue.add({
+  title: '3 rows deleted',
+  duration: 8000,
+  showCountdown: true,
+  action: { label: 'Undo', onAction: () => restoreRows() },
+})
 ```
 
 ### `<moul-toast>`
@@ -3060,23 +3500,25 @@ Class: `MoulToast` · Source: `ui/src/components/Toast/Toast.ts`
 | `title` | `title` | `string` | `''` |
 | `description` | `description` | `string` | `''` |
 | `is-open` | `isOpen` | `boolean` | `true` |
+| `show-countdown` | `showCountdown` | `boolean` | `false` |
 
 **Events**
 
 | Event | Type |
 | :--- | :--- |
 | `dismiss` | `CustomEvent` |
+| `action` | — |
 
 **Slots**
 
 | Slot |
 | :--- |
+| (default) |
 | `icon` |
 | `title` |
-| (default) |
 | `action` |
 
-**CSS Parts:** `base`, `icon`, `content`, `title`, `description`, `actions`, `dismiss-button`
+**CSS Parts:** `base`, `icon`, `content`, `title`, `description`, `actions`, `dismiss-button`, `countdown`
 
 ### `<moul-toast-region>`
 
@@ -3087,6 +3529,7 @@ Class: `MoulToastRegion` · Source: `ui/src/components/Toast/ToastQueue.ts`
 | Attribute | Property | Type | Default |
 | :--- | :--- | :--- | :--- |
 | `placement` | `placement` | `'top-start' \| 'top-center' \| 'top-end' \| 'bottom-start' \| 'bottom-center' \| 'bottom-end'` | `'bottom-end'` |
+| `is-stacked` | `isStacked` | `boolean` | `false` |
 
 **Slots**
 
@@ -3129,6 +3572,139 @@ Class: `MoulEmptyState` · Source: `ui/src/components/EmptyState/EmptyState.ts`
 | `actions` |
 
 **CSS Parts:** `icon`, `title`, `description`, `actions`, `base`
+
+## ExpandableCard
+
+Card that springs from its place in the page into a centred modal dialog to show its `details`, and shrinks back; the closed card is one button. Docs: [/docs/components/expandablecard](/docs/components/expandablecard)
+
+```html
+<moul-expandable-card size="sm">
+  <img slot="media" src="/cabin.jpg" alt="" />
+  <h3>Mountain cabin</h3>
+  <span>2 nights · sleeps 4</span>
+  <div slot="details">
+    <p>Full description…</p>
+    <moul-button variant="primary">Book</moul-button>
+  </div>
+</moul-expandable-card>
+```
+
+```js
+card.addEventListener('openchange', (e) => console.log(e.detail.isOpen))
+await card.setOpen(true)
+```
+
+### `<moul-expandable-card>`
+
+Class: `MoulExpandableCard` · Source: `ui/src/components/ExpandableCard/ExpandableCard.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `is-open` | `isOpen` | `boolean` | `false` |
+| `size` | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` |
+| `label` | `label` | `string` | `''` |
+| `close-label` | `closeLabel` | `string` | `'Close'` |
+| `phase` | `phase` | `Phase` | `'collapsed'` |
+
+**Events**
+
+| Event | Type |
+| :--- | :--- |
+| `openchange` | `CustomEvent` |
+
+**Slots**
+
+| Slot |
+| :--- |
+| (default) |
+| `media` |
+| `details` |
+
+**CSS Parts:** `base`, `media`, `content`, `details`, `close-button`, `placeholder`
+
+## PullToRefresh
+
+Scroll container that refreshes when pulled down from its top; pass the work to `event.detail.waitUntil()`. Docs: [/docs/components/pulltorefresh](/docs/components/pulltorefresh)
+
+```html
+<moul-pull-to-refresh style="height: 100%">
+  <ul id="inbox">…</ul>
+</moul-pull-to-refresh>
+```
+
+```js
+feed.addEventListener('refresh', (e) => e.detail.waitUntil(loadNewMessages()))
+```
+
+### `<moul-pull-to-refresh>`
+
+Class: `MoulPullToRefresh` · Source: `ui/src/components/PullToRefresh/PullToRefresh.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `threshold` | `threshold` | `number` | `72` |
+| `is-refreshing` | `isRefreshing` | `boolean` | `false` |
+| `is-disabled` | `isDisabled` | `boolean` | `false` |
+| `pull-label` | `pullLabel` | `string` | `'Pull to refresh'` |
+| `release-label` | `releaseLabel` | `string` | `'Release to refresh'` |
+| `refreshing-label` | `refreshingLabel` | `string` | `'Refreshing…'` |
+| `done-label` | `doneLabel` | `string` | `'Updated'` |
+| `refresh-label` | `refreshLabel` | `string` | `'Refresh'` |
+| `phase` | `phase` | `Phase` | `'idle'` |
+| `isArmed` | `isArmed` | `boolean` | `false` |
+| `announcement` | `announcement` | `string` | `''` |
+
+**Events**
+
+| Event | Type |
+| :--- | :--- |
+| `refresh` | `CustomEvent` |
+
+**Slots**
+
+| Slot |
+| :--- |
+| (default) |
+
+**CSS Parts:** `indicator`, `scroller`, `refresh-button`, `content`
+
+## Confetti
+
+Confetti burst or rocket on success, from the effects entry (`import '@moul-dev/web-component/effects'`); decorative, skipped under reduced motion. Docs: [/docs/components/confetti](/docs/components/confetti)
+
+```html
+<moul-confetti>
+  <moul-button id="pay">Pay $120</moul-button>
+</moul-confetti>
+```
+
+```js
+await submitPayment()
+document.querySelector('moul-confetti').fire({ variant: 'rocket' })
+// or: import { fireConfetti } from '@moul-dev/web-component/effects'
+```
+
+### `<moul-confetti>`
+
+Class: `MoulConfetti` · Source: `ui/src/components/Confetti/Confetti.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `variant` | `variant` | `'burst' \| 'rocket'` | `'burst'` |
+
+**Slots**
+
+| Slot |
+| :--- |
+| (default) |
+
+**CSS Parts:** `canvas`
 
 ---
 

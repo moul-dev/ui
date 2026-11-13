@@ -1,0 +1,139 @@
+---
+title: Notification Bell
+description: A bell button with an unread count that opens a panel listing the notifications.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import NotificationBellDemo from '@/components/demos/NotificationBellDemo.astro';
+
+`<moul-notification-bell>` is the bell in an app bar. Its badge shows how many notifications are unread, and the bell swings when that number goes up. Pressing it opens a panel that hangs from the bell and lists the notifications, which arrive and leave through a [`<moul-animated-list>`](/docs/components/animatedlist/).
+
+Simulate a few notifications, open the bell, then dismiss one or mark them all read.
+
+<ComponentPreview>
+<div class="demo-stack" style="width: min(100%, 30rem)">
+<div class="demo-bell-bar">
+<strong>Moul Console</strong>
+<moul-notification-bell id="inbox" count="2">
+<moul-button slot="header-actions" size="sm" variant="ghost" data-bell-read><span>Mark all read</span></moul-button>
+<div class="demo-bell-item" data-unread><span class="demo-bell-item-text"><strong>Deploy finished</strong><span>moul-api · production</span></span><moul-button size="sm" variant="ghost" is-icon aria-label="Dismiss" data-bell-dismiss><span>✕</span></moul-button></div>
+<div class="demo-bell-item" data-unread><span class="demo-bell-item-text"><strong>New sign-up</strong><span>Dara · Free plan</span></span><moul-button size="sm" variant="ghost" is-icon aria-label="Dismiss" data-bell-dismiss><span>✕</span></moul-button></div>
+<div class="demo-bell-item"><span class="demo-bell-item-text"><strong>Invoice paid</strong><span>Yesterday</span></span><moul-button size="sm" variant="ghost" is-icon aria-label="Dismiss" data-bell-dismiss><span>✕</span></moul-button></div>
+<moul-link slot="footer" href="#inbox"><span>View all notifications</span></moul-link>
+</moul-notification-bell>
+</div>
+<moul-button variant="secondary" data-bell-notify="inbox"><span>Simulate a notification</span></moul-button>
+</div>
+<NotificationBellDemo />
+</ComponentPreview>
+
+```html
+<moul-notification-bell id="inbox" count="2">
+  <moul-button slot="header-actions" size="sm" variant="ghost" id="read-all">
+    Mark all read
+  </moul-button>
+  <div class="notice" data-unread>Deploy finished</div>
+  <div class="notice" data-unread>New sign-up</div>
+  <div class="notice">Invoice paid</div>
+  <a slot="footer" href="/notifications">View all notifications</a>
+</moul-notification-bell>
+```
+
+```js
+const bell = document.querySelector('#inbox')
+
+// A new notification arrives at the top of the list; the bell swings
+const notice = document.createElement('div')
+notice.className = 'notice'
+notice.textContent = 'Payment received'
+bell.prepend(notice)
+bell.count += 1
+
+// Shrinks it away while the others close ranks
+await bell.removeItem(notice)
+
+document.querySelector('#read-all').addEventListener('press', () => {
+  bell.count = 0
+})
+```
+
+The bell does not count anything itself: set `count` to the number of unread notifications, and it shows that number on a [`<moul-badge>`](/docs/components/badge/), up to `max` (99 by default, `99+` above it). At 0 the badge goes away. The bell swings each time `count` goes up, not when it goes down.
+
+The notifications are the bell's children, in any markup; put the newest first. Insert one to have it arrive, and remove one with `removeItem(el)` to let it shrink away.
+
+## Empty and footer
+
+When the bell has no children, the panel shows "No notifications", or whatever you put in the `empty` slot. The `footer` slot sits below the list, for a link to the full inbox, and its row only shows when it has content.
+
+<ComponentPreview>
+<div class="demo-bell-bar" style="width: min(100%, 30rem)">
+<strong>Moul Console</strong>
+<moul-notification-bell placement="bottom-end">
+<span slot="empty">You are all caught up.</span>
+</moul-notification-bell>
+</div>
+</ComponentPreview>
+
+```html
+<moul-notification-bell>
+  <span slot="empty">You are all caught up.</span>
+</moul-notification-bell>
+```
+
+## Placement
+
+The panel hangs below the bell, aligned to the bell's end edge, which suits a bell at the right of an app bar. `placement` takes `bottom-end` (default), `bottom-start`, `top-end` and `top-start`. The panel flips to the other side when that side has more room, stays inside the viewport, and follows the bell when the page scrolls. `start` and `end` follow the writing direction.
+
+The panel is `22rem` wide (`--notification-bell-width`) and scrolls when the notifications are taller than the room it has.
+
+## Translation
+
+`label` names the bell and the panel and is the panel's heading; `unread-label` is the word after the count in the bell's name. The `header` slot replaces the heading and the `empty` slot the empty message.
+
+```html
+<moul-notification-bell label="ការជូនដំណឹង" unread-label="មិនទាន់អាន" count="3">
+  <span slot="empty">មិនមានការជូនដំណឹងទេ</span>
+</moul-notification-bell>
+```
+
+## Accessibility
+
+- The bell is a native button named by `label` and the count, such as "Notifications, 3 unread". It has `aria-haspopup="dialog"`, `aria-expanded` and `aria-controls`; the badge is hidden from screen readers, because the name already says the count.
+- `Enter` or `Space` opens the panel, a non-modal `role="dialog"` named by `label`. Focus moves to its first focusable element, or to the panel itself; `Tab` then moves through the notifications in order.
+- `Escape` closes the panel and returns focus to the bell. A click outside, or `Tab` past the last element in the panel, closes it and leaves focus where it went. Setting `isOpen` directly opens or closes it without moving focus.
+- A change in `count` is not announced. If a new notification needs to reach a screen reader user straight away, announce it with a [toast](/docs/components/toast/) or a live region of your own.
+- Removing a notification that holds focus loses that focus. Move focus to a neighbour first, as the demo above does.
+- Under reduced motion the bell does not swing, the panel appears and disappears at once instead of growing from the bell, and notifications arrive and leave without animating.
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `count` | `count` | `number` | `0` |
+| `max` | `max` | `number` | `99` |
+| `label` | `label` | `string` | `'Notifications'` |
+| `unread-label` | `unreadLabel` | `string` | `'unread'` |
+| `is-open` | `isOpen` | `boolean` | `false` |
+| `placement` | `placement` | `'bottom-end' \| 'bottom-start' \| 'top-end' \| 'top-start'` | `'bottom-end'` |
+
+| Method | Description |
+| :-- | :-- |
+| `setOpen(isOpen)` | Opens or closes the panel and fires `openchange`. Opening moves focus into it. |
+| `toggle()` | `setOpen(!isOpen)`. |
+| `removeItem(el)` | Shrinks a notification away, then removes it. Returns a `Promise<void>`. |
+
+| Event | Type |
+| :-- | :-- |
+| `openchange` | `CustomEvent<{ isOpen: boolean }>`, when the bell, `Escape`, a click outside, `Tab` or `setOpen()` opens or closes the panel. Setting `isOpen` directly does not fire it. |
+
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | The notifications, one element each. |
+| `header` | Replaces the heading (`label`). |
+| `header-actions` | Controls beside the heading, such as "Mark all read". |
+| `empty` | Shown when there are no notifications. Defaults to "No notifications". |
+| `footer` | Below the list, such as a link to the full inbox. |
+
+**CSS parts:** `button`, `icon`, `badge`, `popover`, `panel`, `header`, `title`, `body`, `list`, `empty`, `footer`
+
+**CSS custom properties:** `--notification-bell-size` (default `2.5rem`), the bell button; `--notification-bell-width` (default `22rem`), the panel.

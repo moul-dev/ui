@@ -1,0 +1,33 @@
+---
+/**
+ * Tour demo wiring, so the MDX previews stay plain markup:
+ *   data-tour-start="id"   → click calls `start()` on #id
+ *   data-tour-log="id"     → shows the last `openchange` of tour #id in this element
+ */
+---
+
+<script>
+  type Tour = HTMLElement & { start(index?: number): void }
+
+  document.addEventListener('click', (event) => {
+    const button = (event.target as Element | null)?.closest?.<HTMLElement>(
+      '[data-tour-start]',
+    )
+    if (!button) return
+    const tour = document.getElementById(
+      button.dataset.tourStart ?? '',
+    ) as Tour | null
+    tour?.start()
+  })
+
+  for (const log of document.querySelectorAll<HTMLElement>('[data-tour-log]')) {
+    const tour = document.getElementById(log.dataset.tourLog ?? '')
+    tour?.addEventListener('openchange', (event) => {
+      const { isOpen, isComplete } = (
+        event as CustomEvent<{ isOpen: boolean; isComplete: boolean }>
+      ).detail
+      if (isOpen) return
+      log.textContent = isComplete ? 'Finished the tour' : 'Skipped the tour'
+    })
+  }
+</script>

@@ -1,0 +1,55 @@
+---
+/**
+ * Result card demo wiring, so the MDX previews stay plain markup:
+ *   data-result-card="id" data-outcome="success|error"
+ *     → click shows #id pending, then after a moment the outcome
+ */
+---
+
+<script>
+  type ResultCard = HTMLElement & {
+    status: string
+    heading: string
+    description: string
+  }
+
+  const OUTCOMES: Record<string, { heading: string; description: string }> = {
+    pending: {
+      heading: 'Processing payment',
+      description: 'This takes a few seconds.',
+    },
+    success: {
+      heading: 'Payment sent',
+      description: '$42.00 is on its way to Dara Sok.',
+    },
+    error: {
+      heading: 'Payment failed',
+      description: 'Your card was declined. No money was taken.',
+    },
+  }
+
+  const timers = new WeakMap<ResultCard, ReturnType<typeof setTimeout>>()
+
+  function show(card: ResultCard, status: string): void {
+    const copy = OUTCOMES[status]
+    card.status = status
+    card.heading = copy.heading
+    card.description = copy.description
+  }
+
+  document.addEventListener('click', (event) => {
+    const button = (event.target as Element | null)?.closest?.<HTMLElement>(
+      '[data-result-card]',
+    )
+    const card = document.getElementById(
+      button?.dataset.resultCard ?? '',
+    ) as ResultCard | null
+    if (!button || !card) return
+    clearTimeout(timers.get(card))
+    show(card, 'pending')
+    timers.set(
+      card,
+      setTimeout(() => show(card, button.dataset.outcome ?? 'success'), 1600),
+    )
+  })
+</script>

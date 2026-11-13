@@ -1,0 +1,29 @@
+---
+/**
+ * Step loader demo wiring, so the MDX previews stay plain markup:
+ *   data-step-loader-restart="id"  → click starts #id over from the first step
+ *   data-step-loader-fail="id"     → click marks the current step of #id failed
+ */
+---
+
+<script>
+  type StepLoader = HTMLElement & { current: number; isError: boolean }
+
+  document.addEventListener('click', (event) => {
+    const button = (event.target as Element | null)?.closest?.<HTMLElement>(
+      '[data-step-loader-restart], [data-step-loader-fail]',
+    )
+    if (!button) return
+    const { stepLoaderRestart, stepLoaderFail } = button.dataset
+    const loader = document.getElementById(
+      stepLoaderRestart ?? stepLoaderFail ?? '',
+    ) as StepLoader | null
+    if (!loader) return
+    if (stepLoaderFail) {
+      loader.isError = true
+      return
+    }
+    loader.isError = false
+    loader.current = 0
+  })
+</script>

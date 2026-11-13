@@ -1,0 +1,57 @@
+---
+/**
+ * Pull to refresh demo wiring, so the MDX preview stays plain markup. On
+ * `refresh`, a `moul-pull-to-refresh[data-pull-demo]` waits a second, as a
+ * request would, then adds a new row to the top of its first `ul`.
+ */
+---
+
+<script>
+  import type { PullToRefreshEventDetail } from '@moul-dev/web-component'
+
+  const senders = ['Dara', 'Sokha', 'Vanna', 'Bopha', 'Rithy', 'Chenda']
+  let count = 0
+
+  document.addEventListener('refresh', (event) => {
+    const pull = (event.target as Element | null)?.closest?.(
+      'moul-pull-to-refresh[data-pull-demo]',
+    )
+    const list = pull?.querySelector('ul')
+    if (!list) return
+    const { waitUntil } = (event as CustomEvent<PullToRefreshEventDetail>)
+      .detail
+    waitUntil(
+      new Promise<void>((resolve) => {
+        setTimeout(() => {
+          const row = document.createElement('li')
+          const sender = senders[count++ % senders.length]
+          row.innerHTML = `<strong>${sender}</strong><span>New message, just now</span>`
+          list.prepend(row)
+          resolve()
+        }, 1000)
+      }),
+    )
+  })
+</script>
+
+<style is:global>
+  .pull-demo ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .pull-demo li {
+    display: grid;
+    gap: 0.125rem;
+    margin: 0;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--color-separator);
+    font-size: var(--font-size-sm);
+    text-align: start;
+  }
+
+  .pull-demo li span {
+    color: var(--color-muted);
+  }
+</style>

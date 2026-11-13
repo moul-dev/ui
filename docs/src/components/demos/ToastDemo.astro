@@ -1,0 +1,64 @@
+---
+/**
+ * Toast demo wiring, so the MDX previews stay plain markup (plain toasts use
+ * ComponentPreview's `data-toast`):
+ *   data-toast-undo                 → a "rows deleted" toast with an Undo
+ *                                     button and a countdown; Undo adds a
+ *                                     "restored" toast
+ *   data-toast-burst="stacked|list" → three toasts at once, with the region
+ *                                     stacked into a deck or listed
+ */
+---
+
+<script>
+  import { toastQueue } from '@moul-dev/web-component'
+
+  const BURST = [
+    { title: 'Build queued', description: 'moul-dev/ui #418' },
+    {
+      title: 'Preview ready',
+      description: 'preview-418.moul.dev',
+      tone: 'success' as const,
+    },
+    {
+      title: 'Tests passed',
+      description: '2,018 of 2,018 in 13 s',
+      tone: 'success' as const,
+    },
+  ]
+
+  let deleted = 0
+
+  document.addEventListener('click', (event) => {
+    const trigger = (event.target as Element | null)?.closest?.<HTMLElement>(
+      '[data-toast-undo], [data-toast-burst]',
+    )
+    if (!trigger) return
+
+    if (trigger.hasAttribute('data-toast-undo')) {
+      const rows = (deleted % 3) + 2
+      deleted++
+      toastQueue.add({
+        title: `${rows} rows deleted`,
+        description: 'They are gone in 8 seconds.',
+        duration: 8000,
+        showCountdown: true,
+        action: {
+          label: 'Undo',
+          onAction: () =>
+            toastQueue.add({
+              title: `${rows} rows restored`,
+              tone: 'success',
+              duration: 3000,
+            }),
+        },
+      })
+      return
+    }
+
+    toastQueue.isStacked = trigger.dataset.toastBurst === 'stacked'
+    BURST.forEach((options, index) => {
+      setTimeout(() => toastQueue.add({ ...options, duration: 8000 }), index * 180)
+    })
+  })
+</script>

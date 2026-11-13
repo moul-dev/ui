@@ -1,0 +1,37 @@
+---
+/**
+ * Number ticker and badge count demo wiring, so the MDX previews stay plain markup:
+ *   data-number-target="id" data-number-by="5"   → click adds 5 to #id
+ *   data-number-target="id" data-number-random   → click sets #id to a random number
+ *                                                   up to data-number-max (default 9999)
+ * The target's `count` is changed when it has one (`moul-badge`), else its `value`.
+ * Render it once per page.
+ */
+---
+
+<script>
+  type Numeric = HTMLElement & { value?: number; count?: number }
+
+  document.addEventListener('click', (event) => {
+    const button = (event.target as Element | null)?.closest?.<HTMLElement>(
+      '[data-number-target]',
+    )
+    if (!button) return
+    const target = document.getElementById(
+      button.dataset.numberTarget ?? '',
+    ) as Numeric | null
+    if (!target) return
+    const key = target.localName === 'moul-badge' ? 'count' : 'value'
+    const current = Number(target[key] ?? 0)
+    const decimals = Number(button.dataset.numberDecimals ?? 0)
+    let next: number
+    if (button.hasAttribute('data-number-random')) {
+      const max = Number(button.dataset.numberMax ?? 9999)
+      next = Math.random() * max
+    } else {
+      next = current + Number(button.dataset.numberBy ?? 1)
+    }
+    const factor = 10 ** decimals
+    target[key] = Math.max(0, Math.round(next * factor) / factor)
+  })
+</script>

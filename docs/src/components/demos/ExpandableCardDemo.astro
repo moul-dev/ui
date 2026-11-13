@@ -1,0 +1,140 @@
+---
+/**
+ * Expandable card demos. `mode="single"` is one card; `mode="grid"` is a
+ * layout grid of cards that each grow into a dialog. The media tiles are
+ * token gradients, so the demo needs no images.
+ */
+interface Props {
+  mode?: 'single' | 'grid'
+}
+
+const { mode = 'single' } = Astro.props
+
+const places = [
+  {
+    tone: 'accent',
+    name: 'Koh Rong Samloem',
+    line: 'Island · 3 nights',
+    body: 'A quiet island off Sihanoukville with a long white beach on Saracen Bay. The boat leaves at 8:30 and takes about 45 minutes.',
+  },
+  {
+    tone: 'warning',
+    name: 'Kampot riverside',
+    line: 'Guesthouse · 2 nights',
+    body: 'Rooms over the Praek Tuek Chhu river, a short ride from the pepper farms and Bokor Mountain.',
+  },
+  {
+    tone: 'success',
+    name: 'Mondulkiri forest',
+    line: 'Eco lodge · 4 nights',
+    body: 'Green hills, waterfalls and an elephant sanctuary that does not allow riding. Nights are cool, so pack a jumper.',
+  },
+  {
+    tone: 'danger',
+    name: 'Siem Reap old town',
+    line: 'Hotel · 3 nights',
+    body: 'Walk to Pub Street and the night market; the temples of Angkor are twenty minutes away by tuk-tuk.',
+  },
+]
+---
+
+{
+  mode === 'single' ? (
+    <div class="ec-single">
+      <moul-expandable-card>
+        <div slot="media" class="ec-media" data-tone="accent" />
+        <h3>Koh Rong Samloem</h3>
+        <span>Island · 3 nights · from $240</span>
+        <div slot="details" class="ec-details">
+          <p>
+            A quiet island off Sihanoukville with a long white beach on Saracen
+            Bay. The boat leaves at 8:30 and takes about 45 minutes.
+          </p>
+          <ul>
+            <li>Bungalow for two, breakfast included</li>
+            <li>Return boat from Sihanoukville pier</li>
+            <li>Free cancellation until 48 hours before arrival</li>
+          </ul>
+          <div class="ec-actions">
+            <moul-button variant="primary">Book</moul-button>
+            <moul-button variant="secondary">Save for later</moul-button>
+          </div>
+        </div>
+      </moul-expandable-card>
+    </div>
+  ) : (
+    <div class="ec-grid">
+      {places.map((place) => (
+        <moul-expandable-card size="sm">
+          <div slot="media" class="ec-media" data-tone={place.tone} />
+          <h3>{place.name}</h3>
+          <span>{place.line}</span>
+          <div slot="details" class="ec-details">
+            <p>{place.body}</p>
+            <div class="ec-actions">
+              <moul-button variant="primary">Book</moul-button>
+            </div>
+          </div>
+        </moul-expandable-card>
+      ))}
+    </div>
+  )
+}
+
+<style>
+  .ec-single {
+    width: min(18rem, 100%);
+  }
+
+  .ec-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+    gap: var(--spacing-4, 1rem);
+    width: 100%;
+  }
+
+  .ec-media {
+    background:
+      radial-gradient(
+        circle at 20% 25%,
+        color-mix(in oklch, var(--_tone) 45%, var(--color-snow)),
+        transparent 55%
+      ),
+      linear-gradient(
+        135deg,
+        color-mix(in oklch, var(--_tone) 70%, var(--color-surface)),
+        var(--_tone)
+      );
+  }
+
+  .ec-media[data-tone='accent'] {
+    --_tone: var(--color-accent);
+  }
+
+  .ec-media[data-tone='success'] {
+    --_tone: var(--color-success);
+  }
+
+  .ec-media[data-tone='warning'] {
+    --_tone: var(--color-warning);
+  }
+
+  .ec-media[data-tone='danger'] {
+    --_tone: var(--color-danger);
+  }
+
+  .ec-details p,
+  .ec-details ul {
+    margin: 0;
+  }
+
+  .ec-details ul {
+    padding-inline-start: 1.25rem;
+    color: var(--color-muted);
+  }
+
+  .ec-actions {
+    display: flex;
+    gap: var(--spacing-2, 0.5rem);
+  }
+</style>

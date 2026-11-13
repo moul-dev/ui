@@ -119,6 +119,45 @@ describe('DragController', () => {
     expect(el.drag.state.isDragging).toBe(false)
   })
 
+  it('asks canStart once per press and leaves a refused press to the browser', async () => {
+    const onStart = vi.fn()
+    // Only a downward pull starts, as on content scrolled to its top.
+    const canStart = vi.fn(
+      ({ deltaY }: { deltaX: number; deltaY: number }) => deltaY > 0,
+    )
+    const el = await mount({
+      axis: 'y',
+      canStart,
+      onStart,
+      release: () => null,
+    })
+
+    drag(el, [
+      [0, 50],
+      [0, 48],
+      [0, 20],
+    ])
+    expect(canStart).toHaveBeenCalledTimes(1)
+    expect(canStart).toHaveBeenLastCalledWith(
+      expect.objectContaining({ deltaX: 0, deltaY: -30 }),
+    )
+    expect(onStart).not.toHaveBeenCalled()
+    expect(el.drag.state.y).toBe(0)
+
+    drag(el, [
+      [0, 0],
+      [0, 2],
+      [0, 10],
+      [0, 40],
+    ])
+    expect(canStart).toHaveBeenCalledTimes(2)
+    expect(canStart).toHaveBeenLastCalledWith(
+      expect.objectContaining({ deltaY: 10 }),
+    )
+    expect(onStart).toHaveBeenCalledTimes(1)
+    expect(el.drag.state.y).toBe(40)
+  })
+
   it('moves along one axis and leaves a cross-axis gesture to scrolling', async () => {
     const el = await mount({ axis: 'x', release: () => null })
     expect(el.style.touchAction).toBe('pan-y')

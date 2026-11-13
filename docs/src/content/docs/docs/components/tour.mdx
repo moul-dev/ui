@@ -1,0 +1,173 @@
+---
+title: Tour
+description: Step-by-step product walkthrough with a spotlight cutout.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import TourDemo from '@/components/demos/TourDemo.astro';
+
+<TourDemo />
+
+`<moul-tour>` walks a new user through a screen one `<moul-tour-step>` at a time. The page dims except for a rounded cutout around the step's target, and a card beside the cutout holds the step's heading, its body, the progress and Back, Next and Done buttons. Between steps the cutout glides to the next target and the card follows it.
+
+<ComponentPreview stack>
+<div class="demo-row">
+  <moul-button id="tour-new"><span>New project</span></moul-button>
+  <moul-button id="tour-invite" variant="secondary"><span>Invite</span></moul-button>
+  <moul-badge id="tour-plan" tone="success"><span>Free plan</span></moul-badge>
+</div>
+<div class="demo-row">
+  <moul-button variant="outline" data-tour-start="tour-demo"><span>Take the tour</span></moul-button>
+  <span data-tour-log="tour-demo" style="font-size: 0.875rem; color: var(--color-muted)"></span>
+</div>
+<moul-tour id="tour-demo">
+  <moul-tour-step heading="Welcome to Moul">
+    <span>Three things you will use every day. It takes less than a minute.</span>
+  </moul-tour-step>
+  <moul-tour-step target="#tour-new" heading="Start a project">
+    <span>Every app, API key and database lives in a project.</span>
+  </moul-tour-step>
+  <moul-tour-step target="#tour-invite" heading="Bring your team" placement="right">
+    <span>Invite people by email. They join with the role you pick.</span>
+  </moul-tour-step>
+  <moul-tour-step target="#tour-plan" heading="Your plan" placement="top">
+    <span>The free plan covers three projects. Upgrade from settings at any time.</span>
+  </moul-tour-step>
+</moul-tour>
+</ComponentPreview>
+
+```html
+<moul-button id="new">New project</moul-button>
+<moul-button id="invite" variant="secondary">Invite</moul-button>
+<moul-badge id="plan" tone="success">Free plan</moul-badge>
+
+<moul-tour id="welcome">
+  <moul-tour-step heading="Welcome to Moul">
+    Three things you will use every day. It takes less than a minute.
+  </moul-tour-step>
+  <moul-tour-step target="#new" heading="Start a project">
+    Every app, API key and database lives in a project.
+  </moul-tour-step>
+  <moul-tour-step target="#invite" heading="Bring your team" placement="right">
+    Invite people by email. They join with the role you pick.
+  </moul-tour-step>
+  <moul-tour-step target="#plan" heading="Your plan" placement="top">
+    The free plan covers three projects. Upgrade from settings at any time.
+  </moul-tour-step>
+</moul-tour>
+
+<script type="module">
+  document.querySelector('#welcome').start()
+</script>
+```
+
+## Steps
+
+A step's `target` is a CSS selector, looked up in the document (or in the shadow root the tour sits in). From script it can also be an element. A step with no target, or one whose selector matches nothing, shows its card in the middle of the screen, which suits a welcome or a closing note.
+
+The card goes on the side of the target named by `placement`. When there is no room there it flips to the opposite side, then tries the others, and as a last resort sits in the middle of the screen. `auto`, the default, tries below, above, right and left in that order. Along its side the card is centred on the target and kept inside the viewport.
+
+A target outside the viewport is scrolled to the middle of its scroll container before the cutout moves, and while the tour is open the cutout and card follow the target as the page scrolls or resizes. `padding` sets the space between the target and the edge of the cutout (8px by default) and `radius` its corner radius, which otherwise follows the `--radius-xl` token.
+
+## Starting, moving and ending
+
+`start(index)` opens the tour, on the first step unless you pass another. `next()`, `previous()` and `goTo(index)` move between steps, and `end()` closes the tour unfinished.
+
+Before the step changes the tour fires a cancelable `stepchange` with `detail: { current, previous }`. When it opens or closes it fires `openchange` with `detail: { isOpen, isComplete }`. `isComplete` is true only when the user pressed Done on the last step, not when they skipped with the close button or `Escape`, so it tells you whether to show the tour again.
+
+```js
+const tour = document.querySelector('#welcome')
+
+if (!localStorage.getItem('welcome-tour')) tour.start()
+
+tour.addEventListener('openchange', (event) => {
+  if (!event.detail.isOpen && event.detail.isComplete) {
+    localStorage.setItem('welcome-tour', 'done')
+  }
+})
+```
+
+The tour runs in a modal `<dialog>`, so the page underneath is inert: the user reads about a control but cannot press it until the tour ends.
+
+## Labels
+
+The buttons and the progress take their text from attributes, so a Khmer screen can translate them. `progress-label` replaces `{current}` and `{total}`.
+
+```html
+<moul-tour
+  next-label="បន្ទាប់"
+  previous-label="ថយក្រោយ"
+  done-label="រួចរាល់"
+  skip-label="រំលងការណែនាំ"
+  progress-label="{current} នៃ {total}"
+>
+  …
+</moul-tour>
+```
+
+## Accessibility
+
+- The tour is a modal dialog named by the step's heading and described by its body. On start, focus moves to the Next button; `Tab` and `Shift+Tab` cycle inside the card.
+- `Arrow Right` and `Arrow Left` go to the next and previous step (the other way round in a right-to-left page), except while focus is in a text field. On the last step `Arrow Right` does nothing, so finishing always takes a press of Done.
+- `Escape` and the close button, named by `skip-label`, end the tour. Focus returns to the element that had it before the tour started.
+- Each later step is announced through a polite live region as its heading and progress, for example "Bring your team, 3 of 4".
+- Under reduced motion the cutout jumps to each target, the card appears and moves at once, and targets are scrolled into view instantly.
+
+## API reference
+
+### `<moul-tour>`
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `is-open` | `isOpen` | `boolean` | `false` |
+| `current` | `current` | `number` | `0` |
+| `padding` | `padding` | `number` | `8` |
+| `radius` | `radius` | `number \| undefined` | from `--radius-xl` |
+| `next-label` | `nextLabel` | `string` | `'Next'` |
+| `previous-label` | `previousLabel` | `string` | `'Back'` |
+| `done-label` | `doneLabel` | `string` | `'Done'` |
+| `skip-label` | `skipLabel` | `string` | `'Skip tour'` |
+| `progress-label` | `progressLabel` | `string` | `'{current} of {total}'` |
+| — | `steps` (read-only) | `MoulTourStep[]` | — |
+
+| Method | Description |
+| :-- | :-- |
+| `start(index = 0)` | Opens the tour on step `index`, or moves there if it is already open. |
+| `next()` | Goes to the next step. On the last step it finishes the tour instead and returns `false`. |
+| `previous()` | Goes to the previous step. Returns `false` on the first step or when `stepchange` was cancelled. |
+| `goTo(index)` | Goes to step `index`. Returns `false` for the current step or when `stepchange` was cancelled. |
+| `end()` | Closes the tour unfinished. |
+
+| Event | Type |
+| :-- | :-- |
+| `stepchange` | `CustomEvent<{ current: number; previous: number }>`, cancelable |
+| `openchange` | `CustomEvent<{ isOpen: boolean; isComplete: boolean }>` |
+
+Setting `isOpen` or `current` directly fires neither event.
+
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | The `moul-tour-step` elements, in order. |
+
+| CSS property | Description |
+| :-- | :-- |
+| `--tour-overlay` | Colour of the dimmed page. Defaults to `--color-overlay`. |
+
+**CSS parts:** `dialog`, `overlay`, `card`, `header`, `heading`, `close-button`, `body`, `footer`, `progress`, `previous-button`, `next-button`
+
+### `<moul-tour-step>`
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `target` | `target` | `string \| Element \| null` | `null` |
+| `heading` | `heading` | `string` | `''` |
+| `placement` | `placement` | `'auto' \| 'top' \| 'bottom' \| 'left' \| 'right'` | `'auto'` |
+| `is-active` | `isActive` | `boolean` | set by the tour |
+
+| Method | Description |
+| :-- | :-- |
+| `resolveTarget()` | The element the step points at, or `null` for a centred step. |
+
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | The body of the step. |

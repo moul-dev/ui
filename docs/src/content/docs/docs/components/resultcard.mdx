@@ -1,0 +1,92 @@
+---
+title: ResultCard
+description: Success or failure card with a self-drawing status icon.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import ResultCardDemo from '@/components/demos/ResultCardDemo.astro';
+
+<ResultCardDemo />
+
+`<moul-result-card>` reports how a task ended: a payment, an import, a deploy. Its status icon draws itself, ring first and then a check or a cross, above a heading, a description, optional details and the actions that come next. Pay again below and watch the card go through `pending` to its result.
+
+<ComponentPreview stack backdrop="page">
+<moul-result-card id="payment-result" heading="Payment sent" description="$42.00 is on its way to Dara Sok." style="width: min(100%, 22rem); margin-inline: auto">
+  <moul-button slot="actions" variant="secondary" data-result-card="payment-result" data-outcome="success"><span>Pay again</span></moul-button>
+  <moul-button slot="actions" variant="tertiary" data-result-card="payment-result" data-outcome="error"><span>Try a declined card</span></moul-button>
+</moul-result-card>
+</ComponentPreview>
+
+```html
+<moul-result-card
+  status="pending"
+  heading="Processing payment"
+  description="This takes a few seconds."
+></moul-result-card>
+```
+
+```js
+const card = document.querySelector('moul-result-card')
+try {
+  await pay()
+  card.status = 'success'
+  card.heading = 'Payment sent'
+  card.description = '$42.00 is on its way to Dara Sok.'
+} catch {
+  card.status = 'error'
+  card.heading = 'Payment failed'
+  card.description = 'Your card was declined. No money was taken.'
+}
+```
+
+While `status` is `pending` the ring turns as an open arc. Set `success` or `error` and a fresh icon draws in, so the change itself is what the user sees.
+
+## Details and actions
+
+The default slot holds details under the description, such as a receipt, and lines up with the card's start edge. The `actions` slot lays its buttons out in a row. Both wrappers disappear while empty.
+
+<ComponentPreview backdrop="page">
+<moul-result-card heading="Payment sent" description="Receipt #4821 is in your inbox." style="width: min(100%, 22rem)">
+  <dl style="display: grid; grid-template-columns: 1fr auto; gap: 0.25rem 1rem; margin: 0">
+    <dt style="color: var(--color-muted)">Amount</dt><dd style="margin: 0">$42.00</dd>
+    <dt style="color: var(--color-muted)">To</dt><dd style="margin: 0">Dara Sok</dd>
+    <dt style="color: var(--color-muted)">Date</dt><dd style="margin: 0">13 Nov 2026</dd>
+  </dl>
+  <moul-button slot="actions" variant="primary"><span>Done</span></moul-button>
+  <moul-button slot="actions" variant="secondary"><span>View receipt</span></moul-button>
+</moul-result-card>
+<moul-result-card status="error" heading="Import failed" description="Row 214 has no email address." style="width: min(100%, 22rem)">
+  <moul-button slot="actions" variant="secondary"><span>Download errors</span></moul-button>
+</moul-result-card>
+</ComponentPreview>
+
+```html
+<moul-result-card heading="Payment sent" description="Receipt #4821 is in your inbox.">
+  <dl>…</dl>
+  <moul-button slot="actions" variant="primary">Done</moul-button>
+  <moul-button slot="actions" variant="secondary">View receipt</moul-button>
+</moul-result-card>
+```
+
+To show your own mark, put it in the `icon` slot; `--result-card-icon-size` sets the icon's diameter (3.5rem by default).
+
+## Accessibility
+
+The heading has `role="heading"` at `heading-level`, 2 unless you set another, and the icon is hidden from screen readers. When `status`, `heading` or `description` changes on a card that is already on the page, the heading and description are announced: politely for `success` and `pending`, and assertively, as an alert, for `error`. A card's first render is not announced, so put the card on the page in `pending` and change it when the task ends, or announce the outcome yourself.
+
+The card takes no focus; its actions keep their own. Under reduced motion the icon appears fully drawn, without the small pop, and the pending arc rests at the top instead of turning.
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `status` | `status` | `'success' \| 'error' \| 'pending'` | `'success'` |
+| `heading` | `heading` | `string` | `''` |
+| `description` | `description` | `string` | `''` |
+| `heading-level` | `headingLevel` | `number` (1 to 6) | `2` |
+
+**Slots:** default (details), `actions`, `icon`
+
+**CSS parts:** `base`, `icon`, `heading`, `description`, `details`, `actions`
+
+**CSS custom properties:** `--result-card-icon-size`

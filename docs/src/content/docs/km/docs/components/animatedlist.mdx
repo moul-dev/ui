@@ -1,0 +1,117 @@
+---
+title: Animated List (សមាសភាគ)
+description: បញ្ជីដែលធាតុថ្មីៗមកដល់ម្ដងមួយៗ រីកចូលកន្លែង ហើយរុញធាតុផ្សេងទៀតចេញ។
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import AnimatedListDemo from '@/components/demos/AnimatedListDemo.astro';
+
+`<moul-animated-list>` is a column of items that move when the list changes. A new item grows in from nothing, fading and scaling up, and pushes the items already there out of its way. Use it for feeds, notifications and activity that streams in. The items are its children, in any markup.
+
+Add a few events below, then remove the oldest.
+
+<ComponentPreview>
+<div class="demo-stack" style="width: min(100%, 22rem)">
+<div class="demo-row">
+<moul-button size="sm" variant="secondary" data-animated-list-add="feed"><span>Add event</span></moul-button>
+<moul-button size="sm" variant="ghost" data-animated-list-remove="feed"><span>Remove oldest</span></moul-button>
+</div>
+<moul-animated-list id="feed" aria-label="Activity" is-live>
+<div class="demo-notice"><span class="demo-notice-icon" data-tone="danger" aria-hidden="true">✕</span><span class="demo-notice-text"><strong>Job failed</strong><span>nightly-backup · exit 1</span></span></div>
+<div class="demo-notice"><span class="demo-notice-icon" data-tone="warning" aria-hidden="true">!</span><span class="demo-notice-text"><strong>Disk 80% full</strong><span>db-primary</span></span></div>
+</moul-animated-list>
+</div>
+<AnimatedListDemo />
+</ComponentPreview>
+
+```html
+<moul-animated-list id="feed" aria-label="Activity" is-live>
+  <div class="event">Job failed</div>
+  <div class="event">Disk 80% full</div>
+</moul-animated-list>
+```
+
+```js
+const feed = document.querySelector('#feed')
+
+// Arrives at the top and pushes the others down
+const event = document.createElement('div')
+event.className = 'event'
+event.textContent = 'Deploy finished'
+feed.prepend(event)
+
+// Shrinks away while the others close ranks
+await feed.removeItem(feed.items.at(-1))
+```
+
+Insert an item wherever it belongs: at the start for a newest-first feed, at the end for a log that reads top to bottom. The list watches its children and animates whatever arrives. Items that are already there when it first connects show at once.
+
+## Removing items
+
+`removeItem(el)` shrinks an item away, fading and scaling down as its height closes, so the items after it slide up into the gap. It returns a promise that resolves once the item is out of the DOM. An item removed any other way, such as `el.remove()` or a framework re-rendering the list, vanishes at once, and the others still glide into its place.
+
+`items` lists the items in order, without the ones on their way out.
+
+## One at a time
+
+With `delay`, the items the list starts with arrive one by one, `delay` milliseconds apart. The last item comes first and each one after lands above it, so a newest-first feed fills in from the bottom, as if it were catching up. It plays once, when the list first connects.
+
+<ComponentPreview>
+<div class="demo-stack" style="width: min(100%, 22rem)">
+<moul-button size="sm" variant="secondary" data-animated-list-replay="catch-up"><span>Replay</span></moul-button>
+<moul-animated-list id="catch-up" delay="700" aria-label="Recent activity">
+<div class="demo-notice"><span class="demo-notice-icon" data-tone="success" aria-hidden="true">$</span><span class="demo-notice-text"><strong>Payment received</strong><span>$49.00 · Pro plan</span></span></div>
+<div class="demo-notice"><span class="demo-notice-icon" aria-hidden="true">＋</span><span class="demo-notice-text"><strong>New sign-up</strong><span>Dara · Free plan</span></span></div>
+<div class="demo-notice"><span class="demo-notice-icon" data-tone="success" aria-hidden="true">✓</span><span class="demo-notice-text"><strong>Deploy finished</strong><span>moul-api · production</span></span></div>
+</moul-animated-list>
+</div>
+</ComponentPreview>
+
+```html
+<moul-animated-list delay="700">
+  <div class="event">Payment received</div>
+  <div class="event">New sign-up</div>
+  <div class="event">Deploy finished</div>
+</moul-animated-list>
+```
+
+## Forwarding a slot
+
+The list follows forwarded slots, so a component can put its own children in one. `<moul-notification-bell>` does this with its notifications.
+
+```js
+render() {
+  return html`<moul-animated-list><slot></slot></moul-animated-list>`
+}
+```
+
+## Spacing
+
+The items sit in a flex column. `--animated-list-gap` sets the space between them (default `var(--spacing-3)`); give the items their own padding and surface. While an item grows in, the list cancels the gap beside it, so the items around it move smoothly from the first frame.
+
+## Accessibility
+
+- The list takes no focus and handles no keys; the items keep their own. It has no role of its own, so give it one that fits the content if it needs one.
+- With `is-live` it becomes `role="log"`, a polite live region: screen readers announce each item that arrives, after what they are reading, without moving focus. A role you set yourself is kept.
+- An item that leaves takes focus with it. If focus was inside it, move focus to a neighbour before calling `removeItem()`.
+- Under reduced motion items appear and disappear at once, the others jump to their new places, and a `delay` reveal shows every item at once.
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `delay` | `delay` | `number` | `0` |
+| `is-live` | `isLive` | `boolean` | `false` |
+| | `items` (read-only) | `HTMLElement[]` | |
+
+| Method | Description |
+| :-- | :-- |
+| `removeItem(el)` | Shrinks `el` away while the others close ranks, then removes it. Returns a `Promise<void>`. |
+
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | The items. Forwarded slots are followed. |
+
+**CSS parts:** `base`
+
+**CSS custom properties:** `--animated-list-gap` (default `var(--spacing-3)`), the space between items.

@@ -59,6 +59,18 @@ export interface DragControllerOptions {
   /** Pixels the pointer must travel before a press becomes a drag, so taps still click. Defaults to 4. */
   threshold?: number
   /**
+   * Asked once per press, when it has travelled `threshold` pixels along the
+   * drag axis, whether it becomes a drag. Return false to leave the rest of
+   * the press to the browser, for example so content that is not scrolled to
+   * its top scrolls instead of being pulled. `deltaX` and `deltaY` are the
+   * pointer's travel so far.
+   */
+  canStart?: (intent: {
+    deltaX: number
+    deltaY: number
+    event: PointerEvent
+  }) => boolean
+  /**
    * Where the offset comes to rest after release, given the final state
    * (including velocity, for flicks). Return null to stay where it was let
    * go, pulled back inside the bounds. Defaults to the origin.
@@ -171,6 +183,13 @@ export class DragController implements ReactiveController {
       if (Math.max(along, across) < (this.options.threshold ?? 4)) return
       // The pointer set off along the other axis: leave it to scrolling.
       if (across > along) {
+        this.endPress()
+        return
+      }
+      if (
+        this.options.canStart &&
+        !this.options.canStart({ deltaX: dx, deltaY: dy, event })
+      ) {
         this.endPress()
         return
       }

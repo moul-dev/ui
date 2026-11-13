@@ -35,7 +35,7 @@ Without a bundler, load the self-contained CDN build (Lit and the other dependen
 - **Attributes are kebab-case**: Boolean state uses presence attributes such as `is-disabled`, `is-open`, `is-checked`, `is-required`. The matching JS property is camelCase (`el.isDisabled = true`).
 - **Rich data is set as properties**: Arrays, objects, and functions (`data`, `series`, `columns`, `items`, `logs`, `valueFormatter`) are assigned in JavaScript, not serialized into attributes.
 - **Events are DOM events**: Listen with `addEventListener` (`press`, `change`, `input`, `openchange`, `selectionchange`, `pagechange`, `dismiss`). Payloads live on `event.detail`. There is no `onPress` prop.
-- **Overlays**: Toggle `is-open` (or `el.isOpen`) on `<moul-modal>`, `<moul-drawer>`, `<moul-alert-dialog>`, `<moul-popover>`, `<moul-tooltip>`, `<moul-command-palette>`, and react to `openchange` (`detail.isOpen`).
+- **Overlays**: Toggle `is-open` (or `el.isOpen`) on `<moul-modal>`, `<moul-drawer>`, `<moul-alert-dialog>`, `<moul-popover>`, `<moul-tooltip>`, `<moul-hover-card>`, `<moul-command-palette>`, `<moul-notification-bell>`, `<moul-expandable-card>`, `<moul-focus-mode>`, and react to `openchange` (`detail.isOpen`). Start a `<moul-tour>` with `start()`; its `openchange` also carries `detail.isComplete`.
 - **Forms**: Inputs are form-associated via `ElementInternals`; give each a `name` and it submits with a native `<form>` / `FormData`. Enter in `<moul-text-field>`, `<moul-number-field>`, or `<moul-search-field>` submits its `<form>` or `<moul-form>` like a native input, so do not add your own Enter handler.
 - **Semantic tones & variants**: `tone` is one of `primary | accent | success | warning | error`; surface `variant` is one of `solid | flat | shadow | bordered | glass`. Omit `variant` for a neutral surface: an unset `variant` on `<moul-card>`, `<moul-alert>`, `<moul-toast>`, or `<moul-stat>` renders the plain `--color-surface` look, while `variant="flat"` tints it in the tone. `<moul-button>` has its own `variant` set (`primary | secondary | tertiary | outline | ghost | danger | danger-soft`).
 - **Accessibility**: Icon-only buttons (`is-icon`) and dot badges (`is-dot`) must have an `aria-label`.
@@ -217,6 +217,19 @@ save.addEventListener('press', () => {
   <moul-button variant="outline">Day</moul-button>
   <moul-button variant="outline">Week</moul-button>
 </moul-button-group>
+```
+
+- [SlideToConfirm](/docs/components/slidetoconfirm): Drag a handle across a track to confirm a risky action; a keyboard slider (arrows, `End`) reaches the same result. Elements: `<moul-slide-to-confirm>`.
+
+```html
+<moul-slide-to-confirm tone="error" label="Slide to delete project" confirmed-label="Deleting"></moul-slide-to-confirm>
+```
+
+```js
+slider.addEventListener('confirm', async () => {
+  slider.isPending = true
+  try { await deleteProject() } catch { slider.reset() } finally { slider.isPending = false }
+})
 ```
 
 - [SplitButton](/docs/components/splitbutton): Main action joined to a chevron menu of related actions; `press` from the main part, `action` from the menu. Elements: `<moul-split-button>`.
@@ -471,12 +484,79 @@ stepper.next()
 </moul-popover>
 ```
 
-- [Tooltip](/docs/components/tooltip): Hover/focus tooltip wired with `aria-describedby`. Elements: `<moul-tooltip>`.
+- [Tooltip](/docs/components/tooltip): Hover/focus label that slides out of its trigger; `follow="pointer"` trails the pointer, `is-rich` makes a small non-interactive card with a `media` slot. Elements: `<moul-tooltip>`.
 
 ```html
 <moul-tooltip content="Copy to clipboard" placement="top">
   <moul-button is-icon aria-label="Copy">⧉</moul-button>
 </moul-tooltip>
+<moul-tooltip is-rich follow="pointer">
+  <moul-avatar name="Sophea Chan" tabindex="0"></moul-avatar>
+  <img slot="media" src="/sophea.jpg" alt="" />
+  <span slot="content">Sophea Chan · Design</span>
+</moul-tooltip>
+```
+
+- [HoverCard](/docs/components/hovercard): Preview card beside a link or name on hover or keyboard focus; may hold links and buttons and stays open while the pointer is in it. Touch never opens it. Elements: `<moul-hover-card>`.
+
+```html
+<moul-hover-card placement="bottom" open-delay="500" close-delay="300">
+  <a slot="trigger" href="/people/sophea">@sophea</a>
+  <strong>Sophea Chan</strong>
+  <moul-button size="sm" variant="secondary">Follow</moul-button>
+</moul-hover-card>
+```
+
+```js
+card.addEventListener('openchange', (e) => console.log(e.detail.isOpen))
+```
+
+- [Notification Bell](/docs/components/notificationbell): Bell button with an unread badge that swings when `count` rises and opens a panel listing its children. Elements: `<moul-notification-bell>`.
+
+```html
+<moul-notification-bell id="inbox" count="2">
+  <moul-button slot="header-actions" size="sm" variant="ghost">Mark all read</moul-button>
+  <div>Deploy finished</div>
+  <div>New sign-up</div>
+  <a slot="footer" href="/notifications">View all</a>
+</moul-notification-bell>
+```
+
+```js
+const bell = document.querySelector('#inbox')
+bell.prepend(item)
+bell.count += 1
+await bell.removeItem(item)
+```
+
+- [Tour](/docs/components/tour): Product walkthrough in a modal dialog: the page dims except a cutout around each step's target, with a card of heading, body, progress and Back/Next/Done. Elements: `<moul-tour>`, `<moul-tour-step>`.
+
+```html
+<moul-tour id="welcome">
+  <moul-tour-step heading="Welcome">A quick look around.</moul-tour-step>
+  <moul-tour-step target="#new" heading="Start a project">Everything lives in a project.</moul-tour-step>
+  <moul-tour-step target="#invite" heading="Bring your team" placement="right">Invite people by email.</moul-tour-step>
+</moul-tour>
+```
+
+```js
+const tour = document.querySelector('#welcome')
+tour.start()
+tour.addEventListener('openchange', (e) => {
+  if (!e.detail.isOpen && e.detail.isComplete) localStorage.setItem('tour', 'done')
+})
+```
+
+- [FocusMode](/docs/components/focusmode): Dims the page around the region it wraps (or `target`); clicks pass through the cutout, and a click on the dim or `Escape` ends it. Visual only, not modal. Elements: `<moul-focus-mode>`.
+
+```html
+<moul-focus-mode id="draft">
+  <moul-text-area label="Release notes"></moul-text-area>
+</moul-focus-mode>
+```
+
+```js
+document.querySelector('#draft').toggle()
 ```
 
 - [CommandPalette](/docs/components/commandpalette): ⌘K command menu with grouped, filterable items. Elements: `<moul-command-palette>`.
@@ -546,6 +626,21 @@ palette.addEventListener('select', (e) => console.log(e.detail.item))
 </moul-alert>
 ```
 
+- [Animated List](/docs/components/animatedlist): Feed whose new children grow in and push the others along; `removeItem()` shrinks one away while the rest close ranks, and `is-live` announces arrivals. Elements: `<moul-animated-list>`.
+
+```html
+<moul-animated-list id="feed" is-live>
+  <div class="event">Deploy finished</div>
+  <div class="event">New sign-up</div>
+</moul-animated-list>
+```
+
+```js
+const feed = document.querySelector('#feed')
+feed.prepend(newEventElement) // animates in
+await feed.removeItem(feed.items.at(-1))
+```
+
 - [Card](/docs/components/card): Surface container with header, body, and footer regions. Elements: `<moul-card>`, `<moul-card-header>`, `<moul-card-body>`, `<moul-card-footer>`.
 
 ```html
@@ -556,11 +651,24 @@ palette.addEventListener('select', (e) => console.log(e.detail.item))
 </moul-card>
 ```
 
-- [Badge](/docs/components/badge): Compact status chip or dot indicator. Elements: `<moul-badge>`.
+- [Badge](/docs/components/badge): Compact status chip or dot indicator; `count` rolls to each new value (`99+` past `max`) and `is-live` pulses a live dot. Elements: `<moul-badge>`.
 
 ```html
 <moul-badge tone="success" variant="flat">Active</moul-badge>
-<moul-badge tone="error" is-dot aria-label="Offline"></moul-badge>
+<moul-badge tone="error" variant="solid" count="3"></moul-badge>
+<moul-badge tone="success" is-dot is-live aria-label="Online"></moul-badge>
+```
+
+- [NumberTicker](/docs/components/numberticker): Number that rolls like an odometer (or counts with `mode="count"`) to each new `value`; Intl formatting via `locale` and `formatOptions`, and `from` counts up on first view. Elements: `<moul-number-ticker>`.
+
+```html
+<moul-number-ticker value="1280" from="0"></moul-number-ticker>
+```
+
+```js
+const ticker = document.querySelector('moul-number-ticker')
+ticker.formatOptions = { style: 'currency', currency: 'USD' }
+ticker.value = 1530
 ```
 
 - [Avatar](/docs/components/avatar): Image avatar with initials fallback, status dot, and grouping. Elements: `<moul-avatar>`, `<moul-avatar-group>`.
@@ -599,10 +707,24 @@ palette.addEventListener('select', (e) => console.log(e.detail.item))
 </moul-button>
 ```
 
-- [Spinner](/docs/components/spinner): Indeterminate loading indicator with accessible label. Elements: `<moul-spinner>`.
+- [Spinner](/docs/components/spinner): Indeterminate loading indicator with accessible label; `variant` is `ring`, `dots`, `shape` or `orbit`. Elements: `<moul-spinner>`.
 
 ```html
 <moul-spinner size="sm" label="Loading projects"></moul-spinner>
+<moul-spinner variant="dots" label="Saving"></moul-spinner>
+```
+
+- [StepLoader](/docs/components/steploader): Checklist that ticks off the steps of a long task: drawn checks for done steps, a spinner on the current one; `interval` advances it by itself and `is-error` marks a failure. Elements: `<moul-step-loader>`.
+
+```html
+<moul-step-loader id="publish" label="Publishing site"></moul-step-loader>
+```
+
+```js
+const loader = document.querySelector('#publish')
+loader.steps = ['Checking files', { label: 'Uploading', description: '12 files' }, 'Publishing']
+loader.addEventListener('complete', () => console.log('done'))
+loader.current = 1 // or loader.isError = true
 ```
 
 - [Skeleton](/docs/components/skeleton): Loading placeholder in line, circle, or rect shapes. Elements: `<moul-skeleton>`.
@@ -616,6 +738,20 @@ palette.addEventListener('select', (e) => console.log(e.detail.item))
 
 ```html
 <moul-progress-bar value="64" max="100" tone="primary" aria-label="Upload progress"></moul-progress-bar>
+```
+
+- [ResultCard](/docs/components/resultcard): Success or failure card whose ring and check (or cross) draw themselves; start it `pending` and set `status` when the task ends so the outcome is announced. Elements: `<moul-result-card>`.
+
+```html
+<moul-result-card status="pending" heading="Processing payment" description="This takes a few seconds.">
+  <moul-button slot="actions" variant="primary">Done</moul-button>
+</moul-result-card>
+```
+
+```js
+const card = document.querySelector('moul-result-card')
+card.status = 'success'
+card.heading = 'Payment sent'
 ```
 
 - [TagGroup](/docs/components/taggroup): Selectable and removable tags. Elements: `<moul-tag-group>`, `<moul-tag>`.
@@ -660,17 +796,24 @@ table.renderExpanded = (row) => html`<p>${row.name} joined in 2024.</p>`
 </moul-selection-toolbar>
 ```
 
-- [Toast](/docs/components/toast): Transient notifications managed by the `toastQueue` singleton. Elements: `<moul-toast>`, `<moul-toast-region>`.
+- [Toast](/docs/components/toast): Transient notifications queued with `toastQueue.add()`: swipe to dismiss, an optional stacked deck (`is-stacked`, `toastQueue.isStacked`), and undo toasts with an `action` button and a `showCountdown` bar. Timers pause on hover, swipe and keyboard focus. Elements: `<moul-toast>`, `<moul-toast-region>`.
 
 ```html
-<moul-toast-region></moul-toast-region>
-<moul-toast tone="success" title="Saved" description="Your profile was updated."></moul-toast>
+<moul-toast-region is-stacked></moul-toast-region>
+<moul-toast title="3 rows deleted" duration="8000" show-countdown>
+  <moul-button slot="action" size="sm" variant="secondary">Undo</moul-button>
+</moul-toast>
 ```
 
 ```js
 import { toastQueue } from '@moul-dev/web-component'
 
-toastQueue.add({ title: 'Saved', description: 'Your profile was updated.', tone: 'success' })
+toastQueue.add({
+  title: '3 rows deleted',
+  duration: 8000,
+  showCountdown: true,
+  action: { label: 'Undo', onAction: () => restoreRows() },
+})
 ```
 
 - [EmptyState](/docs/components/emptystate): Placeholder for empty collections with icon and actions. Elements: `<moul-empty-state>`.
@@ -681,6 +824,51 @@ toastQueue.add({ title: 'Saved', description: 'Your profile was updated.', tone:
   <span slot="description">Create your first project to get started.</span>
   <moul-button slot="actions" variant="primary">New project</moul-button>
 </moul-empty-state>
+```
+
+- [ExpandableCard](/docs/components/expandablecard): Card that springs from its place in the page into a centred modal dialog to show its `details`, and shrinks back; the closed card is one button. Elements: `<moul-expandable-card>`.
+
+```html
+<moul-expandable-card size="sm">
+  <img slot="media" src="/cabin.jpg" alt="" />
+  <h3>Mountain cabin</h3>
+  <span>2 nights · sleeps 4</span>
+  <div slot="details">
+    <p>Full description…</p>
+    <moul-button variant="primary">Book</moul-button>
+  </div>
+</moul-expandable-card>
+```
+
+```js
+card.addEventListener('openchange', (e) => console.log(e.detail.isOpen))
+await card.setOpen(true)
+```
+
+- [PullToRefresh](/docs/components/pulltorefresh): Scroll container that refreshes when pulled down from its top; pass the work to `event.detail.waitUntil()`. Elements: `<moul-pull-to-refresh>`.
+
+```html
+<moul-pull-to-refresh style="height: 100%">
+  <ul id="inbox">…</ul>
+</moul-pull-to-refresh>
+```
+
+```js
+feed.addEventListener('refresh', (e) => e.detail.waitUntil(loadNewMessages()))
+```
+
+- [Confetti](/docs/components/confetti): Confetti burst or rocket on success, from the effects entry (`import '@moul-dev/web-component/effects'`); decorative, skipped under reduced motion. Elements: `<moul-confetti>`.
+
+```html
+<moul-confetti>
+  <moul-button id="pay">Pay $120</moul-button>
+</moul-confetti>
+```
+
+```js
+await submitPayment()
+document.querySelector('moul-confetti').fire({ variant: 'rocket' })
+// or: import { fireConfetti } from '@moul-dev/web-component/effects'
 ```
 
 ### Composite Blocks

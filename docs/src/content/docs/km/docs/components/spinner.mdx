@@ -5,7 +5,7 @@ description: ឯកសារណែនាំសម្រាប់សមាសភ�
 
 import ComponentPreview from '@/components/ComponentPreview.astro';
 
-`<moul-spinner>` is an accessible `role="status"` indicator; `label` is read to screen readers.
+`<moul-spinner>` is an accessible `role="status"` indicator for a wait of unknown length; `label` is read to screen readers. It draws in the current text colour, so it takes the colour of whatever it sits in.
 
 <ComponentPreview>
 <div class="demo-row">
@@ -23,11 +23,47 @@ import ComponentPreview from '@/components/ComponentPreview.astro';
 </div>
 ```
 
+## Variants
+
+`variant` picks the look. All four are calm on purpose: a loader is something people stare at.
+
+| Variant | Look |
+| :-- | :-- |
+| `ring` (default) | A ring with one bright quarter that turns. |
+| `dots` | Three dots that rise and fade in turn. |
+| `shape` | A rounded square that turns a quarter and rounds into a circle, then back. |
+| `orbit` | One dot that circles a faint track. |
+
+<ComponentPreview>
+<div class="demo-row" style="gap: 2rem; color: var(--color-accent)">
+  <moul-spinner size="lg" variant="ring" label="Loading"></moul-spinner>
+  <moul-spinner size="lg" variant="dots" label="Loading"></moul-spinner>
+  <moul-spinner size="lg" variant="shape" label="Loading"></moul-spinner>
+  <moul-spinner size="lg" variant="orbit" label="Loading"></moul-spinner>
+</div>
+</ComponentPreview>
+
+```html
+<moul-spinner variant="ring"></moul-spinner>
+<moul-spinner variant="dots"></moul-spinner>
+<moul-spinner variant="shape"></moul-spinner>
+<moul-spinner variant="orbit"></moul-spinner>
+```
+
+An unknown `variant` falls back to `ring`.
+
+## Accessibility
+
+The spinner is a `role="status"` live region named by `label` ("Loading" unless you set it), and the label is also present as visually hidden text; the drawing is hidden from screen readers. It is not focusable. Say what is loading: "Loading invoices" tells someone more than "Loading".
+
+Under reduced motion nothing turns or travels. The ring, the shape and the orbit's dot pulse their opacity slowly instead, and the dots pulse one after another, so the spinner still says "working".
+
 ## API reference
 
 | Attribute | Property | Type | Default |
 | :-- | :-- | :-- | :-- |
 | `size` | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` |
+| `variant` | `variant` | `'ring' \| 'dots' \| 'shape' \| 'orbit'` | `'ring'` |
 | `label` | `label` | `string` | `'Loading'` |
 
 **CSS parts:** `base`

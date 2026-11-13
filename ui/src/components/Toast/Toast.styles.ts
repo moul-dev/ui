@@ -21,6 +21,29 @@ export const toastStyles = [
       font-size: var(--font-size-sm, 0.875rem);
       line-height: var(--line-height-sm, 1.25rem);
       position: relative;
+      /*
+       * Two layers of offset, apart from the enter and exit transform:
+       * a swipe (--_swipe-x, written by the drag controller, fading with
+       * --_swipe-fade) and a place in a stacked region's deck (--_stack-*,
+       * written by the region and switched on by its --_stack-on).
+       */
+      translate: var(--_swipe-x, 0px)
+        calc(var(--_stack-y, 0px) * var(--_stack-on, 0));
+      scale: calc(1 - var(--_stack-shrink, 0) * var(--_stack-on, 0));
+      opacity: calc(
+        (1 - var(--_swipe-fade, 0)) *
+          (1 - var(--_stack-dim, 0) * var(--_stack-on, 0))
+      );
+      transition:
+        translate 400ms var(--ease-out, ease-out),
+        scale 400ms var(--ease-out, ease-out),
+        opacity 400ms var(--ease-out, ease-out);
+    }
+
+    /* A swipe moves the toast every frame: nothing may lag behind the finger */
+    :host([data-swiping]) {
+      transition: none;
+      user-select: none;
     }
 
     /* Default: a plain surface; the title (and status indicators) carry the tone */
@@ -171,7 +194,48 @@ export const toastStyles = [
       pointer-events: none;
     }
 
+    /* Time left: shrinks over --_toast-duration and pauses with the timer */
+    [part~="countdown"] {
+      position: absolute;
+      inset-inline: var(--spacing-4, 1rem);
+      bottom: var(--spacing-1, 0.25rem);
+      height: 2px;
+      border-radius: var(--radius-full, 9999px);
+      background-color: color-mix(in oklch, currentColor 45%, transparent);
+      transform-origin: left center;
+      animation: moul-toast-countdown var(--_toast-duration, 5000ms) linear
+        forwards;
+      pointer-events: none;
+    }
+
+    :host(:dir(rtl)) [part~="countdown"] {
+      transform-origin: right center;
+    }
+
+    :host(:not([variant])) [part~="countdown"] {
+      background-color: var(--_tone-soft-fg);
+      opacity: 0.6;
+    }
+
+    :host([data-paused]) [part~="countdown"] {
+      animation-play-state: paused;
+    }
+
+    @keyframes moul-toast-countdown {
+      from {
+        transform: scaleX(1);
+      }
+      to {
+        transform: scaleX(0);
+      }
+    }
+
+    /*
+     * Reduced motion: no glide into a deck and no fade on the close button.
+     * The countdown keeps shrinking: it is the only sign of the time left.
+     */
     @media (prefers-reduced-motion: reduce) {
+      :host,
       .dismiss-button {
         transition: none;
       }
@@ -241,6 +305,50 @@ export const toastRegionStyles = [
       left: 50%;
       translate: -50% 0;
       align-items: center;
+    }
+
+    /*
+     * Stacked: the newest toast in front and up to two behind it, peeking out
+     * past its far edge (offsets written per toast by the region). Hovering
+     * or focusing the deck fans it out into the plain list.
+     */
+    :host([is-stacked]) ::slotted(*) {
+      --_stack-on: 1;
+    }
+
+    :host([is-stacked]:hover) ::slotted(*),
+    :host([is-stacked]:focus-within) ::slotted(*) {
+      --_stack-on: 0;
+    }
+
+    /* Fanned out, the stack keeps the hover across the gaps between toasts */
+    :host([is-stacked]:hover) {
+      pointer-events: auto;
+    }
+
+    /* Cards behind the front one shrink toward the edge that peeks out */
+    :host([is-stacked]:not([placement^="top"])) ::slotted(*) {
+      transform-origin: top center;
+    }
+
+    :host([is-stacked][placement^="top"]) ::slotted(*) {
+      transform-origin: bottom center;
+    }
+
+    /* A card taller than the front one is trimmed out of sight behind it */
+    :host([is-stacked]:not(:hover):not(:focus-within))
+      ::slotted(:not(:last-child)) {
+      clip-path: inset(-2rem -2rem var(--_stack-clip, 0px) -2rem);
+    }
+
+    :host([is-stacked][placement^="top"]:not(:hover):not(:focus-within))
+      ::slotted(:not(:last-child)) {
+      clip-path: inset(var(--_stack-clip, 0px) -2rem -2rem -2rem);
+    }
+
+    :host([is-stacked]:not(:hover):not(:focus-within))
+      ::slotted(:nth-last-child(n + 4)) {
+      pointer-events: none;
     }
   `,
 ]

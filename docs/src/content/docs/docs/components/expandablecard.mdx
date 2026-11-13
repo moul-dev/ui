@@ -1,0 +1,136 @@
+---
+title: ExpandableCard
+description: A card that grows into a dialog to show its details, and shrinks back into its place.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import ExpandableCardDemo from '@/components/demos/ExpandableCardDemo.astro';
+
+`<moul-expandable-card>` is a card that opens into a dialog. Press it and the same panel springs from its place in the page to the centre of the screen, its image and title growing with it, while the `details` slot appears below them. Close it and it shrinks back into the gap it left, which a placeholder keeps open so nothing else on the page moves.
+
+<ComponentPreview minHeight="320px" backdrop="page">
+  <ExpandableCardDemo />
+</ComponentPreview>
+
+```html
+<moul-expandable-card>
+  <img slot="media" src="/koh-rong.jpg" alt="" />
+  <h3>Koh Rong Samloem</h3>
+  <span>Island · 3 nights · from $240</span>
+  <div slot="details">
+    <p>A quiet island off Sihanoukville with a long white beach on Saracen Bay.</p>
+    <moul-button variant="primary">Book</moul-button>
+  </div>
+</moul-expandable-card>
+```
+
+The default slot and `media` are shown both closed and open, and they are the parts that morph. `details` is shown only while the card is open, and scrolls when it is taller than the screen allows.
+
+## A grid of cards
+
+Cards lay out like any block, so a grid of them works without extra wiring. Each opens on its own, and `size` sets how wide the dialog grows: `sm` 28rem, `md` 40rem (the default) or `lg` 56rem, never wider than the screen.
+
+<ComponentPreview minHeight="360px" align="stretch" backdrop="page">
+  <ExpandableCardDemo mode="grid" />
+</ComponentPreview>
+
+```html
+<div class="trips">
+  <moul-expandable-card size="sm">…</moul-expandable-card>
+  <moul-expandable-card size="sm">…</moul-expandable-card>
+  <moul-expandable-card size="sm">…</moul-expandable-card>
+</div>
+
+<style>
+  .trips {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+    gap: 1rem;
+  }
+</style>
+```
+
+## How the morph works
+
+There is only one panel, a `<dialog>`. Closed, it sits in the page as an ordinary card. When it opens, it moves into the top layer as a modal dialog, and its position and size spring from the card's box to the dialog's. Size is animated directly rather than with a scale transform, so text rewraps and the media grows instead of stretching.
+
+Slotted media fills the card's width at a `16 / 9` ratio, so an image grows in proportion as the panel widens. Set `--expandable-card-media-ratio` to change the ratio, and `--expandable-card-width` to set the open width outright.
+
+```css
+moul-expandable-card {
+  --expandable-card-media-ratio: 4 / 3;
+  --expandable-card-width: 36rem;
+}
+```
+
+## Opening from script
+
+`setOpen()` and `toggle()` open and close the card and fire `openchange`; both return a promise that settles when the motion does. Setting `isOpen` (or the `is-open` attribute) opens and closes it without firing the event.
+
+```js
+const card = document.querySelector('moul-expandable-card')
+
+card.addEventListener('openchange', (event) => {
+  console.log(event.detail.isOpen)
+})
+
+await card.setOpen(true)
+```
+
+## Accessibility
+
+Closed, the card is a single `Tab` stop with the button role, `aria-haspopup="dialog"` and `aria-expanded="false"`; `Enter` or `Space` opens it. A button reads all of its text as its name, so set `label` when the card holds more than a short title.
+
+Open, it is a modal dialog: the rest of the page is inert, focus moves to the close button and `Tab` stays inside the card. The dialog is named by `label`, or else by the first heading (`h1` to `h6`) in its content. `Escape`, the close button or a click on the backdrop closes it, and focus goes back to the card.
+
+Because the closed card is itself a button, keep links and buttons out of `media` and the default slot. Put them in `details`, where they are reachable once the card is open.
+
+Under reduced motion the dialog fades in at the centre and fades out again, without growing out of the card, and the card does not lift on hover.
+
+## Attributes & Properties
+
+| Name | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `is-open` | `boolean` | `false` | Whether the card is open as a dialog. |
+| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Width of the open card: 28rem, 40rem or 56rem. |
+| `label` | `string` | `''` | Accessible name of the card and its dialog. |
+| `close-label` | `string` | `'Close'` | Accessible name of the close button. |
+
+## Methods
+
+| Name | Description |
+| :--- | :--- |
+| `setOpen(isOpen)` | Opens or closes the card and fires `openchange`. Resolves when the motion settles. |
+| `toggle()` | Flips `isOpen` and fires `openchange`. |
+
+## Events
+
+| Name | Detail | Description |
+| :--- | :--- | :--- |
+| `openchange` | `{ isOpen: boolean }` | The user, `setOpen()` or `toggle()` opened or closed the card. |
+
+## Slots
+
+| Name | Description |
+| :--- | :--- |
+| (default) | Content shown both closed and open, such as a title and a line of text. |
+| `media` | A full-bleed image or video above the content. |
+| `details` | Content shown only while the card is open. |
+
+## CSS Parts
+
+| Name | Description |
+| :--- | :--- |
+| `base` | The card panel, a `<dialog>`: inline while closed, in the top layer while open. |
+| `media` | The wrapper of the `media` slot. |
+| `content` | The wrapper of the default and `details` slots; it scrolls while open. |
+| `details` | The wrapper of the `details` slot. |
+| `close-button` | The close button, shown while open. |
+| `placeholder` | The box that holds the card's place in the page while it is open. |
+
+## CSS Custom Properties
+
+| Name | Default | Description |
+| :--- | :--- | :--- |
+| `--expandable-card-width` | set by `size` | Width of the open card. |
+| `--expandable-card-media-ratio` | `16 / 9` | Aspect ratio of slotted media. |

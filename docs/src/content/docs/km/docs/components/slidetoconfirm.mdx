@@ -1,0 +1,98 @@
+---
+title: SlideToConfirm (សមាសភាគ)
+description: ឯកសារណែនាំសម្រាប់សមាសភាគ SlideToConfirm Web Component
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import SlideToConfirmDemo from '@/components/demos/SlideToConfirmDemo.astro';
+
+`<moul-slide-to-confirm>` asks for a deliberate gesture before something that is hard to undo: deleting a project, sending a payment, wiping a device. Drag the handle all the way along the track to confirm. Let go short of the end and it springs back, so a stray tap or a half-hearted swipe does nothing.
+
+<ComponentPreview>
+  <div class="demo-stack" style="width: min(100%, 20rem)">
+    <moul-slide-to-confirm label="Slide to send $120" confirmed-label="Sent" data-slide-demo="Payment sent" style="width: 100%"></moul-slide-to-confirm>
+    <moul-slide-to-confirm tone="error" label="Slide to delete project" confirmed-label="Deleting" data-slide-demo="Project deleted" style="width: 100%"></moul-slide-to-confirm>
+  </div>
+  <SlideToConfirmDemo />
+</ComponentPreview>
+
+```html
+<moul-slide-to-confirm
+  tone="error"
+  label="Slide to delete project"
+  confirmed-label="Deleting"
+></moul-slide-to-confirm>
+```
+
+The handle must be let go past 90% of the track, or flicked hard past the middle. On confirming, the label changes to `confirmed-label`, `is-confirmed` is set and `confirm` fires. Use `tone="error"` for destructive actions.
+
+## Running the work
+
+Listen for `confirm`, set `is-pending` while the work runs to show a spinner in the handle, and call `reset()` when the user may try again, for example after a failure.
+
+```js
+const slider = document.querySelector('moul-slide-to-confirm')
+
+slider.addEventListener('confirm', async () => {
+  slider.isPending = true
+  try {
+    await deleteProject()
+    toastQueue.add({ title: 'Project deleted', tone: 'success' })
+  } catch {
+    toastQueue.add({ title: 'Could not delete the project', tone: 'error' })
+    slider.reset()
+  } finally {
+    slider.isPending = false
+  }
+})
+```
+
+Setting `isConfirmed` yourself moves the handle to the end without firing `confirm`, and `is-confirmed` in markup starts it there.
+
+## Size
+
+The track is as wide as the element: `18rem` unless you set a `width`, and never wider than its container. `--slide-to-confirm-handle-size` sets the handle's diameter, `2.75rem` by default; the track is `0.5rem` taller.
+
+<ComponentPreview>
+  <moul-slide-to-confirm label="Slide to unlock" style="width: 14rem; --slide-to-confirm-handle-size: 2.25rem"></moul-slide-to-confirm>
+</ComponentPreview>
+
+```html
+<moul-slide-to-confirm
+  label="Slide to unlock"
+  style="width: 14rem; --slide-to-confirm-handle-size: 2.25rem"
+></moul-slide-to-confirm>
+```
+
+## Accessibility
+
+- The handle is a `role="slider"` from 0 to 100, named by `label`, with the position as its value text ("50%") and `confirmed-label` once confirmed. The visible label is hidden from screen readers so it is not read twice.
+- `Tab` reaches the handle. `Arrow Right` and `Arrow Up` move it a quarter of the way, `Arrow Left` and `Arrow Down` back, `Home` to the start and `End` to the end. Reaching the end confirms, so a keyboard user confirms with four presses or `End`.
+- `Escape`, or moving focus away before confirming, sends the handle back to the start. An `Escape` that moves it stops there, so a surrounding dialog stays open.
+- While `is-pending`, the handle is `aria-busy`. With `is-disabled` it leaves the tab order and ignores keys and drags.
+- Under reduced motion the handle jumps back or to the end instead of springing and the light sweeping across the label stops. A drag still follows the pointer.
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `label` | `label` | `string` | `'Slide to confirm'` |
+| `confirmed-label` | `confirmedLabel` | `string` | `'Confirmed'` |
+| `tone` | `tone` | `'primary' \| 'accent' \| 'success' \| 'warning' \| 'error'` | `'primary'` |
+| `is-confirmed` | `isConfirmed` | `boolean` | `false` |
+| `is-pending` | `isPending` | `boolean` | `false` |
+| `is-disabled` | `isDisabled` | `boolean` | `false` |
+
+| Method | Description |
+| :-- | :-- |
+| `reset()` | Sends the handle back to the start and clears `is-confirmed` and `is-pending`. |
+
+| Event | Type |
+| :-- | :-- |
+| `confirm` | `CustomEvent`, when the handle reaches the end by drag or keyboard |
+
+| CSS custom property | Default |
+| :-- | :-- |
+| `--slide-to-confirm-handle-size` | `2.75rem` |
+
+**CSS parts:** `track`, `fill`, `label`, `handle`

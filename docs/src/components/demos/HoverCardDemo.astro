@@ -1,0 +1,130 @@
+---
+/**
+ * Hover card demos: a profile behind an @mention, and a page preview behind a
+ * link. The card content lives here so it can use scoped styles.
+ *   mode="profile" (default) | "link"
+ */
+interface Props {
+  mode?: 'profile' | 'link'
+}
+const { mode = 'profile' } = Astro.props
+---
+
+{
+  mode === 'profile' ? (
+    <div class="hc-sentence">
+      <span>Reviewed by</span>
+      <moul-hover-card>
+        <a slot="trigger" href="#hover-card" class="hc-mention">@sophea</a>
+        <div class="hc-profile">
+          <div class="hc-head">
+            <moul-avatar name="Sophea Chan" size="lg" status="online" />
+            <moul-button size="sm" variant="secondary">Follow</moul-button>
+          </div>
+          <div class="hc-name">Sophea Chan</div>
+          <div class="hc-handle">@sophea · Phnom Penh</div>
+          <div class="hc-bio">
+            Designs the checkout and the admin console. Writes about type
+            in Khmer and English.
+          </div>
+          <div class="hc-stats">
+            <span><strong>248</strong> following</span>
+            <span><strong>1,920</strong> followers</span>
+          </div>
+        </div>
+      </moul-hover-card>
+      <span>and merged into main.</span>
+    </div>
+  ) : (
+    <div class="hc-sentence">
+      <span>Read</span>
+      <moul-hover-card placement="top" open-delay="300">
+        <a slot="trigger" href="#hover-card" class="hc-mention">the theming guide</a>
+        <div class="hc-link">
+          <div class="hc-cover" aria-hidden="true" />
+          <div class="hc-name">Theming</div>
+          <div class="hc-bio">
+            Six brand variables set the hue, chroma, font, scale, radius and
+            density of every element.
+          </div>
+          <a href="#hover-card" class="hc-more">Open the guide</a>
+        </div>
+      </moul-hover-card>
+      <span>before you change a token.</span>
+    </div>
+  )
+}
+
+<style>
+  .hc-sentence {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: center;
+    gap: 0.3em;
+    color: var(--color-fg);
+  }
+
+  .hc-mention {
+    color: var(--color-link);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .hc-mention:hover,
+  .hc-mention:focus-visible {
+    text-decoration: underline;
+  }
+
+  .hc-profile,
+  .hc-link {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    width: 16rem;
+  }
+
+  .hc-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+  }
+
+  .hc-name {
+    font-weight: 600;
+    color: var(--color-fg);
+  }
+
+  .hc-handle,
+  .hc-stats {
+    color: var(--color-fg-subtle);
+  }
+
+  .hc-stats {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.5rem;
+  }
+
+  .hc-stats strong {
+    color: var(--color-fg);
+  }
+
+  .hc-cover {
+    aspect-ratio: 16 / 7;
+    margin-bottom: 0.5rem;
+    border-radius: var(--radius-lg, 0.75rem);
+    background: linear-gradient(
+      135deg,
+      var(--color-primary-solid),
+      var(--color-accent)
+    );
+  }
+
+  .hc-more {
+    margin-top: 0.5rem;
+    color: var(--color-link);
+    font-weight: 600;
+  }
+</style>

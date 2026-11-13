@@ -1,0 +1,28 @@
+---
+/**
+ * Slide to confirm demo wiring, so the MDX previews stay plain markup. A
+ * `moul-slide-to-confirm[data-slide-demo]` pretends to do its work when
+ * confirmed: `is-pending` for a moment, then a toast with the attribute's
+ * text, then `reset()` so it can be tried again.
+ */
+---
+
+<script>
+  import { type MoulSlideToConfirm, toastQueue } from '@moul-dev/web-component'
+
+  document.addEventListener('confirm', (event) => {
+    const slider = (event.target as Element | null)?.closest?.(
+      'moul-slide-to-confirm[data-slide-demo]',
+    ) as MoulSlideToConfirm | null
+    if (!slider) return
+    slider.isPending = true
+    setTimeout(() => {
+      slider.isPending = false
+      toastQueue.add({
+        title: slider.dataset.slideDemo || 'Done',
+        tone: slider.tone === 'error' ? 'error' : 'success',
+      })
+      setTimeout(() => slider.reset(), 1600)
+    }, 1200)
+  })
+</script>

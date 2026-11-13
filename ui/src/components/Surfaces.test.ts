@@ -734,10 +734,10 @@ describe('Phase 5: Surface & Feedback Components', () => {
 
       closeBtn.click()
       await toast.updateComplete
-      await new Promise((r) => setTimeout(r, 50))
-
-      expect(dismissFired).toBe(true)
       expect(toast.isOpen).toBe(false)
+
+      // `dismiss` follows the exit animation.
+      await vi.waitFor(() => expect(dismissFired).toBe(true), { timeout: 1000 })
     })
   })
 })

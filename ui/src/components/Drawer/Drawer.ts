@@ -23,8 +23,6 @@ export type DrawerSize = 'sm' | 'md' | 'lg'
 const DISMISS_FRACTION = 1 / 3
 /** Downward release speed (px/s) that dismisses a sheet however short the drag. */
 const FLICK_VELOCITY = 500
-/** Pixels a press travels before it becomes a drag, as in the drag controller. */
-const DRAG_THRESHOLD = 4
 /** Presses that start on these never drag a sheet. */
 const TEXT_FIELD =
   'input, textarea, select, [contenteditable=""], [contenteditable="true"]'
@@ -110,7 +108,6 @@ export class MoulDrawer extends LitElement {
   private previousActiveElement: HTMLElement | null = null
   private readonly drag: DragController
   private sheetGesture: SheetGesture = 'free'
-  private pressStart = { id: -1, x: 0, y: 0 }
   private sheetHeight = 0
   private dismissOnRelease = false
 
@@ -127,18 +124,16 @@ export class MoulDrawer extends LitElement {
       dialog: () => this.dialogEl,
     })
 
-    const isHeld = (): boolean => this.sheetGesture !== 'free'
     this.drag = new DragController(this, {
       axis: 'y',
       handle: () => (this.isSheet ? this.contentEl : null),
       // On the dialog, next to `--_sheet-progress`; the panel inherits it.
       styleTarget: () => this.dialogEl,
       prefix: '--_drag',
-      // Read on every move: a press in scrollable content waits here until
-      // `watchSheetDirection` sees which way it heads.
-      get threshold() {
-        return isHeld() ? Number.POSITIVE_INFINITY : DRAG_THRESHOLD
-      },
+      // A press at the top of scrollable content drags only if it heads down.
+      canStart: ({ deltaX, deltaY }) =>
+        this.sheetGesture === 'free' ||
+        (this.sheetGesture === 'down' && deltaY > Math.abs(deltaX)),
       bounds: () => (this.isDismissable ? { top: 0 } : { top: 0, bottom: 0 }),
       disabled: () => !this.isOpen || this.sheetGesture === 'blocked',
       onStart: () => {
@@ -173,7 +168,6 @@ export class MoulDrawer extends LitElement {
   public override disconnectedCallback(): void {
     super.disconnectedCallback()
     this.removeEventListener('keydown', this.handleKeyDown)
-    this.stopWatchingDirection()
   }
 
   protected override updated(changedProps: PropertyValues): void {
@@ -263,14 +257,7 @@ export class MoulDrawer extends LitElement {
    */
   private readonly handleSheetPointerDown = (e: PointerEvent): void => {
     if (!this.isSheet || !e.isPrimary) return
-    this.stopWatchingDirection()
     this.sheetGesture = this.gestureFor(e)
-    if (this.sheetGesture !== 'down') return
-    this.pressStart = { id: e.pointerId, x: e.clientX, y: e.clientY }
-    // Capture on window runs before the controller's own window listener.
-    window.addEventListener('pointermove', this.watchSheetDirection, true)
-    window.addEventListener('pointerup', this.stopWatchingDirection, true)
-    window.addEventListener('pointercancel', this.stopWatchingDirection, true)
   }
 
   private gestureFor(e: PointerEvent): SheetGesture {
@@ -289,26 +276,6 @@ export class MoulDrawer extends LitElement {
     return scrollers.some((el) => el.scrollHeight > el.clientHeight + 1)
       ? 'down'
       : 'free'
-  }
-
-  /** Down from the top of the content drags the sheet; any other way scrolls the content. */
-  private readonly watchSheetDirection = (e: PointerEvent): void => {
-    if (e.pointerId !== this.pressStart.id) return
-    const dx = e.clientX - this.pressStart.x
-    const dy = e.clientY - this.pressStart.y
-    if (Math.max(Math.abs(dx), Math.abs(dy)) < DRAG_THRESHOLD) return
-    this.sheetGesture = dy > Math.abs(dx) ? 'free' : 'blocked'
-    this.stopWatchingDirection()
-  }
-
-  private readonly stopWatchingDirection = (): void => {
-    window.removeEventListener('pointermove', this.watchSheetDirection, true)
-    window.removeEventListener('pointerup', this.stopWatchingDirection, true)
-    window.removeEventListener(
-      'pointercancel',
-      this.stopWatchingDirection,
-      true,
-    )
   }
 
   /**

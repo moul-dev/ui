@@ -14,6 +14,16 @@
  * - CanvasLoopController: pixel ratio, resize, pausing and reduced motion for canvas loops
  */
 
+// Effect elements: `bun run gen:component <Name> --effect` adds an export for each.
+export {
+  type ConfettiOptions,
+  type ConfettiPoint,
+  type ConfettiShape,
+  type ConfettiVariant,
+  fireConfetti,
+  MoulConfetti,
+  MoulConfetti as Confetti,
+} from './components/Confetti'
 export {
   type CanvasContextKind,
   type CanvasFrame,
@@ -61,5 +71,3 @@ export {
   prefersReducedMotion,
   watchReducedMotion,
 } from './utils/motion'
-
-// Effect elements: `bun run gen:component <Name> --effect` adds an export for each.

@@ -67,8 +67,19 @@ const HIDDEN_POSES: Partial<Record<OverlayPreset, Pose>> = {
   // at the trigger, and a fixed y-nudge would push the wrong way once they flip.
   popover: { opacity: 0, y: 0, scale: 0.96 },
   tooltip: { opacity: 0, y: 0, scale: 0.97 },
-  toast: { opacity: 0, y: 24, scale: 0.95 },
-  'toast-top': { opacity: 0, y: -24, scale: 0.95 },
+  toast: { opacity: 0, y: 32, scale: 0.95 },
+  'toast-top': { opacity: 0, y: -32, scale: 0.95 },
+}
+
+/**
+ * Toasts arrive with momentum: an underdamped spring that carries them a few
+ * pixels past their slot before they settle back.
+ */
+const SPRING_TOAST_ENTER: AnimationOptions = {
+  type: 'spring',
+  stiffness: 380,
+  damping: 22,
+  mass: 1,
 }
 
 /** Toasts shrink and blur away in place; the stack then closes ranks around them. */
@@ -487,9 +498,10 @@ export class OverlayPresenceController implements ReactiveController {
   private getEnterOptions(preset: OverlayPreset): AnimationOptions {
     switch (preset) {
       case 'modal':
+        return SPRING_GENTLE
       case 'toast':
       case 'toast-top':
-        return SPRING_GENTLE
+        return SPRING_TOAST_ENTER
       case 'popover':
       case 'tooltip':
         return SPRING_SNAPPY

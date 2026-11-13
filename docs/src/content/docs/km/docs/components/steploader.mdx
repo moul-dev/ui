@@ -1,0 +1,113 @@
+---
+title: StepLoader (សមាសភាគ)
+description: ឯកសារណែនាំសម្រាប់សមាសភាគ StepLoader Web Component
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import StepLoaderDemo from '@/components/demos/StepLoaderDemo.astro';
+
+<StepLoaderDemo />
+
+`<moul-step-loader>` shows a long task as a checklist. Finished steps get a check that draws itself, the step in progress sits beside a spinner, and the steps still to come are muted. Set `steps`, then move `current` on as the work moves on.
+
+<ComponentPreview stack>
+<moul-step-loader id="publish-loader" label="Publishing site" interval="1400" data-props='{"steps":["Checking files",{"label":"Uploading assets","description":"12 files, 4.2 MB"},"Building pages","Publishing to the edge"]}'></moul-step-loader>
+<div class="demo-row">
+  <moul-button variant="secondary" size="sm" data-step-loader-restart="publish-loader"><span>Start over</span></moul-button>
+  <moul-button variant="danger-soft" size="sm" data-step-loader-fail="publish-loader"><span>Fail this step</span></moul-button>
+</div>
+</ComponentPreview>
+
+```html
+<moul-step-loader id="publish" label="Publishing site"></moul-step-loader>
+```
+
+```js
+const loader = document.querySelector('#publish')
+loader.steps = [
+  'Checking files',
+  { label: 'Uploading assets', description: '12 files, 4.2 MB' },
+  'Building pages',
+  'Publishing to the edge',
+]
+
+// Move on as each stage of the real work finishes.
+await checkFiles()
+loader.current = 1
+await upload()
+loader.current = 2
+```
+
+Steps before `current` are done, the one at `current` is in progress, and later ones are pending. Setting `current` to `steps.length` (or past it) marks every step done and fires `complete`.
+
+## Moving on by itself
+
+When the work has no progress to report, set `interval` in milliseconds and the loader moves on by itself, firing `stepchange` each time. It stops at the end; add `loop` to start over from the first step, which suits a wait whose length you cannot know.
+
+```html
+<moul-step-loader interval="1500" loop></moul-step-loader>
+```
+
+The interval only paces the list: it says nothing about real progress. Prefer setting `current` yourself whenever you can.
+
+## When a step fails
+
+`is-error` marks the step at `current` as failed: it shows a cross instead of the spinner, and an `interval` stops. Clear it and set `current` again to retry.
+
+<ComponentPreview>
+<moul-step-loader current="2" is-error data-props='{"steps":["Validating CSV","Matching 1,204 rows","Writing records"]}'></moul-step-loader>
+</ComponentPreview>
+
+```js
+try {
+  await importRows()
+  loader.current = loader.steps.length
+} catch {
+  loader.isError = true
+}
+```
+
+## In a fixed height
+
+Give the loader a `height` or `max-height` and it scrolls, keeping the current step in the middle of the box as it moves on.
+
+```html
+<moul-step-loader interval="1200" style="max-height: 7.5rem"></moul-step-loader>
+```
+
+## Accessibility
+
+The steps are an ordered list named by `label`, and the current step has `aria-current="step"`. Each item ends with its state as visually hidden text ("done", "in progress", "failed", "not started"), and a polite live region announces each new current step, "failed" after a failed one, and "All steps done" at the end. Translate those words with the `labels` property:
+
+```js
+loader.labels = {
+  done: 'រួចរាល់',
+  current: 'កំពុងដំណើរការ',
+  failed: 'បរាជ័យ',
+  pending: 'មិនទាន់ចាប់ផ្តើម',
+  complete: 'ជំហានទាំងអស់បានបញ្ចប់',
+}
+```
+
+The loader is not focusable. Under reduced motion the checks appear already drawn, the current row does not slide in, a constrained list jumps to the current step, and the spinner pulses instead of turning.
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| | `steps` | `Array<string \| { label: string; description?: string }>` | `[]` |
+| `current` | `current` | `number` | `0` |
+| `interval` | `interval` | `number` (ms; `0` turns it off) | `0` |
+| `loop` | `loop` | `boolean` | `false` |
+| `is-error` | `isError` | `boolean` | `false` |
+| `label` | `label` | `string` | `'Progress'` |
+| | `labels` | `Partial<StepLoaderLabels>` | English words |
+| | `isComplete` (read-only) | `boolean` | |
+
+**Methods:** `stateOf(index)` returns `'done'`, `'current'`, `'failed'` or `'pending'`.
+
+**Events:** `stepchange` (`detail: { current, previous }`) when `interval` moves it on; `complete` once `current` reaches the end.
+
+**CSS parts:** `list`, `step` (also `step-done`, `step-current`, `step-failed`, `step-pending`), `indicator`, `label`, `description`
+
+**CSS custom properties:** `--step-loader-gap` (space between steps)

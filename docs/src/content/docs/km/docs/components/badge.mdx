@@ -4,8 +4,11 @@ description: ឯកសារណែនាំសម្រាប់សមាសភ�
 ---
 
 import ComponentPreview from '@/components/ComponentPreview.astro';
+import NumberTickerDemo from '@/components/demos/NumberTickerDemo.astro';
 
-`<moul-badge>` labels status with a semantic `tone` and a surface `variant`. `is-dot` renders a status dot and needs an `aria-label` when it stands alone.
+<NumberTickerDemo />
+
+`<moul-badge>` labels status with a semantic `tone` and a surface `variant`. `count` shows a number that rolls to each new value, `is-dot` renders a status dot and needs an `aria-label` when it stands alone, and `is-live` adds a pulsing live dot.
 
 ## Tones
 
@@ -55,6 +58,55 @@ import ComponentPreview from '@/components/ComponentPreview.astro';
 </div>
 ```
 
+## Counts
+
+Set `count` instead of a label and the badge shows a [`<moul-number-ticker>`](/km/docs/components/numberticker/): when the count changes, its digits roll to the new value. Past `max` (99 unless you set it) the badge reads `99+`.
+
+<ComponentPreview stack>
+<div class="demo-row">
+  <moul-badge id="badge-count" tone="error" variant="solid" count="3"></moul-badge>
+  <moul-badge id="badge-capped" tone="primary" count="96"></moul-badge>
+  <moul-badge id="badge-small" tone="accent" size="sm" count="7" max="9"></moul-badge>
+</div>
+<div class="demo-row">
+  <moul-button variant="secondary" size="sm" data-number-target="badge-count" data-number-by="1"><span>Inbox +1</span></moul-button>
+  <moul-button variant="secondary" size="sm" data-number-target="badge-capped" data-number-by="2"><span>Mentions +2</span></moul-button>
+  <moul-button variant="secondary" size="sm" data-number-target="badge-small" data-number-by="1"><span>Tasks +1</span></moul-button>
+</div>
+</ComponentPreview>
+
+```html
+<moul-badge tone="error" variant="solid" count="3"></moul-badge>
+<moul-badge count="96"></moul-badge>
+<moul-badge size="sm" count="7" max="9"></moul-badge>
+```
+
+```js
+document.querySelector('moul-badge').count += 1
+```
+
+Screen readers read the final count, never the digits rolling toward it, followed by "+" past `max`. A changed count is not announced; say what it counts in the text around it, or in the button that holds it (`aria-label="Inbox, 4 unread"`).
+
+## Live
+
+`is-live` marks something happening now. On a dot badge a ring pulses out of the dot; on a text badge a small dot pulses before the label. The dot is hidden from screen readers, so let the label say it.
+
+<ComponentPreview>
+<div class="demo-row">
+  <moul-badge tone="error" is-live><span>Live</span></moul-badge>
+  <moul-badge tone="success" variant="bordered" is-live><span>Recording</span></moul-badge>
+  <moul-badge tone="success" is-dot is-live aria-label="Online"></moul-badge>
+  <moul-badge tone="warning" size="lg" is-dot is-live aria-label="Degraded"></moul-badge>
+</div>
+</ComponentPreview>
+
+```html
+<moul-badge tone="error" is-live>Live</moul-badge>
+<moul-badge tone="success" is-dot is-live aria-label="Online"></moul-badge>
+```
+
+Under reduced motion the dot stays lit without pulsing, and a count jumps to its new value instead of rolling.
+
 ## API reference
 
 | Attribute | Property | Type | Default |
@@ -63,11 +115,14 @@ import ComponentPreview from '@/components/ComponentPreview.astro';
 | `variant` | `variant` | `'solid' \| 'flat' \| 'shadow' \| 'bordered' \| 'glass'` | `'flat'` |
 | `size` | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` |
 | `is-dot` | `isDot` | `boolean` | `false` |
+| `count` | `count` | `number \| undefined` | `undefined` |
+| `max` | `max` | `number` | `99` |
+| `is-live` | `isLive` | `boolean` | `false` |
 
 | Slot | Description |
 | :-- | :-- |
-| `prefix` | — |
-| `(default)` | — |
-| `suffix` | — |
+| `prefix` | Content before the label, such as an icon. |
+| `(default)` | The label. Not shown while `count` is set or on a dot badge. |
+| `suffix` | Content after the label. |
 
-**CSS parts:** `base`, `prefix`, `content`, `suffix`
+**CSS parts:** `base`, `prefix`, `content`, `suffix`, `count` (the number ticker), `live-dot` (a live text badge's dot), `pulse` (a live dot badge's ring)

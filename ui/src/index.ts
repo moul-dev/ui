@@ -15,6 +15,10 @@ export {
   MoulAlertDialog,
   MoulAlertDialog as AlertDialog,
 } from './components/AlertDialog'
+export {
+  MoulAnimatedList,
+  MoulAnimatedList as AnimatedList,
+} from './components/AnimatedList'
 export type { AreaChartProps } from './components/AreaChart'
 export {
   MoulAreaChart,
@@ -153,6 +157,11 @@ export {
   MoulEmptyState as EmptyState,
 } from './components/EmptyState'
 export {
+  type ExpandableCardSize,
+  MoulExpandableCard,
+  MoulExpandableCard as ExpandableCard,
+} from './components/ExpandableCard'
+export {
   type FileRejectReason,
   type FileUploadChangeDetail,
   type FileUploadContext,
@@ -164,6 +173,10 @@ export {
   MoulFileUpload,
   MoulFileUpload as FileUpload,
 } from './components/FileUpload'
+export {
+  MoulFocusMode,
+  MoulFocusMode as FocusMode,
+} from './components/FocusMode'
 export {
   type FormMethod,
   MoulForm,
@@ -183,6 +196,11 @@ export {
   MoulHeatmapChart,
   MoulHeatmapChart as HeatmapChart,
 } from './components/HeatmapChart'
+export {
+  type HoverCardPlacement,
+  MoulHoverCard,
+  MoulHoverCard as HoverCard,
+} from './components/HoverCard'
 export {
   type IconMorphName,
   type IconMorphSize,
@@ -237,9 +255,19 @@ export {
   MoulModal as Modal,
 } from './components/Modal'
 export {
+  MoulNotificationBell,
+  MoulNotificationBell as NotificationBell,
+  type NotificationBellPlacement,
+} from './components/NotificationBell'
+export {
   MoulNumberField,
   MoulNumberField as NumberField,
 } from './components/NumberField'
+export {
+  MoulNumberTicker,
+  MoulNumberTicker as NumberTicker,
+  type NumberTickerMode,
+} from './components/NumberTicker'
 export {
   type GeneratePaginationOptions,
   generatePagination,
@@ -275,12 +303,22 @@ export {
   MoulProgressBar as ProgressBar,
 } from './components/ProgressBar'
 export {
+  MoulPullToRefresh,
+  MoulPullToRefresh as PullToRefresh,
+  type PullToRefreshEventDetail,
+} from './components/PullToRefresh'
+export {
   MoulRadio,
   MoulRadio as Radio,
   MoulRadioGroup,
   MoulRadioGroup as RadioGroup,
   type RadioGroupOrientation,
 } from './components/RadioGroup'
+export {
+  MoulResultCard,
+  MoulResultCard as ResultCard,
+  type ResultCardStatus,
+} from './components/ResultCard'
 export {
   MoulSearchField,
   MoulSearchField as SearchField,
@@ -349,9 +387,14 @@ export {
   MoulSlider as Slider,
 } from './components/Slider'
 export {
+  MoulSlideToConfirm,
+  MoulSlideToConfirm as SlideToConfirm,
+} from './components/SlideToConfirm'
+export {
   MoulSpinner,
   MoulSpinner as Spinner,
   type SpinnerSize,
+  type SpinnerVariant,
 } from './components/Spinner'
 export {
   MoulSplitButton,
@@ -360,6 +403,13 @@ export {
 } from './components/SplitButton'
 export type { StatProps, StatTrend } from './components/Stat'
 export { MoulStat, MoulStat as Stat } from './components/Stat'
+export {
+  MoulStepLoader,
+  MoulStepLoader as StepLoader,
+  type StepLoaderLabels,
+  type StepLoaderState,
+  type StepLoaderStep,
+} from './components/StepLoader'
 export {
   MoulStep,
   MoulStep as Step,
@@ -419,6 +469,7 @@ export {
   MoulToast as Toast,
   MoulToastRegion,
   MoulToastRegion as ToastRegion,
+  type ToastAction,
   type ToastOptions,
   toastQueue,
 } from './components/Toast'
@@ -435,10 +486,20 @@ export {
 export {
   MoulTooltip,
   MoulTooltip as Tooltip,
+  type TooltipFollow,
   type TooltipPlacement,
 } from './components/Tooltip'
 export type { TopListItem, TopListProps } from './components/TopList'
 export { MoulTopList, MoulTopList as TopList } from './components/TopList'
+export {
+  MoulTour,
+  MoulTour as Tour,
+  MoulTourStep,
+  MoulTourStep as TourStep,
+  type TourOpenChangeDetail,
+  type TourPlacement,
+  type TourStepChangeDetail,
+} from './components/Tour'
 export {
   MoulTree,
   MoulTree as Tree,
@@ -486,10 +547,11 @@ export {
   type VisualVariant,
 } from './styles/semantic-tones'
 
-// Custom Element Type Imports for Global HTMLElementTagNameMap
 import type { MoulAccordion, MoulAccordionItem } from './components/Accordion'
 import type { MoulAlert } from './components/Alert'
 import type { MoulAlertDialog } from './components/AlertDialog'
+// Custom Element Type Imports for Global HTMLElementTagNameMap
+import type { MoulAnimatedList } from './components/AnimatedList'
 import type { MoulAreaChart } from './components/AreaChart'
 import type { MoulAvatar, MoulAvatarGroup } from './components/Avatar'
 import type { MoulBadge } from './components/Badge'
@@ -522,10 +584,13 @@ import type {
   MoulMenuSeparator,
 } from './components/DropdownMenu'
 import type { MoulEmptyState } from './components/EmptyState'
+import type { MoulExpandableCard } from './components/ExpandableCard'
 import type { MoulFileUpload } from './components/FileUpload'
+import type { MoulFocusMode } from './components/FocusMode'
 import type { MoulForm } from './components/Form'
 import type { MoulFunnelChart } from './components/FunnelChart'
 import type { MoulHeatmapChart } from './components/HeatmapChart'
+import type { MoulHoverCard } from './components/HoverCard'
 import type { MoulIconMorph } from './components/IconMorph'
 import type { MoulInputOTP } from './components/InputOTP'
 import type { MoulKbd } from './components/Kbd'
@@ -533,7 +598,9 @@ import type { MoulLineChart } from './components/LineChart'
 import type { MoulLink } from './components/Link'
 import type { MoulLogs, MoulLogsViewer } from './components/LogsViewer'
 import type { MoulModal } from './components/Modal'
+import type { MoulNotificationBell } from './components/NotificationBell'
 import type { MoulNumberField } from './components/NumberField'
+import type { MoulNumberTicker } from './components/NumberTicker'
 import type { MoulPagination } from './components/Pagination'
 import type {
   MoulPercentageBar,
@@ -541,7 +608,9 @@ import type {
 } from './components/Percentage'
 import type { MoulPopover } from './components/Popover'
 import type { MoulProgressBar } from './components/ProgressBar'
+import type { MoulPullToRefresh } from './components/PullToRefresh'
 import type { MoulRadio, MoulRadioGroup } from './components/RadioGroup'
+import type { MoulResultCard } from './components/ResultCard'
 import type { MoulSearchField } from './components/SearchField'
 import type { MoulSelect, MoulSelectItem } from './components/Select'
 import type { MoulSelectionToolbar } from './components/SelectionToolbar'
@@ -560,9 +629,11 @@ import type {
 } from './components/Sidebar'
 import type { MoulSkeleton } from './components/Skeleton'
 import type { MoulSlider } from './components/Slider'
+import type { MoulSlideToConfirm } from './components/SlideToConfirm'
 import type { MoulSpinner } from './components/Spinner'
 import type { MoulSplitButton } from './components/SplitButton'
 import type { MoulStat } from './components/Stat'
+import type { MoulStepLoader } from './components/StepLoader'
 import type { MoulStep, MoulStepper } from './components/Stepper'
 import type { MoulSwitch } from './components/Switch'
 import type { MoulTable } from './components/Table'
@@ -576,6 +647,7 @@ import type { MoulToggleButton } from './components/ToggleButton'
 import type { MoulToggleButtonGroup } from './components/ToggleButtonGroup'
 import type { MoulTooltip } from './components/Tooltip'
 import type { MoulTopList } from './components/TopList'
+import type { MoulTour, MoulTourStep } from './components/Tour'
 import type { MoulTree, MoulTreeItem } from './components/Tree'
 import type { MoulTypography } from './components/Typography'
 
@@ -686,5 +758,17 @@ declare global {
     'moul-sidebar-divider': MoulSidebarDivider
     'moul-sidebar-footer': MoulSidebarFooter
     'moul-sidebar-user': MoulSidebarUser
+    'moul-number-ticker': MoulNumberTicker
+    'moul-step-loader': MoulStepLoader
+    'moul-result-card': MoulResultCard
+    'moul-animated-list': MoulAnimatedList
+    'moul-notification-bell': MoulNotificationBell
+    'moul-slide-to-confirm': MoulSlideToConfirm
+    'moul-pull-to-refresh': MoulPullToRefresh
+    'moul-hover-card': MoulHoverCard
+    'moul-tour': MoulTour
+    'moul-tour-step': MoulTourStep
+    'moul-focus-mode': MoulFocusMode
+    'moul-expandable-card': MoulExpandableCard
   }
 }

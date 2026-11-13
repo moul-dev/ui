@@ -90,6 +90,65 @@ export const badgeStyles = [
       display: none;
     }
 
+    .count {
+      display: inline-flex;
+      align-items: baseline;
+    }
+
+    /* Live: a dot badge sends a ring out of itself; a text badge leads with a pulsing dot. */
+    :host([is-dot][is-live]) {
+      position: relative;
+      overflow: visible;
+    }
+
+    .pulse {
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background-color: var(--_tone-solid-bg);
+      pointer-events: none;
+      animation: moul-badge-pulse 1.6s var(--ease-out, ease-out) infinite;
+    }
+
+    .live-dot {
+      position: relative;
+      flex-shrink: 0;
+      width: 0.375rem;
+      height: 0.375rem;
+      border-radius: var(--radius-full, 9999px);
+      background-color: currentColor;
+    }
+
+    .live-dot::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background-color: inherit;
+      animation: moul-badge-pulse 1.6s var(--ease-out, ease-out) infinite;
+    }
+
+    @keyframes moul-badge-pulse {
+      0% {
+        transform: scale(1);
+        opacity: 0.6;
+      }
+      80%,
+      100% {
+        transform: scale(2.75);
+        opacity: 0;
+      }
+    }
+
+    /* Reduced motion: the dot stays lit; the ring does not pulse. */
+    @media (prefers-reduced-motion: reduce) {
+      .pulse,
+      .live-dot::after {
+        animation: none;
+        opacity: 0;
+      }
+    }
+
     ::slotted([slot="prefix"]),
     ::slotted([slot="suffix"]) {
       display: inline-flex;

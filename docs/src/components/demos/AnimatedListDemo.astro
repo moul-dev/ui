@@ -1,0 +1,105 @@
+---
+/**
+ * Animated list demo wiring, so the MDX previews stay plain markup:
+ *   data-animated-list-add="id"     → click prepends the next sample event to #id
+ *   data-animated-list-remove="id"  → click calls `removeItem()` on #id's last item
+ *   data-animated-list-replay="id"  → click swaps #id for a fresh copy, so its
+ *                                     `delay` reveal plays again
+ * It also styles the `.demo-notice` rows the previews use.
+ */
+---
+
+<style is:global>
+  .demo-notice {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.625rem 0.75rem;
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-xl);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-surface);
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-sm);
+  }
+
+  .demo-notice-icon {
+    display: grid;
+    flex-shrink: 0;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: var(--radius-full);
+    background: color-mix(in oklab, var(--_tone, var(--color-accent)) 18%, transparent);
+    color: var(--_tone, var(--color-accent));
+    font-size: 0.875rem;
+  }
+
+  .demo-notice-icon[data-tone='success'] {
+    --_tone: var(--color-success);
+  }
+
+  .demo-notice-icon[data-tone='warning'] {
+    --_tone: var(--color-warning);
+  }
+
+  .demo-notice-icon[data-tone='danger'] {
+    --_tone: var(--color-danger);
+  }
+
+  .demo-notice-text {
+    display: flex;
+    flex: 1;
+    min-width: 0;
+    flex-direction: column;
+  }
+
+  .demo-notice-text span {
+    color: var(--color-fg-subtle);
+    font-size: var(--font-size-xs);
+  }
+</style>
+
+<script>
+  import type { MoulAnimatedList } from '@moul-dev/web-component'
+
+  const SAMPLES = [
+    ['✓', 'success', 'Deploy finished', 'moul-api · production'],
+    ['＋', 'accent', 'New sign-up', 'Dara · Free plan'],
+    ['!', 'warning', 'Disk 80% full', 'db-primary'],
+    ['$', 'success', 'Payment received', '$49.00 · Pro plan'],
+    ['✕', 'danger', 'Job failed', 'nightly-backup · exit 1'],
+  ] as const
+  let next = 0
+
+  function sample(): HTMLElement {
+    const [icon, tone, title, detail] = SAMPLES[next++ % SAMPLES.length]
+    const row = document.createElement('div')
+    row.className = 'demo-notice'
+    row.innerHTML = `<span class="demo-notice-icon" data-tone="${tone}" aria-hidden="true">${icon}</span><span class="demo-notice-text"><strong></strong><span></span></span>`
+    row.querySelector('strong')!.textContent = title
+    row.querySelector('.demo-notice-text span')!.textContent = detail
+    return row
+  }
+
+  document.addEventListener('click', (event) => {
+    const button = (event.target as Element | null)?.closest?.<HTMLElement>(
+      '[data-animated-list-add], [data-animated-list-remove], [data-animated-list-replay]',
+    )
+    if (!button) return
+    const { animatedListAdd, animatedListRemove, animatedListReplay } =
+      button.dataset
+    const list = document.getElementById(
+      animatedListAdd ?? animatedListRemove ?? animatedListReplay ?? '',
+    ) as MoulAnimatedList | null
+    if (!list) return
+    if (animatedListAdd !== undefined) {
+      list.prepend(sample())
+    } else if (animatedListRemove !== undefined) {
+      const last = list.items.at(-1)
+      if (last) void list.removeItem(last)
+    } else {
+      list.replaceWith(list.cloneNode(true))
+    }
+  })
+</script>

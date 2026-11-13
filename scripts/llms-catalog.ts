@@ -203,6 +203,18 @@ save.addEventListener('press', () => {
 </moul-button-group>`,
       },
       {
+        name: 'SlideToConfirm',
+        docs: '/docs/components/slidetoconfirm',
+        summary:
+          'Drag a handle across a track to confirm a risky action; a keyboard slider (arrows, `End`) reaches the same result.',
+        tags: ['moul-slide-to-confirm'],
+        snippet: `<moul-slide-to-confirm tone="error" label="Slide to delete project" confirmed-label="Deleting"></moul-slide-to-confirm>`,
+        script: `slider.addEventListener('confirm', async () => {
+  slider.isPending = true
+  try { await deleteProject() } catch { slider.reset() } finally { slider.isPending = false }
+})`,
+      },
+      {
         name: 'SplitButton',
         docs: '/docs/components/splitbutton',
         summary:
@@ -497,11 +509,75 @@ stepper.next()`,
       {
         name: 'Tooltip',
         docs: '/docs/components/tooltip',
-        summary: 'Hover/focus tooltip wired with `aria-describedby`.',
+        summary:
+          'Hover/focus label that slides out of its trigger; `follow="pointer"` trails the pointer, `is-rich` makes a small non-interactive card with a `media` slot.',
         tags: ['moul-tooltip'],
         snippet: `<moul-tooltip content="Copy to clipboard" placement="top">
   <moul-button is-icon aria-label="Copy">⧉</moul-button>
+</moul-tooltip>
+<moul-tooltip is-rich follow="pointer">
+  <moul-avatar name="Sophea Chan" tabindex="0"></moul-avatar>
+  <img slot="media" src="/sophea.jpg" alt="" />
+  <span slot="content">Sophea Chan · Design</span>
 </moul-tooltip>`,
+      },
+      {
+        name: 'HoverCard',
+        docs: '/docs/components/hovercard',
+        summary:
+          'Preview card beside a link or name on hover or keyboard focus; may hold links and buttons and stays open while the pointer is in it. Touch never opens it.',
+        tags: ['moul-hover-card'],
+        snippet: `<moul-hover-card placement="bottom" open-delay="500" close-delay="300">
+  <a slot="trigger" href="/people/sophea">@sophea</a>
+  <strong>Sophea Chan</strong>
+  <moul-button size="sm" variant="secondary">Follow</moul-button>
+</moul-hover-card>`,
+        script: `card.addEventListener('openchange', (e) => console.log(e.detail.isOpen))`,
+      },
+      {
+        name: 'Notification Bell',
+        docs: '/docs/components/notificationbell',
+        summary:
+          'Bell button with an unread badge that swings when `count` rises and opens a panel listing its children.',
+        tags: ['moul-notification-bell'],
+        snippet: `<moul-notification-bell id="inbox" count="2">
+  <moul-button slot="header-actions" size="sm" variant="ghost">Mark all read</moul-button>
+  <div>Deploy finished</div>
+  <div>New sign-up</div>
+  <a slot="footer" href="/notifications">View all</a>
+</moul-notification-bell>`,
+        script: `const bell = document.querySelector('#inbox')
+bell.prepend(item)
+bell.count += 1
+await bell.removeItem(item)`,
+      },
+      {
+        name: 'Tour',
+        docs: '/docs/components/tour',
+        summary:
+          "Product walkthrough in a modal dialog: the page dims except a cutout around each step's target, with a card of heading, body, progress and Back/Next/Done.",
+        tags: ['moul-tour', 'moul-tour-step'],
+        snippet: `<moul-tour id="welcome">
+  <moul-tour-step heading="Welcome">A quick look around.</moul-tour-step>
+  <moul-tour-step target="#new" heading="Start a project">Everything lives in a project.</moul-tour-step>
+  <moul-tour-step target="#invite" heading="Bring your team" placement="right">Invite people by email.</moul-tour-step>
+</moul-tour>`,
+        script: `const tour = document.querySelector('#welcome')
+tour.start()
+tour.addEventListener('openchange', (e) => {
+  if (!e.detail.isOpen && e.detail.isComplete) localStorage.setItem('tour', 'done')
+})`,
+      },
+      {
+        name: 'FocusMode',
+        docs: '/docs/components/focusmode',
+        summary:
+          'Dims the page around the region it wraps (or `target`); clicks pass through the cutout, and a click on the dim or `Escape` ends it. Visual only, not modal.',
+        tags: ['moul-focus-mode'],
+        snippet: `<moul-focus-mode id="draft">
+  <moul-text-area label="Release notes"></moul-text-area>
+</moul-focus-mode>`,
+        script: `document.querySelector('#draft').toggle()`,
       },
       {
         name: 'CommandPalette',
@@ -580,6 +656,20 @@ palette.addEventListener('select', (e) => console.log(e.detail.item))`,
 </moul-alert>`,
       },
       {
+        name: 'Animated List',
+        docs: '/docs/components/animatedlist',
+        summary:
+          'Feed whose new children grow in and push the others along; `removeItem()` shrinks one away while the rest close ranks, and `is-live` announces arrivals.',
+        tags: ['moul-animated-list'],
+        snippet: `<moul-animated-list id="feed" is-live>
+  <div class="event">Deploy finished</div>
+  <div class="event">New sign-up</div>
+</moul-animated-list>`,
+        script: `const feed = document.querySelector('#feed')
+feed.prepend(newEventElement) // animates in
+await feed.removeItem(feed.items.at(-1))`,
+      },
+      {
         name: 'Card',
         docs: '/docs/components/card',
         summary: 'Surface container with header, body, and footer regions.',
@@ -598,10 +688,23 @@ palette.addEventListener('select', (e) => console.log(e.detail.item))`,
       {
         name: 'Badge',
         docs: '/docs/components/badge',
-        summary: 'Compact status chip or dot indicator.',
+        summary:
+          'Compact status chip or dot indicator; `count` rolls to each new value (`99+` past `max`) and `is-live` pulses a live dot.',
         tags: ['moul-badge'],
         snippet: `<moul-badge tone="success" variant="flat">Active</moul-badge>
-<moul-badge tone="error" is-dot aria-label="Offline"></moul-badge>`,
+<moul-badge tone="error" variant="solid" count="3"></moul-badge>
+<moul-badge tone="success" is-dot is-live aria-label="Online"></moul-badge>`,
+      },
+      {
+        name: 'NumberTicker',
+        docs: '/docs/components/numberticker',
+        summary:
+          'Number that rolls like an odometer (or counts with `mode="count"`) to each new `value`; Intl formatting via `locale` and `formatOptions`, and `from` counts up on first view.',
+        tags: ['moul-number-ticker'],
+        snippet: `<moul-number-ticker value="1280" from="0"></moul-number-ticker>`,
+        script: `const ticker = document.querySelector('moul-number-ticker')
+ticker.formatOptions = { style: 'currency', currency: 'USD' }
+ticker.value = 1530`,
       },
       {
         name: 'Avatar',
@@ -649,9 +752,23 @@ palette.addEventListener('select', (e) => console.log(e.detail.item))`,
       {
         name: 'Spinner',
         docs: '/docs/components/spinner',
-        summary: 'Indeterminate loading indicator with accessible label.',
+        summary:
+          'Indeterminate loading indicator with accessible label; `variant` is `ring`, `dots`, `shape` or `orbit`.',
         tags: ['moul-spinner'],
-        snippet: `<moul-spinner size="sm" label="Loading projects"></moul-spinner>`,
+        snippet: `<moul-spinner size="sm" label="Loading projects"></moul-spinner>
+<moul-spinner variant="dots" label="Saving"></moul-spinner>`,
+      },
+      {
+        name: 'StepLoader',
+        docs: '/docs/components/steploader',
+        summary:
+          'Checklist that ticks off the steps of a long task: drawn checks for done steps, a spinner on the current one; `interval` advances it by itself and `is-error` marks a failure.',
+        tags: ['moul-step-loader'],
+        snippet: `<moul-step-loader id="publish" label="Publishing site"></moul-step-loader>`,
+        script: `const loader = document.querySelector('#publish')
+loader.steps = ['Checking files', { label: 'Uploading', description: '12 files' }, 'Publishing']
+loader.addEventListener('complete', () => console.log('done'))
+loader.current = 1 // or loader.isError = true`,
       },
       {
         name: 'Skeleton',
@@ -668,6 +785,19 @@ palette.addEventListener('select', (e) => console.log(e.detail.item))`,
           'Determinate or indeterminate progress with `role="progressbar"`.',
         tags: ['moul-progress-bar'],
         snippet: `<moul-progress-bar value="64" max="100" tone="primary" aria-label="Upload progress"></moul-progress-bar>`,
+      },
+      {
+        name: 'ResultCard',
+        docs: '/docs/components/resultcard',
+        summary:
+          'Success or failure card whose ring and check (or cross) draw themselves; start it `pending` and set `status` when the task ends so the outcome is announced.',
+        tags: ['moul-result-card'],
+        snippet: `<moul-result-card status="pending" heading="Processing payment" description="This takes a few seconds.">
+  <moul-button slot="actions" variant="primary">Done</moul-button>
+</moul-result-card>`,
+        script: `const card = document.querySelector('moul-result-card')
+card.status = 'success'
+card.heading = 'Payment sent'`,
       },
       {
         name: 'TagGroup',
@@ -717,13 +847,20 @@ table.renderExpanded = (row) => html\`<p>\${row.name} joined in 2024.</p>\``,
         name: 'Toast',
         docs: '/docs/components/toast',
         summary:
-          'Transient notifications managed by the `toastQueue` singleton.',
+          'Transient notifications queued with `toastQueue.add()`: swipe to dismiss, an optional stacked deck (`is-stacked`, `toastQueue.isStacked`), and undo toasts with an `action` button and a `showCountdown` bar. Timers pause on hover, swipe and keyboard focus.',
         tags: ['moul-toast', 'moul-toast-region'],
-        snippet: `<moul-toast-region></moul-toast-region>
-<moul-toast tone="success" title="Saved" description="Your profile was updated."></moul-toast>`,
+        snippet: `<moul-toast-region is-stacked></moul-toast-region>
+<moul-toast title="3 rows deleted" duration="8000" show-countdown>
+  <moul-button slot="action" size="sm" variant="secondary">Undo</moul-button>
+</moul-toast>`,
         script: `import { toastQueue } from '@moul-dev/web-component'
 
-toastQueue.add({ title: 'Saved', description: 'Your profile was updated.', tone: 'success' })`,
+toastQueue.add({
+  title: '3 rows deleted',
+  duration: 8000,
+  showCountdown: true,
+  action: { label: 'Undo', onAction: () => restoreRows() },
+})`,
       },
       {
         name: 'EmptyState',
@@ -735,6 +872,48 @@ toastQueue.add({ title: 'Saved', description: 'Your profile was updated.', tone:
   <span slot="description">Create your first project to get started.</span>
   <moul-button slot="actions" variant="primary">New project</moul-button>
 </moul-empty-state>`,
+      },
+      {
+        name: 'ExpandableCard',
+        docs: '/docs/components/expandablecard',
+        summary:
+          'Card that springs from its place in the page into a centred modal dialog to show its `details`, and shrinks back; the closed card is one button.',
+        tags: ['moul-expandable-card'],
+        snippet: `<moul-expandable-card size="sm">
+  <img slot="media" src="/cabin.jpg" alt="" />
+  <h3>Mountain cabin</h3>
+  <span>2 nights · sleeps 4</span>
+  <div slot="details">
+    <p>Full description…</p>
+    <moul-button variant="primary">Book</moul-button>
+  </div>
+</moul-expandable-card>`,
+        script: `card.addEventListener('openchange', (e) => console.log(e.detail.isOpen))
+await card.setOpen(true)`,
+      },
+      {
+        name: 'PullToRefresh',
+        docs: '/docs/components/pulltorefresh',
+        summary:
+          'Scroll container that refreshes when pulled down from its top; pass the work to `event.detail.waitUntil()`.',
+        tags: ['moul-pull-to-refresh'],
+        snippet: `<moul-pull-to-refresh style="height: 100%">
+  <ul id="inbox">…</ul>
+</moul-pull-to-refresh>`,
+        script: `feed.addEventListener('refresh', (e) => e.detail.waitUntil(loadNewMessages()))`,
+      },
+      {
+        name: 'Confetti',
+        docs: '/docs/components/confetti',
+        summary:
+          "Confetti burst or rocket on success, from the effects entry (`import '@moul-dev/web-component/effects'`); decorative, skipped under reduced motion.",
+        tags: ['moul-confetti'],
+        snippet: `<moul-confetti>
+  <moul-button id="pay">Pay $120</moul-button>
+</moul-confetti>`,
+        script: `await submitPayment()
+document.querySelector('moul-confetti').fire({ variant: 'rocket' })
+// or: import { fireConfetti } from '@moul-dev/web-component/effects'`,
       },
     ],
   },

@@ -1,6 +1,7 @@
 import * as fc from 'fast-check'
 import { html, type LitElement, render } from 'lit'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { mockReducedMotion } from '../test-setup'
 import './Table/Table'
 import './Toast/Toast'
 import './Toast/ToastQueue'
@@ -690,6 +691,9 @@ describe('Empirical Adversarial Challenge Suite: MoulTable & MoulToast', () => {
     })
 
     it('CHAL-TST-03: Timers test with vi.useFakeTimers() advancing by duration and dismiss cleanup', async () => {
+      // The exit animation runs on real frames, which fake timers never
+      // advance; reduced motion makes it instant so only the timers count.
+      const motion = mockReducedMotion(true)
       vi.useFakeTimers()
 
       const id = toastQueue.add({
@@ -720,9 +724,13 @@ describe('Empirical Adversarial Challenge Suite: MoulTable & MoulToast', () => {
       expect(region?.querySelector(`#${id}`)).toBeNull()
 
       vi.useRealTimers()
+      motion.restore()
     })
 
     it('CHAL-TST-04: Pointer hover pauses dismiss timer and unhover resumes with remaining time', async () => {
+      // The exit animation runs on real frames, which fake timers never
+      // advance; reduced motion makes it instant so only the timers count.
+      const motion = mockReducedMotion(true)
       vi.useFakeTimers()
 
       const id = toastQueue.add({
@@ -763,6 +771,7 @@ describe('Empirical Adversarial Challenge Suite: MoulTable & MoulToast', () => {
       expect(region?.querySelector(`#${id}`)).toBeNull()
 
       vi.useRealTimers()
+      motion.restore()
     })
 
     it('CHAL-TST-05: Single and idempotent close() calls and disconnectedCallback safety', async () => {
@@ -836,6 +845,9 @@ describe('Empirical Adversarial Challenge Suite: MoulTable & MoulToast', () => {
     })
 
     it('CHAL-TST-07: Staggered multi-toast lifecycle with vi.useFakeTimers() and manual dismiss button', async () => {
+      // The exit animation runs on real frames, which fake timers never
+      // advance; reduced motion makes it instant so only the timers count.
+      const motion = mockReducedMotion(true)
       vi.useFakeTimers()
 
       // Add 3 toasts with staggered durations
@@ -882,6 +894,7 @@ describe('Empirical Adversarial Challenge Suite: MoulTable & MoulToast', () => {
       expect(region?.querySelectorAll('moul-toast').length).toBe(0)
 
       vi.useRealTimers()
+      motion.restore()
     })
   })
 })

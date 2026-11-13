@@ -1,0 +1,22 @@
+---
+/**
+ * Confetti demo wiring, so the MDX previews stay plain markup. Loads the
+ * effects entry, then a press on a `moul-button[data-confetti]` fires the
+ * `moul-confetti` around it, with the variant named by the attribute.
+ */
+---
+
+<script>
+  import '@moul-dev/web-component/effects'
+  import type { MoulConfetti } from '@moul-dev/web-component/effects'
+
+  document.addEventListener('press', (event) => {
+    const button = (event.target as Element | null)?.closest?.<HTMLElement>(
+      '[data-confetti]',
+    )
+    const confetti = button?.closest('moul-confetti') as MoulConfetti | null
+    if (!button || !confetti) return
+    const variant = button.dataset.confetti === 'rocket' ? 'rocket' : 'burst'
+    void confetti.fire({ variant })
+  })
+</script>

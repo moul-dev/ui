@@ -1,0 +1,115 @@
+---
+title: FocusMode (សមាសភាគ)
+description: ឯកសារណែនាំសម្រាប់សមាសភាគ FocusMode Web Component
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import FocusModeDemo from '@/components/demos/FocusModeDemo.astro';
+
+<FocusModeDemo />
+
+`<moul-focus-mode>` dims everything on the page except the region it wraps, so the reader can concentrate on one thing: a draft, a form, a chart under discussion. Set `is-open` and the dim closes in from the edges of the screen to a rounded cutout around the region. The region stays bright and fully usable, because clicks inside the cutout pass straight through the dim layer.
+
+<ComponentPreview align="stretch" stack>
+<moul-focus-mode id="focus-draft">
+  <moul-card variant="bordered">
+    <moul-card-body>
+      <div class="demo-stack">
+        <moul-text-area label="Release notes" rows="4" placeholder="What changed in this release?"></moul-text-area>
+        <div class="demo-row" style="justify-content: flex-end">
+          <moul-button variant="secondary" data-focus-toggle="focus-draft"><span>Focus</span></moul-button>
+        </div>
+      </div>
+    </moul-card-body>
+  </moul-card>
+</moul-focus-mode>
+</ComponentPreview>
+
+```html
+<moul-focus-mode id="draft">
+  <moul-text-area label="Release notes" rows="4"></moul-text-area>
+  <moul-button variant="secondary" id="focus">Focus</moul-button>
+</moul-focus-mode>
+
+<script type="module">
+  const draft = document.querySelector('#draft')
+  document.querySelector('#focus').addEventListener('press', () => draft.toggle())
+</script>
+```
+
+A click on the dimmed page or `Escape` ends focus mode. Both fire `openchange` with `detail.isOpen` set to `false`, and so do `setOpen()` and `toggle()`. Setting `is-open` directly does not fire it. While focus mode is open the cutout follows the region as the page scrolls and as the region grows or shrinks.
+
+## Blur
+
+Set `is-blurred` to blur the page as well as dim it. `--focus-mode-blur` sets the radius (4px by default) and `--focus-mode-overlay` the colour of the dim.
+
+<ComponentPreview align="stretch" stack>
+<moul-focus-mode id="focus-blur" is-blurred style="--focus-mode-blur: 6px">
+  <moul-card variant="bordered">
+    <moul-card-body>
+      <div class="demo-row" style="justify-content: space-between">
+        <span>Only this card stays sharp.</span>
+        <moul-button variant="secondary" data-focus-toggle="focus-blur"><span>Focus</span></moul-button>
+      </div>
+    </moul-card-body>
+  </moul-card>
+</moul-focus-mode>
+</ComponentPreview>
+
+```html
+<moul-focus-mode is-blurred style="--focus-mode-blur: 6px">…</moul-focus-mode>
+```
+
+## Another element
+
+`target` points the cutout at another element, selected by a CSS selector (or, from script, the element itself), so the focus mode can sit anywhere, even empty. `padding` sets the space around the region (8px by default) and `radius` the corner radius, which otherwise follows the `--radius-xl` token.
+
+<ComponentPreview stack>
+<div class="demo-row">
+  <moul-badge id="focus-status" tone="warning"><span>2 checks failing</span></moul-badge>
+  <moul-button variant="outline" data-focus-toggle="focus-target"><span>Show me</span></moul-button>
+</div>
+<moul-focus-mode id="focus-target" target="#focus-status" padding="6"></moul-focus-mode>
+</ComponentPreview>
+
+```html
+<moul-badge id="status" tone="warning">2 checks failing</moul-badge>
+<moul-focus-mode target="#status" padding="6"></moul-focus-mode>
+```
+
+## Accessibility
+
+- Focus mode is a visual aid, not a modal. It adds no focus stop and moves no focus, the dimmed page stays in the Tab order and in the accessibility tree, and screen readers are told nothing when it opens or closes. If opening it means "work here now", move focus into the region yourself.
+- While it is open, `Escape` anywhere on the page ends it, unless another element has already handled that key (an open menu or dialog closes first).
+- The dim layer is hidden from screen readers.
+- Under reduced motion the dim appears and disappears at once, and the cutout sits on the region from the start instead of closing in on it.
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `is-open` | `isOpen` | `boolean` | `false` |
+| `target` | `target` | `string \| Element \| null` | `null` (the region itself) |
+| `padding` | `padding` | `number` | `8` |
+| `radius` | `radius` | `number \| undefined` | from `--radius-xl` |
+| `is-blurred` | `isBlurred` | `boolean` | `false` |
+
+| Method | Description |
+| :-- | :-- |
+| `setOpen(isOpen)` | Opens or closes focus mode and fires `openchange`. |
+| `toggle()` | Flips `isOpen` and fires `openchange`. |
+
+| Event | Type |
+| :-- | :-- |
+| `openchange` | `CustomEvent<{ isOpen: boolean }>` |
+
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | The region to keep in focus. |
+
+| CSS property | Description |
+| :-- | :-- |
+| `--focus-mode-overlay` | Colour of the dimmed page. Defaults to `--color-overlay`. |
+| `--focus-mode-blur` | Blur radius with `is-blurred`. Defaults to `4px`. |
+
+**CSS parts:** `overlay`
