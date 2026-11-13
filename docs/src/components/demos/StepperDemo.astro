@@ -1,0 +1,57 @@
+---
+/**
+ * Stepper demo wiring, so the MDX previews stay plain markup:
+ *   data-stepper-next="id"      → click calls `next()` on #id
+ *   data-stepper-previous="id"  → click calls `previous()` on #id
+ *   data-stepper-validate       → on a stepper, cancels `stepchange` forward
+ *                                 while the step being left has an unticked
+ *                                 `moul-checkbox[is-required]`, and flags
+ *                                 that step `is-invalid`
+ */
+---
+
+<script>
+  type Step = HTMLElement & { isInvalid: boolean }
+  type Stepper = HTMLElement & {
+    steps: Step[]
+    next(): boolean
+    previous(): boolean
+  }
+  type Checkbox = HTMLElement & { isChecked: boolean }
+
+  document.addEventListener('click', (event) => {
+    const button = (event.target as Element | null)?.closest?.<HTMLElement>(
+      '[data-stepper-next], [data-stepper-previous]',
+    )
+    if (!button) return
+    const { stepperNext, stepperPrevious } = button.dataset
+    const stepper = document.getElementById(
+      stepperNext ?? stepperPrevious ?? '',
+    ) as Stepper | null
+    if (!stepper) return
+    if (stepperNext) stepper.next()
+    else stepper.previous()
+  })
+
+  for (const stepper of document.querySelectorAll<Stepper>(
+    '[data-stepper-validate]',
+  )) {
+    // A ticked box clears the error on its step.
+    stepper.addEventListener('change', (event) => {
+      const box = (event.target as Element).closest?.<Checkbox>('moul-checkbox')
+      const step = box?.closest<Step>('moul-step')
+      if (step && box?.isChecked) step.isInvalid = false
+    })
+    stepper.addEventListener('stepchange', (event) => {
+      const { current, previous } = (
+        event as CustomEvent<{ current: number; previous: number }>
+      ).detail
+      if (current < previous) return
+      const step = stepper.steps[previous]
+      const required = step?.querySelector<Checkbox>('moul-checkbox[is-required]')
+      if (!step || !required || required.isChecked) return
+      step.isInvalid = true
+      event.preventDefault()
+    })
+  }
+</script>

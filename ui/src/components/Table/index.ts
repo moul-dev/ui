@@ -1,2 +1,2 @@
-export type { TableColumn } from './Table'
+export type { TableColumn, TableFilterOption } from './Table'
 export { MoulTable, MoulTable as Table } from './Table'

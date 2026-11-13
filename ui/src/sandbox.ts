@@ -25,44 +25,71 @@ import { defineElement } from './utils/define-element'
 import './index'
 import {
   type CommandPaletteItemData,
+  type FileUploadContext,
+  type MoulButton,
+  type MoulStepper,
   SERVER_LOG_RAW,
   SERVER_LOGS,
+  type TableColumn,
   toastQueue,
 } from './index'
 
-interface TableColumnItem {
-  key: string
-  title: string
-  sortable?: boolean
-}
-
-const TABLE_COLUMNS: TableColumnItem[] = [
-  { key: 'name', title: 'User', sortable: true },
+const TABLE_COLUMNS: TableColumn[] = [
+  { key: 'name', title: 'User' },
   { key: 'role', title: 'Role' },
-  { key: 'status', title: 'Status' },
-  { key: 'activity', title: 'Last Active' },
+  {
+    key: 'status',
+    title: 'Status',
+    filterOptions: ['Active', 'In Review', 'Away'].map((value) => ({
+      value,
+      label: value,
+    })),
+  },
+  { key: 'activity', title: 'Last Active', sortable: false },
 ]
+
+/** Pretends to upload a file in about two seconds, reporting progress. */
+const fakeUpload = (_file: File, { signal, onProgress }: FileUploadContext) =>
+  new Promise((resolve, reject) => {
+    let percent = 0
+    const timer = setInterval(() => {
+      percent += 10
+      onProgress(Math.min(percent, 100))
+      if (percent >= 100) {
+        clearInterval(timer)
+        resolve({ ok: true })
+      }
+    }, 200)
+    signal.addEventListener('abort', () => {
+      clearInterval(timer)
+      reject(signal.reason)
+    })
+  })
 
 const TABLE_DATA: Record<string, unknown>[] = [
   {
+    id: '1',
     name: 'Sarah Chen',
     role: 'Staff Engineer',
     status: 'Active',
     activity: '2m ago',
   },
   {
+    id: '2',
     name: 'Marcus Brody',
     role: 'Product Designer',
     status: 'In Review',
     activity: '15m ago',
   },
   {
+    id: '3',
     name: 'Elena Rostova',
     role: 'DevOps Lead',
     status: 'Active',
     activity: '1h ago',
   },
   {
+    id: '4',
     name: 'Devon Vance',
     role: 'Security Architect',
     status: 'Away',
@@ -515,6 +542,75 @@ export class MoulSandbox extends LitElement {
         </div>
 
         <div class="demo-group">
+          <span class="group-label">Button States</span>
+          <div class="demo-row">
+            <moul-button
+              @press=${(e: Event) =>
+                (e.currentTarget as MoulButton)
+                  .run(
+                    () => new Promise((resolve) => setTimeout(resolve, 1200)),
+                  )
+                  .catch(() => {})}
+            >
+              Save
+              <span slot="pending">Saving…</span>
+              <span slot="success">Saved</span>
+            </moul-button>
+            <moul-button
+              variant="outline"
+              @press=${(e: Event) =>
+                (e.currentTarget as MoulButton)
+                  .run(
+                    () =>
+                      new Promise((_, reject) =>
+                        setTimeout(
+                          () => reject(new Error('Network error')),
+                          1200,
+                        ),
+                      ),
+                  )
+                  .catch(() => {})}
+            >
+              Publish
+              <span slot="error">Try again</span>
+            </moul-button>
+          </div>
+        </div>
+
+        <div class="demo-group">
+          <span class="group-label">Split Buttons</span>
+          <div class="demo-row">
+            <moul-split-button
+              menu-label="More deploy options"
+              @press=${() => this.triggerToast('success')}
+              @action=${(e: CustomEvent<{ value: string }>) =>
+                console.log('[sandbox] split action', e.detail.value)}
+            >
+              Deploy
+              <moul-menu-item slot="menu" value="staging">Deploy to staging</moul-menu-item>
+              <moul-menu-separator slot="menu"></moul-menu-separator>
+              <moul-menu-item slot="menu" value="schedule">Schedule deploy…</moul-menu-item>
+            </moul-split-button>
+            <moul-split-button variant="outline" menu-label="More save options">
+              Save
+              <moul-menu-item slot="menu" value="save-as">Save as…</moul-menu-item>
+            </moul-split-button>
+            <moul-split-button is-disabled>
+              Deploy
+              <moul-menu-item slot="menu" value="staging">Deploy to staging</moul-menu-item>
+            </moul-split-button>
+          </div>
+        </div>
+
+        <div class="demo-group">
+          <span class="group-label">Theme Toggle</span>
+          <div class="demo-row">
+            <moul-theme-toggle></moul-theme-toggle>
+            <moul-theme-toggle modes="light dark" variant="outline"></moul-theme-toggle>
+          </div>
+        </div>
+
+        <div class="demo-group">
           <span class="group-label">Button Group & Toggle Controls</span>
           <div class="demo-row">
             <moul-button-group spacing="none">
@@ -553,7 +649,7 @@ export class MoulSandbox extends LitElement {
       <div class="category-section" id="surfaces">
         <div class="section-header">
           <h3 class="section-title">2. Surfaces & Feedback</h3>
-          <p class="section-subtitle">moul-card, moul-alert, moul-badge, moul-avatar, moul-typography, moul-separator, moul-skeleton, moul-tag-group, moul-empty-state, moul-table, moul-toast, toastQueue</p>
+          <p class="section-subtitle">moul-card, moul-alert, moul-badge, moul-avatar, moul-typography, moul-separator, moul-skeleton, moul-tag-group, moul-empty-state, moul-accordion, moul-icon-morph, moul-table, moul-toast, toastQueue</p>
         </div>
 
         <div class="section-grid">
@@ -720,12 +816,86 @@ export class MoulSandbox extends LitElement {
           </div>
         </div>
 
+        <div class="demo-group">
+          <span class="group-label">Accordion & Icon Morph</span>
+          <moul-accordion variant="separated">
+            <moul-accordion-item value="shipping" heading="How long does shipping take?" is-open>
+              Next day inside Phnom Penh, two to three days elsewhere.
+            </moul-accordion-item>
+            <moul-accordion-item value="returns" heading="Can I return an item?">
+              Within 30 days, unused and in its original packaging.
+            </moul-accordion-item>
+            <moul-accordion-item value="sso" heading="Single sign-on" is-disabled>
+              Available on the Business plan.
+            </moul-accordion-item>
+          </moul-accordion>
+          <div class="demo-row">
+            <moul-button
+              variant="secondary"
+              is-icon
+              aria-label="Toggle menu icon"
+              @click=${(e: Event) => {
+                const icon = (e.currentTarget as HTMLElement).querySelector(
+                  'moul-icon-morph',
+                )
+                if (icon) icon.name = icon.name === 'close' ? 'menu' : 'close'
+              }}
+            >
+              <moul-icon-morph name="menu"></moul-icon-morph>
+            </moul-button>
+            <moul-button
+              variant="secondary"
+              is-icon
+              aria-label="Toggle play icon"
+              @click=${(e: Event) => {
+                const icon = (e.currentTarget as HTMLElement).querySelector(
+                  'moul-icon-morph',
+                )
+                if (icon) icon.name = icon.name === 'pause' ? 'play' : 'pause'
+              }}
+            >
+              <moul-icon-morph name="play"></moul-icon-morph>
+            </moul-button>
+            <moul-button
+              variant="secondary"
+              is-icon
+              aria-label="Toggle sun icon"
+              @click=${(e: Event) => {
+                const icon = (e.currentTarget as HTMLElement).querySelector(
+                  'moul-icon-morph',
+                )
+                if (icon) icon.name = icon.name === 'moon' ? 'sun' : 'moon'
+              }}
+            >
+              <moul-icon-morph name="sun"></moul-icon-morph>
+            </moul-button>
+            <moul-icon-morph name="loader" size="md"></moul-icon-morph>
+          </div>
+        </div>
+
         <moul-card>
           <moul-card-header>
             <h4 style="margin: 0;">Interactive Data Table</h4>
           </moul-card-header>
           <moul-card-body>
-            <moul-table .columns=${TABLE_COLUMNS} .data=${TABLE_DATA} is-sortable></moul-table>
+            <moul-table
+              id="sandbox-table"
+              aria-label="Team members"
+              .columns=${TABLE_COLUMNS}
+              .data=${TABLE_DATA}
+              .renderExpanded=${(row: { name: string; role: string }) =>
+                html`<span class="muted">${row.name} works as ${row.role}.</span>`}
+              is-searchable
+              is-sortable
+              is-selectable
+            >
+              <moul-button slot="toolbar" size="sm" variant="secondary">Export</moul-button>
+            </moul-table>
+            <moul-selection-toolbar for="sandbox-table" position="sticky">
+              <moul-button size="sm" variant="secondary">Archive</moul-button>
+              <moul-button size="sm" variant="secondary">Export</moul-button>
+              <moul-button size="sm" variant="danger-soft">Delete</moul-button>
+            </moul-selection-toolbar>
           </moul-card-body>
         </moul-card>
       </div>
@@ -737,7 +907,7 @@ export class MoulSandbox extends LitElement {
       <div class="category-section" id="overlays">
         <div class="section-header">
           <h3 class="section-title">3. Overlays & Navigation</h3>
-          <p class="section-subtitle">moul-modal, moul-alert-dialog, moul-drawer, moul-popover, moul-tooltip, moul-command-palette, moul-tabs, moul-breadcrumbs, moul-pagination, moul-link</p>
+          <p class="section-subtitle">moul-modal, moul-alert-dialog, moul-drawer, moul-popover, moul-tooltip, moul-command-palette, moul-dropdown-menu, moul-stepper, moul-tree, moul-tabs, moul-breadcrumbs, moul-pagination, moul-link</p>
         </div>
 
         <div class="demo-group">
@@ -817,6 +987,86 @@ export class MoulSandbox extends LitElement {
         </div>
 
         <div class="demo-group">
+          <span class="group-label">Dropdown Menus</span>
+          <div class="demo-row">
+            <moul-dropdown-menu
+              @action=${(e: CustomEvent<{ value: string }>) =>
+                console.log('[sandbox] menu action', e.detail.value)}
+            >
+              <moul-button slot="trigger" variant="outline">Actions</moul-button>
+              <moul-menu-item value="edit" shortcut="⌘E">Edit</moul-menu-item>
+              <moul-menu-item value="duplicate">Duplicate</moul-menu-item>
+              <moul-menu-item value="archive" is-disabled>Archive</moul-menu-item>
+              <moul-menu-separator></moul-menu-separator>
+              <moul-menu-item value="delete" variant="danger">Delete</moul-menu-item>
+            </moul-dropdown-menu>
+            <moul-dropdown-menu variant="gooey" placement="bottom-end">
+              <moul-button slot="trigger" variant="secondary">View</moul-button>
+              <moul-menu-item type="checkbox" value="grid" is-checked>Show grid</moul-menu-item>
+              <moul-menu-group label="Sort by">
+                <moul-menu-item type="radio" value="name" is-checked>Name</moul-menu-item>
+                <moul-menu-item type="radio" value="date">Date</moul-menu-item>
+              </moul-menu-group>
+            </moul-dropdown-menu>
+          </div>
+        </div>
+
+        <div class="demo-group">
+          <span class="group-label">Stepper</span>
+          <moul-stepper id="sandbox-stepper">
+            <moul-step label="Cart" description="3 items">
+              <p style="margin: 0; font-size: 0.875rem;">Two shirts and a cap.</p>
+            </moul-step>
+            <moul-step label="Delivery">
+              <moul-text-field label="Address" placeholder="Street 240, Phnom Penh"></moul-text-field>
+            </moul-step>
+            <moul-step label="Payment">
+              <p style="margin: 0; font-size: 0.875rem;">Pay on delivery.</p>
+            </moul-step>
+            <moul-step label="Done">
+              <p style="margin: 0; font-size: 0.875rem;">Order placed.</p>
+            </moul-step>
+          </moul-stepper>
+          <div class="demo-row">
+            <moul-button
+              variant="secondary"
+              @click=${() =>
+                this.renderRoot
+                  .querySelector<MoulStepper>('#sandbox-stepper')
+                  ?.previous()}
+            >
+              Back
+            </moul-button>
+            <moul-button
+              @click=${() =>
+                this.renderRoot
+                  .querySelector<MoulStepper>('#sandbox-stepper')
+                  ?.next()}
+            >
+              Next
+            </moul-button>
+          </div>
+        </div>
+
+        <div class="demo-group">
+          <span class="group-label">Tree</span>
+          <moul-tree label="Project files" style="max-width: 20rem;">
+            <moul-tree-item value="src" label="src" is-expanded>
+              <moul-tree-item value="src/components" label="components" is-expanded>
+                <moul-tree-item value="src/components/button.ts" label="button.ts" is-selected></moul-tree-item>
+                <moul-tree-item value="src/components/tree.ts" label="tree.ts"></moul-tree-item>
+              </moul-tree-item>
+              <moul-tree-item value="src/index.ts" label="index.ts"></moul-tree-item>
+              <moul-tree-item value="src/legacy.ts" label="legacy.ts" is-disabled></moul-tree-item>
+            </moul-tree-item>
+            <moul-tree-item value="docs" label="docs">
+              <moul-tree-item value="docs/intro.md" label="intro.md"></moul-tree-item>
+            </moul-tree-item>
+            <moul-tree-item value="package.json" label="package.json"></moul-tree-item>
+          </moul-tree>
+        </div>
+
+        <div class="demo-group">
           <span class="group-label">Tabs & Roving Focus</span>
           <moul-tabs
             selected-key=${this.selectedTab}
@@ -882,7 +1132,7 @@ export class MoulSandbox extends LitElement {
       <div class="category-section" id="forms">
         <div class="section-header">
           <h3 class="section-title">4. Forms & Inputs</h3>
-          <p class="section-subtitle">moul-form, moul-text-field, moul-text-area, moul-number-field, moul-input-otp, moul-select, moul-combobox, moul-switch, moul-slider, moul-checkbox-group, moul-date-picker, moul-calendar</p>
+          <p class="section-subtitle">moul-form, moul-text-field, moul-text-area, moul-number-field, moul-input-otp, moul-select, moul-combobox, moul-switch, moul-slider, moul-checkbox-group, moul-date-picker, moul-calendar, moul-file-upload</p>
         </div>
 
         <div class="section-grid">
@@ -1001,6 +1251,22 @@ export class MoulSandbox extends LitElement {
                   }}
                 ></moul-input-otp>
               </div>
+            </moul-card-body>
+          </moul-card>
+
+          <moul-card>
+            <moul-card-header>
+              <h4 style="margin: 0;">File Upload</h4>
+            </moul-card-header>
+            <moul-card-body>
+              <moul-file-upload
+                label="Attachments"
+                description="Images or PDFs, up to 5 MB each."
+                accept="image/*,.pdf"
+                max-size="5242880"
+                is-multiple
+                .upload=${fakeUpload}
+              ></moul-file-upload>
             </moul-card-body>
           </moul-card>
 
@@ -1468,15 +1734,24 @@ export class MoulSandbox extends LitElement {
       </moul-drawer>
 
       <moul-drawer
-        placement="bottom"
+        is-sheet
         aria-label="Share"
         ?is-open=${this.activeDrawer === 'bottom'}
         @openchange=${this.handleDrawerOpenChange}
       >
         <h3 slot="header" style="margin: 0;">Share</h3>
         <p style="margin: 0; font-size: 0.875rem;">
-          Bottom sheets work well for quick actions on touch devices.
+          Bottom sheets work well for quick actions on touch devices. Drag the
+          handle down to dismiss.
         </p>
+        <moul-button
+          slot="footer"
+          @click=${() => {
+            this.activeDrawer = ''
+          }}
+        >
+          Done
+        </moul-button>
       </moul-drawer>
 
       <!-- Command Palette (also opens with ⌘K / Ctrl+K) -->

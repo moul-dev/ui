@@ -280,9 +280,11 @@ describe('MoulButton (`moul-button`)', () => {
     const innerBtn = btn.shadowRoot?.querySelector('button')
     expect(innerBtn?.getAttribute('aria-busy')).toBe('true')
 
-    const spinner = btn.shadowRoot?.querySelector('moul-spinner')
-    expect(spinner).not.toBeNull()
-    expect(spinner?.getAttribute('size')).toBe('sm')
+    // Pending shows the `loader` of the state icon, which morphs into the
+    // success and error marks; it replaced the `moul-spinner`.
+    const icon = btn.shadowRoot?.querySelector('[part="icon"] moul-icon-morph')
+    expect(icon?.getAttribute('name')).toBe('loader')
+    expect(icon?.getAttribute('size')).toBe('sm')
 
     let pressCount = 0
     btn.addEventListener('press', () => {

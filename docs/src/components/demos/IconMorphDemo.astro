@@ -1,0 +1,143 @@
+---
+/**
+ * moul-icon-morph demos.
+ *
+ * `playground`: one large icon and a button per built-in name. Line icons
+ * morph into line icons, sun, moon and system into each other, and anything
+ * else cross-fades.
+ *
+ * `toggles`: icon-only buttons that cycle through a few names each.
+ *
+ * The click wiring is document-wide, so any `moul-button` on the page with
+ * `data-icon-morph-cycle="a b"` (and optional `data-icon-morph-labels="A|B"`)
+ * cycles the `moul-icon-morph` inside it.
+ */
+interface Props {
+  mode?: 'playground' | 'toggles'
+}
+const { mode = 'playground' } = Astro.props
+
+const names = [
+  'menu',
+  'close',
+  'plus',
+  'minus',
+  'check',
+  'chevron-up',
+  'chevron-down',
+  'chevron-left',
+  'chevron-right',
+  'arrow-up',
+  'arrow-down',
+  'arrow-left',
+  'arrow-right',
+  'play',
+  'pause',
+  'more',
+  'loader',
+  'error',
+  'sun',
+  'moon',
+  'system',
+]
+
+const toggles = [
+  { cycle: 'menu close', labels: 'Open menu|Close menu' },
+  { cycle: 'play pause', labels: 'Play|Pause' },
+  { cycle: 'plus minus', labels: 'Expand|Collapse' },
+  { cycle: 'chevron-down chevron-up', labels: 'Show more|Show less' },
+  { cycle: 'sun moon system', labels: 'Light theme|Dark theme|System theme' },
+  { cycle: 'loader check error', labels: 'Saving|Saved|Save failed' },
+]
+---
+
+{
+  mode === 'playground' ? (
+    <div class="icon-morph-playground">
+      <moul-icon-morph name="menu" class="icon-morph-stage" data-icon-morph-stage></moul-icon-morph>
+      <div class="icon-morph-names" role="group" aria-label="Icon">
+        {names.map((name) => (
+          <moul-button
+            size="sm"
+            variant={name === 'menu' ? 'secondary' : 'ghost'}
+            data-icon-morph-name={name}
+          >
+            {name}
+          </moul-button>
+        ))}
+      </div>
+    </div>
+  ) : (
+    <div class="demo-row">
+      {toggles.map(({ cycle, labels }) => (
+        <moul-button
+          variant="secondary"
+          is-icon
+          aria-label={labels.split('|')[0]}
+          data-icon-morph-cycle={cycle}
+          data-icon-morph-labels={labels}
+        >
+          <moul-icon-morph name={cycle.split(' ')[0]} label={labels.split('|')[0]}></moul-icon-morph>
+        </moul-button>
+      ))}
+    </div>
+  )
+}
+
+<style is:global>
+  .icon-morph-playground {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-6);
+    width: 100%;
+  }
+
+  .icon-morph-stage {
+    font-size: 4rem;
+    color: var(--color-fg);
+  }
+
+  .icon-morph-names {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--spacing-1);
+    max-width: 40rem;
+  }
+</style>
+
+<script>
+  type IconMorph = HTMLElement & { name: string; label: string }
+
+  document.addEventListener('click', (event) => {
+    const target = event.target as Element | null
+
+    const pick = target?.closest<HTMLElement>('[data-icon-morph-name]')
+    if (pick) {
+      const playground = pick.closest('.icon-morph-playground')
+      const stage = playground?.querySelector<IconMorph>(
+        '[data-icon-morph-stage]',
+      )
+      if (stage) stage.name = pick.dataset.iconMorphName ?? ''
+      for (const button of playground?.querySelectorAll(
+        '[data-icon-morph-name]',
+      ) ?? []) {
+        button.setAttribute('variant', button === pick ? 'secondary' : 'ghost')
+      }
+      return
+    }
+
+    const toggle = target?.closest<HTMLElement>('[data-icon-morph-cycle]')
+    const icon = toggle?.querySelector<IconMorph>('moul-icon-morph')
+    if (!toggle || !icon) return
+    const names = (toggle.dataset.iconMorphCycle ?? '').split(' ')
+    const labels = (toggle.dataset.iconMorphLabels ?? '').split('|')
+    const next = (names.indexOf(icon.name) + 1) % names.length
+    icon.name = names[next]
+    if (labels[next]) {
+      icon.label = labels[next]
+      toggle.setAttribute('aria-label', labels[next])
+    }
+  })
+</script>

@@ -1,0 +1,185 @@
+---
+title: Split Button (សមាសភាគ)
+description: ឯកសារណែនាំសម្រាប់សមាសភាគ Split Button Web Component
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+`<moul-split-button>` pairs a main action with a chevron that opens a menu of related actions, drawn as one pill with a divider between the two parts. Use it when one action is the usual choice and its variants are rarer, such as "Deploy" with "Deploy to staging" behind the chevron. When no action stands out, use `<moul-dropdown-menu>` on its own.
+
+## Usage
+
+Put the main action's label in the default slot and its icon in the `prefix` slot. Menu items go on the split button itself with `slot="menu"`: `<moul-menu-item>`, `<moul-menu-group>` and `<moul-menu-separator>` all work, with the same keyboard navigation, type-ahead, checkbox and radio items as in a dropdown menu. Pressing the main part fires `press`; activating a menu item fires `action`. The chevron never fires `press`.
+
+<ComponentPreview minHeight="300px" align="start">
+<moul-split-button menu-label="More deploy options">
+  <svg slot="prefix" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg>
+  <span>Deploy</span>
+  <moul-menu-item slot="menu" value="staging">Deploy to staging</moul-menu-item>
+  <moul-menu-item slot="menu" value="clear-cache">Deploy and clear cache</moul-menu-item>
+  <moul-menu-separator slot="menu"></moul-menu-separator>
+  <moul-menu-item slot="menu" value="schedule">Schedule deploy…</moul-menu-item>
+</moul-split-button>
+</ComponentPreview>
+
+```html
+<moul-split-button menu-label="More deploy options">
+  <svg slot="prefix" aria-hidden="true">…</svg>
+  Deploy
+  <moul-menu-item slot="menu" value="staging">Deploy to staging</moul-menu-item>
+  <moul-menu-item slot="menu" value="clear-cache">Deploy and clear cache</moul-menu-item>
+  <moul-menu-separator slot="menu"></moul-menu-separator>
+  <moul-menu-item slot="menu" value="schedule">Schedule deploy…</moul-menu-item>
+</moul-split-button>
+
+<script type="module">
+  const deploy = document.querySelector('moul-split-button')
+  deploy.addEventListener('press', () => {
+    console.log('deploy to production')
+  })
+  deploy.addEventListener('action', (event) => {
+    console.log(event.detail.value) // 'staging', 'clear-cache' or 'schedule'
+  })
+</script>
+```
+
+`menu-label` names the chevron and the menu for screen readers, since the chevron has no visible text. It defaults to "More actions".
+
+## Variants
+
+`variant` is forwarded to both parts and takes `primary` (the default), `secondary`, `tertiary`, `outline`, `ghost` or `danger`. Each draws a 1px divider between the parts that reads on its own fill: the foreground at 30% on `primary` and `danger`, at 15% on the neutral variants, and the border colour on `outline`. Any other value, `danger-soft` included, renders as `primary`. Set `--split-button-divider` to choose the divider colour yourself.
+
+<ComponentPreview minHeight="300px" align="start">
+<div class="demo-row">
+  <moul-split-button variant="outline">
+    <span>Save</span>
+    <moul-menu-item slot="menu" value="save-as">Save as…</moul-menu-item>
+    <moul-menu-item slot="menu" value="save-template">Save as template</moul-menu-item>
+  </moul-split-button>
+  <moul-split-button variant="secondary">
+    <span>Export</span>
+    <moul-menu-item slot="menu" value="csv">Export as CSV</moul-menu-item>
+    <moul-menu-item slot="menu" value="json">Export as JSON</moul-menu-item>
+  </moul-split-button>
+  <moul-split-button variant="ghost">
+    <span>Share</span>
+    <moul-menu-item slot="menu" value="link">Copy link</moul-menu-item>
+    <moul-menu-item slot="menu" value="email">Email</moul-menu-item>
+  </moul-split-button>
+  <moul-split-button variant="danger" menu-label="More delete options">
+    <span>Delete</span>
+    <moul-menu-item slot="menu" value="archive">Archive instead</moul-menu-item>
+    <moul-menu-item slot="menu" value="delete-all" variant="danger">Delete with backups</moul-menu-item>
+  </moul-split-button>
+</div>
+</ComponentPreview>
+
+```html
+<moul-split-button variant="outline">
+  Save
+  <moul-menu-item slot="menu" value="save-as">Save as…</moul-menu-item>
+  <moul-menu-item slot="menu" value="save-template">Save as template</moul-menu-item>
+</moul-split-button>
+```
+
+## Sizes
+
+`size` (`sm`, `md` or `lg`) is forwarded to both parts, so they always share one height.
+
+<ComponentPreview minHeight="260px" align="start">
+<div class="demo-row">
+  <moul-split-button size="sm" variant="secondary">
+    <span>Small</span>
+    <moul-menu-item slot="menu">Another action</moul-menu-item>
+  </moul-split-button>
+  <moul-split-button size="md" variant="secondary">
+    <span>Medium</span>
+    <moul-menu-item slot="menu">Another action</moul-menu-item>
+  </moul-split-button>
+  <moul-split-button size="lg" variant="secondary">
+    <span>Large</span>
+    <moul-menu-item slot="menu">Another action</moul-menu-item>
+  </moul-split-button>
+</div>
+</ComponentPreview>
+
+## Disabled and pending
+
+`is-disabled` turns off both parts: neither can be focused or pressed, and the menu does not open, not even from `showMenu()`. `is-pending` applies to the main part only. It shows the button's pending loader, keeps the main part focusable with `aria-busy="true"`, and ignores presses, while the chevron and its menu stay usable, so the related actions remain reachable while the main one runs. Set `is-disabled` as well if the menu should wait too.
+
+<ComponentPreview minHeight="260px" align="start">
+<div class="demo-row">
+  <moul-split-button is-disabled>
+    <span>Deploy</span>
+    <moul-menu-item slot="menu" value="staging">Deploy to staging</moul-menu-item>
+    <moul-menu-item slot="menu" value="schedule">Schedule deploy…</moul-menu-item>
+  </moul-split-button>
+  <moul-split-button is-pending>
+    <span>Deploying</span>
+    <moul-menu-item slot="menu" value="cancel">Cancel deploy</moul-menu-item>
+    <moul-menu-item slot="menu" value="logs">View logs</moul-menu-item>
+  </moul-split-button>
+</div>
+</ComponentPreview>
+
+```html
+<moul-split-button is-disabled>
+  Deploy
+  <moul-menu-item slot="menu" value="staging">Deploy to staging</moul-menu-item>
+  <moul-menu-item slot="menu" value="schedule">Schedule deploy…</moul-menu-item>
+</moul-split-button>
+
+<moul-split-button is-pending>
+  Deploying
+  <moul-menu-item slot="menu" value="cancel">Cancel deploy</moul-menu-item>
+  <moul-menu-item slot="menu" value="logs">View logs</moul-menu-item>
+</moul-split-button>
+```
+
+## Menu placement and width
+
+The menu opens below the split button, aligned to the chevron's end edge (`placement="bottom-end"`), and flips above when there is no room below. `placement` also takes `bottom-start`, `top-start` and `top-end`. The menu is at least as wide as the whole split button, and never narrower than 10rem; style `::part(menu)` to change that. `showMenu()` opens it and focuses the first enabled item, and `hideMenu()` closes it.
+
+## Accessibility
+
+- There are two Tab stops, the main button and the chevron, each a native `<button>`. Screen readers hear two separate buttons: the split button itself has no role, and nothing ties the chevron to the main action except its name.
+- The main button is named by its label. `Enter` and `Space` press it, and `Alt+Arrow Down` opens the menu and focuses its first enabled item.
+- The chevron is named by `menu-label` (default "More actions") through visually hidden text, and has `aria-haspopup="menu"` and `aria-expanded`. A click toggles the menu; `Enter`, `Space` and `Arrow Down` open it on the first enabled item, and `Arrow Up` on the last. The menu surface is `role="menu"`, named by `menu-label` too.
+- In the menu, the keys of `<moul-dropdown-menu>` apply: the arrow keys, `Home`, `End` and type-ahead. `Escape` or activating an item closes it and returns focus to the chevron; `Tab` closes it and lets focus move on.
+- The chevron turns over while the menu is open. Under reduced motion it turns at once instead of rotating, and the menu appears without growing out of the chevron or staggering its items. Neither part scales down when pressed, so the pill never comes apart.
+
+## API reference
+
+### `<moul-split-button>`
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `variant` | `variant` | `'primary' \| 'secondary' \| 'tertiary' \| 'outline' \| 'ghost' \| 'danger'` | `'primary'` |
+| `size` | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` |
+| `is-disabled` | `isDisabled` | `boolean` | `false` |
+| `is-pending` | `isPending` | `boolean` | `false` |
+| `menu-label` | `menuLabel` | `string` | `'More actions'` |
+| `placement` | `placement` | `'bottom-start' \| 'bottom-end' \| 'top-start' \| 'top-end'` | `'bottom-end'` |
+
+| Method | Description |
+| :-- | :-- |
+| `showMenu()` | Opens the menu and focuses its first enabled item; does nothing while disabled. |
+| `hideMenu()` | Closes the menu, returning focus to the chevron if it was in the menu. |
+
+| Event | Type |
+| :-- | :-- |
+| `press` | `CustomEvent<{ originalEvent: Event }>` (main part only) |
+| `action` | `CustomEvent<{ value: string; item: MoulMenuItem }>` |
+| `openchange` | `CustomEvent<{ isOpen: boolean }>` |
+
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | The main action's label. |
+| `prefix` | An icon before the main action's label. |
+| `menu` | The menu's items, groups and separators. |
+
+| CSS custom property | Default |
+| :-- | :-- |
+| `--split-button-divider` | The variant's foreground at 30% (`primary`, `danger`) or 15% (`secondary`, `tertiary`, `ghost`); `var(--color-border)` on `outline` |
+
+**CSS parts:** `main`, `trigger`, `chevron`, `menu`

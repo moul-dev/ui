@@ -1,0 +1,31 @@
+---
+/**
+ * Selection toolbar demo wiring, so the MDX preview stays plain markup. A
+ * `moul-button[data-bulk-action]` inside a `moul-selection-toolbar` acts on
+ * the table named by the toolbar's `for`: "archive" and "delete" remove the
+ * selected rows, then every action calls `clearSelection()`, which the
+ * toolbar hears and slides away.
+ */
+---
+
+<script>
+  import type { MoulTable } from '@moul-dev/web-component'
+
+  document.addEventListener('press', (event) => {
+    const button = (event.target as Element | null)?.closest?.<HTMLElement>(
+      '[data-bulk-action]',
+    )
+    const toolbar = button?.closest('moul-selection-toolbar')
+    const table = document.getElementById(
+      toolbar?.getAttribute('for') ?? '',
+    ) as MoulTable | null
+    if (!button || !table) return
+    if (button.dataset.bulkAction !== 'export') {
+      const selected = new Set(table.selectedKeys)
+      table.data = table.data.filter(
+        (row, index) => !selected.has(table.rowKey(row, index)),
+      )
+    }
+    table.clearSelection()
+  })
+</script>

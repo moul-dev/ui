@@ -25,6 +25,7 @@ export const buttonStyles = [
       height: 100%;
       box-sizing: border-box;
       border-radius: inherit;
+      gap: var(--_gap);
       border: 1px solid transparent;
       background-color: var(--_bg);
       color: var(--_fg);
@@ -36,6 +37,8 @@ export const buttonStyles = [
       transition:
         transform var(--duration-fast, 150ms) var(--ease-out, ease-out),
         background-color 100ms var(--ease-out, ease-out),
+        color 100ms var(--ease-out, ease-out),
+        border-color 100ms var(--ease-out, ease-out),
         box-shadow 100ms var(--ease-out, ease-out),
         opacity var(--duration-fast, 150ms) ease;
       cursor: pointer;
@@ -56,7 +59,7 @@ export const buttonStyles = [
       height: 2rem;
       padding: 0 var(--spacing-3, 0.75rem);
       font-size: var(--font-size-sm, 0.875rem);
-      gap: var(--spacing-1, 0.25rem);
+      --_gap: var(--spacing-1, 0.25rem);
     }
 
     :host([size="md"]) [part~="button"],
@@ -64,14 +67,14 @@ export const buttonStyles = [
       height: 2.25rem;
       padding: 0 var(--spacing-4, 1rem);
       font-size: var(--font-size-sm, 0.875rem);
-      gap: var(--spacing-2, 0.5rem);
+      --_gap: var(--spacing-2, 0.5rem);
     }
 
     :host([size="lg"]) [part~="button"] {
       height: 2.5rem;
       padding: 0 var(--spacing-4, 1rem);
       font-size: var(--font-size-md, 1rem);
-      gap: var(--spacing-2, 0.5rem);
+      --_gap: var(--spacing-2, 0.5rem);
     }
 
     /* Icon-only size variants */
@@ -138,13 +141,54 @@ export const buttonStyles = [
       --_fg: var(--color-danger-soft-fg);
     }
 
+    /* Result tints, on the inner button so they override the host's fill trio */
+    .success {
+      --_tone: var(--color-success);
+      --_tone-hover: var(--color-success-hover);
+      --_tone-fg: var(--color-success-fg);
+      --_tone-soft: var(--color-success-soft);
+      --_tone-soft-hover: var(--color-success-soft-hover);
+      --_tone-soft-fg: var(--color-success-soft-fg);
+    }
+
+    .error {
+      --_tone: var(--color-danger);
+      --_tone-hover: var(--color-danger-hover);
+      --_tone-fg: var(--color-danger-fg);
+      --_tone-soft: var(--color-danger-soft);
+      --_tone-soft-hover: var(--color-danger-soft-hover);
+      --_tone-soft-fg: var(--color-danger-soft-fg);
+    }
+
+    :host(:is(:not([variant]), [variant="primary"], [variant="danger"]))
+      :is(.success, .error) {
+      --_bg: var(--_tone);
+      --_bg-hover: var(--_tone-hover);
+      --_fg: var(--_tone-fg);
+    }
+
+    :host(:is([variant="secondary"], [variant="danger-soft"]))
+      :is(.success, .error) {
+      --_bg: var(--_tone-soft);
+      --_bg-hover: var(--_tone-soft-hover);
+      --_fg: var(--_tone-soft-fg);
+    }
+
+    :host(:is([variant="tertiary"], [variant="outline"], [variant="ghost"]))
+      :is(.success, .error) {
+      --_fg: var(--_tone-soft-fg);
+      border-color: color-mix(in oklab, var(--_tone) 50%, transparent);
+    }
+
     @media (hover: hover) {
-      :host(:not([is-disabled]):not([is-pending])) [part~="button"]:hover {
+      :host(:not([is-disabled]):not([is-pending]):not([state="pending"]))
+        [part~="button"]:hover {
         background-color: var(--_bg-hover);
       }
     }
 
-    :host(:not([is-disabled]):not([is-pending])) [part~="button"]:active {
+    :host(:not([is-disabled]):not([is-pending]):not([state="pending"]))
+      [part~="button"]:active {
       background-color: var(--_bg-hover);
       transform: scale(var(--_press-scale));
     }
@@ -167,31 +211,63 @@ export const buttonStyles = [
     }
 
     /* Pending State */
-    :host([is-pending]) {
+    :host([is-pending]),
+    :host([state="pending"]) {
       cursor: wait;
       pointer-events: none;
     }
 
-    :host([is-pending]) [part~="button"] {
+    .pending {
       cursor: wait;
       pointer-events: none;
     }
 
-    .spinner {
-      margin-inline-end: var(--spacing-2, 0.5rem);
+    /* State icon: in idle it has no width and its margin cancels the gap */
+    .icon {
       display: inline-flex;
-      align-items: center;
       justify-content: center;
+      flex-shrink: 0;
+      width: 0;
+      margin-inline-end: calc(-1 * var(--_gap));
+      opacity: 0;
+      scale: 0.5;
+      transition-property: width, margin, opacity, scale;
+      transition-duration: var(--duration-base, 250ms);
+      transition-timing-function: var(--ease-out, ease-out);
     }
 
-    :host([is-icon]) .spinner {
+    :not(.idle) > .icon {
+      width: 1rem;
       margin-inline-end: 0;
+      opacity: 1;
+      scale: 1;
+    }
+
+    /* Icon-only: the state icon replaces the content */
+    :host([is-icon]) .icon {
+      position: absolute;
+      margin: 0;
+    }
+
+    :host([is-icon]) :not(.idle) > .content {
+      opacity: 0;
     }
 
     .content {
       display: inline-flex;
       align-items: center;
       gap: inherit;
+      transition: opacity var(--duration-fast, 150ms) ease;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
     }
 
     ::slotted([slot="prefix"]),
@@ -208,11 +284,14 @@ export const buttonStyles = [
     }
 
     @media (prefers-reduced-motion: reduce) {
-      [part~="button"] {
+      [part~="button"],
+      .icon,
+      .content {
         transition: none;
       }
 
-      :host(:not([is-disabled]):not([is-pending])) [part~="button"]:active {
+      :host(:not([is-disabled]):not([is-pending]):not([state="pending"]))
+        [part~="button"]:active {
         transform: none;
       }
     }

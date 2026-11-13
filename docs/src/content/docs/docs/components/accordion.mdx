@@ -1,0 +1,169 @@
+---
+title: Accordion
+description: Collapsible sections whose panels open with a spring and no layout jump.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+`<moul-accordion>` stacks `<moul-accordion-item>` sections. Each header is a button that opens its panel: the height springs from zero to the content's height, so whatever sits below moves smoothly instead of jumping, and the content fades in as it arrives. Toggle again mid-way and the spring turns around from where it is.
+
+## Single open
+
+By default, opening one item closes the others. `is-open` opens an item from the start.
+
+<ComponentPreview align="stretch">
+<moul-accordion>
+  <moul-accordion-item value="shipping" heading="How long does shipping take?" is-open>
+    Orders inside Phnom Penh arrive the next day. Everywhere else in Cambodia takes two to four days.
+  </moul-accordion-item>
+  <moul-accordion-item value="returns" heading="Can I return an item?">
+    Yes, within 30 days, unused and in its box. We collect it from your door.
+  </moul-accordion-item>
+  <moul-accordion-item value="warranty" heading="What does the warranty cover?">
+    One year against manufacturing faults. Accidental damage is not covered.
+  </moul-accordion-item>
+</moul-accordion>
+</ComponentPreview>
+
+```html
+<moul-accordion>
+  <moul-accordion-item value="shipping" heading="How long does shipping take?" is-open>
+    Orders inside Phnom Penh arrive the next day.
+  </moul-accordion-item>
+  <moul-accordion-item value="returns" heading="Can I return an item?">
+    Yes, within 30 days, unused and in its box.
+  </moul-accordion-item>
+  <moul-accordion-item value="warranty" heading="What does the warranty cover?">
+    One year against manufacturing faults.
+  </moul-accordion-item>
+</moul-accordion>
+```
+
+## Multiple open, separated
+
+`is-multiple` lets several items stay open. `variant="separated"` draws each item as its own raised surface.
+
+<ComponentPreview align="stretch" backdrop="page">
+<moul-accordion is-multiple variant="separated">
+  <moul-accordion-item value="profile" heading="Profile" is-open>
+    Your name, photo and the language the app speaks to you in.
+  </moul-accordion-item>
+  <moul-accordion-item value="notifications" heading="Notifications" is-open>
+    Email for receipts, push for messages, nothing for marketing.
+  </moul-accordion-item>
+  <moul-accordion-item value="privacy" heading="Privacy">
+    Who can find you by phone number, and what your profile shows.
+  </moul-accordion-item>
+</moul-accordion>
+</ComponentPreview>
+
+```html
+<moul-accordion is-multiple variant="separated">
+  <moul-accordion-item value="profile" heading="Profile" is-open>…</moul-accordion-item>
+  <moul-accordion-item value="notifications" heading="Notifications" is-open>…</moul-accordion-item>
+  <moul-accordion-item value="privacy" heading="Privacy">…</moul-accordion-item>
+</moul-accordion>
+```
+
+## Bordered, with icons and rich headings
+
+`variant="bordered"` frames the list. Put an icon in the `prefix` slot, and use the `heading` slot instead of the `heading` attribute when the header needs more than text. `is-disabled` keeps an item from being toggled.
+
+<ComponentPreview align="stretch">
+<moul-accordion variant="bordered">
+  <moul-accordion-item value="billing">
+    <svg slot="prefix" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+    <span slot="heading">Billing <moul-badge tone="warning" variant="flat" size="sm">Due soon</moul-badge></span>
+    <p>Your next invoice of $24.00 is due on 1 December.</p>
+  </moul-accordion-item>
+  <moul-accordion-item value="team" heading="Team members">
+    <svg slot="prefix" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="4"/><path d="M2 21a7 7 0 0 1 14 0"/><path d="M16 4a4 4 0 0 1 0 8"/><path d="M22 21a7 7 0 0 0-4-6.3"/></svg>
+    <p>Four members, one pending invitation.</p>
+  </moul-accordion-item>
+  <moul-accordion-item value="sso" heading="Single sign-on" is-disabled>
+    Available on the Business plan.
+  </moul-accordion-item>
+</moul-accordion>
+</ComponentPreview>
+
+```html
+<moul-accordion variant="bordered">
+  <moul-accordion-item value="billing">
+    <svg slot="prefix" aria-hidden="true">…</svg>
+    <span slot="heading">Billing <moul-badge tone="warning" size="sm">Due soon</moul-badge></span>
+    Your next invoice of $24.00 is due on 1 December.
+  </moul-accordion-item>
+  <moul-accordion-item value="team" heading="Team members">…</moul-accordion-item>
+  <moul-accordion-item value="sso" heading="Single sign-on" is-disabled>…</moul-accordion-item>
+</moul-accordion>
+```
+
+## Reading and setting the open items
+
+`value` is the list of open items' `value`s. Set it to open exactly those items; in single mode only the first one named opens. Setting it, or an item's `isOpen`, fires no event. When the user toggles an item, the item fires `openchange` and the accordion fires `valuechange` with the open values.
+
+```js
+const accordion = document.querySelector('moul-accordion')
+accordion.value = ['returns']
+
+accordion.addEventListener('valuechange', (event) => {
+  console.log(event.detail.value) // ['shipping']
+})
+```
+
+Match `heading-level` to the page: under an `<h2>`, use `heading-level="3"` (the default); under an `<h3>`, use `4`.
+
+## Accessibility
+
+- It follows the [WAI-ARIA accordion pattern](https://www.w3.org/WAI/ARIA/apg/patterns/accordion/). Each header is a native `<button>` with `aria-expanded` and `aria-controls`, inside a `role="heading"` element with `aria-level`. Each panel is a `role="region"` named by its header.
+- `Enter` and `Space` toggle the focused item. `Arrow Down` and `Arrow Up` move between headers, wrapping, and `Home` and `End` jump to the first and last. Disabled items are skipped.
+- A closed panel is hidden, so its content is out of the tab order and out of the accessibility tree; while it closes it is `inert`.
+- Under reduced motion, panels open and close at once and the chevron flips without turning.
+
+## API reference
+
+### `<moul-accordion>`
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `is-multiple` | `isMultiple` | `boolean` | `false` |
+| `heading-level` | `headingLevel` | `number` | `3` |
+| `variant` | `variant` | `'default' \| 'separated' \| 'bordered'` | `'default'` |
+| — | `value` | `string[]` | open items' values |
+| — | `items` (read-only) | `MoulAccordionItem[]` | — |
+
+| Event | Type |
+| :-- | :-- |
+| `valuechange` | `CustomEvent<{ value: string[] }>` |
+
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | The `moul-accordion-item` elements. |
+
+**CSS parts:** `base`
+
+### `<moul-accordion-item>`
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `heading` | `heading` | `string` | `''` |
+| `value` | `value` | `string` | generated id |
+| `is-open` | `isOpen` | `boolean` | `false` |
+| `is-disabled` | `isDisabled` | `boolean` | `false` |
+
+| Method | Description |
+| :-- | :-- |
+| `setOpen(isOpen)` | Opens or closes the item as a user toggle does, firing `openchange`. |
+| `focus()` | Focuses the header button. |
+
+| Event | Type |
+| :-- | :-- |
+| `openchange` | `CustomEvent<{ isOpen: boolean }>` |
+
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | The panel content. |
+| `heading` | Rich heading content; replaces the `heading` text. |
+| `prefix` | An icon before the heading. |
+
+**CSS parts:** `heading`, `trigger`, `prefix`, `label`, `indicator`, `panel`, `content`

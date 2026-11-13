@@ -1,0 +1,162 @@
+---
+title: ThemeToggle
+description: A light and dark switch that reveals the new theme in a circle from the button.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import ThemeToggleDemo from '@/components/demos/ThemeToggleDemo.astro';
+
+<ThemeToggleDemo />
+
+`<moul-theme-toggle>` switches the page between the system, light and dark themes. Each press moves to the next mode and uncovers the new theme in a circle that grows from the button. It sets `data-theme` and `color-scheme` on `<html>`, which is all the Moul tokens need, saves the mode in `localStorage`, and follows the OS while in system mode. Try it: it switches this page.
+
+<ComponentPreview>
+  <moul-theme-toggle></moul-theme-toggle>
+</ComponentPreview>
+
+```html
+<moul-theme-toggle></moul-theme-toggle>
+```
+
+It is an icon-only `moul-button` holding a `moul-icon-morph`, so the `system`, `sun` and `moon` icons morph into each other. `variant` (default `ghost`) and `size` go to the button.
+
+<ComponentPreview>
+<div class="demo-row">
+  <moul-theme-toggle size="sm"></moul-theme-toggle>
+  <moul-theme-toggle variant="outline"></moul-theme-toggle>
+  <moul-theme-toggle variant="secondary" size="lg"></moul-theme-toggle>
+</div>
+</ComponentPreview>
+
+```html
+<moul-theme-toggle size="sm"></moul-theme-toggle>
+<moul-theme-toggle variant="outline"></moul-theme-toggle>
+<moul-theme-toggle variant="secondary" size="lg"></moul-theme-toggle>
+```
+
+Every toggle on a page shows the same mode, as the ones above do. Other tabs follow through the `storage` event, and in system mode the page follows `prefers-color-scheme` as it changes.
+
+## Modes
+
+`modes` is the cycle, space-separated: a press moves to the next entry. `modes="light dark"` makes a two-state switch. While the page is in a mode the list leaves out (system mode, set by another toggle), the button shows the theme on screen and a press switches to the other one.
+
+<ComponentPreview>
+  <moul-theme-toggle modes="light dark" variant="outline"></moul-theme-toggle>
+</ComponentPreview>
+
+```html
+<moul-theme-toggle modes="light dark"></moul-theme-toggle>
+```
+
+The first toggle on the page picks the starting mode: the stored mode if it is in `modes`, else the `mode` attribute, else the first entry of `modes`. So `modes="dark light"` starts a new visitor in the dark theme. Toggles added later join the mode the page already has.
+
+Setting `mode` from a script switches the page at once. It applies and saves the mode and moves every toggle, without the reveal or a `change` event.
+
+```js
+document.querySelector('moul-theme-toggle').mode = 'dark'
+```
+
+## Before the first paint
+
+The toggle applies the saved theme when it connects, which is after the page has painted. Put this script in `<head>`, before the stylesheets, so the first paint already has the right theme and nothing flashes. It is the toggle's own start logic: keep the key and the list in step with `storage-key` and `modes`, and start `mode` from the toggle's `mode` attribute or the first of its `modes`.
+
+```html
+<script>
+  (() => {
+    let mode = 'system'
+    try {
+      const saved = localStorage.getItem('moul-theme')
+      if (['system', 'light', 'dark'].includes(saved)) mode = saved
+    } catch {}
+    const isDark = mode === 'system'
+      ? matchMedia('(prefers-color-scheme: dark)').matches
+      : mode === 'dark'
+    document.documentElement.dataset.theme = isDark ? 'dark' : 'light'
+    document.documentElement.style.colorScheme = mode === 'system' ? 'light dark' : mode
+  })()
+</script>
+```
+
+## Storage
+
+The mode is saved under `storage-key` (default `moul-theme`) as `system`, `light` or `dark`. To keep a choice users already saved under another key, point `storage-key` at it, as long as it holds those values. An empty `storage-key` turns persistence off: the page starts from `mode` or `modes` on every load. Blocked storage (strict privacy modes, sandboxed frames) is ignored and the theme still switches.
+
+```html
+<moul-theme-toggle storage-key="app-theme"></moul-theme-toggle>
+<moul-theme-toggle storage-key="" mode="dark"></moul-theme-toggle>
+```
+
+## Applying the theme yourself
+
+`change` fires before the switch, with `detail: { mode, resolvedTheme }`. Call `preventDefault()` to apply the theme yourself: the toggle then leaves `<html>` and storage alone, and later OS changes in system mode too, but every toggle still moves to the new mode. The event fires inside the view transition's update callback, so what the listener changes is what the circle reveals.
+
+```js
+const toggle = document.querySelector('moul-theme-toggle')
+
+toggle.addEventListener('change', (event) => {
+  event.preventDefault()
+  const { mode, resolvedTheme } = event.detail
+  document.documentElement.classList.toggle('dark', resolvedTheme === 'dark')
+  settings.save({ theme: mode })
+})
+```
+
+On start the toggle still applies the mode it starts in, so an app that owns the theme should hand it that mode and turn its storage off: `<moul-theme-toggle storage-key="" mode="dark">`. Without `preventDefault()`, a listener can simply watch: `change` is the place to save the choice to a server.
+
+## Labels and other languages
+
+The button's name says the mode and the next one: "Theme: Light. Switch to Dark.", and in system mode the theme the OS gives, "Theme: System (Dark). Switch to Light." After a press, a polite live region announces the new mode, "Dark theme". `labels` replaces any of these words. In the three templates `{mode}` is the name of the mode shown (in `announcement`, the new one), `{theme}` the name of the theme on screen and `{next}` the mode a press switches to.
+
+```js
+document.querySelector('moul-theme-toggle').labels = {
+  system: 'ប្រព័ន្ធ',
+  light: 'ភ្លឺ',
+  dark: 'ងងឹត',
+  name: 'រចនាបថ៖ {mode}។ ប្ដូរទៅ {next}។',
+  systemName: 'រចនាបថ៖ {mode} ({theme})។ ប្ដូរទៅ {next}។',
+  announcement: 'រចនាបថ{mode}',
+}
+```
+
+Keys you leave out keep their English default. An `aria-label` on the host replaces the whole name in every mode, so the mode is then only heard in the announcement after a press; prefer `labels` when you can.
+
+## Reveal
+
+On a press the toggle calls `document.startViewTransition()` and grows a `clip-path: circle()` on `::view-transition-new(root)`, from the button's centre to the farthest corner of the viewport, over 450ms with the library's ease-out. The old page stays still underneath; nothing cross-fades. For that it adds one small stylesheet to `document.adoptedStyleSheets` the first time, whose rules apply only while an attribute it sets on `<html>` is present, so other view transitions on the page keep their own animations. Elements with their own `view-transition-name` are not part of the root snapshot and cross-fade on top of the reveal.
+
+`transition="none"` switches at once. So do browsers without the View Transitions API.
+
+## Reduced motion
+
+When the user asks for less motion, the theme switches at once with no reveal, and the icon swaps without morphing.
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `mode` | `mode` | `'system' \| 'light' \| 'dark'` | The stored mode, else the first of `modes` |
+| `modes` | `modes` | `string` | `'system light dark'` |
+| `storage-key` | `storageKey` | `string` | `'moul-theme'` |
+| `transition` | `transition` | `'circle' \| 'none'` | `'circle'` |
+| `variant` | `variant` | `ButtonVariant` | `'ghost'` |
+| `size` | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` |
+| — | `labels` | `Partial<ThemeToggleLabels>` | `{}` |
+| `aria-label` | `ariaLabel` | `string` | — |
+| — | `resolvedTheme` (read-only) | `'light' \| 'dark'` | — |
+
+| Event | Type |
+| :-- | :-- |
+| `change` | `CustomEvent<{ mode: ThemeMode; resolvedTheme: 'light' \| 'dark' }>`, cancelable |
+
+### `ThemeToggleLabels`
+
+| Field | Default | Description |
+| :-- | :-- | :-- |
+| `system` | `'System'` | Name of system mode. |
+| `light` | `'Light'` | Name of light mode and the light theme. |
+| `dark` | `'Dark'` | Name of dark mode and the dark theme. |
+| `name` | `'Theme: {mode}. Switch to {next}.'` | The button's name in light and dark mode. |
+| `systemName` | `'Theme: {mode} ({theme}). Switch to {next}.'` | The button's name in system mode. |
+| `announcement` | `'{mode} theme'` | Announced after a press. |
+
+**CSS parts:** `button` (the `moul-button`), `icon` (the `moul-icon-morph`), `status` (the visually hidden live region)

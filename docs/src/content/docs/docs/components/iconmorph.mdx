@@ -1,0 +1,123 @@
+---
+title: IconMorph
+description: One icon that turns into another, such as menu into close or play into pause.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import IconMorphDemo from '@/components/demos/IconMorphDemo.astro';
+
+`<moul-icon-morph>` draws one icon and morphs it into the next when `name` changes. Pick a name below: line icons morph into any other line icon, `sun`, `moon` and `system` morph into each other, and any other change cross-fades, the old icon turning away as the new one turns in.
+
+<ComponentPreview>
+  <IconMorphDemo />
+</ComponentPreview>
+
+```html
+<moul-icon-morph name="menu"></moul-icon-morph>
+```
+
+```js
+document.querySelector('moul-icon-morph').name = 'close'
+```
+
+Interrupting a morph is safe: the next one starts from wherever the icon is, so clicking quickly never makes it jump.
+
+## In buttons
+
+An icon-only `moul-button` takes its name from its content, so give the icon a `label` and change it together with `name`. Next to visible text, leave `label` off and the icon is hidden from screen readers.
+
+<ComponentPreview>
+  <IconMorphDemo mode="toggles" />
+</ComponentPreview>
+
+```html
+<moul-button variant="secondary" is-icon aria-label="Open menu">
+  <moul-icon-morph name="menu" label="Open menu"></moul-icon-morph>
+</moul-button>
+```
+
+```js
+const button = document.querySelector('moul-button')
+const icon = button.querySelector('moul-icon-morph')
+
+button.addEventListener('press', () => {
+  const isOpen = icon.name === 'close'
+  icon.name = isOpen ? 'menu' : 'close'
+  icon.label = isOpen ? 'Open menu' : 'Close menu'
+})
+```
+
+## Built-in icons
+
+| Family | Names | Morphs into |
+| :-- | :-- | :-- |
+| Line | `menu`, `close`, `plus`, `minus`, `check`, `chevron-up`, `chevron-down`, `chevron-left`, `chevron-right`, `arrow-up`, `arrow-down`, `arrow-left`, `arrow-right`, `play`, `pause`, `more`, `loader`, `error` | Any other line icon |
+| Theme | `sun`, `moon`, `system` | Each other |
+
+Every line icon is three stroke segments and a ring, so any two of them morph: strokes slide, turn and grow, and unused ones shrink to a point and fade. `loader` is a three-quarter ring that spins while it is shown and closes into the `error` circle. Between `sun` and `moon` the disc grows as a second circle slides in to cut the crescent and the rays draw in; `system` is a half-filled circle. A change between the two families, or to or from a custom icon, cross-fades.
+
+## Size, colour and stroke
+
+The icon is `1em` square and strokes in `currentColor`, so it follows the text around it. `size` fixes it at `1rem`, `1.5rem` or `2rem`, and `--icon-morph-stroke-width` sets the stroke in viewBox units (the box is 24 wide).
+
+<ComponentPreview>
+<div class="demo-row">
+  <moul-icon-morph name="check" size="sm"></moul-icon-morph>
+  <moul-icon-morph name="check" size="md"></moul-icon-morph>
+  <moul-icon-morph name="check" size="lg"></moul-icon-morph>
+  <span style="font-size: 2.5rem; color: var(--color-accent)"><moul-icon-morph name="sun"></moul-icon-morph></span>
+  <moul-icon-morph name="moon" size="lg" style="--icon-morph-stroke-width: 1.25"></moul-icon-morph>
+</div>
+</ComponentPreview>
+
+```html
+<moul-icon-morph name="check" size="sm"></moul-icon-morph>
+<span style="font-size: 2.5rem; color: var(--color-accent)">
+  <moul-icon-morph name="sun"></moul-icon-morph>
+</span>
+<moul-icon-morph name="moon" size="lg" style="--icon-morph-stroke-width: 1.25"></moul-icon-morph>
+```
+
+## Custom icons
+
+A child whose `slot` matches `name` is shown instead, and it overrides a built-in icon of the same name. Any `<svg>` works, for example one from Phosphor or Lucide; it fills the box and inherits the text colour. Switching to or from a custom icon cross-fades.
+
+<ComponentPreview>
+<moul-button variant="secondary" is-icon aria-label="Add to favourites" data-icon-morph-cycle="heart heart-filled" data-icon-morph-labels="Add to favourites|Remove from favourites">
+  <moul-icon-morph name="heart" label="Add to favourites">
+    <svg slot="heart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 20C6 16 3 12.5 3 9a4.5 4.5 0 0 1 9-2 4.5 4.5 0 0 1 9 2c0 3.5-3 7-9 11z"/></svg>
+    <svg slot="heart-filled" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 20C6 16 3 12.5 3 9a4.5 4.5 0 0 1 9-2 4.5 4.5 0 0 1 9 2c0 3.5-3 7-9 11z"/></svg>
+  </moul-icon-morph>
+</moul-button>
+</ComponentPreview>
+
+```html
+<moul-icon-morph name="heart" label="Add to favourites">
+  <svg slot="heart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">…</svg>
+  <svg slot="heart-filled" viewBox="0 0 24 24" fill="currentColor">…</svg>
+</moul-icon-morph>
+```
+
+A name that is neither built in nor slotted shows nothing, keeps its box so the layout does not move, and logs one warning per name outside production builds.
+
+## Reduced motion
+
+When the user asks for less motion, the new icon replaces the old one at once, with no morph, turn or fade, and `loader` slowly pulses instead of spinning.
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `name` | `name` | `IconMorphName \| string` | `''` |
+| `label` | `label` | `string` | `''` |
+| `size` | `size` | `'sm' \| 'md' \| 'lg' \| undefined` | `undefined` (follows the font size) |
+
+| Slot | Description |
+| :-- | :-- |
+| any name | A custom icon, shown while `name` equals its `slot` value |
+
+| CSS custom property | Default | Description |
+| :-- | :-- | :-- |
+| `--icon-morph-stroke-width` | `2` | Stroke width of the built-in icons, in viewBox units |
+
+**CSS parts:** `base`, `svg`

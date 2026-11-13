@@ -1,0 +1,133 @@
+---
+title: Selection Toolbar
+description: A floating bar of bulk actions for the selected rows of a table, with a count, a clear button and arrow-key navigation.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import SelectionToolbarDemo from '@/components/demos/SelectionToolbarDemo.astro';
+
+`<moul-selection-toolbar>` holds the actions that apply to every selected row, such as Archive, Export or Delete. It shows how many rows are selected and a button that clears the selection, and it slides into view only while something is selected. Point `for` at a selectable `<moul-table>` and it follows the table's selection on its own.
+
+Select a few rows below. The toolbar here uses `position="sticky"`, so it stays at the bottom of the scrolling box instead of the window.
+
+<ComponentPreview align="stretch">
+<div style="max-height: 22rem; overflow: auto">
+<moul-table id="bulk-files" is-selectable is-dense aria-label="Files" data-props='{"columns":[{"key":"name","title":"File"},{"key":"owner","title":"Owner"},{"key":"size","title":"Size","align":"right"}],"data":[{"id":"1","name":"q3-report.pdf","owner":"Sokha","size":"2.4 MB"},{"id":"2","name":"brand-guide.fig","owner":"Dara","size":"18.1 MB"},{"id":"3","name":"invoices-2026.xlsx","owner":"Sokha","size":"640 KB"},{"id":"4","name":"team-photo.jpg","owner":"Vanna","size":"5.2 MB"},{"id":"5","name":"contract-draft.docx","owner":"Dara","size":"120 KB"},{"id":"6","name":"roadmap.md","owner":"Vanna","size":"12 KB"},{"id":"7","name":"launch-video.mp4","owner":"Sokha","size":"210 MB"},{"id":"8","name":"logo.svg","owner":"Dara","size":"9 KB"}]}'></moul-table>
+<moul-selection-toolbar for="bulk-files" position="sticky" label="File actions">
+  <moul-button size="sm" variant="secondary" data-bulk-action="archive">Archive</moul-button>
+  <moul-button size="sm" variant="secondary" data-bulk-action="export">Export</moul-button>
+  <moul-button size="sm" variant="danger-soft" data-bulk-action="delete">Delete</moul-button>
+</moul-selection-toolbar>
+</div>
+<SelectionToolbarDemo />
+</ComponentPreview>
+
+```html
+<moul-table id="files" is-selectable aria-label="Files"></moul-table>
+
+<moul-selection-toolbar for="files" label="File actions">
+  <moul-button size="sm" variant="secondary" id="archive">Archive</moul-button>
+  <moul-button size="sm" variant="secondary" id="export">Export</moul-button>
+  <moul-button size="sm" variant="danger-soft" id="delete">Delete</moul-button>
+</moul-selection-toolbar>
+```
+
+```js
+const table = document.querySelector('#files')
+
+document.querySelector('#delete').addEventListener('press', async () => {
+  await deleteFiles(table.selectedKeys)
+  const deleted = new Set(table.selectedKeys)
+  table.data = table.data.filter((row) => !deleted.has(row.id))
+  // Fires selectionchange, so the toolbar hides too
+  table.clearSelection()
+})
+```
+
+## Following a table
+
+With `for` set to the id of a `<moul-table>` in the same document (or the same shadow root), the toolbar reads the table's `selectedKeys` when it connects and updates `count` on every `selectionchange`. Its clear button calls the table's `clearSelection()`. If the table is not there yet, the toolbar waits for an element with that id to appear; changing `for` follows the new table, and a disconnected toolbar stops listening.
+
+Setting `table.selectedKeys` from your code fires no event, so the toolbar does not see it. After a bulk action, call `table.clearSelection()`, which empties the selection and fires `selectionchange` as if the user had unchecked every row.
+
+## Without a table
+
+Leave out `for` and set `count` yourself, for example from a grid of cards with their own checkboxes. The bar shows while `count` is above 0. The clear button and `Escape` fire `clear`; unless you cancel it, the toolbar then sets `count` to 0, and you clear your own selection in the listener.
+
+<ComponentPreview>
+<moul-selection-toolbar count="2" position="static" label="Photo actions">
+  <span slot="label">2 photos</span>
+  <moul-button size="sm" variant="secondary">Share</moul-button>
+  <moul-button size="sm" variant="secondary">Download</moul-button>
+</moul-selection-toolbar>
+</ComponentPreview>
+
+```js
+const toolbar = document.querySelector('moul-selection-toolbar')
+const selected = new Set()
+
+function toggle(id) {
+  selected.has(id) ? selected.delete(id) : selected.add(id)
+  toolbar.count = selected.size
+}
+
+toolbar.addEventListener('clear', (event) => {
+  if (isSaving) {
+    event.preventDefault() // keeps the selection and the bar while an action runs
+    return
+  }
+  selected.clear()
+})
+```
+
+## Label and translation
+
+The bar reads "3 selected" by default. Put your own text in `slot="label"` to replace it, for example in another language or with the kind of item ("3 files"), and keep it in step with `count`; the live region announces that text when the count changes. `label` names the toolbar for screen readers ("Bulk actions" by default) and `clear-label` names the clear button ("Clear selection").
+
+```html
+<moul-selection-toolbar for="files" label="សកម្មភាពឯកសារ" clear-label="សម្អាតការជ្រើសរើស">
+  <span slot="label">បានជ្រើស ៣</span>
+  <moul-button size="sm" variant="secondary">ទុកក្នុងប័ណ្ណសារ</moul-button>
+</moul-selection-toolbar>
+```
+
+## Position
+
+- `fixed`, the default, floats the bar at the bottom centre of the window, above the page and clear of the home indicator on phones (`env(safe-area-inset-bottom)`).
+- `sticky` keeps the bar at the bottom of its nearest scrolling container. Put it right after the table, inside the box that scrolls.
+- `static` leaves the bar in the flow where you put it.
+
+`--selection-toolbar-offset` sets the gap to the bottom edge for `fixed` and `sticky` (default `1rem`).
+
+## Accessibility
+
+- The bar is a `role="toolbar"` named by `label`, and the "3 selected" text describes it. It is one Tab stop: `Arrow Right` and `Arrow Left` move between the actions and the clear button, wrapping, and `Home` and `End` go to the first and last. Under `dir="rtl"` the arrows swap. Disabled and hidden actions are skipped, and Tab comes back to the action you used last.
+- `Escape` anywhere in the bar clears the selection, through the same cancelable `clear` event as the clear button.
+- A polite live region announces the count about 400ms after it last changed, so clicking "Select all rows" announces one number rather than each step. The default text is English; the `label` slot replaces it.
+- Appearing never moves focus. While hidden the bar is `hidden`, so neither Tab nor screen readers reach it. If it hides while focus is inside it, for example after `Escape` or a Delete action, focus goes back to the element that had it before the bar (such as the row checkbox), or else to the bound table's first control.
+- Put the actions directly in the toolbar: the arrow keys move between its direct children, so buttons inside a wrapper such as `moul-button-group` are not reached. Give icon-only actions an `aria-label`.
+- Under reduced motion the bar appears and disappears at once and the count does not pop.
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `count` | `count` | `number` | `0` |
+| `for` | `htmlFor` | `string` | `''` |
+| `label` | `label` | `string` | `'Bulk actions'` |
+| `clear-label` | `clearLabel` | `string` | `'Clear selection'` |
+| `position` | `position` | `'fixed' \| 'sticky' \| 'static'` | `'fixed'` |
+
+| Event | Type |
+| :-- | :-- |
+| `clear` | `CustomEvent`, cancelable. Cancel it to keep the selection. |
+| `openchange` | `CustomEvent<{ isOpen: boolean }>`, when the bar appears or starts to go. |
+
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | The action buttons, usually `moul-button size="sm"`. |
+| `label` | Replaces the "N selected" text. |
+
+**CSS parts:** `bar`, `label`, `count`, `actions`, `divider`, `clear-button`, `status`
+
+**CSS custom properties:** `--selection-toolbar-offset` (default `1rem`), the gap to the bottom edge for `fixed` and `sticky`.

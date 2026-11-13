@@ -1,0 +1,172 @@
+---
+title: FileUpload
+description: Drop zone with a file list and per-file upload progress.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import FileUploadDemo from '@/components/demos/FileUploadDemo.astro';
+
+`<moul-file-upload>` is a drop zone over a list of files. Click it, press `Enter` or `Space`, or drop files on it. Each file gets a row with a thumbnail or file icon, its name and size, and a `moul-progress-bar` while it uploads. It checks `accept`, `max-size` and `max-files` before a file joins the list, and it submits with a `<form>` through `ElementInternals`.
+
+## Uploading
+
+Give it an `upload` function and every accepted file starts uploading at once. The function gets the `File` and a context with an `AbortSignal` and an `onProgress(percent)` callback. The bar is indeterminate until the first `onProgress`. Cancel aborts the signal and removes the row; a failure shows its message and a Retry button. Whatever the function resolves with lands on `item.response`.
+
+The demo below pretends to upload and fails every third attempt.
+
+<ComponentPreview>
+  <FileUploadDemo />
+</ComponentPreview>
+
+```html
+<moul-file-upload
+  label="Attachments"
+  description="Images or PDFs, up to 5 MB each, at most 4 files."
+  accept="image/*,.pdf"
+  max-size="5242880"
+  max-files="4"
+  is-multiple
+></moul-file-upload>
+```
+
+```js
+const field = document.querySelector('moul-file-upload')
+
+// fetch() cannot report upload progress, so this uses XMLHttpRequest.
+field.upload = (file, { signal, onProgress }) =>
+  new Promise((resolve, reject) => {
+    const request = new XMLHttpRequest()
+    request.open('POST', '/api/files')
+    request.upload.onprogress = (event) => {
+      if (event.lengthComputable) onProgress((event.loaded / event.total) * 100)
+    }
+    request.onload = () =>
+      request.status < 300
+        ? resolve(JSON.parse(request.responseText))
+        : reject(new Error(request.statusText || 'Upload failed.'))
+    request.onerror = () => reject(new Error('Network error.'))
+    signal.addEventListener('abort', () => request.abort())
+    const body = new FormData()
+    body.append('file', file)
+    request.send(body)
+  })
+
+field.addEventListener('change', (event) => {
+  const done = event.detail.items.filter((item) => item.status === 'done')
+  console.log(done.map((item) => item.response))
+})
+```
+
+## One file
+
+Without `is-multiple` the field holds a single file, like a record's attachment. The drop zone gives way to the file's row, with Open (when the item has a `url`), Replace and Remove; picking or dropping another file replaces it. Preset `items` with `status: 'done'` to show a file that already exists.
+
+<ComponentPreview>
+<moul-file-upload label="Logo" accept="image/*" is-required style="width: min(100%, 28rem)" data-props='{"items":[{"id":"logo","name":"logo.svg","type":"image/svg+xml","size":1843,"url":"/favicon.svg","status":"done","createdAt":"2026-10-02T09:30:00Z"}]}'></moul-file-upload>
+</ComponentPreview>
+
+```html
+<moul-file-upload label="Logo" accept="image/*" is-required></moul-file-upload>
+```
+
+```js
+const field = document.querySelector('moul-file-upload')
+field.items = [
+  {
+    id: 'logo',
+    name: 'logo.svg',
+    type: 'image/svg+xml',
+    size: 1843,
+    url: '/favicon.svg',
+    status: 'done',
+    createdAt: '2026-10-02T09:30:00Z',
+  },
+]
+```
+
+## Driving the rows yourself
+
+Without `upload`, picked files stay `idle` and submit with their form: the form value is a `FormData` with each `File` under `name`. To run uploads your own way, update a row with `updateItem(id, patch)`; a status change fires `change`. Removing a row fires a cancelable `remove` first, so you can stop your own upload there or keep the file.
+
+<ComponentPreview>
+<moul-file-upload name="documents" label="Documents" description="Up to 3 files." max-files="3" is-multiple style="width: min(100%, 28rem)"></moul-file-upload>
+</ComponentPreview>
+
+```js
+field.addEventListener('change', ({ detail }) => {
+  for (const item of detail.items) {
+    if (item.status === 'idle') startMyUpload(item)
+  }
+})
+
+function startMyUpload(item) {
+  field.updateItem(item.id, { status: 'uploading' })
+  // …later
+  field.updateItem(item.id, { progress: 50 })
+  field.updateItem(item.id, { status: 'done', url: '/files/' + item.name })
+}
+```
+
+Rejected files fire `reject` with `detail.file` and `detail.reason` (`'type'`, `'size'` or `'count'`), and a short message under the field says why.
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `name` | `name` | `string` | `''` |
+| `label` | `label` | `string` | `''` |
+| `description` | `description` | `string` | `''` |
+| `accept` | `accept` | `string` | `''` |
+| `is-multiple` | `isMultiple` | `boolean` | `false` |
+| `max-size` | `maxSize` | `number` (bytes, `0` for no limit) | `0` |
+| `max-files` | `maxFiles` | `number` (`0` for no limit) | `0` |
+| `is-required` | `isRequired` | `boolean` | `false` |
+| `is-disabled` | `isDisabled` | `boolean` | `false` |
+| `is-invalid` | `isInvalid` | `boolean` | `false` |
+| `error-message` | `errorMessage` | `string` | `''` |
+| — | `items` | `FileUploadItem[]` | `[]` |
+| — | `upload` | `FileUploadFunction \| null` | `null` |
+
+```ts
+interface FileUploadItem {
+  id: string
+  name: string
+  size?: number
+  type?: string
+  url?: string
+  file?: File
+  status: 'idle' | 'uploading' | 'done' | 'error'
+  progress?: number // 0-100
+  error?: string
+  response?: unknown
+  createdAt?: string | number | Date
+}
+
+type FileUploadFunction = (
+  file: File,
+  context: { signal: AbortSignal; onProgress(percent: number): void },
+) => Promise<unknown>
+```
+
+| Method | Description |
+| :-- | :-- |
+| `openPicker()` | Opens the file dialog. |
+| `addFiles(files)` | Adds files as if picked, with the same checks. |
+| `updateItem(id, patch)` | Merges `patch` into an item. |
+| `removeItem(id)` | Removes an item after a cancelable `remove`; returns whether it did. |
+
+| Event | Type |
+| :-- | :-- |
+| `change` | `CustomEvent<{ items: FileUploadItem[] }>` |
+| `remove` | `CustomEvent<{ item: FileUploadItem }>`, cancelable |
+| `reject` | `CustomEvent<{ file: File; reason: 'type' \| 'size' \| 'count' }>` |
+
+| Slot | Description |
+| :-- | :-- |
+| `instructions` | Replaces "Drop a file here or browse" in the drop zone. |
+
+| CSS custom property | Description |
+| :-- | :-- |
+| `--file-upload-thumbnail-size` | Width and height of each row's thumbnail; `2.75rem`. |
+
+**CSS parts:** `base`, `label`, `required-indicator`, `dropzone`, `dropzone-icon`, `instructions`, `browse`, `list`, `item` (with `item-idle`, `item-uploading`, `item-done`, `item-error`), `thumbnail`, `name`, `meta`, `upload-error`, `progress`, `actions`, `action` (with `open`, `retry`, `replace`, `remove`), `description`, `rejection`, `error`

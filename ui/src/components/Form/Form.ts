@@ -66,6 +66,7 @@ export class MoulForm extends LitElement {
       'moul-combobox',
       'moul-calendar',
       'moul-date-picker',
+      'moul-file-upload',
       'input',
       'select',
       'textarea',
@@ -105,6 +106,11 @@ export class MoulForm extends LitElement {
       ) {
         if ((ctrl as HTMLInputElement).checked) {
           formData.append(name, (ctrl as HTMLInputElement).value)
+        }
+      } else if (ctrl.tagName === 'MOUL-FILE-UPLOAD') {
+        // Picked files, like a native file input; uploaded results stay on `items`.
+        for (const item of el.items ?? []) {
+          if (item.file) formData.append(name, item.file)
         }
       } else if ('selectedKey' in el) {
         // Select and ComboBox hold their choice in `selectedKey`, not `value`;
@@ -249,6 +255,9 @@ export class MoulForm extends LitElement {
       const anyCtrl = ctrl as any
       if (typeof anyCtrl.reset === 'function') {
         anyCtrl.reset()
+      } else if (typeof anyCtrl.formResetCallback === 'function') {
+        // Form-associated controls reset themselves, as a native form asks them to.
+        anyCtrl.formResetCallback()
       } else if (
         'value' in anyCtrl &&
         typeof anyCtrl.defaultValue !== 'undefined'

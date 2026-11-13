@@ -1,0 +1,34 @@
+---
+/**
+ * moul-button state demo wiring, so the MDX previews stay plain markup:
+ *   data-button-run="succeed" → a press runs a fake request that succeeds
+ *   data-button-run="fail"    → a press runs a fake request that fails
+ *
+ * Both requests take 1.5 s. The press goes through `run()`, so the button
+ * shows pending, then success or error, then returns to idle.
+ */
+---
+
+<script>
+  type StatefulButton = HTMLElement & {
+    run<T>(task: () => Promise<T>): Promise<T>
+  }
+
+  const fakeRequest = (shouldFail: boolean) =>
+    new Promise<void>((resolve, reject) => {
+      setTimeout(() => {
+        if (shouldFail) reject(new Error('The server did not answer.'))
+        else resolve()
+      }, 1500)
+    })
+
+  document.addEventListener('press', (event) => {
+    const button = (event.target as Element | null)?.closest?.<StatefulButton>(
+      '[data-button-run]',
+    )
+    if (!button) return
+    const shouldFail = button.dataset.buttonRun === 'fail'
+    // run() re-throws the failure; the button already shows it.
+    button.run(() => fakeRequest(shouldFail)).catch(() => {})
+  })
+</script>

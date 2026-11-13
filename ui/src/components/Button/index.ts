@@ -1,5 +1,6 @@
 export {
   type ButtonSize,
+  type ButtonState,
   type ButtonType,
   type ButtonVariant,
   MoulButton,

@@ -656,10 +656,12 @@ describe('Phase 5: Surface & Feedback Components', () => {
         selectionEventDetail = (e as CustomEvent).detail
       })
 
-      const rowCheckboxes = table.shadowRoot?.querySelectorAll(
-        'tbody input[type="checkbox"]',
-      )
-      ;(rowCheckboxes?.[0] as HTMLInputElement)?.click()
+      // The table sorts its own rows now (name descending puts Bob first),
+      // so pick Alice's checkbox by its name rather than its position.
+      const aliceCheckbox = table.shadowRoot?.querySelector(
+        'tbody input[aria-label="Select Alice"]',
+      ) as HTMLInputElement
+      aliceCheckbox.click()
       await table.updateComplete
 
       expect(selectionEventDetail).toEqual({ selectedKeys: ['1'] })

@@ -249,8 +249,8 @@ describe('Empirical Adversarial Challenge Suite: MoulTable & MoulToast', () => {
 
       // Event count remains 3 (no new sortchange event emitted)
       expect(sortEvents.length).toBe(3)
-      // Lit renders empty attribute when ariaSort expression evaluates to undefined
-      expect(updatedNameTh.getAttribute('aria-sort')).toBe('')
+      // Headers that cannot sort carry no aria-sort at all
+      expect(updatedNameTh.getAttribute('aria-sort')).toBeNull()
     })
 
     it('CHAL-TBL-03: Selection state integrity under continuous dynamic filtering and dataset replacement', async () => {

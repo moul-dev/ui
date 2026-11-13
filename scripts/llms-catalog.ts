@@ -178,11 +178,19 @@ document.querySelector('moul-tabs').addEventListener('selectionchange', (e) => {
         name: 'Button',
         docs: '/docs/components/button',
         summary:
-          'Button with 7 variants, 3 sizes, icon-only mode, and pending state.',
+          'Button with 7 variants, 3 sizes, icon-only mode, and pending, success and error states; `run(task)` drives them from a promise.',
         tags: ['moul-button'],
         snippet: `<moul-button variant="primary" size="md">Save changes</moul-button>
 <moul-button variant="ghost" is-icon aria-label="Close">×</moul-button>
-<moul-button variant="danger" is-pending>Deleting…</moul-button>`,
+<moul-button id="save">
+  Save
+  <span slot="pending">Saving…</span>
+  <span slot="success">Saved</span>
+</moul-button>`,
+        script: `const save = document.querySelector('#save')
+save.addEventListener('press', () => {
+  save.run(() => fetch('/api/save', { method: 'POST' })).catch(() => {})
+})`,
       },
       {
         name: 'ButtonGroup',
@@ -193,6 +201,26 @@ document.querySelector('moul-tabs').addEventListener('selectionchange', (e) => {
   <moul-button variant="outline">Day</moul-button>
   <moul-button variant="outline">Week</moul-button>
 </moul-button-group>`,
+      },
+      {
+        name: 'SplitButton',
+        docs: '/docs/components/splitbutton',
+        summary:
+          'Main action joined to a chevron menu of related actions; `press` from the main part, `action` from the menu.',
+        tags: ['moul-split-button'],
+        snippet: `<moul-split-button menu-label="More deploy options">
+  Deploy
+  <moul-menu-item slot="menu" value="staging">Deploy to staging</moul-menu-item>
+  <moul-menu-item slot="menu" value="schedule">Schedule deploy…</moul-menu-item>
+</moul-split-button>`,
+      },
+      {
+        name: 'ThemeToggle',
+        docs: '/docs/components/themetoggle',
+        summary:
+          'Light/dark/system switch with a circular reveal; applies `data-theme` and `color-scheme` to `<html>` and remembers the choice.',
+        tags: ['moul-theme-toggle'],
+        snippet: `<moul-theme-toggle modes="system light dark" variant="ghost"></moul-theme-toggle>`,
       },
       {
         name: 'ToggleButton',
@@ -319,6 +347,22 @@ document.querySelector('moul-tabs').addEventListener('selectionchange', (e) => {
         snippet: `<moul-date-picker name="start" label="Start date" value="2026-10-19" locale="km-KH"></moul-date-picker>`,
       },
       {
+        name: 'FileUpload',
+        docs: '/docs/components/fileupload',
+        summary:
+          'Drop zone and file list with per-file progress; set `upload` to send each file as it is picked.',
+        tags: ['moul-file-upload'],
+        snippet: `<moul-file-upload name="attachments" label="Attachments" accept="image/*,.pdf" max-size="5242880" is-multiple></moul-file-upload>`,
+        script: `const field = document.querySelector('moul-file-upload')
+field.upload = async (file, { signal, onProgress }) => {
+  const body = new FormData()
+  body.append('file', file)
+  const res = await fetch('/api/files', { method: 'POST', body, signal })
+  onProgress(100)
+  return res.json() // stored on the item as \`response\`
+}`,
+      },
+      {
         name: 'Calendar',
         docs: '/docs/components/calendar',
         summary: 'Month grid date selector with min/max bounds.',
@@ -375,12 +419,70 @@ document.querySelector('moul-tabs').addEventListener('selectionchange', (e) => {
       {
         name: 'Drawer',
         docs: '/docs/components/drawer',
-        summary: 'Edge-anchored panel built on native `<dialog>`.',
+        summary:
+          'Edge-anchored panel built on native `<dialog>`; `is-sheet` makes it a bottom sheet dragged down to dismiss.',
         tags: ['moul-drawer'],
         snippet: `<moul-drawer placement="right" size="md" is-open>
   <h2 slot="header">Filters</h2>
   <p>Drawer content</p>
+</moul-drawer>
+<moul-drawer is-sheet aria-label="Share">
+  <h2 slot="header">Share</h2>
+  <moul-button slot="footer">Done</moul-button>
 </moul-drawer>`,
+      },
+      {
+        name: 'DropdownMenu',
+        docs: '/docs/components/dropdownmenu',
+        summary:
+          'Menu button: items, checkbox and radio items, groups and separators; fires `action` with `detail.value`.',
+        tags: [
+          'moul-dropdown-menu',
+          'moul-menu-item',
+          'moul-menu-group',
+          'moul-menu-separator',
+        ],
+        snippet: `<moul-dropdown-menu placement="bottom-end">
+  <moul-button slot="trigger" variant="outline">Actions</moul-button>
+  <moul-menu-item value="edit" shortcut="⌘E">Edit</moul-menu-item>
+  <moul-menu-group label="Sort by">
+    <moul-menu-item type="radio" value="name" is-checked>Name</moul-menu-item>
+    <moul-menu-item type="radio" value="date">Date</moul-menu-item>
+  </moul-menu-group>
+  <moul-menu-separator></moul-menu-separator>
+  <moul-menu-item value="delete" variant="danger">Delete</moul-menu-item>
+</moul-dropdown-menu>`,
+        script: `menu.addEventListener('action', (e) => console.log(e.detail.value))`,
+      },
+      {
+        name: 'Stepper',
+        docs: '/docs/components/stepper',
+        summary:
+          'Multi-step flow with an animated connector; cancel `stepchange` to keep the user on a step that does not validate.',
+        tags: ['moul-stepper', 'moul-step'],
+        snippet: `<moul-stepper id="checkout" current="0">
+  <moul-step label="Cart" description="3 items">…</moul-step>
+  <moul-step label="Delivery">…</moul-step>
+  <moul-step label="Payment">…</moul-step>
+</moul-stepper>`,
+        script: `const stepper = document.querySelector('#checkout')
+stepper.addEventListener('stepchange', (e) => {
+  if (e.detail.current > e.detail.previous && !isValid()) e.preventDefault()
+})
+stepper.next()`,
+      },
+      {
+        name: 'Tree',
+        docs: '/docs/components/tree',
+        summary:
+          'Collapsible tree view with roving focus, type-ahead and none/single/multiple selection.',
+        tags: ['moul-tree', 'moul-tree-item'],
+        snippet: `<moul-tree label="Project files" selection-mode="single">
+  <moul-tree-item value="src" label="src" is-expanded>
+    <moul-tree-item value="src/index.ts" label="index.ts"></moul-tree-item>
+  </moul-tree-item>
+  <moul-tree-item value="docs" label="docs" has-children></moul-tree-item>
+</moul-tree>`,
       },
       {
         name: 'Popover',
@@ -458,6 +560,17 @@ palette.addEventListener('select', (e) => console.log(e.detail.item))`,
     title: 'Surfaces & Feedback',
     families: [
       {
+        name: 'Accordion',
+        docs: '/docs/components/accordion',
+        summary:
+          'Disclosure list whose panels open with a spring; one open at a time unless `is-multiple`.',
+        tags: ['moul-accordion', 'moul-accordion-item'],
+        snippet: `<moul-accordion variant="separated">
+  <moul-accordion-item value="shipping" heading="How long does shipping take?" is-open>Next day.</moul-accordion-item>
+  <moul-accordion-item value="returns" heading="Can I return an item?">Within 30 days.</moul-accordion-item>
+</moul-accordion>`,
+      },
+      {
         name: 'Alert',
         docs: '/docs/components/alert',
         summary: 'Inline status message with semantic tone and dismiss action.',
@@ -524,6 +637,16 @@ palette.addEventListener('select', (e) => console.log(e.detail.item))`,
         snippet: `<moul-separator orientation="horizontal"></moul-separator>`,
       },
       {
+        name: 'IconMorph',
+        docs: '/docs/components/iconmorph',
+        summary:
+          'Icon that morphs into another when `name` changes (menu/close, play/pause, sun/moon, loader/check).',
+        tags: ['moul-icon-morph'],
+        snippet: `<moul-button is-icon aria-label="Open menu">
+  <moul-icon-morph name="menu"></moul-icon-morph>
+</moul-button>`,
+      },
+      {
         name: 'Spinner',
         docs: '/docs/components/spinner',
         summary: 'Indeterminate loading indicator with accessible label.',
@@ -560,9 +683,9 @@ palette.addEventListener('select', (e) => console.log(e.detail.item))`,
         name: 'Table',
         docs: '/docs/components/table',
         summary:
-          'Data table with sortable columns, row selection, and loading/empty states.',
+          'Data table with search, filters, sorting, row selection, expandable rows and a card layout on narrow screens; `is-manual` hands search, filters and sorting to the server.',
         tags: ['moul-table'],
-        snippet: `<moul-table id="users" is-sortable is-selectable>
+        snippet: `<moul-table id="users" aria-label="Team members" is-searchable is-sortable is-selectable>
   <span slot="caption">Team members</span>
   <span slot="empty">No members yet</span>
 </moul-table>`,
@@ -571,11 +694,24 @@ palette.addEventListener('select', (e) => console.log(e.detail.item))`,
 const table = document.querySelector('#users')
 table.columns = [
   { key: 'name', title: 'Name', sortable: true },
-  { key: 'role', title: 'Role' },
+  { key: 'role', title: 'Role', filterOptions: [{ value: 'Admin', label: 'Admin' }, { value: 'Member', label: 'Member' }] },
   // render() puts markup in the cell; it runs inside the table's shadow root.
   { key: 'status', title: 'Status', render: (row) => html\`<moul-badge tone="success">\${row.status}</moul-badge>\` },
 ]
-table.data = [{ id: '1', name: 'Dara', role: 'Admin', status: 'Active' }]`,
+table.data = [{ id: '1', name: 'Dara', role: 'Admin', status: 'Active' }]
+table.renderExpanded = (row) => html\`<p>\${row.name} joined in 2024.</p>\``,
+      },
+      {
+        name: 'SelectionToolbar',
+        docs: '/docs/components/selectiontoolbar',
+        summary:
+          'Floating bar of bulk actions that appears while rows of a bound `moul-table` are selected.',
+        tags: ['moul-selection-toolbar'],
+        snippet: `<moul-table id="users" is-selectable></moul-table>
+<moul-selection-toolbar for="users">
+  <moul-button size="sm" variant="secondary">Export</moul-button>
+  <moul-button size="sm" variant="danger-soft">Delete</moul-button>
+</moul-selection-toolbar>`,
       },
       {
         name: 'Toast',

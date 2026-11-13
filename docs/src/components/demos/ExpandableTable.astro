@@ -1,0 +1,75 @@
+---
+/**
+ * Table demo with expandable rows. `renderExpanded` is a function, so it is
+ * set from a script rather than through `data-props`.
+ */
+---
+
+<moul-table
+  data-expandable-table-demo
+  aria-label="Deployments"
+  is-sortable
+  is-selectable
+></moul-table>
+
+<script>
+  import type { MoulTable, TableColumn } from '@moul-dev/web-component'
+
+  interface Deployment {
+    id: string
+    service: string
+    region: string
+    status: string
+    latency: number
+    owner: string
+    version: string
+    deployed: string
+  }
+
+  const columns: TableColumn<Deployment>[] = [
+    { key: 'service', title: 'Service' },
+    { key: 'region', title: 'Region' },
+    { key: 'status', title: 'Status' },
+    { key: 'latency', title: 'p95 (ms)', align: 'right' },
+  ]
+
+  const data: Deployment[] = [
+    { id: '1', service: 'api-gateway', region: 'us-east', status: 'Healthy', latency: 42, owner: 'Platform', version: 'v2.14.0', deployed: '2 hours ago' },
+    { id: '2', service: 'auth-worker', region: 'ap-southeast', status: 'Degraded', latency: 188, owner: 'Identity', version: 'v0.9.3', deployed: '25 minutes ago' },
+    { id: '3', service: 'billing', region: 'eu-west', status: 'Healthy', latency: 67, owner: 'Payments', version: 'v5.2.1', deployed: 'Yesterday' },
+  ]
+
+  /** A definition list built from DOM nodes; in a Lit app, return an `html` template. */
+  function details(row: Deployment): HTMLElement {
+    const list = document.createElement('dl')
+    list.style.cssText =
+      'display: grid; grid-template-columns: max-content 1fr; gap: 0.25rem 1.5rem'
+    const pairs: [string, string][] = [
+      ['Owner', row.owner],
+      ['Version', row.version],
+      ['Deployed', row.deployed],
+    ]
+    for (const [term, value] of pairs) {
+      const dt = document.createElement('dt')
+      dt.className = 'muted'
+      dt.textContent = term
+      const dd = document.createElement('dd')
+      dd.textContent = value
+      list.append(dt, dd)
+    }
+    return list
+  }
+
+  function setup(): void {
+    for (const table of document.querySelectorAll<MoulTable>(
+      '[data-expandable-table-demo]',
+    )) {
+      table.columns = columns
+      table.data = data
+      table.renderExpanded = details
+    }
+  }
+
+  setup()
+  document.addEventListener('astro:page-load', setup)
+</script>

@@ -1,9 +1,10 @@
-import { html, LitElement, type PropertyValues } from 'lit'
+import { html, LitElement, nothing, type PropertyValues } from 'lit'
 import { PressController } from '../../controllers/press.controller'
 import { defineElement } from '../../utils/define-element'
+import { EASE_OUT, prefersReducedMotion } from '../../utils/motion'
 import { warnMissingLabel } from '../../utils/warn-missing-label'
 import type { MoulForm } from '../Form/Form'
-import '../Spinner/Spinner'
+import '../IconMorph/IconMorph'
 import { buttonStyles } from './Button.styles'
 
 export type ButtonVariant =
@@ -19,25 +20,57 @@ export type ButtonSize = 'sm' | 'md' | 'lg'
 
 export type ButtonType = 'button' | 'submit' | 'reset'
 
+export type ButtonState = 'idle' | 'pending' | 'success' | 'error'
+
+/** The `moul-icon-morph` name for each state; these three morph into each other. */
+const STATE_ICONS = { pending: 'loader', success: 'check', error: 'error' }
+
 /**
  * A button for actions, in seven variants (primary, secondary, tertiary,
- * outline, ghost, danger, danger-soft) and three sizes, with an icon-only mode
- * and a pending state that shows a spinner. It fires `press`, and with
- * `type="submit"` or `type="reset"` submits or resets the enclosing `<form>` or
- * `moul-form`.
+ * outline, ghost, danger, danger-soft) and three sizes, with an icon-only
+ * mode. It fires `press`, and with `type="submit"` or `type="reset"` submits
+ * or resets the enclosing `<form>` or `moul-form`. `state` shows how the
+ * action it started is going: `pending` adds a spinning loader that morphs
+ * into a check for `success` or an alert mark for `error`, which also tint
+ * the button in the success or danger colours; back in `idle` the icon folds
+ * away. In an icon-only button the state icon takes the content's place. The
+ * `pending`, `success` and `error` slots swap in a label for their state, and
+ * the width follows. `run(task)` does all of this for a promise: pending
+ * while it runs, then success or error for `state-duration` milliseconds. It
+ * resolves with the task's value and re-throws its error, so callers must
+ * catch it. `is-pending` is the same as `state="pending"`.
  *
  * Keyboard and screen readers: focus goes to a native `<button>` in the shadow
  * root, so Tab reaches it and Enter or Space press it. `is-disabled` disables
- * that button (out of the tab order, `aria-disabled="true"`); `is-pending`
- * keeps it focusable but ignores presses, sets `aria-busy="true"` and adds a
- * `moul-spinner` (`role="status"`, label "Loading") inside it. The name is the
- * slotted content: an `aria-label` or `aria-labelledby` on the host only
+ * that button (out of the tab order, `aria-disabled="true"`). While pending
+ * it stays focusable but ignores presses and sets `aria-busy="true"`; in
+ * `success` and `error` it presses as usual. The state icon is hidden from
+ * screen readers. Entering `pending`, `success` or `error` is announced
+ * politely by a live region in the shadow root, with the text of that state's
+ * slot, or else `pending-label` ("Loading"), `success-label` ("Done") or
+ * `error-label` ("Failed"). The name is the slotted content, or a state slot's
+ * while it shows: an `aria-label` or `aria-labelledby` on the host only
  * silences the `is-icon` dev warning and is not copied to the inner button.
  * There is no link mode; use `moul-link` for navigation.
  *
- * Reduced motion: the button scales down slightly while pressed, and hover,
- * press and focus colours fade. Under reduced motion there is no press scale
- * and no fades, and the pending spinner pulses instead of spinning.
+ * Reduced motion: the button scales down slightly while pressed; hover,
+ * press, focus and state colours fade; the state icon grows in, morphs
+ * between states and folds away; and a label change animates the width.
+ * Under reduced motion there is no press scale and no fade, the icon and the
+ * width change at once, and the loader pulses instead of spinning.
+ *
+ * @slot - The label.
+ * @slot prefix - Content before the label, such as an icon.
+ * @slot suffix - Content after the label.
+ * @slot pending - Replaces the label while pending, such as "Saving…".
+ * @slot success - Replaces the label in `success`, such as "Saved"; its text is also announced.
+ * @slot error - Replaces the label in `error`, such as "Retry"; its text is also announced.
+ * @fires press - On activation by pointer, Enter or Space, unless disabled or pending; `detail.originalEvent` is the `click`.
+ * @csspart button - The native `<button>`.
+ * @csspart icon - The box around the state icon (a `moul-icon-morph`); it has no width in `idle`.
+ * @csspart prefix - The `prefix` slot.
+ * @csspart content - The box around the label, whose width animates when the label changes.
+ * @csspart suffix - The `suffix` slot.
  */
 export class MoulButton extends LitElement {
   static override styles = buttonStyles
@@ -46,6 +79,11 @@ export class MoulButton extends LitElement {
     variant: { type: String, reflect: true },
     size: { type: String, reflect: true },
     type: { type: String, reflect: true },
+    state: { type: String, reflect: true },
+    stateDuration: { type: Number, attribute: 'state-duration' },
+    pendingLabel: { type: String, attribute: 'pending-label' },
+    successLabel: { type: String, attribute: 'success-label' },
+    errorLabel: { type: String, attribute: 'error-label' },
     isIcon: { type: Boolean, reflect: true, attribute: 'is-icon' },
     isDisabled: { type: Boolean, reflect: true, attribute: 'is-disabled' },
     isPending: { type: Boolean, reflect: true, attribute: 'is-pending' },
@@ -54,25 +92,93 @@ export class MoulButton extends LitElement {
   declare variant: ButtonVariant
   declare size: ButtonSize
   declare type: ButtonType
+  /** Progress of the action; `is-pending` also makes it `pending`. */
+  declare state: ButtonState
+  /** Milliseconds `run()` keeps `success` or `error` before `idle`; `0` keeps it. */
+  declare stateDuration: number
+  /** Announced on `pending` when there is no `pending` slot. */
+  declare pendingLabel: string
+  /** Announced on `success` when there is no `success` slot. */
+  declare successLabel: string
+  /** Announced on `error` when there is no `error` slot. */
+  declare errorLabel: string
   declare isIcon: boolean
   declare isDisabled: boolean
   declare isPending: boolean
 
   public pressController: PressController
 
+  /** The state last rendered, and the label width just before it changed. */
+  private shown?: ButtonState
+  private labelWidth = 0
+  private resizing?: Animation
+  /** The icon is created on the first state other than `idle`, then kept. */
+  private icon = ''
+  private runs = 0
+  private timer?: ReturnType<typeof setTimeout>
+  private timedState?: ButtonState
+  /** Drops the icon once it has folded away, so a hidden loader stops spinning. */
+  private foldTimer?: ReturnType<typeof setTimeout>
+
   constructor() {
     super()
     this.variant = 'primary'
     this.size = 'md'
     this.type = 'button'
+    this.state = 'idle'
+    this.stateDuration = 2000
+    this.pendingLabel = 'Loading'
+    this.successLabel = 'Done'
+    this.errorLabel = 'Failed'
     this.isIcon = false
     this.isDisabled = false
     this.isPending = false
 
     // Press feedback is the stylesheet's :active scale; this tracks state only.
     this.pressController = new PressController(this, {
-      disabled: () => this.isDisabled || this.isPending,
+      disabled: () => this.isDisabled || this.currentState === 'pending',
     })
+  }
+
+  /** `state`, with `is-pending` and unknown values folded in. */
+  private get currentState(): ButtonState {
+    const { state } = this
+    return this.isPending || state === 'pending'
+      ? 'pending'
+      : state === 'success' || state === 'error'
+        ? state
+        : 'idle'
+  }
+
+  /**
+   * Sets `pending`, awaits `task`, then sets `success` or `error` and returns
+   * to `idle` after `state-duration` milliseconds. It resolves with the
+   * task's value and rejects with its error, so catch it. A later `run()` owns
+   * the state, and a new run or any state change cancels the return to idle.
+   */
+  public async run<T>(task: () => Promise<T>): Promise<T> {
+    const run = ++this.runs
+    clearTimeout(this.timer)
+    this.state = 'pending'
+    try {
+      const value = await task()
+      this.settle(run, 'success')
+      return value
+    } catch (error) {
+      this.settle(run, 'error')
+      throw error
+    }
+  }
+
+  private settle(run: number, state: ButtonState): void {
+    if (run !== this.runs) return
+    this.state = state
+    if (this.stateDuration > 0) {
+      this.timedState = state
+      this.timer = setTimeout(() => {
+        this.state = 'idle'
+      }, this.stateDuration)
+    }
   }
 
   public override connectedCallback(): void {
@@ -83,16 +189,39 @@ export class MoulButton extends LitElement {
   public override disconnectedCallback(): void {
     super.disconnectedCallback()
     this.removeEventListener('click', this.handleClick)
+    clearTimeout(this.foldTimer)
+  }
+
+  protected override willUpdate(changedProperties: PropertyValues): void {
+    super.willUpdate(changedProperties)
+    const state = this.currentState
+    if (state !== this.timedState) clearTimeout(this.timer)
+    if (state === this.shown) return
+    if (state !== 'idle') this.icon = STATE_ICONS[state]
+    // Measured before the label changes, mid-animation if one is running.
+    this.labelWidth =
+      this.renderRoot.querySelector('.content')?.getBoundingClientRect()
+        .width ?? 0
   }
 
   protected override updated(changedProperties: PropertyValues): void {
     super.updated(changedProperties)
 
-    if (changedProperties.has('isPending')) {
-      if (this.isPending) {
+    const state = this.currentState
+    if (state !== this.shown) {
+      if (state === 'pending') {
         this.setAttribute('aria-busy', 'true')
       } else {
         this.removeAttribute('aria-busy')
+      }
+      if (this.shown) this.resizeLabel()
+      this.shown = state
+      clearTimeout(this.foldTimer)
+      if (state === 'idle' && this.icon) {
+        this.foldTimer = setTimeout(() => {
+          if (this.currentState === 'idle') this.icon = ''
+          this.requestUpdate()
+        }, 400)
       }
     }
 
@@ -110,13 +239,53 @@ export class MoulButton extends LitElement {
     }
   }
 
+  /** Animates the label box from its old width to the new label's, so nothing jumps. */
+  private resizeLabel(): void {
+    const content = this.renderRoot.querySelector<HTMLElement>('.content')
+    if (!content) return
+    this.resizing?.cancel()
+    content.style.overflowX = ''
+    if (prefersReducedMotion() || !content.animate) return
+    const from = this.labelWidth
+    const to = content.getBoundingClientRect().width
+    if (Math.abs(to - from) < 1) return
+    // Clip sideways only, so tall glyphs (Khmer) still show in full.
+    content.style.overflowX = 'clip'
+    const animation = content.animate(
+      [{ width: `${from}px` }, { width: `${to}px` }],
+      { duration: 300, easing: `cubic-bezier(${EASE_OUT})` },
+    )
+    animation.onfinish = () => {
+      if (this.resizing === animation) content.style.overflowX = ''
+    }
+    this.resizing = animation
+  }
+
+  /** The text announced for `state`: its slot's text, or the label attribute. */
+  private announcement(state: ButtonState): string {
+    if (state === 'idle') return ''
+    const text = Array.from(this.children)
+      .filter((child) => child.getAttribute('slot') === state)
+      .map((child) => child.textContent)
+      .join(' ')
+      .trim()
+    return (
+      text ||
+      (state === 'pending'
+        ? this.pendingLabel
+        : state === 'success'
+          ? this.successLabel
+          : this.errorLabel)
+    )
+  }
+
   /**
    * The inner `<button>` turns a pointer, touch, Enter, or Space activation
    * into exactly one `click`, so `press` comes from `click` alone. Pressing on
    * `pointerup` or `keyup` as well fired it twice per activation.
    */
   private readonly handleClick = (e: MouseEvent): void => {
-    if (this.isDisabled || this.isPending) {
+    if (this.isDisabled || this.currentState === 'pending') {
       e.preventDefault()
       e.stopImmediatePropagation()
       return
@@ -158,23 +327,36 @@ export class MoulButton extends LitElement {
   }
 
   protected override render() {
+    const state = this.currentState
+    const label = html`<slot></slot>`
     return html`
       <button
         part="button"
+        class=${state}
         type=${this.type}
         ?disabled=${this.isDisabled}
-        aria-busy=${this.isPending ? 'true' : 'false'}
+        aria-busy=${state === 'pending' ? 'true' : 'false'}
         aria-disabled=${this.isDisabled ? 'true' : 'false'}
       >
-        ${
-          this.isPending
-            ? html`<moul-spinner size="sm" part="spinner" class="spinner"></moul-spinner>`
-            : ''
-        }
+        <span part="icon" class="icon">
+          ${
+            this.icon
+              ? html`<moul-icon-morph name=${this.icon} size="sm"></moul-icon-morph>`
+              : nothing
+          }
+        </span>
         <slot name="prefix" part="prefix"></slot>
-        <span part="content" class="content"><slot></slot></span>
+        <span part="content" class="content">
+          ${
+            state === 'idle'
+              ? label
+              : // The state's slot, falling back to the label when it is empty.
+                html`<slot name=${state}>${label}</slot>`
+          }
+        </span>
         <slot name="suffix" part="suffix"></slot>
       </button>
+      <span class="sr-only" role="status">${this.announcement(state)}</span>
     `
   }
 }

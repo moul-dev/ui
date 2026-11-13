@@ -1,84 +1,244 @@
 ---
 title: Table
-description: Sortable, selectable data table.
+description: Data table with search, filters, sorting, row selection, expandable rows and a card layout on narrow screens.
 ---
 
 import ComponentPreview from '@/components/ComponentPreview.astro';
+import ExpandableTable from '@/components/demos/ExpandableTable.astro';
 
-`<moul-table>` renders `data` against `columns`. Turn on `is-sortable` and `is-selectable` for click-to-sort headers and row checkboxes.
+`<moul-table>` renders `data` against `columns`. It can search, filter, sort, select rows and open a details row under a row, and below about 480px wide it shows each row as a card. Search, filters and sorting run on `data` in the browser; for server data, `is-manual` turns them into events.
 
 <ComponentPreview align="stretch">
-<moul-table is-sortable is-selectable data-props='{"columns":[{"key":"name","title":"Service","sortable":true},{"key":"region","title":"Region"},{"key":"status","title":"Status"},{"key":"latency","title":"p95 (ms)","sortable":true,"align":"right"}],"data":[{"id":"1","name":"api-gateway","region":"us-east","status":"Healthy","latency":42},{"id":"2","name":"auth-worker","region":"ap-southeast","status":"Degraded","latency":188},{"id":"3","name":"billing","region":"eu-west","status":"Healthy","latency":67},{"id":"4","name":"search","region":"us-west","status":"Healthy","latency":95}]}'></moul-table>
+<moul-table is-sortable is-selectable aria-label="Services" data-props='{"columns":[{"key":"name","title":"Service"},{"key":"region","title":"Region"},{"key":"status","title":"Status","sortable":false},{"key":"latency","title":"p95 (ms)","align":"right"}],"data":[{"id":"1","name":"api-gateway","region":"us-east","status":"Healthy","latency":42},{"id":"2","name":"auth-worker","region":"ap-southeast","status":"Degraded","latency":188},{"id":"3","name":"billing","region":"eu-west","status":"Healthy","latency":67},{"id":"4","name":"search","region":"us-west","status":"Healthy","latency":95}]}'></moul-table>
 </ComponentPreview>
 
 ```html
-<moul-table is-sortable is-selectable></moul-table>
+<moul-table is-sortable is-selectable aria-label="Services"></moul-table>
 ```
 
 ```js
 const table = document.querySelector('moul-table')
 table.columns = [
-  {
-    "key": "name",
-    "title": "Service",
-    "sortable": true
-  },
-  {
-    "key": "region",
-    "title": "Region"
-  },
-  {
-    "key": "status",
-    "title": "Status"
-  },
-  {
-    "key": "latency",
-    "title": "p95 (ms)",
-    "sortable": true,
-    "align": "right"
-  }
+  { key: 'name', title: 'Service' },
+  { key: 'region', title: 'Region' },
+  { key: 'status', title: 'Status', sortable: false },
+  { key: 'latency', title: 'p95 (ms)', align: 'right' },
 ]
 table.data = [
-  {
-    "id": "1",
-    "name": "api-gateway",
-    "region": "us-east",
-    "status": "Healthy",
-    "latency": 42
-  },
-  {
-    "id": "2",
-    "name": "auth-worker",
-    "region": "ap-southeast",
-    "status": "Degraded",
-    "latency": 188
-  },
-  {
-    "id": "3",
-    "name": "billing",
-    "region": "eu-west",
-    "status": "Healthy",
-    "latency": 67
-  },
-  {
-    "id": "4",
-    "name": "search",
-    "region": "us-west",
-    "status": "Healthy",
-    "latency": 95
-  }
+  { id: '1', name: 'api-gateway', region: 'us-east', status: 'Healthy', latency: 42 },
+  { id: '2', name: 'auth-worker', region: 'ap-southeast', status: 'Degraded', latency: 188 },
+  { id: '3', name: 'billing', region: 'eu-west', status: 'Healthy', latency: 67 },
+  { id: '4', name: 'search', region: 'us-west', status: 'Healthy', latency: 95 },
 ]
 ```
 
-## Custom cells
+Name the table with the `caption` slot, or with `aria-label` on the element when the page already shows a heading.
 
-Give a column a `render(row, index)` function to put markup in its cells instead of the plain value. It can return a string, a DOM node, or a Lit template. Cells render inside the table's shadow root, where page stylesheets do not reach, so build them from `<moul-*>` elements or inline styles. `sortchange` still reports the column `key`, so sort by the underlying value.
+## Columns
+
+Each column needs a `key`, the property it reads from a row. `title` is the header: a string, a DOM node or a Lit template, such as a select-all checkbox. Give a column a string `label` when its title is not plain text, since cards, filter names and accessible names need text, and `sortable: false` when the title holds a control of its own. `width` sets the header cell's width, and `align: 'right'` aligns numbers to the end with tabular numerals. Without `columns`, the table makes one column per property of the first row.
 
 ```js
 import { html } from 'lit'
 
 table.columns = [
+  { key: 'id', title: html`<moul-badge size="sm">ID</moul-badge>`, label: 'ID', width: '6rem' },
   { key: 'name', title: 'Service' },
+  { key: 'latency', title: 'p95 (ms)', align: 'right' },
+]
+```
+
+## Search and filters
+
+`is-searchable` adds a search field to a toolbar above the table. Rows match when any column's text contains the query, ignoring case; `searchable: false` leaves a column out, and `searchValue(row)` searches other text than the cell shows. A column with `filterOptions` adds a select to the toolbar, starting at "All" and the column label. A row passes when `String(row[key])`, or the column's `filterValue(row)`, equals the chosen value; several filters must all pass.
+
+<ComponentPreview align="stretch">
+<moul-table is-searchable is-sortable aria-label="Services" search-placeholder="Search services" data-props='{"columns":[{"key":"name","title":"Service"},{"key":"region","title":"Region","filterOptions":[{"value":"us-east","label":"US East"},{"value":"us-west","label":"US West"},{"value":"eu-west","label":"EU West"},{"value":"ap-southeast","label":"AP Southeast"}]},{"key":"status","title":"Status","filterOptions":[{"value":"Healthy","label":"Healthy"},{"value":"Degraded","label":"Degraded"},{"value":"Down","label":"Down"}]},{"key":"latency","title":"p95 (ms)","align":"right"}],"data":[{"id":"1","name":"api-gateway","region":"us-east","status":"Healthy","latency":42},{"id":"2","name":"auth-worker","region":"ap-southeast","status":"Degraded","latency":188},{"id":"3","name":"billing","region":"eu-west","status":"Healthy","latency":67},{"id":"4","name":"search","region":"us-west","status":"Healthy","latency":95},{"id":"5","name":"media-resizer","region":"ap-southeast","status":"Down","latency":0},{"id":"6","name":"notifications","region":"eu-west","status":"Healthy","latency":51},{"id":"7","name":"payments-webhook","region":"us-east","status":"Degraded","latency":240},{"id":"8","name":"ledger","region":"us-west","status":"Healthy","latency":33}]}'></moul-table>
+</ComponentPreview>
+
+```js
+table.isSearchable = true
+table.columns = [
+  { key: 'name', title: 'Service' },
+  {
+    key: 'region',
+    title: 'Region',
+    filterOptions: [
+      { value: 'us-east', label: 'US East' },
+      { value: 'eu-west', label: 'EU West' },
+    ],
+  },
+  {
+    key: 'latency',
+    title: 'p95 (ms)',
+    align: 'right',
+    searchable: false,
+    // Filter on a bucket rather than the raw number
+    filterValue: (row) => (row.latency > 150 ? 'slow' : 'fast'),
+    filterOptions: [
+      { value: 'fast', label: 'Fast' },
+      { value: 'slow', label: 'Slow' },
+    ],
+  },
+]
+
+// Both are settable, for example from the URL
+table.searchQuery = 'billing'
+table.filters = { region: 'eu-west' }
+
+table.addEventListener('searchchange', (event) => console.log(event.detail.query))
+table.addEventListener('filterchange', (event) => console.log(event.detail.filters))
+```
+
+## Sorting
+
+With `is-sortable`, every column sorts unless it sets `sortable: false`. Pressing a header sorts ascending, pressing it again sorts descending, and `sortchange` reports `{ column, direction }`. The table sorts its rows itself: numbers numerically, everything else as text in locale order, so `item-2` comes before `item-10`. `sortValue(row)` sorts by another value than the cell's, such as a timestamp or a severity. `sort-column` and `sort-direction` set the order from the start. `data` itself is never reordered.
+
+```js
+const severity = { Down: 0, Degraded: 1, Healthy: 2 }
+
+table.columns = [
+  { key: 'name', title: 'Service' },
+  { key: 'status', title: 'Status', sortValue: (row) => severity[row.status] },
+  { key: 'deployedAt', title: 'Deployed', sortValue: (row) => Date.parse(row.deployedAt) },
+]
+table.sortColumn = 'status'
+```
+
+## Server data
+
+`is-manual` hands search, filters and sorting to your code: the table only fires `searchchange`, `filterchange` and `sortchange` and renders `data` exactly as given. Set `is-loading` while you fetch, then set `data`; the result count is announced once the new rows arrive.
+
+```js
+table.isManual = true
+const query = { q: '', filters: {}, sort: '' }
+
+async function load() {
+  table.isLoading = true
+  const params = new URLSearchParams({ q: query.q, sort: query.sort, ...query.filters })
+  table.data = await fetch(`/api/services?${params}`).then((response) => response.json())
+  table.isLoading = false
+}
+
+table.addEventListener('searchchange', (event) => { query.q = event.detail.query; load() })
+table.addEventListener('filterchange', (event) => { query.filters = event.detail.filters; load() })
+table.addEventListener('sortchange', ({ detail }) => {
+  query.sort = `${detail.direction === 'desc' ? '-' : ''}${detail.column}`
+  load()
+})
+```
+
+Debounce `searchchange` if your server should not see every keystroke.
+
+## Selection and row keys
+
+`is-selectable` adds a checkbox to each row and a "Select all rows" checkbox to the header. Select all acts on the rows on screen, after search and filters, and shows a mixed state when only some of them are selected; rows hidden by a filter keep their selection. `selectionchange` reports `{ selectedKeys }`, and `selectedKeys` is settable.
+
+Keys come from `rowKey(row, index)`, which defaults to `row.key`, then `row.id`, then the row's index in `data`. They also key expansion and rendering, so a sorted row moves rather than being rebuilt. Give `rowKey` when rows have another identifier:
+
+```js
+table.rowKey = (row) => row.slug
+table.selectedKeys = ['billing']
+table.addEventListener('selectionchange', (event) => console.log(event.detail.selectedKeys))
+```
+
+## Expandable rows
+
+Set `renderExpanded(row, index)` and each row starts with a button that opens a details row under it, spanning every column. Its height springs open and closed. `expandedKeys` lists the open rows and is settable; `expandedchange` reports `{ expandedKeys }` when the user toggles one.
+
+<ComponentPreview align="stretch">
+<ExpandableTable />
+</ComponentPreview>
+
+```js
+import { html } from 'lit'
+
+table.renderExpanded = (row) => html`
+  <dl style="display: grid; grid-template-columns: max-content 1fr; gap: 0.25rem 1.5rem">
+    <dt class="muted">Owner</dt><dd>${row.owner}</dd>
+    <dt class="muted">Version</dt><dd class="mono">${row.version}</dd>
+  </dl>
+`
+table.expandedKeys = ['2']
+table.addEventListener('expandedchange', (event) => console.log(event.detail.expandedKeys))
+```
+
+`renderExpanded` runs each time the table renders an open row, so return a Lit template, which updates in place, rather than building new nodes.
+
+## Cards on narrow screens
+
+`layout="auto"`, the default, switches to cards when the table itself is narrower than about 480px, whatever the window size: each row becomes a card of label and value pairs, labelled by the column's string `title` or `label`. Checkboxes and expand buttons stay on each card, and the header turns into a strip of sort buttons. `layout="cards"` always shows cards; `layout="table"` never does.
+
+<ComponentPreview align="stretch">
+<moul-table layout="cards" is-selectable is-sortable aria-label="Services" data-props='{"columns":[{"key":"name","title":"Service"},{"key":"region","title":"Region","sortable":false},{"key":"status","title":"Status","sortable":false},{"key":"latency","title":"p95 (ms)","align":"right"}],"data":[{"id":"1","name":"api-gateway","region":"us-east","status":"Healthy","latency":42},{"id":"2","name":"auth-worker","region":"ap-southeast","status":"Degraded","latency":188},{"id":"3","name":"billing","region":"eu-west","status":"Healthy","latency":67}]}'></moul-table>
+</ComponentPreview>
+
+```html
+<moul-table layout="cards" is-selectable is-sortable aria-label="Services"></moul-table>
+```
+
+## Toolbar
+
+Anything in `slot="toolbar"` goes at the end of the toolbar, after the search field and filters. The toolbar renders only when it has something in it.
+
+<ComponentPreview align="stretch">
+<moul-table is-searchable aria-label="Invoices" data-props='{"columns":[{"key":"number","title":"Invoice"},{"key":"customer","title":"Customer"},{"key":"total","title":"Total","align":"right"}],"data":[{"id":"1","number":"INV-1042","customer":"Sokha Trading","total":"$1,240.00"},{"id":"2","number":"INV-1043","customer":"Mekong Foods","total":"$86.50"},{"id":"3","number":"INV-1044","customer":"Angkor Print","total":"$412.00"}]}'>
+  <moul-button slot="toolbar" size="sm" variant="secondary">Export CSV</moul-button>
+</moul-table>
+</ComponentPreview>
+
+```html
+<moul-table is-searchable aria-label="Invoices">
+  <moul-button slot="toolbar" size="sm" variant="secondary">Export CSV</moul-button>
+</moul-table>
+```
+
+## Loading, empty and dense
+
+`is-loading` shows `skeleton-rows` placeholder rows (3 by default) and marks the table busy. With no rows to show, the `empty` slot appears; it spans the visible width even when the table scrolls sideways. Without it, the table says "No data available", or "No results" when search or filters hide every row. `is-dense` tightens the rows.
+
+<ComponentPreview align="stretch" stack>
+<moul-table is-loading skeleton-rows="2" aria-label="Loading services" data-props='{"columns":[{"key":"name","title":"Service"},{"key":"region","title":"Region"},{"key":"status","title":"Status"}]}'></moul-table>
+<moul-table is-dense aria-label="Builds" data-props='{"columns":[{"key":"name","title":"Build"},{"key":"branch","title":"Branch"},{"key":"duration","title":"Duration","align":"right"}],"data":[{"id":"1","name":"#2201","branch":"main","duration":"1m 12s"},{"id":"2","name":"#2200","branch":"fix/sse-buffer","duration":"58s"},{"id":"3","name":"#2199","branch":"main","duration":"1m 04s"}]}'></moul-table>
+<moul-table aria-label="Deployments" data-props='{"columns":[{"key":"name","title":"Deployment"},{"key":"status","title":"Status"}],"data":[]}'>
+  <moul-empty-state slot="empty">
+    <span slot="title">No deployments yet</span>
+    <span slot="description">Push a commit to see it here.</span>
+  </moul-empty-state>
+</moul-table>
+</ComponentPreview>
+
+```html
+<moul-table is-loading skeleton-rows="2" aria-label="Loading services"></moul-table>
+<moul-table is-dense aria-label="Builds"></moul-table>
+<moul-table aria-label="Deployments">
+  <moul-empty-state slot="empty">
+    <span slot="title">No deployments yet</span>
+    <span slot="description">Push a commit to see it here.</span>
+  </moul-empty-state>
+</moul-table>
+```
+
+## Custom cells
+
+Give a column a `render(row, index)` function to put markup in its cells instead of the plain value. It can return a string, a DOM node or a Lit template. Cells render inside the table's shadow root, where page stylesheets do not reach, so build them from `<moul-*>` elements, inline styles, or the table's utility classes:
+
+| Class | Effect |
+| :-- | :-- |
+| `.mono` | Monospace font, for IDs and hashes |
+| `.muted` | Muted text colour |
+| `.small` | Smaller text |
+| `.nowrap` | No line breaks |
+| `.truncate` | One line cut with an ellipsis at `--table-truncate-width` (16rem); add a `title` with the full value |
+
+Search, filters and sorting still read the row's own value, so give the column `searchValue`, `filterValue` or `sortValue` when the cell shows something else.
+
+```js
+import { html } from 'lit'
+
+table.columns = [
+  { key: 'id', title: 'ID', render: (row) => html`<span class="mono small">${row.id}</span>` },
+  { key: 'url', title: 'URL', render: (row) => html`<span class="truncate" title=${row.url}>${row.url}</span>` },
   {
     key: 'status',
     title: 'Status',
@@ -88,34 +248,85 @@ table.columns = [
   {
     key: 'actions',
     title: '',
+    label: 'Actions',
+    searchable: false,
     render: (row) =>
       html`<moul-button size="sm" variant="ghost" @press=${() => restart(row.id)}>Restart</moul-button>`,
   },
 ]
 ```
 
+## Accessibility
+
+- It is a native `<table>` with explicit table roles, so screen readers keep the table structure in the card layout too. Name it with the `caption` slot or `aria-label` on the element.
+- Each sortable header holds a native button: `Tab` reaches it, `Enter` or `Space` sorts, and the header cell carries `aria-sort`.
+- The search field is named "Search" plus the table's `aria-label`, each filter select by its column label. After a search or filter change, a polite status region announces the number of results, such as "12 results".
+- Row checkboxes and expand buttons are named after the row's first text cell ("Select billing", "Show details for billing"), or its position when no cell holds text. Expand buttons carry `aria-expanded`, and `aria-controls` while open. Select all reports a mixed state when only some shown rows are selected.
+- The table is `aria-busy` while loading, and skeleton rows are hidden from screen readers.
+- There is no arrow-key navigation between cells; interactive cell content is reached with `Tab`.
+- Under reduced motion, details rows open and close at once and the sort arrow and expand chevron turn without animating.
+
 ## API reference
 
 | Attribute | Property | Type | Default |
 | :-- | :-- | :-- | :-- |
-| `data` | `data` | `Record<string, unknown>[]` | `[]` |
+| `data` | `data` | `object[]` | `[]` |
 | `columns` | `columns` | `TableColumn[]` | `[]` |
 | `is-sortable` | `isSortable` | `boolean` | `false` |
 | `is-selectable` | `isSelectable` | `boolean` | `false` |
+| `is-searchable` | `isSearchable` | `boolean` | `false` |
+| `is-manual` | `isManual` | `boolean` | `false` |
 | `is-loading` | `isLoading` | `boolean` | `false` |
+| `is-dense` | `isDense` | `boolean` | `false` |
+| `skeleton-rows` | `skeletonRows` | `number` | `3` |
+| `layout` | `layout` | `'auto' \| 'table' \| 'cards'` | `'auto'` |
 | `selected-keys` | `selectedKeys` | `string[]` | `[]` |
+| — | `expandedKeys` | `string[]` | `[]` |
 | `sort-column` | `sortColumn` | `string` | `''` |
 | `sort-direction` | `sortDirection` | `'asc' \| 'desc'` | `'asc'` |
+| `search-query` | `searchQuery` | `string` | `''` |
+| `search-placeholder` | `searchPlaceholder` | `string` | `'Search...'` |
+| — | `filters` | `Record<string, string>` | `{}` |
+| — | `rowKey` | `(row, index) => string` | `row.key ?? row.id ?? index` |
+| — | `renderExpanded` | `(row, index) => unknown` | `undefined` |
+| `aria-label` | `ariaLabel` | `string` | — |
+
+| Method | Description |
+| :-- | :-- |
+| `clearSelection()` | Empties `selectedKeys` and fires `selectionchange`, as when the user unchecks every row. Does nothing when no row is selected. Setting `selectedKeys` yourself fires no event. |
 
 | Event | Type |
 | :-- | :-- |
-| `sortchange` | `CustomEvent` |
-| `selectionchange` | `CustomEvent` |
+| `sortchange` | `CustomEvent<{ column: string; direction: 'asc' \| 'desc' }>` |
+| `selectionchange` | `CustomEvent<{ selectedKeys: string[] }>` |
+| `searchchange` | `CustomEvent<{ query: string }>` |
+| `filterchange` | `CustomEvent<{ filters: Record<string, string> }>` |
+| `expandedchange` | `CustomEvent<{ expandedKeys: string[] }>` |
 
 | Slot | Description |
 | :-- | :-- |
-| `caption` | — |
-| `empty` | — |
-| `footer` | — |
+| `caption` | Visible name of the table. |
+| `empty` | Shown when there are no rows to show. |
+| `footer` | Below the table, for totals or pagination. |
+| `toolbar` | Your own controls, at the end of the toolbar. |
 
-**CSS parts:** `caption`, `header-checkbox`, `th`, `loading-row`, `row`, `footer`
+### `TableColumn`
+
+| Field | Type | Description |
+| :-- | :-- | :-- |
+| `key` | `string` | Row property the column reads. |
+| `title` | `unknown` | Header content: text, a node or a template. |
+| `label` | `string` | Plain-text name for cards, filters and accessible names; defaults to a string `title`. |
+| `sortable` | `boolean` | `false` opts out of sorting under `is-sortable`. |
+| `searchable` | `boolean` | `false` leaves the column out of search. |
+| `width` | `string` | Width of the header cell. |
+| `align` | `'left' \| 'center' \| 'right'` | `right` aligns to the end with tabular numerals. |
+| `render` | `(row, index) => unknown` | Cell content in place of the value. |
+| `searchValue` | `(row) => string` | Text that search matches. |
+| `sortValue` | `(row) => string \| number` | Value that sorting compares. |
+| `filterOptions` | `{ value: string; label: string }[]` | Adds a filter select to the toolbar. |
+| `filterValue` | `(row) => string` | Value that filters compare. |
+
+**CSS parts:** `toolbar`, `search`, `filter`, `caption`, `th`, `sort-button`, `header-checkbox`, `row`, `expand-button`, `details`, `loading-row`, `empty`, `footer`
+
+**CSS custom properties:** `--table-truncate-width` (default `16rem`), the widest a `.truncate` value gets.

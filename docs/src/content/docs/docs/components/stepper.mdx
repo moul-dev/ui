@@ -1,0 +1,184 @@
+---
+title: Stepper
+description: Numbered steps with an animated connector and one panel at a time.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import StepperDemo from '@/components/demos/StepperDemo.astro';
+
+<StepperDemo />
+
+`<moul-stepper>` walks the user through `<moul-step>` elements in order: sign-up, checkout, setup. Steps before `current` show a check, the connector fills up to the current step, a soft halo glides to the current indicator, and only the current step's panel shows, sliding in from the direction of travel.
+
+## Horizontal
+
+Each step takes a `label`, an optional `description`, and its panel as content. Drive it with your own buttons through `next()` and `previous()`. Clicking a step header also goes there.
+
+<ComponentPreview align="stretch" stack>
+<moul-stepper id="stepper-checkout">
+  <moul-step label="Cart" description="3 items">
+    <p>Two shirts and a cap, $48.00 in all.</p>
+  </moul-step>
+  <moul-step label="Delivery" description="Address and time">
+    <moul-text-field label="Address" placeholder="Street 240, Phnom Penh"></moul-text-field>
+  </moul-step>
+  <moul-step label="Payment" description="Card or ABA">
+    <p>Pay by card or with ABA Pay when the courier arrives.</p>
+  </moul-step>
+  <moul-step label="Done">
+    <p>Order placed. We sent the receipt to your email.</p>
+  </moul-step>
+</moul-stepper>
+<div class="demo-row" style="justify-content: flex-end">
+  <moul-button variant="secondary" data-stepper-previous="stepper-checkout">Back</moul-button>
+  <moul-button data-stepper-next="stepper-checkout">Next</moul-button>
+</div>
+</ComponentPreview>
+
+```html
+<moul-stepper id="checkout">
+  <moul-step label="Cart" description="3 items">…</moul-step>
+  <moul-step label="Delivery" description="Address and time">…</moul-step>
+  <moul-step label="Payment" description="Card or ABA">…</moul-step>
+  <moul-step label="Done">…</moul-step>
+</moul-stepper>
+<moul-button variant="secondary" id="back">Back</moul-button>
+<moul-button id="next">Next</moul-button>
+
+<script type="module">
+  const stepper = document.querySelector('#checkout')
+  document.querySelector('#back').addEventListener('press', () => stepper.previous())
+  document.querySelector('#next').addEventListener('press', () => stepper.next())
+</script>
+```
+
+## Validating before moving on
+
+Before the step changes, the stepper fires a cancelable `stepchange` event with `detail: { current, previous }`. Call `preventDefault()` to keep the user where they are, and set `is-invalid` on the step to show why. Here Next does nothing until the terms are accepted.
+
+<ComponentPreview align="stretch" stack>
+<moul-stepper id="stepper-signup" data-stepper-validate>
+  <moul-step label="Terms">
+    <moul-checkbox is-required>I accept the terms of service</moul-checkbox>
+  </moul-step>
+  <moul-step label="Profile">
+    <moul-text-field label="Display name"></moul-text-field>
+  </moul-step>
+  <moul-step label="Finish">
+    <p>Your account is ready.</p>
+  </moul-step>
+</moul-stepper>
+<div class="demo-row" style="justify-content: flex-end">
+  <moul-button variant="secondary" data-stepper-previous="stepper-signup">Back</moul-button>
+  <moul-button data-stepper-next="stepper-signup">Next</moul-button>
+</div>
+</ComponentPreview>
+
+```js
+const stepper = document.querySelector('moul-stepper')
+
+stepper.addEventListener('stepchange', (event) => {
+  const { current, previous } = event.detail
+  if (current < previous) return // going back is always fine
+
+  const step = stepper.steps[previous]
+  const isValid = validate(step) // your own check
+  step.isInvalid = !isValid
+  if (!isValid) event.preventDefault()
+})
+```
+
+`next()`, `previous()` and `goTo(index)` return `false` when the step did not change. Setting `current` from code fires no event.
+
+## Linear and vertical
+
+With `is-linear`, users can click back to earlier steps but not ahead of the current one; steps they cannot reach are `aria-disabled`. `next()` and `goTo()` still move forward. `orientation="vertical"` opens each panel under its own header, beside the connector. `is-disabled` takes a step out of reach, and the `icon` slot replaces the number.
+
+<ComponentPreview align="stretch" stack>
+<moul-stepper id="stepper-setup" orientation="vertical" is-linear current="1">
+  <moul-step label="Connect a repository" description="GitHub or GitLab">
+    <p>Connected to moul-dev/ui.</p>
+  </moul-step>
+  <moul-step label="Configure the build" description="Command and output folder">
+    <p>We detected Astro: <code>bun run build</code>, output in <code>dist</code>.</p>
+  </moul-step>
+  <moul-step label="Custom domain" description="Business plan" is-disabled>
+    <p>Point your domain at us.</p>
+  </moul-step>
+  <moul-step label="Deploy">
+    <svg slot="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 16.5c-1.5 1.3-2 5-2 5s3.7-.5 5-2c.7-.8.7-2.1-.1-2.9a2.2 2.2 0 0 0-2.9-.1z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.9A12.9 12.9 0 0 1 22 2c0 2.7-.8 7.5-6 11a22.4 22.4 0 0 1-4 2z"/></svg>
+    <p>Ready to ship.</p>
+  </moul-step>
+</moul-stepper>
+<div class="demo-row" style="justify-content: flex-end">
+  <moul-button variant="secondary" data-stepper-previous="stepper-setup">Back</moul-button>
+  <moul-button data-stepper-next="stepper-setup">Next</moul-button>
+</div>
+</ComponentPreview>
+
+```html
+<moul-stepper orientation="vertical" is-linear current="1">
+  <moul-step label="Connect a repository" description="GitHub or GitLab">…</moul-step>
+  <moul-step label="Configure the build" description="Command and output folder">…</moul-step>
+  <moul-step label="Custom domain" description="Business plan" is-disabled>…</moul-step>
+  <moul-step label="Deploy">
+    <svg slot="icon" aria-hidden="true">…</svg>
+    …
+  </moul-step>
+</moul-stepper>
+```
+
+On narrow screens a horizontal stepper keeps only the current step's label on screen; the others stay readable to screen readers.
+
+## Accessibility
+
+- The steps are an ordered list. Each header is a native `<button>` named by its label, with ", completed" or ", has an error" added when that applies, and described by its description. The current step has `aria-current="step"`.
+- One step button is in the tab order. `Arrow Right` and `Arrow Left` (`Arrow Down` and `Arrow Up` when vertical) move focus between steps, wrapping, and `Home` and `End` jump to the first and last. Moving focus does not change the step; `Enter` or `Space` does, when the step is reachable.
+- Steps the user cannot go to (disabled ones, and later steps in `is-linear` mode) are `aria-disabled` but stay focusable, so they can still be read.
+- Every change of step is announced through a polite live region, for example "Step 2 of 4: Delivery", and focus stays where it was. The announcement is in English.
+- Under reduced motion, the halo jumps, the connector fills and the panel changes at once.
+
+## API reference
+
+### `<moul-stepper>`
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `current` | `current` | `number` | `0` |
+| `orientation` | `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` |
+| `is-linear` | `isLinear` | `boolean` | `false` |
+| — | `steps` (read-only) | `MoulStep[]` | — |
+
+| Method | Description |
+| :-- | :-- |
+| `next()` | Goes to the next enabled step. Returns `false` if there is none or `stepchange` was cancelled. |
+| `previous()` | Goes to the previous enabled step. Returns `false` if there is none or `stepchange` was cancelled. |
+| `goTo(index)` | Goes to the step at `index`, even ahead of the current one in linear mode. Returns `false` for the current, a disabled or a missing step, or when `stepchange` was cancelled. |
+
+| Event | Type |
+| :-- | :-- |
+| `stepchange` | `CustomEvent<{ current: number; previous: number }>`, cancelable |
+
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | The `moul-step` elements. |
+
+**CSS parts:** `list`, `highlight`, `status`
+
+### `<moul-step>`
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `label` | `label` | `string` | `''` |
+| `description` | `description` | `string` | `''` |
+| `is-invalid` | `isInvalid` | `boolean` | `false` |
+| `is-disabled` | `isDisabled` | `boolean` | `false` |
+
+The stepper sets `data-status` (`complete`, `current` or `upcoming`) and `data-orientation` on each step, for styling.
+
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | The step's panel content. |
+| `icon` | A custom indicator; replaces the number, check and alert mark. |
+
+**CSS parts:** `item`, `trigger`, `indicator`, `label`, `description`, `connector`, `connector-fill`, `panel`

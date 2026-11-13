@@ -1,0 +1,241 @@
+---
+title: Tree (សមាសភាគ)
+description: ឯកសារណែនាំសម្រាប់សមាសភាគ Tree Web Component
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+`<moul-tree>` shows nested `<moul-tree-item>` elements as a collapsible tree. Branches open with a spring, guide lines branch from each parent to its children, and the whole tree is one tab stop driven by the arrow keys, as the WAI-ARIA tree view pattern describes.
+
+## Single selection
+
+Nest items in light DOM. Each item needs a `value` (what `selectedKeys` and the events report) and a `label`. `is-expanded` opens a branch, `is-selected` selects an item, and `is-disabled` keeps an item from being selected or activated.
+
+<ComponentPreview>
+<moul-tree label="Project files" style="width: 100%; max-width: 20rem">
+  <moul-tree-item value="src" label="src" is-expanded>
+    <span slot="suffix">3</span>
+    <moul-tree-item value="src/components" label="components" is-expanded>
+      <moul-tree-item value="src/components/button.ts" label="button.ts" is-selected></moul-tree-item>
+      <moul-tree-item value="src/components/tree.ts" label="tree.ts"></moul-tree-item>
+    </moul-tree-item>
+    <moul-tree-item value="src/index.ts" label="index.ts"></moul-tree-item>
+    <moul-tree-item value="src/legacy.ts" label="legacy.ts" is-disabled></moul-tree-item>
+  </moul-tree-item>
+  <moul-tree-item value="docs" label="docs">
+    <moul-tree-item value="docs/intro.md" label="intro.md"></moul-tree-item>
+    <moul-tree-item value="docs/api.md" label="api.md"></moul-tree-item>
+  </moul-tree-item>
+  <moul-tree-item value="package.json" label="package.json"></moul-tree-item>
+</moul-tree>
+</ComponentPreview>
+
+```html
+<moul-tree label="Project files">
+  <moul-tree-item value="src" label="src" is-expanded>
+    <span slot="suffix">3</span>
+    <moul-tree-item value="src/components" label="components" is-expanded>
+      <moul-tree-item value="src/components/button.ts" label="button.ts" is-selected></moul-tree-item>
+      <moul-tree-item value="src/components/tree.ts" label="tree.ts"></moul-tree-item>
+    </moul-tree-item>
+    <moul-tree-item value="src/index.ts" label="index.ts"></moul-tree-item>
+    <moul-tree-item value="src/legacy.ts" label="legacy.ts" is-disabled></moul-tree-item>
+  </moul-tree-item>
+  <moul-tree-item value="docs" label="docs">
+    <moul-tree-item value="docs/intro.md" label="intro.md"></moul-tree-item>
+    <moul-tree-item value="docs/api.md" label="api.md"></moul-tree-item>
+  </moul-tree-item>
+  <moul-tree-item value="package.json" label="package.json"></moul-tree-item>
+</moul-tree>
+```
+
+```js
+const tree = document.querySelector('moul-tree')
+tree.addEventListener('selectionchange', (event) => {
+  console.log(event.detail.selectedKeys) // ['src/index.ts']
+})
+```
+
+## Multiple selection
+
+With `selection-mode="multiple"`, a click or `Space` toggles an item in and out of the selection. Set `selectedKeys` to select from code; that does not fire `selectionchange`.
+
+<ComponentPreview>
+<moul-tree label="Permissions" selection-mode="multiple" style="width: 100%; max-width: 20rem" data-props='{"selectedKeys":["billing.read","members.read"]}'>
+  <moul-tree-item value="billing" label="Billing" is-expanded>
+    <moul-tree-item value="billing.read" label="View invoices"></moul-tree-item>
+    <moul-tree-item value="billing.write" label="Change plan"></moul-tree-item>
+  </moul-tree-item>
+  <moul-tree-item value="members" label="Members" is-expanded>
+    <moul-tree-item value="members.read" label="View members"></moul-tree-item>
+    <moul-tree-item value="members.invite" label="Invite members"></moul-tree-item>
+    <moul-tree-item value="members.remove" label="Remove members"></moul-tree-item>
+  </moul-tree-item>
+</moul-tree>
+</ComponentPreview>
+
+```html
+<moul-tree label="Permissions" selection-mode="multiple">
+  <moul-tree-item value="billing" label="Billing" is-expanded>
+    <moul-tree-item value="billing.read" label="View invoices"></moul-tree-item>
+    <moul-tree-item value="billing.write" label="Change plan"></moul-tree-item>
+  </moul-tree-item>
+  <moul-tree-item value="members" label="Members" is-expanded>
+    <moul-tree-item value="members.read" label="View members"></moul-tree-item>
+    <moul-tree-item value="members.invite" label="Invite members"></moul-tree-item>
+    <moul-tree-item value="members.remove" label="Remove members"></moul-tree-item>
+  </moul-tree-item>
+</moul-tree>
+```
+
+```js
+const tree = document.querySelector('moul-tree')
+tree.selectedKeys = ['billing.read', 'members.read']
+```
+
+## Activation and navigation
+
+`action` fires when an item is activated: with `Enter`, with a click on its row when `selection-mode="none"`, or with a double-click in the other modes (where a single click selects). Activating a branch also opens or closes it; call `preventDefault()` on the event to stop that. With `none`, nothing is ever selected, so the tree works as nested navigation. Disabled items are never activated.
+
+<ComponentPreview>
+<moul-tree label="Settings" selection-mode="none" style="width: 100%; max-width: 20rem">
+  <moul-tree-item value="account" label="Account" is-expanded>
+    <moul-tree-item value="account/profile" label="Profile"></moul-tree-item>
+    <moul-tree-item value="account/security" label="Security"></moul-tree-item>
+  </moul-tree-item>
+  <moul-tree-item value="workspace" label="Workspace">
+    <moul-tree-item value="workspace/members" label="Members"></moul-tree-item>
+    <moul-tree-item value="workspace/billing" label="Billing"></moul-tree-item>
+  </moul-tree-item>
+</moul-tree>
+</ComponentPreview>
+
+```html
+<moul-tree label="Settings" selection-mode="none">
+  <moul-tree-item value="account" label="Account" is-expanded>
+    <moul-tree-item value="account/profile" label="Profile"></moul-tree-item>
+    <moul-tree-item value="account/security" label="Security"></moul-tree-item>
+  </moul-tree-item>
+  <moul-tree-item value="workspace" label="Workspace">
+    <moul-tree-item value="workspace/members" label="Members"></moul-tree-item>
+    <moul-tree-item value="workspace/billing" label="Billing"></moul-tree-item>
+  </moul-tree-item>
+</moul-tree>
+```
+
+```js
+tree.addEventListener('action', (event) => {
+  const { value, item } = event.detail
+  if (item.isBranch) return // let the branch open or close
+  location.hash = value
+})
+```
+
+## Loading children later
+
+`has-children` marks a branch whose children are not there yet: it shows the chevron, and opening it fires `expandedchange` with the item, so you can fetch and append its children. Levels, positions and names are set on whatever you append.
+
+```html
+<moul-tree label="Remote files">
+  <moul-tree-item value="/var" label="var" has-children></moul-tree-item>
+</moul-tree>
+```
+
+```js
+tree.addEventListener('expandedchange', async (event) => {
+  const { value, isExpanded, item } = event.detail
+  if (!isExpanded || item.childElementCount > 0) return
+  const entries = await listDirectory(value)
+  for (const entry of entries) {
+    const child = document.createElement('moul-tree-item')
+    child.value = entry.path
+    child.label = entry.name
+    child.hasChildren = entry.isDirectory
+    item.append(child)
+  }
+})
+```
+
+## Icons and rich labels
+
+`slot="prefix"` holds an icon, `slot="suffix"` holds meta such as a count, and `slot="label"` replaces the plain `label` with markup. The item's accessible name comes from `label` when it is set, else from the label slot's text, never from its children or its suffix.
+
+```html
+<moul-tree-item value="inbox" label="Inbox, 12 unread">
+  <svg slot="prefix" aria-hidden="true"><!-- icon --></svg>
+  <span slot="label"><strong>Inbox</strong></span>
+  <moul-badge slot="suffix" size="sm">12</moul-badge>
+</moul-tree-item>
+```
+
+## Keyboard
+
+| Key | Action |
+| :-- | :-- |
+| `Arrow Down` / `Arrow Up` | Next or previous visible item (no wrapping) |
+| `Arrow Right` | Opens a closed branch; on an open one, moves to its first child |
+| `Arrow Left` | Closes an open branch; otherwise moves to the parent |
+| `Home` / `End` | First or last visible item |
+| `Enter` | Activates the item (`action`), and selects it in single mode |
+| `Space` | Selects the item in single mode, toggles it in multiple mode |
+| `*` | Opens every sibling branch |
+| Letters | Moves to the next item whose label starts with the typed text |
+
+`Arrow Left` and `Arrow Right` swap under `dir="rtl"`. Disabled items can be focused and opened, but never selected or activated.
+
+## Styling
+
+`--moul-tree-indent` sets how far each level steps in (default `1.5rem`), and `--moul-tree-guide-color` colours the guide lines (default `var(--color-border)`; `transparent` hides them). Rows are reachable as `moul-tree-item::part(row)`.
+
+```css
+moul-tree {
+  --moul-tree-indent: 1.25rem;
+  --moul-tree-guide-color: var(--color-border-subtle);
+}
+```
+
+## API reference
+
+### `<moul-tree>`
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `selection-mode` | `selectionMode` | `'none' \| 'single' \| 'multiple'` | `'single'` |
+| — | `selectedKeys` | `string[]` | `[]` |
+| `label` | `label` | `string` | `''` |
+
+| Event | Type |
+| :-- | :-- |
+| `selectionchange` | `CustomEvent<{ selectedKeys: string[] }>` |
+| `expandedchange` | `CustomEvent<{ value: string, isExpanded: boolean, item: MoulTreeItem }>` |
+| `action` | `CustomEvent<{ value: string, item: MoulTreeItem }>` (cancelable) |
+
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | Top-level `<moul-tree-item>` elements |
+
+| CSS custom property | Default |
+| :-- | :-- |
+| `--moul-tree-indent` | `1.5rem` |
+| `--moul-tree-guide-color` | `var(--color-border)` |
+
+### `<moul-tree-item>`
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `value` | `value` | `string` | `''` |
+| `label` | `label` | `string` | `''` |
+| `is-expanded` | `isExpanded` | `boolean` | `false` |
+| `is-selected` | `isSelected` | `boolean` | `false` |
+| `is-disabled` | `isDisabled` | `boolean` | `false` |
+| `has-children` | `hasChildren` | `boolean` | `false` |
+| — | `isBranch` (read-only) | `boolean` | — |
+
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | Nested `<moul-tree-item>` children (direct children only) |
+| `label` | Rich label, shown instead of `label` |
+| `prefix` | Icon before the label |
+| `suffix` | Non-interactive meta after the label |
+
+**CSS parts:** `row`, `toggle`, `label`, `guide`, `group`

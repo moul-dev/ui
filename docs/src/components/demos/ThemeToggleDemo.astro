@@ -1,0 +1,52 @@
+---
+/**
+ * Keeps the moul-theme-toggle demos and Starlight's own theme picker in step,
+ * since both drive `data-theme` on this site. Starlight saves its choice under
+ * `starlight-theme` ('' for auto); the toggles use their default `moul-theme`
+ * key. Render it once, before the first demo.
+ */
+---
+
+<script is:inline>
+  // Runs while the page parses, before the toggles upgrade, so they start from Starlight's choice.
+  try {
+    var saved = localStorage.getItem('starlight-theme')
+    localStorage.setItem(
+      'moul-theme',
+      saved === 'light' || saved === 'dark' ? saved : 'system',
+    )
+  } catch (error) {}
+</script>
+
+<script>
+  type Toggle = HTMLElement & { mode: string }
+  type StarlightWindow = Window & {
+    StarlightThemeProvider?: { updatePickers(theme?: string): void }
+  }
+
+  document.addEventListener('change', (event) => {
+    const target = event.target as Element | null
+
+    // A toggle switched the theme: save it where Starlight looks and update its picker.
+    if (target?.localName === 'moul-theme-toggle') {
+      if (event.defaultPrevented) return
+      const { mode } = (event as CustomEvent<{ mode: string }>).detail
+      try {
+        localStorage.setItem('starlight-theme', mode === 'system' ? '' : mode)
+      } catch {}
+      ;(window as StarlightWindow).StarlightThemeProvider?.updatePickers(
+        mode === 'system' ? 'auto' : mode,
+      )
+      return
+    }
+
+    // Starlight's picker switched it: move the toggles (they share one mode).
+    if (
+      target instanceof HTMLSelectElement &&
+      target.closest('starlight-theme-select')
+    ) {
+      const toggle = document.querySelector<Toggle>('moul-theme-toggle')
+      if (toggle) toggle.mode = target.value === 'auto' ? 'system' : target.value
+    }
+  })
+</script>

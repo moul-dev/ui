@@ -1,6 +1,13 @@
 // Entrypoint for @moul-dev/web-component component library
 export const version = '1.0.0-alpha.2'
 
+export {
+  type AccordionVariant,
+  MoulAccordion,
+  MoulAccordion as Accordion,
+  MoulAccordionItem,
+  MoulAccordionItem as AccordionItem,
+} from './components/Accordion'
 // Phase 5: Surface & Feedback Components
 export { MoulAlert, MoulAlert as Alert } from './components/Alert'
 export {
@@ -38,6 +45,7 @@ export {
 // Phase 4: Actions & Toggle Components
 export {
   type ButtonSize,
+  type ButtonState,
   type ButtonType,
   type ButtonVariant,
   MoulButton,
@@ -121,6 +129,21 @@ export {
   MoulDrawer,
   MoulDrawer as Drawer,
 } from './components/Drawer'
+export {
+  type DropdownMenuActionDetail,
+  type DropdownMenuPlacement,
+  type DropdownMenuVariant,
+  type MenuItemType,
+  type MenuItemVariant,
+  MoulDropdownMenu,
+  MoulDropdownMenu as DropdownMenu,
+  MoulMenuGroup,
+  MoulMenuGroup as MenuGroup,
+  MoulMenuItem,
+  MoulMenuItem as MenuItem,
+  MoulMenuSeparator,
+  MoulMenuSeparator as MenuSeparator,
+} from './components/DropdownMenu'
 export type {
   EmptyStateAlign,
   EmptyStateSize,
@@ -129,6 +152,18 @@ export {
   MoulEmptyState,
   MoulEmptyState as EmptyState,
 } from './components/EmptyState'
+export {
+  type FileRejectReason,
+  type FileUploadChangeDetail,
+  type FileUploadContext,
+  type FileUploadFunction,
+  type FileUploadItem,
+  type FileUploadRejectDetail,
+  type FileUploadRemoveDetail,
+  type FileUploadStatus,
+  MoulFileUpload,
+  MoulFileUpload as FileUpload,
+} from './components/FileUpload'
 export {
   type FormMethod,
   MoulForm,
@@ -148,6 +183,12 @@ export {
   MoulHeatmapChart,
   MoulHeatmapChart as HeatmapChart,
 } from './components/HeatmapChart'
+export {
+  type IconMorphName,
+  type IconMorphSize,
+  MoulIconMorph,
+  MoulIconMorph as IconMorph,
+} from './components/IconMorph'
 export {
   MoulInputOTP,
   MoulInputOTP as InputOTP,
@@ -250,6 +291,11 @@ export {
   MoulSelectItem,
   MoulSelectItem as SelectItem,
 } from './components/Select'
+export {
+  MoulSelectionToolbar,
+  MoulSelectionToolbar as SelectionToolbar,
+  type SelectionToolbarPosition,
+} from './components/SelectionToolbar'
 export type { SeparatorOrientation } from './components/Separator'
 export {
   MoulSeparator,
@@ -307,14 +353,28 @@ export {
   MoulSpinner as Spinner,
   type SpinnerSize,
 } from './components/Spinner'
+export {
+  MoulSplitButton,
+  MoulSplitButton as SplitButton,
+  type SplitButtonVariant,
+} from './components/SplitButton'
 export type { StatProps, StatTrend } from './components/Stat'
 export { MoulStat, MoulStat as Stat } from './components/Stat'
+export {
+  MoulStep,
+  MoulStep as Step,
+  MoulStepper,
+  MoulStepper as Stepper,
+  type StepperChangeDetail,
+  type StepperOrientation,
+  type StepStatus,
+} from './components/Stepper'
 export {
   MoulSwitch,
   MoulSwitch as Switch,
   type SwitchSize,
 } from './components/Switch'
-export type { TableColumn } from './components/Table'
+export type { TableColumn, TableFilterOption } from './components/Table'
 export { MoulTable, MoulTable as Table } from './components/Table'
 export {
   MoulTab,
@@ -346,6 +406,15 @@ export {
   type TextFieldType,
 } from './components/TextField'
 export {
+  MoulThemeToggle,
+  MoulThemeToggle as ThemeToggle,
+  type ResolvedTheme,
+  type ThemeMode,
+  type ThemeToggleChangeDetail,
+  type ThemeToggleLabels,
+  type ThemeToggleTransition,
+} from './components/ThemeToggle'
+export {
   MoulToast,
   MoulToast as Toast,
   MoulToastRegion,
@@ -370,6 +439,16 @@ export {
 } from './components/Tooltip'
 export type { TopListItem, TopListProps } from './components/TopList'
 export { MoulTopList, MoulTopList as TopList } from './components/TopList'
+export {
+  MoulTree,
+  MoulTree as Tree,
+  MoulTreeItem,
+  MoulTreeItem as TreeItem,
+  type TreeActionDetail,
+  type TreeExpandedChangeDetail,
+  type TreeSelectionChangeDetail,
+  type TreeSelectionMode,
+} from './components/Tree'
 export type { TypographyVariant } from './components/Typography'
 export {
   MoulTypography,
@@ -408,6 +487,7 @@ export {
 } from './styles/semantic-tones'
 
 // Custom Element Type Imports for Global HTMLElementTagNameMap
+import type { MoulAccordion, MoulAccordionItem } from './components/Accordion'
 import type { MoulAlert } from './components/Alert'
 import type { MoulAlertDialog } from './components/AlertDialog'
 import type { MoulAreaChart } from './components/AreaChart'
@@ -435,10 +515,18 @@ import type { MoulCommandPalette } from './components/CommandPalette'
 import type { MoulDatePicker } from './components/DatePicker'
 import type { MoulDoughnutChart } from './components/DoughnutChart'
 import type { MoulDrawer } from './components/Drawer'
+import type {
+  MoulDropdownMenu,
+  MoulMenuGroup,
+  MoulMenuItem,
+  MoulMenuSeparator,
+} from './components/DropdownMenu'
 import type { MoulEmptyState } from './components/EmptyState'
+import type { MoulFileUpload } from './components/FileUpload'
 import type { MoulForm } from './components/Form'
 import type { MoulFunnelChart } from './components/FunnelChart'
 import type { MoulHeatmapChart } from './components/HeatmapChart'
+import type { MoulIconMorph } from './components/IconMorph'
 import type { MoulInputOTP } from './components/InputOTP'
 import type { MoulKbd } from './components/Kbd'
 import type { MoulLineChart } from './components/LineChart'
@@ -456,6 +544,7 @@ import type { MoulProgressBar } from './components/ProgressBar'
 import type { MoulRadio, MoulRadioGroup } from './components/RadioGroup'
 import type { MoulSearchField } from './components/SearchField'
 import type { MoulSelect, MoulSelectItem } from './components/Select'
+import type { MoulSelectionToolbar } from './components/SelectionToolbar'
 import type { MoulSeparator } from './components/Separator'
 import type {
   MoulSidebar,
@@ -472,18 +561,22 @@ import type {
 import type { MoulSkeleton } from './components/Skeleton'
 import type { MoulSlider } from './components/Slider'
 import type { MoulSpinner } from './components/Spinner'
+import type { MoulSplitButton } from './components/SplitButton'
 import type { MoulStat } from './components/Stat'
+import type { MoulStep, MoulStepper } from './components/Stepper'
 import type { MoulSwitch } from './components/Switch'
 import type { MoulTable } from './components/Table'
 import type { MoulTab, MoulTabPanel, MoulTabs } from './components/Tabs'
 import type { MoulTag, MoulTagGroup } from './components/TagGroup'
 import type { MoulTextArea } from './components/TextArea'
 import type { MoulTextField } from './components/TextField'
+import type { MoulThemeToggle } from './components/ThemeToggle'
 import type { MoulToast, MoulToastRegion } from './components/Toast'
 import type { MoulToggleButton } from './components/ToggleButton'
 import type { MoulToggleButtonGroup } from './components/ToggleButtonGroup'
 import type { MoulTooltip } from './components/Tooltip'
 import type { MoulTopList } from './components/TopList'
+import type { MoulTree, MoulTreeItem } from './components/Tree'
 import type { MoulTypography } from './components/Typography'
 
 declare global {
@@ -493,6 +586,8 @@ declare global {
     'moul-button-group': MoulButtonGroup
     'moul-toggle-button': MoulToggleButton
     'moul-toggle-button-group': MoulToggleButtonGroup
+    'moul-split-button': MoulSplitButton
+    'moul-theme-toggle': MoulThemeToggle
 
     // Phase 5: Surfaces & Feedback
     'moul-typography': MoulTypography
@@ -515,6 +610,10 @@ declare global {
     'moul-table': MoulTable
     'moul-toast': MoulToast
     'moul-toast-region': MoulToastRegion
+    'moul-accordion': MoulAccordion
+    'moul-accordion-item': MoulAccordionItem
+    'moul-icon-morph': MoulIconMorph
+    'moul-selection-toolbar': MoulSelectionToolbar
 
     // Phase 6: Overlays & Navigation
     'moul-link': MoulLink
@@ -530,6 +629,14 @@ declare global {
     'moul-alert-dialog': MoulAlertDialog
     'moul-drawer': MoulDrawer
     'moul-command-palette': MoulCommandPalette
+    'moul-dropdown-menu': MoulDropdownMenu
+    'moul-menu-item': MoulMenuItem
+    'moul-menu-group': MoulMenuGroup
+    'moul-menu-separator': MoulMenuSeparator
+    'moul-stepper': MoulStepper
+    'moul-step': MoulStep
+    'moul-tree': MoulTree
+    'moul-tree-item': MoulTreeItem
 
     // Phase 7: Inputs & Forms
     'moul-form': MoulForm
@@ -550,6 +657,7 @@ declare global {
     'moul-combobox-item': MoulComboBoxItem
     'moul-calendar': MoulCalendar
     'moul-date-picker': MoulDatePicker
+    'moul-file-upload': MoulFileUpload
 
     // Phase 8: Charts & Data Visualization
     'moul-chart-container': MoulChartContainer

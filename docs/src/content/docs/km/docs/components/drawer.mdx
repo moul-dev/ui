@@ -5,7 +5,7 @@ description: ឯកសារណែនាំសម្រាប់សមាសភ�
 
 import ComponentPreview from '@/components/ComponentPreview.astro';
 
-`<moul-drawer>` slides a sheet in from `left`, `right`, `top` or `bottom` with the iOS sheet curve.
+`<moul-drawer>` slides a sheet in from `left`, `right`, `top` or `bottom` with the iOS sheet curve, or, with `is-sheet`, opens a bottom sheet you drag down to dismiss.
 
 <ComponentPreview>
 <div class="demo-row">
@@ -55,6 +55,79 @@ import ComponentPreview from '@/components/ComponentPreview.astro';
 </moul-drawer>
 ```
 
+## Sheet
+
+`is-sheet` turns the drawer into a bottom sheet, whatever `placement` says. It gets a grab handle on top and rounded top corners, grows with its content up to 90% of the viewport (`size` does not apply), and pads its bottom edge clear of the home indicator. Drag it down to dismiss: it closes when let go past a third of its height or flicked down, and springs back otherwise. The backdrop clears as it goes.
+
+<ComponentPreview>
+<div class="demo-row">
+  <moul-button variant="secondary" data-open="demo-sheet">Share sheet</moul-button>
+  <moul-button variant="secondary" data-open="demo-sheet-long">Scrolling sheet</moul-button>
+</div>
+<moul-drawer id="demo-sheet" is-sheet aria-label="Share">
+  <h3 slot="header">Share</h3>
+  <div class="demo-stack">
+    <moul-button variant="secondary">Copy link</moul-button>
+    <moul-button variant="secondary">Send by email</moul-button>
+  </div>
+  <moul-button slot="footer" data-close="demo-sheet">Done</moul-button>
+</moul-drawer>
+<moul-drawer id="demo-sheet-long" is-sheet aria-label="Deploy log">
+  <h3 slot="header">Deploy log</h3>
+  <div class="demo-stack">
+    <p>09:41 Build queued on worker 3.</p>
+    <p>09:41 Cloned the repository.</p>
+    <p>09:41 Restored the dependency cache.</p>
+    <p>09:42 Installed 312 packages.</p>
+    <p>09:42 Generated the API client.</p>
+    <p>09:42 Type-checked 1,204 files.</p>
+    <p>09:43 Linted 1,204 files.</p>
+    <p>09:43 Ran 2,618 unit tests.</p>
+    <p>09:43 Ran 148 integration tests.</p>
+    <p>09:44 Built the server bundle.</p>
+    <p>09:44 Built the client bundle.</p>
+    <p>09:44 Compressed 87 static assets.</p>
+    <p>09:45 Uploaded 87 static assets.</p>
+    <p>09:45 Signed the release image.</p>
+    <p>09:45 Pushed the image to the registry.</p>
+    <p>09:46 Ran database migrations.</p>
+    <p>09:46 Warmed the cache.</p>
+    <p>09:46 Started 3 new instances.</p>
+    <p>09:47 Instance 1 passed its health check.</p>
+    <p>09:47 Instance 2 passed its health check.</p>
+    <p>09:47 Instance 3 passed its health check.</p>
+    <p>09:48 Shifted 10% of traffic.</p>
+    <p>09:48 Shifted 50% of traffic.</p>
+    <p>09:48 Shifted all traffic.</p>
+    <p>09:49 Drained the old instances.</p>
+    <p>09:49 Stopped the old instances.</p>
+    <p>09:49 Purged the CDN cache.</p>
+    <p>09:50 Posted the release notes.</p>
+    <p>09:50 Tagged the release.</p>
+    <p>09:50 Deploy finished.</p>
+  </div>
+  <moul-button slot="footer" data-close="demo-sheet-long">Done</moul-button>
+</moul-drawer>
+</ComponentPreview>
+
+```html
+<moul-drawer is-sheet aria-label="Share">
+  <h3 slot="header">Share</h3>
+  <div class="demo-stack">
+    <moul-button variant="secondary">Copy link</moul-button>
+    <moul-button variant="secondary">Send by email</moul-button>
+  </div>
+  <moul-button slot="footer">Done</moul-button>
+</moul-drawer>
+```
+
+- The handle, header and footer always drag. The scrolling body drags the sheet only from the top of its content and only downward, so the content still scrolls. A press on a text field never drags, so its text can still be selected.
+- Dragging up stretches and springs back. With `is-dismissable` set to false, dragging down does the same and the sheet stays open.
+- A drag that closes the sheet fires the same `openchange` (`detail.isOpen` is `false`) as `Escape` or a click outside.
+- The handle is decorative: screen readers skip it and `Tab` never lands on it, so focus still moves to the first control on open. Dragging is a pointer gesture; `Escape` closes the sheet from the keyboard. Give a sheet for touch screen readers its own close or done button.
+- Under reduced motion the sheet still follows the finger, but on release it closes or returns at once instead of springing.
+- The bottom padding includes `env(safe-area-inset-bottom)`, which is only non-zero when the page's viewport meta has `viewport-fit=cover`.
+
 ## API reference
 
 | Attribute | Property | Type | Default |
@@ -63,6 +136,7 @@ import ComponentPreview from '@/components/ComponentPreview.astro';
 | `placement` | `placement` | `'left' \| 'right' \| 'top' \| 'bottom'` | `'right'` |
 | `size` | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` |
 | `is-dismissable` | `isDismissable` | `boolean` | `true` |
+| `is-sheet` | `isSheet` | `boolean` | `false` |
 
 | Event | Type |
 | :-- | :-- |
@@ -70,8 +144,10 @@ import ComponentPreview from '@/components/ComponentPreview.astro';
 
 | Slot | Description |
 | :-- | :-- |
-| `header` | — |
-| `(default)` | — |
-| `footer` | — |
+| `header` | Title row at the top of the panel |
+| `(default)` | The body, which scrolls when it overflows |
+| `footer` | Actions at the bottom of the panel |
 
-**CSS parts:** `base`, `dialog`, `header`, `body`, `footer`
+**CSS parts:** `base`, `dialog`, `handle` (sheets only), `header`, `body`, `footer`
+
+With `is-sheet`, `placement` and `size` are ignored: the sheet is attached to the bottom edge and fits its content. `is-dismissable` set to false stops a click outside and a downward drag from closing the drawer; `Escape` always closes it.

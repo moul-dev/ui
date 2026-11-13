@@ -36,22 +36,22 @@ export const drawerStyles = [
       display: none;
     }
 
-    :host([placement="right"]) dialog {
+    :host([placement="right"]:not([is-sheet])) dialog {
       justify-content: flex-end;
       align-items: stretch;
     }
 
-    :host([placement="left"]) dialog {
+    :host([placement="left"]:not([is-sheet])) dialog {
       justify-content: flex-start;
       align-items: stretch;
     }
 
-    :host([placement="top"]) dialog {
+    :host([placement="top"]:not([is-sheet])) dialog {
       justify-content: stretch;
       align-items: flex-start;
     }
 
-    :host([placement="bottom"]) dialog {
+    :host([placement="bottom"]:not([is-sheet])) dialog {
       justify-content: stretch;
       align-items: flex-end;
     }
@@ -70,72 +70,72 @@ export const drawerStyles = [
      * Edge-attached sheet: only the corners facing the content are rounded.
      * These selectors outrank the shared [part~="base"] radius that follows.
      */
-    :host([placement="right"]) [part~="base"] {
+    :host([placement="right"]:not([is-sheet])) [part~="base"] {
       border-radius: var(--_radius) 0 0 var(--_radius);
     }
 
-    :host([placement="left"]) [part~="base"] {
+    :host([placement="left"]:not([is-sheet])) [part~="base"] {
       border-radius: 0 var(--_radius) var(--_radius) 0;
     }
 
-    :host([placement="top"]) [part~="base"] {
+    :host([placement="top"]:not([is-sheet])) [part~="base"] {
       border-radius: 0 0 var(--_radius) var(--_radius);
     }
 
-    :host([placement="bottom"]) [part~="base"] {
+    :host([placement="bottom"]:not([is-sheet])) [part~="base"] {
       border-radius: var(--_radius) var(--_radius) 0 0;
     }
 
     /* Horizontal placements (left & right) */
-    :host([placement="left"]) [part~="base"],
-    :host([placement="right"]) [part~="base"] {
+    :host([placement="left"]:not([is-sheet])) [part~="base"],
+    :host([placement="right"]:not([is-sheet])) [part~="base"] {
       height: 100%;
       max-width: 85vw;
     }
 
-    :host([placement="left"][size="sm"]) [part~="base"],
-    :host([placement="right"][size="sm"]) [part~="base"] {
+    :host([placement="left"][size="sm"]:not([is-sheet])) [part~="base"],
+    :host([placement="right"][size="sm"]:not([is-sheet])) [part~="base"] {
       width: 20rem;
     }
 
-    :host([placement="left"][size="md"]) [part~="base"],
-    :host([placement="right"][size="md"]) [part~="base"] {
+    :host([placement="left"][size="md"]:not([is-sheet])) [part~="base"],
+    :host([placement="right"][size="md"]:not([is-sheet])) [part~="base"] {
       width: 24rem;
     }
 
-    :host([placement="left"][size="lg"]) [part~="base"],
-    :host([placement="right"][size="lg"]) [part~="base"] {
+    :host([placement="left"][size="lg"]:not([is-sheet])) [part~="base"],
+    :host([placement="right"][size="lg"]:not([is-sheet])) [part~="base"] {
       width: 32rem;
     }
 
     /* Vertical placements (top & bottom) */
-    :host([placement="top"]) [part~="base"],
-    :host([placement="bottom"]) [part~="base"] {
+    :host([placement="top"]:not([is-sheet])) [part~="base"],
+    :host([placement="bottom"]:not([is-sheet])) [part~="base"] {
       width: 100%;
       max-height: 85vh;
     }
 
-    :host([placement="top"][size="sm"]) [part~="base"],
-    :host([placement="bottom"][size="sm"]) [part~="base"] {
+    :host([placement="top"][size="sm"]:not([is-sheet])) [part~="base"],
+    :host([placement="bottom"][size="sm"]:not([is-sheet])) [part~="base"] {
       height: 16rem;
     }
 
-    :host([placement="top"][size="md"]) [part~="base"],
-    :host([placement="bottom"][size="md"]) [part~="base"] {
+    :host([placement="top"][size="md"]:not([is-sheet])) [part~="base"],
+    :host([placement="bottom"][size="md"]:not([is-sheet])) [part~="base"] {
       height: 24rem;
     }
 
-    :host([placement="top"][size="lg"]) [part~="base"],
-    :host([placement="bottom"][size="lg"]) [part~="base"] {
+    :host([placement="top"][size="lg"]:not([is-sheet])) [part~="base"],
+    :host([placement="bottom"][size="lg"]:not([is-sheet])) [part~="base"] {
       height: 32rem;
     }
 
-    /* Bottom sheet drag handle */
-    :host([placement="bottom"]) [part~="base"] {
+    /* Bottom placement grip, drawn only (a sheet renders a real handle) */
+    :host([placement="bottom"]:not([is-sheet])) [part~="base"] {
       padding-top: var(--spacing-2, 0.5rem);
     }
 
-    :host([placement="bottom"]) [part~="base"]::before {
+    :host([placement="bottom"]:not([is-sheet])) [part~="base"]::before {
       content: "";
       flex-shrink: 0;
       align-self: center;
@@ -144,6 +144,67 @@ export const drawerStyles = [
       margin-bottom: var(--spacing-2, 0.5rem);
       border-radius: var(--radius-xs, 0.125rem);
       background-color: var(--color-separator);
+    }
+
+    /*
+     * Sheet (is-sheet), whatever placement says: attached to the bottom, as
+     * tall as its content up to 90% of the viewport, clear of the home
+     * indicator, and moved by the drag offset the drag controller writes on
+     * the dialog.
+     */
+    :host([is-sheet]) {
+      --_slide-from: 0 100%;
+    }
+
+    :host([is-sheet]) dialog {
+      justify-content: stretch;
+      align-items: flex-end;
+    }
+
+    :host([is-sheet]) [part~="base"] {
+      width: 100%;
+      max-height: 90vh;
+      max-height: 90dvh;
+      padding-top: 0;
+      padding-bottom: calc(
+        var(--spacing-6, 1.5rem) + env(safe-area-inset-bottom, 0px)
+      );
+      border-radius: var(--_radius) var(--_radius) 0 0;
+      translate: 0 var(--_drag-y, 0px);
+      /* The body is a scroll container, so it still pans its own content */
+      touch-action: none;
+    }
+
+    [part~="handle"] {
+      flex-shrink: 0;
+      display: flex;
+      justify-content: center;
+      padding-block: var(--spacing-2, 0.5rem);
+      cursor: grab;
+      touch-action: none;
+    }
+
+    [part~="handle"]::before {
+      content: "";
+      width: 2.25rem;
+      height: 0.25rem;
+      border-radius: var(--radius-xs, 0.125rem);
+      background-color: var(--color-separator);
+    }
+
+    dialog[data-dragging] [part~="handle"] {
+      cursor: grabbing;
+    }
+
+    /* The backdrop clears as the sheet is dragged down its own height */
+    :host([is-sheet]) dialog::backdrop {
+      opacity: calc(1 - var(--_sheet-progress, 0));
+      transition: opacity 300ms
+        var(--ease-out-fluid, cubic-bezier(0.32, 0.72, 0, 1));
+    }
+
+    :host([is-sheet]) dialog[data-dragging]::backdrop {
+      transition: none;
     }
 
     [part~="header"] {
@@ -198,15 +259,15 @@ export const drawerStyles = [
     }
 
     /* Slide in from (and back out to) the attached edge */
-    :host([placement="left"]) {
+    :host([placement="left"]:not([is-sheet])) {
       --_slide-from: -100% 0;
     }
 
-    :host([placement="top"]) {
+    :host([placement="top"]:not([is-sheet])) {
       --_slide-from: 0 -100%;
     }
 
-    :host([placement="bottom"]) {
+    :host([placement="bottom"]:not([is-sheet])) {
       --_slide-from: 0 100%;
     }
 
@@ -257,6 +318,10 @@ export const drawerStyles = [
       :host(:not([is-open])) dialog[open] [part~="base"],
       :host(:not([is-open])) dialog[open]::backdrop {
         animation: none;
+      }
+
+      :host([is-sheet]) dialog::backdrop {
+        transition: none;
       }
     }
   `,

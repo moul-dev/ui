@@ -1,11 +1,12 @@
 ---
 title: Button
-description: Pressable action with variants, sizes, pending and icon states.
+description: Pressable action with variants, sizes, an icon-only mode, and pending, success and error states.
 ---
 
 import ComponentPreview from '@/components/ComponentPreview.astro';
+import ButtonDemo from '@/components/demos/ButtonDemo.astro';
 
-`<moul-button>` triggers an action. It dips slightly under a pointer press, exposes a pending state that keeps its width, and fires a `press` event for pointer and keyboard activation alike.
+`<moul-button>` triggers an action. It dips slightly under a pointer press, fires a `press` event for pointer and keyboard activation alike, and can show how the action it started is going: pending, then success or error.
 
 ## Variants
 
@@ -53,21 +54,105 @@ import ComponentPreview from '@/components/ComponentPreview.astro';
 
 ## States
 
-Pending buttons show a spinner and ignore presses; disabled buttons are skipped by focus.
+`state` is `idle`, `pending`, `success` or `error`. Pending adds a spinning loader and ignores presses. Success and error morph that loader into a check or an alert mark and tint the button: `primary` and `danger` take the solid success or danger fill, `secondary` and `danger-soft` the soft fill, and `tertiary`, `outline` and `ghost` tint their text and border. Back in idle the icon folds away.
+
+`run(task)` drives the states for you. Press the buttons below: each runs a fake request that takes a second and a half, and the first one succeeds while the second fails.
+
+<ComponentPreview>
+<ButtonDemo />
+<div class="demo-row">
+  <moul-button data-button-run="succeed">
+    <span>Save</span>
+    <span slot="pending">Saving…</span>
+    <span slot="success">Saved</span>
+  </moul-button>
+  <moul-button variant="outline" data-button-run="fail">
+    <span>Save</span>
+    <span slot="pending">Saving…</span>
+    <span slot="error">Not saved</span>
+  </moul-button>
+</div>
+</ComponentPreview>
+
+```html
+<moul-button id="save">
+  Save
+  <span slot="pending">Saving…</span>
+  <span slot="success">Saved</span>
+  <span slot="error">Not saved</span>
+</moul-button>
+```
+
+```js
+const button = document.querySelector('#save')
+
+button.addEventListener('press', async () => {
+  try {
+    const profile = await button.run(async () => {
+      const response = await fetch('/api/profile', { method: 'POST' })
+      if (!response.ok) throw new Error(`Save failed: ${response.status}`)
+      return response.json()
+    })
+    console.log('Saved', profile)
+  } catch (error) {
+    // run() shows the error, then re-throws it so you can handle it too.
+    console.error(error)
+  }
+})
+```
+
+- `run()` sets `pending`, awaits the task, then sets `success` or `error`, and after `state-duration` milliseconds (default `2000`) returns to `idle`. `state-duration="0"` keeps the result until something changes it. A new `run()` or any change to `state` cancels the return to idle, and when runs overlap the latest one sets the result.
+- `run()` resolves with the task's value and rejects with its error, so a failed task still reaches your code. Catch it, or the browser reports an unhandled rejection.
+- The `pending`, `success` and `error` slots replace the label in their state; a state without its slot keeps the default label. The width follows the label smoothly.
+- Presses are ignored only while pending. In success and error the button presses as usual, so an error state can double as "try again".
+- `is-pending` still works and means the same as `state="pending"`: the button is pending while either says so.
+
+You can also set `state` yourself:
 
 <ComponentPreview>
 <div class="demo-row">
-  <moul-button is-pending>Saving</moul-button>
+  <moul-button state="pending">Pending</moul-button>
+  <moul-button state="success">Success</moul-button>
+  <moul-button state="error">Error</moul-button>
+  <moul-button variant="secondary" state="success">Secondary</moul-button>
+  <moul-button variant="outline" state="success">Outline</moul-button>
+  <moul-button variant="ghost" state="error">Ghost</moul-button>
+</div>
+</ComponentPreview>
+
+```html
+<moul-button state="pending">Pending</moul-button>
+<moul-button state="success">Success</moul-button>
+<moul-button variant="outline" state="error">Error</moul-button>
+```
+
+### Accessibility
+
+While pending the button stays focusable, sets `aria-busy="true"` and ignores presses. The state icon is hidden from screen readers. Entering pending, success or error is announced politely, with the text of that state's slot, or else "Loading", "Done" and "Failed". Replace those words with `pending-label`, `success-label` and `error-label`, for example in Khmer:
+
+```html
+<moul-button pending-label="កំពុងរក្សាទុក" success-label="រួចរាល់" error-label="បរាជ័យ">រក្សាទុក</moul-button>
+```
+
+Under reduced motion the icon and the width change at once and the loader pulses instead of spinning.
+
+## Disabled and icon-only
+
+Disabled buttons are skipped by focus. An icon-only button needs an `aria-label`; when its state changes, the state icon takes the place of its content.
+
+<ComponentPreview>
+<div class="demo-row">
   <moul-button variant="secondary" is-disabled>Disabled</moul-button>
   <moul-button variant="outline" is-icon aria-label="Add item">+</moul-button>
+  <moul-button variant="outline" is-icon aria-label="Add item" state="pending">+</moul-button>
 </div>
 </ComponentPreview>
 
 ```html
 <div class="demo-row">
-  <moul-button is-pending>Saving</moul-button>
   <moul-button variant="secondary" is-disabled>Disabled</moul-button>
   <moul-button variant="outline" is-icon aria-label="Add item">+</moul-button>
+  <moul-button variant="outline" is-icon aria-label="Add item" state="pending">+</moul-button>
 </div>
 ```
 
@@ -81,15 +166,29 @@ Pending buttons show a spinner and ignore presses; disabled buttons are skipped 
 | `is-icon` | `isIcon` | `boolean` | `false` |
 | `is-disabled` | `isDisabled` | `boolean` | `false` |
 | `is-pending` | `isPending` | `boolean` | `false` |
+| `state` | `state` | `'idle' \| 'pending' \| 'success' \| 'error'` | `'idle'` |
+| `state-duration` | `stateDuration` | `number` | `2000` |
+| `pending-label` | `pendingLabel` | `string` | `'Loading'` |
+| `success-label` | `successLabel` | `string` | `'Done'` |
+| `error-label` | `errorLabel` | `string` | `'Failed'` |
+
+| Method | Description |
+| :-- | :-- |
+| `run(task)` | Sets `pending`, awaits `task()`, then sets `success` or `error` and returns to `idle` after `state-duration` ms. Resolves with the task's value and rejects with its error, so catch it. |
 
 | Event | Type |
 | :-- | :-- |
-| `press` | `CustomEvent` |
+| `press` | `CustomEvent<{ originalEvent: MouseEvent }>`, not fired while disabled or pending |
 
 | Slot | Description |
 | :-- | :-- |
-| `prefix` | — |
-| `(default)` | — |
-| `suffix` | — |
+| `(default)` | The label. |
+| `prefix` | Content before the label, such as an icon. |
+| `suffix` | Content after the label. |
+| `pending` | Replaces the label while pending, such as "Saving…". |
+| `success` | Replaces the label in `success`; its text is announced. |
+| `error` | Replaces the label in `error`; its text is announced. |
 
-**CSS parts:** `button`, `spinner`, `prefix`, `content`, `suffix`
+**CSS parts:** `button`, `icon`, `prefix`, `content`, `suffix`
+
+`icon` wraps the state icon, a `moul-icon-morph`, and has no width in `idle`. `content` wraps the label; its width animates when a state slot swaps the label.

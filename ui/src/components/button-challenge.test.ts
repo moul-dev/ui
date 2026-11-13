@@ -191,7 +191,7 @@ describe('Empirical Adversarial Challenge Suite: Button & ButtonGroup', () => {
       expect(pressCount).toBe(1)
     })
 
-    it('CHAL-BTN-04: Pending state renders inline spinner with size="sm" and part="spinner", and aria-busy="true"', async () => {
+    it('CHAL-BTN-04: Pending state renders the loader icon with size="sm" in part="icon", and aria-busy="true"', async () => {
       const btn = await mount<MoulButton>(
         html`<moul-button is-pending>Loading</moul-button>`,
       )
@@ -200,10 +200,14 @@ describe('Empirical Adversarial Challenge Suite: Button & ButtonGroup', () => {
       const innerBtn = btn.shadowRoot?.querySelector('button')
       expect(innerBtn?.getAttribute('aria-busy')).toBe('true')
 
-      const spinner = btn.shadowRoot?.querySelector('moul-spinner')
-      expect(spinner).not.toBeNull()
-      expect(spinner?.getAttribute('size')).toBe('sm')
-      expect(spinner?.getAttribute('part')).toBe('spinner')
+      // The state icon replaced the `moul-spinner` so that pending can morph
+      // into success or error.
+      const icon = btn.shadowRoot?.querySelector(
+        '[part="icon"] moul-icon-morph',
+      )
+      expect(icon).not.toBeNull()
+      expect(icon?.getAttribute('size')).toBe('sm')
+      expect(icon?.getAttribute('name')).toBe('loader')
     })
 
     it('CHAL-BTN-05: Space and Enter keypresses during is-pending=true fire 0 press events', async () => {
@@ -352,7 +356,7 @@ describe('Empirical Adversarial Challenge Suite: Button & ButtonGroup', () => {
       expect(pressCount).toBe(1)
     })
 
-    it('CHAL-BTN-10: 100 rapid toggles between isPending true/false leaves aria-busy and spinner in consistent DOM state', async () => {
+    it('CHAL-BTN-10: 100 rapid toggles between isPending true/false leaves aria-busy and the state icon in consistent DOM state', async () => {
       const btn = await mount<MoulButton>(
         html`<moul-button>Stress Pending</moul-button>`,
       )
@@ -366,7 +370,11 @@ describe('Empirical Adversarial Challenge Suite: Button & ButtonGroup', () => {
       expect(btn.isPending).toBe(true)
       expect(btn.hasAttribute('is-pending')).toBe(true)
       expect(btn.getAttribute('aria-busy')).toBe('true')
-      expect(btn.shadowRoot?.querySelector('moul-spinner')).not.toBeNull()
+      const inner = btn.shadowRoot?.querySelector('button')
+      expect(inner?.classList.contains('pending')).toBe(true)
+      expect(
+        btn.shadowRoot?.querySelector('moul-icon-morph')?.getAttribute('name'),
+      ).toBe('loader')
 
       // Toggle one more time to make it false
       btn.isPending = false
@@ -374,7 +382,8 @@ describe('Empirical Adversarial Challenge Suite: Button & ButtonGroup', () => {
       expect(btn.isPending).toBe(false)
       expect(btn.hasAttribute('is-pending')).toBe(false)
       expect(btn.hasAttribute('aria-busy')).toBe(false)
-      expect(btn.shadowRoot?.querySelector('moul-spinner')).toBeNull()
+      // The icon stays in the DOM so it can fold away; idle collapses it.
+      expect(inner?.classList.contains('idle')).toBe(true)
     })
 
     it('CHAL-BTN-11: Secondary pointer button (right click button=2) does not trigger press', async () => {

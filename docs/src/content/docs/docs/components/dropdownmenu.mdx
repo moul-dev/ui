@@ -1,0 +1,266 @@
+---
+title: Dropdown Menu
+description: A menu of actions that grows out of its trigger, with checkbox and radio items, links, groups and a gooey variant.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+`<moul-dropdown-menu>` opens a menu of actions from a trigger button. The menu floats in the top layer, grows out of the trigger edge and flips above the trigger when there is no room below. Put a `<moul-button>` (or any focusable element) in the `trigger` slot and `<moul-menu-item>`s in the default slot. To pick a form value, use `<moul-select>` instead.
+
+## Actions
+
+Activating an item fires `action` on the menu and closes it. Put an icon in an item's `prefix` slot, a keyboard hint in `shortcut`, and mark destructive actions with `variant="danger"`. `<moul-menu-separator>` draws a rule between sets of items.
+
+<ComponentPreview minHeight="340px" align="start">
+<moul-dropdown-menu>
+  <moul-button slot="trigger" variant="secondary">Actions</moul-button>
+  <moul-menu-item value="edit" shortcut="⌘E">
+    <svg slot="prefix" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+    <span>Edit</span>
+  </moul-menu-item>
+  <moul-menu-item value="duplicate" shortcut="⌘D">
+    <svg slot="prefix" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+    <span>Duplicate</span>
+  </moul-menu-item>
+  <moul-menu-item value="archive" is-disabled>
+    <svg slot="prefix" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="5" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/><path d="M10 12h4"/></svg>
+    <span>Archive</span>
+  </moul-menu-item>
+  <moul-menu-separator></moul-menu-separator>
+  <moul-menu-item value="delete" variant="danger" shortcut="⌫">
+    <svg slot="prefix" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="m19 6-1 14H6L5 6"/></svg>
+    <span>Delete</span>
+  </moul-menu-item>
+</moul-dropdown-menu>
+</ComponentPreview>
+
+```html
+<moul-dropdown-menu>
+  <moul-button slot="trigger" variant="secondary">Actions</moul-button>
+  <moul-menu-item value="edit" shortcut="⌘E">
+    <svg slot="prefix" aria-hidden="true">…</svg>
+    Edit
+  </moul-menu-item>
+  <moul-menu-item value="duplicate" shortcut="⌘D">Duplicate</moul-menu-item>
+  <moul-menu-item value="archive" is-disabled>Archive</moul-menu-item>
+  <moul-menu-separator></moul-menu-separator>
+  <moul-menu-item value="delete" variant="danger">Delete</moul-menu-item>
+</moul-dropdown-menu>
+
+<script type="module">
+  const menu = document.querySelector('moul-dropdown-menu')
+  menu.addEventListener('action', (event) => {
+    console.log(event.detail.value) // 'edit', 'duplicate' or 'delete'
+  })
+</script>
+```
+
+`detail.value` is the item's `value`, or its label text when it has none, and `detail.item` is the `<moul-menu-item>` itself.
+
+## Checkbox and radio items
+
+`type="checkbox"` toggles `is-checked` on each activation. `type="radio"` checks its item and unchecks the other radio items in the same `<moul-menu-group>`, or among the radio items outside any group. Both keep the menu open, so several settings can be changed in a row; `action` still fires each time, and `detail.item.isChecked` holds the new state. `<moul-menu-group label="…">` shows a small heading over its items.
+
+<ComponentPreview minHeight="360px" align="start">
+<moul-dropdown-menu label="View options">
+  <moul-button slot="trigger" variant="secondary">View</moul-button>
+  <moul-menu-item type="checkbox" value="grid" is-checked>Show grid</moul-menu-item>
+  <moul-menu-item type="checkbox" value="rulers">Show rulers</moul-menu-item>
+  <moul-menu-separator></moul-menu-separator>
+  <moul-menu-group label="Sort by">
+    <moul-menu-item type="radio" value="name" is-checked>Name</moul-menu-item>
+    <moul-menu-item type="radio" value="modified">Date modified</moul-menu-item>
+    <moul-menu-item type="radio" value="size">Size</moul-menu-item>
+  </moul-menu-group>
+</moul-dropdown-menu>
+</ComponentPreview>
+
+```html
+<moul-dropdown-menu label="View options">
+  <moul-button slot="trigger" variant="secondary">View</moul-button>
+  <moul-menu-item type="checkbox" value="grid" is-checked>Show grid</moul-menu-item>
+  <moul-menu-item type="checkbox" value="rulers">Show rulers</moul-menu-item>
+  <moul-menu-separator></moul-menu-separator>
+  <moul-menu-group label="Sort by">
+    <moul-menu-item type="radio" value="name" is-checked>Name</moul-menu-item>
+    <moul-menu-item type="radio" value="modified">Date modified</moul-menu-item>
+    <moul-menu-item type="radio" value="size">Size</moul-menu-item>
+  </moul-menu-group>
+</moul-dropdown-menu>
+```
+
+## Links and placement
+
+With `href` (and optionally `target`), an item navigates when activated, by keyboard or pointer, and middle-click or "open in new tab" work as on any link. `placement` puts the menu `bottom-start` (the default), `bottom-end`, `top-start` or `top-end` of the trigger; the menu still flips to the other side when there is no room.
+
+<ComponentPreview minHeight="300px">
+<div class="demo-row">
+  <moul-dropdown-menu placement="bottom-end">
+    <moul-button slot="trigger" variant="ghost" is-icon aria-label="Account">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+    </moul-button>
+    <moul-menu-group label="sokha@example.com">
+      <moul-menu-item href="#profile">Profile</moul-menu-item>
+      <moul-menu-item href="#billing">Billing</moul-menu-item>
+      <moul-menu-item href="https://moul.dev" target="_blank">Help centre</moul-menu-item>
+    </moul-menu-group>
+    <moul-menu-separator></moul-menu-separator>
+    <moul-menu-item value="sign-out">Sign out</moul-menu-item>
+  </moul-dropdown-menu>
+</div>
+</ComponentPreview>
+
+```html
+<moul-dropdown-menu placement="bottom-end">
+  <moul-button slot="trigger" variant="ghost" is-icon aria-label="Account">…</moul-button>
+  <moul-menu-group label="sokha@example.com">
+    <moul-menu-item href="/profile">Profile</moul-menu-item>
+    <moul-menu-item href="/billing">Billing</moul-menu-item>
+    <moul-menu-item href="https://moul.dev" target="_blank">Help centre</moul-menu-item>
+  </moul-menu-group>
+  <moul-menu-separator></moul-menu-separator>
+  <moul-menu-item value="sign-out">Sign out</moul-menu-item>
+</moul-dropdown-menu>
+```
+
+## Gooey
+
+`variant="gooey"` pours the items out of the trigger as liquid. Each row's background is a blob that drops out of a pill at the trigger's edge, staggered, and an SVG goo filter (a Gaussian blur followed by an alpha threshold) fuses blobs that come close, so they stretch and merge like drops of the same liquid. Once they settle, the regular surface fades in over them. On close the blobs are pulled back into the trigger, farthest first.
+
+The menu lives in the top layer and the trigger stays in the page, so the trigger itself cannot join the goo. The goo layer starts at the trigger's edge instead and clips everything above it, which makes the drops look as if they pour out of the button. Set `--dropdown-menu-background` to the trigger's colour for the closest match.
+
+<ComponentPreview minHeight="320px" align="start">
+<moul-dropdown-menu variant="gooey">
+  <moul-button slot="trigger" variant="secondary">Share</moul-button>
+  <moul-menu-item value="link">Copy link</moul-menu-item>
+  <moul-menu-item value="email">Email</moul-menu-item>
+  <moul-menu-item value="telegram">Telegram</moul-menu-item>
+  <moul-menu-item value="embed">Embed</moul-menu-item>
+</moul-dropdown-menu>
+</ComponentPreview>
+
+```html
+<moul-dropdown-menu variant="gooey">
+  <moul-button slot="trigger" variant="secondary">Share</moul-button>
+  <moul-menu-item value="link">Copy link</moul-menu-item>
+  <moul-menu-item value="email">Email</moul-menu-item>
+  <moul-menu-item value="telegram">Telegram</moul-menu-item>
+  <moul-menu-item value="embed">Embed</moul-menu-item>
+</moul-dropdown-menu>
+```
+
+The goo filter is an SVG `<filter>` inside the menu's shadow root. A browser that cannot resolve that reference still moves the blobs, but they do not fuse.
+
+## Using it inside another component
+
+A component can render `<moul-dropdown-menu>` in its own shadow root and forward its light-DOM items through a `<slot>`. The menu reads its default slot with `assignedElements({ flatten: true })`, so forwarded items, and items inside forwarded groups, take part in keyboard navigation, type-ahead, radio groups and `action` like direct children.
+
+```js
+class MyToolbar extends HTMLElement {
+  constructor() {
+    super()
+    this.attachShadow({ mode: 'open' }).innerHTML = `
+      <moul-dropdown-menu placement="bottom-end">
+        <moul-button slot="trigger" is-icon aria-label="More actions">⋯</moul-button>
+        <slot name="menu"></slot>
+      </moul-dropdown-menu>
+    `
+  }
+}
+customElements.define('my-toolbar', MyToolbar)
+```
+
+```html
+<my-toolbar>
+  <moul-menu-item slot="menu" value="rename">Rename</moul-menu-item>
+  <moul-menu-item slot="menu" value="move">Move</moul-menu-item>
+</my-toolbar>
+```
+
+`action` and `openchange` are composed, so they reach listeners on `<my-toolbar>`.
+
+## Accessibility
+
+- It follows the [WAI-ARIA menu button pattern](https://www.w3.org/WAI/ARIA/apg/patterns/menu-button/). The trigger gets `aria-haspopup="menu"` and `aria-expanded`; for a `<moul-button>`, whose focus lives on an inner `<button>`, both attributes go on the inner button too. The surface is `role="menu"`, named by `label`, else by the trigger's `aria-label` or text. `aria-controls` is not set, because an ID cannot reach into the menu's shadow root.
+- Items are `menuitem`, `menuitemcheckbox` or `menuitemradio` with `aria-checked`. Disabled items get `aria-disabled="true"` and stay focusable, as the pattern asks, but cannot be activated. Groups are `role="group"` named by their `label`; separators are `role="separator"`.
+- On the trigger, a click toggles the menu and focuses the menu surface; `Enter`, `Space` and `Arrow Down` open it and focus the first enabled item, and `Arrow Up` the last.
+- In the menu, `Arrow Down` and `Arrow Up` move through the items and wrap, `Home` and `End` jump to the first and last, and typing letters jumps to the next item whose label starts with them. `Enter` and `Space` activate the focused item. `Escape` closes and returns focus to the trigger, `Tab` closes and lets focus move on, and a click outside closes. Hovering an item focuses it, so the pointer and the keys share one highlight.
+- `show()` opens the menu and focuses its first enabled item; setting `is-open` opens it without moving focus.
+- The `shortcut` hint is hidden from screen readers. If the shortcut really works, add `aria-keyshortcuts` to the item.
+- Under reduced motion, the menu appears and disappears at once, the rows do not stagger in, and the gooey variant skips the goo.
+
+## API reference
+
+### `<moul-dropdown-menu>`
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `is-open` | `isOpen` | `boolean` | `false` |
+| `placement` | `placement` | `'bottom-start' \| 'bottom-end' \| 'top-start' \| 'top-end'` | `'bottom-start'` |
+| `is-disabled` | `isDisabled` | `boolean` | `false` |
+| `variant` | `variant` | `'default' \| 'gooey'` | `'default'` |
+| `label` | `label` | `string` | `''` |
+| — | `items` (read-only) | `MoulMenuItem[]` | — |
+
+| Method | Description |
+| :-- | :-- |
+| `show()` | Opens the menu and focuses its first enabled item. |
+| `hide()` | Closes the menu, returning focus to the trigger if it was in the menu. |
+| `toggle()` | Calls `show()` or `hide()`. |
+
+| Event | Type |
+| :-- | :-- |
+| `openchange` | `CustomEvent<{ isOpen: boolean }>` |
+| `action` | `CustomEvent<{ value: string; item: MoulMenuItem }>` |
+
+| Slot | Description |
+| :-- | :-- |
+| `trigger` | The element that opens the menu, usually a `<moul-button>`. |
+| `(default)` | Items, groups and separators. |
+
+| CSS custom property | Default |
+| :-- | :-- |
+| `--dropdown-menu-background` | `var(--color-bg-elevated)` |
+| `--dropdown-menu-min-width` | `10rem` (never narrower than the trigger) |
+| `--dropdown-menu-max-width` | `20rem` |
+| `--dropdown-menu-max-height` | `20rem` (also capped by the room beside the trigger) |
+
+**CSS parts:** `trigger`, `popover`, `menu`, `goo`
+
+### `<moul-menu-item>`
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `value` | `value` | `string` | `''` |
+| `type` | `type` | `'item' \| 'checkbox' \| 'radio'` | `'item'` |
+| `is-checked` | `isChecked` | `boolean` | `false` |
+| `is-disabled` | `isDisabled` | `boolean` | `false` |
+| `variant` | `variant` | `'default' \| 'danger'` | `'default'` |
+| `href` | `href` | `string` | `''` |
+| `target` | `target` | `string` | `''` |
+| `shortcut` | `shortcut` | `string` | `''` |
+| — | `label` (read-only) | `string` | the label text |
+
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | The label. |
+| `prefix` | An icon before the label. |
+| `suffix` | Content after the label. |
+
+**CSS parts:** `item`, `indicator`, `label`, `shortcut`, `link`
+
+### `<moul-menu-group>`
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `label` | `label` | `string` | `''` |
+
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | The group's items. |
+
+**CSS parts:** `label`, `items`
+
+### `<moul-menu-separator>`
+
+No attributes, slots or parts.
