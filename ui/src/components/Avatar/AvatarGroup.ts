@@ -3,6 +3,17 @@ import { defineElement } from '../../utils/define-element'
 import type { AvatarSize, MoulAvatar } from './Avatar'
 import { avatarGroupStyles } from './Avatar.styles'
 
+/**
+ * A row of overlapping `moul-avatar` elements that shows at most `max` of them
+ * and a "+N" count for the rest, and passes its `size` to avatars that do not
+ * set their own.
+ *
+ * Keyboard and screen readers: not focusable. The host has `role="group"`
+ * named "Avatar group"; each visible avatar is read by its name, hidden ones
+ * are skipped, and the overflow count is read as plain text such as "+3".
+ *
+ * Reduced motion: does not animate.
+ */
 export class MoulAvatarGroup extends LitElement {
   static override styles = avatarGroupStyles
 

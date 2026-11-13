@@ -13,6 +13,21 @@ import { tagStyles } from './TagGroup.styles'
 
 export type TagSize = 'sm' | 'md' | 'lg'
 
+/**
+ * A small chip for a label, filter or chosen value inside a `moul-tag-group`,
+ * coloured by `tone` and `variant`; in a selectable group a click toggles it.
+ * With `is-removable` it shows a remove button that fades the tag out and
+ * fires `remove`; take the tag out of the DOM in your handler.
+ *
+ * Keyboard and screen readers: the host has `role="button"`, `aria-selected`
+ * and its text as the name, but no `tabindex` and no key handling, so the tag
+ * cannot be focused or toggled from the keyboard and `Backspace`/`Delete` do
+ * nothing. The remove button is a native `<button>` named "Remove tag" that
+ * `Tab` reaches and `Enter` or `Space` activates.
+ *
+ * Reduced motion: the tag no longer shrinks when pressed or when removed (it
+ * disappears at once), and its colours change without fading.
+ */
 export class MoulTag extends LitElement {
   static override styles = tagStyles
 

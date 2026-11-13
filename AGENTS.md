@@ -13,16 +13,20 @@ A multi-project monorepo workspace managed with **Bun**, featuring:
 ├── biome.json           # Lint & format rules (ui/ and docs/)
 ├── AGENTS.md            # This file
 ├── rdt/                 # Requirements, design, and task list for the Lit rebuild
-├── scripts/             # dev, gen:component, sync:llms, bump, verify-no-react, setup-hooks
+├── scripts/             # dev, gen:component, sync:llms, size, bump, verify-no-react, setup-hooks
 ├── ui/                  # Component library package
-│   ├── package.json     # Library exports (`.` and `./style.css`)
-│   ├── vite.config.ts   # Vite library + CDN builds, Vitest (happy-dom)
+│   ├── package.json     # Library exports (`.`, `./effects` and `./style.css`)
+│   ├── vite.config.ts   # Vite library + CDN builds per entry, Vitest (happy-dom)
+│   ├── size-budget.json # Byte budget per published bundle (`bun run size`)
 │   ├── custom-elements-manifest.config.mjs
 │   ├── index.html       # Kitchen-sink sandbox (`bun run dev:ui`)
 │   └── src/
-│       ├── index.ts     # Single public entry point
+│       ├── index.ts     # Main entry point
+│       ├── effects.ts   # Second entry point: motion controllers and effect elements
+│       ├── element-checklist.test.ts # The five things every element ships with
 │       ├── styles/      # style.css token layer, reset, semantic tones
-│       ├── controllers/ # Press, LayoutIndicator, OverlayPresence, NumberSpring, FormInternals
+│       ├── controllers/ # Press, LayoutIndicator, OverlayPresence, NumberSpring, FormInternals;
+│       │                # Pointer, Scroll, InView, Drag, TextSplit, CanvasLoop (effects entry)
 │       ├── utils/       # defineElement, motion, focus trap, icons
 │       ├── sandbox.ts   # Sandbox sections (component order mirrored by the docs sidebar)
 │       └── components/  # <ComponentName>/<ComponentName>.ts, .styles.ts, index.ts
@@ -68,12 +72,17 @@ Run these commands from the root directory:
   ```bash
   bun run test
   ```
+- **Check Bundle Sizes** against `ui/size-budget.json` (also the last step of `build:ui`); `--write` records new budgets when growth is intended:
+  ```bash
+  bun run size
+  bun run size --write
+  ```
 - **Run Lint / Format (Biome)**:
   ```bash
   bun run lint
   bun run format
   ```
-- **Build UI Library** (verify-no-react → `tsc -b` → `vite build` → `cem analyze`):
+- **Build UI Library** (verify-no-react → `tsc -b` → `vite build` per entry, npm and CDN → `cem analyze` → size check):
   ```bash
   bun run build:ui
   ```
@@ -95,6 +104,7 @@ Run these commands from the root directory:
 - **CSS Token Layer**: `ui/src/styles/style.css` defines `:root` custom properties (OKLCH + `light-dark()`), emitted to `dist/assets/style.css` and exported as `@moul-dev/web-component/style.css`. Brand hooks: `--brand-hue`, `--brand-chroma-multiplier`, `--brand-font-family`, `--brand-font-scale`, `--brand-radius-factor`, `--brand-density-factor`.
 - **Native Platform APIs**: `ElementInternals` for form association, `<dialog>` for modals, the Popover API + CSS anchor positioning for overlays.
 - **Vite Library Mode**: Emits `dist/moul-ui.js` (prefixed with a `"use client";` banner for RSC frameworks) and `dist/src/index.d.ts`. Every runtime `dependency` stays a bare import so consumers load one copy of Lit; the build fails if anything from `node_modules` is inlined. A second pass (`vite build --mode cdn`) emits the self-contained, minified `dist/cdn/moul-ui.js` for `<script type="module">` use from a CDN.
+- **Effects Entry Point**: `@moul-dev/web-component/effects` (`src/effects.ts`) holds the motion controllers (pointer, scroll, in-view, drag, text splitting, canvas loop) and, from Phase 5 of `moul-ui-build-plan.md`, the effect elements. It is built in its own passes (`--mode effects`, `--mode cdn-effects`) so the main bundle stays byte-for-byte what it is without it; `ui/size-budget.json` holds every bundle to a byte budget, and `bun run size --write` raises one on purpose. Never export effects code from `src/index.ts`.
 - **Custom Elements Manifest**: `cem analyze` writes `dist/custom-elements.json`, the source of truth for `sync:llms`.
 - **No React**: `scripts/verify-no-react.ts` fails the build if React, React Aria, StyleX, or `@lit/react` appear in `ui/` or `docs/` manifests.
 
@@ -104,6 +114,18 @@ Run these commands from the root directory:
 - **Styling**: `docs/src/styles/global.css` imports `@moul-dev/web-component/style.css`, maps Starlight colors onto the tokens, and sets Khmer content (`:lang(km)`) in `Noto Sans Khmer`.
 - **Pages**: Add component slugs to `docs/src/categories.ts`. Every English page needs a Khmer page at the same path under `km/`; component pages keep the English body with a translated `title` and `description`. New changelog entries go in the `Changelog` sidebar group in `astro.config.mjs` and in both `changelog/index.mdx` files.
 
+## Element Checklist
+
+Every new element ships with five things, and `ui/src/element-checklist.test.ts` fails until it does:
+
+1. **A description in the Custom Elements Manifest**: a summary paragraph in the class JSDoc, because agents pick components from that text.
+2. **Keyboard and screen reader behaviour**: a `Keyboard and screen readers:` paragraph in the JSDoc, and tests that exercise it.
+3. **A reduced-motion path**: a `Reduced motion:` paragraph in the JSDoc, and a `prefers-reduced-motion` branch in the code whenever the element animates.
+4. **Light and dark themes**: colours from tokens only, never literals outside `var()` fallbacks, masks and shadows.
+5. **A demo page and a test**: an English docs page that renders the element, its Khmer twin, and a test that names the tag.
+
+`bun run gen:component <Name>` (with `--effect` for the effects entry) scaffolds all five with `TODO` markers and `it.todo` tests where only the author can fill in the behaviour. The 79 elements that predate the checklist are listed in the test as exempt from the documentation checks until their JSDoc is written; the list only shrinks.
+
 ## AI Coding Agent Guidelines for `@moul-dev/web-component`
 
 <!-- sync:llms:start -->
@@ -111,7 +133,7 @@ Run these commands from the root directory:
 
 When generating or editing code that uses `@moul-dev/web-component`:
 
-- **Imports**: `import '@moul-dev/web-component'` once registers every `<moul-*>` element. Import design tokens with `import '@moul-dev/web-component/style.css'`. There is no `@moul-dev/web-component/react`, `@moul-dev/web-component/tokens`, or `@moul-dev/web-component/tokens.stylex` entry point.
+- **Imports**: `import '@moul-dev/web-component'` once registers every `<moul-*>` element. Import design tokens with `import '@moul-dev/web-component/style.css'`. Motion controllers and effect elements live in a second entry, `import '@moul-dev/web-component/effects'`; an app that never imports it ships none of that code. There is no `@moul-dev/web-component/react`, `@moul-dev/web-component/tokens`, or `@moul-dev/web-component/tokens.stylex` entry point.
 - **Markup, not JSX components**: Write native custom element tags (`<moul-button>`), never PascalCase components (`<Button>`). They work in plain HTML, Astro, Lit, Vue, Svelte, and React 19.
 - **Attributes are kebab-case**: Boolean state uses presence attributes such as `is-disabled`, `is-open`, `is-checked`, `is-required`. The matching JS property is camelCase (`el.isDisabled = true`).
 - **Rich data is set as properties**: Arrays, objects, and functions (`data`, `series`, `columns`, `items`, `logs`, `valueFormatter`) are assigned in JavaScript, not serialized into attributes.

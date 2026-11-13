@@ -35,6 +35,24 @@ const safeJsonConverter = {
   },
 }
 
+/**
+ * A data table that renders `data` rows under `columns`, with optional
+ * sortable headers (`is-sortable`), row-selection checkboxes (`is-selectable`),
+ * skeleton rows while `is-loading`, and an `empty` slot when there are no rows.
+ * Sorting only reports `sortchange`, so sort `data` yourself; selection reports
+ * `selectionchange` with keys taken from each row's `key`, `id` or index.
+ *
+ * Keyboard and screen readers: a native `<table>` named by the `caption` slot,
+ * with `aria-sort` on the headers when sortable. Sorting works by click only:
+ * headers are not focusable and handle no keys. With `is-selectable`, `Tab`
+ * reaches a "Select all rows" checkbox and one native checkbox per row named
+ * "Select row N" (`Space` toggles), and rows carry `aria-selected`. Loading
+ * and empty states are not announced: skeleton rows are hidden from screen
+ * readers and there is no live region or `aria-busy`.
+ *
+ * Reduced motion: the sort arrow flips without rotating, header colours change
+ * at once, and loading skeletons pulse instead of shimmering.
+ */
 export class MoulTable extends LitElement {
   static override styles = tableStyles
 

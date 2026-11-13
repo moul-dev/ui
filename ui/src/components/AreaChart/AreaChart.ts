@@ -34,6 +34,28 @@ export interface AreaChartPointData {
   rawData: Record<string, unknown>
 }
 
+/**
+ * An area chart of one or more numeric series over shared categories: each
+ * `data` row is one point along x (labelled by its `x-key` field, `name` by
+ * default) and each series, from `series` or else every numeric field, is a
+ * filled area under a line, overlapping or `stacked`. Hovering a point fires
+ * `point-hover` so a page can show a `<moul-chart-tooltip>`.
+ *
+ * Keyboard and screen readers: nothing in the chart takes focus and no keys do
+ * anything, so the per-point values, surfaced only by `point-hover` on pointer
+ * hover, cannot be reached without a mouse. The SVG has no role, accessible
+ * name or data table, so a screen reader meets at most the axis text
+ * (categories and tick values), never the plotted values; give the page a
+ * text or table alternative.
+ *
+ * Reduced motion: on first render the areas and lines fade in over 350ms;
+ * under reduced motion they appear at once. A hovered point's dot grows from a
+ * 4px to a 6px radius, smoothly normally and instantly under reduced motion.
+ *
+ * @slot empty - Shown instead of the chart when there is no data.
+ * @fires point-hover - A point is hovered; `detail` has its value and label.
+ * @fires point-leave - The pointer left a point or the chart.
+ */
 export class MoulAreaChart extends LitElement {
   static override styles = areaChartStyles
 

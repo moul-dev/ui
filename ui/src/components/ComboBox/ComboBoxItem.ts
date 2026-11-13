@@ -2,6 +2,23 @@ import { html, LitElement, type PropertyValues } from 'lit'
 import { defineElement } from '../../utils/define-element'
 import { comboBoxItemStyles } from './ComboBox.styles'
 
+/**
+ * One option inside a `<moul-combobox>` list. Its `key` is what the
+ * combobox submits, and its `text-value` (falling back to its text, then its
+ * `key`) is what filtering matches and what fills the input when it is
+ * picked; the picked item shows a trailing check.
+ *
+ * Keyboard and screen readers: it has `role="option"` with `aria-selected`
+ * (set by the parent combobox) and `aria-disabled`, and is named by its
+ * slotted text (or `text-value`, else `key`, when nothing is slotted). It is
+ * not in the tab order (`tabindex="-1"`): the parent `<moul-combobox>` moves
+ * focus onto it with `Arrow Down`/`Arrow Up` and picks it with `Enter`, and
+ * clicking it picks it too. Items that do not match the typed text are
+ * hidden.
+ *
+ * Reduced motion: the row does not press in when clicked, and hover and
+ * focus colours change without fading.
+ */
 export class MoulComboBoxItem extends LitElement {
   static override styles = comboBoxItemStyles
 

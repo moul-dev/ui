@@ -1,0 +1,63 @@
+---
+title: TextSplitController
+description: ឯកសារណែនាំសម្រាប់ Reactive Controller TextSplitController
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import TextSplitDemo from '@/components/demos/effects/TextSplitDemo.astro';
+
+`TextSplitController` renders text as one span per word, and per letter when asked, so each piece can be animated on its own. The pieces are hidden from assistive technology and the text is kept once, whole, in a visually hidden copy: a screen reader reads the sentence, not one letter at a time.
+
+<ComponentPreview>
+  <TextSplitDemo />
+</ComponentPreview>
+
+```ts
+import { html, css, LitElement } from 'lit'
+import { TextSplitController } from '@moul-dev/web-component/effects'
+
+class TextEntrance extends LitElement {
+  static properties = { by: { reflect: true } }
+  splitter = new TextSplitController(this, {
+    container: () => this.renderRoot.querySelector('[part="text"]'),
+    text: () => this.textContent ?? '',
+    by: () => this.by ?? 'words',
+  })
+
+  static styles = css`
+    [data-split='word'] {
+      animation: rise 600ms both;
+      animation-delay: calc(var(--word-index) * 60ms);
+    }
+  `
+  render() {
+    return html`<span part="text"></span>`
+  }
+}
+```
+
+## Pieces and variables
+
+| Piece | Attribute | Variables |
+| :-- | :-- | :-- |
+| Word | `data-split="word"` | `--word-index`; `--line-index` when split by lines |
+| Letter | `data-split="char"` | `--char-index`, counted across the whole text |
+| Container | | `--split-word-count`, `--split-char-count`, `--split-line-count` |
+
+Every piece is an `inline-block`, so it can be moved with `translate` and `scale`. Styles are set through the CSSOM, which a strict Content Security Policy allows.
+
+## Any language
+
+Letters are grapheme clusters, so a Khmer consonant keeps its subscripts and vowel signs, and an emoji with a skin tone stays whole. Scripts written without spaces between words, such as Khmer and Thai, are split at dictionary word boundaries with `Intl.Segmenter`, using the nearest `lang` attribute. Punctuation stays on the word it touches, so a comma never wraps onto a line by itself.
+
+## Lines
+
+Split by `lines`, words keep their natural wrapping and are numbered with the line they landed on. The controller renumbers them whenever the container's width changes.
+
+## Without a host
+
+`splitText(container, text, { by, locale })` does the same once, without a controller, and returns the pieces with a `revert()` that puts the plain text back. `segmentText(text, locale)` returns the words and spaces as data.
+
+## Reduced motion
+
+The controller only splits. An effect built on it should show the whole text at once under reduced motion; the demo fades the pieces in together without the rise.

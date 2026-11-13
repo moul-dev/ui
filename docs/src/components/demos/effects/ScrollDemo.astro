@@ -1,0 +1,95 @@
+---
+/**
+ * ScrollController demo: a reading-progress bar for a scrolling panel,
+ * plus the direction the reader is going.
+ */
+---
+
+<effects-demo-reading>
+  <div class="reading-meta">
+    <span class="reading-bar" aria-hidden="true"></span>
+    <span class="reading-direction" aria-live="polite">Scroll the panel</span>
+  </div>
+  <div class="reading-panel" tabindex="0" aria-label="Sample article">
+    <p>Scroll-linked effects read one number: how far along the reader is. The
+      controller writes it as <code>--scroll-progress</code>, from 0 to 1.</p>
+    <p>Where the browser has scroll-driven animations, a native
+      <code>ScrollTimeline</code> animates that variable and no script runs while
+      you scroll. Elsewhere a passive listener writes it once per frame.</p>
+    <p>The bar above is a single rule:
+      <code>transform: scaleX(var(--scroll-progress))</code>. It does not know
+      which of the two paths is running.</p>
+    <p>With <code>trackDirection</code>, the controller also reports which way the
+      reader is going and how fast, and re-renders the host only when the
+      direction flips. A navbar that hides on the way down needs no more than that.</p>
+    <p>Scrolling is the reader's own movement, so progress keeps updating under
+      reduced motion. Effects that add motion of their own still honour the
+      setting in their styles.</p>
+    <p>That is the end of the panel.</p>
+  </div>
+</effects-demo-reading>
+
+<style is:global>
+  effects-demo-reading {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
+    width: min(100%, 30rem);
+  }
+
+  effects-demo-reading .reading-meta {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+  }
+
+  effects-demo-reading .reading-bar {
+    display: block;
+    height: 0.375rem;
+    border-radius: var(--radius-full);
+    background: var(--color-accent);
+    transform: scaleX(var(--scroll-progress, 0));
+    transform-origin: left;
+  }
+
+  effects-demo-reading .reading-direction {
+    font-size: var(--font-size-sm);
+    color: var(--color-fg-subtle);
+  }
+
+  effects-demo-reading .reading-panel {
+    height: 14rem;
+    overflow-y: auto;
+    padding: var(--spacing-4) var(--spacing-5);
+    border-radius: var(--radius-2xl);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-surface);
+  }
+
+  effects-demo-reading .reading-panel p {
+    margin: 0 0 var(--spacing-4);
+  }
+</style>
+
+<script>
+  import { ScrollController } from '@moul-dev/web-component/effects'
+  import { DemoHost, defineDemo } from './demo-host'
+
+  class ReadingDemo extends DemoHost {
+    // Not `scroll`: that would shadow HTMLElement.scroll().
+    reading = new ScrollController(this, {
+      source: () => this.querySelector('.reading-panel'),
+      trackDirection: true,
+    })
+
+    protected override update(): void {
+      const label = this.querySelector('.reading-direction')
+      const direction = this.reading.state.direction
+      if (!label || !direction) return
+      const engine = this.reading.isNative ? 'native timeline' : 'script fallback'
+      label.textContent = `Scrolling ${direction === 'forward' ? 'down' : 'up'} · ${engine}`
+    }
+  }
+
+  defineDemo('effects-demo-reading', ReadingDemo)
+</script>

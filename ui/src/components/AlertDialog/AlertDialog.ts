@@ -11,6 +11,24 @@ import { alertDialogStyles } from './AlertDialog.styles'
 
 export type AlertDialogSize = 'sm' | 'md' | 'lg'
 
+/**
+ * A blocking confirmation dialog for destructive or irreversible actions, on a
+ * native `<dialog>`: clicking outside does not dismiss it, and a click on a
+ * slotted control with `data-action="confirm"` or `data-action="cancel"` fires
+ * `confirm` or `cancel` and closes it.
+ *
+ * Keyboard and screen readers: on open, focus moves to the slotted
+ * `data-action="cancel"` control if there is one, otherwise to the first
+ * focusable element; `Tab` and `Shift+Tab` cycle inside the dialog, and on
+ * close focus returns to the element that had it before. `Escape` fires
+ * `cancel` and closes; clicks outside the panel do nothing. Screen readers get
+ * `role="alertdialog"` with `aria-modal="true"`, but no accessible name or
+ * description: the header and body are not linked with `aria-labelledby` or
+ * `aria-describedby`.
+ *
+ * Reduced motion: the panel and backdrop appear and disappear at once instead
+ * of fading while the panel scales in from 105% and out to 95%.
+ */
 export class MoulAlertDialog extends LitElement {
   static override styles = alertDialogStyles
 

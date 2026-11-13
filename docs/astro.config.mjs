@@ -47,6 +47,10 @@ export default defineConfig({
           find: /^@moul-dev\/web-component\/style\.css$/,
           replacement: uiSrc('styles/style.css'),
         },
+        {
+          find: /^@moul-dev\/web-component\/effects$/,
+          replacement: uiSrc('effects.ts'),
+        },
         { find: /^@moul-dev\/web-component$/, replacement: uiSrc('index.ts') },
       ],
     },
@@ -107,6 +111,18 @@ export default defineConfig({
           badge: { text: String(slugs.length), variant: 'default' },
           items: slugs,
         })),
+        {
+          label: 'Effects',
+          items: [
+            { label: 'Effects entry point', slug: 'docs/effects' },
+            'docs/effects/pointer',
+            'docs/effects/scroll',
+            'docs/effects/in-view',
+            'docs/effects/drag',
+            'docs/effects/text-split',
+            'docs/effects/canvas-loop',
+          ],
+        },
         {
           label: 'Changelog',
           items: [

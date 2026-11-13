@@ -23,6 +23,22 @@ export interface TopListProps {
   interactive?: boolean
 }
 
+/**
+ * A ranked list of labelled values, each row with a bar sized against the
+ * largest value (or `max`), for leaderboards such as top pages, countries or
+ * referrers. Clicking a row fires `item-press`; `interactive` styles the rows
+ * as pressable.
+ *
+ * Keyboard and screen readers: every row is its own tab stop (even without
+ * `interactive`), and `Enter` or `Space` on a focused row fires `item-press`.
+ * Screen readers get a list whose items read the rank, label and value, with
+ * a `role="progressbar"` bar named after the label and carrying the formatted
+ * value as `aria-valuetext`; nothing tells them a row can be pressed.
+ *
+ * Reduced motion: rows appear without their first-render rise and fade, bars
+ * jump to new widths instead of growing, and pressed rows do not shrink; the
+ * hover fill and focus ring switch instantly.
+ */
 export class MoulTopList extends LitElement {
   static override styles = topListStyles
 

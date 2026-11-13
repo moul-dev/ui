@@ -2,6 +2,20 @@ import { html, LitElement, type PropertyValues } from 'lit'
 import { defineElement } from '../../utils/define-element'
 import { radioStyles } from './RadioGroup.styles'
 
+/**
+ * One option inside a `<moul-radio-group>`: a circle that fills when
+ * selected, labelled by its slotted text; the group submits this radio's
+ * `value` when it is chosen.
+ *
+ * Keyboard and screen readers: only the checked radio (or the first one when
+ * none is checked) is in the tab order. The parent group handles the arrow
+ * keys, which move focus and selection together; clicking a radio selects
+ * it, but `Space` does not. It has `role="radio"` with `aria-checked` and
+ * `aria-disabled`, and its name comes from the slotted text.
+ *
+ * Reduced motion: the circle fills and the dot shrinks at once instead of
+ * easing, and the circle does not press in when clicked.
+ */
 export class MoulRadio extends LitElement {
   static override styles = radioStyles
 

@@ -10,6 +10,7 @@
   "customElements": "dist/custom-elements.json",
   "sideEffects": [
     "./dist/moul-ui.js",
+    "./dist/effects.js",
     "./dist/assets/style.css"
   ],
   "files": [
@@ -45,6 +46,11 @@
       "import": "./dist/moul-ui.js",
       "default": "./dist/moul-ui.js"
     },
+    "./effects": {
+      "types": "./dist/src/effects.d.ts",
+      "import": "./dist/effects.js",
+      "default": "./dist/effects.js"
+    },
     "./style.css": {
       "style": "./dist/assets/style.css",
       "default": "./dist/assets/style.css"
@@ -52,7 +58,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "bun ../scripts/verify-no-react.ts ui && tsc -b && vite build && vite build --mode cdn && cem analyze --config custom-elements-manifest.config.mjs",
+    "build": "bun ../scripts/verify-no-react.ts ui && tsc -b && vite build && vite build --mode effects && vite build --mode cdn && vite build --mode cdn-effects && cem analyze --config custom-elements-manifest.config.mjs && bun ../scripts/check-size.ts",
     "build:watch": "vite build --watch",
     "lint": "biome check",
     "format": "biome format --write",

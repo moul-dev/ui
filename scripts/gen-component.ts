@@ -38,6 +38,8 @@ interface GeneratorOptions {
   /** Docs route slug, matching existing pages (`segmentedcontrol`). */
   docSlug: string
   description: string
+  /** Register in the effects entry (`@moul-dev/web-component/effects`) instead of the main one. */
+  isEffect: boolean
   dryRun: boolean
 }
 
@@ -50,6 +52,7 @@ ${colors.yellow}Usage:${colors.reset}
 
 ${colors.yellow}Options:${colors.reset}
   --description, -d <text>   One-line description for JSDoc and the docs page
+  --effect                   Register in @moul-dev/web-component/effects, not the main entry
   --dry-run                  Preview generated files without writing to disk
   --help, -h                 Show this help message
 
@@ -59,10 +62,16 @@ ${colors.yellow}Generates:${colors.reset}
   ui/src/components/<ComponentName>/<ComponentName>.test.ts    Vitest + @open-wc/testing-helpers
   ui/src/components/<ComponentName>/index.ts                   Barrel export
   docs/src/content/docs/docs/components/<slug>.mdx             Starlight MDX stub with <ComponentPreview>
+  docs/src/content/docs/km/docs/components/<slug>.mdx          Khmer twin of the docs page
+
+  Every element ships with the five things in the element checklist
+  (ui/src/element-checklist.test.ts). The files start with TODO markers for
+  the parts only you can write; the checklist test fails until they are gone.
 
 ${colors.yellow}Examples:${colors.reset}
   bun run gen:component Timeline
   bun run gen:component SegmentedControl -d "Segmented single-choice picker"
+  bun run gen:component Marquee --effect -d "Endless row of logos, cards or text"
 `)
 }
 
@@ -70,6 +79,7 @@ function parseArgs(args: string[]): GeneratorOptions {
   let name = ''
   let description = ''
   let dryRun = false
+  let isEffect = false
 
   for (let i = 0; i < args.length; i++) {
     const arg = args[i]
@@ -78,6 +88,8 @@ function parseArgs(args: string[]): GeneratorOptions {
       process.exit(0)
     } else if (arg === '--dry-run') {
       dryRun = true
+    } else if (arg === '--effect') {
+      isEffect = true
     } else if (arg === '--description' || arg === '-d') {
       description = args[++i] || ''
     } else if (!arg.startsWith('-') && !name) {
@@ -111,6 +123,7 @@ function parseArgs(args: string[]): GeneratorOptions {
     description:
       description ||
       `${componentName} Web Component built with Lit and Moul CSS tokens.`,
+    isEffect,
     dryRun,
   }
 }
@@ -131,6 +144,12 @@ export type ${componentName}Size = 'sm' | 'md' | 'lg'
 
 /**
  * ${description}
+ *
+ * Keyboard and screen readers: TODO. Say whether it takes focus, which keys
+ * operate it, and what role and name a screen reader announces.
+ *
+ * Reduced motion: TODO. Say what replaces the motion when the user asks for
+ * less, for example "appears at once".
  *
  * @slot - Default content.
  * @slot prefix - Content rendered before the default slot.
@@ -250,6 +269,12 @@ export const ${lowerFirst(opts.componentName)}Styles = [
       padding: var(--spacing-3, 0.75rem) var(--spacing-4, 1rem);
       font-size: var(--font-size-lg, 1.125rem);
     }
+
+    @media (prefers-reduced-motion: reduce) {
+      :host {
+        transition: none;
+      }
+    }
   \`,
 ]
 `
@@ -301,6 +326,19 @@ describe('<${tagName}>', () => {
     el.isDisabled = false
     await el.updateComplete
     expect(el.hasAttribute('aria-disabled')).toBe(false)
+  })
+
+  // The element checklist (src/element-checklist.test.ts) fails while any
+  // it.todo remains in this file. Turn each into a real test, or delete it
+  // with a note in the JSDoc when it does not apply.
+  describe('keyboard and screen readers', () => {
+    it.todo('is reached with Tab and operated with the keys a native control uses')
+    it.todo('exposes a role and an accessible name')
+  })
+
+  describe('reduced motion', () => {
+    // mockReducedMotion(true) from src/test-setup.ts switches the setting on.
+    it.todo('shows its end state at once when the user asks for reduced motion')
   })
 })
 `
@@ -359,6 +397,18 @@ import '@moul-dev/web-component/style.css';
 `
 }
 
+/**
+ * The Khmer twin keeps the English body, as every component page does, with
+ * a translated title and description.
+ */
+function generateKhmerMdxDoc(opts: GeneratorOptions): string {
+  const english = generateMdxDoc(opts)
+  return english.replace(
+    /^---\ntitle: .*\ndescription: .*\n---/,
+    `---\ntitle: ${opts.componentName} (សមាសភាគ)\ndescription: ឯកសារណែនាំសម្រាប់សមាសភាគ ${opts.componentName} Web Component\n---`,
+  )
+}
+
 function lowerFirst(str: string): string {
   return str.charAt(0).toLowerCase() + str.slice(1)
 }
@@ -398,6 +448,25 @@ export {
   return next
 }
 
+/**
+ * Register an effect element in `src/effects.ts`. Returns null when the
+ * anchor comment is missing.
+ */
+function updateEffectsTs(
+  content: string,
+  opts: Pick<GeneratorOptions, 'componentName' | 'className'>,
+): string | null {
+  const anchor = '// Effect elements'
+  if (!content.includes(anchor)) return null
+  const { componentName, className } = opts
+  return `${content.trimEnd()}
+export {
+  ${className},
+  ${className} as ${componentName},
+} from './components/${componentName}'
+`
+}
+
 function main() {
   const rootDir = resolve(import.meta.dir, '..')
   const opts = parseArgs(process.argv.slice(2))
@@ -424,6 +493,12 @@ function main() {
     `${opts.docSlug}.mdx`,
   )
   const indexTsPath = join(rootDir, 'ui', 'src', 'index.ts')
+  const effectsTsPath = join(rootDir, 'ui', 'src', 'effects.ts')
+  const entryPath = opts.isEffect ? effectsTsPath : indexTsPath
+  const khmerDocPath = docPath.replace(
+    join('content', 'docs', 'docs'),
+    join('content', 'docs', 'km', 'docs'),
+  )
 
   if (existsSync(componentDir)) {
     console.error(
@@ -431,11 +506,13 @@ function main() {
     )
     process.exit(1)
   }
-  if (existsSync(docPath)) {
-    console.error(
-      `${colors.red}Error:${colors.reset} Docs page already exists: ${docPath}`,
-    )
-    process.exit(1)
+  for (const path of [docPath, khmerDocPath]) {
+    if (existsSync(path)) {
+      console.error(
+        `${colors.red}Error:${colors.reset} Docs page already exists: ${path}`,
+      )
+      process.exit(1)
+    }
   }
 
   const files = [
@@ -464,6 +541,11 @@ function main() {
       content: generateMdxDoc(opts),
       desc: 'Starlight MDX documentation stub',
     },
+    {
+      path: khmerDocPath,
+      content: generateKhmerMdxDoc(opts),
+      desc: 'Khmer twin of the docs page',
+    },
   ]
 
   const rel = (path: string) => path.slice(rootDir.length + 1)
@@ -478,7 +560,7 @@ function main() {
       )
     }
     console.log(
-      `\n  ${colors.cyan}~${colors.reset} Register exports and tag map entry in ${rel(indexTsPath)}`,
+      `\n  ${colors.cyan}~${colors.reset} Register the element in ${rel(entryPath)}`,
     )
     return
   }
@@ -489,20 +571,22 @@ function main() {
     console.log(`  ${colors.green}✓ Created${colors.reset} ${rel(file.path)}`)
   }
 
-  const indexContent = readFileSync(indexTsPath, 'utf-8')
-  const updatedIndex = updateIndexTs(indexContent, opts)
-  if (updatedIndex) {
-    writeFileSync(indexTsPath, updatedIndex, 'utf-8')
-    console.log(`  ${colors.green}✓ Updated${colors.reset} ${rel(indexTsPath)}`)
+  const entryContent = readFileSync(entryPath, 'utf-8')
+  const updatedEntry = opts.isEffect
+    ? updateEffectsTs(entryContent, opts)
+    : updateIndexTs(entryContent, opts)
+  if (updatedEntry) {
+    writeFileSync(entryPath, updatedEntry, 'utf-8')
+    console.log(`  ${colors.green}✓ Updated${colors.reset} ${rel(entryPath)}`)
   } else {
     console.warn(
-      `  ${colors.yellow}⚠ Could not locate export anchors in ${rel(indexTsPath)}; add the export and HTMLElementTagNameMap entry manually.${colors.reset}`,
+      `  ${colors.yellow}⚠ Could not locate export anchors in ${rel(entryPath)}; register the element there manually.${colors.reset}`,
     )
   }
 
   // Let Biome own import order and line wrapping so generated code always
   // passes `bun run lint`, regardless of where it was spliced in.
-  const touched = [...files.map((f) => f.path), indexTsPath].filter((p) =>
+  const touched = [...files.map((f) => f.path), entryPath].filter((p) =>
     p.endsWith('.ts'),
   )
   const biome = Bun.spawnSync(
@@ -525,12 +609,17 @@ function main() {
     `  1. Implement the element in ${colors.dim}ui/src/components/${opts.componentName}/${opts.componentName}.ts${colors.reset}`,
   )
   console.log(
-    `  2. Add it to the sandbox in ${colors.dim}ui/src/sandbox.ts${colors.reset}`,
+    `  2. Replace the TODOs: the JSDoc's keyboard and reduced-motion paragraphs, and the it.todo tests`,
   )
   console.log(
-    `  3. Add a catalog entry in ${colors.dim}scripts/llms-catalog.ts${colors.reset}, then run ${colors.cyan}bun run build:ui && bun run sync:llms --write${colors.reset}`,
+    `  3. Add the page slug to ${colors.dim}docs/src/categories.ts${colors.reset} and a demo to ${colors.dim}ui/src/sandbox.ts${colors.reset}`,
   )
-  console.log(`  4. Run tests: ${colors.cyan}bun run test${colors.reset}`)
+  console.log(
+    `  4. Add a catalog entry in ${colors.dim}scripts/llms-catalog.ts${colors.reset}, then run ${colors.cyan}bun run build:ui && bun run sync:llms --write${colors.reset}`,
+  )
+  console.log(
+    `  5. Run ${colors.cyan}bun run test${colors.reset}: the element checklist passes once every TODO is done`,
+  )
 }
 
 main()

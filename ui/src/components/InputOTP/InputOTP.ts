@@ -5,6 +5,25 @@ import { EASE_OUT, subtleAnimate } from '../../utils/motion'
 import { warnMissingLabel } from '../../utils/warn-missing-label'
 import { inputOtpStyles } from './InputOTP.styles'
 
+/**
+ * A form-associated one-time passcode input with one single-character box
+ * per position (`length`, default 6) that advances as you type, fills the
+ * boxes from a pasted code, and fires `complete` once every box is filled.
+ * `pattern` sets which characters a box accepts (digits by default), and
+ * `shake()` shakes the row sideways to signal a wrong code.
+ *
+ * Keyboard and screen readers: each box is a native `<input>` with its own
+ * Tab stop, labelled "Digit 1 of 6" and so on, inside a `role="group"` named
+ * by the `label` attribute (or "One-time password"). Typing an accepted
+ * character fills the box and moves to the next one; `Backspace` deletes the
+ * box's character, or from an empty box moves back and deletes the previous
+ * one; `Arrow Left` and `Arrow Right` move between boxes. `Enter` does not
+ * submit a form, so listen for `complete`; every box has
+ * `autocomplete="one-time-code"` so browsers can offer a code from SMS.
+ *
+ * Reduced motion: `shake()` leaves the boxes still, and hover and focus
+ * colours change without fading.
+ */
 export class MoulInputOTP extends LitElement {
   static override styles = inputOtpStyles
   static readonly formAssociated = true

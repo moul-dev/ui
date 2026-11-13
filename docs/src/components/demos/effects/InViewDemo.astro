@@ -1,0 +1,114 @@
+---
+/**
+ * InViewController demo: cards that rise into place as they scroll into a
+ * panel, each with a pulse that pauses while it is out of view.
+ */
+const cards = [
+  'Starts its entrance once it is a third visible.',
+  'Plays once: scrolling back up does not replay it.',
+  'Its pulse pauses while it is off screen.',
+  'Under reduced motion it simply appears.',
+  'Without IntersectionObserver it shows at once.',
+  'One observer per element, disconnected on removal.',
+]
+---
+
+<div class="reveal-panel" tabindex="0" aria-label="Cards that reveal on scroll">
+  <p class="reveal-hint">Scroll this panel.</p>
+  {
+    cards.map((text, index) => (
+      <effects-demo-reveal>
+        <span class="reveal-dot" aria-hidden="true" />
+        <span>
+          <strong>Card {index + 1}.</strong> {text}
+        </span>
+      </effects-demo-reveal>
+    ))
+  }
+</div>
+
+<style is:global>
+  .reveal-panel {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4);
+    width: min(100%, 28rem);
+    height: 16rem;
+    overflow-y: auto;
+    padding: var(--spacing-4);
+    padding-bottom: 8rem;
+    border-radius: var(--radius-2xl);
+    background: var(--color-bg-subtle);
+  }
+
+  .reveal-hint {
+    margin: 0 0 6rem;
+    color: var(--color-fg-subtle);
+  }
+
+  effects-demo-reveal {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    padding: var(--spacing-4);
+    border-radius: var(--radius-xl);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-surface);
+    opacity: 0;
+    translate: 0 1.5rem;
+    transition:
+      opacity var(--duration-slow) var(--ease-out),
+      translate var(--duration-slow) var(--ease-out);
+  }
+
+  effects-demo-reveal[data-in-view] {
+    opacity: 1;
+    translate: 0 0;
+  }
+
+  effects-demo-reveal .reveal-dot {
+    flex: none;
+    width: 0.625rem;
+    height: 0.625rem;
+    border-radius: var(--radius-full);
+    background: var(--color-success);
+    animation: effects-demo-pulse 1.2s ease-in-out infinite alternate;
+  }
+
+  @keyframes effects-demo-pulse {
+    to {
+      scale: 1.6;
+      opacity: 0.4;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    effects-demo-reveal {
+      translate: none;
+      transition: opacity var(--duration-fast) linear;
+    }
+
+    effects-demo-reveal .reveal-dot {
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  import { InViewController } from '@moul-dev/web-component/effects'
+  import { DemoHost, defineDemo } from './demo-host'
+
+  class RevealDemo extends DemoHost {
+    inView = new InViewController(this, {
+      root: () => this.closest('.reveal-panel'),
+      threshold: 0.35,
+    })
+
+    protected override update(): void {
+      // Reveal once, but keep tracking so the pulse pauses off screen.
+      this.toggleAttribute('data-in-view', this.inView.hasEntered)
+    }
+  }
+
+  defineDemo('effects-demo-reveal', RevealDemo)
+</script>

@@ -27,6 +27,14 @@ export type ToastPlacement =
  * Fixed-position stack that hosts toasts. The region itself is promoted to the top
  * layer (manual popover) while it has children, so every toast lays out in one flex
  * column at the chosen `placement` instead of each toast floating independently.
+ *
+ * Keyboard and screen readers: not focusable and handles no keys; the toasts'
+ * dismiss buttons and actions take focus. It is a landmark with
+ * `role="region"`, named "Notifications" unless you set `aria-label`; the
+ * announcements come from each toast's own live region.
+ *
+ * Reduced motion: when a toast is removed, the toasts left behind jump into
+ * the freed space instead of gliding there.
  */
 export class MoulToastRegion extends LitElement {
   static override styles = toastRegionStyles

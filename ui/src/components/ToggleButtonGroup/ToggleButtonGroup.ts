@@ -6,6 +6,24 @@ import { toggleButtonGroupStyles } from './ToggleButtonGroup.styles'
 
 export type ToggleButtonGroupOrientation = 'horizontal' | 'vertical'
 
+/**
+ * A segmented control: a row or column of `moul-toggle-button`s of which at
+ * most one is selected, matched by `selected-key` to each button's `value`,
+ * with a tinted indicator that glides to the selection.
+ *
+ * Keyboard and screen readers: the host gets `role="group"` (unless a role is
+ * already set) and `aria-orientation`; give it a name with `aria-label`. A
+ * roving `tabindex` on the toggle-button hosts lets Tab reach only the selected
+ * button (or the first enabled one), in two stops: its host, then its inner
+ * `<button>`. Arrow Right/Down and Arrow Left/Up move focus to the next or
+ * previous enabled host, wrapping, and Home/End to the first or last;
+ * selection does not follow focus, and Space or Enter on a host does nothing.
+ * Clicking a button, or Space or Enter on its inner `<button>`, selects it and
+ * fires `selectionchange`; each button reports its state with `aria-pressed`.
+ *
+ * Reduced motion: the indicator glides and resizes to the newly selected
+ * button over 250ms; under reduced motion it jumps there at once.
+ */
 export class MoulToggleButtonGroup extends LitElement {
   static override styles = toggleButtonGroupStyles
 

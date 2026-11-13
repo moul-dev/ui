@@ -27,6 +27,31 @@ export interface DoughnutChartProps {
   valueFormatter?: (value: any) => string
 }
 
+/**
+ * A doughnut chart of named values (`data` items `{ name, value }`), or a pie
+ * when `inner-radius-ratio` is 0, with an optional `center-label` and
+ * `center-sublabel` (or the `center` slot) in the hole. Hovering or focusing a
+ * slice fires `point-hover` with its name and formatted value.
+ *
+ * Keyboard and screen readers: every slice is its own `Tab` stop, with a focus
+ * ring on `:focus-visible`; focusing one highlights it and fires `point-hover`
+ * as hovering does, blurring fires `point-leave`, and no other keys do
+ * anything. Each slice has `role="graphics-symbol"` and an `aria-label` of
+ * "name: value" (value through `valueFormatter`), but sits inside an SVG
+ * `role="img"` named by `center-label` or "Doughnut chart", whose children
+ * ARIA treats as presentational, so some screen readers announce only that
+ * name. There is no data table.
+ *
+ * Reduced motion: on first render the slices fade in one after another; under
+ * reduced motion they appear at once. The active slice dims to 85% opacity,
+ * fading over 150ms normally and instantly under reduced motion; its 6px step
+ * outward is always instant.
+ *
+ * @slot center - Replaces the center label and sublabel in the hole.
+ * @slot empty - Shown instead of the chart when `data` is empty.
+ * @fires point-hover - A slice is hovered or focused; `detail` has its value.
+ * @fires point-leave - The pointer or focus left a slice.
+ */
 export class MoulDoughnutChart extends LitElement {
   static override styles = doughnutChartStyles
 

@@ -6,6 +6,21 @@ import { checkboxGroupStyles } from './Checkbox.styles'
 
 export type CheckboxGroupOrientation = 'horizontal' | 'vertical'
 
+/**
+ * Groups `<moul-checkbox>` elements under one label, with an optional
+ * description, `is-required` validation and vertical or horizontal layout;
+ * it keeps the checked boxes' values in its `value` array and submits each
+ * one under the group's `name`.
+ *
+ * Keyboard and screen readers: the group itself takes no focus; each
+ * checkbox is its own tab stop and toggles with `Space`, and there is no
+ * arrow-key movement between them. The host has `role="group"`, named by the
+ * `label` attribute copied into `aria-label` (an `aria-label` you set
+ * yourself wins).
+ *
+ * Reduced motion: the group itself does not animate; each checkbox handles
+ * reduced motion on its own.
+ */
 export class MoulCheckboxGroup extends LitElement {
   static override styles = checkboxGroupStyles
   static readonly formAssociated = true

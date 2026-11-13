@@ -40,6 +40,17 @@ const MINUS = '−'
  * by necks that narrow into the next stage and labeled with the step's drop-off.
  * A summary above calls out overall conversion and the steepest step.
  *
+ * Keyboard and screen readers: not focusable, and no stage can be reached by
+ * keyboard, so the hover readout and `point-hover` are pointer-only. The
+ * figures themselves are text: screen readers get the summary, then an ordered
+ * list where each stage reads its label, count, share of the first stage and
+ * (from the second stage on) its drop-off from the previous step. The necks,
+ * drop-off pills and readout are hidden from assistive tech.
+ *
+ * Reduced motion: the bars appear at full width without their first-render
+ * grow-and-fade entrance, and the dimming of other stages on hover and the
+ * hover readout switch instantly instead of fading.
+ *
  * @slot empty - Shown when `data` is empty.
  * @fires point-hover - A stage is hovered; `detail.point` is the stage.
  * @fires point-leave - The pointer left the stage.

@@ -8,6 +8,24 @@ import { tabsStyles } from './Tabs.styles'
 export type TabsOrientation = 'horizontal' | 'vertical'
 export type TabsVariant = 'line' | 'pill' | 'enclosed'
 
+/**
+ * A tab strip that shows one `moul-tab-panel` at a time, matching each
+ * `moul-tab` to its panel by `key`, with a selection indicator that slides to
+ * the selected tab. Comes in pill (default), line and enclosed variants,
+ * horizontal or vertical.
+ *
+ * Keyboard and screen readers: the host gets `role="tablist"` and
+ * `aria-orientation`; give it a name with `aria-label`. Only the selected tab
+ * is in the tab order. Arrow Right/Down and Arrow Left/Up select and focus the
+ * next or previous enabled tab, wrapping, and Home/End the first or last, in
+ * either orientation; selection follows focus (automatic activation) and
+ * fires `selectionchange`. Tab then moves into the selected panel. These keys
+ * are caught anywhere inside `moul-tabs`, panels included, so arrow keys in a
+ * text field inside a panel switch tabs instead of moving the caret.
+ *
+ * Reduced motion: the indicator glides and resizes to the newly selected tab
+ * over 250ms; under reduced motion it jumps there at once.
+ */
 export class MoulTabs extends LitElement {
   static override styles = tabsStyles
 

@@ -4,6 +4,24 @@ import { formStyles } from './Form.styles'
 
 export type FormMethod = 'get' | 'post' | 'dialog'
 
+/**
+ * A form wrapper around a native `<form>` that, on submit, validates the
+ * `moul-*` and native controls slotted inside it and fires `submit` with
+ * their values in `detail.formData`, or `invalid` with `detail.errors`; it
+ * never navigates to `action`. Submit and reset it with
+ * `<moul-button type="submit">` and `type="reset"`, since a native `<button>`
+ * cannot reach the inner form.
+ *
+ * Keyboard and screen readers: not focusable; the inner `<form>` has no
+ * accessible name, so it is not announced as a form landmark, and slotted
+ * fields keep their own semantics. `Enter` in a slotted `moul-text-field`,
+ * `moul-number-field` or `moul-search-field` submits it like a native form:
+ * it clicks the first `<moul-button type="submit">` (nothing happens while
+ * that button is disabled or pending) or, with no submit button, submits
+ * only when there is a single text-like field.
+ *
+ * Reduced motion: does not animate.
+ */
 export class MoulForm extends LitElement {
   static override styles = formStyles
 

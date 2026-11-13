@@ -18,6 +18,7 @@
     "dev": "bun scripts/dev.ts",
     "gen:component": "bun scripts/gen-component.ts",
     "sync:llms": "bun scripts/sync-llms.ts",
+    "size": "bun scripts/check-size.ts",
     "bump": "bun scripts/bump-version.ts",
     "version:bump": "bun scripts/bump-version.ts",
     "lint": "biome check",

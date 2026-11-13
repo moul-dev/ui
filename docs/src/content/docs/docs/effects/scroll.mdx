@@ -1,0 +1,68 @@
+---
+title: ScrollController
+description: Scroll progress through native scroll timelines, with a script fallback.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import ScrollDemo from '@/components/demos/effects/ScrollDemo.astro';
+
+`ScrollController` exposes scroll position as one CSS variable, `--scroll-progress`, from 0 to 1. Write a scroll-linked effect once in CSS against that variable; the controller decides how it is driven.
+
+- Where the browser has scroll-driven animations, a native `ScrollTimeline` or `ViewTimeline` animates the variable and no script runs while the reader scrolls.
+- Elsewhere a passive scroll listener writes it once per frame.
+
+<ComponentPreview>
+  <ScrollDemo />
+</ComponentPreview>
+
+```ts
+import { html, css, LitElement } from 'lit'
+import { ScrollController } from '@moul-dev/web-component/effects'
+
+class ReadingProgress extends LitElement {
+  // Not `scroll`, which would shadow HTMLElement.scroll().
+  progress = new ScrollController(this)
+
+  static styles = css`
+    [part='bar'] {
+      transform: scaleX(var(--scroll-progress, 0));
+      transform-origin: left;
+    }
+  `
+  render() {
+    return html`<div part="bar"></div>`
+  }
+}
+```
+
+## Timelines
+
+| `timeline` | Progress means |
+| :-- | :-- |
+| `'scroll'` (default) | How far the source is scrolled: 0 at the start, 1 at the end |
+| `'view'` | How far the subject has travelled through the source's visible area: 0 as its leading edge comes into view, 1 as its trailing edge leaves |
+
+## Direction and velocity
+
+With `trackDirection: true` (or an `onScroll` callback), `state.direction` reports `'forward'` or `'backward'` once the reader has moved `directionThreshold` pixels, and `state.velocity` gives the speed in pixels per second, dropping to 0 when scrolling stops. The host re-renders only when the direction flips, which is all a navbar that hides on the way down needs. Direction needs a scroll listener even where the progress is native, so it is off unless asked for.
+
+## Options
+
+| Option | Default | Description |
+| :-- | :-- | :-- |
+| `source` | the page | Scroll container |
+| `timeline` | `'scroll'` | `'scroll'` or `'view'` |
+| `subject` | the host | Element a `'view'` timeline follows |
+| `axis` | `'block'` | `'block'` or `'inline'` |
+| `property` | `'--scroll-progress'` | Variable that receives the progress |
+| `styleTarget` | the host | Element that receives the variable |
+| `trackDirection` | `false` | Report direction and velocity |
+| `directionThreshold` | `8` | Pixels of travel before the direction flips |
+| `onScroll(state)` | none | Called after each frame the source scrolled, and once when it settles |
+| `forceFallback` | `false` | Use the script path even where native timelines exist |
+
+`isNative` tells you which path is running.
+
+## Reduced motion
+
+Scrolling is the reader's own movement, so progress keeps updating under reduced motion. Effects that add movement of their own, such as parallax, should still turn it off in a `prefers-reduced-motion` block.

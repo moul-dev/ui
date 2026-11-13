@@ -16,6 +16,24 @@ import {
 } from '../../utils/icons'
 import { toastStyles } from './Toast.styles'
 
+/**
+ * A transient notification card with a tone icon, title, description, an
+ * optional `action` slot and a dismiss button. It closes itself after
+ * `duration` ms (5000 by default, 0 or less to stay) and usually lives in a
+ * `<moul-toast-region>`, created with `toastQueue.add()`.
+ *
+ * Keyboard and screen readers: the host is not focusable and no key dismisses
+ * it; `Tab` reaches any slotted action and the native dismiss button
+ * (`aria-label="Dismiss toast"`), which shows on hover or focus and always on
+ * touch screens. The host is a live region, set when it connects:
+ * `role="status"` with `aria-live="polite"`, or `role="alert"` with
+ * `aria-live="assertive"` for `tone="error"`. Pointer hover pauses the
+ * auto-dismiss timer and leaving resumes it; keyboard focus does not pause it.
+ *
+ * Reduced motion: the toast appears and disappears at once instead of rising
+ * 24px in from its edge while growing from 95%, then shrinking and blurring
+ * away; the dismiss button also shows without fading.
+ */
 export class MoulToast extends LitElement {
   static override styles = toastStyles
 

@@ -1,0 +1,63 @@
+---
+title: PointerController
+description: Pointer position as CSS variables, written once per frame.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import PointerDemo from '@/components/demos/effects/PointerDemo.astro';
+
+`PointerController` follows the pointer over an element and writes its position as CSS variables, at most once per animation frame. A spotlight, a tilt or a magnifier is then a few lines of CSS, and moving the pointer never re-renders the element.
+
+<ComponentPreview>
+  <PointerDemo />
+</ComponentPreview>
+
+```ts
+import { html, css, LitElement } from 'lit'
+import { PointerController } from '@moul-dev/web-component/effects'
+
+class SpotlightCard extends LitElement {
+  pointer = new PointerController(this, { pointerTypes: ['mouse', 'pen'] })
+
+  static styles = css`
+    :host::before {
+      background: radial-gradient(
+        16rem circle at var(--pointer-x, 50%) var(--pointer-y, 50%),
+        color-mix(in oklch, var(--color-accent) 24%, transparent),
+        transparent 70%
+      );
+    }
+  `
+  render() {
+    return html`<slot></slot>`
+  }
+}
+```
+
+## CSS variables
+
+| Variable | Value |
+| :-- | :-- |
+| `--pointer-x`, `--pointer-y` | Offset from the target's top-left corner, in `px` |
+| `--pointer-ratio-x`, `--pointer-ratio-y` | The same offset as a fraction of the target's size, 0 to 1 |
+
+The variables are written only once the pointer moves, so give every `var()` a fallback. After the pointer leaves they keep their last value, which lets an effect fade out where it was.
+
+## Options
+
+| Option | Default | Description |
+| :-- | :-- | :-- |
+| `target` | the host | Element measured; resolved every frame, so it can be in the shadow root |
+| `styleTarget` | the target | Element that receives the variables |
+| `scope` | `'element'` | `'window'` follows the pointer anywhere on the page, for effects that react to a nearby pointer |
+| `pointerTypes` | all | Pointer types to follow, e.g. `['mouse', 'pen']` |
+| `prefix` | `'--pointer'` | Prefix for the variable names |
+| `onFrame(state)` | none | Called once per frame with `x`, `y`, `ratioX`, `ratioY`, `isInside`, `entryEdge` and `pointerType` |
+| `updateOnEnterLeave` | `false` | Re-render the host when the pointer enters or leaves |
+| `trackWhenReducedMotion` | `false` | Keep following under reduced motion |
+
+`state.entryEdge` names the side the pointer entered through, for overlays that slide in from that side.
+
+## Reduced motion
+
+Under reduced motion the variables rest at the centre of the target and `onFrame` stops, so an effect stands still instead of following the pointer. Set `trackWhenReducedMotion` when following the pointer is the point of the element, as with a magnifier.

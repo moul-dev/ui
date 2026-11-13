@@ -7,6 +7,18 @@ import { emptyStateStyles } from './EmptyState.styles'
 export type EmptyStateSize = 'sm' | 'md' | 'lg'
 export type EmptyStateAlign = 'start' | 'center'
 
+/**
+ * A placeholder shown when a list, table or search has nothing to show, with
+ * `icon`, `title`, `description` and `actions` slots (for example a "Create"
+ * button) laid out centred or aligned to the start.
+ *
+ * Keyboard and screen readers: the element itself is not focusable; slotted
+ * actions take focus as usual. The host gets `role="status"` (unless you set a
+ * role), so screen readers treat its text as a polite live region.
+ *
+ * Reduced motion: the icon, title, description and actions appear at once
+ * instead of rising and fading in one after another.
+ */
 export class MoulEmptyState extends LitElement {
   static override styles = emptyStateStyles
 

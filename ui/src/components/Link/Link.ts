@@ -6,6 +6,21 @@ import { linkStyles } from './Link.styles'
 
 export type LinkVariant = 'default' | 'subtle' | 'underline'
 
+/**
+ * A styled anchor for navigation, in default, subtle and underline variants;
+ * `is-external` opens it in a new tab with `rel="noopener noreferrer"` and an
+ * icon. Without an `href` it acts as an inline button that fires `press`.
+ *
+ * Keyboard and screen readers: focus goes to a native `<a>` in the shadow
+ * root. With an `href` it is a link and Enter follows it; without one it gets
+ * `role="button"` and `tabindex="0"`, and Enter or Space fire `press`.
+ * `is-disabled` drops the `href`, sets `tabindex="-1"` and
+ * `aria-disabled="true"`. The name is the slotted text, plus hidden text
+ * "(opens in new window)" when `is-external`.
+ *
+ * Reduced motion: nothing moves; the colour, underline, focus-ring and
+ * external-icon fades are switched off under reduced motion.
+ */
 export class MoulLink extends LitElement {
   static override styles = linkStyles
 

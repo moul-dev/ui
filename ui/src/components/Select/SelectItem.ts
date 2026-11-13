@@ -2,6 +2,22 @@ import { html, LitElement, type PropertyValues, svg } from 'lit'
 import { defineElement } from '../../utils/define-element'
 import { selectItemStyles } from './Select.styles'
 
+/**
+ * One option inside a `<moul-select>` list. Its `key` is what the select
+ * submits, and once chosen the select's button shows its `value`, falling
+ * back to its text and then its `key`; the chosen item shows a trailing
+ * check.
+ *
+ * Keyboard and screen readers: it has `role="option"` with `aria-selected`
+ * (set by the parent select) and `aria-disabled`, and is named by its
+ * slotted text (or `value`, else `key`, when nothing is slotted). It is not
+ * in the tab order (`tabindex="-1"`): the parent `<moul-select>` moves focus
+ * onto it with `Arrow Down`/`Arrow Up` and picks it with `Enter` or `Space`,
+ * and clicking it picks it too.
+ *
+ * Reduced motion: the row does not press in when clicked, and hover and
+ * focus colours change without fading.
+ */
 export class MoulSelectItem extends LitElement {
   static override styles = selectItemStyles
 

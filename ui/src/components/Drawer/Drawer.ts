@@ -15,6 +15,23 @@ import { drawerStyles } from './Drawer.styles'
 export type DrawerPlacement = 'left' | 'right' | 'top' | 'bottom'
 export type DrawerSize = 'sm' | 'md' | 'lg'
 
+/**
+ * A panel that slides in from one edge of the viewport (`placement` left,
+ * right, top or bottom) over a dimmed backdrop, on a modal native `<dialog>`,
+ * for filters, settings and detail views, with `header`, body and `footer`
+ * slots.
+ *
+ * Keyboard and screen readers: on open, focus moves to the first focusable
+ * element in the panel, `Tab` and `Shift+Tab` cycle inside it, and on close
+ * focus returns to the element that had it before, even one inside another
+ * shadow root. `Escape` always closes the drawer; a click outside the panel
+ * closes it unless `isDismissable` is false. Screen readers get the native
+ * `dialog` role with `aria-modal="true"`, but no accessible name: the header
+ * is not linked with `aria-labelledby`.
+ *
+ * Reduced motion: the panel appears and disappears at once instead of sliding
+ * in from and back out to its edge, and the backdrop does not fade.
+ */
 export class MoulDrawer extends LitElement {
   static override styles = drawerStyles
 

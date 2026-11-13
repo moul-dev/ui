@@ -1,0 +1,131 @@
+---
+/**
+ * TextSplitController demo: the same sentence split by letters, words and
+ * lines, with a staggered entrance, in English and in Khmer.
+ */
+---
+
+<div class="split-demo">
+  <div class="split-controls" role="group" aria-label="Split by">
+    <button type="button" data-by="chars" aria-pressed="true">Letters</button>
+    <button type="button" data-by="words" aria-pressed="false">Words</button>
+    <button type="button" data-by="lines" aria-pressed="false">Lines</button>
+  </div>
+  <effects-demo-split by="chars">Every letter arrives on its own, and a screen reader still reads one sentence.</effects-demo-split>
+  <effects-demo-split by="chars" lang="km">អក្សរនីមួយៗលេចឡើងដោយខ្លួនឯង ហើយកម្មវិធីអានអេក្រង់នៅតែអានប្រយោគតែមួយ។</effects-demo-split>
+</div>
+
+<style is:global>
+  .split-demo {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-5);
+    width: min(100%, 32rem);
+  }
+
+  .split-controls {
+    display: flex;
+    gap: var(--spacing-2);
+  }
+
+  .split-controls button {
+    padding: var(--spacing-1) var(--spacing-3);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    background: var(--color-surface);
+    color: var(--color-fg);
+    font: inherit;
+    font-size: var(--font-size-sm);
+    cursor: pointer;
+  }
+
+  .split-controls button[aria-pressed='true'] {
+    border-color: var(--color-accent);
+    background: var(--color-accent-soft);
+    color: var(--color-accent-soft-fg);
+  }
+
+  effects-demo-split {
+    display: block;
+    font-size: var(--font-size-xl);
+    font-weight: 600;
+    line-height: 1.5;
+  }
+
+  effects-demo-split:lang(km) {
+    font-family: 'Noto Sans Khmer', var(--font-family-base, sans-serif);
+    line-height: 1.9;
+  }
+</style>
+
+<script>
+  import { type SplitTextBy, TextSplitController } from '@moul-dev/web-component/effects'
+  import { DemoHost, defineDemo } from './demo-host'
+
+  const STYLES = `
+    [data-split='char'],
+    [data-split='word'] {
+      animation: var(--split-play, rise-a) 600ms var(--ease-out, ease-out) both;
+    }
+    :host([by='chars']) [data-split='char'] { animation-delay: calc(var(--char-index) * 18ms); }
+    :host([by='chars']) [data-split='word'] { animation: none; }
+    :host([by='words']) [data-split='word'] { animation-delay: calc(var(--word-index) * 60ms); }
+    :host([by='lines']) [data-split='word'] { animation-delay: calc(var(--line-index, 0) * 180ms); }
+    @keyframes rise-a { from { opacity: 0; translate: 0 0.6em; } }
+    @keyframes rise-b { from { opacity: 0; translate: 0 0.6em; } }
+    @media (prefers-reduced-motion: reduce) {
+      [data-split='char'],
+      [data-split='word'] { animation-name: fade-a; animation-duration: 200ms; animation-delay: 0ms !important; }
+      @keyframes fade-a { from { opacity: 0; } }
+    }
+  `
+
+  class SplitDemo extends DemoHost {
+    static observedAttributes = ['by']
+    private readonly root = this.attachShadow({ mode: 'open' })
+    private plays = 0
+    // The text is read once, before the element replaces it with pieces.
+    private readonly text = this.textContent?.trim() ?? ''
+
+    splitter = new TextSplitController(this, {
+      container: () => this.root.querySelector('[part="text"]'),
+      text: () => this.text,
+      by: () => (this.getAttribute('by') as SplitTextBy | null) ?? 'words',
+    })
+
+    constructor() {
+      super()
+      const style = document.createElement('style')
+      style.textContent = STYLES
+      const text = document.createElement('span')
+      text.setAttribute('part', 'text')
+      this.root.append(style, text)
+    }
+
+    attributeChangedCallback(): void {
+      this.replay()
+      this.requestUpdate()
+    }
+
+    /** Restarts the entrance by switching to the twin keyframes. */
+    replay(): void {
+      this.plays += 1
+      this.style.setProperty('--split-play', this.plays % 2 ? 'rise-b' : 'rise-a')
+    }
+  }
+
+  defineDemo('effects-demo-split', SplitDemo)
+
+  for (const group of document.querySelectorAll<HTMLElement>('.split-demo')) {
+    group.addEventListener('click', (event) => {
+      const button = (event.target as Element).closest<HTMLButtonElement>('button[data-by]')
+      if (!button) return
+      for (const other of group.querySelectorAll('button[data-by]')) {
+        other.setAttribute('aria-pressed', String(other === button))
+      }
+      for (const split of group.querySelectorAll('effects-demo-split')) {
+        split.setAttribute('by', button.dataset.by ?? 'words')
+      }
+    })
+  }
+</script>

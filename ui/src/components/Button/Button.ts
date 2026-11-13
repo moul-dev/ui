@@ -19,6 +19,26 @@ export type ButtonSize = 'sm' | 'md' | 'lg'
 
 export type ButtonType = 'button' | 'submit' | 'reset'
 
+/**
+ * A button for actions, in seven variants (primary, secondary, tertiary,
+ * outline, ghost, danger, danger-soft) and three sizes, with an icon-only mode
+ * and a pending state that shows a spinner. It fires `press`, and with
+ * `type="submit"` or `type="reset"` submits or resets the enclosing `<form>` or
+ * `moul-form`.
+ *
+ * Keyboard and screen readers: focus goes to a native `<button>` in the shadow
+ * root, so Tab reaches it and Enter or Space press it. `is-disabled` disables
+ * that button (out of the tab order, `aria-disabled="true"`); `is-pending`
+ * keeps it focusable but ignores presses, sets `aria-busy="true"` and adds a
+ * `moul-spinner` (`role="status"`, label "Loading") inside it. The name is the
+ * slotted content: an `aria-label` or `aria-labelledby` on the host only
+ * silences the `is-icon` dev warning and is not copied to the inner button.
+ * There is no link mode; use `moul-link` for navigation.
+ *
+ * Reduced motion: the button scales down slightly while pressed, and hover,
+ * press and focus colours fade. Under reduced motion there is no press scale
+ * and no fades, and the pending spinner pulses instead of spinning.
+ */
 export class MoulButton extends LitElement {
   static override styles = buttonStyles
 

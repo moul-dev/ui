@@ -73,6 +73,27 @@ function fractionDigits(value: number): number {
   return Math.min(fraction.length, 4)
 }
 
+/**
+ * A KPI card that shows a labelled number with optional prefix and suffix, a
+ * trend badge, a description and an optional sparkline of recent values. The
+ * number counts to each new `value`, and scrubbing the sparkline shows each
+ * point's value and label in its place.
+ *
+ * Keyboard and screen readers: with two or more sparkline points, the
+ * sparkline is one tab stop exposed as a `role="slider"` named by `label`;
+ * `Arrow Left` or `Arrow Down` and `Arrow Right` or `Arrow Up` step through
+ * the points, `Home` and `End` jump to the first and last, and `Escape` or
+ * leaving focus returns to the current value, with the point's label and
+ * value (e.g. "Oct 20: 10,067") as `aria-valuetext`. Without a sparkline
+ * nothing is focusable. The label, value with its prefix and suffix,
+ * description and trend badge (with a hidden "Up" or "Down") are plain text,
+ * and value changes are not announced.
+ *
+ * Reduced motion: the number jumps to each new value instead of counting, the
+ * sparkline and its end dot appear without the left-to-right wipe and pop,
+ * the trend badge appears without scaling in, and the scrub dot and guide
+ * change instantly; the card's colour, border and shadow changes stop fading.
+ */
 export class MoulStat extends LitElement {
   static override styles = statStyles
 

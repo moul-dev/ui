@@ -1,0 +1,54 @@
+---
+title: InViewController
+description: Starts an effect on entry and pauses its animations off screen.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import InViewDemo from '@/components/demos/effects/InViewDemo.astro';
+
+`InViewController` tracks whether an element is on screen. An effect starts when the reader reaches it, and the animations it runs pause while it is scrolled away, so a long page of effects only spends frames on what is visible.
+
+<ComponentPreview>
+  <InViewDemo />
+</ComponentPreview>
+
+```ts
+import { html, LitElement } from 'lit'
+import { InViewController } from '@moul-dev/web-component/effects'
+
+class RevealOnView extends LitElement {
+  inView = new InViewController(this, { threshold: 0.35, once: true })
+
+  render() {
+    return html`<div part="content" ?data-shown=${this.inView.hasEntered}>
+      <slot></slot>
+    </div>`
+  }
+}
+```
+
+`isInView` follows the element in and out; `hasEntered` turns true on the first entry and stays true, which suits reveal-once effects. Each change re-renders the host.
+
+## Pausing off screen
+
+While the element is out of view, the controller pauses the CSS animations and Web Animations running on the host and in its shadow root, and resumes them when it returns. It only resumes what it paused, so an animation the element paused itself stays paused. Set `pauseOffscreen: false` to leave them running.
+
+## Options
+
+| Option | Default | Description |
+| :-- | :-- | :-- |
+| `target` | the host | Element whose visibility is tracked |
+| `root` | the viewport | Scroll container used as the viewport |
+| `rootMargin` | `'0px'` | Grows or shrinks the viewport, as in `IntersectionObserver` |
+| `threshold` | `0` | Share of the element, 0 to 1, that must be visible |
+| `once` | `false` | Stop watching after the first entry |
+| `pauseOffscreen` | `true` | Pause animations while out of view |
+| `onChange(isInView, entry)` | none | Called on each entry and exit |
+
+## Without IntersectionObserver
+
+Where `IntersectionObserver` is missing, as in server rendering, the element counts as in view at once, so content that waits for entry is never left hidden.
+
+## Reduced motion
+
+The controller only reports visibility. An entrance built on it should show its end state at once under reduced motion, as the demo does by fading without the rise.

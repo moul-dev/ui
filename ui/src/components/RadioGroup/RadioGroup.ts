@@ -6,6 +6,23 @@ import { radioGroupStyles } from './RadioGroup.styles'
 
 export type RadioGroupOrientation = 'horizontal' | 'vertical'
 
+/**
+ * A form-associated set of mutually exclusive `<moul-radio>` options under
+ * one label, such as a plan or size picker; it submits the chosen radio's
+ * `value` under its `name`, with `is-required` validation and vertical or
+ * horizontal layout.
+ *
+ * Keyboard and screen readers: the group is one tab stop, landing on the
+ * checked radio (or the first one when none is checked). `Arrow Down` or
+ * `Arrow Right` and `Arrow Up` or `Arrow Left` move focus to the next or
+ * previous enabled radio, wrapping at the ends, and select it at once;
+ * `Home`/`End` are not handled. The host has `role="radiogroup"`, named by
+ * the `label` attribute copied into `aria-label` (an `aria-label` you set
+ * yourself wins).
+ *
+ * Reduced motion: the group itself does not animate; each radio handles
+ * reduced motion on its own.
+ */
 export class MoulRadioGroup extends LitElement {
   static override styles = radioGroupStyles
   static readonly formAssociated = true

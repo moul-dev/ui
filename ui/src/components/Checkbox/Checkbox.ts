@@ -4,6 +4,21 @@ import { defineElement } from '../../utils/define-element'
 import { warnMissingLabel } from '../../utils/warn-missing-label'
 import { checkboxStyles } from './Checkbox.styles'
 
+/**
+ * A form-associated checkbox for one yes/no choice, such as accepting terms;
+ * it submits its `value` when checked and has an indeterminate (mixed) state
+ * for "some selected". Use it alone or inside `<moul-checkbox-group>`.
+ *
+ * Keyboard and screen readers: the host takes focus (`tabindex="0"`, out of
+ * the tab order when disabled) and `Space` toggles it. It has
+ * `role="checkbox"` with `aria-checked` set to `true`, `false` or `mixed`,
+ * and its name comes from the slotted text or the `label` attribute, or from
+ * `aria-label`/`aria-labelledby` on the host.
+ *
+ * Reduced motion: the box fills at once instead of growing in, the check
+ * mark appears without drawing itself, and hover and focus colours change
+ * without fading.
+ */
 export class MoulCheckbox extends LitElement {
   static override styles = checkboxStyles
   static readonly formAssociated = true

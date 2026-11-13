@@ -16,6 +16,22 @@ import {
 import { EASE_OUT, subtleAnimate } from '../../utils/motion'
 import { alertStyles } from './Alert.styles'
 
+/**
+ * An inline message about a status or problem, coloured by `tone` with a
+ * matching icon, a `title`, a description and optional `action` content.
+ * With `is-dismissible` it shows a close button that fades the alert out and
+ * fires `dismiss`; remove the element in your handler.
+ *
+ * Keyboard and screen readers: the alert itself is not focusable; the close
+ * button is a native `<button>` named "Dismiss alert", and slotted actions
+ * take focus as usual. The host gets `role="alert"` for the `error` and
+ * `warning` tones and `role="status"` otherwise, so it is a live region that
+ * screen readers announce assertively or politely.
+ *
+ * Reduced motion: the alert appears and leaves at once instead of sliding in
+ * and shrinking out, and the close button no longer shrinks when pressed or
+ * fades its colours.
+ */
 export class MoulAlert extends LitElement {
   static override styles = alertStyles
 

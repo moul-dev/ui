@@ -9,6 +9,26 @@ import { EASE_OUT, subtleAnimate } from '../../utils/motion'
 import { warnMissingLabel } from '../../utils/warn-missing-label'
 import { numberFieldStyles } from './NumberField.styles'
 
+/**
+ * A form-associated number input with increase and decrease stepper buttons,
+ * optional `min`, `max` and `step`, a label, and an optional description and
+ * error message. Typed values outside the bounds are flagged invalid; the
+ * steppers and arrow keys clamp to them.
+ *
+ * Keyboard and screen readers: focus goes to a native text `<input>` with
+ * `role="spinbutton"`, `inputmode="numeric"` and `aria-valuenow`,
+ * `aria-valuemin` and `aria-valuemax`; the stepper buttons are click-only
+ * (`tabindex="-1"`, labelled "Increase value" and "Decrease value").
+ * `Arrow Up` and `Arrow Down` step by `step`, `Home` and `End` jump to `min`
+ * and `max` when those are set, and `Enter` submits the enclosing `<form>` or
+ * `<moul-form>` as a native input would, even when read-only. The input is
+ * named by a `<label for>` holding the `label` attribute or `label` slot and
+ * has `aria-invalid` while it is required and empty or out of range; the
+ * description and error message are not linked with `aria-describedby`.
+ *
+ * Reduced motion: the error message appears in place instead of sliding down
+ * 4px, and hover, focus and stepper colours change without fading.
+ */
 export class MoulNumberField extends LitElement {
   static override styles = numberFieldStyles
   static readonly formAssociated = true

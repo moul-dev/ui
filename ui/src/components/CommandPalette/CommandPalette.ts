@@ -16,6 +16,25 @@ export interface CommandPaletteItemData {
   disabled?: boolean
 }
 
+/**
+ * A command menu summoned with `Cmd+K` or `Ctrl+K` (the `shortcut` key): a
+ * search field over a filterable list of `items` in a modal native
+ * `<dialog>`, which fires `select` with the chosen item and closes.
+ *
+ * Keyboard and screen readers: the shortcut toggles the palette from anywhere
+ * on the page; on open, focus moves to the search field, `Tab` stays inside
+ * the dialog, and on close focus returns to the element that had it before.
+ * `Arrow Up` and `Arrow Down` move the highlighted option (stopping at the
+ * ends), `Enter` selects it unless it is disabled, and `Escape` or a click
+ * outside the panel closes the palette. The field is a `combobox`, named only
+ * by its placeholder, that points at a `listbox` of `option` rows through
+ * `aria-activedescendant` (`aria-selected` on the highlighted row,
+ * `aria-disabled` on disabled ones); the dialog itself has no accessible name.
+ *
+ * Reduced motion: the palette never animates opening or closing; under
+ * reduced motion rows also stop shrinking when pressed, and the field's hover
+ * and focus colours change without fading.
+ */
 export class MoulCommandPalette extends LitElement {
   static override styles = commandPaletteStyles
 

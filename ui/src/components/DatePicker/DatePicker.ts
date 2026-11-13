@@ -7,6 +7,25 @@ import '../Calendar/Calendar'
 import type { MoulCalendar } from '../Calendar/Calendar'
 import { datePickerStyles } from './DatePicker.styles'
 
+/**
+ * A form-associated date field: a text input that shows the date formatted
+ * for `locale`, plus a button that opens a `<moul-calendar>` in a native
+ * popover. Its `value` and submitted form value are ISO `YYYY-MM-DD`
+ * strings, and `min-date`/`max-date` bound the calendar.
+ *
+ * Keyboard and screen readers: focus goes to a native text `<input>` in the
+ * shadow root, named by the `label` attribute through a `<label for>`, and
+ * typing sets the value directly. No key opens the calendar: a click on the
+ * field or its calendar button does, and that button ("Open calendar", with
+ * `aria-haspopup="dialog"` and `aria-expanded`) is out of the tab order.
+ * While the calendar is open, Tab moves into it and its own keys apply;
+ * picking a date closes it and returns focus to the input, and `Escape`
+ * anywhere in the field or calendar does the same without picking.
+ *
+ * Reduced motion: the calendar appears and disappears without scaling or
+ * fading, field colours change without fading, and the calendar does not
+ * slide between months.
+ */
 export class MoulDatePicker extends LitElement {
   static override styles = datePickerStyles
   static readonly formAssociated = true

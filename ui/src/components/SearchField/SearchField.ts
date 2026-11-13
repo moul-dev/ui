@@ -11,6 +11,26 @@ import { EASE_OUT, subtleAnimate } from '../../utils/motion'
 import { warnMissingLabel } from '../../utils/warn-missing-label'
 import { searchFieldStyles } from './SearchField.styles'
 
+/**
+ * A form-associated search input inside a `<search>` landmark, with a search
+ * icon, a clear button that appears once there is text, and an optional
+ * label, description and error message. Outside a form, `Enter` fires the
+ * field's own `submit` event with the query in `detail.value`.
+ *
+ * Keyboard and screen readers: focus goes to a native `<input type="search">`
+ * inside a `<search role="search">` wrapper; the clear button is click-only
+ * (`tabindex="-1"`, labelled "Clear search"). `Escape` clears a non-empty
+ * value and fires `clear`, `input` and `change`; `Enter` submits the
+ * enclosing `<form>` or `<moul-form>` as a native input would, or fires
+ * `submit` when there is no form. The input is named by a `<label for>`
+ * holding the `label` attribute or `label` slot, `aria-describedby` points at
+ * the `description` and `error-message` text when they are set, and
+ * `aria-invalid` is true while an `is-required` field is empty.
+ *
+ * Reduced motion: the clear button appears without its small scale-up and
+ * does not shrink when pressed, the error message appears in place instead
+ * of sliding down, and hover and focus colours change without fading.
+ */
 export class MoulSearchField extends LitElement {
   static override styles = searchFieldStyles
   static readonly formAssociated = true

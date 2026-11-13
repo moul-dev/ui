@@ -12,6 +12,28 @@ export interface ViewportResizeDetail {
   breakpoint: Breakpoint
 }
 
+/**
+ * A card that frames one chart: a header with `title`, `description` and a
+ * `header` slot for actions, the chart in the default slot, and a `legend` row
+ * below; set `is-empty` to show the `empty` slot instead of the chart. The
+ * content sizes to its chart unless `height` is set, and the card fires
+ * `viewport-resize` when its size or breakpoint changes.
+ *
+ * Keyboard and screen readers: the card takes no focus and handles no keys;
+ * slotted actions and charts keep their own. The `title` renders as an `h3`
+ * heading and the `description` as a paragraph, but neither is wired to the
+ * chart as its accessible name. Because `title` is also the host's native
+ * `title` attribute, browsers show it as a hover tooltip over the whole card.
+ *
+ * Reduced motion: the card does not animate; slotted charts handle their own
+ * motion.
+ *
+ * @slot - The chart.
+ * @slot header - Actions at the end of the header, such as a range select.
+ * @slot legend - Legend entries, in a wrapping row below the chart.
+ * @slot empty - Shown instead of the chart while `is-empty` is set.
+ * @fires viewport-resize - The card's size or breakpoint changed.
+ */
 export class MoulChartContainer extends LitElement {
   static override styles = chartContainerStyles
 

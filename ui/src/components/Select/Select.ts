@@ -7,6 +7,28 @@ import { warnMissingLabel } from '../../utils/warn-missing-label'
 import { selectStyles } from './Select.styles'
 import type { MoulSelectItem } from './SelectItem'
 
+/**
+ * A form-associated single-select dropdown: a button shows the chosen option
+ * and opens a list of `<moul-select-item>` options in a native popover, and
+ * the form receives the chosen item's `key` under `name`. Use it to pick one
+ * value from a fixed list; to type and filter, use `<moul-combobox>`.
+ *
+ * Keyboard and screen readers: focus goes to a native `<button>` in the
+ * shadow root with `role="combobox"`, `aria-haspopup="listbox"` and
+ * `aria-expanded`, named through `aria-label` by the `label` attribute (or
+ * the placeholder when there is none). While closed, `Arrow Down`, `Arrow Up`,
+ * `Space` and `Enter` open the list and focus stays on the button. While
+ * open, `Arrow Down`/`Arrow Up` move focus onto the options (no
+ * `aria-activedescendant`), counting from the selected option or the first,
+ * wrapping and skipping disabled ones; `Enter` or `Space` picks the focused
+ * option and `Escape` closes, both returning focus to the button. There is no
+ * `Home`/`End`, `Page Up`/`Page Down` or type-ahead; a click outside closes
+ * the list, which has `role="listbox"`.
+ *
+ * Reduced motion: the list appears and disappears without scaling or fading,
+ * the chevron flips without turning, and field colours change without
+ * fading.
+ */
 export class MoulSelect extends LitElement {
   static override styles = selectStyles
   static readonly formAssociated = true

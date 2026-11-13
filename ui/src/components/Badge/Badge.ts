@@ -10,6 +10,17 @@ import { badgeStyles } from './Badge.styles'
 
 export type BadgeSize = 'sm' | 'md' | 'lg'
 
+/**
+ * A compact chip that labels a status, count or category, coloured by `tone`
+ * and `variant`, with optional `prefix` and `suffix` content. Set `is-dot` for
+ * a small coloured dot with no text.
+ *
+ * Keyboard and screen readers: not focusable and has no role; its text is read
+ * inline with the surrounding content. A dot badge hides its slotted text, so
+ * it shows status by colour alone; say the status in nearby text as well.
+ *
+ * Reduced motion: does not animate.
+ */
 export class MoulBadge extends LitElement {
   static override styles = badgeStyles
 

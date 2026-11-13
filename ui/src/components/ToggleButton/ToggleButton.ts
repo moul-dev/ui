@@ -5,6 +5,22 @@ import { toggleButtonStyles } from './ToggleButton.styles'
 
 export type ToggleButtonSize = 'sm' | 'md' | 'lg'
 
+/**
+ * A two-state button that stays on or off, such as Bold in a toolbar, and
+ * reports its state through `aria-pressed`. Inside `moul-toggle-button-group`
+ * it becomes one option of a single-select set.
+ *
+ * Keyboard and screen readers: focus goes to a native `<button>` in the shadow
+ * root with `aria-pressed`, so Tab reaches it and Enter or Space toggle it,
+ * firing `change` and `press`; `is-disabled` disables it. The name is the
+ * slotted text; an `aria-label` on the host is not copied to the inner button.
+ * Inside `moul-toggle-button-group` the group puts a roving `tabindex` on this
+ * host and handles the arrow keys.
+ *
+ * Reduced motion: the button scales down slightly while pressed (not inside a
+ * group), and hover, press and focus colours fade. Under reduced motion there
+ * is no press scale and no fades.
+ */
 export class MoulToggleButton extends LitElement {
   static override styles = toggleButtonStyles
 

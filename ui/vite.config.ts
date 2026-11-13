@@ -100,13 +100,39 @@ export function noInlinedDependenciesPlugin(): Plugin {
   }
 }
 
-// `vite build` emits the npm entry, `dist/moul-ui.js`, with runtime
-// dependencies left as bare imports. `vite build --mode cdn` emits
-// `dist/cdn/moul-ui.js` with everything inlined for a plain
-// `<script type="module">` from a CDN, where bare specifiers cannot resolve.
+/**
+ * The package has two entry points, each built in its own pass:
+ *
+ * - `vite build` emits the main entry, `dist/moul-ui.js`, plus the type
+ *   declarations and the CSS tokens.
+ * - `vite build --mode effects` emits `dist/effects.js`, the
+ *   `@moul-dev/web-component/effects` entry for motion.
+ *
+ * Separate passes keep the main bundle exactly what it would be without the
+ * effects entry: a shared build would move code both entries use into a
+ * common chunk and change the main bundle's shape. The cost is that a small
+ * internal helper used by both is present in both files. Third-party
+ * packages are never duplicated, because both passes leave them as bare
+ * imports for the app's bundler to resolve once.
+ *
+ * `--mode cdn` and `--mode cdn-effects` emit the same two entries under
+ * `dist/cdn/` with everything inlined, for a plain `<script type="module">`
+ * from a CDN, where bare specifiers cannot resolve.
+ */
+const ENTRIES = {
+  main: { source: 'src/index.ts', fileName: 'moul-ui.js' },
+  effects: { source: 'src/effects.ts', fileName: 'effects.js' },
+} as const
+
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
-  const isCdn = mode === 'cdn'
+  const isCdn = mode === 'cdn' || mode === 'cdn-effects'
+  const entry =
+    mode === 'effects' || mode === 'cdn-effects'
+      ? ENTRIES.effects
+      : ENTRIES.main
+  // Only the first pass clears `dist/`, writes declarations and copies assets.
+  const isFirstPass = !isCdn && entry === ENTRIES.main
   return {
     test: {
       environment: 'happy-dom',
@@ -115,23 +141,23 @@ export default defineConfig(({ mode }) => {
     },
     plugins: [
       banReactImportsPlugin(),
-      ...(isCdn
-        ? []
-        : [
+      ...(isFirstPass
+        ? [
             dts({ tsconfigPath: './tsconfig.app.json' }) as any,
             copyCssTokensPlugin(),
-            noInlinedDependenciesPlugin(),
-          ]),
+          ]
+        : []),
+      ...(isCdn ? [] : [noInlinedDependenciesPlugin()]),
     ],
     build: {
       target: 'esnext',
       outDir: isCdn ? 'dist/cdn' : 'dist',
-      emptyOutDir: !isCdn,
-      copyPublicDir: !isCdn,
+      emptyOutDir: isFirstPass,
+      copyPublicDir: isFirstPass,
       lib: {
-        entry: resolve(__dirname, 'src/index.ts'),
+        entry: resolve(__dirname, entry.source),
         formats: ['es'],
-        fileName: () => 'moul-ui.js',
+        fileName: () => entry.fileName,
       },
       rollupOptions: {
         external: isCdn ? [] : isRuntimeDependency,

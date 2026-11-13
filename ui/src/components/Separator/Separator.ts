@@ -4,6 +4,16 @@ import { separatorStyles } from './Separator.styles'
 
 export type SeparatorOrientation = 'horizontal' | 'vertical'
 
+/**
+ * A thin line that divides content, horizontal by default or vertical with
+ * `orientation="vertical"`.
+ *
+ * Keyboard and screen readers: not focusable. It renders an `<hr>` with
+ * `role="separator"` and a matching `aria-orientation`, so screen readers
+ * report a separator.
+ *
+ * Reduced motion: does not animate.
+ */
 export class MoulSeparator extends LitElement {
   static override styles = separatorStyles
 

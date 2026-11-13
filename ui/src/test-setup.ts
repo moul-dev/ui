@@ -627,3 +627,97 @@ declare global {
     __triggerResize: (element: Element, options: TriggerResizeOptions) => void
   }
 }
+
+// =============================================================================
+// 6. Reduced-motion and animation-frame test controls
+// =============================================================================
+
+export interface ReducedMotionMock {
+  /** Flips the setting and notifies every `change` listener, as the OS would. */
+  set(isReduced: boolean): void
+  /** Listeners currently attached to the reduced-motion query. */
+  listenerCount(): number
+  restore(): void
+}
+
+/**
+ * Replaces `matchMedia('(prefers-reduced-motion: reduce)')` with a query whose
+ * value the test controls. Other queries go to the original implementation.
+ */
+export function mockReducedMotion(initial: boolean): ReducedMotionMock {
+  let matches = initial
+  const listeners = new Set<(event: MediaQueryListEvent) => void>()
+  const original = window.matchMedia
+  window.matchMedia = ((query: string): MediaQueryList => {
+    if (!query.includes('prefers-reduced-motion')) {
+      return original.call(window, query)
+    }
+    return {
+      get matches() {
+        return matches
+      },
+      media: query,
+      onchange: null,
+      addEventListener: (_type: string, listener: any) =>
+        listeners.add(listener),
+      removeEventListener: (_type: string, listener: any) =>
+        listeners.delete(listener),
+      addListener: (listener: any) => listeners.add(listener),
+      removeListener: (listener: any) => listeners.delete(listener),
+      dispatchEvent: () => false,
+    } as unknown as MediaQueryList
+  }) as typeof window.matchMedia
+  return {
+    set(isReduced: boolean) {
+      matches = isReduced
+      for (const listener of [...listeners]) {
+        listener({ matches: isReduced } as MediaQueryListEvent)
+      }
+    },
+    listenerCount: () => listeners.size,
+    restore() {
+      window.matchMedia = original
+    },
+  }
+}
+
+export interface ManualFrames {
+  /** Frame callbacks waiting to run. */
+  readonly pending: number
+  /** Runs every waiting callback with `timestamp`, as one animation frame. */
+  step(timestamp: number): void
+  restore(): void
+}
+
+/**
+ * Takes over `requestAnimationFrame` so a test decides when each frame runs
+ * and what time it reports.
+ */
+export function manualAnimationFrames(): ManualFrames {
+  let nextId = 1
+  const queue = new Map<number, FrameRequestCallback>()
+  const originalRequest = globalThis.requestAnimationFrame
+  const originalCancel = globalThis.cancelAnimationFrame
+  globalThis.requestAnimationFrame = (callback: FrameRequestCallback) => {
+    const id = nextId++
+    queue.set(id, callback)
+    return id
+  }
+  globalThis.cancelAnimationFrame = (id: number) => {
+    queue.delete(id)
+  }
+  return {
+    get pending() {
+      return queue.size
+    },
+    step(timestamp: number) {
+      const callbacks = [...queue.values()]
+      queue.clear()
+      for (const callback of callbacks) callback(timestamp)
+    },
+    restore() {
+      globalThis.requestAnimationFrame = originalRequest
+      globalThis.cancelAnimationFrame = originalCancel
+    },
+  }
+}

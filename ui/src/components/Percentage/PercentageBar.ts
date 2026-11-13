@@ -17,6 +17,20 @@ export interface PercentageBarProps {
   valueFormatter?: (value: number) => string
 }
 
+/**
+ * A thin horizontal bar filled to a 0–100 percentage (clamped), with an
+ * optional label and value text above it, for usage and completion figures
+ * such as storage used or quota spent.
+ *
+ * Keyboard and screen readers: not focusable. The host has
+ * `role="progressbar"` with `aria-valuemin="0"`, `aria-valuemax="100"` and
+ * `aria-valuenow` set to the clamped value; its accessible name is the `label`
+ * attribute (copied to `aria-label`), and text slotted into `label` does not
+ * name it. `valueFormatter` text is not passed on as `aria-valuetext`.
+ *
+ * Reduced motion: the fill jumps to a new value instead of growing or
+ * shrinking over 300ms.
+ */
 export class MoulPercentageBar extends LitElement {
   static override styles = percentageBarStyles
 

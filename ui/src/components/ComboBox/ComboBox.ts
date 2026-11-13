@@ -7,6 +7,29 @@ import { warnMissingLabel } from '../../utils/warn-missing-label'
 import { comboBoxStyles } from './ComboBox.styles'
 import type { MoulComboBoxItem } from './ComboBoxItem'
 
+/**
+ * A form-associated text input with a filterable list of
+ * `<moul-combobox-item>` options in a native popover: typing narrows the
+ * list to items whose text contains it (ignoring case), and picking an item
+ * fills the input. The form receives the picked item's `key`, or the typed
+ * text when nothing is picked, so free text is allowed.
+ *
+ * Keyboard and screen readers: focus goes to a native `<input>` in the
+ * shadow root with `role="combobox"`, `aria-autocomplete="list"` and
+ * `aria-expanded`, named by the `label` attribute through a `<label for>`
+ * (otherwise only by its placeholder). Typing opens and filters the list,
+ * and while closed `Arrow Down`/`Arrow Up` open it. While open,
+ * `Arrow Down`/`Arrow Up` move focus onto the visible, enabled options (no
+ * `aria-activedescendant`), wrapping at the ends; `Enter` picks the focused
+ * option and returns focus to the input, and `Escape` closes the list without
+ * moving focus back. There is no `Home`/`End`, `Page Up`/`Page Down` or
+ * type-ahead on the options. The chevron button ("Toggle options") is out of
+ * the tab order, and the list has `role="listbox"`.
+ *
+ * Reduced motion: the list appears and disappears without scaling or fading,
+ * the chevron flips without turning, and field colours change without
+ * fading.
+ */
 export class MoulComboBox extends LitElement {
   static override styles = comboBoxStyles
   static readonly formAssociated = true

@@ -57,6 +57,28 @@ function resolveCurveFactory(curveName: string): CurveFactory {
   }
 }
 
+/**
+ * A line chart of one or more numeric series over shared categories, with a
+ * dot on every point and a D3 `curve` (`monotoneX` by default, or `linear`,
+ * `natural`, `step`, `stepAfter`, `stepBefore`). Each `data` row is one point
+ * along x (labelled by its `x-key` field, `name` by default), and hovering a
+ * dot fires `point-hover` so a page can show a `<moul-chart-tooltip>`.
+ *
+ * Keyboard and screen readers: no point takes focus and no keys do anything,
+ * so the per-point values, surfaced only by `point-hover` on pointer hover,
+ * cannot be reached without a mouse. A screen reader gets the SVG as one
+ * `role="img"` named just "Line chart", with the axis labels hidden and no
+ * data table, so no values are announced; give the page a text or table
+ * alternative.
+ *
+ * Reduced motion: on first render the lines fade in over 350ms; under reduced
+ * motion they appear at once. A hovered dot grows from a 4px to a 6px radius,
+ * smoothly normally and instantly under reduced motion.
+ *
+ * @slot empty - Shown instead of the chart when `data` is empty.
+ * @fires point-hover - A dot is hovered; `detail` has its value and label.
+ * @fires point-leave - The pointer left a dot.
+ */
 export class MoulLineChart extends LitElement {
   static override styles = lineChartStyles
 

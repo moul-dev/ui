@@ -17,6 +17,17 @@ function getInitials(name: string): string {
   return ((parts[0][0] ?? '') + (parts[1][0] ?? '')).toUpperCase()
 }
 
+/**
+ * A person's picture from `src` in a circle or rounded square, falling back to
+ * initials from `name` and then to a generic person icon, with an optional
+ * `status` dot (online, offline, away or busy).
+ *
+ * Keyboard and screen readers: not focusable. The host has `role="img"` and an
+ * `aria-label` set from `name` ("Avatar" when there is none); the status dot
+ * is not read, because everything inside `role="img"` is presentational.
+ *
+ * Reduced motion: a loaded image appears at once instead of fading in.
+ */
 export class MoulAvatar extends LitElement {
   static override styles = avatarStyles
 

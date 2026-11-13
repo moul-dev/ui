@@ -4,6 +4,29 @@ import { calendarNavNext, calendarNavPrev } from '../../utils/icons'
 import { EASE_OUT, subtleAnimate } from '../../utils/motion'
 import { calendarStyles } from './Calendar.styles'
 
+/**
+ * A month grid for picking one date, with previous and next month buttons,
+ * month and weekday names formatted for `locale`, and optional
+ * `min-date`/`max-date` bounds; dates are ISO `YYYY-MM-DD` strings and
+ * picking one fires `change`. It is not form-associated: for a form field,
+ * use `<moul-date-picker>`, which opens it in a popover.
+ *
+ * Keyboard and screen readers: the host takes no focus; Tab reaches the
+ * "Previous month" and "Next month" buttons, then one day button (the
+ * selected date, or today, when that day is shown), since the days use a
+ * roving tabindex. On a day, `Arrow Left`/`Arrow Right` move one day,
+ * `Arrow Up`/`Arrow Down` one week and `Page Up`/`Page Down` one month,
+ * turning the month as needed, and `Enter` or `Space` picks it; `Home`/`End`
+ * are not handled, and dates outside the bounds are disabled and never take
+ * focus. The days sit in a `role="grid"` table labelled "Calendar" with
+ * `aria-selected` on each `gridcell`, each day button is named by its day
+ * number only, and the month heading is an `aria-live="polite"` region that
+ * announces the new month.
+ *
+ * Reduced motion: the days change at once instead of sliding and fading in
+ * when the month buttons are used, buttons do not press in, and hover and
+ * focus colours change without fading.
+ */
 export class MoulCalendar extends LitElement {
   static override styles = calendarStyles
 

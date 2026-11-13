@@ -11,10 +11,19 @@ import './LogsViewer'
 import { parseLogs } from './parseLogs'
 
 /**
- * MoulLogs Custom Element (`moul-logs`).
- * Companion declarative element accepting raw multiline log string input
- * (via `raw` property/attribute or slotted text), parsing it into structured `LogItem[]`,
- * and passing the result to an internal `<moul-logs-viewer>`.
+ * The declarative way to show logs: it takes raw multiline log text (the
+ * `raw` attribute or property, or slotted text), parses each line into a
+ * `LogItem` and renders them in an internal `<moul-logs-viewer>`.
+ *
+ * Keyboard and screen readers: the host is not focusable; all interaction
+ * happens in its internal `<moul-logs-viewer>`, so Tab reaches the search
+ * input, level filter and toolbar buttons and then each log row, `Enter` or
+ * `Space` on a row opens the detail drawer and `Escape` closes it, and the
+ * event count is announced politely as the filters change.
+ *
+ * Reduced motion: it adds no motion of its own; the inner viewer's level
+ * highlight glide, button press and drawer slide are switched off, as are its
+ * colour fades.
  */
 export class MoulLogs extends LitElement {
   static override styles: CSSResultGroup = css`

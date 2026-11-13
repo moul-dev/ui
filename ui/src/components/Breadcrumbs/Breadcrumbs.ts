@@ -3,6 +3,19 @@ import { defineElement } from '../../utils/define-element'
 import type { MoulBreadcrumbItem } from './BreadcrumbItem'
 import { breadcrumbsStyles } from './Breadcrumbs.styles'
 
+/**
+ * A breadcrumb trail of `moul-breadcrumb-item`s showing where the current
+ * page sits in the site hierarchy, with a shared `separator` between items;
+ * mark the last item `is-current`.
+ *
+ * Keyboard and screen readers: the trail itself is not focusable and adds no
+ * keys; the links in its items are ordinary Tab stops. It renders a
+ * `<nav aria-label="Breadcrumb">` landmark around an `<ol>`, and each item
+ * supplies a list item.
+ *
+ * Reduced motion: the trail does not animate; each item handles its own
+ * link fades.
+ */
 export class MoulBreadcrumbs extends LitElement {
   static override styles = breadcrumbsStyles
 

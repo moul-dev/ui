@@ -16,6 +16,17 @@ function getAriaLabelForKey(key: string): string {
   return SYMBOL_MAP[key] ?? key
 }
 
+/**
+ * A keyboard key or shortcut hint drawn as key caps, such as `⌘` `K`. Pass a
+ * combination in `keys`, split on `+` (`keys="Meta+K"`), or slot a single key.
+ *
+ * Keyboard and screen readers: not focusable. A slotted key is a native
+ * `<kbd>`. With `keys`, the caps sit in a `role="group"` labelled with the
+ * keys spelled out and joined by "plus" (`⌘` reads as "Command", `⇧` as
+ * "Shift"), and the visible `+` signs are hidden from screen readers.
+ *
+ * Reduced motion: does not animate.
+ */
 export class MoulKbd extends LitElement {
   static override styles = kbdStyles
 

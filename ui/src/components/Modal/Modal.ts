@@ -11,6 +11,22 @@ import { modalStyles } from './Modal.styles'
 
 export type ModalSize = 'sm' | 'md' | 'lg' | 'fullscreen'
 
+/**
+ * A modal dialog on a native `<dialog>`, for focused tasks such as forms and
+ * confirmations: a centred panel (`size` sm, md, lg or fullscreen) with
+ * `header`, body and `footer` slots over a dimmed backdrop.
+ *
+ * Keyboard and screen readers: on open, focus moves to the first focusable
+ * element in the panel, `Tab` and `Shift+Tab` cycle inside it, and on close
+ * focus returns to the element that had it before. `Escape` always closes the
+ * modal; a click outside the panel closes it unless `isDismissable` is false.
+ * Screen readers get the native `dialog` role, but no accessible name: the
+ * header is not linked with `aria-labelledby`, and an `aria-label` on the host
+ * stays on the host.
+ *
+ * Reduced motion: the panel and backdrop appear and disappear at once instead
+ * of fading while the panel scales in from 105% and out to 95%.
+ */
 export class MoulModal extends LitElement {
   static override styles = modalStyles
 

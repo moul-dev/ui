@@ -4,6 +4,24 @@ import { defineElement } from '../../utils/define-element'
 import { warnMissingLabel } from '../../utils/warn-missing-label'
 import { sliderStyles } from './Slider.styles'
 
+/**
+ * A form-associated range slider for picking one number between `min` and
+ * `max` in `step` increments by dragging, clicking the track or using the
+ * keyboard, with a label and the current value shown above the track.
+ *
+ * Keyboard and screen readers: the thumb takes focus; it is a
+ * `role="slider"` element with `tabindex="0"` (`-1` when disabled),
+ * `aria-valuemin`, `aria-valuemax`, `aria-valuenow` and an `aria-label` from
+ * the `label` attribute (or "Slider"). `Arrow Right` and `Arrow Up` add one
+ * `step`, `Arrow Left` and `Arrow Down` subtract one, and `Home` and `End`
+ * jump to `min` and `max`; pressing the track moves the thumb there and
+ * focuses it. The value readout is an `<output aria-live="off">`, so it is
+ * not announced; `aria-valuenow` carries the value.
+ *
+ * Reduced motion: the thumb's inner pill does not shrink while pressed and
+ * its colours and focus ring change without fading; the thumb and fill
+ * already follow the value without easing.
+ */
 export class MoulSlider extends LitElement {
   static override styles = sliderStyles
   static readonly formAssociated = true

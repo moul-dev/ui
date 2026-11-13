@@ -33,6 +33,27 @@ export interface ActiveBarState {
   index: number
 }
 
+/**
+ * A bar chart of one or more numeric series per category, `layout="vertical"`
+ * (the default) or `horizontal`, with series grouped side by side or
+ * `stacked`. Each `data` row is one category (labelled by its `x-key` field,
+ * `name` by default), and hovering a bar fires `point-hover` so a page can
+ * show a `<moul-chart-tooltip>`.
+ *
+ * Keyboard and screen readers: no bar takes focus and no keys do anything, so
+ * the per-bar values, surfaced only by `point-hover` on pointer hover, cannot
+ * be reached without a mouse. A screen reader gets the SVG as one `role="img"`
+ * named just "Bar chart", with the axis labels hidden and no data table, so
+ * no values are announced; give the page a text or table alternative.
+ *
+ * Reduced motion: on first render the bars fade in one after another; under
+ * reduced motion they appear at once. A hovered bar dims to 80% opacity,
+ * fading over 150ms normally and instantly under reduced motion.
+ *
+ * @slot empty - Shown instead of the chart when there is no data.
+ * @fires point-hover - A bar is hovered; `detail` has its value and label.
+ * @fires point-leave - The pointer left a bar.
+ */
 export class MoulBarChart extends LitElement {
   static override styles = barChartStyles
 

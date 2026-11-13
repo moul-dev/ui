@@ -130,9 +130,30 @@ export function LogCopyIconButton({
 }
 
 /**
- * MoulLogsViewer Custom Element (`moul-logs-viewer`).
- * Virtualized, interactive log viewer component with filtering, search, line wrapping,
- * active indicator animation, and a log detail drawer opened by clicking a row.
+ * A virtualized log viewer for structured `logs` (`LogItem[]`), with a
+ * toolbar for level filtering, search, timestamps, line wrapping, copy and
+ * download, and a detail drawer that opens when a row is chosen.
+ *
+ * Keyboard and screen readers: the host is not focusable. Its `role="toolbar"`
+ * has no arrow-key handling, so each control is a Tab stop: the search input
+ * ("Filter logs") and its "Clear search" button, five level buttons in a
+ * `role="radiogroup"` (`role="radio"`, `aria-checked`, picked with `Enter` or
+ * `Space`), the timestamp and wrap toggles (`aria-pressed`), and copy,
+ * download and clear buttons; the "N / M events" count is
+ * `aria-live="polite"`, so filtering and searching announce the new count.
+ * Log lines are a `role="table"` in a region named "Logs Stream", and each
+ * rendered row is a `role="row"` Tab stop read cell by cell (no arrow keys
+ * between rows) that `Enter` or `Space` opens in the detail drawer, marking it
+ * `aria-selected`. With `virtualized` on and over 50 matching lines, only rows
+ * near the viewport are rendered, so assistive tech reaches only those and
+ * gets no total row count. The drawer is a modal dialog that moves focus
+ * inside, traps Tab, closes on `Escape`, its "Close log details" button or a
+ * backdrop click, and returns focus to the row.
+ *
+ * Reduced motion: the level highlight jumps to the chosen filter instead of
+ * gliding, toolbar buttons do not shrink when pressed, the detail drawer opens
+ * and closes without sliding or fading its backdrop, and the hover and focus
+ * colour fades on the controls and rows are switched off.
  */
 export class MoulLogsViewer extends LitElement {
   static override styles: CSSResultGroup = logsViewerStyles

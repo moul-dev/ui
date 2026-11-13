@@ -3,6 +3,18 @@ import { defineElement } from '../../utils/define-element'
 import { EASE_OUT, subtleAnimate } from '../../utils/motion'
 import { tabPanelStyles } from './Tabs.styles'
 
+/**
+ * The content for one tab inside `moul-tabs`, shown while the `moul-tab` with
+ * the same `key` is selected and `hidden` otherwise.
+ *
+ * Keyboard and screen readers: the host has `role="tabpanel"` and
+ * `tabindex="0"`, so Tab moves from the selected tab into the panel, then on
+ * to its content. It is not linked to its tab with `aria-labelledby` or
+ * `aria-controls`, so it has no accessible name of its own.
+ *
+ * Reduced motion: a newly shown panel fades in over 150ms; under reduced
+ * motion it appears at once.
+ */
 export class MoulTabPanel extends LitElement {
   static override styles = tabPanelStyles
 

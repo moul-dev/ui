@@ -11,6 +11,21 @@ import { progressBarStyles } from './ProgressBar.styles'
 export type ProgressBarSize = 'sm' | 'md' | 'lg'
 export type ProgressBarShape = 'square' | 'rounded' | 'pill'
 
+/**
+ * A horizontal track that fills from `min` to `max` to show how far a task has
+ * got, or (`is-indeterminate`) a looping bar when the amount is unknown, with
+ * an optional label slotted above it.
+ *
+ * Keyboard and screen readers: not focusable. The host has
+ * `role="progressbar"` with `aria-valuemin`, `aria-valuemax` and
+ * `aria-valuenow` (the value clamped to the range, removed while
+ * indeterminate). Text in the `label` slot does not name it, so give the host
+ * an `aria-label` or `aria-labelledby`.
+ *
+ * Reduced motion: the fill jumps to each new value instead of sliding, and the
+ * indeterminate bar stops sweeping across the track; it fills the track and
+ * slowly pulses in opacity instead.
+ */
 export class MoulProgressBar extends LitElement {
   static override styles = progressBarStyles
 

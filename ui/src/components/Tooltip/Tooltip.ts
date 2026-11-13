@@ -33,6 +33,25 @@ function isKeyboardFocus(target: EventTarget | null): boolean {
   }
 }
 
+/**
+ * A short text label that appears beside its slotted trigger on hover or
+ * focus, for naming icon buttons and explaining controls; the text comes from
+ * the `content` attribute or a `slot="content"` element.
+ *
+ * Keyboard and screen readers: the host takes no focus; the slotted trigger
+ * keeps its own. Hover opens the tip after `delay` (300ms by default, at once
+ * right after a sibling's tip was read) and keyboard or pointer focus opens it
+ * at once; leaving, blurring or `Escape` closes it, and that `Escape` stops
+ * there, so it does not also close a surrounding dialog. The panel has
+ * `role="tooltip"`, and each slotted element without its own
+ * `aria-describedby` gets one pointing at the panel's id, but that id lives in
+ * the shadow root, so the reference does not resolve and screen readers do
+ * not read the tip as a description.
+ *
+ * Reduced motion: the tip appears and disappears at once instead of fading and
+ * growing from 97% out of the trigger edge; keyboard focus and a warm sibling
+ * skip the entrance anyway.
+ */
 export class MoulTooltip extends LitElement {
   static override styles = tooltipStyles
 

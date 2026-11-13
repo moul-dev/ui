@@ -12,6 +12,25 @@ import { popoverStyles } from './Popover.styles'
 export type PopoverPlacement = 'top' | 'bottom' | 'left' | 'right'
 export type PopoverTrigger = 'click' | 'manual'
 
+/**
+ * A floating panel anchored to a slotted `trigger`, for menus, pickers and
+ * small forms; it opens in the top layer with the Popover API and is placed
+ * beside the trigger with CSS anchor positioning, or fixed coordinates where
+ * that is not supported.
+ *
+ * Keyboard and screen readers: the host takes no focus; the slotted trigger
+ * keeps its own. While closed, `Enter`, `Space` or `Arrow Down` on the trigger
+ * opens the panel (even with `trigger="manual"`, where clicks do not) and
+ * focus moves to its first focusable element. `Escape` closes it, and so does
+ * a click outside unless `trigger="manual"`; focus then returns to where it
+ * was before opening, normally the trigger. `Tab` is not trapped, and the
+ * panel stays open when focus leaves it. The panel has no role and the
+ * trigger gets no `aria-expanded` or `aria-haspopup`, so screen readers are
+ * not told that it opened.
+ *
+ * Reduced motion: the panel appears and disappears at once instead of fading
+ * and growing from 96% out of the trigger edge.
+ */
 export class MoulPopover extends LitElement {
   static override styles = popoverStyles
 

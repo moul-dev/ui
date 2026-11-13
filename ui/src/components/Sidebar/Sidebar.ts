@@ -48,6 +48,26 @@ const chevronRightIcon = (): TemplateResult => svg`
 
 // ── 1. MoulSidebar (moul-sidebar) ────────────────────────────────────
 
+/**
+ * The root of the sidebar application shell: it lays a `<moul-sidebar-aside>`
+ * navigation rail beside a `<moul-sidebar-main>` content area and shares the
+ * layout, density, collapsed state and selected item with every sidebar part
+ * through `@lit/context`. Setting `selected-key` marks the matching
+ * `<moul-sidebar-item>` as the current page, and `collapsed` shrinks the rail
+ * to icons.
+ *
+ * Keyboard and screen readers: the root is not focusable and adds no role; it
+ * renders only a slot, and Tab moves through the native links and buttons of
+ * its parts in document order, with no arrow-key navigation and no collapse
+ * shortcut (the aside's toggle button collapses it). The selected item gets
+ * `aria-current="page"` when it is a link, and in the collapsed rail each item
+ * keeps its name through `aria-label` and a tooltip. There is no mobile or
+ * off-canvas mode, so nothing traps focus or closes on `Escape`.
+ *
+ * Reduced motion: the root does not animate itself; under reduced motion the
+ * rail changes width at once and the current-page highlight moves to the new
+ * item without gliding.
+ */
 export class MoulSidebar extends LitElement {
   static override styles = sidebarStyles
 
@@ -143,6 +163,23 @@ export class MoulSidebar extends LitElement {
 
 // ── 2. MoulSidebarAside (moul-sidebar-aside) ──────────────────────────
 
+/**
+ * The navigation rail of a `<moul-sidebar>`: a full-height panel that holds
+ * the header, groups, items and footer, narrows to an icon rail when the
+ * sidebar is collapsed, and can show a collapse toggle in its bottom corner.
+ *
+ * Keyboard and screen readers: the host is not focusable; it renders a native
+ * `<aside>` with `role="complementary"` named by `aria-label` (default "Main
+ * Navigation"). With `show-collapse-toggle`, a native button placed after the
+ * slotted content (so last in Tab order) collapses or expands the rail on
+ * click, `Enter` or `Space`; it has no `aria-expanded`, and instead its
+ * `aria-label` and tooltip switch between "Collapse sidebar" and "Expand
+ * sidebar".
+ *
+ * Reduced motion: the rail snaps between widths, the toggle jumps to its new
+ * spot instead of sliding, and the toggle neither shrinks when pressed nor
+ * fades its hover colour.
+ */
 export class MoulSidebarAside extends LitElement {
   static override styles = sidebarAsideStyles
 
@@ -238,6 +275,17 @@ export class MoulSidebarAside extends LitElement {
 
 // ── 3. MoulSidebarMain (moul-sidebar-main) ────────────────────────────
 
+/**
+ * The page content area of a `<moul-sidebar>`, placed beside the
+ * `<moul-sidebar-aside>`; in the `main-framed` layout it is drawn as a raised
+ * card.
+ *
+ * Keyboard and screen readers: not focusable and handles no keys; it wraps the
+ * slotted page content in a native `<main>` (`role="main"`) landmark with no
+ * accessible name, and the content keeps its own semantics.
+ *
+ * Reduced motion: it does not animate.
+ */
 export class MoulSidebarMain extends LitElement {
   static override styles = sidebarMainStyles
 
@@ -281,6 +329,17 @@ export class MoulSidebarMain extends LitElement {
 
 // ── 4. MoulSidebarHeader (moul-sidebar-header) ────────────────────────
 
+/**
+ * The top section of a `<moul-sidebar-aside>`, usually holding a
+ * `<moul-sidebar-brand>`; it centres its content when the sidebar is
+ * collapsed.
+ *
+ * Keyboard and screen readers: not focusable and handles no keys; it wraps its
+ * slotted content in a native `<header>` and adds no name, so the brand link
+ * or controls inside keep their own semantics.
+ *
+ * Reduced motion: it does not animate.
+ */
 export class MoulSidebarHeader extends LitElement {
   static override styles = sidebarHeaderStyles
 
@@ -329,6 +388,19 @@ export class MoulSidebarHeader extends LitElement {
 
 // ── 5. MoulSidebarBrand (moul-sidebar-brand) ──────────────────────────
 
+/**
+ * The product logo, title and subtitle shown in a `<moul-sidebar-header>`,
+ * optionally linked to `href`; in the collapsed rail only the logo shows.
+ *
+ * Keyboard and screen readers: with `href` it renders a native link, a single
+ * Tab stop that `Enter` follows, named by its title and subtitle text (the
+ * `logo` image has empty `alt`); without `href` it is not focusable and is
+ * read as plain text. In the collapsed rail the title and subtitle are hidden
+ * and no tooltip or `aria-label` replaces them, so a linked brand is left with
+ * only the name its slotted logo provides.
+ *
+ * Reduced motion: it does not animate.
+ */
 export class MoulSidebarBrand extends LitElement {
   static override styles = sidebarBrandStyles
 
@@ -416,6 +488,22 @@ export class MoulSidebarBrand extends LitElement {
 
 // ── 6. MoulSidebarGroup (moul-sidebar-group) ──────────────────────────
 
+/**
+ * A labelled section of `<moul-sidebar-item>` rows inside a
+ * `<moul-sidebar-aside>`, whose header can collapse and expand the rows.
+ *
+ * Keyboard and screen readers: when it has a `label` and the sidebar is not
+ * collapsed, the header is a native button named by the label with
+ * `aria-expanded`, a Tab stop that click, `Enter` or `Space` toggles (it still
+ * renders, but does nothing, when `collapsible` is false). Collapsing only
+ * hides the rows visually, so they stay in the Tab order and the
+ * accessibility tree. In the collapsed rail the header is not rendered and the
+ * rows show as icons.
+ *
+ * Reduced motion: the rows appear and disappear at once instead of sliding
+ * open and fading, the chevron flips without rotating, and the header's hover
+ * colour does not fade.
+ */
 export class MoulSidebarGroup extends LitElement {
   static override styles = sidebarGroupStyles
 
@@ -544,6 +632,27 @@ export class MoulSidebarGroup extends LitElement {
 
 // ── 7. MoulSidebarItem (moul-sidebar-item) ────────────────────────────
 
+/**
+ * A navigation row inside a `<moul-sidebar-group>` or `<moul-sidebar-aside>`
+ * with an icon, label and optional badge; it renders as a link when it has
+ * `href` and as a button otherwise, and is marked as the current page when its
+ * `key` matches the sidebar's `selected-key`.
+ *
+ * Keyboard and screen readers: each item is one Tab stop, a native `<a>` (with
+ * `href`) or `<button>` in its shadow root named by its label and badge text,
+ * and the sidebar adds no arrow-key movement between items. Click, `Enter` or
+ * `Space` selects it, though on a link the `Enter` handler cancels the
+ * browser's own navigation, so only a click follows `href`; a disabled button
+ * item is natively disabled. The selected link gets `aria-current="page"`,
+ * while a selected button gets `aria-selected`, which screen readers do not
+ * announce on a button. In the collapsed rail the label and badge are hidden,
+ * so the row takes the label as its `aria-label` and shows it in a tooltip on
+ * hover or focus (`Escape` closes the tooltip).
+ *
+ * Reduced motion: the current-page highlight jumps to the new item instead of
+ * gliding from the old one, the row does not shrink when pressed, and hover
+ * colours do not fade.
+ */
 export class MoulSidebarItem extends LitElement {
   static override styles = sidebarItemStyles
 
@@ -743,6 +852,16 @@ export class MoulSidebarItem extends LitElement {
 
 // ── 8. MoulSidebarDivider (moul-sidebar-divider) ──────────────────────
 
+/**
+ * A thin horizontal rule that separates groups or sections inside a
+ * `<moul-sidebar-aside>`.
+ *
+ * Keyboard and screen readers: not focusable; the host has `role="separator"`
+ * and `aria-orientation="horizontal"`, so screen readers announce a
+ * separator.
+ *
+ * Reduced motion: it does not animate.
+ */
 export class MoulSidebarDivider extends LitElement {
   static override styles = sidebarDividerStyles
 
@@ -789,6 +908,16 @@ export class MoulSidebarDivider extends LitElement {
 
 // ── 9. MoulSidebarFooter (moul-sidebar-footer) ────────────────────────
 
+/**
+ * The bottom section of a `<moul-sidebar-aside>`, pinned below the groups and
+ * usually holding a `<moul-sidebar-user>`, with a top border by default.
+ *
+ * Keyboard and screen readers: not focusable and handles no keys; it wraps its
+ * slotted content in a native `<footer>` and adds no name, so the controls
+ * inside keep their own semantics.
+ *
+ * Reduced motion: it does not animate.
+ */
 export class MoulSidebarFooter extends LitElement {
   static override styles = sidebarFooterStyles
 
@@ -840,6 +969,21 @@ export class MoulSidebarFooter extends LitElement {
 
 // ── 10. MoulSidebarUser (moul-sidebar-user) ───────────────────────────
 
+/**
+ * The signed-in user's avatar, name and email shown in a
+ * `<moul-sidebar-footer>`, with an optional `action` slot for a menu button;
+ * in the collapsed rail only the avatar shows.
+ *
+ * Keyboard and screen readers: the row itself is not focusable, has no role
+ * and handles no keys, despite its pointer cursor; only a control slotted into
+ * `action` is reachable by keyboard. It reads as the avatar (`role="img"`
+ * named by `name`) followed by the name and email text. In the collapsed rail
+ * the text and the `action` slot are not rendered, and a tooltip with the name
+ * and email shows on hover only, since nothing inside can take focus.
+ *
+ * Reduced motion: the row does not shrink when pressed and its hover
+ * background does not fade.
+ */
 export class MoulSidebarUser extends LitElement {
   static override styles = sidebarUserStyles
 

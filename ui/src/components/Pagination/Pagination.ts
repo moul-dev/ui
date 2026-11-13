@@ -77,6 +77,21 @@ export function generatePagination(
   return [1, '...', ...middleRange, '...', totalPages]
 }
 
+/**
+ * Page navigation for long lists: previous and next buttons around numbered
+ * page buttons, with ellipses for skipped ranges (`sibling-count` sets how many
+ * neighbours of the current page stay visible). Fires `pagechange`.
+ *
+ * Keyboard and screen readers: a `<nav aria-label="Pagination">` landmark of
+ * native buttons, each its own Tab stop, activated with Enter or Space. The
+ * buttons are labelled "Previous page", "Next page" and "Page N"; the current
+ * page has `aria-current="page"`, Previous and Next are disabled (out of the
+ * tab order) at the ends, and the ellipses are `aria-hidden`.
+ *
+ * Reduced motion: buttons scale down slightly while pressed, and their
+ * background and focus ring fade; under reduced motion there is no press
+ * scale and no fades.
+ */
 export class MoulPagination extends LitElement {
   static override styles = paginationStyles
 

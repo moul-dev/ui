@@ -38,6 +38,32 @@ export function prefersReducedMotion(): boolean {
   )
 }
 
+/**
+ * Calls `onChange` each time the reduced-motion setting flips, for effects that
+ * run long enough for the user to change it mid-way (a canvas loop, a pointer
+ * follower). Returns a function that stops listening. It does not report the
+ * current value; read that with `prefersReducedMotion()`.
+ */
+export function watchReducedMotion(
+  onChange: (isReduced: boolean) => void,
+): () => void {
+  if (
+    typeof window === 'undefined' ||
+    typeof window.matchMedia !== 'function'
+  ) {
+    return () => {}
+  }
+  const query = window.matchMedia('(prefers-reduced-motion: reduce)')
+  const listener = (event: MediaQueryListEvent): void => onChange(event.matches)
+  if (typeof query.addEventListener === 'function') {
+    query.addEventListener('change', listener)
+    return () => query.removeEventListener('change', listener)
+  }
+  // Safari before 14 only has the deprecated listener methods.
+  query.addListener?.(listener)
+  return () => query.removeListener?.(listener)
+}
+
 const TRANSFORM_KEYS = new Set([
   'x',
   'y',

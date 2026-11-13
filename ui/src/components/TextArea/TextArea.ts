@@ -5,6 +5,22 @@ import { EASE_OUT, subtleAnimate } from '../../utils/motion'
 import { warnMissingLabel } from '../../utils/warn-missing-label'
 import { textAreaStyles } from './TextArea.styles'
 
+/**
+ * A form-associated multiline text input with a label and an optional
+ * description and error message; `auto-resize` grows it with its content
+ * instead of showing a resize handle.
+ *
+ * Keyboard and screen readers: focus goes to a native `<textarea>` in the
+ * shadow root, so `Enter` inserts a new line and never submits a form. It is
+ * named by a `<label for>` holding the `label` attribute or `label` slot,
+ * `aria-describedby` points at the `description` and `error-message` text
+ * when they are set, and `aria-invalid` is true while an `is-required` field
+ * is empty.
+ *
+ * Reduced motion: the error message appears in place instead of sliding down
+ * 4px, and hover and focus colours change without fading; `auto-resize`
+ * changes the height at once, never animated.
+ */
 export class MoulTextArea extends LitElement {
   static override styles = textAreaStyles
   static readonly formAssociated = true

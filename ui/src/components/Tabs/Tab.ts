@@ -3,6 +3,22 @@ import { PressController } from '../../controllers/press.controller'
 import { defineElement } from '../../utils/define-element'
 import { tabStyles } from './Tabs.styles'
 
+/**
+ * One tab in a `moul-tabs` strip; its `key` names the `moul-tab-panel` it
+ * shows, and `is-disabled` takes it out of the rotation.
+ *
+ * Keyboard and screen readers: the host is the focus target, with
+ * `role="tab"`, `aria-selected`, `aria-disabled` when disabled, and
+ * `tabindex="0"` only while selected (`-1` otherwise). The parent `moul-tabs`
+ * handles the arrow keys, Home and End. The slotted label is drawn inside an
+ * inner `<button>` that is `aria-hidden` and out of the tab order, so screen
+ * readers may not take the tab's name from it; an `aria-label` on the host
+ * names it reliably.
+ *
+ * Reduced motion: the tab does not move (the sliding indicator belongs to
+ * `moul-tabs`); its label colour, hover opacity and focus ring fade over
+ * 150ms, and change at once under reduced motion.
+ */
 export class MoulTab extends LitElement {
   static override styles = tabStyles
 

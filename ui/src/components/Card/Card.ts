@@ -9,6 +9,22 @@ import {
 import { defineElement } from '../../utils/define-element'
 import { cardSectionStyles, cardStyles } from './Card.styles'
 
+/**
+ * A surface that groups related content, with optional `moul-card-header`,
+ * `moul-card-body` and `moul-card-footer` regions, coloured by `tone` and
+ * `variant`. Set `is-interactive` to make the whole card one pressable target
+ * that fires `press`.
+ *
+ * Keyboard and screen readers: a plain card is not focusable and has no role.
+ * With `is-interactive` the host gets `role="button"` and `tabindex="0"`
+ * (unless you set your own), its text content becomes the button's name, and
+ * `Enter` or `Space` fires `press` when the key is released, as a click does.
+ * Clicks and `Enter`/`Space` from controls inside an interactive card bubble
+ * up and press the card too.
+ *
+ * Reduced motion: an interactive card no longer lifts on hover or shrinks
+ * when pressed, and its shadow and background change without fading.
+ */
 export class MoulCard extends LitElement {
   static override styles = cardStyles
 
@@ -143,6 +159,16 @@ export class MoulCard extends LitElement {
   }
 }
 
+/**
+ * The title row of a `moul-card`, in medium-weight text; place it first
+ * inside the card.
+ *
+ * Keyboard and screen readers: not focusable and adds no role; its content is
+ * read as ordinary text, so put a heading element inside it when the card
+ * needs a place in the page outline.
+ *
+ * Reduced motion: does not animate.
+ */
 export class MoulCardHeader extends LitElement {
   static override styles = cardSectionStyles
   public override connectedCallback(): void {
@@ -154,6 +180,15 @@ export class MoulCardHeader extends LitElement {
   }
 }
 
+/**
+ * The main content of a `moul-card`, in muted text, that grows to fill the
+ * card's spare height; place it between the header and the footer.
+ *
+ * Keyboard and screen readers: not focusable and adds no role; its content
+ * keeps its own semantics and focusable children take focus as usual.
+ *
+ * Reduced motion: does not animate.
+ */
 export class MoulCardBody extends LitElement {
   static override styles = cardSectionStyles
   public override connectedCallback(): void {
@@ -165,6 +200,15 @@ export class MoulCardBody extends LitElement {
   }
 }
 
+/**
+ * The bottom row of a `moul-card`, laying out actions such as buttons and
+ * links side by side; place it last inside the card.
+ *
+ * Keyboard and screen readers: not focusable and adds no role; the buttons
+ * and links inside it take focus in document order.
+ *
+ * Reduced motion: does not animate.
+ */
 export class MoulCardFooter extends LitElement {
   static override styles = cardSectionStyles
   public override connectedCallback(): void {

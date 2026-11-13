@@ -22,11 +22,12 @@
 ├── rdt/                 # Requirements, design, and task list for the Lit rebuild
 ├── scripts/             # dev, gen:component, sync:llms, bump, verify-no-react, setup-hooks
 ├── ui/                  # @moul-dev/web-component
-│   ├── package.json     # Exports `.` and `./style.css`
+│   ├── package.json     # Exports `.`, `./effects` and `./style.css`
 │   ├── vite.config.ts   # Vite library build + Vitest (happy-dom)
 │   ├── index.html       # Kitchen-sink sandbox
 │   └── src/
-│       ├── index.ts     # Single public entry point
+│       ├── index.ts     # Main entry point
+│       ├── effects.ts   # `@moul-dev/web-component/effects`: motion controllers and effect elements
 │       ├── components/  # One folder per element: <Name>.ts, <Name>.styles.ts, index.ts
 │       ├── controllers/ # Lit reactive controllers
 │       ├── styles/      # style.css token layer, reset, semantic tones
@@ -67,7 +68,7 @@ bun run dev:docs   # Astro dev server
 | :--- | :--- |
 | `bun run dev` | Runs the sandbox and docs dev servers with combined, color-coded logs |
 | `bun run build` | Builds the library, then the docs site |
-| `bun run build:ui` | Checks for React dependencies, type-checks, builds `ui/dist` with Vite, and writes `dist/custom-elements.json` |
+| `bun run build:ui` | Checks for React dependencies, type-checks, builds both entry points into `ui/dist` with Vite, writes `dist/custom-elements.json`, and checks bundle sizes |
 | `bun run build:docs` | Checks for React dependencies and builds the static docs site into `docs/dist` |
 | `bun run test` | Runs the Vitest suite for `@moul-dev/web-component` |
 | `bun run types:check` | Type-checks `ui` (`tsc -b`) and `docs` (`astro check`) |
@@ -75,6 +76,7 @@ bun run dev:docs   # Astro dev server
 | `bun run sync:llms` | Verifies every custom element is documented in the LLM context files |
 | `bun run sync:llms --write` | Regenerates `llms.txt`, `llms-full.txt`, and both `AGENTS.md` files from the manifest |
 | `bun run bump <major\|minor\|patch\|prerelease>` | Bumps the SemVer version in every `package.json`, `ui/src/index.ts` and `bun.lock`; `--preid=<alpha\|beta\|rc>` opens or switches a prerelease channel, `--changelog` scaffolds a changelog entry |
+| `bun run size` | Checks every bundle in `ui/dist` against `ui/size-budget.json`; `--write` records new budgets when growth is intended |
 | `bun run lint` | Runs Biome checks |
 | `bun run format` | Applies Biome formatting |
 

@@ -15,6 +15,18 @@ export type TypographyVariant =
   | 'code'
   | 'mono'
 
+/**
+ * Text in one of the type scale's styles, chosen by `variant`: headings `h1`
+ * to `h6`, `body`, `caption`, inline `code` or `mono`, optionally coloured by
+ * `tone`.
+ *
+ * Keyboard and screen readers: not focusable. It wraps the slotted text in the
+ * matching native element (`<h1>` to `<h6>`, so the variant also sets the
+ * heading level; `<p>` for body, `<span>` for caption, `<code>` for code and
+ * mono), and screen readers read it with that element's semantics.
+ *
+ * Reduced motion: does not animate.
+ */
 export class MoulTypography extends LitElement {
   static override styles = typographyStyles
 

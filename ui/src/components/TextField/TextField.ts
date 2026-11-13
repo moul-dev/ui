@@ -11,6 +11,24 @@ import { textFieldStyles } from './TextField.styles'
 
 export type TextFieldType = 'text' | 'email' | 'password' | 'tel' | 'url'
 
+/**
+ * A form-associated single-line text input (`type` text, email, password,
+ * tel or url) with a label, an optional description and error message,
+ * prefix and suffix slots, and `is-required` validation.
+ *
+ * Keyboard and screen readers: focus goes to a native `<input>` in the shadow
+ * root (the host's `focus()` forwards there), so it types, selects and
+ * autofills like any text box. `Enter` submits the enclosing `<form>` or
+ * `<moul-form>` as a native input would: it clicks the first submit button,
+ * or submits a form whose only text field this is. The input is named by a
+ * `<label for>` holding the `label` attribute or `label` slot,
+ * `aria-describedby` points at the `description` and `error-message` text
+ * when they are set, and `aria-invalid` is true while an `is-required` field
+ * is empty.
+ *
+ * Reduced motion: the error message appears in place instead of sliding down
+ * 4px, and hover and focus colours change without fading.
+ */
 export class MoulTextField extends LitElement {
   static override styles = textFieldStyles
   static readonly formAssociated = true

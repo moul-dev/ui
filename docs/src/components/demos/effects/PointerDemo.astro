@@ -1,0 +1,68 @@
+---
+/**
+ * PointerController demo: a card whose spotlight follows the pointer,
+ * written entirely in CSS against `--pointer-x` and `--pointer-y`.
+ */
+---
+
+<effects-demo-spotlight>
+  <strong>Spotlight</strong>
+  <span>Move the pointer across the card. The light is a CSS gradient placed at
+    <code>var(--pointer-x)</code> and <code>var(--pointer-y)</code>.</span>
+</effects-demo-spotlight>
+
+<style is:global>
+  effects-demo-spotlight {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+    width: min(100%, 26rem);
+    padding: var(--spacing-8) var(--spacing-6);
+    overflow: hidden;
+    border-radius: var(--radius-2xl);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-surface);
+    color: var(--color-fg);
+  }
+
+  effects-demo-spotlight::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0;
+    background: radial-gradient(
+      16rem circle at var(--pointer-x, 50%) var(--pointer-y, 50%),
+      color-mix(in oklch, var(--color-accent) 24%, transparent),
+      transparent 70%
+    );
+    transition: opacity var(--duration-base) var(--ease-out);
+  }
+
+  effects-demo-spotlight:hover::before {
+    opacity: 1;
+  }
+
+  effects-demo-spotlight > span {
+    color: var(--color-fg-subtle);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    effects-demo-spotlight::before {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  import { PointerController } from '@moul-dev/web-component/effects'
+  import { DemoHost, defineDemo } from './demo-host'
+
+  class SpotlightDemo extends DemoHost {
+    // Mouse and pen only: a touch has no hover, so a tap would flash the light.
+    pointer = new PointerController(this, { pointerTypes: ['mouse', 'pen'] })
+  }
+
+  defineDemo('effects-demo-spotlight', SpotlightDemo)
+</script>

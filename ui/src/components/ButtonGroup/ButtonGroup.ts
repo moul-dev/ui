@@ -5,6 +5,19 @@ import { buttonGroupStyles } from './ButtonGroup.styles'
 export type ButtonGroupOrientation = 'horizontal' | 'vertical'
 export type ButtonGroupSpacing = 'none' | 'sm' | 'md'
 
+/**
+ * Lays out related `moul-button`s in a row or a column, either attached into
+ * one pill (`spacing="none"`) or with a small gap, and can disable them all at
+ * once with `is-disabled`.
+ *
+ * Keyboard and screen readers: the group is not focusable and adds no keys;
+ * each button stays its own Tab stop. The host gets `role="group"` (unless a
+ * role is already set) and `aria-orientation`; give it a name with
+ * `aria-label`.
+ *
+ * Reduced motion: the group itself does not animate; each button handles its
+ * own press motion and reduced motion.
+ */
 export class MoulButtonGroup extends LitElement {
   static override styles = buttonGroupStyles
 

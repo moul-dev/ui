@@ -1,0 +1,66 @@
+---
+title: CanvasLoopController
+description: Pixel ratio, resizing, pausing and reduced motion for canvas loops.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import CanvasLoopDemo from '@/components/demos/effects/CanvasLoopDemo.astro';
+
+`CanvasLoopController` runs a `requestAnimationFrame` drawing loop for a canvas and handles the parts every canvas effect needs, so an effect only writes its `draw` function.
+
+- **Pixel ratio.** The backing store matches the screen's density, capped by `maxPixelRatio`, and follows the window to another screen.
+- **Resize.** A `ResizeObserver` keeps the canvas sharp at any size.
+- **Pausing.** The loop stops while the tab is hidden or the canvas is scrolled off screen, and resumes where it left off.
+- **Reduced motion.** A single still frame is drawn instead.
+
+<ComponentPreview>
+  <CanvasLoopDemo />
+</ComponentPreview>
+
+```ts
+import { html, css, LitElement } from 'lit'
+import { CanvasLoopController } from '@moul-dev/web-component/effects'
+
+class Particles extends LitElement {
+  loop = new CanvasLoopController(this, {
+    canvas: () => this.renderRoot.querySelector('canvas'),
+    draw: ({ context, width, height, time }) => {
+      context?.clearRect(0, 0, width, height)
+      // Draw in CSS pixels: a 2D context is already scaled.
+    },
+  })
+
+  static styles = css`
+    canvas { width: 100%; height: 100%; }
+  `
+  render() {
+    return html`<canvas aria-hidden="true"></canvas>`
+  }
+}
+```
+
+Give the canvas its size in CSS; the controller only sets its backing store.
+
+## Frames
+
+`draw` receives `canvas`, `context`, `width` and `height` in CSS pixels, `pixelRatio`, `time` (milliseconds the loop has run, not counting pauses), `delta` (milliseconds since the last frame, at most 100 so a long pause does not fling a simulation) and `frame`.
+
+## Options
+
+| Option | Default | Description |
+| :-- | :-- | :-- |
+| `canvas()` | required | The canvas, usually in the shadow root |
+| `context` | `'2d'` | `'2d'`, `'webgl'`, `'webgl2'`, or `'none'` for a library that makes its own |
+| `contextAttributes` | none | Passed to `getContext` |
+| `draw(frame)` | required | Draws one frame |
+| `resize(frame)` | none | Rebuild size-dependent state after a resize |
+| `maxPixelRatio` | `2` | Upper limit on the pixel ratio |
+| `fps` | display rate | Frames per second to aim for |
+| `reducedMotion` | `'still'` | `'still'` draws one frame and stops; `'run'` keeps animating |
+| `autoStart` | `true` | Start as soon as the canvas is ready |
+
+`start()`, `stop()` and `drawOnce()` control the loop from code, and `isRunning` reports it.
+
+## Reduced motion
+
+By default a single frame at time 0 is drawn and the loop stays stopped, and it switches back and forth if the user changes the setting while the page is open. Use `reducedMotion: 'run'` only when the movement is driven by the user, such as particles that follow the pointer.

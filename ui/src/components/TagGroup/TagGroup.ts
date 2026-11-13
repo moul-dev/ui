@@ -5,6 +5,20 @@ import { tagGroupStyles } from './TagGroup.styles'
 
 export type TagSelectionMode = 'none' | 'single' | 'multiple'
 
+/**
+ * A labelled set of `moul-tag` chips, for filters or chosen values. Set
+ * `selection-mode` to `single` or `multiple` to let a click toggle tags
+ * (tracked in `selected-keys` and reported by `selectionchange`), and
+ * `is-removable` to give every tag a remove button.
+ *
+ * Keyboard and screen readers: the group is not focusable and handles no keys;
+ * only each tag's remove button is in the tab order, so selecting tags needs a
+ * pointer. The host is a `role="group"`, or a `role="listbox"` when tags are
+ * selectable, named by `label`, which is also shown above the tags.
+ *
+ * Reduced motion: the group itself does not animate; each `moul-tag` handles
+ * its own press and removal motion.
+ */
 export class MoulTagGroup extends LitElement {
   static override styles = tagGroupStyles
 

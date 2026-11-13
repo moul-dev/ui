@@ -1,0 +1,36 @@
+---
+title: ច្រកចូល Effects (Effects entry point)
+description: ផ្លូវ import ទីពីរសម្រាប់ចលនា ដែលមិនត្រូវបានបញ្ចូលក្នុង build របស់កម្មវិធី។
+---
+
+Motion lives in its own entry point, `@moul-dev/web-component/effects`. An app that imports only `@moul-dev/web-component` ships none of it: the effects entry is built as a separate bundle, and a byte budget holds the main bundle to its size.
+
+```ts
+import '@moul-dev/web-component'
+import { PointerController } from '@moul-dev/web-component/effects'
+```
+
+Without a bundler, load the CDN build next to the main one:
+
+```html
+<script type="module" src="https://cdn.jsdelivr.net/npm/@moul-dev/web-component/dist/cdn/effects.js"></script>
+```
+
+## Controllers
+
+Six controllers do the work that pointer, scroll, text and canvas effects share. Each is a [reactive controller](https://lit.dev/docs/composition/controllers/): a Lit element uses it as is, and any other custom element can host it by calling the same four lifecycle hooks. The demos on these pages are plain custom elements for that reason.
+
+| Controller | What it gives |
+| :-- | :-- |
+| [`PointerController`](/km/docs/effects/pointer/) | Pointer position as CSS variables, written once per frame |
+| [`ScrollController`](/km/docs/effects/scroll/) | Scroll progress through native scroll timelines, with a script fallback |
+| [`InViewController`](/km/docs/effects/in-view/) | Starts an effect on entry and pauses its animations off screen |
+| [`DragController`](/km/docs/effects/drag/) | Pointer capture, release velocity and a spring release |
+| [`TextSplitController`](/km/docs/effects/text-split/) | Letters, words or lines, still read as one sentence |
+| [`CanvasLoopController`](/km/docs/effects/canvas-loop/) | Pixel ratio, resizing, pausing and reduced motion for canvas loops |
+
+`prefersReducedMotion()` and `watchReducedMotion(callback)` are exported too, for effects that check the setting themselves.
+
+## What every effect promises
+
+Each controller has a reduced-motion path, works in light and dark themes because it writes numbers rather than colours, and cleans up its listeners, observers and frames when its element leaves the page. Effect elements built on them follow the same [element checklist](https://github.com/moul-dev/ui/blob/main/AGENTS.md#element-checklist) as every other Moul element.

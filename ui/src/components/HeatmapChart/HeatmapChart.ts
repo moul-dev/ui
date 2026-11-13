@@ -120,6 +120,20 @@ function singularOf(unit: string): string {
  * calendar, or (`mode="hour"`) a weekday × hour-of-day punch card built from the
  * same timestamps. Values sum per cell, so raw events (no `value`) count themselves.
  *
+ * Keyboard and screen readers: every cell is reachable. The grid is a single
+ * tab stop that starts on the newest cell; `Arrow Left` and `Arrow Right` step
+ * a week (an hour in hour mode), `Arrow Up` and `Arrow Down` step a day, and
+ * `Home` and `End` jump to the first and last column of the row. A focused
+ * cell shows the same readout and fires the same `point-hover` as a hovered
+ * one. Screen readers get a `role="grid"` named after the unit (e.g.
+ * "Contributions by day") whose cells are labelled like "12 contributions,
+ * Wed, Oct 22, 2025"; the summary is plain text, while the month and weekday
+ * labels, legend and readout are hidden.
+ *
+ * Reduced motion: cells appear at once instead of popping in column by column
+ * (on first render and when `mode` changes), and the hover and focus rings and
+ * the readout switch instantly instead of fading.
+ *
  * @fires point-hover - A cell is hovered or focused; `detail` carries its value and label.
  * @fires point-leave - The pointer or focus left the grid.
  * @csspart base - The wrapper around the summary, grid, and legend.

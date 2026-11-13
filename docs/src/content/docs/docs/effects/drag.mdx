@@ -1,0 +1,69 @@
+---
+title: DragController
+description: Pointer capture, release velocity and a spring release.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import DragDemo from '@/components/demos/effects/DragDemo.astro';
+
+`DragController` turns presses on an element into a drag, measures how fast it was let go, and springs it to where it should rest. The offset is written as `--drag-x` and `--drag-y` in `px`, so the element moves itself in CSS.
+
+<ComponentPreview>
+  <DragDemo />
+</ComponentPreview>
+
+```ts
+import { html, css, LitElement } from 'lit'
+import { DragController } from '@moul-dev/web-component/effects'
+
+class SwipeCard extends LitElement {
+  drag = new DragController(this, {
+    axis: 'x',
+    // A long drag or a flick throws the card; anything else springs back.
+    release: ({ x, velocityX }) =>
+      Math.abs(x) > 120 || Math.abs(velocityX) > 600
+        ? { x: Math.sign(velocityX || x) * 420, y: 0 }
+        : { x: 0, y: 0 },
+  })
+
+  static styles = css`
+    :host {
+      translate: var(--drag-x, 0) 0;
+    }
+  `
+  render() {
+    return html`<slot></slot>`
+  }
+}
+```
+
+## Taps, scrolling and selection
+
+- A press becomes a drag only after `threshold` pixels, so a tap on a link or button inside still works, and the click that ends a real drag is swallowed.
+- On a single-axis drag the other axis is left to the browser: a vertical swipe over a horizontal carousel still scrolls the page. The controller sets `touch-action` on the handle unless your styles already do.
+- Text selection is blocked only while a drag is under way.
+
+## Options
+
+| Option | Default | Description |
+| :-- | :-- | :-- |
+| `handle` | the host | Element that starts a drag; can be in the shadow root |
+| `styleTarget` | the host | Element that receives the variables |
+| `axis` | `'both'` | `'x'`, `'y'` or `'both'` |
+| `bounds()` | none | `{ left, right, top, bottom }` limits, read when each drag starts |
+| `elastic` | `0.35` | How far the offset follows past a bound: 0 stops dead, 1 ignores it |
+| `threshold` | `4` | Pixels before a press becomes a drag |
+| `release(state)` | the origin | Where to rest; return `null` to stay, pulled back inside the bounds |
+| `spring` | stiffness 500, damping 35, mass 0.8 | The release spring |
+| `disabled()` | none | Ignore presses while it returns true |
+| `onStart`, `onMove`, `onEnd`, `onSettle` | none | Lifecycle callbacks; `onEnd` gets the resting point |
+
+`animateTo(point, velocity)` springs to a point from code and resolves when it settles; `jumpTo(point)` moves at once.
+
+## Keyboard
+
+Dragging is a pointer gesture. Give every draggable element a keyboard path to the same result: the demo card takes focus and throws itself with the arrow keys through `animateTo`.
+
+## Reduced motion
+
+Under reduced motion the release jumps straight to its resting point instead of springing. The drag itself still follows the pointer, because that movement is the user's own.

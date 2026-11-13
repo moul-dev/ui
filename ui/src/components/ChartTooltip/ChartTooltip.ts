@@ -27,6 +27,23 @@ export interface ChartTooltipShowOptions {
   valueFormatter?: (value: unknown) => string
 }
 
+/**
+ * A floating readout for one chart point (colour dot, label, value) or, given
+ * a `payload` array, one row per series, shown as a manual popover in the top
+ * layer and centred 8px above its `x`/`y`. Charts do not create it: call
+ * `show()` from a chart's `point-hover` listener and `hide()` on `point-leave`.
+ *
+ * Keyboard and screen readers: not focusable and ignores the pointer, so it
+ * takes no keys. It has no `role="tooltip"`, live region or
+ * `aria-describedby` link, so a screen reader does not announce it when it
+ * opens; keep what it shows available elsewhere on the page.
+ *
+ * Reduced motion: when shown it scales up from 97% and fades in on a quick
+ * spring; under reduced motion it appears at once. Hiding is always instant,
+ * and a new `x`/`y` moves it in one jump, never a glide.
+ *
+ * @slot - Extra content below the readout.
+ */
 export class MoulChartTooltip extends LitElement {
   static override styles = chartTooltipStyles
 

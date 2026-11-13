@@ -1,0 +1,139 @@
+---
+/**
+ * DragController demo: a card you swipe away. A short or slow drag springs
+ * back; a long one or a flick throws it off, carrying the release velocity.
+ */
+---
+
+<div class="swipe-stage">
+  <effects-demo-swipe
+    tabindex="0"
+    role="group"
+    aria-roledescription="swipeable card"
+    aria-label="Swipe me away, or press the left or right arrow key"
+  >
+    <strong>Swipe me away</strong>
+    <span>Drag sideways and let go. With the keyboard, press ← or →.</span>
+    <a href="#drag-demo-link">A link still works on a tap</a>
+  </effects-demo-swipe>
+  <p class="swipe-status" aria-live="polite"></p>
+</div>
+
+<style is:global>
+  .swipe-stage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-3);
+    width: 100%;
+    overflow: hidden;
+    padding: var(--spacing-2) 0;
+  }
+
+  effects-demo-swipe {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+    width: min(100%, 20rem);
+    padding: var(--spacing-6);
+    border-radius: var(--radius-2xl);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-surface);
+    cursor: grab;
+    user-select: none;
+    translate: var(--drag-x, 0) 0;
+    rotate: calc(var(--drag-x, 0px) / 40px * 1deg);
+    opacity: calc(1 - min(1, abs(var(--drag-x, 0px)) / 360px));
+  }
+
+  effects-demo-swipe[data-dragging] {
+    cursor: grabbing;
+  }
+
+  effects-demo-swipe:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+
+  effects-demo-swipe > span {
+    color: var(--color-fg-subtle);
+  }
+
+  .swipe-status {
+    min-height: 1.5em;
+    margin: 0;
+    font-size: var(--font-size-sm);
+    color: var(--color-fg-subtle);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    effects-demo-swipe {
+      rotate: none;
+    }
+  }
+</style>
+
+<script>
+  import { DragController, type DragState } from '@moul-dev/web-component/effects'
+  import { DemoHost, defineDemo } from './demo-host'
+
+  const THROW_DISTANCE = 120
+  const THROW_SPEED = 600
+  const OFF_STAGE = 420
+
+  class SwipeDemo extends DemoHost {
+    drag = new DragController(this, {
+      axis: 'x',
+      release: (state) => this.restingPoint(state),
+      onEnd: (_state, to) => {
+        if (to.x !== 0) this.announce(`Thrown ${to.x > 0 ? 'right' : 'left'}`)
+      },
+      onSettle: (state) => {
+        // Bring a thrown card back so the demo can run again.
+        if (state.x !== 0) setTimeout(() => this.drag.animateTo({ x: 0, y: 0 }), 500)
+      },
+    })
+
+    connectedCallback(): void {
+      super.connectedCallback()
+      this.addEventListener('keydown', this.handleKey)
+      this.querySelector('a')?.addEventListener('click', (event) => {
+        event.preventDefault()
+        this.announce('Link pressed')
+      })
+    }
+
+    disconnectedCallback(): void {
+      super.disconnectedCallback()
+      this.removeEventListener('keydown', this.handleKey)
+    }
+
+    protected override update(): void {
+      this.toggleAttribute('data-dragging', this.drag.state.isDragging)
+    }
+
+    private restingPoint(state: DragState) {
+      const isThrown =
+        Math.abs(state.x) > THROW_DISTANCE || Math.abs(state.velocityX) > THROW_SPEED
+      if (!isThrown) return { x: 0, y: 0 }
+      const direction = Math.sign(state.velocityX || state.x)
+      return { x: direction * OFF_STAGE, y: 0 }
+    }
+
+    // Dragging is pointer-only, so the keyboard gets the same result directly.
+    private readonly handleKey = (event: KeyboardEvent): void => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return
+      event.preventDefault()
+      const direction = event.key === 'ArrowRight' ? 1 : -1
+      this.announce(`Thrown ${direction > 0 ? 'right' : 'left'}`)
+      void this.drag.animateTo({ x: direction * OFF_STAGE, y: 0 }, { x: direction * 1200 })
+    }
+
+    private announce(message: string): void {
+      const status = this.parentElement?.querySelector('.swipe-status')
+      if (status) status.textContent = message
+    }
+  }
+
+  defineDemo('effects-demo-swipe', SwipeDemo)
+</script>

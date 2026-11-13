@@ -6,6 +6,20 @@ import { switchStyles } from './Switch.styles'
 
 export type SwitchSize = 'sm' | 'md' | 'lg'
 
+/**
+ * A form-associated on/off switch for a setting such as enabling
+ * notifications; it submits its `value` when on and comes in `sm`, `md` and
+ * `lg` sizes.
+ *
+ * Keyboard and screen readers: the host takes focus (`tabindex="0"`, out of
+ * the tab order when disabled) and `Space` or `Enter` toggles it. It has
+ * `role="switch"` with `aria-checked` and `aria-disabled`, and its name
+ * comes from the slotted text or the `label` attribute, or from
+ * `aria-label`/`aria-labelledby` on the host.
+ *
+ * Reduced motion: the thumb jumps to the other end instead of sliding, and
+ * the track colour changes without fading.
+ */
 export class MoulSwitch extends LitElement {
   static override styles = switchStyles
   static readonly formAssociated = true

@@ -18,6 +18,21 @@ export interface PercentageCircleProps {
   valueFormatter?: (value: number) => string
 }
 
+/**
+ * A ring filled clockwise to a 0–100 percentage (clamped), with the value text
+ * and an optional label in its centre, for compact indicators such as uptime
+ * or battery level. The default slot replaces the value text.
+ *
+ * Keyboard and screen readers: not focusable. The host has
+ * `role="progressbar"` with `aria-valuemin="0"`, `aria-valuemax="100"` and
+ * `aria-valuenow` set to the clamped value; its accessible name is the `label`
+ * attribute (copied to `aria-label`), and slotted content does not name it.
+ * `valueFormatter` text is not passed on as `aria-valuetext`.
+ *
+ * Reduced motion: the arc never animates (it redraws at each new value); its
+ * only transition, a 300ms colour fade when `tone` or `color` changes, is
+ * switched off.
+ */
 export class MoulPercentageCircle extends LitElement {
   static override styles = percentageCircleStyles
 
