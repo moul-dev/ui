@@ -1,0 +1,136 @@
+---
+title: Word Rotate
+description: One word in a sentence that cycles through a list.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import LandingKitDemo from '@/components/demos/LandingKitDemo.astro';
+
+`<moul-word-rotate>` swaps one word in a sentence for the next in a list, so a heading can say several things in the space of one. The old word slides up and out as the next one rises in, and the box glides to the new word's width, so the rest of the sentence moves with it instead of jumping.
+
+<ComponentPreview stack minHeight="160px">
+  <moul-typography variant="h2">Build <moul-word-rotate words='["dashboards", "landing pages", "admin tools", "AI chat"]'>dashboards</moul-word-rotate> in plain HTML</moul-typography>
+  <LandingKitDemo />
+</ComponentPreview>
+
+It lives in the effects entry, with the rest of the landing kit:
+
+```js
+import '@moul-dev/web-component/effects'
+```
+
+Give it the words as a JSON array, and put the first word inside it. That word is what readers see until the script loads, and whenever `words` is empty.
+
+```html
+<h1>
+  Build
+  <moul-word-rotate words='["dashboards", "landing pages", "admin tools"]'>dashboards</moul-word-rotate>
+  in plain HTML
+</h1>
+```
+
+In JavaScript, `words` is an ordinary array property:
+
+```js
+document.querySelector('moul-word-rotate').words = ['dashboards', 'landing pages']
+```
+
+## Effects
+
+`effect` sets how one word gives way to the next. `slide` (the default) moves the old word up and out while the new one rises from below, clipped to the line. `fade` crossfades them, `blur` fades through a soft blur, and `flip` turns them over like a drum rolling upwards.
+
+<ComponentPreview stack minHeight="240px">
+  <div class="demo-stack">
+    <span class="demo-label">slide</span>
+    <moul-typography variant="h4">Ship <moul-word-rotate words='["fast", "safely", "often"]'>fast</moul-word-rotate> every day</moul-typography>
+    <span class="demo-label">fade</span>
+    <moul-typography variant="h4">Ship <moul-word-rotate effect="fade" words='["fast", "safely", "often"]'>fast</moul-word-rotate> every day</moul-typography>
+    <span class="demo-label">blur</span>
+    <moul-typography variant="h4">Ship <moul-word-rotate effect="blur" words='["fast", "safely", "often"]'>fast</moul-word-rotate> every day</moul-typography>
+    <span class="demo-label">flip</span>
+    <moul-typography variant="h4">Ship <moul-word-rotate effect="flip" words='["fast", "safely", "often"]'>fast</moul-word-rotate> every day</moul-typography>
+  </div>
+</ComponentPreview>
+
+```html
+<moul-word-rotate effect="blur" words='["fast", "safely", "often"]'>fast</moul-word-rotate>
+```
+
+## Timing
+
+`interval` is how long each word stays, in milliseconds, counted from when it starts to come in (2500 by default). `duration` is how long a change takes (450 by default).
+
+<ComponentPreview stack minHeight="120px">
+  <moul-typography variant="h4">Logs you can <moul-word-rotate interval="1200" duration="300" words='["search", "filter", "share", "keep"]'>search</moul-word-rotate></moul-typography>
+</ComponentPreview>
+
+```html
+<moul-word-rotate interval="1200" duration="300" words='["search", "filter", "share", "keep"]'>search</moul-word-rotate>
+```
+
+## A pill behind the word
+
+The `base` part is the box around the word. Give it a background, padding and a radius and the pill grows and shrinks with each word, as the rest of the sentence does. The `word` part is each word inside it.
+
+```css
+moul-word-rotate::part(base) {
+  padding: 0 0.35em;
+  border-radius: var(--radius-md);
+  background: var(--color-accent-soft);
+  color: var(--color-accent-soft-fg);
+}
+```
+
+## Pausing
+
+The words stop changing while the pointer is over them, while focus is inside the element, and while it is off screen. `is-paused` stops it until removed, so a page can offer a pause button for anything that keeps moving:
+
+```js
+const rotate = document.querySelector('moul-word-rotate')
+pauseButton.addEventListener('click', () => {
+  rotate.isPaused = !rotate.isPaused
+})
+```
+
+## Jumping and listening
+
+`index` is the position of the current word in `words`. Set it to jump to a word, which then stays a full `interval`. Each time the element moves on by itself it fires `wordchange`, with the new word's `index` and the `word` itself in `detail`; setting `index` does not fire it.
+
+```js
+rotate.addEventListener('wordchange', (event) => {
+  screenshot.src = `/shots/${event.detail.index}.png`
+})
+rotate.index = 2
+```
+
+## Accessibility
+
+`<moul-word-rotate>` is never focusable. The moving words are hidden from screen readers, which read every word once instead, joined with commas: "Build [dashboards] in plain HTML" reads as "Build dashboards, landing pages, admin tools in plain HTML". That copy never changes, so nothing is announced each time a word does.
+
+Content that moves by itself for more than five seconds needs a way to pause it ([WCAG 2.2.2](https://www.w3.org/WAI/WCAG22/Understanding/pause-stop-hide.html)). Hovering pauses the words, and `is-paused` lets you add a pause button for keyboard and touch users.
+
+Under `prefers-reduced-motion: reduce` the words still change every `interval`, but each one replaces the last in place, with no slide, fade, blur, flip or change of width.
+
+## Attributes and properties
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `words` | `words` | `string[]` (a JSON array in HTML) | `[]` |
+| `effect` | `effect` | `'slide' \| 'fade' \| 'blur' \| 'flip'` | `'slide'` |
+| `interval` | `interval` | `number` (ms) | `2500` |
+| `duration` | `duration` | `number` (ms) | `450` |
+| `index` | `index` | `number` | `0` |
+| `is-paused` | `isPaused` | `boolean` | `false` |
+
+| Event | Detail | Description |
+| :-- | :-- | :-- |
+| `wordchange` | `{ index: number, word: string }` | The element moved on to the next word by itself. |
+
+| Slot | Description |
+| :-- | :-- |
+| (default) | Text shown until the script loads, and whenever `words` is empty. |
+
+| Part | Description |
+| :-- | :-- |
+| `base` | The box around the word. |
+| `word` | A word; during a change there are two, the one leaving and the one arriving. |

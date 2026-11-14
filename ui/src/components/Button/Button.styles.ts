@@ -13,6 +13,7 @@ export const buttonStyles = [
       user-select: none;
       -webkit-tap-highlight-color: transparent;
       --_press-scale: var(--press-scale, 0.97);
+      --_tint: var(--color-accent);
       -webkit-user-select: none;
       cursor: pointer;
     }
@@ -141,6 +142,11 @@ export const buttonStyles = [
       --_fg: var(--color-danger-soft-fg);
     }
 
+    /* The glow and pulse colour */
+    :host([variant^="danger"]) {
+      --_tint: var(--color-danger);
+    }
+
     /* Result tints, on the inner button so they override the host's fill trio */
     .success {
       --_tone: var(--color-success);
@@ -184,6 +190,14 @@ export const buttonStyles = [
       :host(:not([is-disabled]):not([is-pending]):not([state="pending"]))
         [part~="button"]:hover {
         background-color: var(--_bg-hover);
+      }
+
+      .idle:hover .swap > slot {
+        translate: 0 -100%;
+      }
+
+      .idle:hover .hover {
+        translate: none;
       }
     }
 
@@ -260,6 +274,127 @@ export const buttonStyles = [
       transition: opacity var(--duration-fast, 150ms) ease;
     }
 
+    /* Hover swap: label and hover content share one cell, full height */
+    .hover {
+      display: none;
+      translate: 0 100%;
+    }
+
+    .swap {
+      display: inline-grid;
+      align-self: stretch;
+      align-items: stretch;
+      overflow: clip;
+    }
+
+    .swap > * {
+      grid-area: 1 / 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: inherit;
+      transition: translate var(--duration-base, 250ms) var(--ease-out, ease-out);
+    }
+
+    .idle:focus-visible .swap > slot {
+      translate: 0 -100%;
+    }
+
+    .idle:focus-visible .hover {
+      translate: none;
+    }
+
+    /* Effects: ring on ::before, rainbow glow under it on :host::before, pulse on ::after */
+    [part~="button"]::before,
+    [part~="button"]::after,
+    :host::before {
+      position: absolute;
+      inset: -1px;
+      border-radius: inherit;
+      pointer-events: none;
+    }
+
+    :host([effect="shimmer"]) [part~="button"]::before {
+      --_stops: transparent 70%, var(--button-effect-color, var(--_fg)) 90%,
+        transparent 0;
+    }
+
+    :host([effect="rainbow"]) {
+      isolation: isolate;
+      --_stops: var(--color-chart-1), var(--color-chart-2), var(--color-chart-3),
+        var(--color-chart-4), var(--color-chart-5), var(--color-chart-1);
+    }
+
+    :host(:is([effect="shimmer"], [effect="rainbow"])) [part~="button"]::before,
+    :host([effect="rainbow"])::before {
+      content: "";
+      background: conic-gradient(
+        from var(--moul-button-angle, 0deg),
+        var(--_stops)
+      );
+      animation: moul-button-turn var(--button-effect-duration, 3s) linear
+        infinite;
+    }
+
+    :host(:is([effect="shimmer"], [effect="rainbow"])) [part~="button"]::before {
+      padding: 2px;
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+    }
+
+    :host([effect="rainbow"])::before {
+      inset: 40% 8% -16%;
+      z-index: -1;
+      filter: blur(0.75rem);
+      opacity: 0.7;
+    }
+
+    :host([effect="neon"]) [part~="button"]::before {
+      --_neon: var(--button-effect-color, var(--_tint));
+      content: "";
+      border: 1px solid var(--_neon);
+      box-shadow:
+        0 0 0.75rem var(--_neon),
+        inset 0 0 0.5rem color-mix(in oklab, var(--_neon) 50%, transparent);
+      animation: moul-button-breathe var(--button-effect-duration, 3s)
+        ease-in-out infinite;
+    }
+
+    :host([is-disabled]) [part~="button"]::before,
+    :host([is-disabled])::before {
+      animation: none;
+    }
+
+    :host([is-pulsing]:not([is-disabled])) .idle::after {
+      content: "";
+      animation: moul-button-pulse var(--button-pulse-duration, 1.5s) ease-out
+        infinite;
+    }
+
+    @keyframes moul-button-turn {
+      to {
+        --moul-button-angle: 1turn;
+      }
+    }
+
+    @keyframes moul-button-breathe {
+      50% {
+        opacity: 0.4;
+      }
+    }
+
+    /* color-mix() lets Chrome interpolate tokens with calc() channels */
+    @keyframes moul-button-pulse {
+      from {
+        box-shadow: 0 0 0 0
+          color-mix(in oklab, var(--button-pulse-color, var(--_tint)) 70%, transparent);
+      }
+      to {
+        box-shadow: 0 0 0 0.6em transparent;
+      }
+    }
+
     .sr-only {
       position: absolute;
       width: 1px;
@@ -286,13 +421,21 @@ export const buttonStyles = [
     @media (prefers-reduced-motion: reduce) {
       [part~="button"],
       .icon,
-      .content {
+      .content,
+      .swap > * {
         transition: none;
       }
 
       :host(:not([is-disabled]):not([is-pending]):not([state="pending"]))
         [part~="button"]:active {
         transform: none;
+      }
+
+      /* A still ring, a steady neon glow, and no pulse */
+      [part~="button"]::before,
+      [part~="button"]::after,
+      :host::before {
+        animation: none !important;
       }
     }
   `,

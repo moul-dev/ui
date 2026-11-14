@@ -1,0 +1,28 @@
+---
+/**
+ * Landing kit demo wiring, so the MDX previews stay plain markup. Loads the
+ * effects entry, where the landing kit elements live, and makes a press on
+ * any element with `data-replay="id another-id"` call `play()` on each
+ * element named, so a reader can watch an effect again after it has run.
+ * Include it once per page.
+ */
+---
+
+<script>
+  import '@moul-dev/web-component/effects'
+
+  document.addEventListener('press', (event) => {
+    const trigger = (event.target as Element | null)?.closest?.<HTMLElement>(
+      '[data-replay]',
+    )
+    if (!trigger) return
+    for (const id of (trigger.dataset.replay ?? '').split(/\s+/)) {
+      const target = id
+        ? (document.getElementById(id) as
+            | (HTMLElement & { play?: () => unknown })
+            | null)
+        : null
+      if (typeof target?.play === 'function') void target.play()
+    }
+  })
+</script>

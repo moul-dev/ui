@@ -1,0 +1,137 @@
+---
+title: Marquee (សមាសភាគ)
+description: ឯកសារណែនាំសម្រាប់សមាសភាគ Marquee Web Component
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import LandingKitDemo from '@/components/demos/LandingKitDemo.astro';
+
+`<moul-marquee>` moves a row of items past at a steady speed and loops them without a seam, as in a "trusted by" strip of logos or a wall of testimonials. Put the items in it as child elements; it repeats them as often as it needs to fill its length.
+
+<ComponentPreview stack>
+  <moul-marquee fade-edges style="font-size: 1.125rem; font-weight: 600; color: var(--color-muted)">
+    <span style="display: inline-flex; align-items: center; gap: 0.5rem"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor" /></svg>Brightloom</span>
+    <span style="display: inline-flex; align-items: center; gap: 0.5rem"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4" fill="currentColor" /></svg>Tidewell</span>
+    <span style="display: inline-flex; align-items: center; gap: 0.5rem"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M12 2 22 20H2Z" fill="currentColor" /></svg>Cobaltine</span>
+    <span style="display: inline-flex; align-items: center; gap: 0.5rem"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M4 4h16v4H8v4h10v4H8v4H4Z" fill="currentColor" /></svg>Fernforge</span>
+    <span style="display: inline-flex; align-items: center; gap: 0.5rem"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><circle cx="8" cy="12" r="6" fill="currentColor" /><circle cx="16" cy="12" r="6" fill="currentColor" opacity="0.5" /></svg>Quillstone</span>
+    <span style="display: inline-flex; align-items: center; gap: 0.5rem"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20V2Z" fill="currentColor" /></svg>Sundial Works</span>
+  </moul-marquee>
+  <LandingKitDemo />
+</ComponentPreview>
+
+It lives in the effects entry, with the rest of the landing kit:
+
+```js
+import '@moul-dev/web-component/effects'
+```
+
+```html
+<moul-marquee fade-edges>
+  <img src="/logos/brightloom.svg" alt="Brightloom" height="24" />
+  <img src="/logos/tidewell.svg" alt="Tidewell" height="24" />
+  <img src="/logos/cobaltine.svg" alt="Cobaltine" height="24" />
+</moul-marquee>
+```
+
+The marquee is as wide as its container, never as wide as its items. Make each item an element, such as an `<img>`, a `<span>` or a card: text that sits directly in the marquee, outside an element, is shown once but not repeated, so the loop would show a gap.
+
+## Direction
+
+`direction` is the way the items move. `start` (the default) moves them toward the inline start, which is leftward in left-to-right text and rightward in right-to-left text; `end` moves them the other way. `up` and `down` make a column, which needs a height: set one on the marquee, as below, or let a grid or flex parent stretch it. A column never takes its height from its items, so without one it has none.
+
+<ComponentPreview stack>
+  <moul-marquee direction="end" style="font-weight: 600; color: var(--color-muted)">
+    <span>Previews on every push</span>
+    <span>Rollbacks in one click</span>
+    <span>Logs you can search</span>
+    <span>Alerts that wait for you</span>
+  </moul-marquee>
+  <moul-marquee direction="up" fade-edges pause-on-hover style="height: 18rem; max-width: 20rem">
+    <moul-card><moul-card-body>"We stopped dreading Fridays." Dara, platform lead</moul-card-body></moul-card>
+    <moul-card><moul-card-body>"The preview link settles every design review." Sophea, designer</moul-card-body></moul-card>
+    <moul-card><moul-card-body>"Rollbacks used to take a meeting." Vannak, engineer</moul-card-body></moul-card>
+  </moul-marquee>
+</ComponentPreview>
+
+```html
+<moul-marquee direction="end">…</moul-marquee>
+
+<moul-marquee direction="up" style="height: 18rem">
+  <moul-card>…</moul-card>
+  <moul-card>…</moul-card>
+</moul-marquee>
+```
+
+## Speed and spacing
+
+`speed` is how fast the items move, in pixels per second (40 by default), so a long row takes longer to come round than a short one at the same speed. `--marquee-gap` is the space between items, and between the last item and the first of the next round; it defaults to `var(--spacing-8)`.
+
+<ComponentPreview stack>
+  <moul-marquee speed="90" style="--marquee-gap: 1rem">
+    <moul-badge>Fast</moul-badge>
+    <moul-badge>Safe</moul-badge>
+    <moul-badge>Simple</moul-badge>
+    <moul-badge>Open</moul-badge>
+  </moul-marquee>
+</ComponentPreview>
+
+```html
+<moul-marquee speed="90" style="--marquee-gap: 1rem">…</moul-marquee>
+```
+
+## Pausing
+
+`pause-on-hover` holds the items still while the pointer is over the marquee, which suits cards a reader may want to finish. `is-paused` holds them still until you remove it. The marquee also pauses on its own while focus is inside it and while it is off screen, so it costs nothing when nobody can see it.
+
+```html
+<moul-marquee pause-on-hover>…</moul-marquee>
+<moul-marquee is-paused>…</moul-marquee>
+```
+
+## Fading the edges
+
+`fade-edges` fades the items out at both ends, so they slip in and out of view instead of being cut off. In a column the top and bottom fade.
+
+```html
+<moul-marquee fade-edges>…</moul-marquee>
+```
+
+## How the loop works
+
+To loop without a seam the marquee needs the items more than once. It clones them and adds the clones as light-DOM siblings of your items, after them, so your page's CSS styles the clones exactly as it styles the originals. Each clone has `aria-hidden="true"`, `inert` and `data-marquee-copy`, and loses any `id` so it never clashes with the original. The marquee makes as many sets as it needs to cover its length once more, makes more or fewer when its size changes, and rebuilds them when items are added or removed or an item's text or attributes change. It removes them all when it leaves the page. When a resize calls for more or fewer sets, the row starts again from its beginning, so every set moves in step.
+
+Keep the items still. An item whose text or attributes change all the time, such as a running number ticker, makes the marquee rebuild its clones on every change.
+
+In React, Vue or any framework that renders the items, the framework owns them and the marquee only adds the clones beside them. Render the items as normal and update them as normal; the marquee notices and makes new clones. Clones do not carry your event listeners, but since they are inert nothing in them can be clicked or focused. Style a clone differently, if you ever need to, with `[data-marquee-copy]`.
+
+## Accessibility
+
+`<moul-marquee>` is never focusable and adds no role. Screen readers read the items once, in order, because every clone is `aria-hidden`. Clones are `inert` too, so a link in the strip takes focus once, not once per clone.
+
+Any focus inside the marquee pauses it. Focus from the keyboard also returns the row to its start and lets it scroll, so each item a keyboard user tabs to is in view; the movement starts again from the beginning once focus leaves. A list of logos with no links in it has nothing to focus, so the logos' `alt` text carries their meaning.
+
+Under `prefers-reduced-motion: reduce` nothing moves and no clones are made. The row scrolls by hand instead, with a scrollbar, so every item stays within reach, and the edges do not fade.
+
+## Attributes and properties
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `direction` | `direction` | `'start' \| 'end' \| 'up' \| 'down'` | `'start'` |
+| `speed` | `speed` | `number` (px per second) | `40` |
+| `pause-on-hover` | `pauseOnHover` | `boolean` | `false` |
+| `fade-edges` | `fadeEdges` | `boolean` | `false` |
+| `is-paused` | `isPaused` | `boolean` | `false` |
+
+| Slot | Description |
+| :-- | :-- |
+| (default) | The items, each one an element. |
+
+| Part | Description |
+| :-- | :-- |
+| `track` | The strip that holds the groups; it scrolls under reduced motion. |
+| `group` | One set of the items: yours, or one set of clones. Every group moves. |
+
+| CSS property | Description |
+| :-- | :-- |
+| `--marquee-gap` | Space between the items and between one round and the next. Defaults to `var(--spacing-8)`. |

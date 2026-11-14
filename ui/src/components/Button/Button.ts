@@ -22,8 +22,25 @@ export type ButtonType = 'button' | 'submit' | 'reset'
 
 export type ButtonState = 'idle' | 'pending' | 'success' | 'error'
 
+/** An animated edge: a travelling spark, a flowing rainbow, or a breathing glow. */
+export type ButtonEffect = 'shimmer' | 'rainbow' | 'neon'
+
 /** The `moul-icon-morph` name for each state; these three morph into each other. */
 const STATE_ICONS = { pending: 'loader', success: 'check', error: 'error' }
+
+// The effect ring turns by animating this angle. Shadow roots ignore
+// `@property`, so it is registered once here; where registration is missing
+// (or the page already did it) the ring simply stays still.
+try {
+  CSS.registerProperty({
+    name: '--moul-button-angle',
+    syntax: '<angle>',
+    inherits: false,
+    initialValue: '0deg',
+  })
+} catch {
+  // Already registered, or the browser cannot register properties.
+}
 
 /**
  * A button for actions, in seven variants (primary, secondary, tertiary,
@@ -38,7 +55,12 @@ const STATE_ICONS = { pending: 'loader', success: 'check', error: 'error' }
  * the width follows. `run(task)` does all of this for a promise: pending
  * while it runs, then success or error for `state-duration` milliseconds. It
  * resolves with the task's value and re-throws its error, so callers must
- * catch it. `is-pending` is the same as `state="pending"`.
+ * catch it. `is-pending` is the same as `state="pending"`. For landing pages,
+ * `effect` animates the edge (`shimmer`, a spark that travels round it;
+ * `rainbow`, a flowing border in the chart colours with a soft glow beneath;
+ * `neon`, a glow that breathes), `is-pulsing` sends a soft ring outward to
+ * draw the eye, and content in the `hover` slot slides in as the label slides
+ * away on hover or keyboard focus.
  *
  * Keyboard and screen readers: focus goes to a native `<button>` in the shadow
  * root, so Tab reaches it and Enter or Space press it. `is-disabled` disables
@@ -51,13 +73,19 @@ const STATE_ICONS = { pending: 'loader', success: 'check', error: 'error' }
  * `error-label` ("Failed"). The name is the slotted content, or a state slot's
  * while it shows: an `aria-label` or `aria-labelledby` on the host only
  * silences the `is-icon` dev warning and is not copied to the inner button.
- * There is no link mode; use `moul-link` for navigation.
+ * The `hover` slot is decoration and hidden from screen readers, so the name
+ * stays the label; keyboard focus (`:focus-visible`) shows the swap as hover
+ * does. Effects and the pulse are visual only. There is no link mode; use
+ * `moul-link` for navigation.
  *
  * Reduced motion: the button scales down slightly while pressed; hover,
  * press, focus and state colours fade; the state icon grows in, morphs
- * between states and folds away; and a label change animates the width.
- * Under reduced motion there is no press scale and no fade, the icon and the
- * width change at once, and the loader pulses instead of spinning.
+ * between states and folds away; a label change animates the width; the
+ * effect ring turns or breathes, the pulse ring grows outward, and the hover
+ * swap slides. Under reduced motion there is no press scale and no fade, the
+ * icon and the width change at once, and the loader pulses instead of
+ * spinning; the `shimmer` and `rainbow` rings hold still, `neon` glows
+ * steadily, there is no pulse, and the hover swap changes at once.
  *
  * @slot - The label.
  * @slot prefix - Content before the label, such as an icon.
@@ -65,12 +93,18 @@ const STATE_ICONS = { pending: 'loader', success: 'check', error: 'error' }
  * @slot pending - Replaces the label while pending, such as "Saving…".
  * @slot success - Replaces the label in `success`, such as "Saved"; its text is also announced.
  * @slot error - Replaces the label in `error`, such as "Retry"; its text is also announced.
+ * @slot hover - Slides in from below as the label slides away, on hover and keyboard focus, while idle. Decoration: hidden from screen readers.
  * @fires press - On activation by pointer, Enter or Space, unless disabled or pending; `detail.originalEvent` is the `click`.
  * @csspart button - The native `<button>`.
  * @csspart icon - The box around the state icon (a `moul-icon-morph`); it has no width in `idle`.
  * @csspart prefix - The `prefix` slot.
  * @csspart content - The box around the label, whose width animates when the label changes.
+ * @csspart hover - The box around the `hover` slot, stacked with the label inside `content`.
  * @csspart suffix - The `suffix` slot.
+ * @cssprop --button-effect-duration - One cycle of the `effect`: a turn of the ring, or a breath of the glow. Defaults to `3s`.
+ * @cssprop --button-effect-color - The `shimmer` spark (defaults to the text colour) and the `neon` glow (defaults to the accent, or the danger colour on the danger variants).
+ * @cssprop --button-pulse-color - The pulse ring. Defaults to the accent, or the danger colour on the danger variants.
+ * @cssprop --button-pulse-duration - One pulse. Defaults to `1.5s`.
  */
 export class MoulButton extends LitElement {
   static override styles = buttonStyles
@@ -87,6 +121,8 @@ export class MoulButton extends LitElement {
     isIcon: { type: Boolean, reflect: true, attribute: 'is-icon' },
     isDisabled: { type: Boolean, reflect: true, attribute: 'is-disabled' },
     isPending: { type: Boolean, reflect: true, attribute: 'is-pending' },
+    effect: { type: String, reflect: true },
+    isPulsing: { type: Boolean, reflect: true, attribute: 'is-pulsing' },
   }
 
   declare variant: ButtonVariant
@@ -105,6 +141,13 @@ export class MoulButton extends LitElement {
   declare isIcon: boolean
   declare isDisabled: boolean
   declare isPending: boolean
+  /**
+   * An animated edge: `shimmer`, `rainbow` or `neon`. Unset (the default) or
+   * any other value draws none. It holds still while disabled.
+   */
+  declare effect: ButtonEffect | undefined
+  /** Sends a soft ring outward from the button, over and over, while it is idle and enabled. */
+  declare isPulsing: boolean
 
   public pressController: PressController
 
@@ -133,6 +176,7 @@ export class MoulButton extends LitElement {
     this.isIcon = false
     this.isDisabled = false
     this.isPending = false
+    this.isPulsing = false
 
     // Press feedback is the stylesheet's :active scale; this tracks state only.
     this.pressController = new PressController(this, {
@@ -326,6 +370,17 @@ export class MoulButton extends LitElement {
     }
   }
 
+  /** Whether the `hover` slot has content; read from the children so it holds on the first render too. */
+  private get hasHover(): boolean {
+    return Array.from(this.children).some(
+      (child) => child.getAttribute('slot') === 'hover',
+    )
+  }
+
+  private readonly handleHoverSlotChange = (): void => {
+    this.requestUpdate()
+  }
+
   protected override render() {
     const state = this.currentState
     const label = html`<slot></slot>`
@@ -346,13 +401,16 @@ export class MoulButton extends LitElement {
           }
         </span>
         <slot name="prefix" part="prefix"></slot>
-        <span part="content" class="content">
+        <span part="content" class=${this.hasHover ? 'content swap' : 'content'}>
           ${
             state === 'idle'
               ? label
               : // The state's slot, falling back to the label when it is empty.
                 html`<slot name=${state}>${label}</slot>`
           }
+          <span part="hover" class="hover" aria-hidden="true">
+            <slot name="hover" @slotchange=${this.handleHoverSlotChange}></slot>
+          </span>
         </span>
         <slot name="suffix" part="suffix"></slot>
       </button>

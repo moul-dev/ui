@@ -1,0 +1,126 @@
+---
+title: Scroll Progress
+description: A thin bar that fills as the page, or a scroll container, scrolls.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import LandingKitDemo from '@/components/demos/LandingKitDemo.astro';
+
+`<moul-scroll-progress>` is a thin bar that fills from the inline start as the reader scrolls, so a long article or a landing page shows how far through it they are. On its own it follows the page, fixed along the top of the viewport; with `for` it follows a scroll container instead. Scroll the box below.
+
+<ComponentPreview>
+  <div id="scroll-progress-demo" style="width: 100%; max-width: 28rem; height: 14rem; overflow: auto; border: 1px solid var(--color-border); border-radius: var(--radius-xl); background: var(--color-surface)">
+    <moul-scroll-progress for="scroll-progress-demo" placement="inline" style="position: sticky; top: 0"></moul-scroll-progress>
+    <div style="display: grid; gap: 0.75rem; padding: 1rem 1.25rem">
+      <p>Every push builds a preview. The preview gets its own address, so a reviewer can open the change without checking out the branch.</p>
+      <p>Checks run against the preview, not a copy of it. If a check fails, the preview stays up so you can see what broke.</p>
+      <p>Merging promotes the preview. Nothing is rebuilt: the files that passed review are the files that go live.</p>
+      <p>A rollback is the same move in reverse. The previous release is still built, so going back takes as long as changing a pointer.</p>
+      <p>Logs follow the release. Each request is tagged with the release that served it, so a spike in errors points at a commit.</p>
+      <p>That is the whole loop: preview, check, promote, and a way back. Scroll up again and the bar empties as you go.</p>
+    </div>
+  </div>
+  <LandingKitDemo />
+</ComponentPreview>
+
+It lives in the effects entry, with the rest of the landing kit:
+
+```js
+import '@moul-dev/web-component/effects'
+```
+
+For the page, put one anywhere in the body. It is fixed along the top of the viewport, full width, above the page content and below dialogs:
+
+```html
+<body>
+  <moul-scroll-progress></moul-scroll-progress>
+  …
+</body>
+```
+
+## Placement
+
+`placement` says where the bar sits:
+
+- `top` (the default) is fixed along the top of the viewport.
+- `bottom` is fixed along the bottom of the viewport.
+- `inline` sits in the normal flow at the width of its parent, for you to place. Make it sticky at the top of a scroll panel, or put it at the foot of a sticky site header so the bar runs under the header rather than over it.
+
+```html
+<header class="site-header">
+  <nav>…</nav>
+  <moul-scroll-progress placement="inline"></moul-scroll-progress>
+</header>
+```
+
+## Following a scroll container
+
+`for` takes the id of a scroll container in the same document or shadow root, and the bar follows that container instead of the page. Changing `for` switches to the new container. If no element has that id yet, the bar stays empty until one appears, then follows it.
+
+```html
+<div id="changelog" style="height: 20rem; overflow: auto">
+  <moul-scroll-progress for="changelog" placement="inline" style="position: sticky; top: 0"></moul-scroll-progress>
+  …
+</div>
+```
+
+## Tone and colour
+
+`tone` picks the colour of the fill: `primary` (the default), `accent`, `success`, `warning` or `error`. `--scroll-progress-color` takes any colour instead, `--scroll-progress-height` sets the thickness (3px by default), and `--scroll-progress-track` colours the part not yet filled (transparent by default).
+
+<ComponentPreview>
+  <div id="scroll-progress-tones" style="width: 100%; max-width: 28rem; height: 12rem; overflow: auto; border: 1px solid var(--color-border); border-radius: var(--radius-xl); background: var(--color-surface)">
+    <div style="position: sticky; top: 0; display: grid; gap: 0.375rem; padding: 0.75rem 1.25rem; background: var(--color-surface); border-bottom: 1px solid var(--color-border)">
+      <moul-scroll-progress for="scroll-progress-tones" placement="inline"></moul-scroll-progress>
+      <moul-scroll-progress for="scroll-progress-tones" placement="inline" tone="accent"></moul-scroll-progress>
+      <moul-scroll-progress for="scroll-progress-tones" placement="inline" tone="success"></moul-scroll-progress>
+      <moul-scroll-progress for="scroll-progress-tones" placement="inline" tone="warning"></moul-scroll-progress>
+      <moul-scroll-progress for="scroll-progress-tones" placement="inline" tone="error"></moul-scroll-progress>
+      <moul-scroll-progress for="scroll-progress-tones" placement="inline" style="--scroll-progress-height: 6px; --scroll-progress-track: var(--color-fill-track); --scroll-progress-color: var(--color-fg)"></moul-scroll-progress>
+    </div>
+    <div style="display: grid; gap: 0.75rem; padding: 1rem 1.25rem">
+      <p>Each bar above follows this box.</p>
+      <p>The first five take their colour from tone.</p>
+      <p>The last one sets its own colour, thickness and track.</p>
+      <p>Keep scrolling to fill them.</p>
+      <p>Nearly there.</p>
+      <p>The end.</p>
+    </div>
+  </div>
+</ComponentPreview>
+
+```html
+<moul-scroll-progress tone="success"></moul-scroll-progress>
+<moul-scroll-progress
+  style="--scroll-progress-height: 6px; --scroll-progress-track: var(--color-fill-track)"
+></moul-scroll-progress>
+```
+
+## How it fills
+
+Where the browser has scroll-driven animations, a native scroll timeline fills the bar and no script runs while the reader scrolls. Elsewhere a passive scroll listener updates it once per frame. Either way the progress, from 0 to 1, is the `--scroll-progress` custom property on the element, and the bar is scaled by it from the inline start: the left edge, or the right edge in right-to-left text.
+
+## Accessibility
+
+`<moul-scroll-progress>` is decoration: it carries `aria-hidden="true"` and is never focusable. The scrollbar and the reader's own place in the text already say where they are, so announcing a percentage would only repeat it. If progress is information the reader needs, such as an upload, use `<moul-progress-bar>` with a label.
+
+Under `prefers-reduced-motion: reduce` the bar still follows the scroll, because the reader is the one moving it. It adds no easing or spring of its own, so it is never ahead of or behind the page.
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `for` | `htmlFor` | `string`, the id of a scroll container | `''` (the page) |
+| `placement` | `placement` | `'top' \| 'bottom' \| 'inline'` | `'top'` |
+| `tone` | `tone` | `'primary' \| 'accent' \| 'success' \| 'warning' \| 'error'` | `'primary'` |
+
+| Part | Description |
+| :-- | :-- |
+| `base` | The track: the full length of the bar. |
+| `bar` | The fill, scaled from the inline start by the scroll progress. |
+
+| CSS property | Description |
+| :-- | :-- |
+| `--scroll-progress-color` | The colour of the fill. Defaults to the `tone` colour. |
+| `--scroll-progress-height` | The thickness of the bar. Defaults to `3px`. |
+| `--scroll-progress-track` | The colour of the part not yet filled. Defaults to `transparent`. |

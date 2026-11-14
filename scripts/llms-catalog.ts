@@ -180,7 +180,7 @@ document.querySelector('moul-tabs').addEventListener('selectionchange', (e) => {
         name: 'Button',
         docs: '/docs/components/button',
         summary:
-          'Button with 7 variants, 3 sizes, icon-only mode, and pending, success and error states; `run(task)` drives them from a promise.',
+          'Button with 7 variants, 3 sizes, icon-only mode, and pending, success and error states; `run(task)` drives them from a promise. For landing pages: `effect="shimmer|rainbow|neon"` animates the edge, `is-pulsing` adds a pulsing ring, and a `hover` slot swaps in on hover.',
         tags: ['moul-button'],
         snippet: `<moul-button variant="primary" size="md">Save changes</moul-button>
 <moul-button variant="ghost" is-icon aria-label="Close">×</moul-button>
@@ -188,6 +188,10 @@ document.querySelector('moul-tabs').addEventListener('selectionchange', (e) => {
   Save
   <span slot="pending">Saving…</span>
   <span slot="success">Saved</span>
+</moul-button>
+<moul-button size="lg" effect="shimmer" is-pulsing>
+  Get started
+  <span slot="hover">Read the docs →</span>
 </moul-button>`,
         script: `const save = document.querySelector('#save')
 save.addEventListener('press', () => {
@@ -1102,6 +1106,128 @@ answer.sources = [{ title: 'Records API', url: 'https://moul.dev/docs/records' }
           'Small canvas particle orb with a shimmering label, in a polite `role="status"`, shown while a model works; change `label` as the work moves on.',
         tags: ['moul-thinking-indicator'],
         snippet: `<moul-thinking-indicator label="Searching records"></moul-thinking-indicator>`,
+      },
+    ],
+  },
+  {
+    title: 'Landing Kit',
+    families: [
+      {
+        name: 'Reveal',
+        docs: '/docs/components/reveal',
+        summary:
+          "Wraps content that fades in and sharpens from a blur as it scrolls into view, once (or on every entry with `is-repeating`); `stagger` reveals child elements in turn. Effects entry (`import '@moul-dev/web-component/effects'`); shown at once under reduced motion.",
+        tags: ['moul-reveal'],
+        snippet: `<moul-reveal direction="up" delay="150">
+  <h2>Ship on Friday</h2>
+</moul-reveal>
+<moul-reveal stagger="90" class="feature-grid">
+  <moul-card>…</moul-card>
+  <moul-card>…</moul-card>
+</moul-reveal>`,
+      },
+      {
+        name: 'TextEntrance',
+        docs: '/docs/components/textentrance',
+        summary:
+          'Headline text whose letters, words or lines fade, blur or slide in one after another on entering the viewport; read once, whole, by screen readers. Effects entry.',
+        tags: ['moul-text-entrance'],
+        snippet: `<h1><moul-text-entrance by="words" effect="blur-up">Web components for every page</moul-text-entrance></h1>`,
+      },
+      {
+        name: 'Typewriter',
+        docs: '/docs/components/typewriter',
+        summary:
+          'Text that types itself with a blinking cursor, or types a list of `words` in turn, deleting each before the next; Khmer-safe. Effects entry.',
+        tags: ['moul-typewriter'],
+        snippet: `<moul-typewriter words='["Build.","Ship.","Repeat."]' is-looping></moul-typewriter>`,
+      },
+      {
+        name: 'WordRotate',
+        docs: '/docs/components/wordrotate',
+        summary:
+          'One word in a sentence cycles through `words` with a slide, fade, blur or flip while its width glides; pauses on hover, focus and off screen. Effects entry.',
+        tags: ['moul-word-rotate'],
+        snippet: `<h1>Ship <moul-word-rotate words='["fast","safe","yours"]'>fast</moul-word-rotate> today</h1>`,
+      },
+      {
+        name: 'Scramble',
+        docs: '/docs/components/scramble',
+        summary:
+          'Letters scramble through random glyphs, then resolve to the text from start to end, on view, on hover or on `play()`. Effects entry.',
+        tags: ['moul-scramble'],
+        snippet: `<moul-scramble trigger="hover">Decrypting…</moul-scramble>`,
+      },
+      {
+        name: 'GradientText',
+        docs: '/docs/components/gradienttext',
+        summary:
+          'Text painted with a moving gradient, a light sweep (`effect="shine"`) or drifting aurora colours, in CSS only. Effects entry.',
+        tags: ['moul-gradient-text'],
+        snippet: `<h2>Everything you need, <moul-gradient-text>nothing you do not</moul-gradient-text></h2>`,
+      },
+      {
+        name: 'Highlight',
+        docs: '/docs/components/highlight',
+        summary:
+          'A marker band, underline, box or circle drawn behind or around words as they scroll into view, in a semantic `tone`. Effects entry.',
+        tags: ['moul-highlight'],
+        snippet: `<p>Plain HTML with <moul-highlight effect="marker" tone="warning">motion built in</moul-highlight>.</p>`,
+      },
+      {
+        name: 'Marquee',
+        docs: '/docs/components/marquee',
+        summary:
+          'An endless row or column of logos, cards or text; copies are inert and hidden from screen readers, it pauses on focus (and on hover with `pause-on-hover`), and becomes a row you scroll by hand under reduced motion. Effects entry.',
+        tags: ['moul-marquee'],
+        snippet: `<moul-marquee fade-edges pause-on-hover speed="40">
+  <img src="/logos/one.svg" alt="One" />
+  <img src="/logos/two.svg" alt="Two" />
+</moul-marquee>`,
+      },
+      {
+        name: 'BentoGrid',
+        docs: '/docs/components/bentogrid',
+        summary:
+          'Feature cards in an uneven grid: `col-span` and `row-span` per card, one column on narrow screens, and an action that slides in on hover. Effects entry.',
+        tags: ['moul-bento-grid', 'moul-bento-card'],
+        snippet: `<moul-bento-grid columns="3">
+  <moul-bento-card col-span="2">
+    <img slot="visual" src="/feature.png" alt="" />
+    <h3 slot="heading">Motion as markup</h3>
+    Text effects are attributes, not scripts.
+    <moul-link slot="action" href="/docs">Learn more →</moul-link>
+  </moul-bento-card>
+  <moul-bento-card>…</moul-bento-card>
+</moul-bento-grid>`,
+      },
+      {
+        name: 'BrowserFrame',
+        docs: '/docs/components/browserframe',
+        summary:
+          'A browser window mock-up with window dots and an address bar around a screenshot or any content. Effects entry.',
+        tags: ['moul-browser-frame'],
+        snippet: `<moul-browser-frame url="example.com">
+  <img src="/screenshot.png" alt="The dashboard" />
+</moul-browser-frame>`,
+      },
+      {
+        name: 'PhoneFrame',
+        docs: '/docs/components/phoneframe',
+        summary:
+          'A phone mock-up drawn in CSS around a screenshot or video, `variant="iphone"` or `"android"`, sized by `--phone-frame-width`. Effects entry.',
+        tags: ['moul-phone-frame'],
+        snippet: `<moul-phone-frame variant="iphone">
+  <img src="/app.png" alt="The app's home screen" />
+</moul-phone-frame>`,
+      },
+      {
+        name: 'ScrollProgress',
+        docs: '/docs/components/scrollprogress',
+        summary:
+          'A thin bar that fills as the page (or the container named by `for`) scrolls, fixed to the top or bottom or in flow; decorative. Effects entry.',
+        tags: ['moul-scroll-progress'],
+        snippet: `<moul-scroll-progress></moul-scroll-progress>`,
       },
     ],
   },

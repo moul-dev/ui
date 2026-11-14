@@ -1,8 +1,10 @@
 import { fixture, html } from '@open-wc/testing-helpers'
+import type { CSSResult } from 'lit'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { mockReducedMotion, type ReducedMotionMock } from '../../test-setup'
 import './Button'
 import type { ButtonState, MoulButton } from './Button'
+import { buttonStyles } from './Button.styles'
 
 const root = (el: MoulButton) => el.shadowRoot as ShadowRoot
 const inner = (el: MoulButton) =>
@@ -473,6 +475,277 @@ describe('<moul-button> states', () => {
       await setState(el, 'idle')
       expect(animate).not.toHaveBeenCalled()
       expect(content.style.overflowX).toBe('')
+    })
+  })
+})
+
+describe('<moul-button> effects, pulse and hover swap', () => {
+  /** The button's own stylesheet, as written (the first entry is the shared reset). */
+  const css = (buttonStyles[1] as CSSResult).cssText
+
+  /** The selectors of every rule whose body contains `declaration`. */
+  function selectorsWith(declaration: string): string[] {
+    return Array.from(css.matchAll(/([^{}]+)\{([^{}]*)\}/g))
+      .filter(([, , body]) => body.includes(declaration))
+      .map(([, selector]) => selector.replace(/\s+/g, ' ').trim())
+  }
+
+  /** The body of the reduced-motion block. */
+  function reducedMotionBlock(): string {
+    const start = css.indexOf('@media (prefers-reduced-motion: reduce)')
+    expect(start).toBeGreaterThan(-1)
+    return css.slice(start)
+  }
+
+  afterEach(() => {
+    vi.restoreAllMocks()
+  })
+
+  describe('effect', () => {
+    it('is unset by default and reflects each effect', async () => {
+      const el = await fixture<MoulButton>(
+        html`<moul-button>Get started</moul-button>`,
+      )
+      expect(el.effect).toBeUndefined()
+      expect(el.hasAttribute('effect')).toBe(false)
+
+      for (const effect of ['shimmer', 'rainbow', 'neon'] as const) {
+        el.effect = effect
+        await el.updateComplete
+        expect(el.getAttribute('effect')).toBe(effect)
+      }
+      el.effect = undefined
+      await el.updateComplete
+      expect(el.hasAttribute('effect')).toBe(false)
+    })
+
+    it('draws a ring for each effect, and the rainbow glow under the button', () => {
+      const drawn = selectorsWith('content: ""').join('\n')
+      expect(drawn).toContain(
+        ':host(:is([effect="shimmer"], [effect="rainbow"])) [part~="button"]::before',
+      )
+      expect(drawn).toContain(':host([effect="rainbow"])::before')
+      expect(drawn).toContain(':host([effect="neon"]) [part~="button"]::before')
+      // Rings and glow turn by animating the registered angle.
+      expect(css).toContain('from var(--moul-button-angle, 0deg)')
+      expect(css).toMatch(
+        /@keyframes moul-button-turn \{\s*to \{\s*--moul-button-angle: 1turn;/,
+      )
+      // The rainbow takes the chart colours; shimmer and neon take the knob.
+      for (const n of [1, 2, 3, 4, 5]) {
+        expect(css).toContain(`var(--color-chart-${n})`)
+      }
+      expect(css).toContain('var(--button-effect-color, var(--_fg))')
+      expect(css).toContain('var(--button-effect-color, var(--_tint))')
+      expect(css).toContain('var(--button-effect-duration, 3s)')
+    })
+
+    it('does nothing for an unknown effect: no rule matches and the shadow DOM is unchanged', async () => {
+      const plain = await fixture<MoulButton>(
+        html`<moul-button>Get started</moul-button>`,
+      )
+      const unknown = await fixture<MoulButton>(
+        html`<moul-button effect="sparkle">Get started</moul-button>`,
+      )
+      expect(unknown.getAttribute('effect')).toBe('sparkle')
+      // Every effect rule names its value; none matches any value.
+      expect(css).not.toMatch(/\[effect\]/)
+      expect(css).not.toMatch(/\[effect[~|^$*]?=(?!"(?:shimmer|rainbow|neon)")/)
+      // Effects are CSS only, so the rendered markup is the same.
+      expect(root(unknown).innerHTML).toBe(root(plain).innerHTML)
+    })
+
+    it('holds the effect still while disabled', () => {
+      const selectors = selectorsWith('animation: none').join('\n')
+      expect(selectors).toContain(
+        ':host([is-disabled]) [part~="button"]::before',
+      )
+      expect(selectors).toContain(':host([is-disabled])::before')
+      // Declared after the effect rules, which have the same specificity.
+      expect(
+        css.indexOf(':host([is-disabled]) [part~="button"]::before'),
+      ).toBeGreaterThan(
+        css.indexOf(':host([effect="neon"]) [part~="button"]::before'),
+      )
+    })
+
+    it('registers the ring angle at load, and loads where it cannot', async () => {
+      vi.spyOn(console, 'warn').mockImplementation(() => {})
+      const register = vi.fn()
+      // happy-dom hands out a fresh CSS object on every read, so stub the global.
+      vi.stubGlobal('CSS', {
+        supports: () => false,
+        registerProperty: register,
+      })
+      try {
+        vi.resetModules()
+        await import('./Button')
+        expect(register).toHaveBeenCalledTimes(1)
+        expect(register).toHaveBeenCalledWith({
+          name: '--moul-button-angle',
+          syntax: '<angle>',
+          inherits: false,
+          initialValue: '0deg',
+        })
+
+        // Already registered by the page: the browser throws, the module still loads.
+        register.mockImplementation(() => {
+          throw new DOMException(
+            'already registered',
+            'InvalidModificationError',
+          )
+        })
+        vi.resetModules()
+        await expect(import('./Button')).resolves.toHaveProperty('MoulButton')
+
+        // No registerProperty at all.
+        vi.stubGlobal('CSS', { supports: () => false })
+        vi.resetModules()
+        await expect(import('./Button')).resolves.toHaveProperty('MoulButton')
+      } finally {
+        vi.unstubAllGlobals()
+      }
+    })
+  })
+
+  describe('is-pulsing', () => {
+    it('defaults to false and reflects', async () => {
+      const el = await fixture<MoulButton>(
+        html`<moul-button>Join the waitlist</moul-button>`,
+      )
+      expect(el.isPulsing).toBe(false)
+      expect(el.hasAttribute('is-pulsing')).toBe(false)
+      el.isPulsing = true
+      await el.updateComplete
+      expect(el.hasAttribute('is-pulsing')).toBe(true)
+    })
+
+    it('pulses only while idle and enabled', async () => {
+      expect(selectorsWith('animation: moul-button-pulse')).toEqual([
+        ':host([is-pulsing]:not([is-disabled])) .idle::after',
+      ])
+      expect(css).toContain('var(--button-pulse-duration, 1.5s)')
+      expect(css).toContain('var(--button-pulse-color, var(--_tint))')
+
+      // The .idle class the pulse needs leaves the inner button outside idle.
+      const el = await fixture<MoulButton>(
+        html`<moul-button is-pulsing>Join</moul-button>`,
+      )
+      expect(inner(el).classList.contains('idle')).toBe(true)
+      el.isPending = true
+      await el.updateComplete
+      expect(inner(el).classList.contains('idle')).toBe(false)
+      el.isPending = false
+      await setState(el, 'success')
+      expect(inner(el).classList.contains('idle')).toBe(false)
+    })
+  })
+
+  describe('hover slot', () => {
+    const hoverWrapper = (el: MoulButton) =>
+      root(el).querySelector('[part="hover"]') as HTMLElement
+
+    it('sits in an aria-hidden wrapper, so the label stays the accessible content', async () => {
+      const el = await fixture<MoulButton>(html`
+        <moul-button>
+          <span slot="prefix">📅</span>
+          Book a call
+          <span slot="hover">Pick a time →</span>
+        </moul-button>
+      `)
+      const wrapper = hoverWrapper(el)
+      expect(wrapper.getAttribute('aria-hidden')).toBe('true')
+      const slot = wrapper.querySelector(
+        'slot[name="hover"]',
+      ) as HTMLSlotElement
+      expect(slot.assignedElements().map((node) => node.textContent)).toEqual([
+        'Pick a time →',
+      ])
+      // Stacked with the label inside content, which is not hidden.
+      expect(wrapper.parentElement?.getAttribute('part')).toBe('content')
+      expect(
+        root(el).querySelector('.content')?.classList.contains('swap'),
+      ).toBe(true)
+      expect(shownLabel(el)).toBe('Book a call')
+      expect(
+        root(el).querySelector('.content > slot')?.closest('[aria-hidden]'),
+      ).toBeNull()
+      // Prefix and suffix keep their own places, outside the swap.
+      expect(
+        root(el).querySelector('slot[name="prefix"]')?.closest('.content'),
+      ).toBeNull()
+    })
+
+    it('swaps only when the slot has content', async () => {
+      const el = await fixture<MoulButton>(
+        html`<moul-button>Book a call</moul-button>`,
+      )
+      const content = root(el).querySelector('.content') as HTMLElement
+      expect(content.classList.contains('swap')).toBe(false)
+
+      const extra = document.createElement('span')
+      extra.slot = 'hover'
+      extra.textContent = 'Pick a time'
+      el.append(extra)
+      root(el)
+        .querySelector('slot[name="hover"]')
+        ?.dispatchEvent(new Event('slotchange'))
+      await el.updateComplete
+      expect(content.classList.contains('swap')).toBe(true)
+
+      extra.remove()
+      root(el)
+        .querySelector('slot[name="hover"]')
+        ?.dispatchEvent(new Event('slotchange'))
+      await el.updateComplete
+      expect(content.classList.contains('swap')).toBe(false)
+    })
+
+    it('slides on hover (pointer devices) and keyboard focus, only while idle', async () => {
+      // Every rule that moves the label or the hover content needs .idle.
+      const moved = [
+        ...selectorsWith('translate: 0 -100%'),
+        ...selectorsWith('translate: none'),
+      ]
+      expect(moved).toEqual(
+        expect.arrayContaining([
+          '.idle:focus-visible .swap > slot',
+          '.idle:focus-visible .hover',
+          '.idle:hover .swap > slot',
+          '.idle:hover .hover',
+        ]),
+      )
+      for (const selector of moved) expect(selector).toMatch(/^\.idle:/)
+      // Hover only where the pointer can hover.
+      expect(css).toMatch(
+        /@media \(hover: hover\) \{[\s\S]*\.idle:hover \.hover/,
+      )
+
+      // While not idle the state label shows and the hover content stays put.
+      const el = await fixture<MoulButton>(html`
+        <moul-button>
+          Book a call
+          <span slot="pending">Booking…</span>
+          <span slot="hover">Pick a time</span>
+        </moul-button>
+      `)
+      await setState(el, 'pending')
+      expect(inner(el).classList.contains('idle')).toBe(false)
+      expect(shownLabel(el)).toBe('Booking…')
+      // Still stacked, so the width does not jump between states.
+      expect(
+        root(el).querySelector('.content')?.classList.contains('swap'),
+      ).toBe(true)
+    })
+  })
+
+  describe('reduced motion', () => {
+    it('holds the rings still, steadies neon, drops the pulse and swaps at once', () => {
+      const block = reducedMotionBlock()
+      expect(block).toMatch(/\.swap > \*\s*\{\s*transition: none;/)
+      expect(block).toMatch(
+        /\[part~="button"\]::before,\s*\[part~="button"\]::after,\s*:host::before\s*\{\s*animation: none !important;/,
+      )
     })
   })
 })

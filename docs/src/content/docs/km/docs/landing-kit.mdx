@@ -1,0 +1,101 @@
+---
+title: ឧបករណ៍ទំព័រដើម (Landing kit)
+description: ឥទ្ធិពលអក្សរ ការបង្ហាញពេលរំកិល marquee bento grid ស៊ុមឧបករណ៍ និងឥទ្ធិពលប៊ូតុង សម្រាប់ទំព័រផលិតផល ដោយមិនចាំបាច់សរសេរកូដចលនា។
+---
+
+A landing page asks for a lot of small motion: a headline that arrives word by word, a word that keeps changing, a row of logos that never ends, cards that rise into place as the reader scrolls. Each one is usually a few dozen lines of script and keyframes, written again for every page.
+
+The landing kit turns each of those into an element or an attribute. A page built from it has no animation code of its own. The [example landing page](/examples/landing/) is built that way: its only script is the two imports below, and its stylesheet is layout and type.
+
+```js
+import '@moul-dev/web-component'
+import '@moul-dev/web-component/effects'
+```
+
+The kit lives in the effects entry, so an app that never imports it ships none of it. The button effects are the exception: they are attributes on `<moul-button>`, in the main entry.
+
+## What is in it
+
+| Piece | Element | What it does |
+| :-- | :-- | :-- |
+| [Reveal](/km/docs/components/reveal/) | `<moul-reveal>` | Content fades in and sharpens as it scrolls into view |
+| [Text entrance](/km/docs/components/textentrance/) | `<moul-text-entrance>` | Letters, words or lines fade, blur or slide in |
+| [Typewriter](/km/docs/components/typewriter/) | `<moul-typewriter>` | Text types itself with a blinking cursor |
+| [Word rotate](/km/docs/components/wordrotate/) | `<moul-word-rotate>` | One word in a sentence cycles through options |
+| [Scramble](/km/docs/components/scramble/) | `<moul-scramble>` | Letters scramble, then resolve to the final text |
+| [Gradient text](/km/docs/components/gradienttext/) | `<moul-gradient-text>` | A moving gradient or a light sweep across text |
+| [Highlight](/km/docs/components/highlight/) | `<moul-highlight>` | A marker stroke drawn behind or around words |
+| [Marquee](/km/docs/components/marquee/) | `<moul-marquee>` | An endless row of logos, cards or text |
+| [Bento grid](/km/docs/components/bentogrid/) | `<moul-bento-grid>`, `<moul-bento-card>` | Feature cards in an uneven grid |
+| [Browser frame](/km/docs/components/browserframe/) | `<moul-browser-frame>` | A browser window around a screenshot |
+| [Phone frame](/km/docs/components/phoneframe/) | `<moul-phone-frame>` | A phone around a screenshot or video |
+| [Scroll progress](/km/docs/components/scrollprogress/) | `<moul-scroll-progress>` | A bar that fills as the page scrolls |
+| [Button effects](/km/docs/components/button/#effects) | `<moul-button effect is-pulsing>` | Light round the edge, a pulse, a hover swap |
+| [Button styles](/km/docs/components/buttonstyles/) | `<moul-button>` | Ready-made button looks in a few lines of CSS |
+
+## A page, section by section
+
+The hero is a heading made of a text entrance and a word rotate, a paragraph with a highlight, and buttons, each wrapped in a reveal with a growing `delay`, so they arrive one after another.
+
+```html
+<h1>
+  <moul-text-entrance by="words">Web components for</moul-text-entrance>
+  <moul-word-rotate words='["dashboards","landing pages","AI chat"]'>dashboards</moul-word-rotate>
+</h1>
+
+<moul-reveal delay="300">
+  <p>Plain HTML tags with <moul-highlight delay="900">motion built in</moul-highlight>.</p>
+</moul-reveal>
+
+<moul-reveal delay="450">
+  <moul-button size="lg" effect="shimmer">
+    Get started
+    <span slot="hover">Read the docs →</span>
+  </moul-button>
+</moul-reveal>
+
+<moul-reveal delay="600">
+  <moul-browser-frame url="example.com">
+    <img src="/screenshot.png" alt="The dashboard, with three stats and a request log" />
+  </moul-browser-frame>
+</moul-reveal>
+```
+
+The logo row is a marquee. The features are a bento grid inside a staggered reveal, so the cards rise in turn. The call to action is a heading with an underline highlight and a pulsing rainbow button.
+
+```html
+<moul-marquee fade-edges pause-on-hover>
+  <img src="/logos/one.svg" alt="One" />
+  <img src="/logos/two.svg" alt="Two" />
+  <img src="/logos/three.svg" alt="Three" />
+</moul-marquee>
+
+<moul-reveal stagger="90">
+  <moul-bento-grid columns="3">
+    <moul-bento-card col-span="2">
+      <h3 slot="heading">Motion as markup</h3>
+      Text effects, reveals and marquees are attributes, not scripts.
+      <moul-link slot="action" href="/docs">See the kit →</moul-link>
+    </moul-bento-card>
+    <moul-bento-card>…</moul-bento-card>
+    <moul-bento-card>…</moul-bento-card>
+  </moul-bento-grid>
+</moul-reveal>
+
+<h2>Ship your <moul-highlight effect="underline">landing page</moul-highlight> this week</h2>
+<moul-button size="lg" effect="rainbow" is-pulsing>Start building</moul-button>
+```
+
+## Accessibility
+
+Every piece keeps the page readable without its motion:
+
+- **Text stays text.** Split, typed, rotating and scrambled text is read once, whole, by screen readers; the moving pieces are hidden from them. A word rotate is read as all of its words.
+- **Nothing hides from the keyboard.** Moving keyboard focus into content that has not revealed yet shows it at once. A marquee stops while focus is inside it, and its repeated copies are inert, so a link is reached once.
+- **Movement can stop.** Word rotates and marquees pause on hover or focus, and every looping effect pauses while it is off screen.
+- **Reduced motion is honoured.** Under `prefers-reduced-motion: reduce`, reveals and text effects show their end state at once, rotating words swap without moving, marquees become a row you scroll by hand, and button effects hold still.
+- **Decoration says so.** Device frames, highlights, scroll progress and button effects are hidden from screen readers; the content inside them keeps its own semantics, so give screenshots real alt text.
+
+## Before the script loads
+
+Until the effects entry has loaded, the text elements show their own text, unstyled, and reveals show their content. That is the right fallback for a page whose script fails. If a hero flashes before its entrance plays, hide the undefined elements in your stylesheet, as the [reveal page](/km/docs/components/reveal/#before-the-script-loads) shows, and only where the script is sure to load.

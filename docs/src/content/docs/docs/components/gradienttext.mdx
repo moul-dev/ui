@@ -1,0 +1,98 @@
+---
+title: Gradient Text
+description: Text painted with a moving gradient or a passing light.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import LandingKitDemo from '@/components/demos/LandingKitDemo.astro';
+
+`<moul-gradient-text>` paints a word or two with colour that moves: a gradient flowing along the letters, a band of light sweeping across them, or several colours drifting together. It stays inline, so it can sit in the middle of a heading, and every wrapped line gets the whole gradient.
+
+<ComponentPreview stack minHeight="160px">
+  <moul-typography variant="h2">Components that feel <moul-gradient-text>alive</moul-gradient-text></moul-typography>
+  <LandingKitDemo />
+</ComponentPreview>
+
+It lives in the effects entry, with the rest of the landing kit:
+
+```js
+import '@moul-dev/web-component/effects'
+```
+
+```html
+<h1>Components that feel <moul-gradient-text>alive</moul-gradient-text></h1>
+```
+
+## Effects
+
+`effect` sets how the text is painted. `gradient` (the default) flows colours along the text. `shine` keeps the text subdued and sweeps a bright band across it every few seconds, which suits a badge or a small announcement. `aurora` lets several colours drift in two directions and blend slowly.
+
+<ComponentPreview stack minHeight="240px">
+  <div class="demo-stack">
+    <span class="demo-label">gradient</span>
+    <moul-typography variant="h3"><moul-gradient-text>Previews on every push</moul-gradient-text></moul-typography>
+    <span class="demo-label">shine</span>
+    <moul-typography variant="h3"><moul-gradient-text effect="shine">Introducing the landing kit</moul-gradient-text></moul-typography>
+    <span class="demo-label">aurora</span>
+    <moul-typography variant="h3"><moul-gradient-text effect="aurora">Logs you can search</moul-gradient-text></moul-typography>
+  </div>
+</ComponentPreview>
+
+```html
+<moul-gradient-text effect="shine">Introducing the landing kit</moul-gradient-text>
+<moul-gradient-text effect="aurora">Logs you can search</moul-gradient-text>
+```
+
+## Colours and speed
+
+`--gradient-text-colors` is a comma-separated list of colours for `gradient` and `aurora`. It defaults to the theme's accent and two chart colours, so it follows light and dark themes and your `--brand-hue`. Repeat the first colour at the end, so the flowing gradient loops without a seam.
+
+`--gradient-text-duration` is the length of one loop, as a CSS time: `6s` for `gradient`, `4s` for `shine` (the sweep takes the first 40% of it, then the text rests) and `12s` for `aurora`. `shine` takes its two colours from `--gradient-text-shine-base`, the subdued text (`--color-fg` at 65% by default), and `--gradient-text-shine-color`, the band (`--color-fg`).
+
+<ComponentPreview stack minHeight="120px">
+  <moul-typography variant="h3"><moul-gradient-text style="--gradient-text-colors: var(--color-success), var(--color-chart-5), var(--color-success); --gradient-text-duration: 3s">All checks passed</moul-gradient-text></moul-typography>
+</ComponentPreview>
+
+```css
+moul-gradient-text.status {
+  --gradient-text-colors: var(--color-success), var(--color-chart-5), var(--color-success);
+  --gradient-text-duration: 3s;
+}
+```
+
+The animation is CSS only, and pauses while the text is off screen.
+
+## Accessibility
+
+`<moul-gradient-text>` is never focusable and adds no role. The text is ordinary text, so screen readers read it as it is and it can be selected and copied.
+
+Colour that moves is still colour on a background, so check the contrast of the lightest point in the gradient, not only the average. The default colours are mid-tones meant for large headings, and on a white page they are not dark enough for body text: the accent blue is about 3.6:1, and the cyan from `--color-chart-5` falls to about 2.5:1. On dark backgrounds they are well clear. For a light page, or for smaller text, use deeper colours, such as the brand's darker steps:
+
+```css
+moul-gradient-text {
+  --gradient-text-colors: var(--color-primary-600), var(--color-primary-800), var(--color-primary-600);
+}
+```
+
+The `shine` base colour is `--color-fg` at 65%, which keeps the subdued text above 5:1 on the default light and dark backgrounds.
+
+Where the system forces its own colours, as in Windows high contrast mode, and when printing, the text is drawn plain, in the colour of the text around it.
+
+Under `prefers-reduced-motion: reduce` the gradient stands still, and `shine` shows the subdued text with no sweep.
+
+## Attributes and properties
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `effect` | `effect` | `'gradient' \| 'shine' \| 'aurora'` | `'gradient'` |
+
+| Slot | Description |
+| :-- | :-- |
+| (default) | The text to paint. |
+
+| CSS property | Description | Default |
+| :-- | :-- | :-- |
+| `--gradient-text-colors` | Comma-separated colours for `gradient` and `aurora`. | `var(--color-accent), var(--color-chart-3), var(--color-chart-5), var(--color-accent)` |
+| `--gradient-text-duration` | Length of one loop. | `6s`, `4s` for `shine`, `12s` for `aurora` |
+| `--gradient-text-shine-base` | The subdued text colour for `shine`. | `--color-fg` at 65% |
+| `--gradient-text-shine-color` | The colour of the band for `shine`. | `var(--color-fg)` |

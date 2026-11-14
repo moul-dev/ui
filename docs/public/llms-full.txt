@@ -649,7 +649,7 @@ Class: `MoulChartTooltip` · Source: `ui/src/components/ChartTooltip/ChartToolti
 
 ## Button
 
-Button with 7 variants, 3 sizes, icon-only mode, and pending, success and error states; `run(task)` drives them from a promise. Docs: [/docs/components/button](/docs/components/button)
+Button with 7 variants, 3 sizes, icon-only mode, and pending, success and error states; `run(task)` drives them from a promise. For landing pages: `effect="shimmer|rainbow|neon"` animates the edge, `is-pulsing` adds a pulsing ring, and a `hover` slot swaps in on hover. Docs: [/docs/components/button](/docs/components/button)
 
 ```html
 <moul-button variant="primary" size="md">Save changes</moul-button>
@@ -658,6 +658,10 @@ Button with 7 variants, 3 sizes, icon-only mode, and pending, success and error 
   Save
   <span slot="pending">Saving…</span>
   <span slot="success">Saved</span>
+</moul-button>
+<moul-button size="lg" effect="shimmer" is-pulsing>
+  Get started
+  <span slot="hover">Read the docs →</span>
 </moul-button>
 ```
 
@@ -687,6 +691,8 @@ Class: `MoulButton` · Source: `ui/src/components/Button/Button.ts`
 | `is-icon` | `isIcon` | `boolean` | `false` |
 | `is-disabled` | `isDisabled` | `boolean` | `false` |
 | `is-pending` | `isPending` | `boolean` | `false` |
+| `effect` | `effect` | `'shimmer' \| 'rainbow' \| 'neon' \| undefined` | — |
+| `is-pulsing` | `isPulsing` | `boolean` | `false` |
 
 **Events**
 
@@ -704,8 +710,9 @@ Class: `MoulButton` · Source: `ui/src/components/Button/Button.ts`
 | `pending` |
 | `success` |
 | `error` |
+| `hover` |
 
-**CSS Parts:** `button`, `icon`, `prefix`, `content`, `suffix`
+**CSS Parts:** `button`, `icon`, `prefix`, `content`, `hover`, `suffix`
 
 ## ButtonGroup
 
@@ -4483,6 +4490,392 @@ Class: `MoulThinkingIndicator` · Source: `ui/src/components/ThinkingIndicator/T
 | `hide-label` | `hideLabel` | `boolean` | `false` |
 
 **CSS Parts:** `base`, `orb`, `label`
+
+---
+
+# Landing Kit
+
+## Reveal
+
+Wraps content that fades in and sharpens from a blur as it scrolls into view, once (or on every entry with `is-repeating`); `stagger` reveals child elements in turn. Effects entry (`import '@moul-dev/web-component/effects'`); shown at once under reduced motion. Docs: [/docs/components/reveal](/docs/components/reveal)
+
+```html
+<moul-reveal direction="up" delay="150">
+  <h2>Ship on Friday</h2>
+</moul-reveal>
+<moul-reveal stagger="90" class="feature-grid">
+  <moul-card>…</moul-card>
+  <moul-card>…</moul-card>
+</moul-reveal>
+```
+
+### `<moul-reveal>`
+
+Class: `MoulReveal` · Source: `ui/src/components/Reveal/Reveal.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `direction` | `direction` | `'up' \| 'down' \| 'start' \| 'end' \| 'none'` | `'up'` |
+| `distance` | `distance` | `number` | `16` |
+| `blur-radius` | `blurRadius` | `number` | `8` |
+| `duration` | `duration` | `number` | `600` |
+| `delay` | `delay` | `number` | `0` |
+| `stagger` | `stagger` | `number` | `0` |
+| `is-repeating` | `isRepeating` | `boolean` | `false` |
+| `is-revealed` | `isRevealed` | `boolean` | `false` |
+
+**Slots**
+
+| Slot |
+| :--- |
+| (default) |
+
+**CSS Parts:** `base`
+
+## TextEntrance
+
+Headline text whose letters, words or lines fade, blur or slide in one after another on entering the viewport; read once, whole, by screen readers. Effects entry. Docs: [/docs/components/textentrance](/docs/components/textentrance)
+
+```html
+<h1><moul-text-entrance by="words" effect="blur-up">Web components for every page</moul-text-entrance></h1>
+```
+
+### `<moul-text-entrance>`
+
+Class: `MoulTextEntrance` · Source: `ui/src/components/TextEntrance/TextEntrance.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `text` | `text` | `string` | `''` |
+| `by` | `by` | `'chars' \| 'words' \| 'lines'` | `'words'` |
+| `effect` | `effect` | `'fade' \| 'blur' \| 'blur-up' \| 'slide-up' \| 'slide-down' \| 'scale-up'` | `'blur-up'` |
+| `stagger` | `stagger` | `number \| null \| undefined` | `undefined` |
+| `duration` | `duration` | `number` | `500` |
+| `delay` | `delay` | `number` | `0` |
+| `is-repeating` | `isRepeating` | `boolean` | `false` |
+| `is-revealed` | `isRevealed` | `boolean` | `false` |
+
+**CSS Parts:** `base`
+
+## Typewriter
+
+Text that types itself with a blinking cursor, or types a list of `words` in turn, deleting each before the next; Khmer-safe. Effects entry. Docs: [/docs/components/typewriter](/docs/components/typewriter)
+
+```html
+<moul-typewriter words='["Build.","Ship.","Repeat."]' is-looping></moul-typewriter>
+```
+
+### `<moul-typewriter>`
+
+Class: `MoulTypewriter` · Source: `ui/src/components/Typewriter/Typewriter.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `text` | `text` | `string` | `''` |
+| `words` | `words` | `string[]` | `[]` |
+| `typing-speed` | `typingSpeed` | `number` | `60` |
+| `delete-speed` | `deleteSpeed` | `number` | `30` |
+| `hold` | `hold` | `number` | `1500` |
+| `delay` | `delay` | `number` | `0` |
+| `is-looping` | `isLooping` | `boolean` | `false` |
+| `is-paused` | `isPaused` | `boolean` | `false` |
+| `hide-cursor` | `hideCursor` | `boolean` | `false` |
+| `phase` | `phase` | `Phase` | `'idle'` |
+| `wordIndex` | `wordIndex` | `number` | `0` |
+| `typedCount` | `typedCount` | `number` | `0` |
+
+**CSS Parts:** `text`, `cursor`
+
+## WordRotate
+
+One word in a sentence cycles through `words` with a slide, fade, blur or flip while its width glides; pauses on hover, focus and off screen. Effects entry. Docs: [/docs/components/wordrotate](/docs/components/wordrotate)
+
+```html
+<h1>Ship <moul-word-rotate words='["fast","safe","yours"]'>fast</moul-word-rotate> today</h1>
+```
+
+### `<moul-word-rotate>`
+
+Class: `MoulWordRotate` · Source: `ui/src/components/WordRotate/WordRotate.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `words` | `words` | `string[]` | `[]` |
+| `effect` | `effect` | `'slide' \| 'fade' \| 'blur' \| 'flip'` | `'slide'` |
+| `interval` | `interval` | `number` | `2500` |
+| `duration` | `duration` | `number` | `450` |
+| `index` | `index` | `number` | `0` |
+| `is-paused` | `isPaused` | `boolean` | `false` |
+
+**Events**
+
+| Event | Type |
+| :--- | :--- |
+| `wordchange` | `CustomEvent` |
+
+**Slots**
+
+| Slot |
+| :--- |
+| (default) |
+
+**CSS Parts:** `base`, `word`
+
+## Scramble
+
+Letters scramble through random glyphs, then resolve to the text from start to end, on view, on hover or on `play()`. Effects entry. Docs: [/docs/components/scramble](/docs/components/scramble)
+
+```html
+<moul-scramble trigger="hover">Decrypting…</moul-scramble>
+```
+
+### `<moul-scramble>`
+
+Class: `MoulScramble` · Source: `ui/src/components/Scramble/Scramble.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `text` | `text` | `string` | `''` |
+| `trigger` | `trigger` | `'view' \| 'hover' \| 'manual'` | `'view'` |
+| `duration` | `duration` | `number` | `800` |
+| `charset` | `charset` | `string` | `DEFAULT_CHARSET` |
+| `resolvedCount` | `resolvedCount` | `number` | `0` |
+| `glyphs` | `glyphs` | `string[]` | `[]` |
+
+**CSS Parts:** `text`
+
+## GradientText
+
+Text painted with a moving gradient, a light sweep (`effect="shine"`) or drifting aurora colours, in CSS only. Effects entry. Docs: [/docs/components/gradienttext](/docs/components/gradienttext)
+
+```html
+<h2>Everything you need, <moul-gradient-text>nothing you do not</moul-gradient-text></h2>
+```
+
+### `<moul-gradient-text>`
+
+Class: `MoulGradientText` · Source: `ui/src/components/GradientText/GradientText.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `effect` | `effect` | `'gradient' \| 'shine' \| 'aurora'` | `'gradient'` |
+
+**Slots**
+
+| Slot |
+| :--- |
+| (default) |
+
+## Highlight
+
+A marker band, underline, box or circle drawn behind or around words as they scroll into view, in a semantic `tone`. Effects entry. Docs: [/docs/components/highlight](/docs/components/highlight)
+
+```html
+<p>Plain HTML with <moul-highlight effect="marker" tone="warning">motion built in</moul-highlight>.</p>
+```
+
+### `<moul-highlight>`
+
+Class: `MoulHighlight` · Source: `ui/src/components/Highlight/Highlight.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `effect` | `effect` | `'marker' \| 'underline' \| 'box' \| 'circle'` | `'marker'` |
+| `tone` | `tone` | `'primary' \| 'accent' \| 'success' \| 'warning' \| 'error'` | `'warning'` |
+| `delay` | `delay` | `number` | `0` |
+| `duration` | `duration` | `number` | `700` |
+| `is-drawn` | `isDrawn` | `boolean` | `false` |
+
+**Slots**
+
+| Slot |
+| :--- |
+| (default) |
+
+## Marquee
+
+An endless row or column of logos, cards or text; copies are inert and hidden from screen readers, it pauses on focus (and on hover with `pause-on-hover`), and becomes a row you scroll by hand under reduced motion. Effects entry. Docs: [/docs/components/marquee](/docs/components/marquee)
+
+```html
+<moul-marquee fade-edges pause-on-hover speed="40">
+  <img src="/logos/one.svg" alt="One" />
+  <img src="/logos/two.svg" alt="Two" />
+</moul-marquee>
+```
+
+### `<moul-marquee>`
+
+Class: `MoulMarquee` · Source: `ui/src/components/Marquee/Marquee.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `direction` | `direction` | `'start' \| 'end' \| 'up' \| 'down'` | `'start'` |
+| `speed` | `speed` | `number` | `DEFAULT_SPEED` |
+| `pause-on-hover` | `pauseOnHover` | `boolean` | `false` |
+| `fade-edges` | `fadeEdges` | `boolean` | `false` |
+| `is-paused` | `isPaused` | `boolean` | `false` |
+| `copyCount` | `copyCount` | `number` | `0` |
+| `isBrowsing` | `isBrowsing` | `boolean` | `false` |
+
+**Slots**
+
+| Slot |
+| :--- |
+| (default) |
+
+**CSS Parts:** `track`, `group`
+
+## BentoGrid
+
+Feature cards in an uneven grid: `col-span` and `row-span` per card, one column on narrow screens, and an action that slides in on hover. Effects entry. Docs: [/docs/components/bentogrid](/docs/components/bentogrid)
+
+```html
+<moul-bento-grid columns="3">
+  <moul-bento-card col-span="2">
+    <img slot="visual" src="/feature.png" alt="" />
+    <h3 slot="heading">Motion as markup</h3>
+    Text effects are attributes, not scripts.
+    <moul-link slot="action" href="/docs">Learn more →</moul-link>
+  </moul-bento-card>
+  <moul-bento-card>…</moul-bento-card>
+</moul-bento-grid>
+```
+
+### `<moul-bento-grid>`
+
+Class: `MoulBentoGrid` · Source: `ui/src/components/BentoGrid/BentoGrid.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `columns` | `columns` | `number` | `DEFAULT_COLUMNS` |
+
+**Slots**
+
+| Slot |
+| :--- |
+| (default) |
+
+**CSS Parts:** `base`
+
+### `<moul-bento-card>`
+
+Class: `MoulBentoCard` · Source: `ui/src/components/BentoGrid/BentoGrid.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `col-span` | `colSpan` | `number` | `1` |
+| `row-span` | `rowSpan` | `number` | `1` |
+
+**Slots**
+
+| Slot |
+| :--- |
+| `visual` |
+| `background` |
+| `icon` |
+| `heading` |
+| (default) |
+| `action` |
+
+**CSS Parts:** `base`, `visual`, `background`, `content`, `icon`, `action`
+
+## BrowserFrame
+
+A browser window mock-up with window dots and an address bar around a screenshot or any content. Effects entry. Docs: [/docs/components/browserframe](/docs/components/browserframe)
+
+```html
+<moul-browser-frame url="example.com">
+  <img src="/screenshot.png" alt="The dashboard" />
+</moul-browser-frame>
+```
+
+### `<moul-browser-frame>`
+
+Class: `MoulBrowserFrame` · Source: `ui/src/components/BrowserFrame/BrowserFrame.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `url` | `url` | `string` | `''` |
+
+**Slots**
+
+| Slot |
+| :--- |
+| (default) |
+
+**CSS Parts:** `base`, `toolbar`, `address`, `content`
+
+## PhoneFrame
+
+A phone mock-up drawn in CSS around a screenshot or video, `variant="iphone"` or `"android"`, sized by `--phone-frame-width`. Effects entry. Docs: [/docs/components/phoneframe](/docs/components/phoneframe)
+
+```html
+<moul-phone-frame variant="iphone">
+  <img src="/app.png" alt="The app's home screen" />
+</moul-phone-frame>
+```
+
+### `<moul-phone-frame>`
+
+Class: `MoulPhoneFrame` · Source: `ui/src/components/PhoneFrame/PhoneFrame.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `variant` | `variant` | `'iphone' \| 'android'` | `'iphone'` |
+
+**Slots**
+
+| Slot |
+| :--- |
+| (default) |
+
+**CSS Parts:** `base`, `screen`, `island`, `camera`
+
+## ScrollProgress
+
+A thin bar that fills as the page (or the container named by `for`) scrolls, fixed to the top or bottom or in flow; decorative. Effects entry. Docs: [/docs/components/scrollprogress](/docs/components/scrollprogress)
+
+```html
+<moul-scroll-progress></moul-scroll-progress>
+```
+
+### `<moul-scroll-progress>`
+
+Class: `MoulScrollProgress` · Source: `ui/src/components/ScrollProgress/ScrollProgress.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `for` | `htmlFor` | `string` | `''` |
+| `placement` | `placement` | `'top' \| 'bottom' \| 'inline'` | `'top'` |
+| `tone` | `tone` | `'primary' \| 'accent' \| 'success' \| 'warning' \| 'error'` | `'primary'` |
+
+**CSS Parts:** `base`, `bar`
 
 ---
 

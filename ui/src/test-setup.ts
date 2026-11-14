@@ -721,3 +721,97 @@ export function manualAnimationFrames(): ManualFrames {
     },
   }
 }
+
+// =============================================================================
+// 7. IntersectionObserver test control
+// =============================================================================
+
+export interface IntersectionMock {
+  /** Every element currently observed, across all observers. */
+  readonly targets: Element[]
+  /**
+   * Reports `target` (default: every observed element) as on screen, to each
+   * observer watching it, as the browser does after a scroll.
+   */
+  enter(target?: Element): void
+  /** Reports `target` (default: every observed element) as off screen. */
+  leave(target?: Element): void
+  restore(): void
+}
+
+/**
+ * Replaces `IntersectionObserver` with one the test drives. happy-dom ships an
+ * observer that never reports, so an effect that waits for the reader to
+ * reach it would wait forever; with this mock a test decides when it is on
+ * screen. Install it before the element connects.
+ */
+export function mockIntersectionObserver(): IntersectionMock {
+  const observers = new Set<FakeObserver>()
+  const original = globalThis.IntersectionObserver
+
+  class FakeObserver {
+    readonly targets = new Set<Element>()
+    readonly root: Element | null
+    readonly rootMargin: string
+    readonly thresholds: number[]
+    readonly callback: IntersectionObserverCallback
+    constructor(
+      callback: IntersectionObserverCallback,
+      options: IntersectionObserverInit = {},
+    ) {
+      this.callback = callback
+      this.root = (options.root as Element | null) ?? null
+      this.rootMargin = options.rootMargin ?? '0px'
+      const threshold = options.threshold ?? 0
+      this.thresholds = Array.isArray(threshold) ? threshold : [threshold]
+      observers.add(this)
+    }
+    observe(target: Element) {
+      this.targets.add(target)
+    }
+    unobserve(target: Element) {
+      this.targets.delete(target)
+    }
+    disconnect() {
+      this.targets.clear()
+      observers.delete(this)
+    }
+    takeRecords() {
+      return []
+    }
+  }
+
+  const report = (isIntersecting: boolean, target?: Element) => {
+    for (const observer of [...observers]) {
+      const hits = [...observer.targets].filter(
+        (observed) => !target || observed === target,
+      )
+      if (hits.length === 0) continue
+      observer.callback(
+        hits.map(
+          (observed) =>
+            ({
+              isIntersecting,
+              intersectionRatio: isIntersecting ? 1 : 0,
+              target: observed,
+              time: performance.now(),
+            }) as unknown as IntersectionObserverEntry,
+        ),
+        observer as unknown as IntersectionObserver,
+      )
+    }
+  }
+
+  globalThis.IntersectionObserver =
+    FakeObserver as unknown as typeof IntersectionObserver
+  return {
+    get targets() {
+      return [...observers].flatMap((observer) => [...observer.targets])
+    },
+    enter: (target) => report(true, target),
+    leave: (target) => report(false, target),
+    restore() {
+      globalThis.IntersectionObserver = original
+    },
+  }
+}

@@ -1,0 +1,120 @@
+---
+title: Scramble (សមាសភាគ)
+description: ឯកសារណែនាំសម្រាប់សមាសភាគ Scramble Web Component
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import LandingKitDemo from '@/components/demos/LandingKitDemo.astro';
+
+`<moul-scramble>` shows its text as random glyphs that settle, letter by letter from the start, into the final text, like a decoder. Each letter keeps the width of its final glyph while it scrambles, so the line never jitters, and spaces never scramble. By default it plays once, the first time it enters the viewport.
+
+<ComponentPreview stack minHeight="200px">
+  <moul-typography variant="h2"><moul-scramble id="scramble-demo">Decrypting the roadmap</moul-scramble></moul-typography>
+  <moul-button size="sm" variant="secondary" data-replay="scramble-demo"><span>Replay</span></moul-button>
+  <LandingKitDemo />
+</ComponentPreview>
+
+It lives in the effects entry, with the rest of the landing kit:
+
+```js
+import '@moul-dev/web-component/effects'
+```
+
+```html
+<h1><moul-scramble>Decrypting the roadmap</moul-scramble></h1>
+```
+
+Write the text inside the element, as above, so it is in the HTML and shows before the script loads; or set the `text` attribute, which wins when both are there. Runs of spaces and line breaks in the HTML count as one space. Change the text and the new text shows; call `play()` to scramble into it.
+
+## Trigger
+
+`trigger` says what starts it:
+
+- `view` (the default) plays once, the first time the text enters the viewport. Until then it shows random glyphs, so it always resolves from noise.
+- `hover` plays each time a pointer enters the text, once the last scramble has finished.
+- `manual` waits for `play()`.
+
+<ComponentPreview stack minHeight="160px">
+  <div class="demo-row">
+    <moul-badge><moul-scramble trigger="hover">Hover over me</moul-scramble></moul-badge>
+    <moul-badge><moul-scramble id="scramble-manual" trigger="manual">Only on play()</moul-scramble></moul-badge>
+  </div>
+  <moul-button size="sm" variant="secondary" data-replay="scramble-manual"><span>Play</span></moul-button>
+</ComponentPreview>
+
+```html
+<moul-scramble trigger="hover">Hover over me</moul-scramble>
+<moul-scramble trigger="manual">Only on play()</moul-scramble>
+```
+
+The scramble never takes focus itself, so a keyboard user cannot hover it. Inside a link or a button, the control takes the focus, so start the scramble from the control's own events:
+
+```html
+<a href="/changelog" id="changelog-link"><moul-scramble trigger="manual">Changelog</moul-scramble></a>
+```
+
+```js
+const link = document.querySelector('#changelog-link')
+const scramble = link.querySelector('moul-scramble')
+
+link.addEventListener('pointerenter', () => scramble.play())
+link.addEventListener('focus', () => scramble.play())
+```
+
+## Duration and glyphs
+
+`duration` is how long the whole text takes to resolve (800 ms by default); letters resolve from the start, evenly spread over it. The glyphs change about every 50 ms, slow enough to see and fast enough to read as noise. `charset` is the set of glyphs to scramble through; it defaults to Latin letters, digits and `!@#$%&*`. `--scramble-glyph-color` gives the random glyphs a colour of their own.
+
+<ComponentPreview stack minHeight="200px">
+  <moul-typography variant="h3"><moul-scramble id="scramble-binary" charset="01" duration="1600">Binary, slowly</moul-scramble></moul-typography>
+  <moul-typography variant="h3"><moul-scramble id="scramble-accent" style="--scramble-glyph-color: var(--color-accent)">Accent noise</moul-scramble></moul-typography>
+  <moul-button size="sm" variant="secondary" data-replay="scramble-binary scramble-accent"><span>Replay</span></moul-button>
+</ComponentPreview>
+
+```html
+<moul-scramble charset="01" duration="1600">Binary, slowly</moul-scramble>
+<moul-scramble style="--scramble-glyph-color: var(--color-accent)">Accent noise</moul-scramble>
+```
+
+Letters are grapheme clusters, so a Khmer letter resolves with its marks, and a Khmer `charset` scrambles through whole Khmer letters. The language comes from the nearest `lang` attribute.
+
+<ComponentPreview stack minHeight="140px">
+  <moul-typography variant="h3" lang="km"><moul-scramble id="scramble-km" charset="កខគឃងចឆជឈញ">សួស្តីពិភពលោក</moul-scramble></moul-typography>
+  <moul-button size="sm" variant="secondary" data-replay="scramble-km"><span>Replay</span></moul-button>
+</ComponentPreview>
+
+## Playing again
+
+`play()` scrambles the text from the start and resolves it again, which is what the buttons on this page call. It returns a promise that resolves once every letter shows its final glyph. The frame loop runs only while a scramble is under way: it stops when the text is resolved, pauses while the element is off screen and stops for good when the element is removed.
+
+```js
+await document.querySelector('moul-scramble').play()
+```
+
+## Accessibility
+
+`<moul-scramble>` is never focusable itself. The scrambling letters are hidden from screen readers, and a visually hidden copy holds the final text, so a screen reader reads the words once, never the noise.
+
+Under `prefers-reduced-motion: reduce` nothing scrambles: the final text shows at once and `play()` resolves at once. Turning reduced motion on mid-scramble shows the final text straight away.
+
+## Attributes and properties
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `text` | `text` | `string`; when empty, the text inside is used | `''` |
+| `trigger` | `trigger` | `'view' \| 'hover' \| 'manual'` | `'view'` |
+| `duration` | `duration` | `number` (ms) | `800` |
+| `charset` | `charset` | `string` | Latin letters, digits and `!@#$%&*` |
+| | `currentText` | `string`, read only: the final text | |
+
+| Method | Description |
+| :-- | :-- |
+| `play()` | Scrambles the text and resolves it again. Resolves once every letter is final. |
+
+| Part | Description |
+| :-- | :-- |
+| `text` | The visible letters. |
+
+| CSS property | Description |
+| :-- | :-- |
+| `--scramble-glyph-color` | The colour of the random glyphs. Defaults to `currentColor`. |

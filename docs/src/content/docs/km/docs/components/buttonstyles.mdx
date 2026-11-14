@@ -1,0 +1,604 @@
+---
+title: Button Styles (សមាសភាគ)
+description: ឯកសារណែនាំសម្រាប់សមាសភាគ Button Styles Web Component
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+<style>{`
+.bs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
+  gap: 0 1.5rem;
+  align-items: start;
+}
+.bs-grid > .bs-cell {
+  margin: 0;
+  min-inline-size: 0;
+}
+
+.bs-sketch::part(button) {
+  border: 2px solid var(--color-fg);
+  border-radius: var(--radius-sm);
+  background: color-mix(in oklab, var(--color-warning) 30%, var(--color-surface));
+  color: var(--color-fg);
+  filter: drop-shadow(3px 3px 0 var(--color-fg));
+}
+.bs-sketch::part(button):hover {
+  background-color: color-mix(in oklab, var(--color-warning) 50%, var(--color-surface));
+}
+.bs-sketch::part(button):active {
+  transform: translate(3px, 3px);
+  filter: none;
+}
+
+.bs-gradient::part(button) {
+  background: linear-gradient(120deg, var(--color-chart-4), var(--color-accent));
+  color: var(--color-snow);
+}
+.bs-gradient::part(button):hover {
+  opacity: 0.88;
+}
+
+.bs-glass::part(button) {
+  background: var(--color-bg-glass);
+  border-color: var(--color-border-glass);
+  color: var(--color-fg);
+  -webkit-backdrop-filter: blur(12px) saturate(1.6);
+  backdrop-filter: blur(12px) saturate(1.6);
+}
+.bs-glass::part(button):hover {
+  background-color: var(--color-surface);
+}
+
+.bs-fill::part(button) {
+  border-color: var(--color-accent);
+  color: var(--color-accent-soft-fg);
+}
+.bs-fill::part(button):hover {
+  background-color: var(--color-accent-hover);
+  color: var(--color-accent-fg);
+}
+
+.bs-arrow [slot="suffix"] {
+  display: grid;
+  place-items: center;
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+  margin-inline-end: -0.625rem;
+  border-radius: 50%;
+  background: var(--color-accent);
+  color: var(--color-accent-fg);
+}
+.bs-arrow:hover [slot="suffix"] {
+  translate: 0.1875rem 0;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .bs-arrow [slot="suffix"] {
+    transition: translate var(--duration-fast) var(--ease-out);
+  }
+}
+
+.bs-shimmer {
+  --button-effect-color: var(--color-bg);
+  --button-effect-duration: 2.5s;
+}
+.bs-shimmer::part(button) {
+  background: var(--color-fg);
+  color: var(--color-bg);
+}
+.bs-shimmer::part(button):hover {
+  background-color: color-mix(in oklab, var(--color-fg) 85%, var(--color-bg));
+}
+
+.bs-rainbow::part(button) {
+  background: var(--color-surface);
+  font-weight: var(--font-weight-semibold);
+}
+.bs-rainbow::part(button):hover {
+  background-color: var(--color-surface-hover);
+}
+
+.bs-neon {
+  --button-effect-color: var(--color-chart-5);
+}
+.bs-neon::part(button) {
+  background: var(--color-eclipse);
+  color: var(--color-snow);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.bs-neon::part(button):hover {
+  background-color: color-mix(in oklab, var(--color-eclipse) 85%, var(--color-chart-5));
+}
+
+.bs-live {
+  --button-pulse-color: var(--color-success);
+}
+.bs-live::part(button) {
+  background: var(--color-success);
+  color: var(--color-success-fg);
+}
+.bs-live::part(button):hover {
+  background-color: var(--color-success-hover);
+}
+
+.bs-link::part(button) {
+  padding-inline: 0;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--color-accent-soft-fg);
+  text-decoration: underline 1px;
+  text-underline-offset: 0.3em;
+}
+.bs-link::part(button):hover {
+  text-decoration-thickness: 2px;
+}
+
+.bs-invert::part(button) {
+  border-color: var(--color-fg);
+  border-radius: 0;
+  color: var(--color-fg);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.bs-invert::part(button):hover {
+  background-color: var(--color-fg);
+  color: var(--color-bg);
+}
+
+.bs-press {
+  --bs-edge: 0 4px 0 color-mix(in oklab, var(--color-accent), var(--color-black) 35%);
+}
+.bs-press::part(button) {
+  border-radius: var(--radius-lg);
+  box-shadow: var(--bs-edge);
+}
+.bs-press::part(button):focus-visible {
+  box-shadow: var(--bs-edge), var(--focus-ring);
+}
+.bs-press::part(button):active {
+  transform: translateY(4px);
+  box-shadow: none;
+}
+
+.bs-book::part(button) {
+  border-radius: var(--radius-lg);
+}
+.bs-book::part(hover) {
+  color: var(--color-accent-soft-fg);
+  font-weight: var(--font-weight-semibold);
+}
+`}</style>
+
+Each look on this page is one `<moul-button>` with a class and a few CSS rules: no wrapper elements and no script. Copy the HTML and CSS of the one you want, then change the words and colours.
+
+<ComponentPreview>
+<div class="demo-row">
+  <moul-button class="bs-sketch">Get started</moul-button>
+  <moul-button class="bs-shimmer" effect="shimmer">Get early access</moul-button>
+  <moul-button class="bs-invert" variant="outline">View pricing</moul-button>
+</div>
+</ComponentPreview>
+
+## Styling a button
+
+`::part(button)` reaches the native `<button>` inside `moul-button`, so a rule on it can set the background, border, radius, shadow and type, and `:hover`, `:active` and `:focus-visible` work after it. `::part(hover)`, `::part(content)` and the other parts reach the pieces inside. The `effect` and `is-pulsing` attributes add motion, and four CSS properties on the element tune it: `--button-effect-color`, `--button-effect-duration`, `--button-pulse-color` and `--button-pulse-duration` (see [Button](/docs/components/button/#effects)). Every colour below is a theme token, so each look follows the light and dark themes.
+
+```css
+moul-button.cta::part(button) {
+  border-radius: var(--radius-md);
+  font-weight: var(--font-weight-semibold);
+}
+
+moul-button.cta {
+  --button-effect-color: var(--color-chart-5);
+}
+```
+
+Three things to know before you write your own:
+
+- A rule from your page wins over the button's own rules, whatever its specificity. Set `background` and the variant's hover colour stops showing, so set `:hover` too.
+- The focus ring is a `box-shadow`. A look that sets `box-shadow` replaces it, so add `var(--focus-ring)` back on `:focus-visible`, as the 3D press look does.
+- The button already fades its background, text and border colours, shadow, transform and opacity, and stops fading under reduced motion. Change only those on hover and press and the fades come for free. Anything else you transition needs its own reduced-motion rule, as the arrow look shows.
+
+## Gallery
+
+<div class="bs-grid">
+
+<div class="bs-cell">
+
+### Sketch
+
+A heavy border and a hard offset shadow; pressing pushes the button into its shadow.
+
+<ComponentPreview>
+  <moul-button class="bs-sketch">Get started</moul-button>
+</ComponentPreview>
+
+```html wrap
+<moul-button class="bs-sketch">Get started</moul-button>
+
+<style>
+  .bs-sketch::part(button) {
+    border: 2px solid var(--color-fg);
+    border-radius: var(--radius-sm);
+    background: color-mix(in oklab, var(--color-warning) 30%, var(--color-surface));
+    color: var(--color-fg);
+    filter: drop-shadow(3px 3px 0 var(--color-fg));
+  }
+  .bs-sketch::part(button):hover {
+    background-color: color-mix(in oklab, var(--color-warning) 50%, var(--color-surface));
+  }
+  .bs-sketch::part(button):active {
+    transform: translate(3px, 3px);
+    filter: none;
+  }
+</style>
+```
+
+</div>
+
+<div class="bs-cell">
+
+### Gradient
+
+A diagonal blend of two theme colours that dims slightly on hover.
+
+<ComponentPreview>
+  <moul-button class="bs-gradient">Upgrade to Pro</moul-button>
+</ComponentPreview>
+
+```html wrap
+<moul-button class="bs-gradient">Upgrade to Pro</moul-button>
+
+<style>
+  .bs-gradient::part(button) {
+    background: linear-gradient(120deg, var(--color-chart-4), var(--color-accent));
+    color: var(--color-snow);
+  }
+  .bs-gradient::part(button):hover {
+    opacity: 0.88;
+  }
+</style>
+```
+
+</div>
+
+<div class="bs-cell">
+
+### Glass
+
+A translucent face that blurs whatever is behind it. It needs something colourful behind it to show.
+
+<ComponentPreview backdrop="mesh">
+  <moul-button class="bs-glass">Explore</moul-button>
+</ComponentPreview>
+
+```html wrap
+<moul-button class="bs-glass">Explore</moul-button>
+
+<style>
+  .bs-glass::part(button) {
+    background: var(--color-bg-glass);
+    border-color: var(--color-border-glass);
+    color: var(--color-fg);
+    -webkit-backdrop-filter: blur(12px) saturate(1.6);
+    backdrop-filter: blur(12px) saturate(1.6);
+  }
+  .bs-glass::part(button):hover {
+    background-color: var(--color-surface);
+  }
+</style>
+```
+
+</div>
+
+<div class="bs-cell">
+
+### Fill on hover
+
+An accent outline that fills with the accent on hover.
+
+<ComponentPreview>
+  <moul-button class="bs-fill" variant="outline">Subscribe</moul-button>
+</ComponentPreview>
+
+```html wrap
+<moul-button class="bs-fill" variant="outline">Subscribe</moul-button>
+
+<style>
+  .bs-fill::part(button) {
+    border-color: var(--color-accent);
+    color: var(--color-accent-soft-fg);
+  }
+  .bs-fill::part(button):hover {
+    background-color: var(--color-accent-hover);
+    color: var(--color-accent-fg);
+  }
+</style>
+```
+
+</div>
+
+<div class="bs-cell">
+
+### Arrow
+
+A pill with a round arrow badge in the suffix slot that nudges forward on hover.
+
+<ComponentPreview>
+  <moul-button class="bs-arrow" variant="secondary"><span>Read the guide</span><span slot="suffix" aria-hidden="true">→</span></moul-button>
+</ComponentPreview>
+
+```html wrap
+<moul-button class="bs-arrow" variant="secondary">
+  Read the guide
+  <span slot="suffix" aria-hidden="true">→</span>
+</moul-button>
+
+<style>
+  .bs-arrow [slot="suffix"] {
+    display: grid;
+    place-items: center;
+    inline-size: 1.5rem;
+    block-size: 1.5rem;
+    margin-inline-end: -0.625rem;
+    border-radius: 50%;
+    background: var(--color-accent);
+    color: var(--color-accent-fg);
+  }
+  .bs-arrow:hover [slot="suffix"] {
+    translate: 0.1875rem 0;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .bs-arrow [slot="suffix"] {
+      transition: translate var(--duration-fast) var(--ease-out);
+    }
+  }
+</style>
+```
+
+</div>
+
+<div class="bs-cell">
+
+### Shimmer call to action
+
+A spark circles an inverted button: dark in the light theme, light in the dark one.
+
+<ComponentPreview>
+  <moul-button class="bs-shimmer" effect="shimmer" size="lg">Get early access</moul-button>
+</ComponentPreview>
+
+```html wrap
+<moul-button class="bs-shimmer" effect="shimmer" size="lg">Get early access</moul-button>
+
+<style>
+  .bs-shimmer {
+    --button-effect-color: var(--color-bg);
+    --button-effect-duration: 2.5s;
+  }
+  .bs-shimmer::part(button) {
+    background: var(--color-fg);
+    color: var(--color-bg);
+  }
+  .bs-shimmer::part(button):hover {
+    background-color: color-mix(in oklab, var(--color-fg) 85%, var(--color-bg));
+  }
+</style>
+```
+
+</div>
+
+<div class="bs-cell">
+
+### Rainbow call to action
+
+The rainbow border and glow around a plain surface, with a heavier label.
+
+<ComponentPreview>
+  <moul-button class="bs-rainbow" effect="rainbow" variant="tertiary" size="lg">Start building</moul-button>
+</ComponentPreview>
+
+```html wrap
+<moul-button class="bs-rainbow" effect="rainbow" variant="tertiary" size="lg">Start building</moul-button>
+
+<style>
+  .bs-rainbow::part(button) {
+    background: var(--color-surface);
+    font-weight: var(--font-weight-semibold);
+  }
+  .bs-rainbow::part(button):hover {
+    background-color: var(--color-surface-hover);
+  }
+</style>
+```
+
+</div>
+
+<div class="bs-cell">
+
+### Neon on dark
+
+A dark button whose edge glows cyan and breathes, in both themes.
+
+<ComponentPreview>
+  <moul-button class="bs-neon" effect="neon" variant="ghost">Enter</moul-button>
+</ComponentPreview>
+
+```html wrap
+<moul-button class="bs-neon" effect="neon" variant="ghost">Enter</moul-button>
+
+<style>
+  .bs-neon {
+    --button-effect-color: var(--color-chart-5);
+  }
+  .bs-neon::part(button) {
+    background: var(--color-eclipse);
+    color: var(--color-snow);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .bs-neon::part(button):hover {
+    background-color: color-mix(in oklab, var(--color-eclipse) 85%, var(--color-chart-5));
+  }
+</style>
+```
+
+</div>
+
+<div class="bs-cell">
+
+### Pulsing call to action
+
+A success-green button whose pulse ring takes the same green.
+
+<ComponentPreview>
+  <moul-button class="bs-live" is-pulsing>Join the live session</moul-button>
+</ComponentPreview>
+
+```html wrap
+<moul-button class="bs-live" is-pulsing>Join the live session</moul-button>
+
+<style>
+  .bs-live {
+    --button-pulse-color: var(--color-success);
+  }
+  .bs-live::part(button) {
+    background: var(--color-success);
+    color: var(--color-success-fg);
+  }
+  .bs-live::part(button):hover {
+    background-color: var(--color-success-hover);
+  }
+</style>
+```
+
+</div>
+
+<div class="bs-cell">
+
+### Link
+
+No fill and no padding, just underlined text that thickens on hover. Use it for an action that sits in a sentence; for navigation use `moul-link`.
+
+<ComponentPreview>
+  <moul-button class="bs-link" variant="ghost">Read the changelog</moul-button>
+</ComponentPreview>
+
+```html wrap
+<moul-button class="bs-link" variant="ghost">Read the changelog</moul-button>
+
+<style>
+  .bs-link::part(button) {
+    padding-inline: 0;
+    border-radius: var(--radius-sm);
+    background: none;
+    color: var(--color-accent-soft-fg);
+    text-decoration: underline 1px;
+    text-underline-offset: 0.3em;
+  }
+  .bs-link::part(button):hover {
+    text-decoration-thickness: 2px;
+  }
+</style>
+```
+
+</div>
+
+<div class="bs-cell">
+
+### Invert on hover
+
+Square corners and spaced capitals; hover swaps the text and fill colours.
+
+<ComponentPreview>
+  <moul-button class="bs-invert" variant="outline">View pricing</moul-button>
+</ComponentPreview>
+
+```html wrap
+<moul-button class="bs-invert" variant="outline">View pricing</moul-button>
+
+<style>
+  .bs-invert::part(button) {
+    border-color: var(--color-fg);
+    border-radius: 0;
+    color: var(--color-fg);
+    font-size: var(--font-size-xs);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .bs-invert::part(button):hover {
+    background-color: var(--color-fg);
+    color: var(--color-bg);
+  }
+</style>
+```
+
+</div>
+
+<div class="bs-cell">
+
+### 3D press
+
+A raised button on a darker edge that sinks onto it when pressed. It sets a shadow, so it puts the focus ring back.
+
+<ComponentPreview>
+  <moul-button class="bs-press">Press me</moul-button>
+</ComponentPreview>
+
+```html wrap
+<moul-button class="bs-press">Press me</moul-button>
+
+<style>
+  .bs-press {
+    --bs-edge: 0 4px 0 color-mix(in oklab, var(--color-accent), var(--color-black) 35%);
+  }
+  .bs-press::part(button) {
+    border-radius: var(--radius-lg);
+    box-shadow: var(--bs-edge);
+  }
+  .bs-press::part(button):focus-visible {
+    box-shadow: var(--bs-edge), var(--focus-ring);
+  }
+  .bs-press::part(button):active {
+    transform: translateY(4px);
+    box-shadow: none;
+  }
+</style>
+```
+
+</div>
+
+<div class="bs-cell">
+
+### Book a call
+
+The hover slot swaps in a second line on hover and keyboard focus, styled through `::part(hover)`.
+
+<ComponentPreview>
+  <moul-button class="bs-book" variant="secondary"><span>Book a call</span><span slot="hover">Pick a time →</span></moul-button>
+</ComponentPreview>
+
+```html wrap
+<moul-button class="bs-book" variant="secondary">
+  Book a call
+  <span slot="hover">Pick a time →</span>
+</moul-button>
+
+<style>
+  .bs-book::part(button) {
+    border-radius: var(--radius-lg);
+  }
+  .bs-book::part(hover) {
+    color: var(--color-accent-soft-fg);
+    font-weight: var(--font-weight-semibold);
+  }
+</style>
+```
+
+</div>
+
+</div>

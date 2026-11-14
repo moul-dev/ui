@@ -31,6 +31,10 @@ Six controllers do the work that pointer, scroll, text and canvas effects share.
 
 `prefersReducedMotion()` and `watchReducedMotion(callback)` are exported too, for effects that check the setting themselves.
 
+## Effect elements
+
+The effects entry also registers the elements built on these controllers: [`<moul-confetti>`](/docs/components/confetti/) and the [landing kit](/docs/landing-kit/), which covers text effects, reveals, a marquee, a bento grid, device frames and scroll progress.
+
 ## What every effect promises
 
 Each controller has a reduced-motion path, works in light and dark themes because it writes numbers rather than colours, and cleans up its listeners, observers and frames when its element leaves the page. Effect elements built on them follow the same [element checklist](https://github.com/moul-dev/ui/blob/main/AGENTS.md#element-checklist) as every other Moul element.

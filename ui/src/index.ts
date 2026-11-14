@@ -48,6 +48,7 @@ export {
 } from './components/Breadcrumbs'
 // Phase 4: Actions & Toggle Components
 export {
+  type ButtonEffect,
   type ButtonSize,
   type ButtonState,
   type ButtonType,

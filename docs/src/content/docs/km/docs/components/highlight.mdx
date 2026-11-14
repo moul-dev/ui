@@ -1,0 +1,116 @@
+---
+title: Highlight (សមាសភាគ)
+description: ឯកសារណែនាំសម្រាប់សមាសភាគ Highlight Web Component
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import LandingKitDemo from '@/components/demos/LandingKitDemo.astro';
+
+`<moul-highlight>` draws a mark on the phrase that matters, the way you would with a highlighter pen: a band behind the words, a thick stroke under them, or a quick box or ring around them. It draws once, the first time the words scroll into view, and the text keeps its own colour.
+
+<ComponentPreview stack minHeight="180px">
+  <moul-typography variant="h3">Plain HTML tags with <moul-highlight id="highlight-demo">motion built in</moul-highlight>.</moul-typography>
+  <moul-button size="sm" variant="secondary" data-replay="highlight-demo"><span>Replay</span></moul-button>
+  <LandingKitDemo />
+</ComponentPreview>
+
+It lives in the effects entry, with the rest of the landing kit:
+
+```js
+import '@moul-dev/web-component/effects'
+```
+
+```html
+<p>Plain HTML tags with <moul-highlight>motion built in</moul-highlight>.</p>
+```
+
+## Effects
+
+`effect` sets the kind of mark. `marker` (the default) sweeps a translucent band behind the words. `underline` draws a thick stroke under them. Both are drawn from the start of the words to the end, and when the words wrap they are drawn line after line. `box` draws a hand-drawn rectangle around the words and `circle` a hand-drawn ring; both keep the words on one line.
+
+<ComponentPreview stack minHeight="320px">
+  <div class="demo-stack">
+    <moul-typography variant="h4">Deploys are <moul-highlight id="highlight-marker">previews first</moul-highlight>, then a click.</moul-typography>
+    <moul-typography variant="h4">Deploys are <moul-highlight id="highlight-underline" effect="underline">previews first</moul-highlight>, then a click.</moul-typography>
+    <moul-typography variant="h4">Deploys are <moul-highlight id="highlight-box" effect="box">previews first</moul-highlight>, then a click.</moul-typography>
+    <moul-typography variant="h4">Deploys are <moul-highlight id="highlight-circle" effect="circle">previews first</moul-highlight>, then a click.</moul-typography>
+  </div>
+  <moul-button size="sm" variant="secondary" data-replay="highlight-marker highlight-underline highlight-box highlight-circle"><span>Replay</span></moul-button>
+</ComponentPreview>
+
+```html
+<moul-highlight effect="underline">previews first</moul-highlight>
+<moul-highlight effect="circle">previews first</moul-highlight>
+```
+
+## Tone and colour
+
+`tone` colours the mark: `warning` (the default, a yellow marker), `primary`, `accent`, `success` or `error`. The marker band mixes the colour at 40% with transparent so the text shows through; underline, box and circle use it solid. `--highlight-color` replaces the tone's colour with your own, and the marker still mixes it at 40%.
+
+<ComponentPreview stack minHeight="200px">
+  <div class="demo-row">
+    <moul-highlight id="highlight-primary" tone="primary">primary</moul-highlight>
+    <moul-highlight id="highlight-accent" tone="accent">accent</moul-highlight>
+    <moul-highlight id="highlight-success" tone="success">success</moul-highlight>
+    <moul-highlight id="highlight-warning">warning</moul-highlight>
+    <moul-highlight id="highlight-error" tone="error" effect="underline">error</moul-highlight>
+  </div>
+  <moul-button size="sm" variant="secondary" data-replay="highlight-primary highlight-accent highlight-success highlight-warning highlight-error"><span>Replay</span></moul-button>
+</ComponentPreview>
+
+```html
+<moul-highlight tone="success">passes every check</moul-highlight>
+<moul-highlight style="--highlight-color: var(--color-chart-4)">your own colour</moul-highlight>
+```
+
+## Timing
+
+`delay` waits after the words enter the viewport (0 by default) and `duration` is how long the drawing takes (700 by default), both in milliseconds. A delay lets a heading arrive before its key phrase is marked.
+
+```html
+<moul-reveal>
+  <h2>Ship your <moul-highlight delay="600">landing page</moul-highlight> this week</h2>
+</moul-reveal>
+```
+
+## Drawing again
+
+`is-drawn` is set when the mark is drawn. `play()` erases the mark and draws it again, which is what the replay buttons on this page call.
+
+```js
+document.querySelector('moul-highlight').play()
+```
+
+## Accessibility
+
+`<moul-highlight>` is never focusable and adds no role. The words are read as they are, and the drawn mark is decoration that screen readers do not see. When the emphasis carries meaning, say so in the markup too: put the words in `<mark>` or `<strong>` inside the element. A `<mark>` placed directly inside loses the browser's yellow background, so only the drawn mark shows.
+
+```html
+<moul-highlight><mark>cancel any time</mark></moul-highlight>
+```
+
+The marker band is a 40% mix of the tone colour, so the text over it keeps most of its contrast. Where the system forces its own colours, as in Windows high contrast mode, the mark uses the system text colour.
+
+Under `prefers-reduced-motion: reduce` the mark is drawn from the start, with no animation. It is also drawn when printing.
+
+## Attributes and properties
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `effect` | `effect` | `'marker' \| 'underline' \| 'box' \| 'circle'` | `'marker'` |
+| `tone` | `tone` | `'primary' \| 'accent' \| 'success' \| 'warning' \| 'error'` | `'warning'` |
+| `delay` | `delay` | `number` (ms) | `0` |
+| `duration` | `duration` | `number` (ms) | `700` |
+| `is-drawn` | `isDrawn` | `boolean`, set by the element | `false` |
+
+| Method | Description |
+| :-- | :-- |
+| `play()` | Erases the mark and draws it again. |
+
+| Slot | Description |
+| :-- | :-- |
+| (default) | The words to mark. |
+
+| CSS property | Description | Default |
+| :-- | :-- | :-- |
+| `--highlight-color` | The colour of the mark, in place of the tone's. | The tone's colour |

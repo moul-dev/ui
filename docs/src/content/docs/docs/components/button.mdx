@@ -156,6 +156,102 @@ Disabled buttons are skipped by focus. An icon-only button needs an `aria-label`
 </div>
 ```
 
+## Effects
+
+`effect` animates the edge of the button, for the one call to action a landing page is built around. There are three:
+
+- `shimmer`: a bright spark travels round the edge. It takes the button's text colour, so it shows on every variant.
+- `rainbow`: the border flows through the five chart colours, with a soft glow of the same colours beneath the button.
+- `neon`: the edge glows in the accent colour, or the danger colour on `danger` and `danger-soft`, and slowly brightens and dims.
+
+<ComponentPreview>
+<div class="demo-row">
+  <moul-button effect="shimmer">Get early access</moul-button>
+  <moul-button effect="rainbow" variant="tertiary">Start building</moul-button>
+  <moul-button effect="neon" variant="outline">Join the beta</moul-button>
+</div>
+</ComponentPreview>
+
+```html
+<moul-button effect="shimmer">Get early access</moul-button>
+<moul-button effect="rainbow" variant="tertiary">Start building</moul-button>
+<moul-button effect="neon" variant="outline">Join the beta</moul-button>
+```
+
+The effects work with every variant and size. An unset or unknown `effect` draws nothing, and a disabled button holds its effect still. The rainbow and neon glows spread a little beyond the button, so an ancestor with `overflow: hidden` close around it will clip them.
+
+### Pulse
+
+`is-pulsing` sends a soft ring outward from the button, over and over, in the accent colour (the danger colour on the danger variants). It stops while the button is disabled, pending, or showing success or error, and it combines with an effect.
+
+<ComponentPreview>
+<div class="demo-row">
+  <moul-button is-pulsing>Join the live session</moul-button>
+  <moul-button is-pulsing effect="shimmer" variant="secondary">Claim your seat</moul-button>
+</div>
+</ComponentPreview>
+
+```html
+<moul-button is-pulsing>Join the live session</moul-button>
+<moul-button is-pulsing effect="shimmer" variant="secondary">Claim your seat</moul-button>
+```
+
+### Timing and colour
+
+Four CSS properties tune the effects. `--button-effect-duration` is one cycle, a turn of the ring or a breath of the glow (`3s` by default). `--button-effect-color` colours the shimmer spark and the neon glow, and `--button-pulse-color` and `--button-pulse-duration` (`1.5s`) do the same for the pulse.
+
+<ComponentPreview>
+<div class="demo-row">
+  <moul-button effect="neon" variant="ghost" style="--button-effect-color: var(--color-chart-5); --button-effect-duration: 2s">Faster neon</moul-button>
+  <moul-button is-pulsing style="--button-pulse-color: var(--color-success); --button-pulse-duration: 2.5s">Slower pulse</moul-button>
+</div>
+</ComponentPreview>
+
+```css
+moul-button.cta {
+  --button-effect-color: var(--color-chart-5);
+  --button-effect-duration: 2s;
+  --button-pulse-color: var(--color-success);
+  --button-pulse-duration: 2.5s;
+}
+```
+
+For whole looks built from these attributes and a few lines of CSS, see [Button styles](/docs/components/buttonstyles/).
+
+### Accessibility
+
+Effects and the pulse are drawn in CSS and change nothing a screen reader reads. Under reduced motion the `shimmer` and `rainbow` rings hold still, `neon` glows steadily, and there is no pulse. Keep motion to one button per view: several moving edges compete for attention and none of them wins it.
+
+## Hover swap
+
+Content in the `hover` slot waits below the label. When a mouse or trackpad hovers the button, or keyboard focus reaches it, the label slides up and away and the hover content slides in. The two share one box, so the button is as wide as the wider of them and does not change size. Touch screens have no hover, so they keep the label.
+
+<ComponentPreview>
+<div class="demo-row">
+  <moul-button variant="outline">
+    <span>Book a call</span>
+    <span slot="hover">Pick a time →</span>
+  </moul-button>
+  <moul-button>
+    <span>Get started</span>
+    <span slot="hover">It is free</span>
+  </moul-button>
+</div>
+</ComponentPreview>
+
+```html
+<moul-button variant="outline">
+  Book a call
+  <span slot="hover">Pick a time →</span>
+</moul-button>
+```
+
+The `prefix` and `suffix` slots stay in place while the label swaps. While the button is pending or showing success or error there is no swap: the state's label shows. Style the hover content through `::part(hover)`.
+
+### Accessibility
+
+The hover content is decoration. It sits in a box hidden from screen readers, so the button's name is always the label, and it should say nothing the label does not. Keyboard focus shows the swap the way hover does. Under reduced motion the label and the hover content change places at once, without sliding.
+
 ## API reference
 
 | Attribute | Property | Type | Default |
@@ -171,6 +267,8 @@ Disabled buttons are skipped by focus. An icon-only button needs an `aria-label`
 | `pending-label` | `pendingLabel` | `string` | `'Loading'` |
 | `success-label` | `successLabel` | `string` | `'Done'` |
 | `error-label` | `errorLabel` | `string` | `'Failed'` |
+| `effect` | `effect` | `'shimmer' \| 'rainbow' \| 'neon' \| undefined` | `undefined` |
+| `is-pulsing` | `isPulsing` | `boolean` | `false` |
 
 | Method | Description |
 | :-- | :-- |
@@ -188,7 +286,15 @@ Disabled buttons are skipped by focus. An icon-only button needs an `aria-label`
 | `pending` | Replaces the label while pending, such as "Saving…". |
 | `success` | Replaces the label in `success`; its text is announced. |
 | `error` | Replaces the label in `error`; its text is announced. |
+| `hover` | Slides in as the label slides away, on hover and keyboard focus, while idle. Hidden from screen readers. |
 
-**CSS parts:** `button`, `icon`, `prefix`, `content`, `suffix`
+**CSS parts:** `button`, `icon`, `prefix`, `content`, `hover`, `suffix`
 
-`icon` wraps the state icon, a `moul-icon-morph`, and has no width in `idle`. `content` wraps the label; its width animates when a state slot swaps the label.
+`icon` wraps the state icon, a `moul-icon-morph`, and has no width in `idle`. `content` wraps the label; its width animates when a state slot swaps the label. `hover` wraps the `hover` slot and sits inside `content`, in the same cell as the label.
+
+| CSS property | Description |
+| :-- | :-- |
+| `--button-effect-duration` | One cycle of the `effect`: a turn of the ring, or a breath of the glow. Defaults to `3s`. |
+| `--button-effect-color` | The `shimmer` spark and the `neon` glow. Defaults to the text colour for the spark, and to the accent (danger on the danger variants) for the glow. |
+| `--button-pulse-color` | The pulse ring. Defaults to the accent, or the danger colour on the danger variants. |
+| `--button-pulse-duration` | One pulse. Defaults to `1.5s`. |

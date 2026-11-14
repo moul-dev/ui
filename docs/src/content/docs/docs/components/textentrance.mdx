@@ -1,0 +1,147 @@
+---
+title: Text Entrance
+description: Text whose letters, words or lines come in one after another as it scrolls into view.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import LandingKitDemo from '@/components/demos/LandingKitDemo.astro';
+
+`<moul-text-entrance>` brings a line of text in piece by piece as the reader reaches it: each word sharpens from a soft blur and rises a short way into place, a moment after the one before. Put it inside your own heading. It plays once, the first time the text enters the viewport, and text that is already on screen when the page loads plays straight away.
+
+<ComponentPreview stack minHeight="200px">
+  <moul-typography variant="h2"><moul-text-entrance id="entrance-demo">Ship on Friday, sleep on Saturday</moul-text-entrance></moul-typography>
+  <moul-button size="sm" variant="secondary" data-replay="entrance-demo"><span>Replay</span></moul-button>
+  <LandingKitDemo />
+</ComponentPreview>
+
+It lives in the effects entry, with the rest of the landing kit:
+
+```js
+import '@moul-dev/web-component/effects'
+```
+
+```html
+<h1><moul-text-entrance>Ship on Friday, sleep on Saturday</moul-text-entrance></h1>
+```
+
+Write the text inside the element, as above, so it is in the HTML and shows before the script loads; or set the `text` attribute, which wins when both are there. Runs of spaces and line breaks in the HTML count as one space, as they do on the page. Markup inside, such as `<em>`, counts only for its text. Change the text inside and it splits again; once the text has come in, the new pieces come in too.
+
+## Letters, words or lines
+
+`by` chooses the pieces: `words` (the default), `chars` for one letter at a time, or `lines` for each wrapped line as one piece. Lines are measured after layout and measured again when the width changes, so a heading that wraps differently on a phone still comes in line by line.
+
+<ComponentPreview stack minHeight="260px">
+  <moul-typography variant="h4"><moul-text-entrance id="entrance-chars" by="chars">One letter at a time</moul-text-entrance></moul-typography>
+  <moul-typography variant="h4"><moul-text-entrance id="entrance-words" by="words">One word at a time</moul-text-entrance></moul-typography>
+  <div style="max-width: 18rem; text-align: center">
+    <moul-text-entrance id="entrance-lines" by="lines">Every deploy is a preview first, so the release is a click, not a ceremony.</moul-text-entrance>
+  </div>
+  <moul-button size="sm" variant="secondary" data-replay="entrance-chars entrance-words entrance-lines"><span>Replay</span></moul-button>
+</ComponentPreview>
+
+```html
+<moul-text-entrance by="chars">One letter at a time</moul-text-entrance>
+<moul-text-entrance by="lines">Every deploy is a preview first…</moul-text-entrance>
+```
+
+Letters are grapheme clusters and words follow the language's own boundaries, so Khmer, written without spaces between words, splits into words, and a Khmer letter never loses its marks. The language comes from the nearest `lang` attribute.
+
+<ComponentPreview stack minHeight="140px">
+  <moul-typography variant="h3" lang="km"><moul-text-entrance id="entrance-km" by="chars">សួស្តីពិភពលោក</moul-text-entrance></moul-typography>
+  <moul-button size="sm" variant="secondary" data-replay="entrance-km"><span>Replay</span></moul-button>
+</ComponentPreview>
+
+```html
+<h2 lang="km"><moul-text-entrance by="chars">សួស្តីពិភពលោក</moul-text-entrance></h2>
+```
+
+## Effects
+
+`effect` is how each piece comes in: `fade`, `blur`, `blur-up` (the default: it sharpens from a blur while rising), `slide-up`, `slide-down` or `scale-up`. None of them moves sideways, so they read the same in right-to-left text.
+
+<ComponentPreview stack minHeight="320px">
+  <div class="demo-stack" style="text-align: center">
+    <moul-text-entrance id="entrance-fade" effect="fade">fade: Logs you can search</moul-text-entrance>
+    <moul-text-entrance id="entrance-blur" effect="blur">blur: Logs you can search</moul-text-entrance>
+    <moul-text-entrance id="entrance-blur-up" effect="blur-up">blur-up: Logs you can search</moul-text-entrance>
+    <moul-text-entrance id="entrance-slide-up" effect="slide-up">slide-up: Logs you can search</moul-text-entrance>
+    <moul-text-entrance id="entrance-slide-down" effect="slide-down">slide-down: Logs you can search</moul-text-entrance>
+    <moul-text-entrance id="entrance-scale-up" effect="scale-up">scale-up: Logs you can search</moul-text-entrance>
+  </div>
+  <moul-button size="sm" variant="secondary" data-replay="entrance-fade entrance-blur entrance-blur-up entrance-slide-up entrance-slide-down entrance-scale-up"><span>Replay</span></moul-button>
+</ComponentPreview>
+
+```html
+<moul-text-entrance effect="slide-up">Logs you can search</moul-text-entrance>
+```
+
+How far the slides travel and how soft the blur starts are `--text-entrance-distance` (`0.4em`) and `--text-entrance-blur` (`0.2em`). Both are in `em`, so they scale with the text.
+
+## Timing
+
+`stagger` is the gap in milliseconds between one piece and the next. When it is unset it follows `by`: 25 for letters, 60 for words and 150 for lines. `duration` is how long each piece takes to come in (500 ms by default) and `delay` waits after the text enters the viewport (0 by default). `--text-entrance-easing` sets the curve; it defaults to `var(--ease-out)`.
+
+<ComponentPreview stack minHeight="160px">
+  <moul-typography variant="h3"><moul-text-entrance id="entrance-slow" stagger="200" duration="900" delay="300">Slow and deliberate</moul-text-entrance></moul-typography>
+  <moul-button size="sm" variant="secondary" data-replay="entrance-slow"><span>Replay</span></moul-button>
+</ComponentPreview>
+
+```html
+<moul-text-entrance stagger="200" duration="900" delay="300">Slow and deliberate</moul-text-entrance>
+```
+
+## Every time
+
+`is-repeating` hides the text again when it leaves the viewport, so it plays on every entry. `play()` hides it and brings it in again on demand, which is what the replay buttons on this page call. It returns a promise that resolves when the last piece is in, so you can chain the next step.
+
+```js
+const heading = document.querySelector('moul-text-entrance')
+await heading.play()
+document.querySelector('#cta').hidden = false
+```
+
+## Before the script loads
+
+Until the effects entry has loaded, `<moul-text-entrance>` is an unknown element and its text shows as normal; once it loads, the text hides until it comes in. If a heading near the top of the page flashes before it plays, hide undefined entrances in your own stylesheet:
+
+```css
+moul-text-entrance:not(:defined) {
+  opacity: 0;
+}
+```
+
+Only do this if the script is sure to load, since the text stays hidden without it.
+
+## Accessibility
+
+`<moul-text-entrance>` is never focusable and adds no role, so the heading around it keeps its own. The pieces are hidden from screen readers, and a visually hidden copy holds the whole text, so a screen reader reads the sentence once, whole, whether or not it has come in yet.
+
+Under `prefers-reduced-motion: reduce` the whole text is shown at once, with no fade, blur or movement, and `play()` resolves at once. It is also shown when printing, and where the browser has no `IntersectionObserver` to tell whether it is on screen.
+
+## Attributes and properties
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `text` | `text` | `string`; when empty, the text inside is used | `''` |
+| `by` | `by` | `'chars' \| 'words' \| 'lines'` | `'words'` |
+| `effect` | `effect` | `'fade' \| 'blur' \| 'blur-up' \| 'slide-up' \| 'slide-down' \| 'scale-up'` | `'blur-up'` |
+| `stagger` | `stagger` | `number` (ms) | 25, 60 or 150, by `by` |
+| `duration` | `duration` | `number` (ms) | `500` |
+| `delay` | `delay` | `number` (ms) | `0` |
+| `is-repeating` | `isRepeating` | `boolean` | `false` |
+| `is-revealed` | `isRevealed` | `boolean`, set by the element | `false` |
+| | `currentText` | `string`, read only: the text shown | |
+
+| Method | Description |
+| :-- | :-- |
+| `play()` | Hides the text and brings it in again. Resolves when the last piece is in. |
+
+| Part | Description |
+| :-- | :-- |
+| `base` | The span the pieces are rendered into. |
+
+| CSS property | Description |
+| :-- | :-- |
+| `--text-entrance-easing` | The timing function. Defaults to `var(--ease-out)`. |
+| `--text-entrance-distance` | How far the slide and `blur-up` effects travel. Defaults to `0.4em`. |
+| `--text-entrance-blur` | The starting blur of the blur effects. Defaults to `0.2em`. |

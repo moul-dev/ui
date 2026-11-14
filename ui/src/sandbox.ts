@@ -2034,11 +2034,130 @@ export class MoulSandbox extends LitElement {
     `
   }
 
+  private renderLandingSection(): TemplateResult {
+    return html`
+      <div class="category-section" id="landing">
+        <div class="section-header">
+          <h3 class="section-title">8. Landing Kit</h3>
+          <p class="section-subtitle">moul-reveal, moul-text-entrance, moul-typewriter, moul-word-rotate, moul-scramble, moul-gradient-text, moul-highlight, moul-marquee, moul-bento-grid, moul-browser-frame, moul-phone-frame, moul-scroll-progress; button effects</p>
+        </div>
+
+        <div class="section-grid">
+          <moul-card style="grid-column: 1 / -1">
+            <moul-card-header><h4 style="margin: 0;">Hero</h4></moul-card-header>
+            <moul-card-body>
+              <h2 style="margin: 0; font-size: 2.25rem; line-height: 1.1;">
+                <moul-text-entrance by="words">Web components for</moul-text-entrance>
+                <moul-word-rotate .words=${['dashboards', 'landing pages', 'AI chat']}>dashboards</moul-word-rotate>
+              </h2>
+              <moul-reveal delay="200">
+                <p style="color: var(--color-fg-subtle);">
+                  Plain HTML tags with <moul-highlight delay="600">motion built in</moul-highlight>,
+                  <moul-gradient-text>switched off</moul-gradient-text> for readers who ask for less.
+                </p>
+              </moul-reveal>
+              <div class="demo-row">
+                <moul-button effect="shimmer">Shimmer<span slot="hover">Get started →</span></moul-button>
+                <moul-button effect="rainbow">Rainbow</moul-button>
+                <moul-button effect="neon" variant="secondary">Neon</moul-button>
+                <moul-button is-pulsing>Pulse</moul-button>
+              </div>
+            </moul-card-body>
+          </moul-card>
+
+          <moul-card>
+            <moul-card-header><h4 style="margin: 0;">Text effects</h4></moul-card-header>
+            <moul-card-body>
+              <p><moul-typewriter .words=${['Build.', 'Ship.', 'Repeat.']} is-looping></moul-typewriter></p>
+              <p><moul-scramble trigger="hover">Hover to decode</moul-scramble></p>
+              <p><moul-gradient-text effect="shine">A light sweeps across</moul-gradient-text></p>
+              <p><moul-highlight effect="circle" tone="error">circled</moul-highlight> and <moul-highlight effect="box" tone="success">boxed</moul-highlight></p>
+            </moul-card-body>
+          </moul-card>
+
+          <moul-card>
+            <moul-card-header><h4 style="margin: 0;">Marquee</h4></moul-card-header>
+            <moul-card-body>
+              <moul-marquee fade-edges pause-on-hover>
+                ${[
+                  'Astro',
+                  'Vue',
+                  'Svelte',
+                  'React 19',
+                  'Lit',
+                  'Plain HTML',
+                ].map((name) => html`<moul-badge>${name}</moul-badge>`)}
+              </moul-marquee>
+            </moul-card-body>
+          </moul-card>
+
+          <moul-card style="grid-column: 1 / -1">
+            <moul-card-header><h4 style="margin: 0;">Bento grid</h4></moul-card-header>
+            <moul-card-body>
+              <moul-reveal stagger="90">
+                <moul-bento-grid columns="3">
+                  <moul-bento-card col-span="2">
+                    <h3 slot="heading" style="margin: 0;">Motion as markup</h3>
+                    Text effects and reveals are attributes, not scripts.
+                    <moul-link slot="action" href="#">See the kit →</moul-link>
+                  </moul-bento-card>
+                  <moul-bento-card>
+                    <h3 slot="heading" style="margin: 0;">Reduced motion</h3>
+                    Every effect has a still version.
+                  </moul-bento-card>
+                  <moul-bento-card>
+                    <h3 slot="heading" style="margin: 0;">Both themes</h3>
+                    Colours come from tokens.
+                  </moul-bento-card>
+                  <moul-bento-card col-span="2">
+                    <h3 slot="heading" style="margin: 0;">Frames</h3>
+                    Browser and phone mock-ups in CSS.
+                  </moul-bento-card>
+                </moul-bento-grid>
+              </moul-reveal>
+            </moul-card-body>
+          </moul-card>
+
+          <moul-card>
+            <moul-card-header><h4 style="margin: 0;">Browser frame</h4></moul-card-header>
+            <moul-card-body>
+              <moul-browser-frame url="moul.dev/admin">
+                <div style="padding: 1.5rem; background: var(--color-bg-subtle);">
+                  <moul-stat label="Requests" value="128430" trend="up" trend-value="+8%"></moul-stat>
+                </div>
+              </moul-browser-frame>
+            </moul-card-body>
+          </moul-card>
+
+          <moul-card>
+            <moul-card-header><h4 style="margin: 0;">Phone frames</h4></moul-card-header>
+            <moul-card-body>
+              <div class="demo-row" style="justify-content: center;">
+                <moul-phone-frame style="--phone-frame-width: 9rem"></moul-phone-frame>
+                <moul-phone-frame variant="android" style="--phone-frame-width: 9rem"></moul-phone-frame>
+              </div>
+            </moul-card-body>
+          </moul-card>
+
+          <moul-card style="grid-column: 1 / -1">
+            <moul-card-header><h4 style="margin: 0;">Scroll progress</h4></moul-card-header>
+            <moul-card-body>
+              <moul-scroll-progress for="sb-scroll-panel" placement="inline"></moul-scroll-progress>
+              <div id="sb-scroll-panel" style="height: 8rem; overflow: auto; border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: 0 1rem;">
+                ${Array.from({ length: 12 }, (_, i) => html`<p>Paragraph ${i + 1} of a panel that scrolls.</p>`)}
+              </div>
+            </moul-card-body>
+          </moul-card>
+        </div>
+      </div>
+    `
+  }
+
   private renderBlocksSection(): TemplateResult {
     return html`
       <div class="category-section" id="blocks">
         <div class="section-header">
-          <h3 class="section-title">8. Composite Blocks</h3>
+          <h3 class="section-title">9. Composite Blocks</h3>
           <p class="section-subtitle">moul-logs-viewer, moul-logs, moul-sidebar, moul-sidebar-user</p>
         </div>
 
@@ -2102,7 +2221,7 @@ export class MoulSandbox extends LitElement {
           </moul-sidebar-header>
 
           <moul-sidebar-group label="Kitchen Sink" collapsible>
-            <moul-sidebar-item key="all" label="All Categories" badge="8">
+            <moul-sidebar-item key="all" label="All Categories" badge="9">
               <span slot="icon">⚡</span>
             </moul-sidebar-item>
             <moul-sidebar-item key="actions" label="Actions" badge="4">
@@ -2125,6 +2244,9 @@ export class MoulSandbox extends LitElement {
             </moul-sidebar-item>
             <moul-sidebar-item key="ai" label="AI Kit" badge="5">
               <span slot="icon">✨</span>
+            </moul-sidebar-item>
+            <moul-sidebar-item key="landing" label="Landing Kit" badge="13">
+              <span slot="icon">🚀</span>
             </moul-sidebar-item>
             <moul-sidebar-item key="blocks" label="Composite Blocks" badge="12">
               <span slot="icon">📦</span>
@@ -2200,6 +2322,11 @@ export class MoulSandbox extends LitElement {
             ${
               isAll || this.selectedCategory === 'ai'
                 ? this.renderAiSection()
+                : nothing
+            }
+            ${
+              isAll || this.selectedCategory === 'landing'
+                ? this.renderLandingSection()
                 : nothing
             }
             ${

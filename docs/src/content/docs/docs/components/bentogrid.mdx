@@ -1,0 +1,166 @@
+---
+title: Bento Grid
+description: Feature cards in an uneven grid, with art above or behind the text and an action that slides in on hover.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import LandingKitDemo from '@/components/demos/LandingKitDemo.astro';
+
+`<moul-bento-grid>` lays out feature cards in an uneven grid, as in the features section of a landing page. Each `<moul-bento-card>` is a surface like `moul-card` with optional art above or behind the text, an icon, a heading, a description and an action. Some cards span more columns or rows than others. Where there is a mouse, hovering a card lifts its text and slides its action up into view.
+
+<ComponentPreview align="stretch">
+  <moul-bento-grid>
+    <moul-bento-card col-span="2">
+      <div slot="background" aria-hidden="true" style="background: radial-gradient(circle at 85% 0%, var(--color-accent-soft), transparent 65%)"></div>
+      <svg slot="icon" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M4 12h16M12 4l8 8-8 8" /></svg>
+      <h3 slot="heading">Previews on every push</h3>
+      <p>Each branch gets its own URL, so a review starts with a link.</p>
+      <moul-link slot="action" href="#">See how previews work</moul-link>
+    </moul-bento-card>
+    <moul-bento-card row-span="2">
+      <div slot="background" aria-hidden="true" style="background: linear-gradient(to bottom, var(--color-surface-secondary), transparent 70%)"></div>
+      <svg slot="icon" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10" /></svg>
+      <h3 slot="heading">Logs you can search</h3>
+      <p>Every request, filterable by route, status and user, kept for thirty days.</p>
+      <moul-link slot="action" href="#">Open the logs guide</moul-link>
+    </moul-bento-card>
+    <moul-bento-card>
+      <svg slot="icon" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M9 14 4 9l5-5M4 9h11a5 5 0 0 1 0 10h-3" /></svg>
+      <h3 slot="heading">Rollbacks in one click</h3>
+      <p>Any earlier deploy is one click away.</p>
+      <moul-link slot="action" href="#">Read about rollbacks</moul-link>
+    </moul-bento-card>
+    <moul-bento-card>
+      <svg slot="icon" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4ZM10 21h4" /></svg>
+      <h3 slot="heading">Alerts that wait for you</h3>
+      <p>Quiet hours hold alerts until the morning.</p>
+      <moul-link slot="action" href="#">Set up alerts</moul-link>
+    </moul-bento-card>
+    <moul-bento-card col-span="3">
+      <div slot="background" aria-hidden="true" style="background: radial-gradient(circle at 0% 100%, var(--color-accent-soft), transparent 55%)"></div>
+      <h3 slot="heading">Built for teams</h3>
+      <p>Roles, reviews and an audit log for every change.</p>
+      <moul-button slot="action" size="sm" variant="secondary"><span>Book a demo</span></moul-button>
+    </moul-bento-card>
+  </moul-bento-grid>
+  <LandingKitDemo />
+</ComponentPreview>
+
+It lives in the effects entry, with the rest of the landing kit:
+
+```js
+import '@moul-dev/web-component/effects'
+```
+
+```html
+<moul-bento-grid>
+  <moul-bento-card col-span="2">
+    <img slot="visual" src="/previews.png" alt="A pull request with its preview link" />
+    <svg slot="icon" aria-hidden="true">…</svg>
+    <h3 slot="heading">Previews on every push</h3>
+    <p>Each branch gets its own URL, so a review starts with a link.</p>
+    <moul-link slot="action" href="/previews">See how previews work</moul-link>
+  </moul-bento-card>
+  <moul-bento-card row-span="2">…</moul-bento-card>
+  <moul-bento-card>…</moul-bento-card>
+</moul-bento-grid>
+```
+
+## Columns and spans
+
+`columns` sets the number of columns (3 by default). On a card, `col-span` and `row-span` set how many columns and rows it takes (1 by default). A `col-span` larger than the grid's columns is cut down to fit, so a card never pushes the grid wider. The cards fill the grid in source order; the grid never moves a card to fill a hole, so plan the spans so each row adds up.
+
+```html
+<moul-bento-grid columns="4">
+  <moul-bento-card col-span="2" row-span="2">…</moul-bento-card>
+  <moul-bento-card col-span="2">…</moul-bento-card>
+  <moul-bento-card>…</moul-bento-card>
+  <moul-bento-card>…</moul-bento-card>
+</moul-bento-grid>
+```
+
+## Narrow grids
+
+Below 36rem of its own width the grid becomes one column and every card drops its spans, so it reads as a simple stack. The width that counts is the grid's, not the viewport's: the grid is a CSS size container (named `moul-bento`), and the cards query it. So the same grid stacks in a narrow sidebar on a wide screen.
+
+Because it is a size container, the grid takes its width from its container and never from its cards. As a block it fills the line, as it should; in a flex row, give it a width or `flex: 1`.
+
+## Inside a card
+
+A card has six slots, all optional:
+
+- `visual`: a screenshot, a code sample or a device frame, shown edge to edge across the top of the card, above the text. It takes the card's spare height (at least 5rem), so taller cards show more of it; an image fills it and is cropped to fit.
+- `background`: decoration behind the whole card, such as a gradient wash or a pattern. Keep it quiet, or fade it out with a `mask-image`, so the text stays readable.
+
+Give decorative art in either slot `alt=""` or `aria-hidden="true"`, and give a screenshot that carries information real alt text.
+
+- `icon`: an icon above the heading. Size it yourself; 24 to 32 pixels suits most cards.
+- `heading`: the card's heading. Bring your own heading element at the right level for the page, usually an `<h3>` under the section's `<h2>`.
+- the default slot: the description.
+- `action`: a link or a button, such as `moul-link` or `moul-button`.
+
+Where there is a mouse, the action waits out of sight below the text. Hovering the card, or moving focus into it, lifts the text by the action's height, slides the action up into view and grows the art slightly. On touch screens, which cannot hover, the action is always shown and nothing moves.
+
+## Spacing and row height
+
+`--bento-gap` is the space between cards (`var(--spacing-4)` by default). `--bento-row-height` sets the height of one row as a `grid-auto-rows` value; it defaults to `minmax(12rem, auto)`, so a row is at least 12rem tall and grows to fit its tallest card.
+
+```html
+<moul-bento-grid style="--bento-gap: 1.5rem; --bento-row-height: minmax(14rem, auto)">…</moul-bento-grid>
+```
+
+## Accessibility
+
+Neither element is focusable or adds a role. Each card reads in order: heading, description, then action. The grid never reorders cards to fill gaps, so the reading order and the tab order always match the order the cards appear in.
+
+Give every card a heading. Screen reader users move through a page by its headings, so a features section with an `<h2>` and an `<h3>` in each card is quick to scan. The grid does not add list roles, and you rarely need them: the headings already say where each card starts. If your cards have no headings, such as a grid of short quotes, add `role="list"` to the grid and `role="listitem"` to each card, so a screen reader says how many there are.
+
+The action is in the accessibility tree and can take focus even while it is out of sight, and focus moving into a card shows it at once, so a keyboard user always sees the link they are on.
+
+Under `prefers-reduced-motion: reduce` nothing lifts, slides or grows, and the action is always shown.
+
+## Attributes and properties
+
+`<moul-bento-grid>`
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `columns` | `columns` | `number` | `3` |
+
+`<moul-bento-card>`
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `col-span` | `colSpan` | `number`, at most the grid's `columns` | `1` |
+| `row-span` | `rowSpan` | `number` | `1` |
+
+## Slots
+
+| Element | Slot | Description |
+| :-- | :-- | :-- |
+| `moul-bento-grid` | (default) | The `moul-bento-card` elements. |
+| `moul-bento-card` | `visual` | A screenshot, code sample or device frame shown edge to edge above the text. |
+| `moul-bento-card` | `background` | Decoration behind the whole card. |
+| `moul-bento-card` | `icon` | An icon above the heading. |
+| `moul-bento-card` | `heading` | The card's heading element. |
+| `moul-bento-card` | (default) | The description. |
+| `moul-bento-card` | `action` | A link or button. |
+
+## Parts
+
+| Element | Part | Description |
+| :-- | :-- | :-- |
+| `moul-bento-grid` | `base` | The CSS grid. |
+| `moul-bento-card` | `base` | The card's inner layout, which holds every other part. |
+| `moul-bento-card` | `visual` | The area above the text that holds the `visual` slot. |
+| `moul-bento-card` | `background` | The layer behind the card that holds the `background` slot. |
+| `moul-bento-card` | `content` | The icon, heading and description. |
+| `moul-bento-card` | `icon` | The wrapper around the icon. |
+| `moul-bento-card` | `action` | The wrapper around the action. |
+
+## CSS properties
+
+| Property | Description |
+| :-- | :-- |
+| `--bento-gap` | Space between the cards. Defaults to `var(--spacing-4)`. |
+| `--bento-row-height` | The height of one row, as `grid-auto-rows`. Defaults to `minmax(12rem, auto)`. |

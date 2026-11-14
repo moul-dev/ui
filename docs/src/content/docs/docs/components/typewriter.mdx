@@ -1,0 +1,133 @@
+---
+title: Typewriter
+description: Text that types itself with a blinking cursor, or a list of words typed and deleted in turn.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import LandingKitDemo from '@/components/demos/LandingKitDemo.astro';
+
+`<moul-typewriter>` types its text one letter at a time, with a blinking cursor after it. Give it a list of `words` instead and it types each in turn, deleting one before the next, which suits the one word in a hero heading that changes. Typing starts the first time it enters the viewport.
+
+<ComponentPreview stack minHeight="200px">
+  <moul-typography variant="h2">We build <moul-typewriter id="typewriter-demo" words='["fast","safe","small"]' is-looping>fast</moul-typewriter> apps</moul-typography>
+  <moul-typography variant="body"><moul-typewriter id="typewriter-text">Every deploy is a preview first.</moul-typewriter></moul-typography>
+  <moul-button size="sm" variant="secondary" data-replay="typewriter-demo typewriter-text"><span>Replay</span></moul-button>
+  <LandingKitDemo />
+</ComponentPreview>
+
+It lives in the effects entry, with the rest of the landing kit:
+
+```js
+import '@moul-dev/web-component/effects'
+```
+
+```html
+<h1>We build <moul-typewriter words='["fast","safe","small"]' is-looping>fast</moul-typewriter> apps</h1>
+<p><moul-typewriter>Every deploy is a preview first.</moul-typewriter></p>
+```
+
+Write the text inside the element, as above, so it is in the HTML and shows before the script loads; or set the `text` attribute, which wins when both are there. Runs of spaces and line breaks in the HTML count as one space. Change the text and it types the new text from the beginning.
+
+## Words in turn
+
+`words` is a list typed one after another: each word is typed, held for `hold` milliseconds, deleted, and the next is typed. As an attribute it is a JSON array; from script, set the property. When the list is not empty it replaces the text, so write the first word inside the element, as in the heading above, and the sentence reads whole before the script loads.
+
+Without `is-looping` the run stops on the last word, fully typed. With it, the last word is deleted too and the list starts again from the first.
+
+<ComponentPreview stack minHeight="160px">
+  <moul-typography variant="h3">Built for <moul-typewriter id="typewriter-once" words='["teams","agencies","you"]' hold="900">teams</moul-typewriter></moul-typography>
+  <moul-button size="sm" variant="secondary" data-replay="typewriter-once"><span>Replay</span></moul-button>
+</ComponentPreview>
+
+```html
+<h2>Built for <moul-typewriter words='["teams","agencies","you"]' hold="900">teams</moul-typewriter></h2>
+```
+
+```js
+document.querySelector('moul-typewriter').words = ['teams', 'agencies', 'you']
+```
+
+It types whole grapheme clusters, so a Khmer letter appears with its marks, never without them. The language comes from the nearest `lang` attribute.
+
+<ComponentPreview stack minHeight="140px">
+  <moul-typography variant="h3" lang="km"><moul-typewriter id="typewriter-km">សួស្តីពិភពលោក</moul-typewriter></moul-typography>
+  <moul-button size="sm" variant="secondary" data-replay="typewriter-km"><span>Replay</span></moul-button>
+</ComponentPreview>
+
+## Speed and timing
+
+`typing-speed` is the time per letter while typing (60 ms by default) and `delete-speed` the time per letter while deleting (30 ms). `hold` is how long a finished word stays before it is deleted (1500 ms), and `delay` waits before the first letter (0 ms).
+
+<ComponentPreview stack minHeight="140px">
+  <moul-typography variant="h4"><moul-typewriter id="typewriter-slow" typing-speed="140" delay="400">Slow, then steady.</moul-typewriter></moul-typography>
+  <moul-button size="sm" variant="secondary" data-replay="typewriter-slow"><span>Replay</span></moul-button>
+</ComponentPreview>
+
+```html
+<moul-typewriter typing-speed="140" delay="400">Slow, then steady.</moul-typewriter>
+```
+
+## Cursor
+
+The cursor is a thin bar in the text colour after the last letter. It stays solid while letters go in or out and blinks while it waits. It is kept on the same line as the last letter, so it never wraps onto a line by itself. `--typewriter-cursor-color` gives it a colour of its own, and `hide-cursor` removes it.
+
+When a run without `is-looping` ends, the cursor blinks four more times and then hides, so nothing keeps blinking on the page once the text is done.
+
+<ComponentPreview stack minHeight="160px">
+  <moul-typography variant="h4"><moul-typewriter id="typewriter-accent" style="--typewriter-cursor-color: var(--color-accent)">An accent cursor</moul-typewriter></moul-typography>
+  <moul-typography variant="h4"><moul-typewriter id="typewriter-bare" hide-cursor>No cursor at all</moul-typewriter></moul-typography>
+  <moul-button size="sm" variant="secondary" data-replay="typewriter-accent typewriter-bare"><span>Replay</span></moul-button>
+</ComponentPreview>
+
+```html
+<moul-typewriter style="--typewriter-cursor-color: var(--color-accent)">An accent cursor</moul-typewriter>
+<moul-typewriter hide-cursor>No cursor at all</moul-typewriter>
+```
+
+## Pausing and starting again
+
+Typing stops where it is while the element is off screen, and while `is-paused` is set; it carries on from the same letter when it comes back or the attribute goes. `play()` starts again from the beginning, which is what the replay buttons on this page call. It returns a promise that resolves once the last word, or the text, has been typed in full.
+
+```js
+const typewriter = document.querySelector('moul-typewriter')
+
+document.querySelector('#pause-typing').addEventListener('press', () => {
+  typewriter.isPaused = !typewriter.isPaused
+})
+```
+
+A looping list moves for as long as the page is open. Offer a way to stop it, such as the button above, so readers who find moving text distracting can pause it.
+
+## Accessibility
+
+`<moul-typewriter>` is never focusable. The typed letters and the cursor are hidden from screen readers, and a visually hidden copy holds the whole text, or every word joined with commas ("fast, safe, small"), so a screen reader reads it once, whole. That copy does not change while letters are typed or deleted, and there is no live region, so nothing is announced as it types.
+
+Under `prefers-reduced-motion: reduce` nothing is typed or deleted. The text, or the current word, appears at once and the cursor does not blink; a list swaps whole words every `hold` milliseconds, and `is-paused` still stops it.
+
+## Attributes and properties
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `text` | `text` | `string`; when empty, the text inside is used | `''` |
+| `words` | `words` | `string[]`; as an attribute, a JSON array | `[]` |
+| `typing-speed` | `typingSpeed` | `number` (ms per letter) | `60` |
+| `delete-speed` | `deleteSpeed` | `number` (ms per letter) | `30` |
+| `hold` | `hold` | `number` (ms) | `1500` |
+| `delay` | `delay` | `number` (ms) | `0` |
+| `is-looping` | `isLooping` | `boolean` | `false` |
+| `is-paused` | `isPaused` | `boolean` | `false` |
+| `hide-cursor` | `hideCursor` | `boolean` | `false` |
+| | `currentText` | `string`, read only: the text typed when `words` is empty | |
+
+| Method | Description |
+| :-- | :-- |
+| `play()` | Starts typing again from the beginning. Resolves once the last word, or the text, has been typed in full. |
+
+| Part | Description |
+| :-- | :-- |
+| `text` | The typed text, cursor included. |
+| `cursor` | The blinking bar after the typed text. |
+
+| CSS property | Description |
+| :-- | :-- |
+| `--typewriter-cursor-color` | The cursor's colour. Defaults to `currentColor`. |

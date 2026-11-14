@@ -1,0 +1,114 @@
+---
+title: Browser Frame (សមាសភាគ)
+description: ឯកសារណែនាំសម្រាប់សមាសភាគ Browser Frame Web Component
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import LandingKitDemo from '@/components/demos/LandingKitDemo.astro';
+
+`<moul-browser-frame>` draws a browser window around a screenshot, so a product shot on a landing page reads as a web app at a glance. A toolbar with three window dots and an address runs across the top, and the content fills the full width below it. Every colour comes from the surface tokens, so the window suits light and dark themes.
+
+<ComponentPreview backdrop="page">
+  <moul-browser-frame url="app.example.com/overview" style="width: 100%; max-width: 36rem">
+    <div role="img" aria-label="A dashboard with a sidebar, three figures and a chart" style="display: grid; grid-template-columns: 6rem 1fr; min-height: 15rem; background: var(--color-bg)">
+      <div style="display: grid; align-content: start; gap: 0.75rem; padding: 1rem; border-inline-end: 1px solid var(--color-border); background: var(--color-surface)">
+        <div style="width: 60%; height: 0.625rem; border-radius: 999px; background: var(--color-fg)"></div>
+        <div style="width: 85%; height: 0.5rem; border-radius: 999px; background: var(--color-accent-soft)"></div>
+        <div style="width: 70%; height: 0.5rem; border-radius: 999px; background: var(--color-border)"></div>
+        <div style="width: 78%; height: 0.5rem; border-radius: 999px; background: var(--color-border)"></div>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: 3.5rem 1fr; gap: 0.75rem; padding: 1rem">
+        <div style="border: 1px solid var(--color-border); border-radius: 0.75rem; background: var(--color-surface)"></div>
+        <div style="border: 1px solid var(--color-border); border-radius: 0.75rem; background: var(--color-surface)"></div>
+        <div style="border: 1px solid var(--color-border); border-radius: 0.75rem; background: var(--color-surface)"></div>
+        <div style="grid-column: 1 / -1; border: 1px solid var(--color-border); border-radius: 0.75rem; background: linear-gradient(to top, var(--color-accent-soft), var(--color-surface))"></div>
+      </div>
+    </div>
+  </moul-browser-frame>
+  <LandingKitDemo />
+</ComponentPreview>
+
+It lives in the effects entry, with the rest of the landing kit:
+
+```js
+import '@moul-dev/web-component/effects'
+```
+
+```html
+<moul-browser-frame url="app.example.com/overview">
+  <img
+    src="/overview.png"
+    alt="The overview dashboard: revenue up 12% this month, and a chart of sign-ups"
+    width="1440"
+    height="900"
+  />
+</moul-browser-frame>
+```
+
+## The address
+
+`url` is the text in the address pill. It is plain text, not a link, so it can be anything that reads as an address: a full URL, a bare domain or a path. An address too long for the pill is cut short with an ellipsis, and it reads left to right, as in a real browser, even on a right-to-left page. Without `url` the pill is empty.
+
+<ComponentPreview backdrop="page">
+  <moul-browser-frame url="https://docs.example.com/guides/getting-started/install-and-configure-your-first-project" style="width: 100%; max-width: 22rem">
+    <div style="height: 6rem; background: var(--color-bg)"></div>
+  </moul-browser-frame>
+</ComponentPreview>
+
+```html
+<moul-browser-frame url="https://docs.example.com/guides/getting-started/install-and-configure-your-first-project">
+  …
+</moul-browser-frame>
+```
+
+## Content
+
+An image or a video fills the width of the window as a block, and its height follows its own aspect ratio. Give an image its `width` and `height` so the page does not jump when it loads. An iframe also fills the width and takes the height you give it. Any other markup sits on the window's surface, so you can build the screen from your own components instead of a screenshot, as the preview at the top of this page does.
+
+```html
+<moul-browser-frame url="example.com/editor">
+  <video src="/editor-tour.mp4" controls muted playsinline aria-label="A tour of the editor"></video>
+</moul-browser-frame>
+
+<moul-browser-frame url="example.com">
+  <iframe src="/embed/pricing" title="Pricing" style="height: 32rem"></iframe>
+</moul-browser-frame>
+```
+
+## Styling
+
+The toolbar is sized in `em`, so a `font-size` on its part scales the dots, the address and the padding together. The window's corners, border and shadow are on the `base` part.
+
+```css
+moul-browser-frame::part(toolbar) {
+  font-size: 0.875rem;
+}
+
+moul-browser-frame::part(base) {
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+}
+```
+
+## Accessibility
+
+`<moul-browser-frame>` is never focusable and adds no role. The toolbar, dots and address alike, is decoration hidden from screen readers, so they read only the content, with its own semantics. Give a screenshot alt text that says what the reader would learn from it, not "screenshot"; if the text beside it already says everything, use `alt=""`.
+
+Nothing moves, so `prefers-reduced-motion` changes nothing. A video inside is your own content: if it plays on its own, pause it under reduced motion as you would anywhere else.
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `url` | `url` | `string` | `''` |
+
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | The content of the window: an image, a video, an iframe or any markup. |
+
+| Part | Description |
+| :-- | :-- |
+| `base` | The window: its border, rounded corners and shadow. |
+| `toolbar` | The bar across the top that holds the dots and the address. Sized in `em`. |
+| `address` | The pill that shows `url`. |
+| `content` | The area below the toolbar that holds the content. |

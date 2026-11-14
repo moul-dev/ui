@@ -12,9 +12,22 @@
  * - DragController: pointer capture, release velocity and a spring release
  * - TextSplitController / splitText: letters, words or lines, still read as one sentence
  * - CanvasLoopController: pixel ratio, resize, pausing and reduced motion for canvas loops
+ *
+ * Effect elements: confetti, and the landing kit (text effects, reveals,
+ * marquee, bento grid, device frames and scroll progress).
  */
 
 // Effect elements: `bun run gen:component <Name> --effect` adds an export for each.
+export {
+  MoulBentoCard,
+  MoulBentoCard as BentoCard,
+  MoulBentoGrid,
+  MoulBentoGrid as BentoGrid,
+} from './components/BentoGrid'
+export {
+  MoulBrowserFrame,
+  MoulBrowserFrame as BrowserFrame,
+} from './components/BrowserFrame'
 export {
   type ConfettiOptions,
   type ConfettiPoint,
@@ -24,6 +37,56 @@ export {
   MoulConfetti,
   MoulConfetti as Confetti,
 } from './components/Confetti'
+export {
+  type GradientTextEffect,
+  MoulGradientText,
+  MoulGradientText as GradientText,
+} from './components/GradientText'
+export {
+  type HighlightEffect,
+  MoulHighlight,
+  MoulHighlight as Highlight,
+} from './components/Highlight'
+export {
+  type MarqueeDirection,
+  MoulMarquee,
+  MoulMarquee as Marquee,
+} from './components/Marquee'
+export {
+  MoulPhoneFrame,
+  MoulPhoneFrame as PhoneFrame,
+  type PhoneFrameVariant,
+} from './components/PhoneFrame'
+export {
+  MoulReveal,
+  MoulReveal as Reveal,
+  type RevealDirection,
+} from './components/Reveal'
+export {
+  MoulScramble,
+  MoulScramble as Scramble,
+  type ScrambleTrigger,
+} from './components/Scramble'
+export {
+  MoulScrollProgress,
+  MoulScrollProgress as ScrollProgress,
+  type ScrollProgressPlacement,
+} from './components/ScrollProgress'
+export {
+  MoulTextEntrance,
+  MoulTextEntrance as TextEntrance,
+  type TextEntranceEffect,
+} from './components/TextEntrance'
+export {
+  MoulTypewriter,
+  MoulTypewriter as Typewriter,
+} from './components/Typewriter'
+export {
+  MoulWordRotate,
+  MoulWordRotate as WordRotate,
+  type WordRotateChangeDetail,
+  type WordRotateEffect,
+} from './components/WordRotate'
 export {
   type CanvasContextKind,
   type CanvasFrame,

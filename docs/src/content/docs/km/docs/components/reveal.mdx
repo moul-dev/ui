@@ -1,0 +1,133 @@
+---
+title: Reveal (សមាសភាគ)
+description: ឯកសារណែនាំសម្រាប់សមាសភាគ Reveal Web Component
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import LandingKitDemo from '@/components/demos/LandingKitDemo.astro';
+
+`<moul-reveal>` brings a block of content in as the reader reaches it: it fades in, sharpens from a soft blur and rises a short way into place. Wrap a section heading, a card or a whole grid. It plays once, the first time the content enters the viewport, and content that is already on screen when the page loads reveals straight away.
+
+<ComponentPreview stack minHeight="240px">
+  <moul-reveal id="reveal-demo">
+    <moul-card style="max-width: 22rem">
+      <moul-card-header>
+        <moul-typography variant="h4">Ship on Friday</moul-typography>
+      </moul-card-header>
+      <moul-card-body>Every deploy is a preview first, so the release is a click, not a ceremony.</moul-card-body>
+    </moul-card>
+  </moul-reveal>
+  <moul-button size="sm" variant="secondary" data-replay="reveal-demo"><span>Replay</span></moul-button>
+  <LandingKitDemo />
+</ComponentPreview>
+
+It lives in the effects entry, with the rest of the landing kit:
+
+```js
+import '@moul-dev/web-component/effects'
+```
+
+```html
+<moul-reveal>
+  <h2>Ship on Friday</h2>
+</moul-reveal>
+```
+
+## Direction and distance
+
+`direction` is where the content comes from: `up` (the default) rises into place, `down` drops in, `start` and `end` slide in from the inline start or end (they swap sides in right-to-left text), and `none` only fades and sharpens. `distance` is how far it travels in pixels (16 by default), and `blur-radius` is the starting blur in pixels (8 by default; `0` fades without blurring).
+
+<ComponentPreview stack minHeight="200px">
+  <div class="demo-row">
+    <moul-reveal id="reveal-up"><moul-badge>up</moul-badge></moul-reveal>
+    <moul-reveal id="reveal-down" direction="down"><moul-badge>down</moul-badge></moul-reveal>
+    <moul-reveal id="reveal-start" direction="start" distance="32"><moul-badge>start</moul-badge></moul-reveal>
+    <moul-reveal id="reveal-end" direction="end" distance="32"><moul-badge>end</moul-badge></moul-reveal>
+    <moul-reveal id="reveal-none" direction="none" blur-radius="16"><moul-badge>none</moul-badge></moul-reveal>
+  </div>
+  <moul-button size="sm" variant="secondary" data-replay="reveal-up reveal-down reveal-start reveal-end reveal-none"><span>Replay</span></moul-button>
+</ComponentPreview>
+
+```html
+<moul-reveal direction="start" distance="32">…</moul-reveal>
+<moul-reveal direction="none" blur-radius="16">…</moul-reveal>
+```
+
+## One after another
+
+`stagger` reveals each child element in turn, that many milliseconds apart, instead of the block as one. It suits a row of feature cards or a list of logos.
+
+<ComponentPreview stack minHeight="240px">
+  <moul-reveal id="reveal-stagger" stagger="120" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); gap: 1rem; width: 100%">
+    <moul-card><moul-card-body>Previews on every push</moul-card-body></moul-card>
+    <moul-card><moul-card-body>Rollbacks in one click</moul-card-body></moul-card>
+    <moul-card><moul-card-body>Logs you can search</moul-card-body></moul-card>
+  </moul-reveal>
+  <moul-button size="sm" variant="secondary" data-replay="reveal-stagger"><span>Replay</span></moul-button>
+</ComponentPreview>
+
+```html
+<moul-reveal stagger="120" class="feature-grid">
+  <moul-card>…</moul-card>
+  <moul-card>…</moul-card>
+  <moul-card>…</moul-card>
+</moul-reveal>
+```
+
+The grid or flex layout goes on `<moul-reveal>` itself, as above, because the cards are its children. Each child's transition delay is set from its position, so a child's own `transition` rule overrides the reveal.
+
+## Timing
+
+`duration` is how long each piece takes to settle (600 ms by default) and `delay` waits after the content enters the viewport (0 by default). Chain a heading and the text below it with a small delay on the second. `--reveal-easing` sets the curve; it defaults to `var(--ease-out)`.
+
+```html
+<moul-reveal><h2>Logs you can search</h2></moul-reveal>
+<moul-reveal delay="150"><p>Every request, filterable by route, status and user.</p></moul-reveal>
+```
+
+## Every time
+
+`is-repeating` hides the content again when it leaves the viewport, so it plays on every entry. `play()` hides it and reveals it again on demand, which is what the replay buttons on this page call.
+
+```js
+document.querySelector('moul-reveal').play()
+```
+
+## Before the script loads
+
+Until the effects entry has loaded, `<moul-reveal>` is an unknown element and its content shows as normal. If content near the top of the page flashes before it fades in, hide undefined reveals in your own stylesheet:
+
+```css
+moul-reveal:not(:defined) {
+  opacity: 0;
+}
+```
+
+Only do this if the script is sure to load, since the content stays hidden without it.
+
+## Accessibility
+
+`<moul-reveal>` is never focusable and adds no role. Hidden content is transparent, not removed, so screen readers read it wherever the reader is on the page, and moving keyboard focus into hidden content shows it at once.
+
+Under `prefers-reduced-motion: reduce` the content is shown from the start, with no fade, blur or movement. It is also shown when printing, and where the browser has no `IntersectionObserver` to tell whether it is on screen.
+
+## Attributes and properties
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `direction` | `direction` | `'up' \| 'down' \| 'start' \| 'end' \| 'none'` | `'up'` |
+| `distance` | `distance` | `number` (px) | `16` |
+| `blur-radius` | `blurRadius` | `number` (px) | `8` |
+| `duration` | `duration` | `number` (ms) | `600` |
+| `delay` | `delay` | `number` (ms) | `0` |
+| `stagger` | `stagger` | `number` (ms) | `0` |
+| `is-repeating` | `isRepeating` | `boolean` | `false` |
+| `is-revealed` | `isRevealed` | `boolean`, set by the element | `false` |
+
+| Method | Description |
+| :-- | :-- |
+| `play()` | Hides the content and reveals it again. |
+
+| Part | Description |
+| :-- | :-- |
+| `base` | The wrapper that fades, blurs and moves when `stagger` is `0`. |

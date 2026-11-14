@@ -1,4 +1,5 @@
 export {
+  type ButtonEffect,
   type ButtonSize,
   type ButtonState,
   type ButtonType,
