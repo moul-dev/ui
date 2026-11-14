@@ -27,9 +27,28 @@ import { searchFieldStyles } from './SearchField.styles'
  * the `description` and `error-message` text when they are set, and
  * `aria-invalid` is true while an `is-required` field is empty.
  *
+ * With `is-expandable` the field starts as a round search button that
+ * springs open into the full field when pressed, for a navbar or a toolbar
+ * with little room. It closes again when focus leaves it while it is empty,
+ * or on `Escape` with no text. A field that has a value starts open.
+ *
+ * Expanding: the collapsed button (part `expand-button`) is a native button
+ * named by `label` (else the host's `aria-label`, else "Search") with
+ * `aria-expanded` and `aria-controls` pointing at the input; `Enter` or
+ * `Space` on it opens the field and moves focus into the input. `Escape` in
+ * an empty open field closes it and returns focus to the button. While
+ * expandable, the visible label is hidden but still names the input.
+ *
  * Reduced motion: the clear button appears without its small scale-up and
  * does not shrink when pressed, the error message appears in place instead
- * of sliding down, and hover and focus colours change without fading.
+ * of sliding down, an expandable field opens and closes without its width
+ * animation, and hover and focus colours change without fading.
+ *
+ * @fires expandchange - An expandable field opened or closed after a press, a key or focus leaving it. `detail.isExpanded` is the new state.
+ *
+ * @csspart expand-button - The round search button of an `is-expandable` field, which opens it.
+ *
+ * @cssprop --search-field-expanded-width - The width an `is-expandable` field opens to. Defaults to `16rem`.
  */
 export class MoulSearchField extends LitElement {
   static override styles = searchFieldStyles
@@ -45,6 +64,12 @@ export class MoulSearchField extends LitElement {
     isDisabled: { type: Boolean, reflect: true, attribute: 'is-disabled' },
     isRequired: { type: Boolean, reflect: true, attribute: 'is-required' },
     isReadonly: { type: Boolean, reflect: true, attribute: 'is-readonly' },
+    isExpandable: {
+      type: Boolean,
+      reflect: true,
+      attribute: 'is-expandable',
+    },
+    isExpanded: { type: Boolean, reflect: true, attribute: 'is-expanded' },
   }
 
   declare name: string
@@ -56,9 +81,14 @@ export class MoulSearchField extends LitElement {
   declare isDisabled: boolean
   declare isRequired: boolean
   declare isReadonly: boolean
+  /** Start as a round search button that opens into the full field when pressed. */
+  declare isExpandable: boolean
+  /** Whether an `is-expandable` field is open. Setting it opens or closes the field without an event. */
+  declare isExpanded: boolean
 
   public internalsController: FormInternalsController
   private wasClearVisible = false
+  private collapseTimer: ReturnType<typeof setTimeout> | null = null
 
   constructor() {
     super()
@@ -71,6 +101,8 @@ export class MoulSearchField extends LitElement {
     this.isDisabled = false
     this.isRequired = false
     this.isReadonly = false
+    this.isExpandable = false
+    this.isExpanded = false
 
     this.internalsController = new FormInternalsController(this)
   }
@@ -85,6 +117,10 @@ export class MoulSearchField extends LitElement {
 
   public override blur(): void {
     this.inputElement?.blur()
+  }
+
+  public get expandButton(): HTMLButtonElement | null {
+    return this.renderRoot?.querySelector('[part~="expand-button"]') ?? null
   }
 
   public select(): void {
@@ -133,8 +169,31 @@ export class MoulSearchField extends LitElement {
     this.focus()
   }
 
+  public override connectedCallback(): void {
+    super.connectedCallback()
+    this.addEventListener('focusout', this.handleFocusOut)
+  }
+
+  public override disconnectedCallback(): void {
+    super.disconnectedCallback()
+    this.removeEventListener('focusout', this.handleFocusOut)
+    if (this.collapseTimer) clearTimeout(this.collapseTimer)
+    this.collapseTimer = null
+  }
+
   protected override willUpdate(changedProperties: PropertyValues): void {
     super.willUpdate(changedProperties)
+
+    // Text in a closed field would be hidden, so a field with a value is open.
+    if (
+      (changedProperties.has('value') ||
+        changedProperties.has('isExpandable')) &&
+      this.isExpandable &&
+      this.value &&
+      !this.isExpanded
+    ) {
+      this.isExpanded = true
+    }
 
     if (
       changedProperties.has('value') ||
@@ -188,6 +247,51 @@ export class MoulSearchField extends LitElement {
         )
       }
     }
+  }
+
+  /** Opens an `is-expandable` field and moves focus into the input. */
+  private async expand(): Promise<void> {
+    if (!this.isExpandable || this.isDisabled) return
+    if (!this.isExpanded) {
+      this.isExpanded = true
+      this.dispatchExpandChange()
+      await this.updateComplete
+    }
+    this.inputElement?.focus()
+  }
+
+  /** Closes an empty `is-expandable` field; `returnFocus` moves focus to its button so it is not lost. */
+  private async collapse(returnFocus: boolean): Promise<void> {
+    if (!this.isExpandable || !this.isExpanded) return
+    this.isExpanded = false
+    this.dispatchExpandChange()
+    await this.updateComplete
+    if (returnFocus) this.expandButton?.focus()
+  }
+
+  private dispatchExpandChange(): void {
+    this.dispatchEvent(
+      new CustomEvent('expandchange', {
+        detail: { isExpanded: this.isExpanded },
+        bubbles: true,
+        composed: true,
+      }),
+    )
+  }
+
+  /** Focus that leaves an empty open field closes it; checked a task later, once focus has landed. */
+  private readonly handleFocusOut = (): void => {
+    if (!this.isExpandable || !this.isExpanded) return
+    if (this.collapseTimer) clearTimeout(this.collapseTimer)
+    this.collapseTimer = setTimeout(() => {
+      this.collapseTimer = null
+      const hasFocus = Boolean(this.shadowRoot?.activeElement)
+      if (!hasFocus && !this.value) void this.collapse(false)
+    })
+  }
+
+  private readonly handleExpandClick = (): void => {
+    void this.expand()
   }
 
   private syncFormValueAndValidity(): void {
@@ -249,15 +353,24 @@ export class MoulSearchField extends LitElement {
       if (this.value) {
         event.preventDefault()
         this.clear()
+      } else if (this.isExpandable && this.isExpanded) {
+        event.preventDefault()
+        void this.collapse(true)
       }
     }
   }
 
   protected override render() {
     const isInvalid = this.hasAttribute('is-invalid')
+    const isCollapsed = this.isExpandable && !this.isExpanded
     const showClear = Boolean(
-      this.value && !this.isDisabled && !this.isReadonly,
+      this.value && !this.isDisabled && !this.isReadonly && !isCollapsed,
     )
+    // An expandable field hides its visible label, so a host aria-label
+    // still names the input when no label is given.
+    const hasLabel = Boolean(this.label || this.querySelector('[slot="label"]'))
+    const fallbackName = this.getAttribute('aria-label') || 'Search'
+    const inputName = this.isExpandable && !hasLabel ? fallbackName : nothing
     const describedBy = [
       this.description ? 'description' : '',
       this.errorMessage ? 'error' : '',
@@ -277,7 +390,22 @@ export class MoulSearchField extends LitElement {
             ?data-invalid=${isInvalid}
             ?data-disabled=${this.isDisabled}
           >
-            <span part="search-icon">${search()}</span>
+            ${
+              this.isExpandable
+                ? html`<button
+                    type="button"
+                    part="expand-button"
+                    aria-label=${this.label || fallbackName}
+                    aria-expanded=${this.isExpanded ? 'true' : 'false'}
+                    aria-controls="input"
+                    tabindex=${this.isExpanded ? '-1' : '0'}
+                    ?disabled=${this.isDisabled}
+                    @click=${this.handleExpandClick}
+                  >
+                    <span part="search-icon">${search()}</span>
+                  </button>`
+                : html`<span part="search-icon">${search()}</span>`
+            }
 
             <input
               id="input"
@@ -289,6 +417,8 @@ export class MoulSearchField extends LitElement {
               ?required=${this.isRequired}
               ?readonly=${this.isReadonly}
               aria-invalid=${isInvalid ? 'true' : 'false'}
+              aria-label=${inputName}
+              tabindex=${isCollapsed ? '-1' : nothing}
               aria-describedby=${describedBy || nothing}
               @input=${this.handleInput}
               @change=${this.handleChange}

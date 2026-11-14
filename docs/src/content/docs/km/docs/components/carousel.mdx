@@ -1,0 +1,193 @@
+---
+title: Carousel (សមាសភាគ)
+description: ឯកសារណែនាំសម្រាប់សមាសភាគ Carousel Web Component
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import LandingKitDemo from '@/components/demos/LandingKitDemo.astro';
+
+`<moul-carousel>` lays its children out in a row and moves them through a window, one stop at a time. The reader drags or swipes the row, presses the previous and next buttons or a dot, or uses the arrow keys. A drag follows the pointer, and on release the row settles on the nearest slide, carried on by the speed of a flick.
+
+<ComponentPreview align="stretch" backdrop="page">
+  <moul-carousel label="Customer stories" style="--carousel-slide-size: min(20rem, 80%)">
+    <moul-card>
+      <moul-card-body>“We replaced four hand-rolled widgets with plain tags, and the bundle got smaller.”</moul-card-body>
+      <moul-card-footer>
+        <moul-avatar name="Sophea Lim" size="sm"></moul-avatar>
+        <span><strong>Sophea Lim</strong><br /><small style="color: var(--color-fg-subtle)">Lead engineer, Tidewell</small></span>
+      </moul-card-footer>
+    </moul-card>
+    <moul-card>
+      <moul-card-body>“The reduced-motion paths mean I stopped writing media queries by hand.”</moul-card-body>
+      <moul-card-footer>
+        <moul-avatar name="Dara Sok" size="sm"></moul-avatar>
+        <span><strong>Dara Sok</strong><br /><small style="color: var(--color-fg-subtle)">Designer, Brightloom</small></span>
+      </moul-card-footer>
+    </moul-card>
+    <moul-card>
+      <moul-card-body>“Our docs site and our admin console share one set of elements now.”</moul-card-body>
+      <moul-card-footer>
+        <moul-avatar name="Vannak Chea" size="sm"></moul-avatar>
+        <span><strong>Vannak Chea</strong><br /><small style="color: var(--color-fg-subtle)">Founder, Fernforge</small></span>
+      </moul-card-footer>
+    </moul-card>
+    <moul-card>
+      <moul-card-body>“Keyboard support was already there. That alone saved us a sprint.”</moul-card-body>
+      <moul-card-footer>
+        <moul-avatar name="Bopha Keo" size="sm"></moul-avatar>
+        <span><strong>Bopha Keo</strong><br /><small style="color: var(--color-fg-subtle)">Accessibility lead, Quillstone</small></span>
+      </moul-card-footer>
+    </moul-card>
+    <moul-card>
+      <moul-card-body>“Light and dark both worked on the first try.”</moul-card-body>
+      <moul-card-footer>
+        <moul-avatar name="Rithy Nhem" size="sm"></moul-avatar>
+        <span><strong>Rithy Nhem</strong><br /><small style="color: var(--color-fg-subtle)">Developer, Cobaltine</small></span>
+      </moul-card-footer>
+    </moul-card>
+  </moul-carousel>
+  <LandingKitDemo />
+</ComponentPreview>
+
+It lives in the effects entry, with the rest of the site kit:
+
+```js
+import '@moul-dev/web-component/effects'
+```
+
+```html
+<moul-carousel label="Customer stories" style="--carousel-slide-size: min(20rem, 80%)">
+  <moul-card>
+    <moul-card-body>“We replaced four hand-rolled widgets with plain tags…”</moul-card-body>
+    <moul-card-footer>
+      <moul-avatar name="Sophea Lim" size="sm"></moul-avatar>
+      <span><strong>Sophea Lim</strong> · Lead engineer, Tidewell</span>
+    </moul-card-footer>
+  </moul-card>
+  <!-- one element per slide -->
+</moul-carousel>
+```
+
+Every child element is a slide: a card, a figure, an image, a link. Give the carousel a `label`, the name screen readers announce for the region.
+
+## Slide size and alignment
+
+`--carousel-slide-size` sets how wide each slide is, `100%` by default, so one shows at a time. A smaller size lets the next slide peek in, which tells the reader there is more to swipe. `--carousel-gap` sets the space between slides, `1rem` by default. The slides' own margins are ignored, so the gap is the only space between them.
+
+`align="start"`, the default, brings each slide to rest against the inline start of the window. The row never scrolls past its last slide, so when several slides fit at once there are fewer stops than slides, and the dots count the stops. `align="center"` centres each slide instead, with a stop for every one.
+
+<ComponentPreview align="stretch">
+  <moul-carousel label="Places" align="center" is-loop index="1" style="--carousel-slide-size: 70%">
+    <img src="/demo/imageslider/mondulkiri-dawn.svg" alt="Hills in layers of mist at dawn" style="display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: var(--radius-xl, 1rem)" />
+    <img src="/demo/imageslider/tonle-sap-dusk.svg" alt="Stilt houses on a lake at dusk" style="display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: var(--radius-xl, 1rem)" />
+    <img src="/demo/imageslider/kep-coast.svg" alt="A palm over a sandy shore and a green sea" style="display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: var(--radius-xl, 1rem)" />
+    <img src="/demo/imageslider/yeak-laom-lake.svg" alt="A round crater lake in the forest" style="display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: var(--radius-xl, 1rem)" />
+  </moul-carousel>
+</ComponentPreview>
+
+```html
+<moul-carousel label="Places" align="center" is-loop index="1" style="--carousel-slide-size: 70%">
+  <img src="/mondulkiri.jpg" alt="Hills in layers of mist at dawn" />
+  <img src="/tonle-sap.jpg" alt="Stilt houses on a lake at dusk" />
+  …
+</moul-carousel>
+```
+
+The track is a row of flex items, so slides stretch to the height of the tallest one. Cards with different amounts of text line up.
+
+## Dragging and flicking
+
+A drag with the mouse, a pen or a finger moves the row with the pointer, and pulls against it past either end. On release the row springs to the nearest stop; a quick flick goes on to the next one even if it was let go near the current one. A press only becomes a drag after it has moved a few pixels, so a tap on a link or a button in a slide still works, and the click that ends a real drag is swallowed. On a touch screen a vertical swipe still scrolls the page.
+
+## Looping
+
+Without `is-loop`, the previous button is marked unavailable on the first stop and the next button on the last. With `is-loop`, next on the last stop goes back to the first, and previous on the first goes to the last, with the row rewinding across. Dragging never wraps round.
+
+## Autoplay
+
+`autoplay="6000"` moves to the next stop every six seconds, going back to the first after the last; a bare `autoplay` attribute means every five seconds. A play button appears, first in the tab order, so the reader can stop the rotation for good, and start it again.
+
+Autoplay waits while the pointer is over the carousel, while focus is anywhere inside it except the play button, while the carousel is off screen and while the tab is hidden. Each change the reader makes starts the interval again, so a slide never moves on straight after a click.
+
+```html
+<moul-carousel label="What's new" autoplay="6000" is-loop>…</moul-carousel>
+```
+
+## Controls
+
+`controls` is a list of the controls to show: `arrows`, `dots`, or both, the default. `controls="none"` hides them all, for a carousel driven from your own buttons. With only one stop (every slide fits) there are no controls to show.
+
+```html
+<moul-carousel controls="dots">…</moul-carousel>
+<moul-carousel controls="none">…</moul-carousel>
+```
+
+The buttons and dots are parts, so `::part(prev)`, `::part(next)`, `::part(play-button)`, `::part(dot)` and `::part(dot-current)` restyle them.
+
+## Methods and events
+
+`next()`, `previous()` and `goTo(index)` move the carousel from script, as the buttons do. `index` is the current stop, from 0, and reflects to the `index` attribute; set it to move without an event. `slidechange` fires with `detail.index` after every move the carousel makes itself: a drag, a key, a button, a dot, a method or autoplay.
+
+```js
+const carousel = document.querySelector('moul-carousel')
+carousel.addEventListener('slidechange', (event) => {
+  console.log('Now on', event.detail.index)
+})
+document.querySelector('#skip').addEventListener('click', () => carousel.goTo(3))
+```
+
+## Accessibility
+
+`<moul-carousel>` follows the carousel pattern from the WAI-ARIA Authoring Practices. It is a region with `aria-roledescription="carousel"`, named by `label`. Each slide without a name of its own gets `role="group"`, `aria-roledescription="slide"` and a label such as "2 of 5"; a slide with its own `aria-label` or `aria-labelledby` keeps it, a slide with its own role keeps that, and an `<img>` slide stays an image named by its `alt`.
+
+The tab order is the play button (with autoplay), the previous and next buttons, the slides and the dots. The slide area itself takes focus: Left and Right move one stop, mirrored in right-to-left text, and Home and End go to the first and last. Keys pressed inside a slide, in a link or a field, stay with that content.
+
+Slides wholly outside the window are `inert`, so neither the Tab key nor a screen reader reaches content the reader cannot see. A slide that shows in part stays reachable, and when a link in it takes focus the carousel moves to show the whole slide. The window is `overflow: clip`, so focus never scrolls it behind the carousel's back.
+
+After every change the reader makes, a polite live region says "Slide 2 of 5". While autoplay is turning the region is silent, so the screen reader is not interrupted every few seconds.
+
+The dots and the arrow buttons have visible focus rings, and in forced-colours mode the dots use the system's text and highlight colours.
+
+Under `prefers-reduced-motion: reduce` the row jumps to its stop instead of springing, a drag still follows the pointer but the release jumps, and autoplay never starts, so there is no play button.
+
+## Attributes and properties
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `label` | `label` | `string` | `''` |
+| `controls` | `controls` | `string` (`arrows`, `dots`, `none`) | `'arrows dots'` |
+| `align` | `align` | `'start' \| 'center'` | `'start'` |
+| `is-loop` | `isLoop` | `boolean` | `false` |
+| `autoplay` | `autoplay` | `number` (ms; bare attribute is 5000) | `0` (off) |
+| `index` | `index` | `number` | `0` |
+
+| Method | Description |
+| :-- | :-- |
+| `next()` | Moves to the next stop; on the last, to the first with `is-loop`. |
+| `previous()` | Moves to the previous stop; on the first, to the last with `is-loop`. |
+| `goTo(index)` | Moves to the stop at `index`, from 0. |
+
+| Event | Detail | Description |
+| :-- | :-- | :-- |
+| `slidechange` | `{ index: number }` | After a move by drag, key, button, dot, method or autoplay. Not fired when `index` is set from outside. |
+
+| Slot | Description |
+| :-- | :-- |
+| (default) | The slides, one element each. |
+
+| Part | Description |
+| :-- | :-- |
+| `base` | The region that holds the slides and the controls. |
+| `viewport` | The focusable window the slides move through. |
+| `track` | The row of slides that moves. |
+| `buttons` | The play, previous and next buttons. |
+| `prev`, `next` | The previous and next buttons. |
+| `play-button` | The button that stops and starts autoplay. |
+| `dots` | The row of dots. |
+| `dot`, `dot-current` | Each dot, and the current one. |
+
+| CSS property | Description | Default |
+| :-- | :-- | :-- |
+| `--carousel-slide-size` | The inline size of each slide. | `100%` |
+| `--carousel-gap` | The space between slides. | `1rem` |
+| `--carousel-viewport-padding` | Room above and below the slides for their shadows. | `0.5rem` |

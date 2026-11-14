@@ -1,0 +1,263 @@
+---
+title: Navbar
+description: The top bar of a site, which hides on scroll, shrinks or turns to glass, and folds its links behind a menu button on small screens.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import LandingKitDemo from '@/components/demos/LandingKitDemo.astro';
+
+`<moul-navbar>` is the bar across the top of a site: the brand at the start, the navigation in the middle and a few actions at the end. It stays at the top while the page scrolls, and can slide out of the way on the way down, lower itself, or turn from clear to frosted glass once the reader leaves the top of the page. On a narrow screen the navigation folds behind a menu button.
+
+Scroll inside the frame below to see it work.
+
+<ComponentPreview align="stretch">
+  <div id="navbar-demo-main" style="height: 26rem; overflow: auto; border: 1px solid var(--color-border); border-radius: 0.75rem; background: var(--color-background)">
+    <moul-navbar for="navbar-demo-main" variant="floating" effect="glass shrink" hide-on-scroll collapse-below="560">
+      <moul-banner slot="banner" hide-on-scroll is-dismissable>The site kit is here: navbars, menus and media. <a href="/docs/components/banner/">Read more</a></moul-banner>
+      <a slot="brand" href="/docs/components/navbar/"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><rect width="24" height="24" rx="6" style="fill: var(--color-accent)" /><path d="M7 16V8l5 5 5-5v8" style="fill: none; stroke: var(--color-accent-fg); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round" /></svg> Moul</a>
+      <a href="/docs/" aria-current="page">Docs</a>
+      <a href="/docs/components/button/">Components</a>
+      <a href="/examples/landing/">Examples</a>
+      <moul-button slot="actions" size="sm">Get started</moul-button>
+    </moul-navbar>
+    <div style="display: grid; gap: 0.75rem; padding: 3rem 1.5rem 2rem; text-align: center; background: radial-gradient(70% 100% at 50% 0%, var(--color-accent-soft), transparent)">
+      <strong style="font-size: 1.75rem; line-height: 1.2">Web components for every site</strong>
+      <span style="color: var(--color-fg-subtle)">Scroll down: the banner slides away, the bar narrows and turns to glass, then hides until you scroll back up.</span>
+    </div>
+    <div style="display: grid; gap: 0.875rem; padding: 1.5rem; max-width: 36rem; margin: 0 auto">
+      <div style="height: 0.75rem; width: 92%; border-radius: 9999px; background: var(--color-surface-secondary)"></div>
+      <div style="height: 0.75rem; width: 100%; border-radius: 9999px; background: var(--color-surface-secondary)"></div>
+      <div style="height: 0.75rem; width: 78%; border-radius: 9999px; background: var(--color-surface-secondary)"></div>
+      <div style="height: 8rem; border-radius: 0.75rem; background: linear-gradient(135deg, var(--color-chart-1), var(--color-chart-3))"></div>
+      <div style="height: 0.75rem; width: 96%; border-radius: 9999px; background: var(--color-surface-secondary)"></div>
+      <div style="height: 0.75rem; width: 84%; border-radius: 9999px; background: var(--color-surface-secondary)"></div>
+      <div style="height: 0.75rem; width: 100%; border-radius: 9999px; background: var(--color-surface-secondary)"></div>
+      <div style="height: 0.75rem; width: 64%; border-radius: 9999px; background: var(--color-surface-secondary)"></div>
+      <div style="height: 8rem; border-radius: 0.75rem; background: linear-gradient(135deg, var(--color-chart-4), var(--color-chart-2))"></div>
+      <div style="height: 0.75rem; width: 88%; border-radius: 9999px; background: var(--color-surface-secondary)"></div>
+      <div style="height: 0.75rem; width: 100%; border-radius: 9999px; background: var(--color-surface-secondary)"></div>
+      <div style="height: 0.75rem; width: 72%; border-radius: 9999px; background: var(--color-surface-secondary)"></div>
+      <div style="height: 8rem; border-radius: 0.75rem; background: linear-gradient(135deg, var(--color-chart-5), var(--color-chart-7))"></div>
+      <div style="height: 0.75rem; width: 94%; border-radius: 9999px; background: var(--color-surface-secondary)"></div>
+      <div style="height: 0.75rem; width: 58%; border-radius: 9999px; background: var(--color-surface-secondary)"></div>
+    </div>
+  </div>
+  <LandingKitDemo />
+</ComponentPreview>
+
+It lives in the effects entry, with the rest of the site kit:
+
+```js
+import '@moul-dev/web-component/effects'
+```
+
+```html
+<moul-navbar variant="floating" effect="glass shrink" hide-on-scroll>
+  <a slot="brand" href="/">Moul</a>
+  <a href="/docs/" aria-current="page">Docs</a>
+  <a href="/components/">Components</a>
+  <a href="/examples/">Examples</a>
+  <moul-button slot="actions" size="sm">Get started</moul-button>
+</moul-navbar>
+```
+
+Put the navbar first in the `<body>`, before `<main>`. It is sticky at the top of the page, so it takes its place in the flow and the content starts below it.
+
+## Brand, navigation and actions
+
+The navbar has three places in the bar and one above it:
+
+- `slot="brand"`: the site's name or logo, at the inline start.
+- The default slot: the navigation, inside a `<nav>` landmark. Plain links are styled as navigation (muted, with a soft hover), and `aria-current="page"` marks the current one. For panels that open from each item, put a [`moul-navigation-menu`](/docs/components/navigationmenu/) here instead.
+- `slot="actions"`: buttons, a search field or a theme toggle, at the inline end. They stay in the bar when it collapses.
+- `slot="banner"`: a [`moul-banner`](/docs/components/banner/) above the bar, which rides with it.
+
+Your page's own link styles win over the navbar's, so a site that already styles its links keeps them.
+
+## Bar or floating
+
+`variant="bar"` (the default) runs the full width of the page, with its content kept to `--navbar-max-width` (`72rem`) in the middle. `variant="floating"` is a rounded pill, inset from the viewport edges by `--navbar-inset` (`0.75rem`) and no wider than `--navbar-max-width`.
+
+<ComponentPreview align="stretch" backdrop="page">
+  <moul-navbar variant="floating" collapse-below="480" style="position: relative">
+    <a slot="brand" href="/docs/components/navbar/">Moul</a>
+    <a href="/docs/" aria-current="page">Docs</a>
+    <a href="/docs/components/button/">Components</a>
+    <a href="/examples/landing/">Examples</a>
+    <moul-button slot="actions" size="sm" variant="outline">Sign in</moul-button>
+  </moul-navbar>
+  <moul-navbar collapse-below="480" style="position: relative">
+    <a slot="brand" href="/docs/components/navbar/">Moul</a>
+    <a href="/docs/" aria-current="page">Docs</a>
+    <a href="/docs/components/button/">Components</a>
+    <a href="/examples/landing/">Examples</a>
+    <moul-button slot="actions" size="sm" variant="outline">Sign in</moul-button>
+  </moul-navbar>
+</ComponentPreview>
+
+```html
+<moul-navbar variant="floating">…</moul-navbar>
+<moul-navbar>…</moul-navbar>
+```
+
+## Shrink and glass
+
+`effect` takes one or both of two words, as a space-separated list. Both change the bar once the page is scrolled past `threshold` pixels (24 by default), and change it back at the top.
+
+- `shrink` lowers the bar from `--navbar-height` (`4rem`) to `--navbar-shrunk-height` (`3.25rem`). A floating pill also narrows to `--navbar-shrunk-width` (`48rem`). The navbar keeps its full height in the page, so the content below never moves; the strip the lower bar leaves lets clicks through.
+- `glass` makes the bar clear at the top of the page and a translucent, blurred surface once scrolled. The glass is tinted with `--navbar-background`.
+
+Without `glass` the bar has a solid `--navbar-background` (the page background by default) and gains a hairline border once scrolled.
+
+```html
+<moul-navbar effect="shrink">…</moul-navbar>
+<moul-navbar effect="glass">…</moul-navbar>
+<moul-navbar variant="floating" effect="glass shrink">…</moul-navbar>
+```
+
+The navbar reflects what it is doing in two read-only attributes, `is-scrolled` and `is-retracted`, which you can use in your own CSS:
+
+```css
+moul-navbar[is-scrolled] + main {
+  /* … */
+}
+```
+
+A clear bar at the top of the page sits over whatever comes after it in the flow. To let a hero show through it, pull the hero up under the bar and pad it by the same amount:
+
+```css
+.hero {
+  margin-block-start: calc(-1 * var(--navbar-height, 4rem));
+  padding-block-start: calc(var(--navbar-height, 4rem) + 2rem);
+}
+```
+
+## Hiding on scroll
+
+`hide-on-scroll` slides the navbar out of view while the reader scrolls down and brings it back as soon as they scroll up, so long pages get the whole screen. It never hides at the top of the page, while focus is inside it, or while its menu panel is open, and it comes back the moment focus moves into it.
+
+```html
+<moul-navbar hide-on-scroll threshold="80">…</moul-navbar>
+```
+
+The navbar follows the page's scroll. To follow a scroll container instead, as in the demos on this page, give the container an id and the navbar `for="that-id"`.
+
+```html
+<div id="reader" style="height: 100vh; overflow: auto">
+  <moul-navbar for="reader" hide-on-scroll>…</moul-navbar>
+  …
+</div>
+```
+
+## With a banner
+
+Put a [`moul-banner`](/docs/components/banner/) in `slot="banner"` and it sits above the bar and moves with it. Give the banner `hide-on-scroll` and the navbar slides it away once the page is scrolled down, so only the bar stays at the top; it returns on the way up. The navbar does the sliding, so the banner and bar always move together.
+
+```html
+<moul-navbar effect="glass">
+  <moul-banner slot="banner" hide-on-scroll is-dismissable>
+    Moul UI 1.0 is out. <a href="/changelog/">Read the notes</a>
+  </moul-banner>
+  <a slot="brand" href="/">Moul</a>
+  …
+</moul-navbar>
+```
+
+## On small screens
+
+Below `collapse-below` pixels of its own width (768 by default) the navbar collapses: the navigation moves behind a menu button into a panel under the bar, and the actions stay in the bar. The width is the navbar's own, not the viewport's. Set `collapse-below="0"` to never collapse. Open the menu in the frame below.
+
+<ComponentPreview align="stretch" backdrop="page">
+  <div id="navbar-demo-small" style="height: 22rem; width: 100%; max-width: 24rem; margin: 0 auto; overflow: auto; border: 1px solid var(--color-border); border-radius: 1.5rem; background: var(--color-background)">
+    <moul-navbar for="navbar-demo-small" effect="glass">
+      <a slot="brand" href="/docs/components/navbar/">Moul</a>
+      <a href="/docs/" aria-current="page">Docs</a>
+      <a href="/docs/components/button/">Components</a>
+      <a href="/examples/landing/">Examples</a>
+      <a href="/changelog/">Changelog</a>
+      <moul-button slot="actions" size="sm">Get started</moul-button>
+    </moul-navbar>
+    <div style="display: grid; gap: 0.875rem; padding: 1.5rem">
+      <div style="height: 7rem; border-radius: 0.75rem; background: linear-gradient(135deg, var(--color-chart-2), var(--color-chart-6))"></div>
+      <div style="height: 0.75rem; width: 92%; border-radius: 9999px; background: var(--color-surface-secondary)"></div>
+      <div style="height: 0.75rem; width: 100%; border-radius: 9999px; background: var(--color-surface-secondary)"></div>
+      <div style="height: 0.75rem; width: 70%; border-radius: 9999px; background: var(--color-surface-secondary)"></div>
+      <div style="height: 7rem; border-radius: 0.75rem; background: linear-gradient(135deg, var(--color-chart-3), var(--color-chart-8))"></div>
+      <div style="height: 0.75rem; width: 86%; border-radius: 9999px; background: var(--color-surface-secondary)"></div>
+      <div style="height: 0.75rem; width: 60%; border-radius: 9999px; background: var(--color-surface-secondary)"></div>
+    </div>
+  </div>
+</ComponentPreview>
+
+```html
+<moul-navbar collapse-below="900" menu-label="Site menu">…</moul-navbar>
+```
+
+The panel opens with `is-menu-open` and fires `openchange` with `detail.isOpen` when the reader opens or closes it. Setting `isMenuOpen` (or calling `setMenuOpen()`, which also fires the event) opens it from script. Following a link, pressing `Escape` or pressing outside the navbar closes it, and widening the navbar past the limit closes it too.
+
+While it is collapsed, the navbar sets `orientation="vertical"` on a `moul-navigation-menu` in its default slot, so the menu's panels open in line inside the panel, and puts the menu's own orientation back when it widens again.
+
+## Accessibility
+
+The default slot sits in a `<nav>` landmark named by `label` ("Main" by default), so screen reader users can jump to it. Name it differently if the page has another navigation landmark, such as a footer's.
+
+The navbar itself never takes focus. Focus moves through the brand, the navigation and the actions in the order they appear. When it is collapsed, the order is the brand, the actions and then the menu button, and the open panel follows the button. The button is a disclosure button: `aria-expanded` says whether the panel is open, `aria-controls` points at it, and `menu-label` names it ("Menu" by default). `Escape` closes the panel and returns focus to the button. A closed panel is hidden with `visibility`, so its links leave the focus order and the accessibility tree.
+
+A bar hidden by scrolling never strands a keyboard user: it does not hide while focus is inside it, and it comes back as soon as focus moves into it.
+
+Where the system forces its own colours, as in Windows high contrast mode, the bar and the panel keep a visible border.
+
+Under `prefers-reduced-motion: reduce`, `hide-on-scroll` does nothing and the bar stays in view. The shrink and glass changes still happen, without transitions, and the panel and menu icon change at once.
+
+## Attributes and properties
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `label` | `label` | `string` | `'Main'` |
+| `variant` | `variant` | `'bar' \| 'floating'` | `'bar'` |
+| `effect` | `effect` | space-separated `shrink`, `glass` | `''` |
+| `hide-on-scroll` | `hideOnScroll` | `boolean` | `false` |
+| `threshold` | `threshold` | `number` (px) | `24` |
+| `collapse-below` | `collapseBelow` | `number` (px, `0` never collapses) | `768` |
+| `menu-label` | `menuLabel` | `string` | `'Menu'` |
+| `for` | `htmlFor` | `string` (id of a scroll container) | `''` (the page) |
+| `is-menu-open` | `isMenuOpen` | `boolean` | `false` |
+| `is-scrolled` | `isScrolled` | `boolean`, read-only | `false` |
+| `is-retracted` | `isRetracted` | `boolean`, read-only | `false` |
+| `is-collapsed` | `isCollapsed` | `boolean`, read-only | `false` |
+
+| Method | Description |
+| :-- | :-- |
+| `setMenuOpen(isOpen)` | Opens or closes the collapsed panel and fires `openchange`. |
+
+| Event | Detail | Description |
+| :-- | :-- | :-- |
+| `openchange` | `{ isOpen: boolean }` | The reader opened or closed the panel. |
+
+| Slot | Description |
+| :-- | :-- |
+| (default) | The navigation: links or a `moul-navigation-menu`, inside a `<nav>` landmark. |
+| `brand` | The site's name or logo. |
+| `actions` | Buttons, a search field or a theme toggle. |
+| `banner` | A `moul-banner` above the bar. |
+
+| Part | Description |
+| :-- | :-- |
+| `base` | Everything the navbar draws; it slides away with `hide-on-scroll`. |
+| `banner` | The box that holds the `banner` slot. |
+| `bar` | The bar itself. |
+| `brand` | The box that holds the `brand` slot. |
+| `panel` | The box around the `<nav>`: in line in the bar, or the panel under it when collapsed. |
+| `nav` | The `<nav>` landmark. |
+| `actions` | The box that holds the `actions` slot. |
+| `menu-button` | The button that opens the panel when collapsed. |
+
+| CSS property | Description | Default |
+| :-- | :-- | :-- |
+| `--navbar-height` | The bar's height. | `4rem` |
+| `--navbar-shrunk-height` | The bar's height once scrolled, with `shrink`. | `3.25rem` |
+| `--navbar-background` | The bar's background, and the tint of the glass. | `var(--color-background)` |
+| `--navbar-max-width` | The width of the bar's content, or of a floating pill. | `72rem` |
+| `--navbar-shrunk-width` | The width a floating pill narrows to, with `shrink`. | `48rem` |
+| `--navbar-inset` | The gap round a floating pill. | `0.75rem` |
+| `--navbar-z-index` | The stacking order of the sticky navbar. | `100` |

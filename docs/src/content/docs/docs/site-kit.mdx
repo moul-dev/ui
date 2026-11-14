@@ -1,0 +1,89 @@
+---
+title: Navigation and media
+description: The shell and media of a marketing or docs site, from the top bar and its menus to carousels, before-and-after images, video and a dotted world map.
+---
+
+A marketing site or a docs site needs the same few pieces around its content: a bar across the top with a menu and a search, sometimes a notice above it, and a few ways to show pictures and video. They are the parts most often rebuilt by hand, and the parts where keyboard and screen reader support most often goes missing.
+
+The third part of the site kit gives each of them an element. The bar hides as the reader scrolls down, turns to glass and shrinks; its menu opens on hover with one panel that changes shape from item to item; slides, images and video come with keyboard control, labels and a way to stop the movement. The [example landing page](/examples/landing/) is built from them: its whole header is four elements, and its only script is still the two imports.
+
+```js
+import '@moul-dev/web-component'
+import '@moul-dev/web-component/effects'
+```
+
+Like the rest of the kit, these elements live in the effects entry. The expanding search is the exception: `is-expandable` is an attribute on `<moul-search-field>`, in the main entry.
+
+## What is in it
+
+| Piece | Element | What it does |
+| :-- | :-- | :-- |
+| [Navbar](/docs/components/navbar/) | `<moul-navbar>` | Top bar that hides on scroll, shrinks or turns to glass, and folds its links into a menu on a phone |
+| [Navigation menu](/docs/components/navigationmenu/) | `<moul-navigation-menu>` | Hover panels that change shape from one item to the next |
+| [Expanding search](/docs/components/searchfield/#expanding) | `<moul-search-field is-expandable>` | A search icon that springs open into the full field |
+| [Banner](/docs/components/banner/) | `<moul-banner>` | An announcement bar that can be dismissed and steps aside as the reader scrolls |
+| [Dock](/docs/components/dock/) | `<moul-dock>` | A bar of icons that grow under the pointer |
+| [Progress nav](/docs/components/progressnav/) | `<moul-progress-nav>` | A floating pill with how far through the page the reader is and the heading they are under |
+| [Carousel](/docs/components/carousel/) | `<moul-carousel>` | Slides you swipe, drag or step through |
+| [Image slider](/docs/components/imageslider/) | `<moul-image-slider>` | A full-width slideshow with text over it |
+| [Compare](/docs/components/compare/) | `<moul-compare>` | Two images with a divider you drag to compare them |
+| [Video dialog](/docs/components/videodialog/) | `<moul-video-dialog>` | A thumbnail with a play button that opens the video |
+| [World map](/docs/components/worldmap/) | `<moul-world-map>` | A dotted map with pins and curved lines between places |
+
+## The shell
+
+The navbar holds the rest. A banner goes in its `banner` slot and rides above the bar, the brand goes in `brand`, the navigation in the default slot, inside a `<nav>` landmark, and the search and theme switch in `actions`.
+
+```html
+<moul-navbar variant="floating" effect="glass shrink" hide-on-scroll>
+  <moul-banner slot="banner" is-dismissable storage-key="launch">
+    The landing kit is out. <a href="/docs/landing-kit/">See what is in it</a>
+  </moul-banner>
+
+  <a slot="brand" href="/">Moul UI</a>
+
+  <moul-navigation-menu>
+    <moul-navigation-menu-item label="Components">
+      <moul-navigation-menu-link href="/docs/" label="App kit" description="Forms, tables, overlays and charts."></moul-navigation-menu-link>
+      <moul-navigation-menu-link href="/docs/landing-kit/" label="Landing kit" description="Text effects, reveals and frames."></moul-navigation-menu-link>
+    </moul-navigation-menu-item>
+    <moul-navigation-menu-item label="Theme" href="/theme/"></moul-navigation-menu-item>
+  </moul-navigation-menu>
+
+  <moul-search-field slot="actions" is-expandable label="Search the docs"></moul-search-field>
+  <moul-theme-toggle slot="actions"></moul-theme-toggle>
+</moul-navbar>
+```
+
+On a narrow screen the navbar folds its navigation behind a menu button, and the navigation menu inside turns into a list whose panels open in place. Nothing in the markup changes.
+
+## Media
+
+The carousel and the image slider share their controls: arrows, dots, a pause button whenever they play on their own, and the arrow keys once the slides have focus. The carousel is for cards, such as testimonials or stories, several to a view; the image slider is for one picture at a time with text over it.
+
+```html
+<moul-carousel label="What teams say" style="--carousel-slide-size: 22rem">
+  <figure>…</figure>
+  <figure>…</figure>
+</moul-carousel>
+
+<moul-image-slider label="Mondulkiri in four days" effect="zoom">
+  <img src="/trip/forest.jpg" alt="Morning mist over the forest at Bou Sra" />
+  <img src="/trip/river.jpg" alt="The Srepok river at dusk" />
+  <div slot="overlay"><h2>Mondulkiri in four days</h2></div>
+</moul-image-slider>
+```
+
+`<moul-compare>` puts two images on top of each other with a divider between them, for a before and after or light and dark. `<moul-video-dialog>` shows a thumbnail and loads the video only when the reader asks for it. `<moul-world-map>` draws its land from data built into the element, so it needs no image and no request.
+
+## Accessibility
+
+- **Landmarks and names.** The navbar puts its navigation in a `<nav>` named by `label`, the banner is a region named by its `label`, carousels and sliders are regions with a role description, and every icon button has a name.
+- **Keyboard first.** Menus open with Enter, Space or the down arrow and close with Escape, returning focus to the trigger. The dock is a toolbar the arrow keys move through. Slides change with the arrow keys, the divider of `<moul-compare>` is a slider, and the video dialog keeps focus inside until it closes.
+- **Nothing moves away from a focused reader.** The navbar does not hide while focus is inside it or while its menu is open, and carousels and sliders stop playing on their own while hovered or focused.
+- **Movement can stop.** Anything that plays on its own has a pause button and pauses while it is off screen or the tab is hidden.
+- **Reduced motion is honoured.** Under `prefers-reduced-motion: reduce` the navbar and the banner stay in view, panels change at once, the dock does not magnify, slides change without sliding and never play on their own, and the world map shows its lines drawn.
+
+## Cost
+
+The navbar's glass is a `backdrop-filter`, which costs the graphics card on every frame that scrolls under it; keep it to the one bar. The dock writes its sizes once per frame while the pointer is over it and nothing otherwise, the carousel moves one transformed track, and the world map is one path of dots. Video is never loaded until the reader opens it.

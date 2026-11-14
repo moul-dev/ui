@@ -1,13 +1,55 @@
 ---
 /**
- * The Phase 5 and Phase 6 gates: a landing page with a hero, a logo row, a
+ * The Phase 5, 6 and 7 gates: a landing page with a hero, a logo row, a
  * features grid and a call to action, built from Moul elements alone, where
- * every section also has a background or light drawn in CSS and SVG. The
- * page loads the main and effects entries and carries no animation code of
- * its own: no keyframes, no transitions, no script beyond the two imports.
- * Every piece of motion and light is an element or an attribute.
+ * every section also has a background or light drawn in CSS and SVG, inside
+ * a full site shell (navbar, navigation menu, banner, expanding search) with
+ * a testimonials carousel, a video and a world map. The page loads the main
+ * and effects entries and carries no animation code of its own: no
+ * keyframes, no transitions, no script beyond the two imports. Every piece
+ * of motion, light and navigation is an element or an attribute.
  */
 import '@moul-dev/web-component/style.css'
+
+const testimonials = [
+  {
+    quote:
+      'We replaced four hand-rolled widgets in the admin console in an afternoon, and the keyboard support came with them.',
+    name: 'Sokha Chan',
+    role: 'Front-end lead, Riverside Ledger',
+  },
+  {
+    quote:
+      'The landing page shipped without a single animation file. Reduced motion was already handled when we checked.',
+    name: 'Malis Phan',
+    role: 'Designer, Kampot Pepper Co-op',
+  },
+  {
+    quote:
+      'Plain tags meant our Vue app and our Astro docs could share the same header, menu and search.',
+    name: 'Dara Ouk',
+    role: 'Engineer, Tonle Freight',
+  },
+  {
+    quote:
+      'Dark mode worked on day one because every colour comes from the theme tokens.',
+    name: 'Vicheka Long',
+    role: 'Founder, Angkor Field Notes',
+  },
+]
+
+const routes = JSON.stringify(
+  [
+    { lat: 38.72, lng: -9.14, label: 'Lisbon' },
+    { lat: 35.68, lng: 139.69, label: 'Tokyo' },
+    { lat: -33.87, lng: 151.21, label: 'Sydney' },
+    { lat: 37.77, lng: -122.42, label: 'San Francisco' },
+    { lat: -1.29, lng: 36.82, label: 'Nairobi' },
+  ].map((to) => ({
+    from: { lat: 11.56, lng: 104.92, label: 'Phnom Penh' },
+    to,
+  })),
+)
 
 const frameworks = [
   'Astro',
@@ -40,15 +82,33 @@ const frameworks = [
   <body>
     <moul-scroll-progress></moul-scroll-progress>
 
-    <header class="nav">
-      <a class="brand" href="/">Moul UI</a>
-      <nav aria-label="Main">
-        <moul-link href="/docs/">Docs</moul-link>
-        <moul-link href="/docs/landing-kit/">Landing kit</moul-link>
-        <moul-link href="/theme/">Theme</moul-link>
-      </nav>
-      <moul-theme-toggle></moul-theme-toggle>
-    </header>
+    <moul-navbar variant="floating" effect="glass shrink" hide-on-scroll>
+      <moul-banner slot="banner" is-dismissable storage-key="moul-landing-site-kit">
+        Site navigation and media are in: a navbar, menus, carousels and a world map.
+        <a href="/docs/site-kit/">See what is in it</a>
+      </moul-banner>
+
+      <a slot="brand" class="brand" href="/">Moul UI</a>
+
+      <moul-navigation-menu>
+        <moul-navigation-menu-item label="Kits" columns="2">
+            <moul-navigation-menu-link href="/docs/landing-kit/" label="Landing kit" description="Text effects, reveals, marquees and device frames."></moul-navigation-menu-link>
+            <moul-navigation-menu-link href="/docs/backgrounds/" label="Backgrounds and light" description="Patterns, aurora, beams and card light."></moul-navigation-menu-link>
+            <moul-navigation-menu-link href="/docs/site-kit/" label="Navigation and media" description="Navbar, menus, carousels, video and maps."></moul-navigation-menu-link>
+            <moul-navigation-menu-link href="/docs/components/chat/" label="AI kit" description="Chat, prompt input and streaming answers."></moul-navigation-menu-link>
+        </moul-navigation-menu-item>
+        <moul-navigation-menu-item label="Docs">
+            <moul-navigation-menu-link href="/docs/" label="Introduction" description="Install the package and use your first element."></moul-navigation-menu-link>
+            <moul-navigation-menu-link href="/docs/effects/" label="Effects entry" description="Motion controllers and how they are loaded."></moul-navigation-menu-link>
+            <moul-navigation-menu-link href="/docs/llms/" label="LLM and agent guide" description="Context files for coding agents."></moul-navigation-menu-link>
+        </moul-navigation-menu-item>
+        <moul-navigation-menu-item label="Theme" href="/theme/"></moul-navigation-menu-item>
+        <moul-navigation-menu-item label="Changelog" href="/changelog/"></moul-navigation-menu-item>
+      </moul-navigation-menu>
+
+      <moul-search-field slot="actions" is-expandable label="Search the docs" placeholder="Search the docs"></moul-search-field>
+      <moul-theme-toggle slot="actions"></moul-theme-toggle>
+    </moul-navbar>
 
     <main>
       <section class="hero" aria-labelledby="hero-title">
@@ -177,6 +237,51 @@ const frameworks = [
         </moul-reveal>
       </section>
 
+      <section class="testimonials" aria-labelledby="testimonials-title">
+        <moul-pattern class="layer" variant="dots" fade="edges"></moul-pattern>
+        <moul-reveal>
+          <h2 id="testimonials-title">Teams that build with it</h2>
+        </moul-reveal>
+        <moul-carousel label="What teams say" controls="arrows dots" class="quotes">
+          {
+            testimonials.map((t) => (
+              <figure class="quote">
+                <blockquote>{t.quote}</blockquote>
+                <figcaption>
+                  <moul-avatar name={t.name} size="sm"></moul-avatar>
+                  <span>
+                    <strong>{t.name}</strong>
+                    <span class="quote-role">{t.role}</span>
+                  </span>
+                </figcaption>
+              </figure>
+            ))
+          }
+        </moul-carousel>
+      </section>
+
+      <section class="reach" aria-labelledby="reach-title">
+        <moul-reveal>
+          <h2 id="reach-title">From Phnom Penh to five continents</h2>
+        </moul-reveal>
+        <div class="reach-grid">
+          <moul-world-map label="Teams using Moul UI, from the Phnom Penh office" show-labels arcs={routes}></moul-world-map>
+          <div class="reach-copy">
+            <p class="lede">
+              The elements are plain HTML, so the same header, menu and carousel
+              work in every framework a team already uses.
+            </p>
+            <moul-video-dialog
+              class="tour"
+              label="Watch the tour"
+              src="/demo/videodialog/clip.mp4"
+            >
+              <img slot="thumbnail" src="/demo/videodialog/poster.svg" alt="" />
+            </moul-video-dialog>
+          </div>
+        </div>
+      </section>
+
       <section class="cta" aria-labelledby="cta-title">
         <moul-perspective-grid class="layer"></moul-perspective-grid>
         <moul-reveal>
@@ -219,21 +324,6 @@ const frameworks = [
 
   body {
     margin: 0;
-  }
-
-  .nav {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-6, 1.5rem);
-    max-width: 72rem;
-    margin: 0 auto;
-    padding: var(--spacing-4, 1rem) var(--spacing-6, 1.5rem);
-  }
-
-  .nav nav {
-    display: flex;
-    gap: var(--spacing-4, 1rem);
-    margin-inline-start: auto;
   }
 
   .brand {
@@ -431,6 +521,76 @@ const frameworks = [
   .features h3 {
     margin: 0;
     font-size: 1.125rem;
+  }
+
+  .quotes {
+    --carousel-slide-size: min(24rem, 85%);
+    --carousel-gap: var(--spacing-4, 1rem);
+  }
+
+  .quote {
+    display: grid;
+    align-content: space-between;
+    gap: var(--spacing-6, 1.5rem);
+    box-sizing: border-box;
+    height: 100%;
+    margin: 0;
+    padding: var(--spacing-6, 1.5rem);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl, 1rem);
+    background: var(--color-surface);
+  }
+
+  .quote blockquote {
+    margin: 0;
+    font-size: 1.0625rem;
+    line-height: 1.6;
+  }
+
+  .quote figcaption {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3, 0.75rem);
+  }
+
+  .quote figcaption > span {
+    display: grid;
+  }
+
+  .quote-role {
+    color: var(--color-fg-subtle);
+    font-size: var(--font-size-sm, 0.875rem);
+  }
+
+  .reach-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(16rem, 1fr);
+    align-items: center;
+    gap: var(--spacing-10, 2.5rem);
+  }
+
+  .reach-copy {
+    display: grid;
+    gap: var(--spacing-6, 1.5rem);
+  }
+
+  .reach-copy .lede {
+    margin: 0;
+    font-size: 1.125rem;
+  }
+
+  @media (max-width: 56rem) {
+    .reach-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* On a phone the labels crowd each other; the pins and arcs say enough,
+     and the map's hidden list still reads every place. */
+  @media (max-width: 40rem) {
+    moul-world-map::part(label) {
+      display: none;
+    }
   }
 
   .cta {

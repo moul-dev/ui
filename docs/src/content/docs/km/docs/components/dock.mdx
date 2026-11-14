@@ -1,0 +1,169 @@
+---
+title: Dock (សមាសភាគ)
+description: ឯកសារណែនាំសម្រាប់សមាសភាគ Dock Web Component
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import LandingKitDemo from '@/components/demos/LandingKitDemo.astro';
+
+`<moul-dock>` holds a row of icons on a glass panel. Move a mouse along it and the icon under the pointer swells, its neighbours a little less, and the row spreads out on both sides to make room. Each `<moul-dock-item>` is a link or a button with a `label` that appears as a tooltip above it.
+
+<ComponentPreview backdrop="mesh" minHeight="14rem">
+  <moul-dock label="Quick links" style="margin-top: 3rem">
+    <moul-dock-item label="Home" href="#home" is-active><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1Z" /></svg></moul-dock-item>
+    <moul-dock-item label="Search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg></moul-dock-item>
+    <moul-dock-item label="Messages"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H8l-4 4Z" /></svg></moul-dock-item>
+    <moul-dock-item label="Calendar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M3 10h18M8 3v4M16 3v4" /></svg></moul-dock-item>
+    <moul-dock-item label="Photos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2" /><path d="m3 16 5-5 4 4 3-3 6 6" /></svg></moul-dock-item>
+    <moul-dock-separator></moul-dock-separator>
+    <moul-dock-item label="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="3" /><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1" /></svg></moul-dock-item>
+  </moul-dock>
+  <LandingKitDemo />
+</ComponentPreview>
+
+It lives in the effects entry, with the rest of the site kit:
+
+```js
+import '@moul-dev/web-component/effects'
+```
+
+```html
+<moul-dock label="Quick links">
+  <moul-dock-item label="Home" href="/" is-active>
+    <svg viewBox="0 0 24 24" aria-hidden="true">…</svg>
+  </moul-dock-item>
+  <moul-dock-item label="Search">
+    <svg viewBox="0 0 24 24" aria-hidden="true">…</svg>
+  </moul-dock-item>
+  <moul-dock-separator></moul-dock-separator>
+  <moul-dock-item label="Settings">
+    <svg viewBox="0 0 24 24" aria-hidden="true">…</svg>
+  </moul-dock-item>
+</moul-dock>
+```
+
+Put the icon inside the item: an inline `<svg>` or an `<img>` fills half of it, and an emoji or a letter is set at a matching size. An item with an `href` is a link; any other item is a button, so listen for `click` on it.
+
+## Placing the dock
+
+The dock grows from its middle, as a desktop dock does: the icons rise out of the panel and the row widens by the same amount on each side. So give it room above, and centre it, for example fixed at the bottom of the page.
+
+```css
+moul-dock {
+  position: fixed;
+  inset-block-end: 1rem;
+  left: 50%;
+  translate: -50% 0;
+  z-index: 10;
+}
+```
+
+The icons grow by transforms alone, so the dock never changes its own size in the layout and nothing around it moves while the pointer travels along it.
+
+## Magnification
+
+`magnification` is the scale of the icon right under the pointer, 1.6 by default; `1` turns the effect off. `distance` is how far from the pointer, in pixels, the neighbours still grow, 140 by default. A larger distance makes a broader, gentler swell.
+
+<ComponentPreview backdrop="mesh" minHeight="12rem">
+  <moul-dock label="Large swell" magnification="2" distance="200" style="margin-top: 4rem">
+    <moul-dock-item label="Angkor">🛕</moul-dock-item>
+    <moul-dock-item label="Kampot">🌶️</moul-dock-item>
+    <moul-dock-item label="Kep">🦀</moul-dock-item>
+    <moul-dock-item label="Koh Rong">🏝️</moul-dock-item>
+    <moul-dock-item label="Mondulkiri">🐘</moul-dock-item>
+  </moul-dock>
+</ComponentPreview>
+
+```html
+<moul-dock label="Large swell" magnification="2" distance="200">…</moul-dock>
+```
+
+Only a mouse or a pen magnifies. On a touch screen a tap simply follows the link or presses the button.
+
+## Active items and separators
+
+`is-active` puts a small dot under an item, for the page you are on or an app that is running. A link item also gets `aria-current="page"`, and a button `aria-pressed="true"`. `<moul-dock-separator>` draws a thin line between groups; it moves aside with its neighbours but never grows. `is-disabled` dims an item and leaves it out of the arrow keys.
+
+## Vertical
+
+`orientation="vertical"` stands the dock on its side. The icons then grow toward the inline end, with their labels beside them, so put a vertical dock against the left edge of the page (the right edge in right-to-left text).
+
+<ComponentPreview backdrop="mesh" minHeight="16rem">
+  <moul-dock label="Side dock" orientation="vertical" style="margin-inline-end: 8rem">
+    <moul-dock-item label="Home" href="#home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1Z" /></svg></moul-dock-item>
+    <moul-dock-item label="Messages" is-active><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H8l-4 4Z" /></svg></moul-dock-item>
+    <moul-dock-separator></moul-dock-separator>
+    <moul-dock-item label="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="3" /><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1" /></svg></moul-dock-item>
+  </moul-dock>
+</ComponentPreview>
+
+```html
+<moul-dock label="Side dock" orientation="vertical">…</moul-dock>
+```
+
+## Styling
+
+`--dock-item-size` sets the resting size of every item, `2.75rem` by default; set it on the dock. `--dock-gap` and `--dock-padding` space the items and the panel. The panel is a glass surface from the theme tokens, so it works in light and dark; change it with `--dock-background` and `--dock-radius`, or through `::part(background)`. Each item's fill is `--dock-item-background`, and `--dock-item-radius` makes the icons square.
+
+```css
+moul-dock {
+  --dock-item-size: 3rem;
+  --dock-item-radius: 0.875rem;
+  --dock-background: var(--color-surface);
+}
+```
+
+## Accessibility
+
+The dock is a `role="toolbar"` named by `label`, with `aria-orientation`. Only one item is in the tab order at a time. The arrow keys along the dock (Left and Right, or Up and Down when vertical) move focus between items and wrap at the ends; Home and End jump to the first and the last; Tab leaves the dock, and returns to the item you left. A focused item grows as if the pointer were on it and shows its label.
+
+Each item's link or button is named by its `label`. The tooltip shows the same text, so it is hidden from screen readers to avoid reading the name twice; give every item a label, since an icon alone has no name. Separators are `role="separator"`, so screen readers announce the groups.
+
+Where the system forces its own colours, as in Windows high contrast mode, the items and the panel get visible borders.
+
+Under `prefers-reduced-motion: reduce` nothing grows or moves; the labels still appear on hover and focus, without sliding.
+
+## Attributes and properties
+
+`<moul-dock>`:
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `label` | `label` | `string` | `''` |
+| `orientation` | `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` |
+| `magnification` | `magnification` | `number` (scale) | `1.6` |
+| `distance` | `distance` | `number` (px) | `140` |
+
+`<moul-dock-item>`:
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `label` | `label` | `string` | `''` |
+| `href` | `href` | `string` | `''` (a button) |
+| `target` | `target` | `string` | `''` |
+| `is-active` | `isActive` | `boolean` | `false` |
+| `is-disabled` | `isDisabled` | `boolean` | `false` |
+
+| Slot | Element | Description |
+| :-- | :-- | :-- |
+| (default) | `moul-dock` | The `moul-dock-item` and `moul-dock-separator` elements. |
+| (default) | `moul-dock-item` | The icon. |
+
+| Part | Element | Description |
+| :-- | :-- | :-- |
+| `bar` | `moul-dock` | The row (or column) that holds the items. |
+| `background` | `moul-dock` | The glass panel behind the items; it widens with them. |
+| `control` | `moul-dock-item` | The link or button. |
+| `label` | `moul-dock-item` | The tooltip with the label. |
+| `indicator` | `moul-dock-item` | The dot shown with `is-active`. |
+
+| CSS property | Description | Default |
+| :-- | :-- | :-- |
+| `--dock-item-size` | The resting width and height of each item. | `2.75rem` |
+| `--dock-gap` | The space between items. | `0.5rem` |
+| `--dock-padding` | The space between the items and the panel's edge. | `0.5rem` |
+| `--dock-radius` | The panel's corner radius. | `var(--radius-2xl)` |
+| `--dock-background` | The panel's fill. | `var(--color-bg-glass)` |
+| `--dock-item-radius` | Each item's corner radius. | `9999px` |
+| `--dock-item-background` | Each item's fill. | `var(--color-surface-secondary)` |
+| `--dock-separator-color` | The colour of a separator. | `var(--color-border)` |

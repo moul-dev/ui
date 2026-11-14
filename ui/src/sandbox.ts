@@ -2246,6 +2246,89 @@ export class MoulSandbox extends LitElement {
     `
   }
 
+  private renderSiteSection(): TemplateResult {
+    const panel =
+      'border: 1px solid var(--color-border); border-radius: var(--radius-xl, 1rem)'
+    const phnomPenh = { lat: 11.56, lng: 104.92, label: 'Phnom Penh' }
+    return html`
+      <div class="category-section" id="site">
+        <div class="section-header">
+          <h3 class="section-title">10. Navigation &amp; Media</h3>
+          <p class="section-subtitle">moul-navbar, moul-banner, moul-navigation-menu, moul-dock, moul-progress-nav, moul-carousel, moul-image-slider, moul-compare, moul-video-dialog, moul-world-map; expanding search</p>
+        </div>
+
+        <div id="sandbox-navbar" style=${`height: 14rem; overflow: auto; ${panel}`}>
+          <moul-navbar for="sandbox-navbar" variant="floating" effect="glass shrink" hide-on-scroll collapse-below="520">
+            <moul-banner slot="banner" hide-on-scroll is-dismissable>Site kit is here. <a href="#">Read more</a></moul-banner>
+            <a slot="brand" href="#">Moul</a>
+            <moul-navigation-menu>
+              <moul-navigation-menu-item label="Products">
+                <moul-navigation-menu-link href="#" label="Components" description="Ninety elements."></moul-navigation-menu-link>
+                <moul-navigation-menu-link href="#" label="Landing kit" description="Text effects and frames."></moul-navigation-menu-link>
+              </moul-navigation-menu-item>
+              <moul-navigation-menu-item label="Pricing" href="#"></moul-navigation-menu-item>
+            </moul-navigation-menu>
+            <moul-search-field slot="actions" is-expandable label="Search"></moul-search-field>
+          </moul-navbar>
+          <div style="height: 40rem; padding: 1.5rem">Scroll this box: the banner slides away, the bar narrows to glass, then hides until you scroll back up.</div>
+        </div>
+
+        <div class="section-grid" style="margin-top: var(--spacing-4, 1rem)">
+          <div style="display: grid; place-items: center; min-height: 9rem">
+            <moul-dock label="Sandbox dock">
+              <moul-dock-item label="Home" is-active>🏠</moul-dock-item>
+              <moul-dock-item label="Mail">✉️</moul-dock-item>
+              <moul-dock-separator></moul-dock-separator>
+              <moul-dock-item label="Music">🎵</moul-dock-item>
+            </moul-dock>
+          </div>
+          <moul-compare label="Compare two fills" before-label="Flat" after-label="Gradient" style="max-width: 28rem">
+            <div slot="before" style="aspect-ratio: 16 / 10; background: var(--color-bg-subtle)"></div>
+            <div slot="after" style="aspect-ratio: 16 / 10; background: linear-gradient(135deg, var(--color-chart-1), var(--color-chart-3))"></div>
+          </moul-compare>
+          <moul-video-dialog src="https://www.youtube-nocookie.com/embed/VIDEO_ID" label="Watch the tour" style="max-width: 20rem">
+            <div slot="thumbnail" style="aspect-ratio: 16 / 9; background: linear-gradient(135deg, var(--color-chart-2), var(--color-chart-5))"></div>
+          </moul-video-dialog>
+          <moul-carousel label="Sandbox slides" style="--carousel-slide-size: 70%">
+            ${['One', 'Two', 'Three', 'Four'].map(
+              (name) =>
+                html`<moul-card><moul-card-header>Slide ${name}</moul-card-header><moul-card-body>Drag, swipe or use the arrows.</moul-card-body></moul-card>`,
+            )}
+          </moul-carousel>
+          <moul-image-slider label="Sandbox slideshow" interval="0" style="--image-slider-height: 12rem">
+            ${['--color-chart-1', '--color-chart-4', '--color-chart-6'].map(
+              (token) =>
+                html`<div role="img" aria-label="A field of colour" style=${`background: var(${token})`}></div>`,
+            )}
+            <div slot="overlay"><strong>Image slider</strong></div>
+          </moul-image-slider>
+          <moul-world-map
+            label="Routes from Phnom Penh"
+            show-labels
+            .arcs=${[
+              {
+                from: phnomPenh,
+                to: { lat: 38.72, lng: -9.14, label: 'Lisbon' },
+              },
+              {
+                from: phnomPenh,
+                to: { lat: 35.68, lng: 139.69, label: 'Tokyo' },
+              },
+            ]}
+          ></moul-world-map>
+        </div>
+
+        <div id="sandbox-article" style=${`height: 14rem; overflow: auto; margin-top: var(--spacing-4, 1rem); padding: 0 1.5rem; ${panel}`}>
+          <moul-progress-nav for="sandbox-article" placement="inline" is-always-visible style="position: sticky; top: 0.75rem; z-index: 1"></moul-progress-nav>
+          ${['Planning', 'Getting there', 'Where to stay', 'Eating'].map(
+            (heading) =>
+              html`<h4>${heading}</h4><p style="min-height: 8rem">Scroll this box: the pill follows the heading you are under.</p>`,
+          )}
+        </div>
+      </div>
+    `
+  }
+
   private renderBlocksSection(): TemplateResult {
     return html`
       <div class="category-section" id="blocks">
@@ -2314,7 +2397,7 @@ export class MoulSandbox extends LitElement {
           </moul-sidebar-header>
 
           <moul-sidebar-group label="Kitchen Sink" collapsible>
-            <moul-sidebar-item key="all" label="All Categories" badge="9">
+            <moul-sidebar-item key="all" label="All Categories" badge="11">
               <span slot="icon">⚡</span>
             </moul-sidebar-item>
             <moul-sidebar-item key="actions" label="Actions" badge="4">
@@ -2343,6 +2426,9 @@ export class MoulSandbox extends LitElement {
             </moul-sidebar-item>
             <moul-sidebar-item key="backgrounds" label="Backgrounds & Light" badge="14">
               <span slot="icon">🌅</span>
+            </moul-sidebar-item>
+            <moul-sidebar-item key="site" label="Navigation & Media" badge="11">
+              <span slot="icon">🧭</span>
             </moul-sidebar-item>
             <moul-sidebar-item key="blocks" label="Composite Blocks" badge="12">
               <span slot="icon">📦</span>
@@ -2428,6 +2514,11 @@ export class MoulSandbox extends LitElement {
             ${
               isAll || this.selectedCategory === 'backgrounds'
                 ? this.renderBackgroundsSection()
+                : nothing
+            }
+            ${
+              isAll || this.selectedCategory === 'site'
+                ? this.renderSiteSection()
                 : nothing
             }
             ${

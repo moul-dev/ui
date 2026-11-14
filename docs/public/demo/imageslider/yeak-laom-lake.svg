@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7cb7a5"/>
+      <stop offset="1" stop-color="#d8efe4"/>
+    </linearGradient>
+    <radialGradient id="lake" cx="0.5" cy="0.5" r="0.6">
+      <stop offset="0" stop-color="#4fb3bf"/>
+      <stop offset="0.7" stop-color="#1f7a8c"/>
+      <stop offset="1" stop-color="#145a69"/>
+    </radialGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#sky)"/>
+  <path d="M0 380 C200 320 420 350 600 320 S1000 300 1200 330 1480 310 1600 330 V900 H0Z" fill="#3f7d58"/>
+  <path d="M0 440 C260 400 480 420 700 400 S1160 380 1600 410 V900 H0Z" fill="#2f6a48"/>
+  <ellipse cx="800" cy="640" rx="620" ry="190" fill="#24553a"/>
+  <ellipse cx="800" cy="640" rx="560" ry="160" fill="url(#lake)"/>
+  <g fill="#d8efe4" opacity="0.35">
+    <ellipse cx="640" cy="600" rx="160" ry="10"/>
+    <ellipse cx="960" cy="660" rx="120" ry="8"/>
+  </g>
+  <g fill="#1b4430">
+    <path d="M140 430 l40 -120 l40 120Z"/>
+    <path d="M200 440 l34 -100 l34 100Z"/>
+    <path d="M1360 440 l40 -130 l40 130Z"/>
+    <path d="M1420 450 l30 -90 l30 90Z"/>
+    <path d="M1300 450 l28 -80 l28 80Z"/>
+  </g>
+  <path d="M0 820 C300 780 560 800 800 790 S1300 770 1600 800 V900 H0Z" fill="#1b4430"/>
+</svg>

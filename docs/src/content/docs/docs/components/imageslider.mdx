@@ -1,0 +1,167 @@
+---
+title: Image Slider
+description: A full-width slideshow of images with an overlay, autoplay, swipe and keyboard control.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import LandingKitDemo from '@/components/demos/LandingKitDemo.astro';
+
+`<moul-image-slider>` shows one image at a time across the full width of its box, with a scrim and an overlay for a headline and a button, as at the top of a travel or product page. The images change on their own every few seconds, and the reader can swipe, use the arrows or the dots, or the arrow keys.
+
+<ComponentPreview align="stretch">
+  <moul-image-slider label="Mondulkiri in four days" style="--image-slider-radius: var(--radius-xl, 1rem)">
+    <img src="/demo/imageslider/mondulkiri-dawn.svg" alt="Hills in layers of mist at dawn" width="1600" height="900" />
+    <img src="/demo/imageslider/tonle-sap-dusk.svg" alt="Stilt houses on a lake at dusk" width="1600" height="900" />
+    <img src="/demo/imageslider/kep-coast.svg" alt="A palm over a sandy shore and a green sea" width="1600" height="900" />
+    <img src="/demo/imageslider/yeak-laom-lake.svg" alt="A round crater lake in the forest" width="1600" height="900" />
+    <div slot="overlay" style="display: grid; gap: 1rem; justify-items: center; max-width: 34rem">
+      <strong style="font-size: clamp(1.75rem, 4vw, 3rem); line-height: 1.1; letter-spacing: -0.02em">Four days in the hills</strong>
+      <span style="font-size: 1.125rem; opacity: 0.9">Waterfalls, coffee farms and a crater lake, an hour past the last paved road.</span>
+      <moul-button>Plan the trip</moul-button>
+    </div>
+  </moul-image-slider>
+  <LandingKitDemo />
+</ComponentPreview>
+
+It lives in the effects entry, with the rest of the site kit:
+
+```js
+import '@moul-dev/web-component/effects'
+```
+
+```html
+<moul-image-slider label="Mondulkiri in four days">
+  <img src="/mondulkiri.jpg" alt="Hills in layers of mist at dawn" />
+  <img src="/tonle-sap.jpg" alt="Stilt houses on a lake at dusk" />
+  <img src="/kep.jpg" alt="A palm over a sandy shore and a green sea" />
+  <div slot="overlay">
+    <h2>Four days in the hills</h2>
+    <moul-button>Plan the trip</moul-button>
+  </div>
+</moul-image-slider>
+```
+
+Put the images in it as `<img>` children with `alt` text. Any other element works as a slide too, such as a `<picture>` or a `<div>` with a background. Each slide covers the frame, cropped to fill it.
+
+## Size
+
+The frame is `28rem` tall by default. Set `--image-slider-height` for another height, or set it to `auto` and give `--image-slider-aspect-ratio` to size the frame by its shape. `--image-slider-radius` rounds its corners.
+
+```css
+moul-image-slider {
+  --image-slider-height: auto;
+  --image-slider-aspect-ratio: 16 / 9;
+  --image-slider-radius: 1rem;
+}
+```
+
+## Overlay
+
+Content in `slot="overlay"` sits centred over the images, in white, because it always sits on a photograph, whichever theme the page is in. When the overlay has content a scrim darkens the images from the bottom up, so the text stays readable over a bright sky. `--image-slider-scrim` replaces the scrim's background, and `--image-slider-overlay-color` the text colour.
+
+```css
+moul-image-slider {
+  --image-slider-scrim: linear-gradient(to right, oklch(0 0 0 / 0.6), transparent 60%);
+}
+```
+
+The overlay passes the pointer through to the frame, except on its own content, so a swipe that starts on the headline still changes the image while the button stays clickable.
+
+## Effects
+
+`effect` sets how one image gives way to the next:
+
+- `fade`, the default: the next image fades in over the last one.
+- `slide`: the images slide along, from the side the reader is going.
+- `zoom`: a fade, and a slow push-in on the image while it is on show.
+
+<ComponentPreview align="stretch">
+  <moul-image-slider label="The coast" effect="slide" interval="0" style="--image-slider-height: 18rem; --image-slider-radius: var(--radius-xl, 1rem)">
+    <img src="/demo/imageslider/kep-coast.svg" alt="A palm over a sandy shore and a green sea" width="1600" height="900" />
+    <img src="/demo/imageslider/tonle-sap-dusk.svg" alt="Stilt houses on a lake at dusk" width="1600" height="900" />
+    <img src="/demo/imageslider/yeak-laom-lake.svg" alt="A round crater lake in the forest" width="1600" height="900" />
+  </moul-image-slider>
+</ComponentPreview>
+
+```html
+<moul-image-slider label="The coast" effect="slide" interval="0">…</moul-image-slider>
+<moul-image-slider label="The hills" effect="zoom">…</moul-image-slider>
+```
+
+Before an image is shown the slider waits, briefly, for it to decode, so it never flashes in half drawn, and it starts decoding the one after while the change runs.
+
+## Autoplay
+
+The images change every `interval` milliseconds, 5000 by default; `interval="0"` turns autoplay off. The slideshow goes round from the last image to the first. A play button in the bottom corner, first in the tab order, stops the rotation for good, and starts it again.
+
+Autoplay waits while the pointer is over the slider, while focus is anywhere inside it except the play button, while it is off screen and while the tab is hidden. Each change the reader makes starts the interval again.
+
+## Controls
+
+The reader can swipe the frame, press the previous and next buttons on its sides or a dot along the bottom, or focus the frame and use the arrow keys. `controls` lists the controls to show: `arrows`, `dots`, or both, the default; `controls="none"` hides them, for a slideshow driven from your own buttons.
+
+`next()`, `previous()` and `goTo(index)` move it from script, and `index` is the current image, from 0; set it to move without an event. `slidechange` fires with `detail.index` after every change the slider makes itself.
+
+```js
+const slider = document.querySelector('moul-image-slider')
+slider.addEventListener('slidechange', (event) => {
+  caption.textContent = slider.children[event.detail.index].alt
+})
+```
+
+## Accessibility
+
+`<moul-image-slider>` follows the carousel pattern from the WAI-ARIA Authoring Practices. It is a region with `aria-roledescription="carousel"`, named by `label`. Images keep their image role and their `alt` text; any other slide gets `role="group"`, `aria-roledescription="slide"` and a label such as "2 of 4", unless it has a name of its own. Only the image on show is exposed: the others are `inert`.
+
+The tab order is the play button, the frame, the previous and next buttons and the dots ("Go to slide N", the current one marked with `aria-current`). With focus on the frame, Left and Right change the image, mirrored in right-to-left text, and Home and End go to the first and last.
+
+After every change the reader makes, a polite live region says "Slide 2 of 4" followed by the image's `alt` text. While autoplay is turning the region is silent.
+
+The controls are dark chips with white icons and a white focus ring, so they read the same over a light or a dark image, in either theme. In forced-colours mode they get a solid outline.
+
+Under `prefers-reduced-motion: reduce` autoplay never starts and the play button is not shown, the images change at once with no fade, slide or zoom, and a swipe still changes the image.
+
+## Attributes and properties
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `label` | `label` | `string` | `''` |
+| `effect` | `effect` | `'fade' \| 'slide' \| 'zoom'` | `'fade'` |
+| `interval` | `interval` | `number` (ms; 0 is off) | `5000` |
+| `controls` | `controls` | `string` (`arrows`, `dots`, `none`) | `'arrows dots'` |
+| `index` | `index` | `number` | `0` |
+
+| Method | Description |
+| :-- | :-- |
+| `next()` | Shows the next image, going round to the first after the last. |
+| `previous()` | Shows the previous image, going round to the last before the first. |
+| `goTo(index)` | Shows the image at `index`, from 0. |
+
+| Event | Detail | Description |
+| :-- | :-- | :-- |
+| `slidechange` | `{ index: number }` | After a change by swipe, key, button, dot, method or autoplay. Not fired when `index` is set from outside. |
+
+| Slot | Description |
+| :-- | :-- |
+| (default) | The images, one element each. |
+| `overlay` | Content over the images, such as a headline and a button. |
+
+| Part | Description |
+| :-- | :-- |
+| `base` | The region round the slideshow. |
+| `frame` | The focusable box the images fill. |
+| `slides` | The layer that stacks the images. |
+| `scrim` | The shade under the overlay, shown when the overlay has content. |
+| `overlay` | The box that centres the `overlay` slot. |
+| `prev`, `next` | The previous and next buttons. |
+| `play-button` | The button that stops and starts autoplay. |
+| `dots` | The row of dots. |
+| `dot`, `dot-current` | Each dot, and the current one. |
+
+| CSS property | Description | Default |
+| :-- | :-- | :-- |
+| `--image-slider-height` | The height of the frame. | `28rem` |
+| `--image-slider-aspect-ratio` | The frame's aspect ratio, used when the height is `auto`. | `auto` |
+| `--image-slider-radius` | The frame's corner radius. | `0` |
+| `--image-slider-scrim` | The scrim's background. | A dark gradient from the bottom |
+| `--image-slider-overlay-color` | The overlay's text colour. | `var(--color-white)` |

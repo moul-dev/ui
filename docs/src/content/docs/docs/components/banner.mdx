@@ -1,0 +1,176 @@
+---
+title: Banner
+description: A one-line announcement across the top of a page, with an optional action and a close button, that can stay sticky and hide on scroll.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import LandingKitDemo from '@/components/demos/LandingKitDemo.astro';
+
+`<moul-banner>` is a one-line announcement across the top of a page: a release, an event, planned downtime. It can carry an icon and an action, a close button that remembers the reader's choice, and it can stay at the top of the screen while the page scrolls or slide away on the way down.
+
+<ComponentPreview align="stretch">
+  <moul-banner is-dismissable>Moul UI 1.0 is out, with a site kit for navbars and media. <a href="/docs/components/navbar/">Read the notes</a></moul-banner>
+  <moul-banner tone="warning" variant="flat" is-dismissable><svg slot="icon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 1.5 15 14H1Z" style="fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linejoin: round" /><path d="M8 6v3.5M8 11.5v.5" style="stroke: currentColor; stroke-width: 1.5; stroke-linecap: round" /></svg>Planned maintenance on Sunday from 02:00 to 03:00, Phnom Penh time.</moul-banner>
+  <LandingKitDemo />
+</ComponentPreview>
+
+It lives in the effects entry, with the rest of the site kit:
+
+```js
+import '@moul-dev/web-component/effects'
+```
+
+```html
+<moul-banner is-dismissable storage-key="release-1-0">
+  Moul UI 1.0 is out. <a href="/changelog/">Read the notes</a>
+</moul-banner>
+```
+
+Put the message in the banner as text. Links directly in it take the banner's colour and an underline, so they read on every tone.
+
+## Tones and variants
+
+`tone` sets the colour: `primary` (the default), `accent`, `success`, `warning` or `error`. `variant="solid"` (the default) fills the banner with the tone; `variant="flat"` tints it, with a hairline under it, for quieter news.
+
+<ComponentPreview align="stretch">
+  <moul-banner tone="success">Deploys are back to normal. <a href="/docs/components/banner/">See the status page</a></moul-banner>
+  <moul-banner tone="error">Sign-ups are paused while we fix a bug in email checks.</moul-banner>
+  <moul-banner variant="flat">Early access to the site kit is open to every workspace.</moul-banner>
+  <moul-banner tone="success" variant="flat">Siem Reap office is open again from Monday.</moul-banner>
+</ComponentPreview>
+
+```html
+<moul-banner tone="success">Deploys are back to normal.</moul-banner>
+<moul-banner variant="flat">Early access is open to every workspace.</moul-banner>
+```
+
+`--banner-background` and `--banner-color` override the tone's colours.
+
+## Icon and action
+
+`slot="icon"` puts an icon before the message, and `slot="action"` puts a button or link after it. On a narrow screen the action wraps under the message and the icon stays beside it.
+
+<ComponentPreview align="stretch">
+  <moul-banner tone="accent" variant="flat"><svg slot="icon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 1.5l1.9 4 4.4.5-3.3 3 .9 4.4L8 11.2l-3.9 2.2.9-4.4-3.3-3 4.4-.5Z" style="fill: currentColor" /></svg>The Kampot meetup is on 6 December.<moul-button slot="action" size="sm" variant="outline">Save a seat</moul-button></moul-banner>
+</ComponentPreview>
+
+```html
+<moul-banner tone="accent" variant="flat">
+  <svg slot="icon" …></svg>
+  The Kampot meetup is on 6 December.
+  <moul-button slot="action" size="sm" variant="outline">Save a seat</moul-button>
+</moul-banner>
+```
+
+## Dismissing
+
+`is-dismissable` adds a close button at the inline end. Pressing it fires a cancelable `dismiss` event; unless a listener calls `preventDefault()`, the banner folds away and sets `hidden`. Call `dismiss()` to do the same from script; it resolves to `false` if a listener kept the banner.
+
+`storage-key` remembers the dismissal in `localStorage`, under `moul-banner:` followed by the key, and a banner with that key starts hidden on later visits. Give each announcement its own key, so a new one shows even to readers who closed the last. Where storage is blocked, the banner still hides for the visit.
+
+```html
+<moul-banner is-dismissable storage-key="meetup-2026-12">…</moul-banner>
+```
+
+```js
+banner.addEventListener('dismiss', (event) => {
+  analytics.track('banner-dismissed')
+})
+```
+
+## Sticky and hiding on scroll
+
+The banner sits in the normal flow and scrolls away with the page. `is-sticky` keeps it at the top of the viewport instead. Add `hide-on-scroll` and a sticky banner slides out of view while the reader scrolls down, then returns as soon as they scroll up. Scroll inside the frame below.
+
+<ComponentPreview align="stretch" backdrop="page">
+  <div id="banner-demo-scroll" style="height: 18rem; overflow: auto; border: 1px solid var(--color-border); border-radius: 0.75rem; background: var(--color-background)">
+    <moul-banner for="banner-demo-scroll" is-sticky hide-on-scroll>Free shipping to Battambang and Siem Reap this week. <a href="/docs/components/banner/">Shop now</a></moul-banner>
+    <div style="display: grid; gap: 0.875rem; padding: 1.5rem; max-width: 32rem; margin: 0 auto">
+      <div style="height: 6rem; border-radius: 0.75rem; background: linear-gradient(135deg, var(--color-chart-1), var(--color-chart-5))"></div>
+      <div style="height: 0.75rem; width: 92%; border-radius: 9999px; background: var(--color-surface-secondary)"></div>
+      <div style="height: 0.75rem; width: 100%; border-radius: 9999px; background: var(--color-surface-secondary)"></div>
+      <div style="height: 0.75rem; width: 74%; border-radius: 9999px; background: var(--color-surface-secondary)"></div>
+      <div style="height: 6rem; border-radius: 0.75rem; background: linear-gradient(135deg, var(--color-chart-3), var(--color-chart-6))"></div>
+      <div style="height: 0.75rem; width: 88%; border-radius: 9999px; background: var(--color-surface-secondary)"></div>
+      <div style="height: 0.75rem; width: 100%; border-radius: 9999px; background: var(--color-surface-secondary)"></div>
+      <div style="height: 0.75rem; width: 62%; border-radius: 9999px; background: var(--color-surface-secondary)"></div>
+      <div style="height: 6rem; border-radius: 0.75rem; background: linear-gradient(135deg, var(--color-chart-4), var(--color-chart-8))"></div>
+      <div style="height: 0.75rem; width: 80%; border-radius: 9999px; background: var(--color-surface-secondary)"></div>
+    </div>
+  </div>
+</ComponentPreview>
+
+```html
+<moul-banner is-sticky hide-on-scroll threshold="40">…</moul-banner>
+```
+
+`hide-on-scroll` only acts on a banner that stays in view as the page scrolls: one with `is-sticky`, or one in a navbar. A banner in the normal flow scrolls away on its own. The banner follows the page's scroll; to follow a scroll container, give the container an id and the banner `for="that-id"`, as in the frame above. While it is out of view it reflects `is-retracted`, and the space it leaves lets clicks through to the page.
+
+## In a navbar
+
+In a [`moul-navbar`](/docs/components/navbar/)'s `banner` slot, the banner sits above the bar and rides with it. With `hide-on-scroll` on the banner, the navbar slides it away once the page is scrolled and the bar moves up to the top, so the two always move together.
+
+```html
+<moul-navbar effect="glass">
+  <moul-banner slot="banner" hide-on-scroll is-dismissable>
+    Moul UI 1.0 is out. <a href="/changelog/">Read the notes</a>
+  </moul-banner>
+  <a slot="brand" href="/">Moul</a>
+  …
+</moul-navbar>
+```
+
+## Accessibility
+
+The banner is a `region` landmark named by `label` ("Announcement" by default), so screen reader users can find it in the list of landmarks and skip past it. An `aria-label` or `aria-labelledby` of your own takes the place of `label`. The banner itself never takes focus; links and buttons in it do, in order, followed by the close button, which is named by `dismiss-label` ("Dismiss announcement"). The close button's focus ring is drawn in the banner's text colour, so it shows on every tone.
+
+The message is not a live region and is not announced as the page loads: it is page content, read in place. For a message that must interrupt, use a [toast](/docs/components/toast/) or an [alert](/docs/components/alert/) instead.
+
+Where the system forces its own colours, as in Windows high contrast mode, the banner keeps a border under it.
+
+Under `prefers-reduced-motion: reduce`, `hide-on-scroll` does nothing and the banner stays in view, and dismissing hides the banner at once instead of folding it away.
+
+## Attributes and properties
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `label` | `label` | `string` | `'Announcement'` |
+| `tone` | `tone` | `'primary' \| 'accent' \| 'success' \| 'warning' \| 'error'` | `'primary'` |
+| `variant` | `variant` | `'solid' \| 'flat'` | `'solid'` |
+| `is-dismissable` | `isDismissable` | `boolean` | `false` |
+| `dismiss-label` | `dismissLabel` | `string` | `'Dismiss announcement'` |
+| `storage-key` | `storageKey` | `string` | `''` |
+| `is-sticky` | `isSticky` | `boolean` | `false` |
+| `hide-on-scroll` | `hideOnScroll` | `boolean` | `false` |
+| `threshold` | `threshold` | `number` (px) | `24` |
+| `for` | `htmlFor` | `string` (id of a scroll container) | `''` (the page) |
+| `is-retracted` | `isRetracted` | `boolean`, read-only | `false` |
+
+| Method | Description |
+| :-- | :-- |
+| `dismiss()` | Dismisses the banner as the close button does. Resolves to `false` if a listener kept it. |
+
+| Event | Detail | Description |
+| :-- | :-- | :-- |
+| `dismiss` | none | The reader pressed the close button. Cancelable. |
+
+| Slot | Description |
+| :-- | :-- |
+| (default) | The message. |
+| `icon` | An icon before the message. |
+| `action` | A button or link after the message. |
+
+| Part | Description |
+| :-- | :-- |
+| `base` | The banner's box. |
+| `content` | The row that holds the icon, message, action and close button. |
+| `icon` | The box that holds the `icon` slot. |
+| `message` | The box that holds the message. |
+| `action` | The box that holds the `action` slot. |
+| `close-button` | The close button, with `is-dismissable`. |
+
+| CSS property | Description | Default |
+| :-- | :-- | :-- |
+| `--banner-background` | The background. | The tone's solid or soft colour |
+| `--banner-color` | The text colour. | The tone's matching foreground |
+| `--banner-z-index` | The stacking order of a sticky banner. | `101` |

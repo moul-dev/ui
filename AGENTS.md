@@ -156,6 +156,7 @@ When generating or editing code that uses `@moul-dev/web-component`:
 - **AI Kit**: `<moul-agent-activity>`, `<moul-chat>`, `<moul-prompt-input>`, `<moul-streaming-response>`, `<moul-thinking-indicator>`
 - **Landing Kit**: `<moul-reveal>`, `<moul-text-entrance>`, `<moul-typewriter>`, `<moul-word-rotate>`, `<moul-scramble>`, `<moul-gradient-text>`, `<moul-highlight>`, `<moul-marquee>`, `<moul-bento-grid>`, `<moul-bento-card>`, `<moul-browser-frame>`, `<moul-phone-frame>`, `<moul-scroll-progress>`
 - **Backgrounds & Light**: `<moul-pattern>`, `<moul-perspective-grid>`, `<moul-ripple>`, `<moul-aurora>`, `<moul-noise>`, `<moul-light-rays>`, `<moul-spotlight>`, `<moul-border-beam>`, `<moul-shine-border>`, `<moul-beams>`, `<moul-backlight>`, `<moul-focus-group>`, `<moul-edge-blur>`, `<moul-orbit>`
+- **Navigation & Media**: `<moul-navbar>`, `<moul-banner>`, `<moul-navigation-menu>`, `<moul-navigation-menu-item>`, `<moul-navigation-menu-link>`, `<moul-dock>`, `<moul-dock-item>`, `<moul-dock-separator>`, `<moul-progress-nav>`, `<moul-carousel>`, `<moul-image-slider>`, `<moul-compare>`, `<moul-video-dialog>`, `<moul-world-map>`
 - **Composite Blocks**: `<moul-logs-viewer>`, `<moul-logs>`, `<moul-sidebar>`, `<moul-sidebar-aside>`, `<moul-sidebar-header>`, `<moul-sidebar-brand>`, `<moul-sidebar-group>`, `<moul-sidebar-item>`, `<moul-sidebar-divider>`, `<moul-sidebar-footer>`, `<moul-sidebar-user>`, `<moul-sidebar-main>`
 <!-- sync:llms:end -->
 

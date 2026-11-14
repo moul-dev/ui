@@ -19,6 +19,31 @@ import ComponentPreview from '@/components/ComponentPreview.astro';
 </div>
 ```
 
+## Expanding
+
+`is-expandable` starts the field as a round search button, for a navbar or a toolbar with little room. Pressing it springs the field open to `--search-field-expanded-width` (`16rem` by default) and puts the cursor in it. The field closes again when focus leaves it while it is empty, or on `Escape` with no text; `Escape` with text clears it first, as in the plain field. A field that has a value starts open, so its text is never hidden.
+
+<ComponentPreview>
+<div style="display: flex; justify-content: flex-end; align-items: center; gap: 0.5rem; width: min(100%, 24rem)">
+  <moul-search-field is-expandable label="Search the docs" placeholder="Search the docs…"></moul-search-field>
+</div>
+</ComponentPreview>
+
+```html
+<moul-search-field is-expandable label="Search the docs" placeholder="Search the docs…"></moul-search-field>
+```
+
+The field grows from its button toward the side it has room on, so in a row that ends with it, such as a navbar's actions, it opens toward the start. It fires `expandchange` with `detail.isExpanded` when a press, a key or focus leaving it opens or closes it; setting `isExpanded` yourself does the same without the event.
+
+```js
+const search = document.querySelector('moul-search-field[is-expandable]')
+search.addEventListener('expandchange', (event) => {
+  document.body.classList.toggle('is-searching', event.detail.isExpanded)
+})
+```
+
+The collapsed button is a native button named by `label` (or, without one, the field's `aria-label`, then "Search"), with `aria-expanded` and `aria-controls` pointing at the input. `Enter` or `Space` on it opens the field and moves focus into the input; `Escape` in the empty field closes it and returns focus to the button. The visible label is hidden while the field is expandable but still names the input. Under `prefers-reduced-motion: reduce` the field opens and closes at once, without the width animation.
+
 ## API reference
 
 | Attribute | Property | Type | Default |
@@ -32,6 +57,8 @@ import ComponentPreview from '@/components/ComponentPreview.astro';
 | `is-disabled` | `isDisabled` | `boolean` | `false` |
 | `is-required` | `isRequired` | `boolean` | `false` |
 | `is-readonly` | `isReadonly` | `boolean` | `false` |
+| `is-expandable` | `isExpandable` | `boolean` | `false` |
+| `is-expanded` | `isExpanded` | `boolean` | `false` |
 
 | Event | Type |
 | :-- | :-- |
@@ -39,6 +66,7 @@ import ComponentPreview from '@/components/ComponentPreview.astro';
 | `input` | `Event` |
 | `change` | `Event` |
 | `submit` | `CustomEvent` |
+| `expandchange` | `CustomEvent<{ isExpanded: boolean }>` |
 
 | Slot | Description |
 | :-- | :-- |
@@ -46,4 +74,6 @@ import ComponentPreview from '@/components/ComponentPreview.astro';
 | `description` | — |
 | `error` | — |
 
-**CSS parts:** `clear-btn`, `error`, `base`, `label`, `search`, `input-container`, `search-icon`, `input`, `description`
+**CSS parts:** `clear-btn`, `error`, `base`, `label`, `search`, `input-container`, `search-icon`, `expand-button`, `input`, `description`
+
+**CSS custom properties:** `--search-field-expanded-width` (default `16rem`), the width an `is-expandable` field opens to.

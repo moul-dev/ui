@@ -13,8 +13,11 @@
  * - TextSplitController / splitText: letters, words or lines, still read as one sentence
  * - CanvasLoopController: pixel ratio, resize, pausing and reduced motion for canvas loops
  *
- * Effect elements: confetti, and the landing kit (text effects, reveals,
- * marquee, bento grid, device frames and scroll progress).
+ * Effect elements: confetti; the landing kit (text effects, reveals,
+ * marquee, bento grid, device frames and scroll progress); backgrounds and
+ * light; and site navigation and media (navbar, navigation menu, banner,
+ * dock, progress nav, carousel, image slider, compare, video dialog and
+ * world map).
  */
 
 export {
@@ -26,6 +29,11 @@ export {
   MoulBacklight,
   MoulBacklight as Backlight,
 } from './components/Backlight'
+export {
+  type BannerVariant,
+  MoulBanner,
+  MoulBanner as Banner,
+} from './components/Banner'
 export {
   type BeamsVariant,
   MoulBeams,
@@ -47,6 +55,19 @@ export {
   MoulBrowserFrame as BrowserFrame,
 } from './components/BrowserFrame'
 export {
+  type CarouselAlign,
+  type CarouselSlideChangeDetail,
+  MoulCarousel,
+  MoulCarousel as Carousel,
+} from './components/Carousel'
+export {
+  type CompareChangeDetail,
+  type CompareMode,
+  type CompareOrientation,
+  MoulCompare,
+  MoulCompare as Compare,
+} from './components/Compare'
+export {
   type ConfettiOptions,
   type ConfettiPoint,
   type ConfettiShape,
@@ -55,6 +76,15 @@ export {
   MoulConfetti,
   MoulConfetti as Confetti,
 } from './components/Confetti'
+export {
+  type DockOrientation,
+  MoulDock,
+  MoulDock as Dock,
+  MoulDockItem,
+  MoulDockItem as DockItem,
+  MoulDockSeparator,
+  MoulDockSeparator as DockSeparator,
+} from './components/Dock'
 export {
   type EdgeBlurEdges,
   type EdgeBlurOrientation,
@@ -76,6 +106,12 @@ export {
   MoulHighlight as Highlight,
 } from './components/Highlight'
 export {
+  type ImageSliderEffect,
+  type ImageSliderSlideChangeDetail,
+  MoulImageSlider,
+  MoulImageSlider as ImageSlider,
+} from './components/ImageSlider'
+export {
   MoulLightRays,
   MoulLightRays as LightRays,
 } from './components/LightRays'
@@ -84,6 +120,21 @@ export {
   MoulMarquee,
   MoulMarquee as Marquee,
 } from './components/Marquee'
+export {
+  MoulNavbar,
+  MoulNavbar as Navbar,
+  type NavbarEffect,
+  type NavbarVariant,
+} from './components/Navbar'
+export {
+  MoulNavigationMenu,
+  MoulNavigationMenu as NavigationMenu,
+  MoulNavigationMenuItem,
+  MoulNavigationMenuItem as NavigationMenuItem,
+  MoulNavigationMenuLink,
+  MoulNavigationMenuLink as NavigationMenuLink,
+  type NavigationMenuOrientation,
+} from './components/NavigationMenu'
 export {
   MoulNoise,
   MoulNoise as Noise,
@@ -108,6 +159,11 @@ export {
   MoulPhoneFrame as PhoneFrame,
   type PhoneFrameVariant,
 } from './components/PhoneFrame'
+export {
+  MoulProgressNav,
+  MoulProgressNav as ProgressNav,
+  type ProgressNavPlacement,
+} from './components/ProgressNav'
 export {
   MoulReveal,
   MoulReveal as Reveal,
@@ -147,11 +203,26 @@ export {
   MoulTypewriter as Typewriter,
 } from './components/Typewriter'
 export {
+  MoulVideoDialog,
+  MoulVideoDialog as VideoDialog,
+  type VideoDialogAnimation,
+  type VideoDialogType,
+} from './components/VideoDialog'
+export {
   MoulWordRotate,
   MoulWordRotate as WordRotate,
   type WordRotateChangeDetail,
   type WordRotateEffect,
 } from './components/WordRotate'
+export {
+  arcPath,
+  MoulWorldMap,
+  MoulWorldMap as WorldMap,
+  projectPoint,
+  type WorldMapArc,
+  type WorldMapMarker,
+  type WorldMapPoint,
+} from './components/WorldMap'
 export {
   type CanvasContextKind,
   type CanvasFrame,

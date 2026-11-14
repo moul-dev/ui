@@ -1,0 +1,233 @@
+---
+title: Navigation Menu
+description: Site navigation whose panels open on hover and morph from one item to the next, with a stacked layout for narrow screens.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import LandingKitDemo from '@/components/demos/LandingKitDemo.astro';
+
+`<moul-navigation-menu>` is the row of links at the top of a marketing or docs site. Items with a panel open on hover, and once one is open, moving along the row morphs the same floating panel into the next one: it slides and resizes, and the new content comes in from the side the pointer travelled from. Put `<moul-navigation-menu-item>` elements in it, and fill each panel with `<moul-navigation-menu-link>` cards or any markup.
+
+<ComponentPreview minHeight="420px" align="start">
+  <nav aria-label="Main" style="display: flex; align-items: center; gap: 1.5rem">
+    <strong>Moul</strong>
+    <moul-navigation-menu>
+      <moul-navigation-menu-item label="Products" columns="2">
+        <moul-navigation-menu-link href="/docs/" label="Components" description="Ninety elements for apps and sites."><svg slot="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5" /><rect x="14" y="3" width="7" height="7" rx="1.5" /><rect x="3" y="14" width="7" height="7" rx="1.5" /><rect x="14" y="14" width="7" height="7" rx="1.5" /></svg></moul-navigation-menu-link>
+        <moul-navigation-menu-link href="/docs/landing-kit/" label="Landing kit" description="Text effects, reveals and frames for product pages."><svg slot="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 19 19 5M9 5h10v10" /></svg></moul-navigation-menu-link>
+        <moul-navigation-menu-link href="/docs/backgrounds/" label="Backgrounds" description="Patterns, light and drifting colour."><svg slot="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M3 12h18" /></svg></moul-navigation-menu-link>
+        <moul-navigation-menu-link href="/docs/components/chat/" label="AI kit" description="Chat, prompt input and streaming answers."><svg slot="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 3v4M12 17v4M3 12h4M17 12h4" /><circle cx="12" cy="12" r="3" /></svg></moul-navigation-menu-link>
+      </moul-navigation-menu-item>
+      <moul-navigation-menu-item label="Resources">
+        <moul-navigation-menu-link href="/docs/" label="Guides" description="Setting up Moul in each framework."></moul-navigation-menu-link>
+        <moul-navigation-menu-link href="/docs/llms/" label="Agent guide" description="What coding agents should know about Moul."></moul-navigation-menu-link>
+        <moul-navigation-menu-link href="/changelog/" label="Changelog" description="What changed in every release."></moul-navigation-menu-link>
+      </moul-navigation-menu-item>
+      <moul-navigation-menu-item label="Theme" href="/theme/"></moul-navigation-menu-item>
+    </moul-navigation-menu>
+  </nav>
+  <LandingKitDemo />
+</ComponentPreview>
+
+It lives in the effects entry, with the rest of the site kit:
+
+```js
+import '@moul-dev/web-component/effects'
+```
+
+```html
+<nav aria-label="Main">
+  <moul-navigation-menu>
+    <moul-navigation-menu-item label="Products" columns="2">
+      <moul-navigation-menu-link href="/docs/" label="Components" description="Ninety elements for apps and sites.">
+        <svg slot="icon" aria-hidden="true">…</svg>
+      </moul-navigation-menu-link>
+      <moul-navigation-menu-link href="/docs/landing-kit/" label="Landing kit" description="Text effects, reveals and frames.">
+        <svg slot="icon" aria-hidden="true">…</svg>
+      </moul-navigation-menu-link>
+    </moul-navigation-menu-item>
+    <moul-navigation-menu-item label="Resources">…</moul-navigation-menu-item>
+    <moul-navigation-menu-item label="Theme" href="/theme/"></moul-navigation-menu-item>
+  </moul-navigation-menu>
+</nav>
+```
+
+The menu adds no landmark of its own, so put it in a `<nav>` with a label, or in a [`<moul-navbar>`](/docs/components/navbar/), which provides one.
+
+## Items
+
+Each `<moul-navigation-menu-item>` is a trigger named by `label`, with its children shown in a panel when it opens. Give an item an `href` instead and it is a plain link with no panel, as for Theme above. `is-current` marks the item for the page the reader is on with `aria-current="page"`.
+
+```html
+<moul-navigation-menu-item label="Pricing" href="/pricing/" is-current></moul-navigation-menu-item>
+```
+
+The menu's `value` is the open item's `value`, which defaults to its label, and is empty while every panel is closed. It fires `openchange` with `detail.value` each time a hover, press or key opens, switches or closes a panel. Setting `value` yourself opens that item without an event.
+
+```js
+const menu = document.querySelector('moul-navigation-menu')
+menu.addEventListener('openchange', (event) => {
+  console.log(event.detail.value) // 'Products', 'Resources' or ''
+})
+```
+
+## Link cards
+
+`<moul-navigation-menu-link>` is a link with an optional icon, a label and a line of description, the usual content of a mega menu. Every card is the same width, `--navigation-menu-link-width` (`16rem` by default), and the item's `columns` attribute lays its children out in that many columns, so the cards line up. A panel holds any markup too: plain links, a featured card, a short form.
+
+```html
+<moul-navigation-menu-item label="Products" columns="2">
+  <moul-navigation-menu-link href="/docs/" label="Components" description="Ninety elements for apps and sites.">
+    <svg slot="icon" viewBox="0 0 24 24" aria-hidden="true">…</svg>
+  </moul-navigation-menu-link>
+  <!-- three more cards -->
+</moul-navigation-menu-item>
+```
+
+A panel grows to fit its content, up to `--navigation-menu-panel-max-width` (`44rem` by default), and stays at least 8 pixels inside the window: it is centred under its trigger when there is room and pushed back in from the edge when there is not.
+
+## Opening and morphing
+
+A mouse resting on a trigger for a moment opens its panel. While one is open, moving to the next trigger morphs the panel at once, and the panel stays open while the pointer crosses from the trigger to it. It closes a quarter of a second after the pointer leaves both, so a pointer that strays off for a moment does not lose it. A click toggles a panel too, and on a touch screen a tap does, since there is no hover; a click that comes just after a hover opened the same panel keeps it open.
+
+The floating surface behind the panels is drawn by the menu. A small arrow on its top edge points at the open trigger and slides with it.
+
+## Vertical
+
+`orientation="vertical"` stacks the items, full width, for a narrow screen or a phone's menu panel. Panels then open in the flow under their trigger, their height growing from nothing, and only a press or a key opens them. [`<moul-navbar>`](/docs/components/navbar/) switches the menu to vertical on its own when it collapses into its menu button, and back when it widens.
+
+<ComponentPreview align="start">
+  <div style="width: min(100%, 20rem)">
+    <moul-navigation-menu orientation="vertical">
+      <moul-navigation-menu-item label="Products">
+        <moul-navigation-menu-link href="/docs/" label="Components" description="Ninety elements for apps and sites."></moul-navigation-menu-link>
+        <moul-navigation-menu-link href="/docs/landing-kit/" label="Landing kit" description="Text effects, reveals and frames."></moul-navigation-menu-link>
+      </moul-navigation-menu-item>
+      <moul-navigation-menu-item label="Resources">
+        <moul-navigation-menu-link href="/docs/llms/" label="Agent guide" description="What coding agents should know about Moul."></moul-navigation-menu-link>
+        <moul-navigation-menu-link href="/changelog/" label="Changelog" description="What changed in every release."></moul-navigation-menu-link>
+      </moul-navigation-menu-item>
+      <moul-navigation-menu-item label="Theme" href="/theme/"></moul-navigation-menu-item>
+    </moul-navigation-menu>
+  </div>
+</ComponentPreview>
+
+```html
+<moul-navigation-menu orientation="vertical">…</moul-navigation-menu>
+```
+
+Switching the orientation closes whatever was open.
+
+## Styling
+
+The floating surface takes `--navigation-menu-background` (`var(--color-bg-elevated)` by default) and `--navigation-menu-radius`; `--navigation-menu-offset` is the gap between the triggers and the panel. Style the triggers through `moul-navigation-menu-item::part(trigger)` and the cards through `moul-navigation-menu-link::part(base)`.
+
+```css
+moul-navigation-menu {
+  --navigation-menu-offset: 0.75rem;
+  --navigation-menu-radius: var(--radius-xl);
+}
+
+moul-navigation-menu-item::part(trigger) {
+  font-weight: 600;
+}
+```
+
+## Accessibility
+
+The menu is a list (`role="list"`) of items (`role="listitem"`). A panel item's trigger is a native `<button>` with `aria-expanded` and `aria-controls` pointing at its panel; an `href` item and every link card are native links, so screen readers announce them as such. A card is named by its label and described by its description, so the label is read as the link text and the description after it.
+
+From the keyboard:
+
+| Key | Does |
+| :-- | :-- |
+| `Tab` | Moves through the triggers, and into an open panel's links in reading order. Tabbing past a panel's last link closes it and moves on to the next trigger. |
+| `Enter`, `Space` | On a trigger, opens its panel and moves focus to the first link in it, or closes it if it is open. |
+| `ArrowDown` | On a trigger of a horizontal menu, opens its panel and moves focus into it. |
+| `ArrowLeft`, `ArrowRight` | Move focus to the previous or next item; mirrored in right-to-left text. In a vertical menu, `ArrowUp` and `ArrowDown` do this. |
+| `Home`, `End` | Move focus to the first or last item. |
+| `Escape` | Closes the open panel and returns focus to its trigger. With nothing open it is left alone, so an enclosing navbar can close its own menu. |
+
+Focus or a press outside a horizontal menu closes its panel. A closed panel is not displayed, so its links are out of the tab order and out of the accessibility tree; a panel sliding out is inert until it is gone. The floating surface and the arrow are decoration and are `aria-hidden`.
+
+Where the system forces its own colours, as in Windows high contrast mode, the floating surface gets a solid border and the arrow is not drawn.
+
+Under `prefers-reduced-motion: reduce` the floating surface jumps to its new size and place, panel content swaps without sliding or fading, chevrons flip without turning, and vertical panels open and close at once.
+
+## Attributes and properties
+
+### `<moul-navigation-menu>`
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `value` | `value` | `string` (the open item's value) | `''` |
+| `orientation` | `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` |
+
+| Event | Detail |
+| :-- | :-- |
+| `openchange` | `{ value: string }`, the open item's value or `''` |
+
+| Part | Description |
+| :-- | :-- |
+| `base` | The box the floating panel is positioned against. |
+| `list` | The row (or column) of items. |
+| `viewport` | The floating surface behind the open panel. |
+| `indicator` | The arrow on the surface's top edge, under the open trigger. |
+
+| CSS property | Description | Default |
+| :-- | :-- | :-- |
+| `--navigation-menu-background` | The floating surface. | `var(--color-bg-elevated)` |
+| `--navigation-menu-radius` | The floating surface's corner radius. | `var(--radius-2xl)` |
+| `--navigation-menu-offset` | The gap between the triggers and the panel. | `0.5rem` |
+| `--navigation-menu-panel-max-width` | The widest a panel may grow. | `44rem` |
+
+### `<moul-navigation-menu-item>`
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `label` | `label` | `string` | `''` |
+| `href` | `href` | `string` (makes the item a plain link) | `''` |
+| `value` | `value` | `string` | the label |
+| `columns` | `columns` | `number` | `1` |
+| `is-current` | `isCurrent` | `boolean` | `false` |
+| `is-open` | `isOpen` | `boolean`, set by the menu | `false` |
+
+| Slot | Description |
+| :-- | :-- |
+| (default) | The panel content. Ignored when `href` is set. |
+| `label` | Rich trigger content, in place of the `label` text. |
+
+| Part | Description |
+| :-- | :-- |
+| `trigger` | The button that opens the panel. |
+| `link` | The link an `href` item renders. |
+| `chevron` | The chevron after the trigger label. |
+| `panel` | The panel. |
+| `content` | The grid inside the panel that holds the children. |
+
+### `<moul-navigation-menu-link>`
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `href` | `href` | `string` | `''` |
+| `target` | `target` | `string`; `_blank` adds `rel="noopener noreferrer"` | `''` |
+| `label` | `label` | `string` | `''` |
+| `description` | `description` | `string` | `''` |
+| `is-current` | `isCurrent` | `boolean` | `false` |
+
+| Slot | Description |
+| :-- | :-- |
+| (default) | Rich description content, shown after the `description` text. |
+| `label` | Rich label content, in place of the `label` text. |
+| `icon` | An icon, shown in a tinted square. |
+
+| Part | Description |
+| :-- | :-- |
+| `base` | The link. |
+| `icon` | The tinted square that holds the icon. |
+| `label` | The label. |
+| `description` | The description. |
+
+| CSS property | Description | Default |
+| :-- | :-- | :-- |
+| `--navigation-menu-link-width` | The width of the card. | `16rem` |

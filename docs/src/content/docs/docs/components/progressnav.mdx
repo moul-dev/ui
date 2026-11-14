@@ -1,0 +1,133 @@
+---
+title: Progress nav
+description: A floating pill that shows how far through a page the reader is and which section they are in.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import LandingKitDemo from '@/components/demos/LandingKitDemo.astro';
+
+`<moul-progress-nav>` is a small pill for long pages. A ring fills as the reader scrolls, and the heading of the section they are in slides in beside it as they pass each one. Press the pill and it opens a list of every heading to jump to.
+
+Scroll the article in the preview: the pill follows it.
+
+<ComponentPreview align="stretch">
+  <div id="progress-nav-demo" style="position: relative; height: 22rem; overflow: auto; padding: 0 1.5rem 12rem; border: 1px solid var(--color-border); border-radius: var(--radius-xl, 1rem); line-height: 1.6">
+    <div style="position: sticky; top: 0.75rem; z-index: 1; display: flex; justify-content: center; margin-bottom: 0.5rem">
+      <moul-progress-nav for="progress-nav-demo" placement="inline" is-always-visible label="In this guide"></moul-progress-nav>
+    </div>
+    <h2 style="margin-top: 1rem">Planning the trip</h2>
+    <p>Kampot sits on a slow river between the Elephant Mountains and the sea. Most visitors arrive by bus from Phnom Penh in the morning and are on the water by the afternoon.</p>
+    <p>The dry season runs from November to April. Rooms by the river fill early around the water festival, so book those weeks ahead.</p>
+    <h3>Getting there</h3>
+    <p>Buses leave the capital every hour from dawn. The trip takes about three hours with one stop for noodles and iced coffee.</p>
+    <h3>Where to stay</h3>
+    <p>Guesthouses line the east bank of the river. The quieter ones upstream have their own jetties and kayaks for the morning.</p>
+    <h2>The pepper farms</h2>
+    <p>Kampot pepper grows on vines trained up wooden posts. The farms welcome visitors most mornings and will walk you through the drying racks.</p>
+    <p>Green pepper is picked young; red pepper ripens on the vine; white pepper is red pepper soaked and peeled.</p>
+    <h2>Bokor Mountain</h2>
+    <p>The road to the plateau climbs through the national park in long, easy bends. Start early, before the cloud settles on the top.</p>
+    <h3>The old hill station</h3>
+    <p>Near the summit stand the shells of a church and a hotel from the last century, often wrapped in fog.</p>
+    <h2>Kep and the crab market</h2>
+    <p>Half an hour along the coast, Kep's market sells crab cooked with fresh green pepper straight from the baskets on the shore.</p>
+  </div>
+  <LandingKitDemo />
+</ComponentPreview>
+
+It lives in the effects entry, with the rest of the site kit:
+
+```js
+import '@moul-dev/web-component/effects'
+```
+
+```html
+<article id="guide">
+  <h1>Kampot in three days</h1>
+  <h2>Planning the trip</h2>
+  …
+</article>
+
+<moul-progress-nav for="guide"></moul-progress-nav>
+```
+
+## Which headings
+
+`for` takes the id of the article to follow. Left empty, the element follows the page's `main`, or the body if there is none. `headings` is a selector matched inside the article, `h2, h3` by default; set it to `h2` for a shorter list, or to any selector, such as `[data-toc]`.
+
+Headings without an `id` are given one made from their text, so the links work and can be shared. The list nests each heading under the one before it with a lower level, so `h3`s sit inside their `h2`. When the article's content changes, the list follows on its own; call `refresh()` after a change it cannot see, such as a heading's text set through a property.
+
+## The active heading
+
+The active heading is the last one whose top has passed a line a quarter of the way down the view. At the very bottom of the page, the last heading still in view becomes active, so a short final section is never skipped.
+
+The pill stays out of sight, and out of the accessibility tree, until the reader reaches the first heading. Add `is-always-visible` to show it from the start; until a heading is reached it shows its `label`, "On this page" by default.
+
+## The ring
+
+The ring shows how far the page has been scrolled. If the article scrolls by itself, as in the preview above, the ring follows the article instead. Where the browser has scroll-driven animations the ring is filled by a native scroll timeline, and no script runs to draw it. Its colour is `--progress-nav-color`, `var(--color-accent)` by default.
+
+## Placement
+
+`placement="bottom"`, the default, fixes the pill to the bottom of the viewport, centred, and opens the list above it. `placement="top"` fixes it to the top and opens the list below. `placement="inline"` leaves it in the normal flow for you to place, for example sticky at the top of a panel. `--progress-nav-offset` sets the gap from the viewport edge, `1.5rem` by default; raise it to clear a sticky navbar.
+
+```css
+moul-progress-nav {
+  --progress-nav-offset: 5rem;
+}
+```
+
+A jump scrolls the heading to the top of the view. If a sticky header covers it, give the headings a `scroll-margin-top` as tall as the header.
+
+```css
+article :is(h2, h3) {
+  scroll-margin-top: 5rem;
+}
+```
+
+## Accessibility
+
+The element is a `<nav>` landmark named by `label`. The pill is a button whose name is the label and the active heading, such as "On this page: Planning the trip", with `aria-expanded` and `aria-controls` for the list. Enter or Space opens the list; Down or Up on the pill opens it and moves focus to the active link. Inside the list Up, Down, Home and End move between the links, and Escape closes it and returns focus to the pill. A press outside, or tabbing away, closes it too.
+
+Choosing a link scrolls to its heading, moves focus to the heading (adding `tabindex="-1"` if the heading cannot take focus) and puts its id in the address, as a plain link would. The active link has `aria-current="location"`. Changes of the active heading are not announced, since the reader's own scrolling caused them. The ring is drawn for the eye only and is `aria-hidden`.
+
+Where the system forces its own colours, as in Windows high contrast mode, the pill and the list get visible borders and the ring uses the system highlight colour.
+
+Under `prefers-reduced-motion: reduce` the heading text swaps at once instead of sliding, a jump to a heading is instant instead of smooth, the pill and the list appear without moving, and the ring follows the scroll exactly.
+
+## Attributes and properties
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `for` | `htmlFor` | `string` (an id) | `''` (the page's `main`) |
+| `headings` | `headings` | `string` (a selector) | `'h2, h3'` |
+| `placement` | `placement` | `'bottom' \| 'top' \| 'inline'` | `'bottom'` |
+| `label` | `label` | `string` | `'On this page'` |
+| `is-always-visible` | `isAlwaysVisible` | `boolean` | `false` |
+| `is-open` | `isOpen` | `boolean` | `false` |
+| | `activeHeading` | `HTMLElement \| null` (read only) | `null` |
+
+| Method | Description |
+| :-- | :-- |
+| `setOpen(isOpen)` | Opens or closes the list and fires `openchange`. |
+| `refresh()` | Reads the headings again. |
+
+| Event | Detail | Description |
+| :-- | :-- | :-- |
+| `openchange` | `{ isOpen: boolean }` | The list opened or closed. |
+
+| Part | Description |
+| :-- | :-- |
+| `base` | The `<nav>` that holds the pill and the list. |
+| `pill` | The button: ring, active heading and chevron. |
+| `ring` | The progress ring. |
+| `current` | The active heading's text. |
+| `panel` | The floating box that holds the list. |
+| `list` | Each list of links (nested lists for deeper levels). |
+| `link` | Each heading link. |
+
+| CSS property | Description | Default |
+| :-- | :-- | :-- |
+| `--progress-nav-color` | The colour of the ring's fill. | `var(--color-accent)` |
+| `--progress-nav-offset` | The gap between the pill and the viewport edge it is fixed to. | `1.5rem` |
+| `--progress-nav-max-width` | The widest the heading text gets before it is cut short. | `16rem` |

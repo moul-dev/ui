@@ -185,6 +185,23 @@ export const COMPONENT_CATEGORIES: ComponentCategory[] = [
     ],
   },
   {
+    key: 'site',
+    label: 'Navigation & Media',
+    slugs: [
+      'docs/site-kit',
+      'docs/components/banner',
+      'docs/components/carousel',
+      'docs/components/compare',
+      'docs/components/dock',
+      'docs/components/imageslider',
+      'docs/components/navbar',
+      'docs/components/navigationmenu',
+      'docs/components/progressnav',
+      'docs/components/videodialog',
+      'docs/components/worldmap',
+    ],
+  },
+  {
     key: 'blocks',
     label: 'Composite Blocks',
     slugs: ['docs/blocks/logs', 'docs/blocks/sidebar'],

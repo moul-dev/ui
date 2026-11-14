@@ -284,9 +284,11 @@ save.addEventListener('press', () => {
       {
         name: 'SearchField',
         docs: '/docs/components/searchfield',
-        summary: 'Search input in a `<search>` landmark with a clear button.',
+        summary:
+          'Search input in a `<search>` landmark with a clear button. `is-expandable` starts it as a round search button that springs open (`--search-field-expanded-width`) and closes when left empty; fires `expandchange`.',
         tags: ['moul-search-field'],
-        snippet: `<moul-search-field name="q" label="Search" placeholder="Search projects…"></moul-search-field>`,
+        snippet: `<moul-search-field name="q" label="Search" placeholder="Search projects…"></moul-search-field>
+<moul-search-field is-expandable label="Search the docs"></moul-search-field>`,
       },
       {
         name: 'TextArea',
@@ -1381,6 +1383,134 @@ answer.sources = [{ title: 'Records API', url: 'https://moul.dev/docs/records' }
   <img src="/logos/two.svg" alt="Two" />
   <moul-orbit slot="center" radius="64" duration="14" is-reverse>…</moul-orbit>
 </moul-orbit>`,
+      },
+    ],
+  },
+  {
+    title: 'Navigation & Media',
+    families: [
+      {
+        name: 'Navbar',
+        docs: '/docs/components/navbar',
+        summary:
+          'Sticky site top bar with `brand`, default (inside a `<nav>` landmark) and `actions` slots plus a `banner` slot above it; `variant="floating"` for an inset pill, `effect="shrink glass"` once scrolled past `threshold`, `hide-on-scroll` slides it away on the way down. Below `collapse-below` px (768) the navigation folds behind a menu button into a panel (`openchange`) and a child `moul-navigation-menu` turns vertical. Effects entry.',
+        tags: ['moul-navbar'],
+        snippet: `<moul-navbar variant="floating" effect="glass shrink" hide-on-scroll>
+  <moul-banner slot="banner" hide-on-scroll is-dismissable>Moul UI 1.0 is out. <a href="/changelog/">Read the notes</a></moul-banner>
+  <a slot="brand" href="/">Moul</a>
+  <a href="/docs/" aria-current="page">Docs</a>
+  <a href="/examples/">Examples</a>
+  <moul-button slot="actions" size="sm">Get started</moul-button>
+</moul-navbar>`,
+      },
+      {
+        name: 'Banner',
+        docs: '/docs/components/banner',
+        summary:
+          'One-line announcement (a `region` landmark) with `tone`, `variant="solid|flat"`, `icon` and `action` slots; `is-dismissable` fires a cancelable `dismiss` and folds it away, `storage-key` remembers that in localStorage; `is-sticky` + `hide-on-scroll` slides it away on the way down, and in a navbar\'s `banner` slot the navbar slides it. Effects entry.',
+        tags: ['moul-banner'],
+        snippet: `<moul-banner tone="primary" is-dismissable storage-key="release-1-0">
+  Moul UI 1.0 is out. <a href="/changelog/">Read the notes</a>
+  <moul-button slot="action" size="sm" variant="outline">Upgrade</moul-button>
+</moul-banner>`,
+      },
+      {
+        name: 'NavigationMenu',
+        docs: '/docs/components/navigationmenu',
+        summary:
+          'Site navigation whose panels open on hover and morph from one item to the next (one floating surface slides and resizes; content slides in from the side of travel). Items with `href` are plain links; `moul-navigation-menu-link` is a link card with icon, label and description; `orientation="vertical"` stacks items with inline disclosure panels (moul-navbar switches to it when collapsed). Fires `openchange` with `detail.value`. Effects entry.',
+        tags: [
+          'moul-navigation-menu',
+          'moul-navigation-menu-item',
+          'moul-navigation-menu-link',
+        ],
+        snippet: `<nav aria-label="Main">
+  <moul-navigation-menu>
+    <moul-navigation-menu-item label="Products" columns="2">
+      <moul-navigation-menu-link href="/docs/" label="Components" description="Ninety elements for apps and sites.">
+        <svg slot="icon" aria-hidden="true">…</svg>
+      </moul-navigation-menu-link>
+    </moul-navigation-menu-item>
+    <moul-navigation-menu-item label="Pricing" href="/pricing/"></moul-navigation-menu-item>
+  </moul-navigation-menu>
+</nav>`,
+      },
+      {
+        name: 'Dock',
+        docs: '/docs/components/dock',
+        summary:
+          'A glass bar of icons that grow under a mouse or pen like a desktop dock (`magnification`, `distance`, `orientation`); items are links (`href`) or buttons with a `label` tooltip and `is-active` dot, separated by `moul-dock-separator`. A toolbar with arrow-key focus. Effects entry.',
+        tags: ['moul-dock', 'moul-dock-item', 'moul-dock-separator'],
+        snippet: `<moul-dock label="Quick links">
+  <moul-dock-item label="Home" href="/" is-active><svg aria-hidden="true">…</svg></moul-dock-item>
+  <moul-dock-item label="Search"><svg aria-hidden="true">…</svg></moul-dock-item>
+  <moul-dock-separator></moul-dock-separator>
+  <moul-dock-item label="Settings"><svg aria-hidden="true">…</svg></moul-dock-item>
+</moul-dock>`,
+      },
+      {
+        name: 'ProgressNav',
+        docs: '/docs/components/progressnav',
+        summary:
+          'A floating pill with a scroll-depth ring and the active heading of an article (`for`, `headings`, `placement="bottom|top|inline"`); pressing it opens a nested list of headings to jump to. Effects entry.',
+        tags: ['moul-progress-nav'],
+        snippet: `<article id="guide">…<h2>Planning the trip</h2>…</article>
+<moul-progress-nav for="guide" headings="h2, h3"></moul-progress-nav>`,
+      },
+      {
+        name: 'Carousel',
+        docs: '/docs/components/carousel',
+        summary:
+          'A row of slides (every child) the reader drags, swipes or steps through, settling on the nearest slide after a flick; arrows, dots, `align="start|center"`, `is-loop`, and `autoplay="6000"` with a play button that holds on hover, focus, off screen and a hidden tab. `--carousel-slide-size` lets the next slide peek in; `slidechange`, `next()`, `previous()`, `goTo()`. Effects entry.',
+        tags: ['moul-carousel'],
+        snippet: `<moul-carousel label="Customer stories" style="--carousel-slide-size: min(20rem, 80%)">
+  <moul-card>…</moul-card>
+  <moul-card>…</moul-card>
+  <moul-card>…</moul-card>
+</moul-carousel>`,
+      },
+      {
+        name: 'ImageSlider',
+        docs: '/docs/components/imageslider',
+        summary:
+          'A full-width slideshow of `<img>` children with a scrim and a `slot="overlay"` for a headline; `effect="fade|slide|zoom"`, autoplay every `interval` ms (default 5000, 0 is off) with a pause button, swipe, arrows, dots and arrow keys; goes round from last to first. Effects entry.',
+        tags: ['moul-image-slider'],
+        snippet: `<moul-image-slider label="Mondulkiri in four days" effect="fade">
+  <img src="/hills.jpg" alt="Hills in mist at dawn" />
+  <img src="/lake.jpg" alt="A crater lake in the forest" />
+  <div slot="overlay"><h2>Four days in the hills</h2></div>
+</moul-image-slider>`,
+      },
+      {
+        name: 'Compare',
+        docs: '/docs/components/compare',
+        summary:
+          'Two images in one frame with a draggable divider (`role="slider"`, arrows/Page/Home/End) to compare a before and an after; `position` 0–100, `orientation="vertical"`, `mode="hover"`, optional `before-label`/`after-label` chips; fires `input` and `change` with `detail.position`. Effects entry.',
+        tags: ['moul-compare'],
+        snippet: `<moul-compare label="Edited photo" before-label="Before" after-label="After" position="50">
+  <img slot="before" src="/photos/raw.jpg" alt="The photo straight from the camera" />
+  <img slot="after" src="/photos/edited.jpg" alt="The same photo, warmer and brighter" />
+</moul-compare>`,
+      },
+      {
+        name: 'VideoDialog',
+        docs: '/docs/components/videodialog',
+        summary:
+          'Thumbnail button with a play icon that opens an embed URL (`<iframe>`) or a video file (`<video>`) in a native modal dialog; the player exists only while open. `animation="expand|fade|slide-up"`, `is-open`/`setOpen()`, `openchange`; only http(s) and relative URLs play. Effects entry.',
+        tags: ['moul-video-dialog'],
+        snippet: `<moul-video-dialog src="https://www.youtube-nocookie.com/embed/VIDEO_ID" label="Watch the two-minute tour">
+  <img slot="thumbnail" src="/images/tour-poster.jpg" alt="" />
+</moul-video-dialog>`,
+      },
+      {
+        name: 'WorldMap',
+        docs: '/docs/components/worldmap',
+        summary:
+          'A dotted world map drawn from an embedded land mask (no image, request or map library) with pins (`markers`) and curved lines (`arcs`) that draw in turn when it scrolls into view, then carry a travelling light; places are `{ lat, lng, label }`, as properties or JSON attributes, and `show-labels` writes the labels beside the pins. One image to screen readers, named by `label`, plus a hidden list of places and routes. Effects entry.',
+        tags: ['moul-world-map'],
+        snippet: `<moul-world-map label="Our offices" show-labels
+  arcs='[{ "from": { "lat": 11.56, "lng": 104.92, "label": "Phnom Penh" }, "to": { "lat": 38.72, "lng": -9.14, "label": "Lisbon" } }]'
+></moul-world-map>`,
       },
     ],
   },

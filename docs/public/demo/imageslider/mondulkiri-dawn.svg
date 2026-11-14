@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2b3a67"/>
+      <stop offset="0.45" stop-color="#c86b85"/>
+      <stop offset="0.75" stop-color="#f4a261"/>
+      <stop offset="1" stop-color="#ffd6a5"/>
+    </linearGradient>
+    <radialGradient id="sun" cx="0.62" cy="0.62" r="0.18">
+      <stop offset="0" stop-color="#fff4d6"/>
+      <stop offset="0.35" stop-color="#ffe0a3" stop-opacity="0.9"/>
+      <stop offset="1" stop-color="#ffd6a5" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="mist" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fbe3d3" stop-opacity="0"/>
+      <stop offset="1" stop-color="#fbe3d3" stop-opacity="0.55"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#sky)"/>
+  <rect width="1600" height="900" fill="url(#sun)"/>
+  <path d="M0 560 C180 500 320 520 470 470 S760 430 900 480 1180 440 1340 470 1520 450 1600 470 V900 H0Z" fill="#8f5e7e" opacity="0.75"/>
+  <rect y="460" width="1600" height="160" fill="url(#mist)"/>
+  <path d="M0 640 C160 580 300 600 430 560 S700 520 860 580 1120 540 1260 570 1480 540 1600 560 V900 H0Z" fill="#5d4466"/>
+  <path d="M0 720 C140 680 260 700 400 660 S640 620 800 680 1060 650 1220 690 1460 650 1600 670 V900 H0Z" fill="#3b2f4f"/>
+  <path d="M0 800 C220 760 380 790 560 760 S900 740 1080 780 1420 750 1600 770 V900 H0Z" fill="#231d33"/>
+</svg>

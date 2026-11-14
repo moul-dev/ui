@@ -1,0 +1,161 @@
+---
+title: Compare
+description: Two images in one frame with a divider you drag to compare a before and an after.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import LandingKitDemo from '@/components/demos/LandingKitDemo.astro';
+
+`<moul-compare>` stacks two images in one frame and puts a divider between them. Drag the divider, or press anywhere on the frame, to see more of one side and less of the other: a photo before and after an edit, a page before and after a redesign, a sketch and the finished painting.
+
+<ComponentPreview align="stretch">
+  <moul-compare before-label="Sketch" after-label="Painting" label="Sketch and finished painting" position="45">
+    <img slot="before" src="/demo/compare/sketch.svg" alt="Pencil sketch of rice paddies, two sugar palms and a stilt house" width="1200" height="675" />
+    <img slot="after" src="/demo/compare/painting.svg" alt="The same scene painted at dusk, with a pink sky and green and gold paddies" width="1200" height="675" />
+  </moul-compare>
+  <LandingKitDemo />
+</ComponentPreview>
+
+It lives in the effects entry, with the rest of the site kit:
+
+```js
+import '@moul-dev/web-component/effects'
+```
+
+```html
+<moul-compare label="Edited photo" before-label="Before" after-label="After">
+  <img slot="before" src="/photos/angkor-raw.jpg" alt="The temple at dawn, straight from the camera" />
+  <img slot="after" src="/photos/angkor-edited.jpg" alt="The same photo, warmer and brighter" />
+</moul-compare>
+```
+
+The before image sits on the inline start, the after image on the inline end. The before image also sets the frame's size, and the after image is cropped to fill the same frame, so give both images the same shape. Each image keeps its own `alt` text.
+
+## Position
+
+`position` is where the divider sits, from 0 at the inline start to 100 at the inline end, 50 by default. Set it to open on the more interesting side.
+
+```html
+<moul-compare position="30">…</moul-compare>
+```
+
+As the divider moves, the element fires `input` with the new position in `detail.position`, and `change` once a move ends: when a drag lets go, after each key, or when a hovering mouse leaves the frame.
+
+```js
+const compare = document.querySelector('moul-compare')
+compare.addEventListener('change', (event) => {
+  console.log(`Divider at ${event.detail.position}%`)
+})
+```
+
+A mouse or pen press moves the divider to the press and keeps following the pointer until it is let go. A finger has to set off along the divider's axis: a swipe the other way scrolls the page, as a reader on a phone expects, and a tap moves the divider to where it landed.
+
+## Orientation
+
+`orientation="vertical"` turns the divider on its side: the before image is on top, the after image below, and the divider moves up and down. Here the frame takes its shape from `--compare-aspect-ratio` instead of the image.
+
+<ComponentPreview>
+  <moul-compare orientation="vertical" position="38" before-label="Sketch" after-label="Painting" label="Sketch and finished painting, top and bottom" style="--compare-aspect-ratio: 4 / 3; width: min(100%, 28rem)">
+    <img slot="before" src="/demo/compare/sketch.svg" alt="Pencil sketch of the paddies" width="1200" height="675" />
+    <img slot="after" src="/demo/compare/painting.svg" alt="The finished painting of the paddies" width="1200" height="675" />
+  </moul-compare>
+</ComponentPreview>
+
+```html
+<moul-compare orientation="vertical" style="--compare-aspect-ratio: 4 / 3">…</moul-compare>
+```
+
+## Hover
+
+`mode="hover"` lets a mouse move the divider just by passing over the frame, which suits a gallery where readers skim many pairs. A press and drag still works, and touch screens always drag.
+
+<ComponentPreview>
+  <moul-compare mode="hover" before-label="Sketch" after-label="Painting" label="Sketch and finished painting, follows the pointer" style="width: min(100%, 32rem)">
+    <img slot="before" src="/demo/compare/sketch.svg" alt="Pencil sketch of the paddies" width="1200" height="675" />
+    <img slot="after" src="/demo/compare/painting.svg" alt="The finished painting of the paddies" width="1200" height="675" />
+  </moul-compare>
+</ComponentPreview>
+
+```html
+<moul-compare mode="hover">…</moul-compare>
+```
+
+## Labels
+
+`before-label` and `after-label` put a small chip in the top corner of each side. Each chip belongs to its own image, so it slides out of sight as the divider covers that side. Leave a label out and its chip is not drawn. The labels also name the sides in the value a screen reader hears, as in "45% Sketch, 55% Painting".
+
+## Styling
+
+The frame has rounded corners and no padding. Its shape comes from the before image, or from `--compare-aspect-ratio` when you set one. The divider and its handle are white by default, which reads on most photos in both themes. A darker set of images may want a different colour.
+
+```css
+moul-compare {
+  --compare-aspect-ratio: 16 / 9;
+  --compare-radius: var(--radius-xl);
+  --compare-divider-color: var(--color-accent);
+  --compare-handle-size: 3rem;
+}
+
+moul-compare::part(before-label),
+moul-compare::part(after-label) {
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+```
+
+In right-to-left text the frame is mirrored: the before image is on the right and `position` counts from the right edge.
+
+## Accessibility
+
+The divider's handle is the one tab stop, a `role="slider"` from 0 to 100 named by `label` ("Compare images" by default), with `aria-orientation`. Its `aria-valuetext` says how much of each side shows, using the labels when they are set, as in "45% Sketch, 55% Painting".
+
+| Key | Action |
+| :-- | :-- |
+| `Arrow Left`, `Arrow Right` | Move a horizontal divider one step that way on screen, in either text direction; on a vertical divider, `Arrow Right` adds a step and `Arrow Left` takes one away |
+| `Arrow Up`, `Arrow Down` | Move a vertical divider one step that way; on a horizontal divider, `Arrow Up` adds a step and `Arrow Down` takes one away |
+| `Shift` + arrow | Ten steps |
+| `Page Up`, `Page Down` | Ten steps, the way `Arrow Up` and `Arrow Down` go |
+| `Home`, `End` | To 0 or 100 |
+
+Screen readers read the two images, with their `alt` text, before the slider. The chips are drawn for the eye; the slider's value already carries their names. Where the system forces its own colours, as in Windows high contrast mode, the divider and handle take the system text colour.
+
+Under `prefers-reduced-motion: reduce`, a click, a tap or a key moves the divider at once instead of gliding there, and the handle does not grow under the pointer. A drag follows the pointer either way.
+
+## Attributes and properties
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `position` | `position` | `number` (0 to 100) | `50` |
+| `orientation` | `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` |
+| `mode` | `mode` | `'drag' \| 'hover'` | `'drag'` |
+| `label` | `label` | `string` | `'Compare images'` |
+| `before-label` | `beforeLabel` | `string` | `''` |
+| `after-label` | `afterLabel` | `string` | `''` |
+
+| Event | Detail | Fires |
+| :-- | :-- | :-- |
+| `input` | `{ position: number }` | While the divider moves, by pointer or key |
+| `change` | `{ position: number }` | When a move ends |
+
+| Slot | Description |
+| :-- | :-- |
+| `before` | The image on the start side, which also sets the frame's size. |
+| `after` | The image on the end side, cropped to fill the frame. |
+
+| Part | Description |
+| :-- | :-- |
+| `base` | The frame that holds both layers. |
+| `before` | The layer behind, holding the before slot and its label. |
+| `after` | The layer in front, clipped to the end side of the divider. |
+| `divider` | The line along the divider. |
+| `handle` | The round grip on the divider, the `role="slider"` element. |
+| `before-label` | The chip naming the before side. |
+| `after-label` | The chip naming the after side. |
+
+| CSS property | Description | Default |
+| :-- | :-- | :-- |
+| `--compare-aspect-ratio` | The frame's aspect ratio. | `auto` (the before image's) |
+| `--compare-radius` | The frame's corner radius. | `var(--radius-2xl)` |
+| `--compare-divider-color` | The divider and the handle's fill. | `var(--color-white)` |
+| `--compare-divider-width` | The thickness of the divider line. | `2px` |
+| `--compare-handle-size` | The diameter of the handle. | `2.5rem` |

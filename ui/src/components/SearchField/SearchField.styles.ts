@@ -155,6 +155,82 @@ export const searchFieldStyles = [
       height: 1rem;
     }
 
+    /* Expandable: a round search button that springs open into the field.
+       The container's width animates; the input inside is hidden (and so
+       never focusable) while it is closed, and hides only once the width
+       has finished closing. */
+    :host([is-expandable]) {
+      display: inline-block;
+      width: auto;
+      max-width: 100%;
+      vertical-align: middle;
+    }
+
+    :host([is-expandable]) [part~='label'] {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      margin: -1px;
+      padding: 0;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+
+    :host([is-expandable]) [part~='input-container'] {
+      --_search-collapsed: 2.25rem;
+      inline-size: var(--_search-collapsed);
+      max-inline-size: 100%;
+      overflow: hidden;
+      border-radius: var(--radius-full, 9999px);
+      transition:
+        inline-size var(--duration-slow, 300ms) var(--ease-spring, ease-out),
+        background-color var(--duration-fast, 150ms) var(--ease-smooth, ease),
+        box-shadow var(--duration-fast, 150ms) var(--ease-out, ease-out);
+    }
+
+    :host([is-expandable][is-expanded]) [part~='input-container'] {
+      inline-size: var(--search-field-expanded-width, 16rem);
+    }
+
+    [part~='expand-button'] {
+      display: inline-grid;
+      place-items: center;
+      flex-shrink: 0;
+      inline-size: var(--_search-collapsed);
+      block-size: var(--_search-collapsed);
+      padding: 0;
+      border: none;
+      border-radius: inherit;
+      background: transparent;
+      color: inherit;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    :host([is-expanded]) [part~='expand-button'] {
+      cursor: text;
+    }
+
+    [part~='expand-button'] [part~='search-icon'] {
+      margin: 0;
+    }
+
+    /* The focus-within ring of the shell already marks the focused button. */
+    [part~='expand-button']:focus-visible {
+      outline: none;
+    }
+
+    :host([is-expandable]) [part~='input'] {
+      padding-inline-start: 0;
+      transition: visibility 0s linear 0s;
+    }
+
+    :host([is-expandable]:not([is-expanded])) [part~='input'] {
+      visibility: hidden;
+      transition-delay: var(--duration-slow, 300ms);
+    }
+
     :host([is-disabled]) {
       opacity: var(--disabled-opacity, 0.5);
       cursor: not-allowed;
@@ -170,6 +246,12 @@ export const searchFieldStyles = [
 
       [part~='clear-btn']:active {
         transform: none;
+      }
+
+      /* Opens and closes at once, without the width spring. */
+      :host([is-expandable]) [part~='input-container'],
+      :host([is-expandable]) [part~='input'] {
+        transition: none;
       }
     }
   `,

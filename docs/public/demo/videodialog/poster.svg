@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720">
+<title>Poster for the product tour: a deploy dashboard</title>
+<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1e1b4b"/><stop offset="0.55" stop-color="#4c1d95"/><stop offset="1" stop-color="#be185d"/></linearGradient><radialGradient id="glow" cx="0.75" cy="0.2" r="0.6"><stop offset="0" stop-color="#f9a8d4" stop-opacity="0.55"/><stop offset="1" stop-color="#f9a8d4" stop-opacity="0"/></radialGradient><linearGradient id="area" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#818cf8" stop-opacity="0.45"/><stop offset="1" stop-color="#818cf8" stop-opacity="0"/></linearGradient><filter id="shadow" x="-10%" y="-10%" width="120%" height="130%"><feDropShadow dx="0" dy="24" stdDeviation="28" flood-color="#0b0820" flood-opacity="0.55"/></filter><pattern id="dots" width="28" height="28" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.4" fill="#ffffff" opacity="0.12"/></pattern></defs>
+<rect width="1280" height="720" fill="url(#bg)"/><rect width="1280" height="720" fill="url(#dots)"/><rect width="1280" height="720" fill="url(#glow)"/>
+<g filter="url(#shadow)"><rect x="150" y="110" width="980" height="560" rx="22" fill="#f8fafc"/></g>
+<path d="M150 132 a22 22 0 0 1 22 -22 h936 a22 22 0 0 1 22 22 v26 h-980 Z" fill="#e2e8f0"/>
+<circle cx="178" cy="134" r="6.5" fill="#f87171"/>
+<circle cx="200" cy="134" r="6.5" fill="#fbbf24"/>
+<circle cx="222" cy="134" r="6.5" fill="#34d399"/>
+<rect x="530" y="123" width="220" height="22" rx="11" fill="#f8fafc"/>
+<text x="640" y="139" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12" fill="#64748b">deploy.tonle.test</text>
+<rect x="150" y="158" width="190" height="512" fill="#f1f5f9"/>
+<rect x="172" y="184" width="30" height="30" rx="9" fill="#6366f1"/><rect x="212" y="192" width="80" height="12" rx="6" fill="#334155"/>
+<rect x="164" y="238" width="162" height="30" rx="8" fill="none"/>
+<rect x="178" y="248" width="12" height="12" rx="3" fill="#94a3b8"/>
+<rect x="200" y="249" width="70" height="10" rx="5" fill="#cbd5e1"/>
+<rect x="164" y="278" width="162" height="30" rx="8" fill="#e0e7ff"/>
+<rect x="178" y="288" width="12" height="12" rx="3" fill="#6366f1"/>
+<rect x="200" y="289" width="87" height="10" rx="5" fill="#4338ca"/>
+<rect x="164" y="318" width="162" height="30" rx="8" fill="none"/>
+<rect x="178" y="328" width="12" height="12" rx="3" fill="#94a3b8"/>
+<rect x="200" y="329" width="104" height="10" rx="5" fill="#cbd5e1"/>
+<rect x="164" y="358" width="162" height="30" rx="8" fill="none"/>
+<rect x="178" y="368" width="12" height="12" rx="3" fill="#94a3b8"/>
+<rect x="200" y="369" width="81" height="10" rx="5" fill="#cbd5e1"/>
+<rect x="164" y="398" width="162" height="30" rx="8" fill="none"/>
+<rect x="178" y="408" width="12" height="12" rx="3" fill="#94a3b8"/>
+<rect x="200" y="409" width="98" height="10" rx="5" fill="#cbd5e1"/>
+<rect x="164" y="438" width="162" height="30" rx="8" fill="none"/>
+<rect x="178" y="448" width="12" height="12" rx="3" fill="#94a3b8"/>
+<rect x="200" y="449" width="75" height="10" rx="5" fill="#cbd5e1"/>
+<rect x="364" y="182" width="232" height="104" rx="14" fill="#ffffff" stroke="#e2e8f0"/>
+<text x="382" y="212" font-family="system-ui, sans-serif" font-size="14" fill="#64748b">Deploys today</text>
+<text x="382" y="258" font-family="system-ui, sans-serif" font-size="34" font-weight="700" fill="#0f172a">128</text>
+<rect x="532" y="236" width="46" height="22" rx="11" fill="#6366f1" opacity="0.15"/><rect x="542" y="245" width="26" height="4" rx="2" fill="#6366f1"/>
+<rect x="612" y="182" width="232" height="104" rx="14" fill="#ffffff" stroke="#e2e8f0"/>
+<text x="630" y="212" font-family="system-ui, sans-serif" font-size="14" fill="#64748b">Success rate</text>
+<text x="630" y="258" font-family="system-ui, sans-serif" font-size="34" font-weight="700" fill="#0f172a">99.2%</text>
+<rect x="780" y="236" width="46" height="22" rx="11" fill="#10b981" opacity="0.15"/><rect x="790" y="245" width="26" height="4" rx="2" fill="#10b981"/>
+<rect x="860" y="182" width="232" height="104" rx="14" fill="#ffffff" stroke="#e2e8f0"/>
+<text x="878" y="212" font-family="system-ui, sans-serif" font-size="14" fill="#64748b">p95 build</text>
+<text x="878" y="258" font-family="system-ui, sans-serif" font-size="34" font-weight="700" fill="#0f172a">48 s</text>
+<rect x="1028" y="236" width="46" height="22" rx="11" fill="#f59e0b" opacity="0.15"/><rect x="1038" y="245" width="26" height="4" rx="2" fill="#f59e0b"/>
+<rect x="364" y="306" width="728" height="330" rx="14" fill="#ffffff" stroke="#e2e8f0"/>
+<text x="384" y="340" font-family="system-ui, sans-serif" font-size="15" font-weight="600" fill="#0f172a">Deploys this week</text>
+<path d="M384 386 H1072" stroke="#f1f5f9" stroke-width="2"/>
+<path d="M384 446 H1072" stroke="#f1f5f9" stroke-width="2"/>
+<path d="M384 506 H1072" stroke="#f1f5f9" stroke-width="2"/>
+<path d="M384 566 H1072" stroke="#f1f5f9" stroke-width="2"/>
+<path d="M394.0 502.5 L468.2 486.4 L542.4 518.6 L616.7 468.0 L690.9 491.0 L765.1 445.0 L839.3 458.8 L913.6 426.6 L987.8 440.4 L1062.0 412.8 L1062.0 616 L394.0 616 Z" fill="url(#area)"/>
+<path d="M394.0 502.5 L468.2 486.4 L542.4 518.6 L616.7 468.0 L690.9 491.0 L765.1 445.0 L839.3 458.8 L913.6 426.6 L987.8 440.4 L1062.0 412.8" fill="none" stroke="#6366f1" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="913.6" cy="426.6" r="7" fill="#ffffff" stroke="#6366f1" stroke-width="4"/>
+</svg>

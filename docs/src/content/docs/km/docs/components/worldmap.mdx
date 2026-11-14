@@ -1,0 +1,147 @@
+---
+title: World Map (សមាសភាគ)
+description: ឯកសារណែនាំសម្រាប់សមាសភាគ World Map Web Component
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import LandingKitDemo from '@/components/demos/LandingKitDemo.astro';
+
+`<moul-world-map>` draws the land as a grid of dots, pins the places you give it, and draws curved lines between them, one after another, when the map scrolls into view. Use it for a "where we are" section, a list of regions, or a picture of where requests travel.
+
+<ComponentPreview stack>
+  <moul-world-map
+    id="world-map-demo"
+    label="Routes from the Phnom Penh office"
+    show-labels
+    style="width: 100%; max-width: 44rem"
+    arcs='[
+      { "from": { "lat": 11.56, "lng": 104.92, "label": "Phnom Penh" }, "to": { "lat": 38.72, "lng": -9.14, "label": "Lisbon" } },
+      { "from": { "lat": 11.56, "lng": 104.92, "label": "Phnom Penh" }, "to": { "lat": 35.68, "lng": 139.69, "label": "Tokyo" } },
+      { "from": { "lat": 11.56, "lng": 104.92, "label": "Phnom Penh" }, "to": { "lat": -33.87, "lng": 151.21, "label": "Sydney" } },
+      { "from": { "lat": 11.56, "lng": 104.92, "label": "Phnom Penh" }, "to": { "lat": 37.77, "lng": -122.42, "label": "San Francisco" } },
+      { "from": { "lat": 11.56, "lng": 104.92, "label": "Phnom Penh" }, "to": { "lat": -23.55, "lng": -46.63, "label": "São Paulo" } }
+    ]'
+  ></moul-world-map>
+  <moul-button size="sm" variant="outline" data-replay="world-map-demo">Draw again</moul-button>
+  <LandingKitDemo />
+</ComponentPreview>
+
+It lives in the effects entry, with the rest of the site kit:
+
+```js
+import '@moul-dev/web-component/effects'
+```
+
+```html
+<moul-world-map label="Our offices" show-labels></moul-world-map>
+
+<script type="module">
+  const map = document.querySelector('moul-world-map')
+  const phnomPenh = { lat: 11.56, lng: 104.92, label: 'Phnom Penh' }
+  map.markers = [phnomPenh]
+  map.arcs = [
+    { from: phnomPenh, to: { lat: 38.72, lng: -9.14, label: 'Lisbon' } },
+    { from: phnomPenh, to: { lat: 35.68, lng: 139.69, label: 'Tokyo' } },
+  ]
+</script>
+```
+
+The map needs no image, no network request and no map library. The land comes from an outline of the world (Natural Earth, public domain) sampled into 2° cells from 84°N to 58°S and built into the element, about 1.6 KB. Antarctica is left out, as it is on most maps of this kind.
+
+## Places
+
+Every place is an object with `lat` and `lng` in degrees, north and east positive, and an optional `label`. Set `markers` to pin places and `arcs` to join them; each arc is `{ from, to, label }`. Both are properties, and both also read a JSON array from their attribute, which suits static HTML:
+
+```html
+<moul-world-map
+  markers='[{ "lat": 13.36, "lng": 103.86, "label": "Siem Reap" }]'
+></moul-world-map>
+```
+
+The ends of every arc are pinned too, so a map of routes needs only `arcs`. A place listed in both is pinned once. Places without finite coordinates are skipped, and an attribute that is not a JSON array counts as empty.
+
+The map is equirectangular: one degree of longitude is as wide as one degree of latitude is tall. It fills the width of its container and keeps its shape, 360 by 146.
+
+## Labels
+
+`show-labels` writes each pin's label beside it, to the east, or to the west when the east side would run off the map. Labels are text, so they stay the same size at any map width; pins do too. Two labelled pins close together will overlap, so label the places a reader needs and leave the rest to the hidden list described under Accessibility.
+
+<ComponentPreview stack>
+  <moul-world-map
+    label="Regions"
+    show-labels
+    style="width: 100%; max-width: 44rem"
+    markers='[
+      { "lat": 50.11, "lng": 8.68, "label": "Frankfurt" },
+      { "lat": 1.35, "lng": 103.82, "label": "Singapore" },
+      { "lat": 39.04, "lng": -77.49, "label": "Virginia" },
+      { "lat": -23.55, "lng": -46.63, "label": "São Paulo" }
+    ]'
+  ></moul-world-map>
+</ComponentPreview>
+
+## Motion
+
+When the map is a fifth in view, the arcs draw one after another, each taking `--world-map-arc-duration` (1.4 s) and starting `--world-map-arc-stagger` (0.35 s) after the one before. Once an arc is drawn, a short light runs along it, over and over, and the pins pulse. Everything pauses while the map is off screen and carries on when it returns. Call `play()` to draw the arcs again from the start, as the button above does.
+
+```css
+moul-world-map {
+  --world-map-arc-duration: 2s;
+  --world-map-arc-stagger: 0.5s;
+}
+```
+
+An arc bows north by about a third of the distance between its ends, so long routes rise higher than short ones. It takes the direct way across the flat map: a route from Tokyo to San Francisco crosses Asia and the Atlantic rather than the Pacific.
+
+## Colours
+
+The land dots take a low-strength foreground colour and the arcs and pins the accent colour, so the map follows the theme in light and dark. Change them with `--world-map-dot-color`, `--world-map-arc-color` and `--world-map-marker-color`.
+
+```css
+moul-world-map {
+  --world-map-dot-color: var(--color-border);
+  --world-map-arc-color: var(--color-success);
+  --world-map-marker-color: var(--color-success);
+}
+```
+
+## Accessibility
+
+The map is never focusable. Its drawing is one image, named by `label` ("World map" when unset), so a screen reader does not read thousands of dots. After it comes a visually hidden list that reads out every labelled pin and every arc that has a label. An arc without its own label reads "Phnom Penh to Lisbon" when both of its ends are labelled. The visible labels are hidden from assistive technology, since the list already says them.
+
+Give the map a `label` that says what it shows, such as "Our offices" or "Where requests are served from", and label the places that matter.
+
+Where the system forces its own colours, as in Windows high contrast mode, the dots, arcs and pins take system colours.
+
+Under `prefers-reduced-motion: reduce` the arcs are drawn from the start, no light runs along them, and the pins do not pulse.
+
+## Attributes and properties
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `label` | `label` | `string` | `'World map'` |
+| `markers` | `markers` | `{ lat, lng, label? }[]` | `[]` |
+| `arcs` | `arcs` | `{ from, to, label? }[]` | `[]` |
+| `show-labels` | `showLabels` | `boolean` | `false` |
+
+| Method | Description |
+| :-- | :-- |
+| `play()` | Draws the arcs again from the start. |
+
+| Part | Description |
+| :-- | :-- |
+| `base` | The box that holds the map and the pins. |
+| `map` | The SVG with the land dots and the arcs. |
+| `land` | The path that draws every land dot. |
+| `arc` | Each arc's line. |
+| `beam` | The light that runs along each arc once it is drawn. |
+| `marker` | Each pin. |
+| `label` | Each pin's label, with `show-labels`. |
+
+| CSS property | Description | Default |
+| :-- | :-- | :-- |
+| `--world-map-dot-color` | The colour of the land dots. | The foreground at low strength |
+| `--world-map-arc-color` | The colour of the arcs and of the light on them. | `var(--color-accent)` |
+| `--world-map-marker-color` | The colour of the pins. | `var(--color-accent)` |
+| `--world-map-arc-duration` | How long each arc takes to draw. | `1.4s` |
+| `--world-map-arc-stagger` | The wait between one arc starting and the next. | `0.35s` |

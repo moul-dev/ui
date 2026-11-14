@@ -1,0 +1,153 @@
+---
+title: Video Dialog
+description: A thumbnail with a play button that opens the video in a dialog, loading nothing until it is asked for.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import LandingKitDemo from '@/components/demos/LandingKitDemo.astro';
+
+`<moul-video-dialog>` shows a thumbnail with a play button, as in a product hero's "watch the tour". Activating it opens the video in a dialog over the page. The player is created when the dialog opens and removed when it closes, so the page loads no video until a reader asks for one, and closing the dialog stops the sound.
+
+<ComponentPreview align="stretch">
+  <moul-video-dialog src="/demo/videodialog/player.html" label="Watch the two-minute tour">
+    <img slot="thumbnail" src="/demo/videodialog/poster.svg" alt="" width="1280" height="720" />
+  </moul-video-dialog>
+  <LandingKitDemo />
+</ComponentPreview>
+
+The demos on this page play a placeholder page from this site and a short clip, so they load nothing from another site. Give `src` your own embed URL or video file.
+
+It lives in the effects entry, with the rest of the site kit:
+
+```js
+import '@moul-dev/web-component/effects'
+```
+
+```html
+<moul-video-dialog
+  src="https://www.youtube-nocookie.com/embed/VIDEO_ID"
+  label="Watch the two-minute tour"
+>
+  <img slot="thumbnail" src="/images/tour-poster.jpg" alt="" />
+</moul-video-dialog>
+```
+
+Put the poster in `slot="thumbnail"`. It sets the button's size, and the play button sits in its middle. Give the image an empty `alt`: the button is already named by `label`, and a second description would only repeat it.
+
+## Embeds and video files
+
+`src` takes an embed URL or a video file. An embed URL, such as a YouTube or Vimeo player, plays in an `<iframe>` that may autoplay, go full screen and use picture-in-picture, and sends only its origin as the referrer. A file ending in `.mp4`, `.m4v`, `.webm`, `.ogg`, `.ogv` or `.mov` plays in a `<video>` with the browser's own controls, starting at once.
+
+<ComponentPreview>
+  <moul-video-dialog src="/demo/videodialog/clip.mp4" label="Play the eight-second clip" animation="fade" style="width: min(100%, 22rem)">
+    <img slot="thumbnail" src="/demo/videodialog/poster.svg" alt="" width="1280" height="720" />
+  </moul-video-dialog>
+</ComponentPreview>
+
+```html
+<moul-video-dialog src="/media/tour.mp4" label="Play the tour">
+  <img slot="thumbnail" src="/media/tour-poster.jpg" alt="" />
+</moul-video-dialog>
+```
+
+When the address does not end in a file extension, as with a streaming URL, set `type="video"` to play it in a `<video>`, or `type="embed"` to keep it in an `<iframe>`.
+
+Most embedded players only start on their own when asked. Add the provider's own autoplay parameter to the embed URL, such as `?autoplay=1`, if you want the video to start as the dialog opens.
+
+Only web addresses are played: `http:`, `https:` and addresses relative to the page. Anything else, such as a `javascript:` or `data:` URL, is ignored with a warning in the console.
+
+## Animation
+
+`animation` sets how the panel arrives and leaves.
+
+| Value | Motion |
+| :-- | :-- |
+| `expand` (default) | The panel grows out of the thumbnail's box and shrinks back into it on close. |
+| `fade` | The panel fades in, settling from slightly smaller. |
+| `slide-up` | The panel rises from just below its place as it fades in. |
+
+```html
+<moul-video-dialog animation="slide-up" src="…">…</moul-video-dialog>
+```
+
+When the thumbnail is out of view, for example after the dialog was opened from script, `expand` falls back to a fade.
+
+## Opening from script
+
+`is-open` opens the dialog and removing it closes it, as with the other overlays. `setOpen(true)` and `setOpen(false)` do the same as the reader would and fire `openchange`; setting the property or attribute does not fire it.
+
+```js
+const tour = document.querySelector('moul-video-dialog')
+tour.addEventListener('openchange', (event) => {
+  console.log(event.detail.isOpen ? 'Tour opened' : 'Tour closed')
+})
+document.querySelector('#watch').addEventListener('click', () => tour.setOpen(true))
+```
+
+## Styling
+
+The panel keeps the video's shape, 16:9 by default, and grows as wide as `--video-dialog-width` while staying inside the viewport, so a tall phone gets the full width and a short laptop screen the full height.
+
+```css
+moul-video-dialog {
+  --video-dialog-width: 56rem;
+  --video-dialog-aspect-ratio: 4 / 3;
+  --video-dialog-radius: var(--radius-xl);
+  --video-dialog-play-size: 5rem;
+}
+
+moul-video-dialog::part(play-icon) {
+  background: color-mix(in oklch, var(--color-white) 30%, transparent);
+}
+```
+
+The play button takes the accent colour, and the backdrop is the overlay colour of the other dialogs, slightly blurred.
+
+## Accessibility
+
+The thumbnail is one native `<button>`, named by `label` ("Play video" by default) and marked `aria-haspopup="dialog"`. It opens a native modal `<dialog>` with the same name, so the page behind it is inert to the keyboard and to screen readers. The `<iframe>` is titled with `label`, and the `<video>` is labelled with it.
+
+On open, focus moves to the close button, named by `close-label` ("Close video" by default). `Tab` goes on into the player's own controls. `Escape`, the close button and a click on the backdrop all close the dialog, and focus returns to the thumbnail button.
+
+Under `prefers-reduced-motion: reduce` the panel and the backdrop appear and disappear at once, the ring round the play button does not pulse, and the thumbnail does not grow under the pointer.
+
+## Attributes and properties
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `src` | `src` | `string` | `''` |
+| `type` | `type` | `'' \| 'video' \| 'embed'` | `''` (by the file extension) |
+| `label` | `label` | `string` | `'Play video'` |
+| `close-label` | `closeLabel` | `string` | `'Close video'` |
+| `animation` | `animation` | `'expand' \| 'fade' \| 'slide-up'` | `'expand'` |
+| `is-open` | `isOpen` | `boolean` | `false` |
+
+| Method | Description |
+| :-- | :-- |
+| `setOpen(isOpen)` | Opens or closes the dialog as the reader would and fires `openchange`. Resolves once the panel has arrived or left. |
+
+| Event | Detail | Fires |
+| :-- | :-- | :-- |
+| `openchange` | `{ isOpen: boolean }` | When the reader opens or closes the dialog, or `setOpen()` does |
+
+| Slot | Description |
+| :-- | :-- |
+| `thumbnail` | The poster image; it sets the button's size. |
+
+| Part | Description |
+| :-- | :-- |
+| `trigger` | The button around the thumbnail. |
+| `thumbnail` | The box that holds the thumbnail slot. |
+| `play-icon` | The play button drawn over the thumbnail, with its pulsing ring. |
+| `dialog` | The native `<dialog>`, the full-screen layer over the backdrop. |
+| `panel` | The video's frame inside the dialog. |
+| `iframe` | The embedded player, while open. |
+| `video` | The `<video>` player, while open. |
+| `close-button` | The button that closes the dialog. |
+
+| CSS property | Description | Default |
+| :-- | :-- | :-- |
+| `--video-dialog-width` | The largest width of the video panel; it also stays inside the viewport. | `64rem` |
+| `--video-dialog-aspect-ratio` | The panel's aspect ratio. | `16 / 9` |
+| `--video-dialog-radius` | The corner radius of the thumbnail and the panel. | `var(--radius-2xl)` |
+| `--video-dialog-play-size` | The diameter of the play button. | `4.5rem` |
