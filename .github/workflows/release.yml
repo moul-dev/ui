@@ -7,10 +7,13 @@ on:
 
 permissions:
   contents: write
+  # npm trusted publishing: the job trades a GitHub OIDC token for a
+  # short-lived npm token, so no npm token is stored in this repository.
+  id-token: write
 
 jobs:
   release:
-    name: Test, Build & Publish GitHub Release
+    name: Test, Build, Publish to npm & GitHub
     runs-on: ubuntu-latest
     steps:
       - name: Check SemVer Tag
@@ -46,12 +49,41 @@ jobs:
       - name: Build Library
         run: bun run build:ui
 
+      # The README in the tarball and the docs' llms files are generated from the
+      # manifest; this fails when they were not regenerated after an API change.
+      - name: Check Generated Docs Match the Manifest
+        run: bun run sync:llms
+
       - name: Pack npm Tarball
         run: |
           mkdir -p release
           cd ui && bun pm pack --destination ../release
 
-      # npm publishing stays manual (`cd ui && bun publish`); this attaches the same tarball.
+      - name: Set up Node for npm
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          registry-url: 'https://registry.npmjs.org'
+
+      # Publishes the same tarball the GitHub release attaches. Needs a trusted
+      # publisher on npmjs.com (package settings → Trusted publishing → GitHub
+      # Actions, this repository, workflow `release.yml`); if the step fails for
+      # want of one, add it and re-run the job. A re-run skips a version npm
+      # already has, so a failure in a later step can be retried too.
+      - name: Publish to npm
+        run: |
+          version="$(jq -r .version ui/package.json)"
+          if npm view "@moul-dev/web-component@$version" version >/dev/null 2>&1; then
+            echo "::notice::@moul-dev/web-component@$version is already on npm; skipping publish."
+            exit 0
+          fi
+          # Trusted publishing needs npm 11.5.1 or later.
+          npm install --global npm@^11.5.1
+          # npm refuses a prerelease without an explicit tag. Alphas take latest
+          # on purpose, like the GitHub release below, until 1.0.0. npm adds
+          # provenance by itself when the repository is public.
+          npm publish release/*.tgz --access public --tag latest
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:

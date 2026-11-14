@@ -1,6 +1,6 @@
 {
   "name": "@moul-dev/web-component",
-  "version": "1.0.0-alpha.2",
+  "version": "1.0.0-alpha.3",
   "description": "Accessible, standards-first Web Components library built with Lit, Shadow DOM, and native CSS tokens",
   "license": "MIT",
   "type": "module",
@@ -70,7 +70,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "bun ../scripts/verify-no-react.ts ui && tsc -b && vite build && vite build --mode effects && vite build --mode canvas && vite build --mode cdn && vite build --mode cdn-effects && vite build --mode cdn-canvas && cem analyze --config custom-elements-manifest.config.mjs && bun ../scripts/check-size.ts",
+    "build": "bun ../scripts/verify-no-react.ts ui && tsc -b && vite build && vite build --mode effects && vite build --mode canvas && vite build --mode cdn && vite build --mode cdn-effects && vite build --mode cdn-canvas && cem analyze --config custom-elements-manifest.config.mjs && bun ../scripts/compact-manifest.ts && bun ../scripts/check-size.ts",
     "build:watch": "vite build --watch",
     "lint": "biome check",
     "format": "biome format --write",

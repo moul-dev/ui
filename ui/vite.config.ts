@@ -205,7 +205,18 @@ export default defineConfig(({ mode }) => {
       minifyCssTemplatesPlugin(),
       ...(isFirstPass
         ? [
-            dts({ tsconfigPath: './tsconfig.app.json' }) as any,
+            dts({
+              tsconfigPath: './tsconfig.app.json',
+              // Overrides the tsconfig's exclude, so it repeats the test files
+              // and adds the sandbox, which is the dev page, not package API.
+              exclude: [
+                'src/**/*.test.ts',
+                'src/**/*.test.tsx',
+                'src/**/test-setup.ts',
+                'src/sandbox.ts',
+                'node_modules/**',
+              ],
+            }) as any,
             copyCssTokensPlugin(),
           ]
         : []),
@@ -215,7 +226,8 @@ export default defineConfig(({ mode }) => {
       target: 'esnext',
       outDir: isCdn ? 'dist/cdn' : 'dist',
       emptyOutDir: isFirstPass,
-      copyPublicDir: isFirstPass,
+      // `public/` holds the sandbox's favicon and icons, not package assets.
+      copyPublicDir: false,
       lib: isCanvas
         ? {
             entry: canvasEntries(),

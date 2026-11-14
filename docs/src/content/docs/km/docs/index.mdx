@@ -76,3 +76,17 @@ Component នីមួយៗគឺជា Custom Element ស្តង់ដារ
      <moul-badge variant="success">សកម្ម</moul-badge>
    </ComponentPreview>
 </Steps>
+
+---
+
+## មុនពេល Elements ត្រូវបាន Register
+
+មុនពេល Definition របស់វាផ្ទុករួច Tag `<moul-*>` នៅជា Element ដែល Browser មិនទាន់ស្គាល់ ដូច្នេះអត្ថបទដែលដាក់ក្នុង Slot បង្ហាញដោយគ្មាន Style មួយភ្លែត។ ដើម្បីលាក់ Elements រហូតដល់វាត្រូវបាន Register សូមបន្ថែម Rule នេះទៅក្នុង Stylesheet របស់អ្នក៖
+
+```css
+:not(:defined) {
+  visibility: hidden;
+}
+```
+
+Rule នេះត្រូវនឹងគ្រប់ Custom Element ដែលមិនទាន់ត្រូវបាន Define ទោះជារបស់ Moul ឬមិនមែនក៏ដោយ។ ប្រើវាតែពេលទំព័រ Import គ្រប់ Entry ដែលមាន Tags នៅក្នុងទំព័រនោះ៖ Element ពី Entry ដែលអ្នកមិនដែល Import ដូចជា [`@moul-dev/web-component/effects`](/km/docs/effects/) នឹងនៅលាក់ជានិច្ច។

@@ -85,3 +85,17 @@ Each component is a standard custom element built on **Lit 3** and **Shadow DOM*
      <moul-badge variant="success">Active</moul-badge>
    </ComponentPreview>
 </Steps>
+
+---
+
+## Before the Elements Register
+
+Until its definition loads, a `<moul-*>` tag is an element the browser does not know yet, so its slotted text shows unstyled for a moment. To hide elements until they register, add this to your own stylesheet:
+
+```css
+:not(:defined) {
+  visibility: hidden;
+}
+```
+
+The rule matches every custom element that is not defined yet, Moul's or not. Use it only when the page imports every entry whose tags it contains: an element from an entry you never import, such as [`@moul-dev/web-component/effects`](/docs/effects/), stays hidden.

@@ -65,11 +65,11 @@ Run these commands from the root directory:
   bun run gen:component <ComponentName>
   bun run gen:component <ComponentName> --canvas
   ```
-- **Validate LLM Context Files** (fails if any custom element is undocumented):
+- **Validate LLM Context Files** (fails if any custom element is undocumented or a generated block is stale):
   ```bash
   bun run sync:llms
   ```
-- **Regenerate LLM Context Files** from `ui/dist/custom-elements.json`:
+- **Regenerate LLM Context Files** (and the generated element list in `ui/README.md`, the npm page) from `ui/dist/custom-elements.json`:
   ```bash
   bun run sync:llms --write
   ```
@@ -87,7 +87,7 @@ Run these commands from the root directory:
   bun run lint
   bun run format
   ```
-- **Build UI Library** (verify-no-react → `tsc -b` → `vite build` per entry, npm and CDN → `cem analyze` → size check):
+- **Build UI Library** (verify-no-react → `tsc -b` → `vite build` per entry, npm and CDN → `cem analyze` → manifest compaction → size check):
   ```bash
   bun run build:ui
   ```
@@ -111,7 +111,7 @@ Run these commands from the root directory:
 - **Vite Library Mode**: Emits `dist/moul-ui.js` (prefixed with a `"use client";` banner for RSC frameworks) and `dist/src/index.d.ts`. Every runtime `dependency` stays a bare import so consumers load one copy of Lit; the build fails if anything from `node_modules` is inlined. A second pass (`vite build --mode cdn`) emits the self-contained, minified `dist/cdn/moul-ui.js` for `<script type="module">` use from a CDN. Every build pass minifies Lit `css` templates (`ui/minify-css-templates.ts`): comments are stripped and whitespace collapsed, so write style comments freely; they stay in the source and never ship. Vitest and the dev server see the styles as written.
 - **Effects Entry Point**: `@moul-dev/web-component/effects` (`src/effects.ts`) holds the motion controllers (pointer, scroll, in-view, drag, text splitting, canvas loop) and, from Phase 5 of `moul-ui-build-plan.md`, the effect elements. It is built in its own passes (`--mode effects`, `--mode cdn-effects`) so the main bundle stays byte-for-byte what it is without it; `ui/size-budget.json` holds every bundle to a byte budget, and `bun run size --write` raises one on purpose. Never export effects code from `src/index.ts`.
 - **Canvas Entry Point**: `@moul-dev/web-component/canvas` (`src/canvas.ts`) is the third entry, for the heaviest effects, drawn on a canvas or with WebGL (Phase 9 of `moul-ui-build-plan.md`). It registers no element: `CANVAS_ELEMENTS` maps each tag to a dynamic `import()`, and a `MutationObserver` loads an element's file the first time its tag appears (`watchCanvasElements(shadowRoot)` for shadow roots). Each element is also its own entry, `@moul-dev/web-component/canvas/<name>` (`src/canvas/<name>.ts`). `vite build --mode canvas` (and `cdn-canvas`) emit `dist/canvas.js`, `dist/canvas/<name>.js` and one shared chunk, `dist/chunks/canvas-shared.js`, for the controllers and helpers the elements share. Neither the main nor the effects entry may import a canvas element (`src/canvas.test.ts` walks their imports), and every canvas file has its own size budget. Canvases take no `var()` or `light-dark()`, so canvas elements resolve token colours through `CanvasColorController`, which also re-resolves them when the theme changes.
-- **Custom Elements Manifest**: `cem analyze` writes `dist/custom-elements.json`, the source of truth for `sync:llms`.
+- **Custom Elements Manifest**: `cem analyze` writes `dist/custom-elements.json`, the source of truth for `sync:llms`. The config drops private members (they are not API), and `scripts/compact-manifest.ts` rewrites the file without indentation; read it with `jq`.
 - **No React**: `scripts/verify-no-react.ts` fails the build if React, React Aria, StyleX, or `@lit/react` appear in `ui/` or `docs/` manifests.
 
 ### 2. Documentation Website (`docs/`)
@@ -130,7 +130,7 @@ Every new element ships with five things, and `ui/src/element-checklist.test.ts`
 4. **Light and dark themes**: colours from tokens only, never literals outside `var()` fallbacks, masks and shadows.
 5. **A demo page and a test**: an English docs page that renders the element, its Khmer twin, and a test that names the tag.
 
-`bun run gen:component <Name>` (with `--effect` for the effects entry, or `--canvas` for a canvas element) scaffolds all five with `TODO` markers and `it.todo` tests where only the author can fill in the behaviour. The 79 elements that predate the checklist are listed in the test as exempt from the documentation checks until their JSDoc is written; the list only shrinks.
+`bun run gen:component <Name>` (with `--effect` for the effects entry, or `--canvas` for a canvas element) scaffolds all five with `TODO` markers and `it.todo` tests where only the author can fill in the behaviour. The elements that predate the checklist have all been documented, so the test's exemption lists are empty and every element passes all five checks; the lists only shrink.
 
 ## AI Coding Agent Guidelines for `@moul-dev/web-component`
 
@@ -173,7 +173,7 @@ When generating or editing code that uses `@moul-dev/web-component`:
 - **Full LLM Single-File Reference**: `docs/public/llms-full.txt` (served at `/llms-full.txt`)
 - **Docs Guide**: `docs/src/content/docs/docs/llms.mdx` (served at `/docs/llms`)
 
-All three files in `docs/public/` and the generated block above are produced by `bun run sync:llms --write`. Edit `scripts/sync-llms.ts` or `scripts/llms-catalog.ts`, never the outputs.
+All three files in `docs/public/`, the generated block above, and the element list between the `sync:llms:readme` markers in `ui/README.md` are produced by `bun run sync:llms --write`; without `--write` the script fails when any of them no longer matches the manifest. Edit `scripts/sync-llms.ts` or `scripts/llms-catalog.ts`, never the outputs.
 
 ## Changelog Writing Guidelines
 

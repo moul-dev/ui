@@ -88,27 +88,25 @@ bun run dev:docs   # Astro dev server
 
 ## 📦 Publishing `@moul-dev/web-component`
 
+Releases publish from CI. Versions follow [SemVer](https://semver.org). Until `1.0.0`, releases are prereleases (`1.0.0-alpha.1`, `1.0.0-alpha.2`, …): `bun run bump prerelease` advances the counter, and `bun run bump major` releases `1.0.0`. Run `bun run bump --help` for every release type.
+
 ```bash
-# Build the library bundle and manifest
+# Build the library bundle and manifest, then check what will be published
 bun run build:ui
-
-# Inspect what will be published
+bun run sync:llms
 cd ui && bun pm pack --dry-run
-
-# Publish to npm (scoped public package)
-bun publish
 ```
-
-Versions follow [SemVer](https://semver.org). Until `1.0.0`, releases are prereleases (`1.0.0-alpha.1`, `1.0.0-alpha.2`, …): `bun run bump prerelease` advances the counter, and `bun run bump major` releases `1.0.0`. Run `bun run bump --help` for every release type.
 
 After committing the bump, tag the commit and push the tag:
 
 ```bash
-git tag -a v1.0.0-alpha.2 -m "Release v1.0.0-alpha.2"
-git push origin v1.0.0-alpha.2
+git tag -a v1.0.0-alpha.3 -m "Release v1.0.0-alpha.3"
+git push origin v1.0.0-alpha.3
 ```
 
-The tag starts `.github/workflows/release.yml`. It refuses a tag that is not SemVer or does not match `ui/package.json`, runs the tests, builds the library, and publishes a GitHub release with the npm tarball attached. Publishing to npm (`bun publish`) stays a manual step.
+The tag starts `.github/workflows/release.yml`. It refuses a tag that is not SemVer or does not match `ui/package.json`, runs the tests, builds the library, checks the generated docs against the manifest, publishes the tarball to npm, and makes a GitHub release with the same tarball attached.
+
+npm publishing uses [trusted publishing](https://docs.npmjs.com/trusted-publishers): the workflow trades a GitHub OIDC token for a short-lived npm token, so the repository stores no npm token. It needs a trusted publisher on npmjs.com, set once in the package settings (GitHub Actions, this repository, workflow `release.yml`). A re-run of the workflow skips a version npm already has.
 
 ---
 
