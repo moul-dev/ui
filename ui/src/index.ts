@@ -569,6 +569,30 @@ export {
   MoulActivityFeed,
   MoulActivityFeed as ActivityFeed,
 } from './components/ActivityFeed'
+// Phase 4: AI kit
+export {
+  type AgentActivityExpandedChangeDetail,
+  type AgentActivityOpenChangeDetail,
+  type AgentStep,
+  type AgentStepStatus,
+  formatDuration,
+  MoulAgentActivity,
+  MoulAgentActivity as AgentActivity,
+} from './components/AgentActivity'
+export {
+  type ChatAttachment,
+  type ChatConversation,
+  type ChatConversationSelectDetail,
+  type ChatFeedbackChangeDetail,
+  type ChatMessage,
+  type ChatMessageEventDetail,
+  type ChatMessageStatus,
+  type ChatRole,
+  type ChatSidebarChangeDetail,
+  type ChatSuggestion,
+  MoulChat,
+  MoulChat as Chat,
+} from './components/Chat'
 export {
   type CodeBlockCopyDetail,
   type CodeBlockTab,
@@ -606,6 +630,17 @@ export {
   MoulHistoryLedger as HistoryLedger,
 } from './components/HistoryLedger'
 export {
+  MoulPromptInput,
+  MoulPromptInput as PromptInput,
+  type PromptAttachment,
+  type PromptAttachmentRejectDetail,
+  type PromptAttachmentsChangeDetail,
+  type PromptModel,
+  type PromptModelChangeDetail,
+  type PromptSubmitDetail,
+  type PromptSubmitKey,
+} from './components/PromptInput'
+export {
   describeRelationshipNode,
   type GraphDirection,
   type GraphLayout,
@@ -622,6 +657,14 @@ export {
   type RelationshipGraphTraceChangeDetail,
 } from './components/RelationshipGraph'
 export {
+  MoulStreamingResponse,
+  MoulStreamingResponse as StreamingResponse,
+  type ResponseCopyDetail,
+  type ResponseFeedback,
+  type ResponseFeedbackChangeDetail,
+  type ResponseSource,
+} from './components/StreamingResponse'
+export {
   MoulTerminal,
   MoulTerminal as Terminal,
   MoulTerminalLine,
@@ -629,6 +672,11 @@ export {
   type TerminalLineState,
   type TerminalLineTone,
 } from './components/Terminal'
+export {
+  MoulThinkingIndicator,
+  MoulThinkingIndicator as ThinkingIndicator,
+  type ThinkingIndicatorSize,
+} from './components/ThinkingIndicator'
 export {
   MoulTimeline,
   MoulTimeline as Timeline,
@@ -645,9 +693,19 @@ export {
   languageLabel,
   tokenize,
 } from './utils/highlight'
+export {
+  type MarkdownBlock,
+  type MarkdownInline,
+  type MarkdownListItem,
+  type MarkdownOptions,
+  markdownToText,
+  parseMarkdown,
+  type TableAlign,
+} from './utils/markdown'
 
-// Custom Element Type Imports for Global HTMLElementTagNameMap
 import type { MoulActivityFeed } from './components/ActivityFeed'
+// Custom Element Type Imports for Global HTMLElementTagNameMap
+import type { MoulAgentActivity } from './components/AgentActivity'
 import type { MoulAnimatedList } from './components/AnimatedList'
 import type { MoulAreaChart } from './components/AreaChart'
 import type { MoulAvatar, MoulAvatarGroup } from './components/Avatar'
@@ -668,6 +726,7 @@ import type {
 } from './components/Card'
 import type { MoulChartContainer } from './components/ChartContainer'
 import type { MoulChartTooltip } from './components/ChartTooltip'
+import type { MoulChat } from './components/Chat'
 import type { MoulCheckbox, MoulCheckboxGroup } from './components/Checkbox'
 import type { MoulCodeBlock } from './components/CodeBlock'
 import type { MoulCodeComparison } from './components/CodeComparison'
@@ -709,6 +768,7 @@ import type {
 } from './components/Percentage'
 import type { MoulPopover } from './components/Popover'
 import type { MoulProgressBar } from './components/ProgressBar'
+import type { MoulPromptInput } from './components/PromptInput'
 import type { MoulPullToRefresh } from './components/PullToRefresh'
 import type { MoulRadio, MoulRadioGroup } from './components/RadioGroup'
 import type { MoulRelationshipGraph } from './components/RelationshipGraph'
@@ -737,6 +797,7 @@ import type { MoulSplitButton } from './components/SplitButton'
 import type { MoulStat } from './components/Stat'
 import type { MoulStepLoader } from './components/StepLoader'
 import type { MoulStep, MoulStepper } from './components/Stepper'
+import type { MoulStreamingResponse } from './components/StreamingResponse'
 import type { MoulSwitch } from './components/Switch'
 import type { MoulTable } from './components/Table'
 import type { MoulTab, MoulTabPanel, MoulTabs } from './components/Tabs'
@@ -745,6 +806,7 @@ import type { MoulTerminal, MoulTerminalLine } from './components/Terminal'
 import type { MoulTextArea } from './components/TextArea'
 import type { MoulTextField } from './components/TextField'
 import type { MoulThemeToggle } from './components/ThemeToggle'
+import type { MoulThinkingIndicator } from './components/ThinkingIndicator'
 import type { MoulTimeline, MoulTimelineItem } from './components/Timeline'
 import type { MoulToast, MoulToastRegion } from './components/Toast'
 import type { MoulToggleButton } from './components/ToggleButton'
@@ -884,5 +946,10 @@ declare global {
     'moul-terminal-line': MoulTerminalLine
     'moul-file-tree': MoulFileTree
     'moul-relationship-graph': MoulRelationshipGraph
+    'moul-thinking-indicator': MoulThinkingIndicator
+    'moul-streaming-response': MoulStreamingResponse
+    'moul-agent-activity': MoulAgentActivity
+    'moul-prompt-input': MoulPromptInput
+    'moul-chat': MoulChat
   }
 }

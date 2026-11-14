@@ -472,6 +472,17 @@ html:root[data-theme] {
   margin: 0;
 }
 
+/* What a demo's events reported, under the element that fired them */
+.moul-preview .demo-log {
+  display: block;
+  min-height: 1.25rem;
+  font-family: var(--font-family-mono, ui-monospace, monospace);
+  font-size: 0.75rem;
+  line-height: 1.25rem;
+  color: var(--color-fg-subtle);
+  overflow-wrap: anywhere;
+}
+
 @media (max-width: 40rem) {
   .moul-preview-canvas {
     padding: 1.75rem 1rem;

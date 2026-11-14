@@ -25,6 +25,42 @@ import ComponentPreview from '@/components/ComponentPreview.astro';
 </div>
 ```
 
+## Rotating placeholder
+
+`placeholders` rotates the placeholder through several hints while the field is empty, each sliding up as the next arrives, every `placeholder-interval` milliseconds (3000, and never under 1000). The cycle stops while the field holds text and while the tab is hidden. Screen readers hear one stable placeholder instead: `placeholder`, or else the first hint.
+
+<ComponentPreview>
+<div style="width: min(100%, 22rem)">
+  <moul-text-field label="Search" data-props='{"placeholders": ["Search collections…", "Find a record by id…", "Look up a user by email…"]}'></moul-text-field>
+</div>
+</ComponentPreview>
+
+```js
+document.querySelector('moul-text-field').placeholders = [
+  'Search collections…',
+  'Find a record by id…',
+  'Look up a user by email…',
+]
+```
+
+## Vanishing text
+
+`vanish()` scatters the typed text into letters that drift away and blur out, and clears the field. With `vanish-on-submit` that happens each time the field's form submits, after the form has read the value, so `FormData` and `submit` listeners still see it. A password scatters as dots. Under reduced motion the field clears at once.
+
+<ComponentPreview>
+<form class="demo-row" style="width: min(100%, 26rem)" onsubmit="event.preventDefault()">
+  <div style="flex: 1"><moul-text-field label="Subscribe" name="email" type="email" placeholder="you@example.com" vanish-on-submit></moul-text-field></div>
+  <moul-button type="submit" style="align-self: end"><span>Send</span></moul-button>
+</form>
+</ComponentPreview>
+
+```html
+<form>
+  <moul-text-field label="Subscribe" name="email" type="email" vanish-on-submit></moul-text-field>
+  <moul-button type="submit">Send</moul-button>
+</form>
+```
+
 ## API reference
 
 | Attribute | Property | Type | Default |
@@ -39,6 +75,14 @@ import ComponentPreview from '@/components/ComponentPreview.astro';
 | `is-disabled` | `isDisabled` | `boolean` | `false` |
 | `is-required` | `isRequired` | `boolean` | `false` |
 | `is-readonly` | `isReadonly` | `boolean` | `false` |
+| | `placeholders` | `string[]` | `[]` |
+| `placeholder-interval` | `placeholderInterval` | `number` | `3000` |
+| `vanish-on-submit` | `vanishOnSubmit` | `boolean` | `false` |
+
+| Method | Description |
+| :-- | :-- |
+| `vanish()` | Scatters the text away and clears the field; resolves when the letters are gone. |
+| `focus()`, `blur()`, `select()` | As on a native input. |
 
 | Event | Type |
 | :-- | :-- |
@@ -53,4 +97,4 @@ import ComponentPreview from '@/components/ComponentPreview.astro';
 | `description` | — |
 | `error` | — |
 
-**CSS parts:** `error`, `base`, `label`, `input-container`, `prefix`, `input`, `suffix`, `description`
+**CSS parts:** `error`, `base`, `label`, `input-container`, `prefix`, `input`, `placeholder`, `suffix`, `description`

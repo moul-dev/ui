@@ -30,6 +30,7 @@ import {
   type MoulActivityFeed,
   type MoulAnimatedList,
   type MoulButton,
+  type MoulChat,
   type MoulFocusMode,
   type MoulLineChart,
   type MoulNotificationBell,
@@ -38,6 +39,7 @@ import {
   type MoulSlideToConfirm,
   type MoulStepper,
   type MoulTour,
+  type PromptSubmitDetail,
   SERVER_LOG_RAW,
   SERVER_LOGS,
   type TableColumn,
@@ -57,6 +59,35 @@ const TABLE_COLUMNS: TableColumn[] = [
   },
   { key: 'activity', title: 'Last Active', sortable: false },
 ]
+
+const SB_AGENT_STEPS = [
+  {
+    id: 'plan',
+    title: 'Reading the question',
+    detail: 'The newest posts are wanted.',
+    duration: 420,
+  },
+  {
+    id: 'list',
+    tool: 'list_records',
+    title: 'Read the newest posts',
+    input: { collection: 'posts', sort: '-created', perPage: 3 },
+    output: { items: [{ id: 'rec_8f2k', title: 'Release notes' }] },
+    duration: 980,
+  },
+]
+
+const SB_CHAT_ANSWER = [
+  'There are **3 collections**:',
+  '',
+  '| Collection | Records |',
+  '| :-- | --: |',
+  '| `posts` | 128 |',
+  '| `users` | 42 |',
+  '| `comments` | 1,204 |',
+  '',
+  'Ask for one by name to see its fields.',
+].join('\n')
 
 const SB_VERSIONS = [
   {
@@ -593,6 +624,55 @@ export class MoulSandbox extends LitElement {
     })
     const chart = this.renderRoot.querySelector<MoulLineChart>('#sb-live')
     chart?.push({ t: `#${n}`, value: 40 + Math.round(Math.random() * 50) })
+  }
+
+  private sandboxChatCount = 0
+
+  /** A scripted agent: one tool call, then a streamed answer. */
+  private async answerSandboxChat(
+    e: CustomEvent<PromptSubmitDetail>,
+  ): Promise<void> {
+    const chat = e.currentTarget as MoulChat
+    const n = ++this.sandboxChatCount
+    const reply = `a${n}`
+    chat.push(
+      { id: `u${n}`, role: 'user', content: e.detail.value },
+      { id: reply, role: 'assistant', status: 'pending' },
+    )
+    const wait = (ms: number) =>
+      new Promise((resolve) => setTimeout(resolve, ms))
+    await wait(500)
+    chat.pushSteps(reply, {
+      id: 'call',
+      tool: 'list_collections',
+      title: 'List the collections',
+      input: {},
+      status: 'running',
+      startedAt: Date.now(),
+    })
+    await wait(900)
+    chat.pushSteps(reply, {
+      id: 'call',
+      status: 'done',
+      output: ['posts', 'users', 'comments'],
+      endedAt: Date.now(),
+    })
+    for (let i = 0; i < SB_CHAT_ANSWER.length; i += 6) {
+      if (!chat.messages.some((m) => m.id === reply && m.status !== 'done'))
+        return
+      chat.appendText(reply, SB_CHAT_ANSWER.slice(i, i + 6))
+      await wait(30)
+    }
+    chat.updateMessage(reply, { status: 'done' })
+  }
+
+  private stopSandboxChat(e: Event): void {
+    const chat = e.currentTarget as MoulChat
+    const busy = chat.messages.find(
+      (m) =>
+        m.role === 'assistant' && m.status !== 'done' && m.status !== 'error',
+    )
+    if (busy) chat.updateMessage(busy.id, { status: 'done' })
   }
 
   private handleSidebarSelect(e: CustomEvent<{ selectedKey: string }>): void {
@@ -1906,11 +1986,59 @@ export class MoulSandbox extends LitElement {
     `
   }
 
+  private renderAiSection(): TemplateResult {
+    return html`
+      <div class="category-section" id="ai">
+        <div class="section-header">
+          <h3 class="section-title">7. AI Kit</h3>
+          <p class="section-subtitle">moul-chat, moul-prompt-input, moul-streaming-response, moul-agent-activity, moul-thinking-indicator</p>
+        </div>
+
+        <div class="section-grid">
+          <moul-card style="grid-column: 1 / -1">
+            <moul-card-header><h4 style="margin: 0;">Chat</h4></moul-card-header>
+            <moul-card-body>
+              <moul-chat
+                style="height: 32rem; border: 1px solid var(--color-border); border-radius: var(--radius-lg); overflow: hidden"
+                .conversations=${[{ id: 'c1', title: 'Collections', group: 'Today' }]}
+                .suggestions=${['Which collections are there?', 'Show me the newest posts']}
+                .placeholders=${['Ask about your collections…', 'Find a record…']}
+                @promptsubmit=${this.answerSandboxChat}
+                @stop=${this.stopSandboxChat}
+              ></moul-chat>
+            </moul-card-body>
+          </moul-card>
+          <moul-card>
+            <moul-card-header><h4 style="margin: 0;">Agent activity</h4></moul-card-header>
+            <moul-card-body>
+              <div class="demo-col">
+                <moul-thinking-indicator label="Searching records"></moul-thinking-indicator>
+                <moul-agent-activity .steps=${SB_AGENT_STEPS}></moul-agent-activity>
+              </div>
+            </moul-card-body>
+          </moul-card>
+          <moul-card>
+            <moul-card-header><h4 style="margin: 0;">Answer and composer</h4></moul-card-header>
+            <moul-card-body>
+              <div class="demo-col">
+                <moul-streaming-response .content=${SB_CHAT_ANSWER}></moul-streaming-response>
+                <moul-prompt-input allow-attachments .models=${[
+                  { value: 'sonnet', label: 'Sonnet' },
+                  { value: 'opus', label: 'Opus' },
+                ]}></moul-prompt-input>
+              </div>
+            </moul-card-body>
+          </moul-card>
+        </div>
+      </div>
+    `
+  }
+
   private renderBlocksSection(): TemplateResult {
     return html`
       <div class="category-section" id="blocks">
         <div class="section-header">
-          <h3 class="section-title">7. Composite Blocks</h3>
+          <h3 class="section-title">8. Composite Blocks</h3>
           <p class="section-subtitle">moul-logs-viewer, moul-logs, moul-sidebar, moul-sidebar-user</p>
         </div>
 
@@ -1974,7 +2102,7 @@ export class MoulSandbox extends LitElement {
           </moul-sidebar-header>
 
           <moul-sidebar-group label="Kitchen Sink" collapsible>
-            <moul-sidebar-item key="all" label="All Categories" badge="7">
+            <moul-sidebar-item key="all" label="All Categories" badge="8">
               <span slot="icon">⚡</span>
             </moul-sidebar-item>
             <moul-sidebar-item key="actions" label="Actions" badge="4">
@@ -1994,6 +2122,9 @@ export class MoulSandbox extends LitElement {
             </moul-sidebar-item>
             <moul-sidebar-item key="developer" label="Data & Developer" badge="10">
               <span slot="icon">🧩</span>
+            </moul-sidebar-item>
+            <moul-sidebar-item key="ai" label="AI Kit" badge="5">
+              <span slot="icon">✨</span>
             </moul-sidebar-item>
             <moul-sidebar-item key="blocks" label="Composite Blocks" badge="12">
               <span slot="icon">📦</span>
@@ -2064,6 +2195,11 @@ export class MoulSandbox extends LitElement {
             ${
               isAll || this.selectedCategory === 'developer'
                 ? this.renderDeveloperSection()
+                : nothing
+            }
+            ${
+              isAll || this.selectedCategory === 'ai'
+                ? this.renderAiSection()
                 : nothing
             }
             ${

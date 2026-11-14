@@ -1,0 +1,159 @@
+---
+title: Chat
+description: A complete AI chat screen with a conversation history, tool calls, streaming answers and a composer.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import AiKitDemo from '@/components/demos/AiKitDemo.astro';
+
+`<moul-chat>` is a whole chat screen: a history of conversations in a sidebar, the conversation itself, and a `<moul-prompt-input>` to write in. It is put together from the rest of the AI kit. An assistant turn shows its tool calls as a `<moul-agent-activity>`, a `<moul-thinking-indicator>` until the first words arrive, and the answer as a `<moul-streaming-response>`.
+
+The chat draws what it is given and calls nothing itself. Your code listens for prompts, talks to the model, and feeds the reply back. The demo below plays an agent with Moul's MCP tools against sample data; nothing leaves the page.
+
+<ComponentPreview align="stretch" minHeight="36rem">
+<moul-chat data-ai-chat style="height: 36rem; border: 1px solid var(--color-border); border-radius: var(--radius-lg); overflow: hidden">
+<span slot="footer">The answers in this demo are scripted.</span>
+</moul-chat>
+<AiKitDemo />
+</ComponentPreview>
+
+```html
+<moul-chat id="chat" allow-attachments>
+  <span slot="footer">Answers can be wrong. Check important facts.</span>
+</moul-chat>
+```
+
+## Connecting a model
+
+Three calls cover a streamed answer: `push()` adds the user's message and an empty assistant message, `pushSteps()` and `appendText()` fill the assistant message in as the model works, and `updateMessage()` marks it done. While any assistant message is `pending` or `streaming`, the composer shows Stop.
+
+This is the shape of a chat that lets a model call Moul's MCP tools:
+
+```js
+const chat = document.querySelector('#chat')
+let controller
+
+chat.addEventListener('promptsubmit', async (event) => {
+  const reply = crypto.randomUUID()
+  chat.push(
+    { id: crypto.randomUUID(), role: 'user', content: event.detail.value },
+    { id: reply, role: 'assistant', status: 'pending' },
+  )
+
+  controller = new AbortController()
+  try {
+    for await (const part of streamAgent(event.detail.value, { signal: controller.signal })) {
+      if (part.type === 'tool_call') {
+        chat.pushSteps(reply, { id: part.id, tool: part.name, input: part.input, status: 'running', startedAt: Date.now() })
+      } else if (part.type === 'tool_result') {
+        chat.pushSteps(reply, { id: part.id, output: part.output, status: part.isError ? 'error' : 'done', endedAt: Date.now() })
+      } else if (part.type === 'text') {
+        chat.appendText(reply, part.text)
+      }
+    }
+    chat.updateMessage(reply, { status: 'done' })
+  } catch (error) {
+    chat.updateMessage(reply, { status: 'error', error: error.message })
+  }
+})
+
+chat.addEventListener('stop', () => controller?.abort())
+chat.addEventListener('regenerate', (event) => {
+  // event.detail.messageId is the answer to write again
+})
+```
+
+`streamAgent` stands for whatever runs your model: a server route that talks to the model provider and forwards Moul's MCP tools, sent to the page as server-sent events. Keep API keys on the server; the chat never needs them.
+
+## Messages
+
+`messages` is the conversation, oldest first.
+
+| Field | Type | |
+| :-- | :-- | :-- |
+| `id` | `string \| number` | Identifies the message. Pushing a known id updates it in place. |
+| `role` | `'user' \| 'assistant'` | Who said it. |
+| `content` | `string` | Markdown for the assistant, plain text for the user. |
+| `status` | `'pending' \| 'streaming' \| 'done' \| 'error'` | An assistant message's progress; `done` by default. |
+| `error` | `string` | Why the answer failed. |
+| `steps` | `AgentStep[]` | Reasoning and tool calls, as `<moul-agent-activity>` takes them. |
+| `sources` | `ResponseSource[]` | What the answer's `[n]` citations point at. |
+| `attachments` | `{ name, size, type, url }[]` | Files sent with a user message. |
+| `feedback` | `'up' \| 'down' \| ''` | The reader's verdict on an answer. |
+
+The thinking indicator shows while an answer is pending, or streaming with no text and no running tool. The activity stays open while the agent works and folds away once the answer starts, unless the reader opened or closed it by hand.
+
+The view follows new text down while the reader is at the bottom. Scroll up and it stays put, with a "Jump to latest" button above the composer. Sending a prompt always brings the view back down.
+
+## History and starting out
+
+`conversations` fills the sidebar, newest first, each `{ id, title, group }`; consecutive conversations with the same `group` share a heading. `conversation-id` marks the one shown. Choosing a conversation fires `conversationselect`, and New chat fires `conversationcreate`: load the messages and set them. `hide-sidebar` leaves the sidebar out. Narrower than 720px, the sidebar starts closed and slides over the conversation.
+
+While there are no messages, the chat shows `greeting` and offers `suggestions`. Choosing one sends it as if it were typed.
+
+```js
+chat.suggestions = [
+  'Which collections are there?',
+  { label: 'Newest posts', prompt: 'Show me the three newest posts', description: 'list_records' },
+]
+```
+
+## Accessibility
+
+- The conversation is a region named by `label` ("Chat"). Each message is an article that starts with a hidden heading, "You said" or "Assistant said", so screen reader users can jump from turn to turn.
+- When an answer finishes, a polite live region reads its text, up to 600 characters, or its error. Answers are not read word by word while they stream.
+- The sidebar is a navigation landmark named "Conversations"; the current conversation has `aria-current`. The toggle in the header has `aria-expanded`, and over a narrow chat `Escape` closes the sidebar and returns focus to the toggle.
+- The message list takes focus so it can be scrolled with the keyboard.
+- Under reduced motion new messages and "Jump to latest" scroll into place at once, and the sidebar opens without sliding; every part inside follows its own reduced-motion path.
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| | `messages` | `ChatMessage[]` | `[]` |
+| | `conversations` | `ChatConversation[]` | `[]` |
+| `conversation-id` | `conversationId` | `string` | `''` |
+| | `suggestions` | `ChatSuggestion[]` | `[]` |
+| `heading` | `heading` | `string` | the conversation's title |
+| `greeting` | `greeting` | `string` | `'How can I help?'` |
+| `label` | `label` | `string` | `'Chat'` |
+| `is-generating` | `isGenerating` | `boolean` | `false` |
+| `hide-sidebar` | `hideSidebar` | `boolean` | `false` |
+| `is-sidebar-open` | `isSidebarOpen` | `boolean` | `true` |
+| `placeholder` | `placeholder` | `string` | `'Ask anything'` |
+| | `placeholders`, `models`, `upload` | | passed to the composer |
+| `model`, `allow-attachments`, `accept`, `max-files`, `max-size`, `submit-key` | | | passed to the composer |
+| | `composer` (read-only) | `MoulPromptInput` | |
+| | `isBusy` (read-only) | `boolean` | |
+
+| Method | Description |
+| :-- | :-- |
+| `push(...messages)` | Adds messages; a known id is updated in place. |
+| `updateMessage(id, patch)` | Merges a patch into a message. |
+| `appendText(id, chunk)` | Adds text to a message, and marks a pending one as streaming. |
+| `pushSteps(id, ...steps)` | Adds or updates steps on a message. |
+| `scrollToBottom({ smooth })` | Scrolls to the latest message and follows it again. |
+| `focusComposer()` | Puts the caret in the composer. |
+
+| Event | Detail |
+| :-- | :-- |
+| `promptsubmit` | `{ value, attachments, model }`, from the composer; cancelable |
+| `stop` | From the composer |
+| `modelchange` | `{ value, model }`, from the composer |
+| `regenerate` | `{ messageId, message }` |
+| `feedbackchange` | `{ messageId, message, value }` |
+| `conversationselect` | `{ id, conversation }` |
+| `conversationcreate` | |
+| `sidebarchange` | `{ isOpen }` |
+
+| Slot | Description |
+| :-- | :-- |
+| `empty` | Replaces the greeting. |
+| `header-actions` | Controls at the end of the header. |
+| `sidebar-footer` | The bottom of the sidebar. |
+| `footer` | A note under the composer. |
+| `composer-start` | Controls in the composer, after the attach button. |
+
+**CSS parts:** `base`, `sidebar`, `new-chat`, `conversation`, `main`, `header`, `title`, `messages`, `message`, `bubble`, `suggestion`, `jump-button`, `composer`, and the composer's `composer-base`, `composer-textarea` and `composer-send-button`
+
+**CSS custom properties:** `--chat-max-width` (default `48rem`), `--chat-sidebar-width` (default `16rem`).

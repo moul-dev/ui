@@ -1,0 +1,65 @@
+---
+title: Thinking Indicator (សមាសភាគ)
+description: គ្រាប់ភាគល្អិតតូចមួយដែលបង្វិល និងដកដង្ហើម ក្បែរស្លាកដែលភ្លឺរលោង ខណៈម៉ូដែលកំពុងធ្វើការ។
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import AiKitDemo from '@/components/demos/AiKitDemo.astro';
+
+`<moul-thinking-indicator>` fills the gap between sending a prompt and the first word of the answer. A small sphere of particles turns and breathes on a canvas, and the label beside it shimmers. Change `label` as the work moves on, so the reader can tell searching from writing.
+
+<ComponentPreview stack>
+<div class="demo-row">
+<moul-thinking-indicator id="thinking-demo"></moul-thinking-indicator>
+<moul-button size="sm" variant="secondary" data-ai-labels="thinking-demo"><span>Next step</span></moul-button>
+</div>
+<AiKitDemo />
+</ComponentPreview>
+
+```html
+<moul-thinking-indicator label="Searching records"></moul-thinking-indicator>
+```
+
+## Sizes
+
+`size` is `sm`, `md` (the default) or `lg`. `hide-label` keeps only the orb on screen; screen readers still hear the label.
+
+<ComponentPreview>
+<moul-thinking-indicator size="sm"></moul-thinking-indicator>
+<moul-thinking-indicator size="md" label="Reading the schema"></moul-thinking-indicator>
+<moul-thinking-indicator size="lg" label="Writing the answer"></moul-thinking-indicator>
+<moul-thinking-indicator size="lg" hide-label></moul-thinking-indicator>
+</ComponentPreview>
+
+```html
+<moul-thinking-indicator size="sm"></moul-thinking-indicator>
+<moul-thinking-indicator size="lg" hide-label></moul-thinking-indicator>
+```
+
+## Colour
+
+The orb takes `--thinking-indicator-color`, the accent colour by default. Set it on the element or any ancestor.
+
+<ComponentPreview>
+<moul-thinking-indicator label="Checking flags" style="--thinking-indicator-color: var(--color-success)"></moul-thinking-indicator>
+<moul-thinking-indicator label="Retrying" style="--thinking-indicator-color: var(--color-warning)"></moul-thinking-indicator>
+</ComponentPreview>
+
+## Accessibility
+
+- The host is a polite `role="status"` live region, so screen readers say the label when the indicator appears and each new label as it changes. Keep labels short; they are read in full.
+- The orb is decorative and hidden. The element takes no focus.
+- The orb stops drawing while it is scrolled off screen or the tab is hidden.
+- Under reduced motion the orb is drawn once, still, and the label does not shimmer.
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `label` | `label` | `string` | `'Thinking'` |
+| `size` | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` |
+| `hide-label` | `hideLabel` | `boolean` | `false` |
+
+**CSS parts:** `base`, `orb`, `label`
+
+**CSS custom properties:** `--thinking-indicator-color` (default `var(--color-accent)`), `--thinking-indicator-size` (default `1.25rem`, `1.75rem` or `2.75rem` by `size`).

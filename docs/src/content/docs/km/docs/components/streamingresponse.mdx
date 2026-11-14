@@ -1,0 +1,128 @@
+---
+title: Streaming Response (សមាសភាគ)
+description: ចម្លើយ Markdown របស់ម៉ូដែលដែលហូរចូលយ៉ាងរលូន ជាមួយកូដ ការដកស្រង់ ប្រភព និងសកម្មភាព។
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import AiKitDemo from '@/components/demos/AiKitDemo.astro';
+
+`<moul-streaming-response>` shows an answer from a language model as it arrives. Chunks from a stream rarely come evenly, so the element reveals the text at a steady pace at the end of the answer, behind a soft caret, and catches up faster the further behind it falls. Once the stream ends, a row of actions offers copy, regenerate and good or bad feedback.
+
+<ComponentPreview align="stretch" stack>
+<div class="demo-row">
+<moul-button size="sm" variant="secondary" data-ai-stream="answer-demo"><span>Stream an answer</span></moul-button>
+</div>
+<moul-streaming-response id="answer-demo" content={'Press **Stream an answer** to watch a reply arrive. It lists posts, shows a code block and cites a source.'}></moul-streaming-response>
+<AiKitDemo />
+</ComponentPreview>
+
+```html
+<moul-streaming-response id="answer"></moul-streaming-response>
+```
+
+```js
+const answer = document.querySelector('#answer')
+answer.isStreaming = true
+
+for await (const chunk of stream) {
+  answer.appendText(chunk)
+}
+
+answer.isStreaming = false
+answer.sources = [{ title: 'Records API', url: 'https://moul.dev/docs/records' }]
+```
+
+Set `content` to the whole text so far, or call `appendText()` with each chunk. Text that is already complete when it arrives, a saved answer for example, shows at once; only an answer with `is-streaming` set is revealed gradually. Replacing `content` with text that does not continue the old, as a regenerated answer does, starts the reveal over.
+
+## Markdown
+
+The answer is Markdown. The element reads what models write:
+
+| Written | Shown |
+| :-- | :-- |
+| `# Heading` to `######` | Headings whose level starts at `heading-level` (3) |
+| `**bold**`, `*italic*`, `~~struck~~` | Emphasis |
+| `` `code` `` | Inline code |
+| Fenced code with a language | A `<moul-code-block>` with highlighting and a copy button |
+| `- item`, `1. item`, `- [x] task` | Lists, nested by indentation, and task lists |
+| `> quote` | A quote |
+| Pipe tables with `:--` alignment | A table that scrolls sideways when wide |
+| `[text](url)`, `<https://…>`, bare URLs | Links |
+| `[1]`, `[^1]`, `[1, 2]` | Citations, when that many `sources` exist |
+
+Every newline is a line break, since chat replies mean their line breaks. Markup a reply is still writing never flickers into the wrong shape: an unclosed `**` stays as it is until its closer arrives, and an open code fence is a code block that grows.
+
+### What it will not do
+
+The Markdown is parsed into data and rendered as text, never through `innerHTML`, so HTML in a reply is shown rather than run. Links go only to `http`, `https`, `mailto` and relative URLs; a `javascript:` link keeps its text and loses its target.
+
+Images are never loaded. `![chart](https://…)` becomes a link to the image. A reply can be steered by a prompt injection, and an image URL is an easy way to carry data out of the page the moment the browser fetches it.
+
+<ComponentPreview align="stretch">
+<moul-streaming-response heading-level="4" actions="" content={['### Safe by default', '', 'The tag <img src=x onerror="alert(1)"> is shown as text, [this link](javascript:alert(1)) has no target, and ![this image](https://example.com/pixel.png?leak=secret) is only a link.'].join('\n')}></moul-streaming-response>
+</ComponentPreview>
+
+## Sources and citations
+
+`sources` lists what the answer drew on, each `{ title, url, description }`. A `[n]` in the text becomes a small numbered link to source `n`, and the sources appear as chips under the answer once it is done. Only `http` and `https` sources become links.
+
+```js
+answer.sources = [
+  { title: 'Records API', url: 'https://moul.dev/docs/records', description: 'Listing and sorting' },
+  { title: 'MCP tools', url: 'https://moul.dev/docs/mcp' },
+]
+```
+
+## Actions and errors
+
+`actions` names the buttons to show once the answer is done: `copy`, `regenerate` and `feedback` by default. Copy copies the Markdown and fires `responsecopy`. Regenerate fires `regenerate`. The feedback buttons are toggles that set `feedback` to `up`, `down` or empty, and fire `feedbackchange`. Add your own buttons in the `actions` slot.
+
+`error` shows why an answer failed, with a Retry button that fires `regenerate`.
+
+<ComponentPreview align="stretch">
+<moul-streaming-response error="The model is busy. Try again in a moment." content="The posts collection holds"></moul-streaming-response>
+</ComponentPreview>
+
+```html
+<moul-streaming-response error="The model is busy. Try again in a moment."></moul-streaming-response>
+```
+
+## Accessibility
+
+- The answer is a region named by `label` ("Response"). While it streams it has `aria-busy="true"`, so screen readers wait for the finished text instead of reading every word as it lands.
+- Headings are real headings, starting at `heading-level`, so readers can jump between sections of a long answer.
+- Citations are named "Source 1: Records API". The actions are buttons with names, the feedback buttons have `aria-pressed`, and "Copied" is announced after a copy. An error is a `role="alert"`.
+- Under reduced motion text appears as soon as it arrives, the caret does not pulse, and the actions appear without fading in.
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `content` | `content` | `string` | `''` |
+| `is-streaming` | `isStreaming` | `boolean` | `false` |
+| | `sources` | `ResponseSource[]` | `[]` |
+| `actions` | `actions` | `string` | `'copy regenerate feedback'` |
+| `feedback` | `feedback` | `'up' \| 'down' \| ''` | `''` |
+| `error` | `error` | `string` | `''` |
+| `heading-level` | `headingLevel` | `number` | `3` |
+| `label` | `label` | `string` | `'Response'` |
+| | `text` (read-only) | `string` | |
+| | `isRevealing` (read-only) | `boolean` | |
+
+| Method | Description |
+| :-- | :-- |
+| `appendText(chunk)` | Adds a chunk to the end of the answer. |
+| `copy()` | Copies the Markdown, as the copy button does. |
+
+| Event | Detail |
+| :-- | :-- |
+| `regenerate` | `{}`, from the regenerate or retry button |
+| `feedbackchange` | `{ value }` |
+| `responsecopy` | `{ text, isCopied }` |
+
+| Slot | Description |
+| :-- | :-- |
+| (default) | Markdown to show when `content` is empty. |
+| `actions` | More buttons for the action row. |
+
+**CSS parts:** `base`, `content`, `caret`, `error`, `sources`, `source`, `actions`, `action-button`

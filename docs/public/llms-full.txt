@@ -941,10 +941,15 @@ Class: `MoulToggleButtonGroup` · Source: `ui/src/components/ToggleButtonGroup/T
 
 ## TextField
 
-Form-associated text input with label, description, and error message. Docs: [/docs/components/textfield](/docs/components/textfield)
+Form-associated text input with label, description, and error message. `placeholders` rotates the placeholder through hints; `vanish()` or `vanish-on-submit` scatters the text away and clears it after its form submits. Docs: [/docs/components/textfield](/docs/components/textfield)
 
 ```html
 <moul-text-field name="email" type="email" label="Email" placeholder="you@example.com" is-required></moul-text-field>
+<moul-text-field name="q" label="Search" vanish-on-submit></moul-text-field>
+```
+
+```js
+document.querySelector('[name="q"]').placeholders = ['Search collections…', 'Find a record…']
 ```
 
 ### `<moul-text-field>`
@@ -965,12 +970,20 @@ Class: `MoulTextField` · Source: `ui/src/components/TextField/TextField.ts`
 | `is-disabled` | `isDisabled` | `boolean` | `false` |
 | `is-required` | `isRequired` | `boolean` | `false` |
 | `is-readonly` | `isReadonly` | `boolean` | `false` |
+| `placeholder-interval` | `placeholderInterval` | `number` | `3000` |
+| `vanish-on-submit` | `vanishOnSubmit` | `boolean` | `false` |
+
+**Properties** (JavaScript only — set on the element instance)
+
+| Property | Type | Default |
+| :--- | :--- | :--- |
+| `placeholders` | `string[]` | `[]` |
 
 **Events**
 
 | Event | Type |
 | :--- | :--- |
-| `input` | `CustomEvent` |
+| `input` | `Event` |
 | `change` | `CustomEvent` |
 
 **Slots**
@@ -983,7 +996,7 @@ Class: `MoulTextField` · Source: `ui/src/components/TextField/TextField.ts`
 | `description` |
 | `error` |
 
-**CSS Parts:** `error`, `base`, `label`, `input-container`, `prefix`, `input`, `suffix`, `description`
+**CSS Parts:** `placeholder`, `error`, `base`, `label`, `input-container`, `prefix`, `input`, `suffix`, `description`
 
 ## NumberField
 
@@ -4184,6 +4197,292 @@ Class: `MoulTimelineItem` · Source: `ui/src/components/Timeline/TimelineItem.ts
 | `marker` |
 
 **CSS Parts:** `base`, `rail`, `progress`, `aside`, `marker`, `heading`, `content`
+
+---
+
+# AI Kit
+
+## AgentActivity
+
+An AI agent's reasoning steps and tool calls as a live compact timeline with status and timing; a tool call's input and output open as highlighted JSON, and the header sums the run up and folds it away. Docs: [/docs/components/agentactivity](/docs/components/agentactivity)
+
+```html
+<moul-agent-activity id="activity" is-live></moul-agent-activity>
+```
+
+```js
+const activity = document.querySelector('#activity')
+activity.push({ id: 'call_1', tool: 'list_records', input: { collection: 'posts' }, status: 'running', startedAt: Date.now() })
+activity.push({ id: 'call_1', status: 'done', output: { items: [] }, endedAt: Date.now() })
+```
+
+### `<moul-agent-activity>`
+
+Class: `MoulAgentActivity` · Source: `ui/src/components/AgentActivity/AgentActivity.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `is-open` | `isOpen` | `boolean` | `true` |
+| `is-live` | `isLive` | `boolean` | `false` |
+| `label` | `label` | `string` | `''` |
+| `announcement` | `announcement` | `string` | `''` |
+
+**Properties** (JavaScript only — set on the element instance)
+
+| Property | Type | Default |
+| :--- | :--- | :--- |
+| `steps` | `AgentStep[]` | `[]` |
+
+**Events**
+
+| Event | Type |
+| :--- | :--- |
+| `openchange` | `CustomEvent` |
+| `expandedchange` | `CustomEvent` |
+
+**CSS Parts:** `base`, `header`, `summary`, `steps`, `step`, `tool`, `details-button`, `details`
+
+## Chat
+
+A complete AI chat screen: conversation history sidebar, user bubbles, assistant turns with tool calls, a thinking indicator and streamed Markdown answers, suggestions while empty, and a prompt-input composer. It calls no model itself: listen for `promptsubmit` and feed replies back with `push()`, `pushSteps()`, `appendText()` and `updateMessage()`. Docs: [/docs/components/chat](/docs/components/chat)
+
+```html
+<moul-chat id="chat" allow-attachments>
+  <span slot="footer">Answers can be wrong. Check important facts.</span>
+</moul-chat>
+```
+
+```js
+const chat = document.querySelector('#chat')
+chat.suggestions = ['Which collections are there?']
+chat.addEventListener('promptsubmit', async (e) => {
+  const reply = crypto.randomUUID()
+  chat.push({ id: crypto.randomUUID(), role: 'user', content: e.detail.value }, { id: reply, role: 'assistant', status: 'pending' })
+  for await (const part of streamAgent(e.detail.value)) {
+    if (part.type === 'tool_call') chat.pushSteps(reply, { id: part.id, tool: part.name, input: part.input, status: 'running' })
+    if (part.type === 'tool_result') chat.pushSteps(reply, { id: part.id, output: part.output, status: 'done' })
+    if (part.type === 'text') chat.appendText(reply, part.text)
+  }
+  chat.updateMessage(reply, { status: 'done' })
+})
+chat.addEventListener('stop', () => controller.abort())
+```
+
+### `<moul-chat>`
+
+Class: `MoulChat` · Source: `ui/src/components/Chat/Chat.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `conversation-id` | `conversationId` | `string` | `''` |
+| `heading` | `heading` | `string` | `''` |
+| `greeting` | `greeting` | `string` | `'How can I help?'` |
+| `label` | `label` | `string` | `'Chat'` |
+| `is-generating` | `isGenerating` | `boolean` | `false` |
+| `hide-sidebar` | `hideSidebar` | `boolean` | `false` |
+| `is-sidebar-open` | `isSidebarOpen` | `boolean` | `true` |
+| `placeholder` | `placeholder` | `string` | `'Ask anything'` |
+| `model` | `model` | `string` | `''` |
+| `allow-attachments` | `allowAttachments` | `boolean` | `false` |
+| `accept` | `accept` | `string` | `''` |
+| `max-files` | `maxFiles` | `number` | `10` |
+| `max-size` | `maxSize` | `number` | `0` |
+| `submit-key` | `submitKey` | `'enter' \| 'mod-enter'` | `'enter'` |
+| `isNarrow` | `isNarrow` | `boolean` | `false` |
+| `isPinned` | `isPinned` | `boolean` | `true` |
+| `announcement` | `announcement` | `string` | `''` |
+
+**Properties** (JavaScript only — set on the element instance)
+
+| Property | Type | Default |
+| :--- | :--- | :--- |
+| `messages` | `ChatMessage[]` | `[]` |
+| `conversations` | `ChatConversation[]` | `[]` |
+| `suggestions` | `ChatSuggestion[]` | `[]` |
+| `placeholders` | `string[]` | `[]` |
+| `models` | `PromptModel[]` | `[]` |
+| `upload` | `FileUploadFunction \| null` | `null` |
+
+**Events**
+
+| Event | Type |
+| :--- | :--- |
+| `type` | `CustomEvent` |
+| `promptsubmit` | — |
+| `stop` | — |
+| `modelchange` | — |
+| `regenerate` | — |
+| `feedbackchange` | — |
+| `conversationselect` | — |
+| `conversationcreate` | — |
+| `sidebarchange` | — |
+
+**Slots**
+
+| Slot |
+| :--- |
+| `empty` |
+| `header-actions` |
+| `sidebar-footer` |
+| `footer` |
+| `composer-start` |
+
+**CSS Parts:** `base`, `sidebar`, `new-chat`, `conversation`, `main`, `header`, `title`, `messages`, `message`, `bubble`, `suggestion`, `jump-button`, `composer`
+
+## PromptInput
+
+Chat composer: auto-growing textarea where Enter sends (IME-safe, Shift+Enter for a new line), Arrow Up recalls history, a model picker, file attachments by button, paste or drop with optional uploads, rotating placeholder hints, and a send button that becomes Stop while `is-generating`. Docs: [/docs/components/promptinput](/docs/components/promptinput)
+
+```html
+<moul-prompt-input id="composer" allow-attachments accept="image/*,.pdf"></moul-prompt-input>
+```
+
+```js
+const composer = document.querySelector('#composer')
+composer.models = [{ value: 'sonnet', label: 'Sonnet' }, { value: 'opus', label: 'Opus' }]
+composer.placeholders = ['Ask about your collections…', 'Summarise errors…']
+composer.addEventListener('promptsubmit', (e) => send(e.detail.value, e.detail.attachments, e.detail.model))
+composer.addEventListener('stop', () => controller.abort())
+```
+
+### `<moul-prompt-input>`
+
+Class: `MoulPromptInput` · Source: `ui/src/components/PromptInput/PromptInput.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `value` | `value` | `string` | `''` |
+| `label` | `label` | `string` | `'Message'` |
+| `placeholder` | `placeholder` | `string` | `''` |
+| `placeholder-interval` | `placeholderInterval` | `number` | `3000` |
+| `is-generating` | `isGenerating` | `boolean` | `false` |
+| `is-disabled` | `isDisabled` | `boolean` | `false` |
+| `model` | `model` | `string` | `''` |
+| `allow-attachments` | `allowAttachments` | `boolean` | `false` |
+| `accept` | `accept` | `string` | `''` |
+| `max-files` | `maxFiles` | `number` | `10` |
+| `max-size` | `maxSize` | `number` | `0` |
+| `max-history` | `maxHistory` | `number` | `50` |
+| `submit-key` | `submitKey` | `'enter' \| 'mod-enter'` | `'enter'` |
+| `max-rows` | `maxRows` | `number` | `8` |
+| `vanish-on-submit` | `vanishOnSubmit` | `boolean` | `false` |
+| `isDragging` | `isDragging` | `boolean` | `false` |
+| `announcement` | `announcement` | `string` | `''` |
+
+**Properties** (JavaScript only — set on the element instance)
+
+| Property | Type | Default |
+| :--- | :--- | :--- |
+| `placeholders` | `string[]` | `[]` |
+| `models` | `PromptModel[]` | `[]` |
+| `attachments` | `PromptAttachment[]` | `[]` |
+| `upload` | `FileUploadFunction \| null` | `null` |
+| `history` | `string[]` | `[]` |
+
+**Events**
+
+| Event | Type |
+| :--- | :--- |
+| `promptsubmit` | `CustomEvent` |
+| `stop` | `CustomEvent` |
+| `type` | `CustomEvent` |
+| `input` | `Event` |
+| `modelchange` | — |
+| `attachmentschange` | — |
+| `attachmentreject` | — |
+
+**Slots**
+
+| Slot |
+| :--- |
+| `start` |
+| `end` |
+
+**CSS Parts:** `base`, `attachments`, `attachment`, `textarea`, `placeholder`, `toolbar`, `attach-button`, `model-button`, `send-button`
+
+## StreamingResponse
+
+A model's Markdown answer that reveals smoothly as it streams, with headings, lists, tables, code blocks, `[n]` citations linked to `sources`, and copy, regenerate and feedback actions once done. Rendered as text, never HTML; images become links and only http, https, mailto and relative links are kept. Docs: [/docs/components/streamingresponse](/docs/components/streamingresponse)
+
+```html
+<moul-streaming-response id="answer" is-streaming></moul-streaming-response>
+```
+
+```js
+const answer = document.querySelector('#answer')
+for await (const chunk of stream) answer.appendText(chunk)
+answer.isStreaming = false
+answer.sources = [{ title: 'Records API', url: 'https://moul.dev/docs/records' }]
+```
+
+### `<moul-streaming-response>`
+
+Class: `MoulStreamingResponse` · Source: `ui/src/components/StreamingResponse/StreamingResponse.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `content` | `content` | `string` | `''` |
+| `is-streaming` | `isStreaming` | `boolean` | `false` |
+| `actions` | `actions` | `string` | `'copy regenerate feedback'` |
+| `feedback` | `feedback` | `'up' \| 'down' \| ''` | `''` |
+| `error` | `error` | `string` | `''` |
+| `heading-level` | `headingLevel` | `number` | `3` |
+| `label` | `label` | `string` | `'Response'` |
+| `lightContent` | `lightContent` | `string` | `''` |
+
+**Properties** (JavaScript only — set on the element instance)
+
+| Property | Type | Default |
+| :--- | :--- | :--- |
+| `sources` | `ResponseSource[]` | `[]` |
+
+**Events**
+
+| Event | Type |
+| :--- | :--- |
+| `responsecopy` | `CustomEvent` |
+| `type` | `CustomEvent` |
+| `regenerate` | — |
+| `feedbackchange` | — |
+
+**Slots**
+
+| Slot |
+| :--- |
+| (default) |
+| `actions` |
+
+**CSS Parts:** `base`, `content`, `caret`, `error`, `sources`, `source`, `actions`, `action-button`
+
+## ThinkingIndicator
+
+Small canvas particle orb with a shimmering label, in a polite `role="status"`, shown while a model works; change `label` as the work moves on. Docs: [/docs/components/thinkingindicator](/docs/components/thinkingindicator)
+
+```html
+<moul-thinking-indicator label="Searching records"></moul-thinking-indicator>
+```
+
+### `<moul-thinking-indicator>`
+
+Class: `MoulThinkingIndicator` · Source: `ui/src/components/ThinkingIndicator/ThinkingIndicator.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `label` | `label` | `string` | `'Thinking'` |
+| `size` | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` |
+| `hide-label` | `hideLabel` | `boolean` | `false` |
+
+**CSS Parts:** `base`, `orb`, `label`
 
 ---
 

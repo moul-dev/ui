@@ -1,0 +1,149 @@
+---
+title: Prompt Input (សមាសភាគ)
+description: ប្រអប់សរសេរសារនៃការជជែកជាមួយ AI ដែលមានប្រអប់អត្ថបទរីកធំ ការជ្រើសម៉ូដែល ឯកសារភ្ជាប់ ប្រវត្តិ និងប៊ូតុងបញ្ឈប់។
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import AiKitDemo from '@/components/demos/AiKitDemo.astro';
+
+`<moul-prompt-input>` is where a reader writes to a model. The text box grows with what is typed, `Enter` sends, and `Arrow Up` in an empty box brings back earlier prompts. While the model answers, the send button turns into Stop. With `models` it offers a model picker, and with `allow-attachments` it takes files from a button, a paste or a drop.
+
+<ComponentPreview align="stretch" stack>
+<moul-prompt-input
+  id="composer-demo"
+  data-ai-log="composer-demo"
+  allow-attachments
+  accept="image/*,.pdf,.txt,.csv"
+  max-size="5000000"
+  data-props='{"placeholders": ["Ask about your collections…", "Summarise yesterday’s errors…", "Draft a migration…"], "models": [{"value": "sonnet", "label": "Sonnet", "description": "Fast and capable"}, {"value": "opus", "label": "Opus", "description": "For harder questions"}], "history": ["Which collections are there?"]}'
+></moul-prompt-input>
+<output class="demo-log" data-ai-log-for="composer-demo">Type, attach a file, then press Enter.</output>
+<AiKitDemo />
+</ComponentPreview>
+
+```html
+<moul-prompt-input id="composer" allow-attachments accept="image/*,.pdf"></moul-prompt-input>
+```
+
+```js
+const composer = document.querySelector('#composer')
+composer.models = [
+  { value: 'sonnet', label: 'Sonnet', description: 'Fast and capable' },
+  { value: 'opus', label: 'Opus', description: 'For harder questions' },
+]
+composer.placeholders = ['Ask about your collections…', 'Summarise yesterday’s errors…']
+
+composer.addEventListener('promptsubmit', async (event) => {
+  const { value, attachments, model } = event.detail
+  composer.isGenerating = true
+  try {
+    await askModel(value, { attachments, model })
+  } finally {
+    composer.isGenerating = false
+  }
+})
+composer.addEventListener('stop', () => controller.abort())
+```
+
+## Sending
+
+`promptsubmit` fires with `{ value, attachments, model }`. It is cancelable: call `preventDefault()` and the box keeps its text, for example while you validate it. Otherwise the box empties, the attachments clear, and the prompt joins `history`.
+
+| Key | Does |
+| :-- | :-- |
+| `Enter` | Sends. Waits while an input method is composing (Khmer, Japanese and other IMEs). |
+| `Shift` + `Enter` | Adds a line. |
+| `Ctrl` or `⌘` + `Enter` | Sends instead, with `submit-key="mod-enter"`; `Enter` then adds a line. |
+| `Arrow Up` | In an empty box, steps back through `history`. |
+| `Arrow Down` | While browsing, steps forward, back to the draft. |
+| `Escape` | Stops the model while it answers; while browsing, returns to the draft. |
+
+Set `is-generating` while the answer streams. Sending waits, the send button becomes Stop, and Stop (or `Escape`) fires `stop`. The text box stays editable, so the next question can be written while the answer arrives.
+
+<ComponentPreview align="stretch">
+<moul-prompt-input is-generating placeholder="The model is answering…" submit-key="mod-enter"></moul-prompt-input>
+</ComponentPreview>
+
+## Attachments
+
+With `allow-attachments`, files come in through the paperclip button, a paste, or a drop anywhere on the composer. Each is checked against `accept`, `max-size` (bytes) and `max-files` (10), and a refused file fires `attachmentreject` with the reason: `type`, `size` or `count`. Images show a thumbnail.
+
+Set `upload` to send each file as soon as it is attached. It is the same function `<moul-file-upload>` takes: it receives the file and `{ signal, onProgress }`, and what it resolves with is kept as the attachment's `response`. While a file uploads, its chip shows progress and sending waits; removing it aborts the upload.
+
+```js
+composer.upload = async (file, { signal, onProgress }) => {
+  const body = new FormData()
+  body.append('file', file)
+  const response = await fetch('/api/files', { method: 'POST', body, signal })
+  onProgress(100)
+  return response.json() // becomes attachment.response
+}
+```
+
+## Rotating hints and vanishing text
+
+`placeholders` rotates the placeholder through several hints, each sliding up as the next arrives, every `placeholder-interval` milliseconds. `vanish-on-submit` scatters the sent text into drifting letters instead of clearing it at once.
+
+<ComponentPreview align="stretch">
+<moul-prompt-input vanish-on-submit data-props='{"placeholders": ["Type something and press Enter…", "It breaks apart as it leaves…"]}'></moul-prompt-input>
+</ComponentPreview>
+
+## Accessibility
+
+- The text box is a native `<textarea>` named by `label` ("Message") and described by a hint that says how to send.
+- The send, stop, attach and remove buttons are native buttons with names: "Send message", "Stop generating", "Attach files", "Remove report.pdf".
+- The model picker is a `<moul-dropdown-menu>` of radio items; its trigger reads "Model: Sonnet".
+- A polite live region reports files attached, refused, uploaded or failed, and why sending is waiting.
+- Rotating hints are hidden from screen readers, which hear one stable placeholder: `placeholder`, or else the first hint.
+- Under reduced motion attachments appear without sliding in, hints swap in place, and sent text clears at once.
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| | `value` | `string` | `''` |
+| `label` | `label` | `string` | `'Message'` |
+| `placeholder` | `placeholder` | `string` | `''` |
+| | `placeholders` | `string[]` | `[]` |
+| `placeholder-interval` | `placeholderInterval` | `number` | `3000` |
+| `is-generating` | `isGenerating` | `boolean` | `false` |
+| `is-disabled` | `isDisabled` | `boolean` | `false` |
+| | `models` | `PromptModel[]` | `[]` |
+| `model` | `model` | `string` | the first model |
+| `allow-attachments` | `allowAttachments` | `boolean` | `false` |
+| `accept` | `accept` | `string` | `''` |
+| `max-files` | `maxFiles` | `number` | `10` |
+| `max-size` | `maxSize` | `number` | `0` (no limit) |
+| | `attachments` | `PromptAttachment[]` | `[]` |
+| | `upload` | `FileUploadFunction \| null` | `null` |
+| | `history` | `string[]` | `[]` |
+| `max-history` | `maxHistory` | `number` | `50` |
+| `submit-key` | `submitKey` | `'enter' \| 'mod-enter'` | `'enter'` |
+| `max-rows` | `maxRows` | `number` | `8` |
+| `vanish-on-submit` | `vanishOnSubmit` | `boolean` | `false` |
+
+| Method | Description |
+| :-- | :-- |
+| `submit()` | Sends as `Enter` does; returns whether it was sent. |
+| `stop()` | Fires `stop` while generating. |
+| `clear()` | Empties the box and the attachments. |
+| `addFiles(files)` | Attaches files, with the same checks as a pick. |
+| `removeAttachment(id)` | Removes a file and cancels its upload. |
+| `updateAttachment(id, patch)` | Updates a file, for apps that run uploads themselves. |
+| `focus()` | Puts the caret in the box. |
+
+| Event | Detail |
+| :-- | :-- |
+| `promptsubmit` | `{ value, attachments, model }`; cancelable |
+| `stop` | |
+| `input` | |
+| `modelchange` | `{ value, model }` |
+| `attachmentschange` | `{ attachments }` |
+| `attachmentreject` | `{ file, reason }` |
+
+| Slot | Description |
+| :-- | :-- |
+| `start` | Controls after the attach button, such as a tool toggle. |
+| `end` | Controls before the send button. |
+
+**CSS parts:** `base`, `attachments`, `attachment`, `textarea`, `placeholder`, `toolbar`, `attach-button`, `model-button`, `send-button`

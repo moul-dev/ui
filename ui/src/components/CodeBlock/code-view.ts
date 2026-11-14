@@ -15,6 +15,42 @@ export interface CodeSource {
   highlightLines: string
 }
 
+/** Payloads longer than this are cut, so one huge value cannot stall the page. */
+const MAX_PAYLOAD_CHARS = 50_000
+
+/**
+ * A payload (an event's, a tool call's input or output) as display text:
+ * formatted JSON when it is JSON or a JSON string, else plain text. Text
+ * past 50,000 characters is cut with a note of how much is left out.
+ */
+export function payloadText(payload: unknown): {
+  text: string
+  language: string
+} {
+  let text: string
+  let language = 'json'
+  try {
+    if (typeof payload === 'string') {
+      try {
+        text = JSON.stringify(JSON.parse(payload), null, 2)
+      } catch {
+        text = payload
+        language = 'text'
+      }
+    } else {
+      text = JSON.stringify(payload, null, 2) ?? String(payload)
+    }
+  } catch {
+    // Circular or otherwise unserialisable.
+    text = String(payload)
+    language = 'text'
+  }
+  if (text.length > MAX_PAYLOAD_CHARS) {
+    text = `${text.slice(0, MAX_PAYLOAD_CHARS)}\n… (${text.length - MAX_PAYLOAD_CHARS} more characters)`
+  }
+  return { text, language }
+}
+
 /** Renders highlighted tokens as text inside classed spans; plain text stays a bare string. */
 export function renderTokens(tokens: CodeToken[]): (TemplateResult | string)[] {
   return tokens.map((token) =>

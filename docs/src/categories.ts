@@ -133,6 +133,17 @@ export const COMPONENT_CATEGORIES: ComponentCategory[] = [
     ],
   },
   {
+    key: 'ai',
+    label: 'AI Kit',
+    slugs: [
+      'docs/components/agentactivity',
+      'docs/components/chat',
+      'docs/components/promptinput',
+      'docs/components/streamingresponse',
+      'docs/components/thinkingindicator',
+    ],
+  },
+  {
     key: 'blocks',
     label: 'Composite Blocks',
     slugs: ['docs/blocks/logs', 'docs/blocks/sidebar'],

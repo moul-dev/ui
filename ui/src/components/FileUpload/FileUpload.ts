@@ -1,6 +1,14 @@
 import { html, LitElement, nothing, type PropertyValues } from 'lit'
 import { FormInternalsController } from '../../controllers/form-internals.controller'
 import { defineElement } from '../../utils/define-element'
+import {
+  createFileId as createId,
+  uploadErrorText as errorText,
+  formatFileSize,
+  isImageFile as isImage,
+  matchesAccept,
+  safeHref,
+} from '../../utils/files'
 import { close, externalLink } from '../../utils/icons'
 import { EASE_OUT, subtleAnimate } from '../../utils/motion'
 import { warnMissingLabel } from '../../utils/warn-missing-label'
@@ -65,69 +73,6 @@ export interface FileUploadRejectDetail {
   file: File
   reason: FileRejectReason
 }
-
-const IMAGE_EXTENSION = /\.(avif|bmp|gif|ico|jpe?g|png|svg|webp)$/i
-const SIZE_UNITS = ['B', 'KB', 'MB', 'GB', 'TB']
-const SAFE_PROTOCOLS = ['http:', 'https:', 'blob:']
-
-let nextId = 0
-const createId = (): string => `file-${Date.now().toString(36)}-${nextId++}`
-
-/** `1536` → `1.5 KB`, in steps of 1024. */
-function formatFileSize(bytes: number): string {
-  let size = bytes
-  let unit = 0
-  while (size >= 1024 && unit < SIZE_UNITS.length - 1) {
-    size /= 1024
-    unit++
-  }
-  return `${unit === 0 ? size : Number(size.toFixed(1))} ${SIZE_UNITS[unit]}`
-}
-
-/** Matches the `accept` attribute's grammar: extensions, `type/*` wildcards and exact MIME types. */
-function matchesAccept(file: File, accept: string): boolean {
-  const tokens = accept
-    .split(',')
-    .map((token) => token.trim().toLowerCase())
-    .filter(Boolean)
-  const name = file.name.toLowerCase()
-  const type = file.type.toLowerCase()
-  return (
-    tokens.length === 0 ||
-    tokens.some((token) =>
-      token.startsWith('.')
-        ? name.endsWith(token)
-        : token.endsWith('/*')
-          ? type.startsWith(token.slice(0, -1))
-          : type === token,
-    )
-  )
-}
-
-function isImage(item: FileUploadItem): boolean {
-  if (item.type) return item.type.startsWith('image/')
-  const path = (item.url ?? '').split(/[?#]/)[0]
-  return IMAGE_EXTENSION.test(item.name) || IMAGE_EXTENSION.test(path)
-}
-
-/** The URL if it is safe to open as a link (http, https or blob), else null. */
-function safeHref(url: string | undefined): string | null {
-  if (!url) return null
-  try {
-    return SAFE_PROTOCOLS.includes(new URL(url, document.baseURI).protocol)
-      ? url
-      : null
-  } catch {
-    return null
-  }
-}
-
-const errorText = (error: unknown): string =>
-  (error instanceof Error
-    ? error.message
-    : typeof error === 'string'
-      ? error
-      : '') || 'Upload failed.'
 
 /**
  * A form-associated file picker: a drop zone that opens the file dialog or

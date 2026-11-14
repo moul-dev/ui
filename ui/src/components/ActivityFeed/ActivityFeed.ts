@@ -12,7 +12,7 @@ import {
   subtleAnimate,
 } from '../../utils/motion'
 import '../AnimatedList/AnimatedList'
-import { renderTokens } from '../CodeBlock/code-view'
+import { payloadText, renderTokens } from '../CodeBlock/code-view'
 import { activityFeedStyles } from './ActivityFeed.styles'
 
 export interface ActivityEvent {
@@ -44,8 +44,6 @@ export interface ActivityFeedPauseChangeDetail {
   isPaused: boolean
 }
 
-/** Payloads longer than this are cut, so one huge event cannot stall the page. */
-const MAX_PAYLOAD_CHARS = 50_000
 const TONES = new Set(['primary', 'accent', 'success', 'warning', 'error'])
 
 const keyOf = (event: ActivityEvent) => String(event.id)
@@ -54,32 +52,6 @@ function toDate(value: ActivityEvent['timestamp']): Date | null {
   if (value === undefined || value === null || value === '') return null
   const date = value instanceof Date ? value : new Date(value)
   return Number.isNaN(date.getTime()) ? null : date
-}
-
-/** A payload as display text: formatted JSON when it is JSON, else plain text. */
-function payloadText(payload: unknown): { text: string; language: string } {
-  let text: string
-  let language = 'json'
-  try {
-    if (typeof payload === 'string') {
-      try {
-        text = JSON.stringify(JSON.parse(payload), null, 2)
-      } catch {
-        text = payload
-        language = 'text'
-      }
-    } else {
-      text = JSON.stringify(payload, null, 2) ?? String(payload)
-    }
-  } catch {
-    // Circular or otherwise unserialisable.
-    text = String(payload)
-    language = 'text'
-  }
-  if (text.length > MAX_PAYLOAD_CHARS) {
-    text = `${text.slice(0, MAX_PAYLOAD_CHARS)}\n… (${text.length - MAX_PAYLOAD_CHARS} more characters)`
-  }
-  return { text, language }
 }
 
 /**

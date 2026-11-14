@@ -1,0 +1,79 @@
+---
+title: Agent Activity
+description: An AI agent's reasoning and tool calls as a live timeline, with each call's input and output.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import AiKitDemo from '@/components/demos/AiKitDemo.astro';
+
+`<moul-agent-activity>` shows what an agent is doing while it works: the steps it reasons through and the tools it calls, each with a status and how long it took. It sits on a compact `<moul-timeline>`, whose rail fills up to the running step. A tool call's input and output open as highlighted JSON. The header sums the run up and folds the steps away, so a finished run can make room for the answer.
+
+<ComponentPreview align="stretch" stack>
+<div class="demo-row">
+<moul-button size="sm" variant="secondary" data-ai-run="activity-demo"><span>Run the agent</span></moul-button>
+</div>
+<moul-agent-activity id="activity-demo" data-ai-activity-seed></moul-agent-activity>
+<AiKitDemo />
+</ComponentPreview>
+
+```html
+<moul-agent-activity id="activity"></moul-agent-activity>
+```
+
+```js
+const activity = document.querySelector('#activity')
+
+// As the agent works
+activity.push({ id: 'call_1', tool: 'list_records', input: { collection: 'posts' }, status: 'running', startedAt: Date.now() })
+// …and when the tool returns, the same id updates the step in place
+activity.push({ id: 'call_1', status: 'done', output: result, endedAt: Date.now() })
+```
+
+## Steps
+
+Each step is an object. Set `steps` to the whole run, oldest first, or call `push()` as it goes; a step whose `id` is already there is merged into it.
+
+| Field | Type | |
+| :-- | :-- | :-- |
+| `id` | `string \| number` | Identifies the step. |
+| `title` | `string` | What the step does. A tool call without one shows its tool's name. |
+| `tool` | `string` | The tool called, shown as a tag. Makes the step a tool call. |
+| `detail` | `string` | Reasoning or a note, under the title. |
+| `input`, `output` | any JSON value, or a JSON string | Shown as highlighted code when the step is opened. |
+| `error` | `string` | Why the step failed. |
+| `status` | `'pending' \| 'running' \| 'done' \| 'error'` | Defaults to `done`. |
+| `startedAt`, `endedAt` | `Date \| number \| string` | A running step counts up from `startedAt`. |
+| `duration` | `number` | Milliseconds, when the times are unknown. |
+
+The header names the running step ("Calling list_records…"), and once nothing runs it sums the run up: "Finished 3 steps · 2 tool calls · 1 failed · 2.6s". `label` replaces that text.
+
+Outputs longer than 50,000 characters are cut, so one large tool result cannot stall the page.
+
+## Accessibility
+
+- The header is a button with `aria-expanded` that shows or hides the steps.
+- The steps are a list named "Agent steps". The running step is `aria-current="step"`; finished steps add "Completed" after their title, and failed ones "Failed".
+- A step with input or output has a "Show input and output" button with `aria-expanded`. The code blocks it opens keep their own copy buttons.
+- With `is-live`, a polite live region announces each step as it starts ("Running Read posts") or fails, and "Finished" when the run ends. It is off by default because a busy agent can talk over everything else.
+- Under reduced motion the steps open and close at once, the running marker does not pulse, the summary does not shimmer, and the header's spinner turns slowly.
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| | `steps` | `AgentStep[]` | `[]` |
+| `is-open` | `isOpen` | `boolean` | `true` |
+| `is-live` | `isLive` | `boolean` | `false` |
+| `label` | `label` | `string` | `''` |
+| | `isRunning` (read-only) | `boolean` | |
+
+| Method | Description |
+| :-- | :-- |
+| `push(...steps)` | Adds steps to the end; a known id is updated in place. |
+
+| Event | Detail |
+| :-- | :-- |
+| `openchange` | `{ isOpen }`, from the header |
+| `expandedchange` | `{ id, isExpanded, step }`, from a step's details button |
+
+**CSS parts:** `base`, `header`, `summary`, `steps`, `step`, `tool`, `details-button`, `details`

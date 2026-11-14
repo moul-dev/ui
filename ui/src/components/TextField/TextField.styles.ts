@@ -1,4 +1,5 @@
 import { css } from 'lit'
+import { placeholderCycleStyles } from '../../controllers/placeholder-cycle.controller'
 import { fieldStyles } from '../../styles/field.styles'
 import { resetStyles } from '../../styles/reset.styles'
 
@@ -6,6 +7,7 @@ import { resetStyles } from '../../styles/reset.styles'
    focus and invalid rings) comes from the shared fieldStyles appended last. */
 export const textFieldStyles = [
   resetStyles,
+  placeholderCycleStyles,
   css`
     :host {
       display: block;
@@ -49,6 +51,41 @@ export const textFieldStyles = [
       width: 100%;
       min-height: 2.25rem;
       font-size: var(--font-size-sm, 0.875rem);
+    }
+
+    .input-wrap {
+      position: relative;
+      display: flex;
+      flex: 1;
+      align-self: stretch;
+      min-width: 0;
+    }
+
+    /* The rotating hint and the scattering letters sit exactly over the text. */
+    .cycling-placeholder,
+    .vanish-layer {
+      inset: 0;
+      align-items: center;
+      padding: var(--spacing-2, 0.5rem) var(--spacing-3, 0.75rem);
+      font-size: var(--font-size-sm, 0.875rem);
+      line-height: var(--line-height-sm, 1.25rem);
+    }
+
+    .vanish-layer {
+      position: absolute;
+      display: flex;
+      overflow: hidden;
+      white-space: pre;
+      color: var(--color-field-fg);
+      pointer-events: none;
+    }
+
+    .vanish-layer:empty {
+      display: none;
+    }
+
+    [part~='input'][data-cycling]::placeholder {
+      color: transparent;
     }
 
     [part~='input'] {

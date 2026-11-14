@@ -1,11 +1,14 @@
 import { html, LitElement, nothing, type PropertyValues } from 'lit'
 import { FormInternalsController } from '../../controllers/form-internals.controller'
+import { PlaceholderCycleController } from '../../controllers/placeholder-cycle.controller'
 import { defineElement } from '../../utils/define-element'
 import {
   findImplicitSubmissionForm,
+  type ImplicitSubmissionForm,
   submitOnEnter,
 } from '../../utils/implicit-submission'
 import { EASE_OUT, subtleAnimate } from '../../utils/motion'
+import { scatterText } from '../../utils/scatter-text'
 import { warnMissingLabel } from '../../utils/warn-missing-label'
 import { textFieldStyles } from './TextField.styles'
 
@@ -14,7 +17,12 @@ export type TextFieldType = 'text' | 'email' | 'password' | 'tel' | 'url'
 /**
  * A form-associated single-line text input (`type` text, email, password,
  * tel or url) with a label, an optional description and error message,
- * prefix and suffix slots, and `is-required` validation.
+ * prefix and suffix slots, and `is-required` validation. Give it
+ * `placeholders` to rotate the placeholder through several hints, each
+ * sliding up as the next arrives, every `placeholder-interval` milliseconds
+ * while the field is empty. `vanish()` scatters the typed text into drifting
+ * letters and clears the field; with `vanish-on-submit` that happens each
+ * time its form submits, after the form has read the value.
  *
  * Keyboard and screen readers: focus goes to a native `<input>` in the shadow
  * root (the host's `focus()` forwards there), so it types, selects and
@@ -24,10 +32,17 @@ export type TextFieldType = 'text' | 'email' | 'password' | 'tel' | 'url'
  * `<label for>` holding the `label` attribute or `label` slot,
  * `aria-describedby` points at the `description` and `error-message` text
  * when they are set, and `aria-invalid` is true while an `is-required` field
- * is empty.
+ * is empty. Rotating hints are drawn over the input and hidden from screen
+ * readers, which hear one stable placeholder instead: `placeholder`, or else
+ * the first hint. The scattering letters are hidden too; the field is
+ * already empty when they start.
  *
  * Reduced motion: the error message appears in place instead of sliding down
- * 4px, and hover and focus colours change without fading.
+ * 4px, and hover and focus colours change without fading. Rotating hints
+ * swap in place without sliding, and `vanish()` clears the field at once
+ * without scattering the letters.
+ *
+ * @csspart placeholder - The rotating hint drawn over an empty input when `placeholders` is set.
  */
 export class MoulTextField extends LitElement {
   static override styles = textFieldStyles
@@ -44,6 +59,13 @@ export class MoulTextField extends LitElement {
     isDisabled: { type: Boolean, reflect: true, attribute: 'is-disabled' },
     isRequired: { type: Boolean, reflect: true, attribute: 'is-required' },
     isReadonly: { type: Boolean, reflect: true, attribute: 'is-readonly' },
+    placeholders: { attribute: false },
+    placeholderInterval: { type: Number, attribute: 'placeholder-interval' },
+    vanishOnSubmit: {
+      type: Boolean,
+      reflect: true,
+      attribute: 'vanish-on-submit',
+    },
   }
 
   declare name: string
@@ -56,8 +78,21 @@ export class MoulTextField extends LitElement {
   declare isDisabled: boolean
   declare isRequired: boolean
   declare isReadonly: boolean
+  /** Hints the placeholder rotates through while the field is empty. */
+  declare placeholders: string[]
+  /** Milliseconds each hint stays; at least 1000. */
+  declare placeholderInterval: number
+  /** Scatter the text and clear the field each time its form submits. */
+  declare vanishOnSubmit: boolean
 
   public internalsController: FormInternalsController
+  private readonly hints = new PlaceholderCycleController(this, {
+    hints: () => (Array.isArray(this.placeholders) ? this.placeholders : []),
+    interval: () => this.placeholderInterval,
+    isIdle: () => !!this.value,
+  })
+  /** The form whose `submit` this field listens to for `vanish-on-submit`. */
+  private watchedForm: ImplicitSubmissionForm | null = null
 
   constructor() {
     super()
@@ -71,8 +106,16 @@ export class MoulTextField extends LitElement {
     this.isDisabled = false
     this.isRequired = false
     this.isReadonly = false
+    this.placeholders = []
+    this.placeholderInterval = 3000
+    this.vanishOnSubmit = false
 
     this.internalsController = new FormInternalsController(this)
+  }
+
+  public override disconnectedCallback(): void {
+    super.disconnectedCallback()
+    this.watchForm(null)
   }
 
   public get inputElement(): HTMLInputElement | null {
@@ -89,6 +132,27 @@ export class MoulTextField extends LitElement {
 
   public select(): void {
     this.inputElement?.select()
+  }
+
+  /**
+   * Scatters the typed text into drifting letters and clears the field,
+   * firing `input`. Resolves when the letters are gone. A password scatters
+   * as dots. Under reduced motion the field clears at once.
+   */
+  public async vanish(): Promise<void> {
+    const text = this.value
+    if (!text) return
+    const input = this.inputElement
+    const scrollLeft = input?.scrollLeft ?? 0
+    this.value = ''
+    this.syncFormValueAndValidity()
+    this.dispatchEvent(new Event('input', { bubbles: true, composed: true }))
+    const layer = this.renderRoot?.querySelector<HTMLElement>('.vanish-layer')
+    if (!layer) return
+    await scatterText(layer, text, {
+      isMasked: this.type === 'password',
+      scrollLeft,
+    })
   }
 
   public checkValidity(): boolean {
@@ -130,6 +194,12 @@ export class MoulTextField extends LitElement {
     )
     warnMissingLabel(this, 'text field', hasLabel)
 
+    this.watchForm(
+      this.vanishOnSubmit
+        ? findImplicitSubmissionForm(this, this.internalsController.form)
+        : null,
+    )
+
     if (changedProperties.has('errorMessage') && this.errorMessage) {
       const errorEl = this.renderRoot?.querySelector(
         '[part="error"]',
@@ -145,6 +215,20 @@ export class MoulTextField extends LitElement {
         )
       }
     }
+  }
+
+  private watchForm(form: ImplicitSubmissionForm | null): void {
+    if (form === this.watchedForm) return
+    this.watchedForm?.removeEventListener('submit', this.handleFormSubmit)
+    this.watchedForm = form
+    form?.addEventListener('submit', this.handleFormSubmit)
+  }
+
+  /** Waits until every `submit` listener, and the browser, has read the value. */
+  private readonly handleFormSubmit = (): void => {
+    setTimeout(() => {
+      void this.vanish()
+    })
   }
 
   private syncFormValueAndValidity(): void {
@@ -210,11 +294,13 @@ export class MoulTextField extends LitElement {
           ?data-disabled=${this.isDisabled}
         >
           <span part="prefix"><slot name="prefix"></slot></span>
+          <span class="input-wrap">
           <input
             id="input"
             part="input"
             type=${this.type}
-            placeholder=${this.placeholder}
+            placeholder=${this.placeholder || (this.placeholders?.[0] ?? '')}
+            ?data-cycling=${this.hints.isActive}
             .value=${this.value}
             ?disabled=${this.isDisabled}
             ?required=${this.isRequired}
@@ -225,6 +311,9 @@ export class MoulTextField extends LitElement {
             @change=${this.handleChange}
             @keydown=${this.handleKeyDown}
           />
+          ${this.hints.render(!!this.value)}
+          <span class="vanish-layer" aria-hidden="true"></span>
+          </span>
           <span part="suffix"><slot name="suffix"></slot></span>
         </div>
 

@@ -258,3 +258,82 @@ export const replay = (classes = ''): SVGTemplateResult => svg`
     <path d="M3 3v5h5" />
   </svg>
 `
+
+const icon = (
+  classes: string,
+  body: SVGTemplateResult,
+): SVGTemplateResult => svg`
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    class=${classes}
+    aria-hidden="true"
+    focusable="false"
+  >
+    ${body}
+  </svg>
+`
+
+export const arrowUp = (classes = ''): SVGTemplateResult =>
+  icon(classes, svg`<path d="m5 12 7-7 7 7" /><path d="M12 19V5" />`)
+
+export const arrowDown = (classes = ''): SVGTemplateResult =>
+  icon(classes, svg`<path d="M12 5v14" /><path d="m19 12-7 7-7-7" />`)
+
+export const stopSquare = (classes = ''): SVGTemplateResult =>
+  icon(
+    classes,
+    svg`<rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor" stroke="none" />`,
+  )
+
+export const paperclip = (classes = ''): SVGTemplateResult =>
+  icon(
+    classes,
+    svg`<path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48" />`,
+  )
+
+export const thumbUp = (classes = ''): SVGTemplateResult =>
+  icon(
+    classes,
+    svg`<path d="M7 10v12" /><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z" />`,
+  )
+
+export const thumbDown = (classes = ''): SVGTemplateResult =>
+  icon(
+    classes,
+    svg`<path d="M17 14V2" /><path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22a3.13 3.13 0 0 1-3-3.88Z" />`,
+  )
+
+export const sidebarPanel = (classes = ''): SVGTemplateResult =>
+  icon(
+    classes,
+    svg`<rect x="3" y="3" width="18" height="18" rx="2" /><path d="M9 3v18" />`,
+  )
+
+export const pencilSquare = (classes = ''): SVGTemplateResult =>
+  icon(
+    classes,
+    svg`<path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" /><path d="M18.38 2.63a1.88 1.88 0 1 1 2.65 2.65L12 14.3 9 15l.7-3z" />`,
+  )
+
+export const imageIcon = (classes = ''): SVGTemplateResult =>
+  icon(
+    classes,
+    svg`<rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="9" cy="9" r="2" /><path d="m21 15-3.09-3.09a2 2 0 0 0-2.82 0L6 21" />`,
+  )
+
+export const wrench = (classes = ''): SVGTemplateResult =>
+  icon(
+    classes,
+    svg`<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />`,
+  )
+
+export const sparkle = (classes = ''): SVGTemplateResult =>
+  icon(
+    classes,
+    svg`<path d="M9.94 15.5A2 2 0 0 0 8.5 14.06l-6.14-1.58a.5.5 0 0 1 0-.96L8.5 9.94A2 2 0 0 0 9.94 8.5l1.58-6.14a.5.5 0 0 1 .96 0L14.06 8.5A2 2 0 0 0 15.5 9.94l6.14 1.58a.5.5 0 0 1 0 .96L15.5 14.06a2 2 0 0 0-1.44 1.44l-1.58 6.14a.5.5 0 0 1-.96 0z" />`,
+  )

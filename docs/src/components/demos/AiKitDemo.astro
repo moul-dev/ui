@@ -1,0 +1,430 @@
+---
+/**
+ * AI kit demo wiring, so the MDX previews stay plain markup. Nothing here
+ * calls a model: a small scripted agent plays the part, calling Moul's MCP
+ * tools against sample data and streaming its answers token by token.
+ *
+ *   data-ai-stream="id"      → click streams a sample answer into <moul-streaming-response id>
+ *   data-ai-run="id"         → click runs a sample agent on <moul-agent-activity id>
+ *   data-ai-labels="id"      → click moves <moul-thinking-indicator id> to its next label
+ *   data-ai-log="id"         → <moul-prompt-input id> reports what it sends into
+ *                              <output data-ai-log-for="id">
+ *   data-ai-chat             → <moul-chat> answers prompts with the scripted agent
+ */
+---
+
+<script>
+  import type {
+    AgentStep,
+    ChatConversation,
+    ChatMessage,
+    MoulAgentActivity,
+    MoulChat,
+    MoulPromptInput,
+    MoulStreamingResponse,
+    MoulThinkingIndicator,
+    PromptSubmitDetail,
+    ResponseSource,
+  } from '@moul-dev/web-component'
+
+  // -------------------------------------------------------------------------
+  // Sample data: what Moul's MCP tools return for a small blog.
+  // -------------------------------------------------------------------------
+
+  const COLLECTIONS = [
+    { name: 'posts', type: 'base', records: 128, fields: ['title', 'body', 'status', 'author', 'published_at'] },
+    { name: 'users', type: 'auth', records: 42, fields: ['email', 'name', 'avatar', 'role'] },
+    { name: 'comments', type: 'base', records: 1_204, fields: ['post', 'author', 'body'] },
+  ]
+
+  const RECORDS = [
+    { id: 'rec_8f2k', title: 'Release notes for 2026.11', status: 'published', published_at: '2026-11-13' },
+    { id: 'rec_7d1q', title: 'Moving the admin to web components', status: 'published', published_at: '2026-11-10' },
+    { id: 'rec_6c0p', title: 'Draft: realtime presence', status: 'draft', published_at: null },
+  ]
+
+  const SOURCES: ResponseSource[] = [
+    { title: 'Records API', url: 'https://moul.dev/docs/records', description: 'Listing, filtering and sorting' },
+    { title: 'MCP tools', url: 'https://moul.dev/docs/mcp', description: 'What the server exposes to agents' },
+  ]
+
+  const sleep = (ms: number, signal?: AbortSignal) =>
+    new Promise<void>((resolve, reject) => {
+      const timer = setTimeout(resolve, ms)
+      signal?.addEventListener('abort', () => {
+        clearTimeout(timer)
+        reject(new DOMException('Stopped', 'AbortError'))
+      })
+    })
+
+  /** Splits an answer into the uneven chunks a model streams. */
+  function chunks(text: string): string[] {
+    const out: string[] = []
+    let rest = text
+    while (rest) {
+      const size = 3 + Math.floor(Math.random() * 14)
+      out.push(rest.slice(0, size))
+      rest = rest.slice(size)
+    }
+    return out
+  }
+
+  interface Plan {
+    steps: (AgentStep & { tool?: string; result?: unknown; ms: number })[]
+    answer: string
+    sources?: ResponseSource[]
+  }
+
+  function plan(prompt: string): Plan {
+    const text = prompt.toLowerCase()
+    if (/schema|field|post collection|users collection/.test(text)) {
+      const name = /user/.test(text) ? 'users' : 'posts'
+      const collection = COLLECTIONS.find((c) => c.name === name)!
+      return {
+        steps: [
+          { id: 'plan', title: 'Reading the question', detail: `The schema of the ${name} collection is asked for.`, ms: 600 },
+          { id: 'get', tool: 'get_collection', title: `Read the ${name} schema`, input: { name }, result: { name, type: collection.type, fields: collection.fields.map((f) => ({ name: f, type: f.endsWith('_at') ? 'date' : 'text' })) }, ms: 900 },
+        ],
+        answer: [
+          `The **${name}** collection is a \`${collection.type}\` collection with ${collection.fields.length} fields:`,
+          '',
+          '| Field | Type |',
+          '| :-- | :-- |',
+          ...collection.fields.map((f) => `| \`${f}\` | ${f.endsWith('_at') ? 'date' : 'text'} |`),
+          '',
+          'To add a field, call `create_collection` again with the full field list, or edit it in the admin console.',
+        ].join('\n'),
+      }
+    }
+    if (/record|post|latest|newest|draft/.test(text)) {
+      return {
+        steps: [
+          { id: 'plan', title: 'Reading the question', detail: 'The newest posts are wanted, newest first.', ms: 500 },
+          { id: 'list', tool: 'list_records', title: 'Read the newest posts', input: { collection: 'posts', sort: '-published_at', perPage: 3 }, result: { items: RECORDS, totalItems: 128 }, ms: 1100 },
+        ],
+        answer: [
+          'Here are the three newest posts [1]:',
+          '',
+          ...RECORDS.map((r, i) => `${i + 1}. **${r.title}** — ${r.status === 'draft' ? '_draft_' : `published ${r.published_at}`}`),
+          '',
+          'The same query from code:',
+          '',
+          '```ts',
+          "const posts = await moul.collection('posts').getList(1, 3, {",
+          "  sort: '-published_at',",
+          '})',
+          '```',
+          '',
+          '- [x] Two are published',
+          '- [ ] One is still a draft',
+        ].join('\n'),
+        sources: [SOURCES[0]!],
+      }
+    }
+    if (/collection|table|data/.test(text)) {
+      return {
+        steps: [
+          { id: 'plan', title: 'Reading the question', detail: 'A list of collections, with how many records each holds.', ms: 500 },
+          { id: 'list', tool: 'list_collections', title: 'List the collections', input: {}, result: COLLECTIONS.map(({ name, type }) => ({ name, type })), ms: 800 },
+          { id: 'count', tool: 'list_records', title: 'Count records', input: { collections: COLLECTIONS.map((c) => c.name), perPage: 1 }, result: Object.fromEntries(COLLECTIONS.map((c) => [c.name, c.records])), ms: 900 },
+        ],
+        answer: [
+          `There are **${COLLECTIONS.length} collections**:`,
+          '',
+          '| Collection | Type | Records |',
+          '| :-- | :-- | --: |',
+          ...COLLECTIONS.map((c) => `| \`${c.name}\` | ${c.type} | ${c.records.toLocaleString('en')} |`),
+          '',
+          '`comments` is the largest by far. Ask for a collection by name to see its fields.',
+        ].join('\n'),
+      }
+    }
+    return {
+      steps: [
+        { id: 'plan', title: 'Reading the question', detail: 'A general question about how agents reach Moul.', ms: 700 },
+      ],
+      answer: [
+        'Moul exposes its data to agents through an **MCP server** [2]. An agent can:',
+        '',
+        '- list and read collections with `list_collections` and `get_collection`',
+        '- read and write records with `list_records` and friends [1]',
+        '- check feature flags and the job queue',
+        '',
+        '> Every tool call runs with the permissions of the token the agent holds.',
+        '',
+        'Try asking for your collections, the newest posts, or the schema of `posts`.',
+      ].join('\n'),
+      sources: SOURCES,
+    }
+  }
+
+  /** Plays an agent run: tool steps on `onStep`, then the answer on `onText`. */
+  async function runAgent(
+    prompt: string,
+    signal: AbortSignal,
+    onStep: (step: AgentStep) => void,
+    onText: (chunk: string) => void,
+  ): Promise<Plan> {
+    const run = plan(prompt)
+    for (const step of run.steps) {
+      const startedAt = Date.now()
+      const { result, ms, ...shape } = step
+      onStep({ ...shape, status: 'running', startedAt })
+      await sleep(ms, signal)
+      onStep({ id: step.id, status: 'done', endedAt: Date.now(), ...(step.tool ? { output: result } : {}) })
+    }
+    await sleep(350, signal)
+    for (const chunk of chunks(run.answer)) {
+      onText(chunk)
+      await sleep(25 + Math.random() * 45, signal)
+    }
+    return run
+  }
+
+  // -------------------------------------------------------------------------
+  // Single-element demos
+  // -------------------------------------------------------------------------
+
+  const running = new Map<string, AbortController>()
+
+  async function streamInto(id: string, button: HTMLElement): Promise<void> {
+    const el = document.getElementById(id) as MoulStreamingResponse | null
+    if (!el) return
+    running.get(id)?.abort()
+    const controller = new AbortController()
+    running.set(id, controller)
+    const run = plan('newest posts')
+    el.sources = []
+    el.error = ''
+    el.content = ''
+    el.isStreaming = true
+    button.setAttribute('is-disabled', '')
+    try {
+      await sleep(300, controller.signal)
+      for (const chunk of chunks(run.answer)) {
+        el.appendText(chunk)
+        await sleep(25 + Math.random() * 45, controller.signal)
+      }
+      el.sources = run.sources ?? []
+    } catch {
+      // Stopped: keep what arrived.
+    } finally {
+      el.isStreaming = false
+      button.removeAttribute('is-disabled')
+    }
+  }
+
+  async function runActivity(id: string, button: HTMLElement): Promise<void> {
+    const el = document.getElementById(id) as MoulAgentActivity | null
+    if (!el) return
+    const controller = new AbortController()
+    running.get(id)?.abort()
+    running.set(id, controller)
+    el.steps = []
+    el.isOpen = true
+    button.setAttribute('is-disabled', '')
+    try {
+      await runAgent('which collections are there', controller.signal, (step) => el.push(step), () => {})
+    } catch {
+      // Stopped.
+    } finally {
+      button.removeAttribute('is-disabled')
+    }
+  }
+
+  function seedActivity(): void {
+    for (const el of document.querySelectorAll<MoulAgentActivity>('[data-ai-activity-seed]')) {
+      if (el.steps.length) continue
+      const now = Date.now()
+      el.steps = [
+        { id: 1, title: 'Reading the question', detail: 'A list of collections, with how many records each holds.', startedAt: now - 2600, endedAt: now - 2100 },
+        { id: 2, tool: 'list_collections', title: 'List the collections', input: {}, output: COLLECTIONS.map(({ name, type }) => ({ name, type })), startedAt: now - 2100, endedAt: now - 1300 },
+        { id: 3, tool: 'delete_collection', title: 'Remove the test collection', input: { name: 'scratch' }, status: 'error', error: 'This token may not delete collections.', startedAt: now - 1300, endedAt: now - 1100 },
+      ]
+    }
+  }
+
+  const LABELS = ['Thinking', 'Searching records', 'Reading the schema', 'Writing the answer']
+
+  // -------------------------------------------------------------------------
+  // Chat
+  // -------------------------------------------------------------------------
+
+  interface Thread {
+    conversation: ChatConversation
+    messages: ChatMessage[]
+  }
+
+  let nextId = 1
+  const id = (prefix: string) => `${prefix}-${nextId++}`
+
+  function setupChat(chat: MoulChat): void {
+    if (chat.dataset.aiReady) return
+    chat.dataset.aiReady = ''
+    const threads: Thread[] = [
+      {
+        conversation: { id: 'c-schema', title: 'Fields on posts', group: 'Yesterday' },
+        messages: [
+          { id: 'h1', role: 'user', content: 'What fields does the posts collection have?' },
+          {
+            id: 'h2',
+            role: 'assistant',
+            content: plan('schema of posts').answer,
+            steps: [
+              { id: 's1', tool: 'get_collection', title: 'Read the posts schema', input: { name: 'posts' }, output: { name: 'posts', fields: COLLECTIONS[0]!.fields }, duration: 640 },
+            ],
+          },
+        ],
+      },
+    ]
+    let current: Thread | null = null
+    let controller: AbortController | null = null
+
+    const render = () => {
+      chat.conversations = threads.map((t) => t.conversation)
+      chat.conversationId = current?.conversation.id ?? ''
+      chat.messages = current ? [...current.messages] : []
+    }
+
+    const sync = () => {
+      if (current) current.messages = chat.messages
+    }
+
+    async function answer(prompt: string, assistantId: string): Promise<void> {
+      controller?.abort()
+      controller = new AbortController()
+      const signal = controller.signal
+      try {
+        const run = await runAgent(
+          prompt,
+          signal,
+          (step) => chat.pushSteps(assistantId, step),
+          (chunk) => chat.appendText(assistantId, chunk),
+        )
+        chat.updateMessage(assistantId, { status: 'done', sources: run.sources })
+      } catch {
+        const message = chat.messages.find((m) => m.id === assistantId)
+        chat.updateMessage(assistantId, {
+          status: 'done',
+          content: message?.content ? `${message.content}\n\n_Stopped._` : '_Stopped before answering._',
+          steps: message?.steps?.map((s) => (s.status === 'running' ? { ...s, status: 'error', error: 'Stopped' } : s)),
+        })
+      } finally {
+        sync()
+      }
+    }
+
+    chat.addEventListener('promptsubmit', (event) => {
+      const { value } = (event as CustomEvent<PromptSubmitDetail>).detail
+      if (!current) {
+        current = {
+          conversation: { id: id('c'), title: value.slice(0, 40), group: 'Today' },
+          messages: [],
+        }
+        threads.unshift(current)
+      }
+      const assistantId = id('a')
+      chat.push(
+        { id: id('u'), role: 'user', content: value },
+        { id: assistantId, role: 'assistant', status: 'pending' },
+      )
+      sync()
+      chat.conversations = threads.map((t) => t.conversation)
+      chat.conversationId = current.conversation.id
+      void answer(value, assistantId)
+    })
+
+    chat.addEventListener('stop', () => controller?.abort())
+
+    chat.addEventListener('regenerate', (event) => {
+      const { messageId } = (event as CustomEvent<{ messageId: string }>).detail
+      const index = chat.messages.findIndex((m) => m.id === messageId)
+      const prompt = [...chat.messages.slice(0, index)].reverse().find((m) => m.role === 'user')
+      if (!prompt) return
+      chat.updateMessage(messageId, { content: '', steps: [], sources: [], status: 'pending', feedback: '' })
+      void answer(prompt.content ?? '', messageId)
+    })
+
+    chat.addEventListener('conversationselect', (event) => {
+      const { id: chosen } = (event as CustomEvent<{ id: string }>).detail
+      controller?.abort()
+      current = threads.find((t) => t.conversation.id === chosen) ?? null
+      render()
+    })
+
+    chat.addEventListener('conversationcreate', () => {
+      controller?.abort()
+      current = null
+      render()
+    })
+
+    chat.suggestions = [
+      { label: 'Which collections are there?', description: 'list_collections' },
+      { label: 'Show me the newest posts', description: 'list_records' },
+      { label: 'What fields does posts have?', description: 'get_collection' },
+      { label: 'How do agents reach Moul?', description: 'With sources' },
+    ]
+    chat.placeholders = ['Ask about your collections…', 'Find the newest posts…', 'Describe a schema…']
+    chat.models = [
+      { value: 'sonnet', label: 'Sonnet', description: 'Fast and capable' },
+      { value: 'opus', label: 'Opus', description: 'For harder questions' },
+    ]
+    chat.model = 'sonnet'
+    render()
+  }
+
+  // -------------------------------------------------------------------------
+  // Wiring
+  // -------------------------------------------------------------------------
+
+  document.addEventListener('click', (event) => {
+    const button = (event.target as Element | null)?.closest?.<HTMLElement>(
+      '[data-ai-stream], [data-ai-run], [data-ai-labels]',
+    )
+    if (!button || button.hasAttribute('is-disabled')) return
+    const { aiStream, aiRun, aiLabels } = button.dataset
+    if (aiStream) void streamInto(aiStream, button)
+    if (aiRun) void runActivity(aiRun, button)
+    if (aiLabels) {
+      const el = document.getElementById(aiLabels) as MoulThinkingIndicator | null
+      if (el) el.label = LABELS[(LABELS.indexOf(el.label) + 1) % LABELS.length]!
+    }
+  })
+
+  function setupLogs(): void {
+    for (const input of document.querySelectorAll<MoulPromptInput>('[data-ai-log]')) {
+      if (input.dataset.aiLogReady) continue
+      input.dataset.aiLogReady = ''
+      const output = document.querySelector<HTMLOutputElement>(
+        `[data-ai-log-for="${input.dataset.aiLog}"]`,
+      )
+      const say = (text: string) => {
+        if (output) output.textContent = text
+      }
+      input.addEventListener('promptsubmit', (event) => {
+        const { value, attachments, model } = (event as CustomEvent<PromptSubmitDetail>).detail
+        const files = attachments.length ? ` with ${attachments.map((a) => a.name).join(', ')}` : ''
+        say(`promptsubmit: “${value}”${files}${model ? ` · model ${model}` : ''}`)
+      })
+      input.addEventListener('modelchange', (event) => say(`modelchange: ${(event as CustomEvent).detail.value}`))
+      input.addEventListener('stop', () => say('stop'))
+      input.addEventListener('attachmentreject', (event) => {
+        const { file, reason } = (event as CustomEvent).detail
+        say(`attachmentreject: ${file.name} (${reason})`)
+      })
+    }
+  }
+
+  function setup(): void {
+    seedActivity()
+    setupLogs()
+    for (const chat of document.querySelectorAll<MoulChat>('[data-ai-chat]')) setupChat(chat)
+  }
+
+  Promise.all(
+    ['moul-chat', 'moul-agent-activity', 'moul-prompt-input'].map((tag) =>
+      customElements.whenDefined(tag),
+    ),
+  ).then(setup)
+  document.addEventListener('astro:page-load', setup)
+</script>

@@ -264,9 +264,11 @@ save.addEventListener('press', () => {
         name: 'TextField',
         docs: '/docs/components/textfield',
         summary:
-          'Form-associated text input with label, description, and error message.',
+          'Form-associated text input with label, description, and error message. `placeholders` rotates the placeholder through hints; `vanish()` or `vanish-on-submit` scatters the text away and clears it after its form submits.',
         tags: ['moul-text-field'],
-        snippet: `<moul-text-field name="email" type="email" label="Email" placeholder="you@example.com" is-required></moul-text-field>`,
+        snippet: `<moul-text-field name="email" type="email" label="Email" placeholder="you@example.com" is-required></moul-text-field>
+<moul-text-field name="q" label="Search" vanish-on-submit></moul-text-field>`,
+        script: `document.querySelector('[name="q"]').placeholders = ['Search collections…', 'Find a record…']`,
       },
       {
         name: 'NumberField',
@@ -1028,6 +1030,78 @@ graph.addEventListener('node-action', (e) => console.log(e.detail.id))`,
   <moul-timeline-item heading="Out for delivery" meta="Today" status="current">Arrives 2–4 pm.</moul-timeline-item>
   <moul-timeline-item heading="Delivered" status="upcoming"></moul-timeline-item>
 </moul-timeline>`,
+      },
+    ],
+  },
+  {
+    title: 'AI Kit',
+    families: [
+      {
+        name: 'AgentActivity',
+        docs: '/docs/components/agentactivity',
+        summary:
+          "An AI agent's reasoning steps and tool calls as a live compact timeline with status and timing; a tool call's input and output open as highlighted JSON, and the header sums the run up and folds it away.",
+        tags: ['moul-agent-activity'],
+        snippet: `<moul-agent-activity id="activity" is-live></moul-agent-activity>`,
+        script: `const activity = document.querySelector('#activity')
+activity.push({ id: 'call_1', tool: 'list_records', input: { collection: 'posts' }, status: 'running', startedAt: Date.now() })
+activity.push({ id: 'call_1', status: 'done', output: { items: [] }, endedAt: Date.now() })`,
+      },
+      {
+        name: 'Chat',
+        docs: '/docs/components/chat',
+        summary:
+          'A complete AI chat screen: conversation history sidebar, user bubbles, assistant turns with tool calls, a thinking indicator and streamed Markdown answers, suggestions while empty, and a prompt-input composer. It calls no model itself: listen for `promptsubmit` and feed replies back with `push()`, `pushSteps()`, `appendText()` and `updateMessage()`.',
+        tags: ['moul-chat'],
+        snippet: `<moul-chat id="chat" allow-attachments>
+  <span slot="footer">Answers can be wrong. Check important facts.</span>
+</moul-chat>`,
+        script: `const chat = document.querySelector('#chat')
+chat.suggestions = ['Which collections are there?']
+chat.addEventListener('promptsubmit', async (e) => {
+  const reply = crypto.randomUUID()
+  chat.push({ id: crypto.randomUUID(), role: 'user', content: e.detail.value }, { id: reply, role: 'assistant', status: 'pending' })
+  for await (const part of streamAgent(e.detail.value)) {
+    if (part.type === 'tool_call') chat.pushSteps(reply, { id: part.id, tool: part.name, input: part.input, status: 'running' })
+    if (part.type === 'tool_result') chat.pushSteps(reply, { id: part.id, output: part.output, status: 'done' })
+    if (part.type === 'text') chat.appendText(reply, part.text)
+  }
+  chat.updateMessage(reply, { status: 'done' })
+})
+chat.addEventListener('stop', () => controller.abort())`,
+      },
+      {
+        name: 'PromptInput',
+        docs: '/docs/components/promptinput',
+        summary:
+          'Chat composer: auto-growing textarea where Enter sends (IME-safe, Shift+Enter for a new line), Arrow Up recalls history, a model picker, file attachments by button, paste or drop with optional uploads, rotating placeholder hints, and a send button that becomes Stop while `is-generating`.',
+        tags: ['moul-prompt-input'],
+        snippet: `<moul-prompt-input id="composer" allow-attachments accept="image/*,.pdf"></moul-prompt-input>`,
+        script: `const composer = document.querySelector('#composer')
+composer.models = [{ value: 'sonnet', label: 'Sonnet' }, { value: 'opus', label: 'Opus' }]
+composer.placeholders = ['Ask about your collections…', 'Summarise errors…']
+composer.addEventListener('promptsubmit', (e) => send(e.detail.value, e.detail.attachments, e.detail.model))
+composer.addEventListener('stop', () => controller.abort())`,
+      },
+      {
+        name: 'StreamingResponse',
+        docs: '/docs/components/streamingresponse',
+        summary:
+          "A model's Markdown answer that reveals smoothly as it streams, with headings, lists, tables, code blocks, `[n]` citations linked to `sources`, and copy, regenerate and feedback actions once done. Rendered as text, never HTML; images become links and only http, https, mailto and relative links are kept.",
+        tags: ['moul-streaming-response'],
+        snippet: `<moul-streaming-response id="answer" is-streaming></moul-streaming-response>`,
+        script: `const answer = document.querySelector('#answer')
+for await (const chunk of stream) answer.appendText(chunk)
+answer.isStreaming = false
+answer.sources = [{ title: 'Records API', url: 'https://moul.dev/docs/records' }]`,
+      },
+      {
+        name: 'ThinkingIndicator',
+        docs: '/docs/components/thinkingindicator',
+        summary:
+          'Small canvas particle orb with a shimmering label, in a polite `role="status"`, shown while a model works; change `label` as the work moves on.',
+        tags: ['moul-thinking-indicator'],
+        snippet: `<moul-thinking-indicator label="Searching records"></moul-thinking-indicator>`,
       },
     ],
   },
