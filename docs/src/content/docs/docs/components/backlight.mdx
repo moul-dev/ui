@@ -1,0 +1,93 @@
+---
+title: Backlight
+description: A glow behind an image or video in the media's own colours.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import LandingKitDemo from '@/components/demos/LandingKitDemo.astro';
+
+`<moul-backlight>` puts a glow behind an image or a video in the media's own colours, as if the screen lit the wall behind it. A sunset glows pink and gold; a product video glows in its brand colours, and the glow changes as the video plays.
+
+<ComponentPreview stack minHeight="320px">
+  <moul-backlight style="margin-block: 2rem">
+    <div role="img" aria-label="A sun setting over the sea in violet, pink and gold" style="width: min(24rem, 70vw); aspect-ratio: 16 / 9; border-radius: 1rem; background: radial-gradient(circle at 50% 62%, var(--color-chart-2) 0 11%, transparent 12%), linear-gradient(to bottom, var(--color-chart-4), var(--color-chart-3) 62%, var(--color-chart-6) 62.5%, var(--color-chart-5))"></div>
+  </moul-backlight>
+  <LandingKitDemo />
+</ComponentPreview>
+
+It lives in the effects entry, with the rest of the landing kit:
+
+```js
+import '@moul-dev/web-component/effects'
+```
+
+```html
+<moul-backlight>
+  <img src="/sunset.jpg" alt="A sun setting over the sea" width="1280" height="720" />
+</moul-backlight>
+```
+
+## How it works
+
+An SVG filter in the element's shadow root blurs a copy of the media, strengthens its colours and draws the media over it. Because it is a filter, not a copy made once, it follows whatever the media shows: a `<video>` glows frame by frame, and so does a `<canvas>`. Put one `<img>`, `<picture>`, `<video>` or `<canvas>` inside, and the element fits it to its own width and keeps its aspect ratio. Any other element works too, such as a `<div>` painted with a gradient, and is left at its own size.
+
+```html
+<moul-backlight blur="32">
+  <video src="/tour.mp4" autoplay muted loop playsinline aria-label="A tour of the editor"></video>
+</moul-backlight>
+```
+
+A blur over a large, playing video costs the browser some work on every frame. Keep the video no larger than it needs to be, and test on the slowest device you support.
+
+## Blur and saturation
+
+`blur` is how far the glow spreads, as the blur's standard deviation in pixels, from 0 to 80 (20 by default). `saturation` is how strong the glow's colours are: 1 keeps the media's own, higher is more vivid and 0 is grey, from 0 to 10 (2 by default).
+
+<ComponentPreview minHeight="300px">
+  <div class="demo-row" style="gap: 4rem; padding-block: 3.5rem">
+    <div class="demo-stack" style="align-items: center">
+      <moul-backlight blur="8" saturation="1">
+        <div role="img" aria-label="A turquoise bay" style="width: 12rem; aspect-ratio: 4 / 3; border-radius: 0.75rem; background: linear-gradient(to bottom, var(--color-chart-5), var(--color-accent) 60%, var(--color-chart-2) 61%)"></div>
+      </moul-backlight>
+      <span class="demo-label">blur 8, saturation 1</span>
+    </div>
+    <div class="demo-stack" style="align-items: center">
+      <moul-backlight blur="32" saturation="3">
+        <div role="img" aria-label="A turquoise bay" style="width: 12rem; aspect-ratio: 4 / 3; border-radius: 0.75rem; background: linear-gradient(to bottom, var(--color-chart-5), var(--color-accent) 60%, var(--color-chart-2) 61%)"></div>
+      </moul-backlight>
+      <span class="demo-label">blur 32, saturation 3</span>
+    </div>
+  </div>
+</ComponentPreview>
+
+```html
+<moul-backlight blur="8" saturation="1">…</moul-backlight>
+<moul-backlight blur="32" saturation="3">…</moul-backlight>
+```
+
+In script the `blur` attribute is the `glowBlur` property, because `blur()` is already a method of every element.
+
+## Room around it
+
+The glow reaches about three times `blur` pixels past the media: 60 pixels at the default. Leave that much space around the element, and keep it out of containers with `overflow: hidden` close to its edges, or the glow is cut off there. The glow shows on light pages as a pale halo and on dark pages as a bright one.
+
+## Accessibility
+
+`<moul-backlight>` is never focusable and adds no role. The media keeps its own alt text, captions and controls, so give an image real `alt` text and a video its captions as usual. The glow is decoration and is not exposed to screen readers.
+
+The element does not animate. A video's glow changes as the video plays, which is the video's own motion; give a video that plays by itself a way to pause it, and that stills the glow too. Where the system forces its own colours, as in Windows high contrast mode, there is no glow.
+
+## Attributes and properties
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `blur` | `glowBlur` | `number`, 0 to 80 | `20` |
+| `saturation` | `saturation` | `number`, 0 to 10 | `2` |
+
+| Slot | Description |
+| :-- | :-- |
+| (default) | The image or video. |
+
+| Part | Description |
+| :-- | :-- |
+| `base` | The wrapper the filter is drawn on, around the media. |

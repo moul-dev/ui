@@ -45,6 +45,95 @@ import ComponentPreview from '@/components/ComponentPreview.astro';
 </div>
 ```
 
+## Effects
+
+`effect` adds light to a card, for landing pages and feature sections. It takes a space-separated list, so effects combine, and a name it does not know is ignored.
+
+- `spotlight`: a soft light follows a mouse or pen across the card, under its content. It fades in when the pointer arrives and out where it leaves. A finger does not show it.
+- `glare`: a band of light sweeps across the card once when the pointer arrives.
+- `glow`: a gradient ring runs round the edge and a coloured glow sits outside the card, and both turn slowly. The glow pauses while the card is off screen.
+
+<ComponentPreview backdrop="page">
+<div class="demo-row" style="align-items: stretch; gap: 2rem">
+  <moul-card effect="spotlight" style="width: 15rem; min-height: 9rem">
+    <moul-card-header><strong>Spotlight</strong></moul-card-header>
+    <moul-card-body>Move the pointer across this card.</moul-card-body>
+  </moul-card>
+  <moul-card effect="glare" style="width: 15rem; min-height: 9rem">
+    <moul-card-header><strong>Glare</strong></moul-card-header>
+    <moul-card-body>Point at this card to sweep a band of light across it.</moul-card-body>
+  </moul-card>
+  <moul-card effect="glow" style="width: 15rem; min-height: 9rem">
+    <moul-card-header><strong>Glow</strong></moul-card-header>
+    <moul-card-body>A ring and a soft glow in the accent and a chart colour.</moul-card-body>
+  </moul-card>
+</div>
+</ComponentPreview>
+
+```html
+<moul-card effect="spotlight">…</moul-card>
+<moul-card effect="glare">…</moul-card>
+<moul-card effect="glow">…</moul-card>
+```
+
+Effects combine, and they work with every variant and with `is-interactive`. On an interactive card, keyboard focus shows the spotlight at the centre and sweeps the glare, as the pointer does.
+
+<ComponentPreview backdrop="page">
+<div class="demo-row" style="align-items: stretch; gap: 2rem">
+  <moul-card effect="spotlight glow" is-interactive style="width: 16rem; min-height: 10rem">
+    <moul-card-header><strong>Spotlight and glow</strong></moul-card-header>
+    <moul-card-body>Interactive: tab to it to see the light at the centre.</moul-card-body>
+  </moul-card>
+  <moul-card effect="glare" variant="solid" tone="accent" style="width: 16rem; min-height: 10rem">
+    <moul-card-header><strong>Glare on a solid card</strong></moul-card-header>
+    <moul-card-body>On a filled card the band is white, in both themes.</moul-card-body>
+  </moul-card>
+</div>
+</ComponentPreview>
+
+```html
+<moul-card effect="spotlight glow" is-interactive>…</moul-card>
+<moul-card effect="glare" variant="solid" tone="accent">…</moul-card>
+```
+
+### Colours and timing
+
+Each effect has CSS properties for its colour, size and speed. The defaults come from the theme tokens, so they follow light and dark themes and your `--brand-hue`. A white band cannot show on a white card, so in the light theme the glare is a pale accent; in the dark theme, and on `solid` and `shadow` cards, it is white.
+
+<ComponentPreview backdrop="page">
+<div class="demo-row" style="align-items: stretch; gap: 2rem">
+  <moul-card effect="glow" style="width: 16rem; min-height: 9rem; --card-glow-color-1: var(--color-success); --card-glow-color-2: var(--color-chart-5); --card-glow-duration: 3s">
+    <moul-card-header><strong>All checks passed</strong></moul-card-header>
+    <moul-card-body>A glow in the success and teal chart colours, turning twice as fast.</moul-card-body>
+  </moul-card>
+  <moul-card effect="spotlight" style="width: 16rem; min-height: 9rem; --card-spotlight-size: 10rem; --card-spotlight-color: color-mix(in oklab, var(--color-chart-3) 30%, transparent)">
+    <moul-card-header><strong>A smaller light</strong></moul-card-header>
+    <moul-card-body>A tighter spotlight in a warmer colour.</moul-card-body>
+  </moul-card>
+</div>
+</ComponentPreview>
+
+```css
+moul-card.status {
+  --card-glow-color-1: var(--color-success);
+  --card-glow-color-2: var(--color-chart-5);
+  --card-glow-duration: 3s;
+}
+
+moul-card.feature {
+  --card-spotlight-size: 10rem;
+  --card-spotlight-color: color-mix(in oklab, var(--color-chart-3) 30%, transparent);
+}
+```
+
+The glow lies outside the card, so leave room around it: a gap of about 2rem between glowing cards, and no clipping container right at its edge.
+
+### Accessibility
+
+The effect layers are empty and hidden from screen readers, so a card reads and behaves the same with or without them: an interactive card keeps its role, its name and its keys. The light is decoration, so keep text contrast checked against the card without it.
+
+Under `prefers-reduced-motion: reduce` the spotlight shows and hides at once and rests at the centre instead of following the pointer, the glare is a still sheen across the middle while the card is hovered or focused, and the glow holds still. Where the system forces its own colours, as in Windows high contrast mode, and when printing, no effect is drawn.
+
 ## API reference
 
 ### `<moul-card>`
@@ -54,6 +143,7 @@ import ComponentPreview from '@/components/ComponentPreview.astro';
 | `tone` | `tone` | `'primary' \| 'accent' \| 'success' \| 'warning' \| 'error'` | `'primary'` |
 | `variant` | `variant` | `'solid' \| 'flat' \| 'shadow' \| 'bordered' \| 'glass'` | unset (neutral surface) |
 | `is-interactive` | `isInteractive` | `boolean` | `false` |
+| `effect` | `effect` | `string`: a space-separated list of `'spotlight'`, `'glare'` and `'glow'` | unset (no effect) |
 
 | Event | Type |
 | :-- | :-- |
@@ -67,6 +157,20 @@ import ComponentPreview from '@/components/ComponentPreview.astro';
 | `footer` | — |
 
 **CSS parts:** `header`, `body`, `content`, `footer`
+
+| CSS property | Description | Default |
+| :-- | :-- | :-- |
+| `--card-spotlight-color` | The light at the centre of the `spotlight`. | the accent at 16% (light theme) or 28% (dark theme) |
+| `--card-spotlight-size` | How far the `spotlight` reaches from the pointer, as a radius. | `20rem` |
+| `--card-glare-color` | The band of the `glare`. | the accent at 14% (light theme), white at 14% (dark theme), white at 30% on `solid` and `shadow` cards |
+| `--card-glare-duration` | How long the `glare` takes to cross. | `700ms` |
+| `--card-glow-color-1` | The first `glow` colour. | `var(--color-accent)` |
+| `--card-glow-color-2` | The second `glow` colour. | `var(--color-chart-4)` |
+| `--card-glow-size` | The blur of the `glow` outside the card. | `1.5rem` |
+| `--card-glow-width` | The width of the `glow` ring on the edge. | `1.5px` |
+| `--card-glow-duration` | One turn of the `glow`. | `6s` |
+
+The `CardEffect` type (`'spotlight' | 'glare' | 'glow'`) is exported for TypeScript.
 
 ### `<moul-card-header>`
 

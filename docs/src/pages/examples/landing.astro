@@ -1,10 +1,11 @@
 ---
 /**
- * The Phase 5 gate: a landing page with a hero, a logo row, a features grid
- * and a call to action, built from Moul elements alone. The page loads the
- * main and effects entries and carries no animation code of its own: no
- * keyframes, no transitions, no script beyond the two imports. Every piece
- * of motion is an element or an attribute.
+ * The Phase 5 and Phase 6 gates: a landing page with a hero, a logo row, a
+ * features grid and a call to action, built from Moul elements alone, where
+ * every section also has a background or light drawn in CSS and SVG. The
+ * page loads the main and effects entries and carries no animation code of
+ * its own: no keyframes, no transitions, no script beyond the two imports.
+ * Every piece of motion and light is an element or an attribute.
  */
 import '@moul-dev/web-component/style.css'
 
@@ -51,6 +52,9 @@ const frameworks = [
 
     <main>
       <section class="hero" aria-labelledby="hero-title">
+        <moul-spotlight class="layer"></moul-spotlight>
+        <moul-pattern class="layer" variant="grid" fade="radial" is-animated count="10"></moul-pattern>
+
         <a class="pill" href="/docs/landing-kit/">
           <moul-gradient-text effect="shine">New: the landing kit</moul-gradient-text>
           <span aria-hidden="true">→</span>
@@ -78,30 +82,35 @@ const frameworks = [
         </moul-reveal>
 
         <moul-reveal delay="600" distance="40" class="showcase">
-          <moul-browser-frame url="moul.dev/admin">
-            <div class="screen">
-              <div class="screen-stats">
-                <moul-stat label="Requests" value="128430" trend="up" trend-value="+8%"></moul-stat>
-                <moul-stat label="Error rate" value="0.4" suffix="%" trend="down" trend-value="-0.2%" tone="success"></moul-stat>
-                <moul-stat label="p95 latency" value="182" suffix=" ms"></moul-stat>
+          <moul-border-beam>
+            <moul-browser-frame url="moul.dev/admin">
+              <div class="screen">
+                <div class="screen-stats">
+                  <moul-stat label="Requests" value="128430" trend="up" trend-value="+8%"></moul-stat>
+                  <moul-stat label="Error rate" value="0.4" suffix="%" trend="down" trend-value="-0.2%" tone="success"></moul-stat>
+                  <moul-stat label="p95 latency" value="182" suffix=" ms"></moul-stat>
+                </div>
+                <moul-terminal label="zsh">
+                  <moul-terminal-line is-command>bun add @moul-dev/web-component</moul-terminal-line>
+                  <moul-terminal-line tone="success">installed @moul-dev/web-component</moul-terminal-line>
+                </moul-terminal>
               </div>
-              <moul-terminal label="zsh">
-                <moul-terminal-line is-command>bun add @moul-dev/web-component</moul-terminal-line>
-                <moul-terminal-line tone="success">installed @moul-dev/web-component</moul-terminal-line>
-              </moul-terminal>
-            </div>
-          </moul-browser-frame>
-          <moul-phone-frame class="phone">
-            <div class="phone-screen">
-              <strong>Today</strong>
-              <moul-stat label="Sign-ups" value="342"></moul-stat>
-              <moul-stat label="Revenue" value="4820" prefix="$"></moul-stat>
-            </div>
-          </moul-phone-frame>
+            </moul-browser-frame>
+          </moul-border-beam>
+          <moul-backlight class="phone" blur="28">
+            <moul-phone-frame>
+              <moul-aurora variant="blobs" class="phone-screen">
+                <strong>Today</strong>
+                <moul-stat label="Sign-ups" value="342"></moul-stat>
+                <moul-stat label="Revenue" value="4820" prefix="$"></moul-stat>
+              </moul-aurora>
+            </moul-phone-frame>
+          </moul-backlight>
         </moul-reveal>
       </section>
 
       <section class="logos" aria-labelledby="logos-title">
+        <moul-pattern class="layer" variant="dots" fade="edges"></moul-pattern>
         <h2 id="logos-title" class="eyebrow">Works wherever HTML works</h2>
         <moul-marquee fade-edges pause-on-hover>
           {frameworks.map((name) => <span class="wordmark">{name}</span>)}
@@ -109,6 +118,7 @@ const frameworks = [
       </section>
 
       <section class="features" aria-labelledby="features-title">
+        <moul-light-rays class="layer" count="9"></moul-light-rays>
         <moul-reveal>
           <h2 id="features-title">
             Everything a product page needs,
@@ -118,7 +128,7 @@ const frameworks = [
 
         <moul-reveal stagger="90">
           <moul-bento-grid columns="3">
-            <moul-bento-card col-span="2">
+            <moul-bento-card col-span="2" effect="spotlight glow">
               <div slot="visual" class="visual visual-code" aria-hidden="true">
                 <moul-code-block language="html">{`<moul-text-entrance by="words">
   Web components for
@@ -128,7 +138,7 @@ const frameworks = [
               Text effects, reveals and marquees are attributes, not scripts.
               <moul-link slot="action" href="/docs/landing-kit/">See the kit →</moul-link>
             </moul-bento-card>
-            <moul-bento-card row-span="2">
+            <moul-bento-card row-span="2" effect="spotlight">
               <div slot="visual" class="visual visual-phone" aria-hidden="true">
                 <moul-phone-frame variant="android" class="mini-phone">
                   <div class="phone-screen"><moul-stat label="Orders" value="58"></moul-stat></div>
@@ -138,12 +148,25 @@ const frameworks = [
               Show the product in context with frames drawn in CSS.
               <moul-link slot="action" href="/docs/components/phoneframe/">Frames →</moul-link>
             </moul-bento-card>
-            <moul-bento-card>
+            <moul-bento-card effect="spotlight">
+              <moul-ripple slot="visual" class="visual visual-ripple" count="4" aria-hidden="true">
+                <span class="ripple-mark">Aa</span>
+              </moul-ripple>
               <h3 slot="heading">Reduced motion, always</h3>
               Every effect has a still version for readers who ask for less.
               <moul-link slot="action" href="/docs/landing-kit/#accessibility">Accessibility →</moul-link>
             </moul-bento-card>
-            <moul-bento-card>
+            <moul-bento-card effect="spotlight">
+              <div slot="visual" class="visual visual-orbit" aria-hidden="true">
+                <moul-orbit radius="52" duration="24" show-path>
+                  <span class="swatch swatch-1"></span>
+                  <span class="swatch swatch-2"></span>
+                  <span class="swatch swatch-3"></span>
+                  <span class="swatch swatch-4"></span>
+                  <span class="swatch swatch-5"></span>
+                  <span slot="center" class="swatch swatch-accent"></span>
+                </moul-orbit>
+              </div>
               <h3 slot="heading">
                 <moul-scramble>Light and dark</moul-scramble>
               </h3>
@@ -155,15 +178,18 @@ const frameworks = [
       </section>
 
       <section class="cta" aria-labelledby="cta-title">
+        <moul-perspective-grid class="layer"></moul-perspective-grid>
         <moul-reveal>
           <h2 id="cta-title">
             Ship your <moul-highlight effect="underline" tone="primary">landing page</moul-highlight> this week
           </h2>
         </moul-reveal>
         <moul-reveal delay="150">
-          <p class="cta-command">
-            <moul-typewriter text="bun add @moul-dev/web-component"></moul-typewriter>
-          </p>
+          <moul-shine-border class="command">
+            <p class="cta-command">
+              <moul-typewriter text="bun add @moul-dev/web-component"></moul-typewriter>
+            </p>
+          </moul-shine-border>
         </moul-reveal>
         <moul-reveal delay="300" class="actions">
           <moul-button size="lg" effect="rainbow" is-pulsing>Start building</moul-button>
@@ -184,7 +210,7 @@ const frameworks = [
 </html>
 
 <style is:global>
-  /* Layout and type only. Motion comes from the elements. */
+  /* Layout and type only. Motion and light come from the elements. */
   html {
     background: var(--color-background);
     color: var(--color-fg);
@@ -216,10 +242,22 @@ const frameworks = [
     text-decoration: none;
   }
 
+  /* Sections run the full width, so their backgrounds do, while the padding
+     keeps the content in a 72rem column. Each holds its background layers. */
   main > section {
-    max-width: 72rem;
-    margin: 0 auto;
-    padding: var(--spacing-16, 4rem) var(--spacing-6, 1.5rem);
+    position: relative;
+    isolation: isolate;
+    padding: var(--spacing-16, 4rem) max(var(--spacing-6, 1.5rem), (100% - 72rem) / 2);
+  }
+
+  .layer {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+  }
+
+  main > section + section {
+    border-top: 1px solid var(--color-border-subtle);
   }
 
   .hero {
@@ -297,6 +335,7 @@ const frameworks = [
 
   .phone-screen {
     display: grid;
+    box-sizing: border-box;
     align-content: start;
     gap: var(--spacing-3, 0.75rem);
     height: 100%;
@@ -339,6 +378,48 @@ const frameworks = [
     align-items: end;
   }
 
+  .visual-ripple {
+    min-height: 12rem;
+    padding: 0;
+    overflow: hidden;
+    --ripple-size: 5rem;
+    --ripple-gap: 2.5rem;
+    --ripple-color: var(--color-accent);
+  }
+
+  .ripple-mark {
+    display: grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    background: var(--color-accent);
+    color: var(--color-accent-fg);
+    font-weight: 700;
+  }
+
+  .visual-orbit {
+    padding: var(--spacing-6, 1.5rem);
+    --orbit-item-size: 1.25rem;
+  }
+
+  .swatch {
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 1px var(--color-border);
+  }
+
+  .swatch-1 { background: var(--color-chart-1); }
+  .swatch-2 { background: var(--color-chart-2); }
+  .swatch-3 { background: var(--color-chart-3); }
+  .swatch-4 { background: var(--color-chart-4); }
+  .swatch-5 { background: var(--color-chart-5); }
+
+  .swatch-accent {
+    width: 2.5rem;
+    height: 2.5rem;
+    background: var(--color-accent);
+  }
+
   .visual-code moul-code-block {
     width: 100%;
   }
@@ -356,7 +437,13 @@ const frameworks = [
     text-align: center;
   }
 
+  .command {
+    display: inline-block;
+    border-radius: 999px;
+  }
+
   .cta-command {
+    padding: var(--spacing-3, 0.75rem) var(--spacing-6, 1.5rem);
     margin: 0;
     color: var(--color-fg-subtle);
     font-family: var(--font-family-mono, monospace);

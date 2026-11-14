@@ -1,0 +1,123 @@
+---
+title: Focus Group
+description: Tiles where the one under the pointer or keyboard focus stays sharp and the others blur.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import LandingKitDemo from '@/components/demos/LandingKitDemo.astro';
+
+`<moul-focus-group>` holds a set of tiles, such as photos or cards. When the pointer is over one tile, or keyboard focus is inside one, that tile stays sharp and every other tile blurs, dims and shrinks a little, so the eye goes to the one in play. With no tile active, including while the pointer is over the gap between tiles, they are all sharp.
+
+<ComponentPreview align="stretch">
+  <moul-focus-group>
+    <a href="#angkor" style="display: grid; gap: 0.5rem; color: inherit; text-decoration: none">
+      <div aria-hidden="true" style="aspect-ratio: 4 / 3; border-radius: 1rem; background: radial-gradient(circle at 70% 30%, var(--color-chart-2) 0 10%, transparent 11%), linear-gradient(to bottom, var(--color-chart-4), var(--color-chart-3) 70%, var(--color-chart-6))"></div>
+      <strong>Angkor Wat at dawn</strong>
+    </a>
+    <a href="#koh-rong" style="display: grid; gap: 0.5rem; color: inherit; text-decoration: none">
+      <div aria-hidden="true" style="aspect-ratio: 4 / 3; border-radius: 1rem; background: linear-gradient(to bottom, var(--color-chart-5), var(--color-accent) 60%, var(--color-chart-2) 61%)"></div>
+      <strong>Koh Rong</strong>
+    </a>
+    <a href="#mondulkiri" style="display: grid; gap: 0.5rem; color: inherit; text-decoration: none">
+      <div aria-hidden="true" style="aspect-ratio: 4 / 3; border-radius: 1rem; background: linear-gradient(160deg, var(--color-chart-7), var(--color-chart-5) 55%, var(--color-chart-7))"></div>
+      <strong>Mondulkiri hills</strong>
+    </a>
+    <a href="#kampot" style="display: grid; gap: 0.5rem; color: inherit; text-decoration: none">
+      <div aria-hidden="true" style="aspect-ratio: 4 / 3; border-radius: 1rem; background: linear-gradient(to top, var(--color-chart-6), var(--color-chart-2) 45%, var(--color-chart-4))"></div>
+      <strong>Kampot river</strong>
+    </a>
+    <a href="#kep" style="display: grid; gap: 0.5rem; color: inherit; text-decoration: none">
+      <div aria-hidden="true" style="aspect-ratio: 4 / 3; border-radius: 1rem; background: radial-gradient(circle at 30% 80%, var(--color-chart-3) 0 18%, transparent 19%), linear-gradient(to bottom, var(--color-chart-1), var(--color-chart-5))"></div>
+      <strong>Kep crab market</strong>
+    </a>
+    <a href="#battambang" style="display: grid; gap: 0.5rem; color: inherit; text-decoration: none">
+      <div aria-hidden="true" style="aspect-ratio: 4 / 3; border-radius: 1rem; background: linear-gradient(120deg, var(--color-chart-2), var(--color-chart-6) 50%, var(--color-chart-3))"></div>
+      <strong>Battambang bamboo train</strong>
+    </a>
+  </moul-focus-group>
+  <LandingKitDemo />
+</ComponentPreview>
+
+It lives in the effects entry, with the rest of the landing kit:
+
+```js
+import '@moul-dev/web-component/effects'
+```
+
+```html
+<moul-focus-group>
+  <a href="/places/angkor"><img src="/angkor.jpg" alt="" /> Angkor Wat at dawn</a>
+  <a href="/places/koh-rong"><img src="/koh-rong.jpg" alt="" /> Koh Rong</a>
+  <a href="/places/mondulkiri"><img src="/mondulkiri.jpg" alt="" /> Mondulkiri hills</a>
+</moul-focus-group>
+```
+
+## Items and layout
+
+Each direct child of the group is one item: a link, a `<figure>`, a `moul-card`, anything. The group lays them out as a grid of equal columns, as many as fit at `--focus-group-min-width` (14rem) or wider, with `--focus-group-gap` between them. On a container narrower than one column, the one column shrinks to fit. For another layout, set your own `display` on the group, such as `display: flex`; the blur works the same.
+
+Only the items themselves blur, so a hover over the space between them counts as no item, and every item is sharp again.
+
+<ComponentPreview backdrop="page" align="stretch">
+  <moul-focus-group style="--focus-group-min-width: 12rem; --focus-group-gap: 1.5rem">
+    <moul-card is-interactive>
+      <moul-card-header><strong>Previews</strong></moul-card-header>
+      <moul-card-body>Each branch gets its own URL.</moul-card-body>
+    </moul-card>
+    <moul-card is-interactive>
+      <moul-card-header><strong>Logs</strong></moul-card-header>
+      <moul-card-body>Every request, searchable for thirty days.</moul-card-body>
+    </moul-card>
+    <moul-card is-interactive>
+      <moul-card-header><strong>Rollbacks</strong></moul-card-header>
+      <moul-card-body>Any earlier deploy is one click away.</moul-card-body>
+    </moul-card>
+  </moul-focus-group>
+</ComponentPreview>
+
+```html
+<moul-focus-group style="--focus-group-min-width: 12rem; --focus-group-gap: 1.5rem">
+  <moul-card is-interactive>…</moul-card>
+  <moul-card is-interactive>…</moul-card>
+  <moul-card is-interactive>…</moul-card>
+</moul-focus-group>
+```
+
+## Blur, dim and speed
+
+`--focus-group-blur` (`4px`), `--focus-group-dim` (`0.6`, an opacity) and `--focus-group-scale` (`0.98`) set what happens to the other items, and `--focus-group-duration` how long the change takes (`var(--duration-slow)`, 400ms).
+
+```css
+moul-focus-group.gallery {
+  --focus-group-blur: 8px;
+  --focus-group-dim: 0.4;
+  --focus-group-duration: 250ms;
+}
+```
+
+To animate the change, the group sets `transition` on its items. Its list also covers `translate`, `box-shadow` and `background-color`, so a `moul-card`'s own hover lift still animates. A `transition` you set on the items yourself wins over the group's; add `filter`, `opacity` and `scale` to it to keep the fade.
+
+## Accessibility
+
+`<moul-focus-group>` is never focusable and adds no role. The items keep their own semantics and tab order, and moving keyboard focus into an item makes it the sharp one, as the pointer does. Focus from a mouse click does not, so clicking a link and moving away does not leave the group blurred. A finger does not blur anything either.
+
+The blur is visual only: screen readers read every item as usual. Blurred, dimmed text is hard to read, though, so the group suits tiles led by an image, with a short caption that is sharp whenever its tile is the one in play. Avoid it for items whose text someone has to compare side by side.
+
+Under `prefers-reduced-motion: reduce` the other items blur and dim at once, with no transition, and do not shrink. Where the system forces its own colours, as in Windows high contrast mode, nothing blurs or dims.
+
+## Slots
+
+| Slot | Description |
+| :-- | :-- |
+| (default) | The items. Each direct child is one item. |
+
+## CSS properties
+
+| CSS property | Description | Default |
+| :-- | :-- | :-- |
+| `--focus-group-min-width` | The narrowest a column gets before the grid drops one. | `14rem` |
+| `--focus-group-gap` | Space between the items. | `var(--spacing-4)` |
+| `--focus-group-blur` | How much the other items blur. | `4px` |
+| `--focus-group-dim` | The opacity of the other items. | `0.6` |
+| `--focus-group-scale` | The scale of the other items. | `0.98` |
+| `--focus-group-duration` | How long the change takes. | `var(--duration-slow)`, 400ms |

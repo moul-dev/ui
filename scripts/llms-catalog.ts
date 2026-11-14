@@ -680,7 +680,8 @@ await feed.removeItem(feed.items.at(-1))`,
       {
         name: 'Card',
         docs: '/docs/components/card',
-        summary: 'Surface container with header, body, and footer regions.',
+        summary:
+          'Surface container with header, body, and footer regions. `effect` adds light for landing pages, as a space-separated list: `spotlight` follows the pointer, `glare` sweeps a band across on hover, `glow` turns a gradient ring and an outer glow (main entry).',
         tags: [
           'moul-card',
           'moul-card-header',
@@ -1189,7 +1190,7 @@ answer.sources = [{ title: 'Records API', url: 'https://moul.dev/docs/records' }
         name: 'BentoGrid',
         docs: '/docs/components/bentogrid',
         summary:
-          'Feature cards in an uneven grid: `col-span` and `row-span` per card, one column on narrow screens, and an action that slides in on hover. Effects entry.',
+          'Feature cards in an uneven grid: `col-span` and `row-span` per card, one column on narrow screens, and an action that slides in on hover; `effect="spotlight glare glow"` on a card adds the same light as `<moul-card>`. Effects entry.',
         tags: ['moul-bento-grid', 'moul-bento-card'],
         snippet: `<moul-bento-grid columns="3">
   <moul-bento-card col-span="2">
@@ -1228,6 +1229,158 @@ answer.sources = [{ title: 'Records API', url: 'https://moul.dev/docs/records' }
           'A thin bar that fills as the page (or the container named by `for`) scrolls, fixed to the top or bottom or in flow; decorative. Effects entry.',
         tags: ['moul-scroll-progress'],
         snippet: `<moul-scroll-progress></moul-scroll-progress>`,
+      },
+    ],
+  },
+  {
+    title: 'Backgrounds & Light',
+    families: [
+      {
+        name: 'Pattern',
+        docs: '/docs/components/pattern',
+        summary:
+          'A quiet background pattern behind its content: `variant="dots|grid|hexagons|stripes|lines"`, `fade="radial|top|bottom|edges"` to soften it, and `is-animated` to light `count` random cells (grid, dots) or let the pattern drift (the others). Wrap content, or use it empty as a layer. Effects entry; still under reduced motion.',
+        tags: ['moul-pattern'],
+        snippet: `<moul-pattern variant="grid" fade="radial" is-animated count="12">
+  <h2>Ship on every push</h2>
+  <p>Previews, rollbacks and logs in one place.</p>
+</moul-pattern>`,
+      },
+      {
+        name: 'PerspectiveGrid',
+        docs: '/docs/components/perspectivegrid',
+        summary:
+          'A grid receding into depth behind its content, lines flowing toward the viewer: `variant="floor"` runs back to a horizon (`angle`, default 65), `tunnel` is four walls meeting in the centre. Effects entry; still under reduced motion.',
+        tags: ['moul-perspective-grid'],
+        snippet: `<moul-perspective-grid variant="floor" style="min-height: 24rem">
+  <h2>Built for what comes next</h2>
+</moul-perspective-grid>`,
+      },
+      {
+        name: 'Ripple',
+        docs: '/docs/components/ripple',
+        summary:
+          'Concentric rings (`count`, default 6) pulsing outward in sequence behind an icon, avatar or button centred in it, fainter toward the edge. Effects entry; still under reduced motion.',
+        tags: ['moul-ripple'],
+        snippet: `<moul-ripple count="6">
+  <moul-avatar name="Sophea Chan" size="lg"></moul-avatar>
+</moul-ripple>`,
+      },
+      {
+        name: 'Aurora',
+        docs: '/docs/components/aurora',
+        summary:
+          'Slow-drifting, blurred colour behind a hero or section: `variant="aurora"` sways bands across the top, `blobs` drifts and reshapes large blobs; colours from `--aurora-color-1` to `-3`. Effects entry; a still field under reduced motion.',
+        tags: ['moul-aurora'],
+        snippet: `<moul-aurora variant="blobs" style="padding: 6rem 2rem">
+  <h1>Ship on every push</h1>
+  <p>Previews, logs and rollbacks for every branch.</p>
+</moul-aurora>`,
+      },
+      {
+        name: 'Noise',
+        docs: '/docs/components/noise',
+        summary:
+          'A film-grain texture laid over its content (a hero, a card, a gradient) from an SVG turbulence mask in a token colour; `frequency` sets the grain, `is-animated` makes it flicker like film. Effects entry; still under reduced motion.',
+        tags: ['moul-noise'],
+        snippet: `<moul-noise style="border-radius: 1rem">
+  <moul-aurora variant="blobs" style="padding: 6rem 2rem; border-radius: inherit">
+    <h1>Made by hand</h1>
+  </moul-aurora>
+</moul-noise>`,
+      },
+      {
+        name: 'LightRays',
+        docs: '/docs/components/lightrays',
+        summary:
+          'Soft blurred rays (`count`, default 7) fanning down from the top edge, each swaying and brightening at its own pace, behind a hero or a heading. Effects entry; still under reduced motion.',
+        tags: ['moul-light-rays'],
+        snippet: `<moul-light-rays count="9" style="padding: 6rem 2rem">
+  <h1>Light where it matters</h1>
+</moul-light-rays>`,
+      },
+      {
+        name: 'Spotlight',
+        docs: '/docs/components/spotlight',
+        summary:
+          'Light falling on a hero from above: `variant="cone"` slides in from a top corner (`placement="start|center|end"`), `lamp` widens a bright line and its cone of light, both once as they enter view (`play()` replays, `is-lit` shows it at once); `sway` swings two lights slowly. Effects entry; end state at once under reduced motion.',
+        tags: ['moul-spotlight'],
+        snippet: `<moul-spotlight variant="lamp" style="padding: 5rem 2rem 4rem; text-align: center">
+  <h1>Build under a good light</h1>
+</moul-spotlight>`,
+      },
+      {
+        name: 'BorderBeam',
+        docs: '/docs/components/borderbeam',
+        summary:
+          "Wraps a card or panel and sends a short bright beam round its border, following the rounded corners (the radius is the element's own `border-radius`); `is-reverse` turns it the other way. Effects entry; still under reduced motion.",
+        tags: ['moul-border-beam'],
+        snippet: `<moul-border-beam>
+  <moul-card><moul-card-body>Pro: $24 a month</moul-card-body></moul-card>
+</moul-border-beam>`,
+      },
+      {
+        name: 'ShineBorder',
+        docs: '/docs/components/shineborder',
+        summary:
+          'Wraps a card or panel in a thin border whose colours drift slowly round it (`--shine-border-colors`); quieter than a border beam. Effects entry; still under reduced motion.',
+        tags: ['moul-shine-border'],
+        snippet: `<moul-shine-border>
+  <moul-card><moul-card-body>Team: $48 a month</moul-card-body></moul-card>
+</moul-shine-border>`,
+      },
+      {
+        name: 'Beams',
+        docs: '/docs/components/beams',
+        summary:
+          'A background of faint SVG lines with light travelling along them, behind a hero or feature section: `variant="beams"` curves from a corner, `lines` waves across, `rain` falls and flashes where it lands. Effects entry; the lines stay and nothing travels under reduced motion.',
+        tags: ['moul-beams'],
+        snippet: `<moul-beams variant="lines" style="padding: 4rem 1.5rem">
+  <h2>Ship on every push</h2>
+</moul-beams>`,
+      },
+      {
+        name: 'Backlight',
+        docs: '/docs/components/backlight',
+        summary:
+          "Wraps an image or video and draws a glow behind it in the media's own colours with an SVG filter, so it follows a playing video; `blur` (property `glowBlur`) and `saturation` tune it. Effects entry.",
+        tags: ['moul-backlight'],
+        snippet: `<moul-backlight blur="24">
+  <img src="/screenshot.png" alt="The editor with a preview panel open" />
+</moul-backlight>`,
+      },
+      {
+        name: 'FocusGroup',
+        docs: '/docs/components/focusgroup',
+        summary:
+          'A grid of tiles where the one under the pointer, or holding keyboard focus, stays sharp while its siblings blur, dim and shrink; suits image-led tiles. Effects entry; no transition under reduced motion.',
+        tags: ['moul-focus-group'],
+        snippet: `<moul-focus-group>
+  <a href="/places/angkor"><img src="/angkor.jpg" alt="" /> Angkor Wat at dawn</a>
+  <a href="/places/koh-rong"><img src="/koh-rong.jpg" alt="" /> Koh Rong</a>
+</moul-focus-group>`,
+      },
+      {
+        name: 'EdgeBlur',
+        docs: '/docs/components/edgeblur',
+        summary:
+          'A scroll container (give it a height) whose content blurs out progressively toward its edges; `orientation="horizontal"` for a row, `edges="start|end"` for one side. Where scroll timelines exist, an edge clears when there is nothing more to scroll that way. Focusable by keyboard; label it with `aria-label`. Effects entry.',
+        tags: ['moul-edge-blur'],
+        snippet: `<moul-edge-blur aria-label="Release notes" style="height: 18rem">
+  <ul>…</ul>
+</moul-edge-blur>`,
+      },
+      {
+        name: 'Orbit',
+        docs: '/docs/components/orbit',
+        summary:
+          'Icons, logos or avatars spaced evenly on a ring that turns slowly round a centre, staying upright (`radius`, `duration`, `is-reverse`, `show-path`, `pause-on-hover`; pauses while focus is inside). Nest another orbit in `slot="center"` for more rings. Effects entry; still under reduced motion.',
+        tags: ['moul-orbit'],
+        snippet: `<moul-orbit radius="128" show-path pause-on-hover>
+  <img src="/logos/one.svg" alt="One" />
+  <img src="/logos/two.svg" alt="Two" />
+  <moul-orbit slot="center" radius="64" duration="14" is-reverse>…</moul-orbit>
+</moul-orbit>`,
       },
     ],
   },

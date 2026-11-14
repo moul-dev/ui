@@ -65,6 +65,7 @@ export {
 // Phase 7: Input & Form Components
 export { MoulCalendar, MoulCalendar as Calendar } from './components/Calendar'
 export {
+  type CardEffect,
   MoulCard,
   MoulCard as Card,
   MoulCardBody,

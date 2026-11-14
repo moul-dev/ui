@@ -1,4 +1,5 @@
 export {
+  type CardEffect,
   MoulCard,
   MoulCard as Card,
   MoulCardBody,

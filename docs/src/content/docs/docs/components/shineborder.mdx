@@ -1,0 +1,117 @@
+---
+title: Shine Border
+description: A thin border whose colours drift slowly round a card or panel.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import LandingKitDemo from '@/components/demos/LandingKitDemo.astro';
+
+`<moul-shine-border>` gives a box a thin border of colour that drifts slowly round it, brightening one side and then another. It is quieter than `<moul-border-beam>`: nothing races round, so it suits a featured plan, a sign-up panel or an announcement that should look a little special. Wrap the box in it; it draws a ring over the box's own edge and never clips or pads it.
+
+<ComponentPreview backdrop="page" minHeight="300px">
+  <moul-shine-border style="width: 100%; max-width: 22rem">
+    <moul-card>
+      <moul-card-header><strong>Team</strong></moul-card-header>
+      <moul-card-body>
+        <p style="font-size: 2rem; font-weight: 700; line-height: 1.2">$48 <span style="font-size: 1rem; font-weight: 400; color: var(--color-muted)">a month</span></p>
+        <p style="color: var(--color-muted)">Shared projects, roles for everyone on the account, and an audit log.</p>
+      </moul-card-body>
+      <moul-card-footer><moul-button>Choose Team</moul-button></moul-card-footer>
+    </moul-card>
+  </moul-shine-border>
+  <LandingKitDemo />
+</ComponentPreview>
+
+It lives in the effects entry, with the rest of the landing kit:
+
+```js
+import '@moul-dev/web-component/effects'
+```
+
+```html
+<moul-shine-border>
+  <moul-card>
+    <moul-card-header><strong>Team</strong></moul-card-header>
+    <moul-card-body>Shared projects, roles and an audit log.</moul-card-body>
+  </moul-card>
+</moul-shine-border>
+```
+
+## Wrapping a box
+
+The element is a block as wide as its container, and as tall as what it wraps. Its ring lies over the outer edge of that content, so the content keeps its own border, background and shadow.
+
+The ring takes its corners from the element's `border-radius`, which defaults to the `moul-card` radius (`--radius-surface`). For a box with other corners, set `border-radius` on the element to match. Content that should take the same corners can use `border-radius: inherit`, as the panel below does.
+
+<ComponentPreview backdrop="page" minHeight="260px">
+  <moul-shine-border style="width: 100%; max-width: 26rem; border-radius: 1rem; --shine-border-width: 2px">
+    <div style="display: grid; gap: 0.5rem; padding: 1.5rem; border-radius: inherit; background: var(--color-surface)">
+      <moul-badge tone="accent" variant="flat" style="justify-self: start">New</moul-badge>
+      <strong>Preview links for every branch</strong>
+      <p style="color: var(--color-muted)">Each push now gets its own address, shared with a click and gone when the branch is merged.</p>
+    </div>
+  </moul-shine-border>
+</ComponentPreview>
+
+```html
+<moul-shine-border style="border-radius: 1rem; --shine-border-width: 2px">
+  <div class="panel" style="border-radius: inherit">…</div>
+</moul-shine-border>
+```
+
+## Colours, width and speed
+
+`--shine-border-colors` is a comma-separated list of colours. It defaults to the theme's accent and three chart colours, so it follows light and dark themes and your `--brand-hue`. `--shine-border-width` is the width of the ring (`1px`), and `--shine-border-duration` the time for the colours to drift across the box and back (`14s`).
+
+<ComponentPreview backdrop="page" minHeight="220px">
+  <moul-shine-border style="width: 100%; max-width: 22rem; --shine-border-colors: var(--color-success), var(--color-chart-5), var(--color-chart-7); --shine-border-width: 2px; --shine-border-duration: 8s">
+    <moul-card><moul-card-body>All checks passed on the last deploy.</moul-card-body></moul-card>
+  </moul-shine-border>
+</ComponentPreview>
+
+```css
+moul-shine-border.healthy {
+  --shine-border-colors: var(--color-success), var(--color-chart-5), var(--color-chart-7);
+  --shine-border-width: 2px;
+  --shine-border-duration: 8s;
+}
+```
+
+## As an overlay
+
+Left empty, the element is an overlay for any positioned box: give it `position: absolute; inset: 0; border-radius: inherit`, and it draws its ring round the box and lets the pointer through.
+
+```html
+<div class="panel" style="position: relative; border-radius: 1rem">
+  …
+  <moul-shine-border style="position: absolute; inset: 0; border-radius: inherit"></moul-shine-border>
+</div>
+```
+
+The animation is CSS only, and pauses while the element is off screen.
+
+## Accessibility
+
+`<moul-shine-border>` is never focusable and adds no role. The ring is decorative and hidden from assistive technology, so the wrapped content is read, and reached with Tab, as if the element were not there.
+
+Where the system forces its own colours, as in Windows high contrast mode, and when printing, the ring is not drawn.
+
+Under `prefers-reduced-motion: reduce` the colours stand still, spread once round the whole border.
+
+## Attributes and properties
+
+`<moul-shine-border>` has no attributes of its own; style it with the CSS properties below.
+
+| Slot | Description |
+| :-- | :-- |
+| (default) | The box to frame: a card, a frame, an image or a panel. |
+
+| Part | Description |
+| :-- | :-- |
+| `border` | The coloured ring. It sits over the content's edge and ignores the pointer. |
+
+| CSS property | Description | Default |
+| :-- | :-- | :-- |
+| `--shine-border-colors` | A comma-separated list of colours. | `var(--color-accent), var(--color-chart-4), var(--color-chart-3), var(--color-chart-2)` |
+| `--shine-border-width` | Width of the ring. | `1px` |
+| `--shine-border-duration` | Time for the colours to drift across and back. | `14s` |

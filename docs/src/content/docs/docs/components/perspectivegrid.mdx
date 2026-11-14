@@ -1,0 +1,134 @@
+---
+title: Perspective Grid
+description: A grid floor running back to a horizon, or a tunnel of grid walls, with lines flowing toward the viewer.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import LandingKitDemo from '@/components/demos/LandingKitDemo.astro';
+
+`<moul-perspective-grid>` draws a grid of lines receding into depth behind whatever you put inside it. `floor` lays the grid on a plane that runs back to a horizon, the retro look of an old arcade screen; `tunnel` builds four grid walls that meet at a point in the centre. The lines flow slowly toward the viewer and fade out in the distance, so the grid sits on any background.
+
+<ComponentPreview align="stretch" minHeight="320px">
+  <moul-perspective-grid style="display: grid; place-content: center; gap: 0.5rem; min-height: 20rem; padding: 2rem; text-align: center; border-radius: var(--radius-2xl)">
+    <moul-typography variant="h2">Built for what comes next</moul-typography>
+    <moul-typography variant="body">Deploy to every region from one push.</moul-typography>
+  </moul-perspective-grid>
+  <LandingKitDemo />
+</ComponentPreview>
+
+It lives in the effects entry, with the rest of the landing kit:
+
+```js
+import '@moul-dev/web-component/effects'
+```
+
+```html
+<moul-perspective-grid>
+  <h2>Built for what comes next</h2>
+  <p>Deploy to every region from one push.</p>
+</moul-perspective-grid>
+```
+
+The grid fills the element's box and paints behind its content. The element adds no padding and no background colour of its own, so give it the padding or height the section needs; a taller element shows more of the floor.
+
+## Variants
+
+`variant` sets the shape. `floor` (the default) is a plane whose near edge lies along the bottom of the element; it runs back to a horizon, and its lines meet at a point on the horizon in the middle. `tunnel` is four walls, top, bottom, left and right, whose near edges run round the element's border; they meet at a vanishing point in the centre, so the content in the middle sits at the end of the tunnel.
+
+<ComponentPreview align="stretch" minHeight="320px">
+  <moul-perspective-grid variant="tunnel" style="display: grid; place-content: center; gap: 0.5rem; min-height: 20rem; padding: 2rem; text-align: center; border-radius: var(--radius-2xl)">
+    <moul-typography variant="h2">Go deeper</moul-typography>
+    <moul-typography variant="body">Traces from the edge to the database.</moul-typography>
+  </moul-perspective-grid>
+</ComponentPreview>
+
+```html
+<moul-perspective-grid variant="tunnel">…</moul-perspective-grid>
+```
+
+## Angle
+
+`angle` tilts the floor, in degrees from 0 to 85 (65 by default). It is how far the plane leans back from facing you: a lower angle looks down on the floor from above, with the horizon high or out of sight and the lines close to parallel; a higher angle looks along the floor, with the horizon low and the lines converging steeply. The tunnel's walls are always square to the view, so `tunnel` ignores it.
+
+<ComponentPreview align="stretch" minHeight="320px">
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); gap: 1rem">
+    <moul-perspective-grid angle="45" style="display: grid; place-content: center; height: 12rem; border: 1px solid var(--color-border); border-radius: var(--radius-xl)"><span class="demo-label">45</span></moul-perspective-grid>
+    <moul-perspective-grid style="display: grid; place-content: center; height: 12rem; border: 1px solid var(--color-border); border-radius: var(--radius-xl)"><span class="demo-label">65 (default)</span></moul-perspective-grid>
+    <moul-perspective-grid angle="80" style="display: grid; place-content: center; height: 12rem; border: 1px solid var(--color-border); border-radius: var(--radius-xl)"><span class="demo-label">80</span></moul-perspective-grid>
+  </div>
+</ComponentPreview>
+
+```html
+<moul-perspective-grid angle="80">…</moul-perspective-grid>
+```
+
+## Colours, size and speed
+
+The lines are `--color-fg` at 22%, so they darken a light page and lighten a dark one. Four CSS properties change the look:
+
+- `--perspective-grid-size` is the size of one cell where the grid is nearest (`60px`).
+- `--perspective-grid-color` is the colour of the lines.
+- `--perspective-grid-line-width` is the width of the lines where the grid is nearest (`1px`); they thin out with distance.
+- `--perspective-grid-duration` is the time the lines take to move one cell toward you (`1s`). A longer time is slower.
+
+<ComponentPreview align="stretch" minHeight="320px">
+  <moul-perspective-grid angle="75" style="--perspective-grid-size: 40px; --perspective-grid-color: color-mix(in oklab, var(--color-accent) 55%, transparent); --perspective-grid-duration: 0.6s; display: grid; place-content: center; gap: 0.5rem; min-height: 20rem; padding: 2rem; text-align: center; border-radius: var(--radius-2xl)">
+    <moul-typography variant="h2">Launch week</moul-typography>
+    <moul-typography variant="body">Five releases, five days.</moul-typography>
+  </moul-perspective-grid>
+</ComponentPreview>
+
+```css
+moul-perspective-grid.launch {
+  --perspective-grid-size: 40px;
+  --perspective-grid-color: color-mix(in oklab, var(--color-accent) 55%, transparent);
+  --perspective-grid-duration: 0.6s;
+}
+```
+
+The grid is CSS 3D transforms and gradients only, and the movement pauses while the grid is off screen.
+
+## Use as a layer
+
+To put the grid behind a section you already have, leave the element empty and position it over the section, behind the content:
+
+```html
+<section style="position: relative; isolation: isolate">
+  <moul-perspective-grid style="position: absolute; inset: 0; z-index: -1"></moul-perspective-grid>
+  <h2>Built for what comes next</h2>
+</section>
+```
+
+`isolation: isolate` on the section keeps the `z-index: -1` inside it, so the grid paints above the section's own background and below its content. The floor's horizon follows the section's height: about a third of the way down at the default angle.
+
+## Accessibility
+
+The grid is decoration. Its layer is hidden from screen readers with `aria-hidden`, and the element adds no role and never takes focus. The content inside is read, selected and focused as usual; the grid paints behind it and takes no pointer events.
+
+The lines are faint and fade out toward the horizon or the centre, where a heading usually sits, so text in front keeps nearly all its contrast. If you make the lines stronger, check the contrast where they cross the text.
+
+Where the system forces its own colours, as in Windows high contrast mode, the grid is not drawn.
+
+Under `prefers-reduced-motion: reduce` the grid holds still.
+
+## Attributes and properties
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `variant` | `variant` | `'floor' \| 'tunnel'` | `'floor'` |
+| `angle` | `angle` | `number`, degrees from 0 to 85; `floor` only | `65` |
+
+| Slot | Description |
+| :-- | :-- |
+| (default) | The content shown in front of the grid. Leave it empty to use the element as a layer. |
+
+| Part | Description |
+| :-- | :-- |
+| `background` | The decorative layer behind the content that holds the grid. |
+
+| CSS property | Description | Default |
+| :-- | :-- | :-- |
+| `--perspective-grid-size` | The size of one cell where the grid is nearest. | `60px` |
+| `--perspective-grid-color` | The colour of the lines. | `--color-fg` at 22% |
+| `--perspective-grid-line-width` | The width of the lines where the grid is nearest. | `1px` |
+| `--perspective-grid-duration` | The time the lines take to move one cell toward the viewer. | `1s` |

@@ -1,9 +1,17 @@
 import { fixture, html } from '@open-wc/testing-helpers'
-import { describe, expect, it } from 'vitest'
-import { triggerResize } from '../../test-setup'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import {
+  type ManualFrames,
+  manualAnimationFrames,
+  triggerResize,
+} from '../../test-setup'
 import './BentoGrid'
-import type { MoulBentoCard, MoulBentoGrid } from './BentoGrid'
-import { bentoCardStyles, bentoGridStyles } from './BentoGrid.styles'
+import { MoulBentoCard, type MoulBentoGrid } from './BentoGrid'
+import {
+  bentoCardEffectStyles,
+  bentoCardStyles,
+  bentoGridStyles,
+} from './BentoGrid.styles'
 
 const gridCss = bentoGridStyles.map((sheet) => String(sheet)).join('\n')
 const cardCss = bentoCardStyles.map((sheet) => String(sheet)).join('\n')
@@ -300,6 +308,122 @@ describe('<moul-bento-card>', () => {
       expect(reduce).toContain('translate: none')
       expect(reduce).toContain('scale: none')
       expect(reduce).toMatch(/\[part="action"\]\s*\{\s*opacity: 1/)
+    })
+  })
+})
+
+describe('<moul-bento-card> effect', () => {
+  const effectCss = String(bentoCardEffectStyles)
+  // The shared card effects, as the bento card instantiates them.
+  const sharedCss = String((MoulBentoCard.styles as unknown[])[1])
+
+  let frames: ManualFrames
+
+  beforeEach(() => {
+    frames = manualAnimationFrames()
+  })
+
+  afterEach(() => {
+    frames.restore()
+  })
+
+  it('takes the same effects as moul-card, ignoring unknown names', async () => {
+    const card = await fixture<MoulBentoCard>(
+      html`<moul-bento-card effect="spotlight glare glow sparkle">
+        <h3 slot="heading">Lit</h3>
+      </moul-bento-card>`,
+    )
+    const root = card.shadowRoot as ShadowRoot
+    for (const name of ['spotlight', 'glare', 'glow']) {
+      const layer = root.querySelector(`.card-${name}`)
+      expect(layer, name).not.toBeNull()
+      expect(layer?.getAttribute('aria-hidden')).toBe('true')
+    }
+    expect(card.getAttribute('effect')).toBe('spotlight glare glow sparkle')
+    expect(card.hasAttribute('tabindex')).toBe(false)
+    expect(card.hasAttribute('role')).toBe(false)
+  })
+
+  it('puts the spotlight above the background art and under the visual, with the glare and glow outside the layout', async () => {
+    const card = await fixture<MoulBentoCard>(
+      html`<moul-bento-card effect="spotlight glare glow">
+        <img slot="visual" alt="The dashboard" />
+        <h3 slot="heading">Order</h3>
+      </moul-bento-card>`,
+    )
+    const order = [...part(card, 'base').children].map(
+      (child) => child.getAttribute('part') ?? child.className,
+    )
+    expect(order.slice(0, 3)).toEqual([
+      'background',
+      'card-spotlight',
+      'visual',
+    ])
+    const outside = [...(card.shadowRoot?.children ?? [])]
+      .map((child) => child.className)
+      .filter(Boolean)
+    expect(outside).toEqual(['card-glow', 'card-glare'])
+    expect(effectCss).toMatch(
+      /\[part="base"\] > \.card-spotlight\s*\{\s*z-index: 0/,
+    )
+  })
+
+  it('follows the pointer, measured against the light inside the card', async () => {
+    const card = await fixture<MoulBentoCard>(
+      html`<moul-bento-card effect="spotlight">
+        <h3 slot="heading">Follow</h3>
+      </moul-bento-card>`,
+    )
+    const light = card.shadowRoot?.querySelector(
+      '.card-spotlight',
+    ) as HTMLElement
+    light.getBoundingClientRect = () =>
+      ({ left: 10, top: 20, width: 300, height: 200 }) as DOMRect
+    card.dispatchEvent(
+      new PointerEvent('pointermove', {
+        clientX: 60,
+        clientY: 70,
+        pointerType: 'mouse',
+        bubbles: true,
+      }),
+    )
+    frames.step(16)
+    expect(light.hasAttribute('data-on')).toBe(true)
+    expect(light.style.getPropertyValue('--_card-spotlight-x')).toBe('50px')
+    expect(light.style.getPropertyValue('--_card-spotlight-y')).toBe('50px')
+  })
+
+  it('lets the glow out: the inner layout clips the art instead of the host', () => {
+    expect(effectCss).toMatch(
+      /:host\(\[effect~="glow"\]\)\s*\{\s*overflow: visible;\s*min-block-size: 0/,
+    )
+    expect(effectCss).toMatch(
+      /:host\(\[effect~="glow"\]\) \[part="base"\]\s*\{\s*overflow: hidden;\s*border-radius: inherit/,
+    )
+    // Without a glow the host still clips, as before.
+    expect(block(String(bentoCardStyles[1]), ':host {')).toContain(
+      'overflow: hidden',
+    )
+  })
+
+  describe('keyboard and screen readers', () => {
+    it('shows the spotlight and sweeps the glare when focus moves into the card', () => {
+      expect(sharedCss).toContain(
+        ':host(:focus-within) .card-spotlight:not([data-on])',
+      )
+      expect(sharedCss).toContain(':host(:focus-within) .card-glare::before')
+      expect(sharedCss).not.toContain(':focus-visible')
+    })
+  })
+
+  describe('reduced motion', () => {
+    it('holds the glow still and the glare as a still sheen', () => {
+      const reduce = block(
+        sharedCss,
+        '@media (prefers-reduced-motion: reduce) {',
+      )
+      expect(reduce).toContain('animation: none')
+      expect(reduce).toContain('translate: none')
     })
   })
 })

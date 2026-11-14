@@ -1,0 +1,152 @@
+---
+title: Orbit
+description: Icons, logos or avatars that travel round a centre on one or more rings.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import LandingKitDemo from '@/components/demos/LandingKitDemo.astro';
+
+`<moul-orbit>` spaces its items evenly on a ring and turns them slowly round a centre, each one staying upright, as in an "integrates with" section. Put the items in it as child elements and anything for the middle in `slot="center"`. For more rings, put another orbit in the centre.
+
+<ComponentPreview stack>
+  <moul-orbit radius="128" show-path>
+    <span role="img" aria-label="Brightloom" style="display: grid; place-items: center; border-radius: 9999px; background: var(--color-surface); border: 1px solid var(--color-border); color: var(--color-chart-1)"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="currentColor" /></svg></span>
+    <span role="img" aria-label="Tidewell" style="display: grid; place-items: center; border-radius: 9999px; background: var(--color-surface); border: 1px solid var(--color-border); color: var(--color-chart-2)"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4" fill="currentColor" /></svg></span>
+    <span role="img" aria-label="Cobaltine" style="display: grid; place-items: center; border-radius: 9999px; background: var(--color-surface); border: 1px solid var(--color-border); color: var(--color-chart-3)"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 3 21 20H3Z" fill="currentColor" /></svg></span>
+    <span role="img" aria-label="Fernforge" style="display: grid; place-items: center; border-radius: 9999px; background: var(--color-surface); border: 1px solid var(--color-border); color: var(--color-chart-4)"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M5 4h14v4H9v3h8v4H9v5H5Z" fill="currentColor" /></svg></span>
+    <span role="img" aria-label="Quillstone" style="display: grid; place-items: center; border-radius: 9999px; background: var(--color-surface); border: 1px solid var(--color-border); color: var(--color-chart-5)"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="9" cy="12" r="6" fill="currentColor" /><circle cx="15" cy="12" r="6" fill="currentColor" opacity="0.5" /></svg></span>
+    <span role="img" aria-label="Sundial Works" style="display: grid; place-items: center; border-radius: 9999px; background: var(--color-surface); border: 1px solid var(--color-border); color: var(--color-chart-7)"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18Z" fill="currentColor" /></svg></span>
+    <moul-orbit slot="center" radius="64" duration="14" is-reverse show-path>
+      <span role="img" aria-label="Ashgrove" style="display: grid; place-items: center; border-radius: 9999px; background: var(--color-surface); border: 1px solid var(--color-border); color: var(--color-chart-6)"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 3 21 12 12 21 3 12Z" fill="currentColor" /></svg></span>
+      <span role="img" aria-label="Marlpeak" style="display: grid; place-items: center; border-radius: 9999px; background: var(--color-surface); border: 1px solid var(--color-border); color: var(--color-chart-8)"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M3 19 9 7l4 7 3-4 5 9Z" fill="currentColor" /></svg></span>
+      <span role="img" aria-label="Pellucid" style="display: grid; place-items: center; border-radius: 9999px; background: var(--color-surface); border: 1px solid var(--color-border); color: var(--color-accent)"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="3" /></svg></span>
+      <span slot="center" role="img" aria-label="Moul" style="display: grid; place-items: center; width: 3.25rem; height: 3.25rem; border-radius: 1rem; background: var(--color-accent); color: var(--color-accent-fg); font-weight: 700; font-size: 1.5rem">M</span>
+    </moul-orbit>
+  </moul-orbit>
+  <LandingKitDemo />
+</ComponentPreview>
+
+It lives in the effects entry, with the rest of the landing kit:
+
+```js
+import '@moul-dev/web-component/effects'
+```
+
+```html
+<moul-orbit show-path>
+  <img src="/logos/brightloom.svg" alt="Brightloom" />
+  <img src="/logos/tidewell.svg" alt="Tidewell" />
+  <img src="/logos/cobaltine.svg" alt="Cobaltine" />
+  <img slot="center" src="/logo.svg" alt="Moul" width="56" height="56" />
+</moul-orbit>
+```
+
+Make each item an element, such as an `<img>`, an `<svg>`, a `<span>` or a `moul-avatar`. The first item sits at the top and the rest follow clockwise, evenly spaced; the orbit spaces them again whenever you add or remove one. Text placed directly in the orbit, outside an element, is not put on the ring.
+
+## Radius and item size
+
+`radius` is the distance from the centre to the middle of each item, in pixels, 120 by default. Every item is sized to `--orbit-item-size`, `2.5rem` by default, and images keep their shape inside that box. The orbit is a square twice the radius plus one item across, so the items at its edges stay inside it.
+
+<ComponentPreview stack>
+  <moul-orbit radius="72" style="--orbit-item-size: 3rem">
+    <moul-avatar name="Dara Sok"></moul-avatar>
+    <moul-avatar name="Sophea Lim"></moul-avatar>
+    <moul-avatar name="Vannak Chea"></moul-avatar>
+    <moul-avatar name="Bopha Keo"></moul-avatar>
+  </moul-orbit>
+</ComponentPreview>
+
+```html
+<moul-orbit radius="72" style="--orbit-item-size: 3rem">
+  <moul-avatar name="Dara Sok"></moul-avatar>
+  <moul-avatar name="Sophea Lim"></moul-avatar>
+  <moul-avatar name="Vannak Chea"></moul-avatar>
+  <moul-avatar name="Bopha Keo"></moul-avatar>
+</moul-orbit>
+```
+
+An item's own width and height from your page's CSS win over `--orbit-item-size`, and the orbit still centres it on the ring.
+
+## Speed and direction
+
+`duration` is the number of seconds one full turn takes, 20 by default; a larger number turns more slowly. The ring turns clockwise; `is-reverse` turns it anticlockwise. In right-to-left text the orbit is mirrored: the items run anticlockwise from the top and the ring turns that way, and `is-reverse` turns it clockwise.
+
+```html
+<moul-orbit duration="40">…</moul-orbit>
+<moul-orbit is-reverse>…</moul-orbit>
+```
+
+## Path
+
+`show-path` draws the ring as a faint circle through the middle of the items. Its colour is `--orbit-path-color`, `var(--color-border)` by default; style it further, for a dashed line, through `::part(path)`.
+
+```css
+moul-orbit {
+  --orbit-path-color: var(--color-accent-soft);
+}
+
+moul-orbit::part(path) {
+  border-style: dashed;
+}
+```
+
+## Rings
+
+For a second ring, put another `moul-orbit` in the centre slot. Each orbit has its own `radius`, `duration` and direction, and its own centre slot, which can hold a third orbit or the content for the very middle. Give the inner orbit a smaller radius so its items clear the outer ring's.
+
+```html
+<moul-orbit radius="128" show-path>
+  <img src="/logos/brightloom.svg" alt="Brightloom" />
+  <img src="/logos/tidewell.svg" alt="Tidewell" />
+  <moul-orbit slot="center" radius="64" duration="14" is-reverse show-path>
+    <img src="/logos/ashgrove.svg" alt="Ashgrove" />
+    <img src="/logos/marlpeak.svg" alt="Marlpeak" />
+    <img slot="center" src="/logo.svg" alt="Moul" width="52" height="52" />
+  </moul-orbit>
+</moul-orbit>
+```
+
+## Pausing
+
+`pause-on-hover` holds the orbit still while the pointer is over it, which helps a reader who wants to click an item. The orbit also pauses on its own while focus is inside it and while it is off screen, so it costs nothing when nobody can see it. A pointer over an inner ring is over the outer one too, so both pause.
+
+```html
+<moul-orbit pause-on-hover>…</moul-orbit>
+```
+
+## Accessibility
+
+`<moul-orbit>` is never focusable and adds no role. Its items keep their own semantics and screen readers read them in DOM order, the outer ring's items first, then the centre. Give each image an `alt`, and an icon a name with `role="img"` and `aria-label`, as in the examples above. The path is drawn for the eye only and is `aria-hidden`.
+
+Links and buttons on the ring take focus as usual, and any focus inside holds the orbit still, so a keyboard user never chases a moving target. Each item stays upright as it travels, so its text and icons never turn on their side.
+
+Where the system forces its own colours, as in Windows high contrast mode, the path is not drawn.
+
+Under `prefers-reduced-motion: reduce` nothing turns: the items rest at their places on the ring, upright, as a still picture.
+
+## Attributes and properties
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `radius` | `radius` | `number` (px) | `120` |
+| `duration` | `duration` | `number` (seconds per turn) | `20` |
+| `is-reverse` | `isReverse` | `boolean` | `false` |
+| `show-path` | `showPath` | `boolean` | `false` |
+| `pause-on-hover` | `pauseOnHover` | `boolean` | `false` |
+
+| Slot | Description |
+| :-- | :-- |
+| (default) | The items, each one an element. |
+| `center` | Content for the middle, such as a logo or another `moul-orbit`. |
+
+| Part | Description |
+| :-- | :-- |
+| `orbit` | The square that holds the ring and the centre. |
+| `path` | The circle drawn along the ring, with `show-path`. |
+| `ring` | The turning layer that carries the items. |
+| `center` | The box that centres the `center` slot. |
+
+| CSS property | Description | Default |
+| :-- | :-- | :-- |
+| `--orbit-item-size` | The width and height of each item, and the room left round the ring for them. | `2.5rem` |
+| `--orbit-path-color` | The colour of the path. | `var(--color-border)` |

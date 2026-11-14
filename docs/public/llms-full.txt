@@ -2826,7 +2826,7 @@ Class: `MoulAnimatedList` · Source: `ui/src/components/AnimatedList/AnimatedLis
 
 ## Card
 
-Surface container with header, body, and footer regions. Docs: [/docs/components/card](/docs/components/card)
+Surface container with header, body, and footer regions. `effect` adds light for landing pages, as a space-separated list: `spotlight` follows the pointer, `glare` sweeps a band across on hover, `glow` turns a gradient ring and an outer glow (main entry). Docs: [/docs/components/card](/docs/components/card)
 
 ```html
 <moul-card variant="bordered" is-interactive>
@@ -2847,6 +2847,7 @@ Class: `MoulCard` · Source: `ui/src/components/Card/Card.ts`
 | `tone` | `tone` | `'primary' \| 'accent' \| 'success' \| 'warning' \| 'error'` | `'primary'` |
 | `variant` | `variant` | `'solid' \| 'flat' \| 'shadow' \| 'bordered' \| 'glass' \| undefined` | — |
 | `is-interactive` | `isInteractive` | `boolean` | `false` |
+| `effect` | `effect` | `string \| undefined` | — |
 
 **Events**
 
@@ -2858,9 +2859,9 @@ Class: `MoulCard` · Source: `ui/src/components/Card/Card.ts`
 
 | Slot |
 | :--- |
+| (default) |
 | `header` |
 | `body` |
-| (default) |
 | `footer` |
 
 **CSS Parts:** `header`, `body`, `content`, `footer`
@@ -4743,7 +4744,7 @@ Class: `MoulMarquee` · Source: `ui/src/components/Marquee/Marquee.ts`
 
 ## BentoGrid
 
-Feature cards in an uneven grid: `col-span` and `row-span` per card, one column on narrow screens, and an action that slides in on hover. Effects entry. Docs: [/docs/components/bentogrid](/docs/components/bentogrid)
+Feature cards in an uneven grid: `col-span` and `row-span` per card, one column on narrow screens, and an action that slides in on hover; `effect="spotlight glare glow"` on a card adds the same light as `<moul-card>`. Effects entry. Docs: [/docs/components/bentogrid](/docs/components/bentogrid)
 
 ```html
 <moul-bento-grid columns="3">
@@ -4785,6 +4786,7 @@ Class: `MoulBentoCard` · Source: `ui/src/components/BentoGrid/BentoGrid.ts`
 | :--- | :--- | :--- | :--- |
 | `col-span` | `colSpan` | `number` | `1` |
 | `row-span` | `rowSpan` | `number` | `1` |
+| `effect` | `effect` | `string \| undefined` | — |
 
 **Slots**
 
@@ -4876,6 +4878,413 @@ Class: `MoulScrollProgress` · Source: `ui/src/components/ScrollProgress/ScrollP
 | `tone` | `tone` | `'primary' \| 'accent' \| 'success' \| 'warning' \| 'error'` | `'primary'` |
 
 **CSS Parts:** `base`, `bar`
+
+---
+
+# Backgrounds & Light
+
+## Pattern
+
+A quiet background pattern behind its content: `variant="dots|grid|hexagons|stripes|lines"`, `fade="radial|top|bottom|edges"` to soften it, and `is-animated` to light `count` random cells (grid, dots) or let the pattern drift (the others). Wrap content, or use it empty as a layer. Effects entry; still under reduced motion. Docs: [/docs/components/pattern](/docs/components/pattern)
+
+```html
+<moul-pattern variant="grid" fade="radial" is-animated count="12">
+  <h2>Ship on every push</h2>
+  <p>Previews, rollbacks and logs in one place.</p>
+</moul-pattern>
+```
+
+### `<moul-pattern>`
+
+Class: `MoulPattern` · Source: `ui/src/components/Pattern/Pattern.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `variant` | `variant` | `'dots' \| 'grid' \| 'hexagons' \| 'stripes' \| 'lines'` | `'dots'` |
+| `fade` | `fade` | `'none' \| 'radial' \| 'top' \| 'bottom' \| 'edges'` | `'none'` |
+| `is-animated` | `isAnimated` | `boolean` | `false` |
+| `count` | `count` | `number` | `DEFAULT_COUNT` |
+| `cells` | `cells` | `LitCell[]` | `[]` |
+
+**Slots**
+
+| Slot |
+| :--- |
+| (default) |
+
+**CSS Parts:** `background`
+
+## PerspectiveGrid
+
+A grid receding into depth behind its content, lines flowing toward the viewer: `variant="floor"` runs back to a horizon (`angle`, default 65), `tunnel` is four walls meeting in the centre. Effects entry; still under reduced motion. Docs: [/docs/components/perspectivegrid](/docs/components/perspectivegrid)
+
+```html
+<moul-perspective-grid variant="floor" style="min-height: 24rem">
+  <h2>Built for what comes next</h2>
+</moul-perspective-grid>
+```
+
+### `<moul-perspective-grid>`
+
+Class: `MoulPerspectiveGrid` · Source: `ui/src/components/PerspectiveGrid/PerspectiveGrid.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `variant` | `variant` | `'floor' \| 'tunnel'` | `'floor'` |
+| `angle` | `angle` | `number` | `DEFAULT_ANGLE` |
+
+**Slots**
+
+| Slot |
+| :--- |
+| (default) |
+
+**CSS Parts:** `background`
+
+## Ripple
+
+Concentric rings (`count`, default 6) pulsing outward in sequence behind an icon, avatar or button centred in it, fainter toward the edge. Effects entry; still under reduced motion. Docs: [/docs/components/ripple](/docs/components/ripple)
+
+```html
+<moul-ripple count="6">
+  <moul-avatar name="Sophea Chan" size="lg"></moul-avatar>
+</moul-ripple>
+```
+
+### `<moul-ripple>`
+
+Class: `MoulRipple` · Source: `ui/src/components/Ripple/Ripple.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `count` | `count` | `number` | `DEFAULT_COUNT` |
+
+**Slots**
+
+| Slot |
+| :--- |
+| (default) |
+
+**CSS Parts:** `background`
+
+## Aurora
+
+Slow-drifting, blurred colour behind a hero or section: `variant="aurora"` sways bands across the top, `blobs` drifts and reshapes large blobs; colours from `--aurora-color-1` to `-3`. Effects entry; a still field under reduced motion. Docs: [/docs/components/aurora](/docs/components/aurora)
+
+```html
+<moul-aurora variant="blobs" style="padding: 6rem 2rem">
+  <h1>Ship on every push</h1>
+  <p>Previews, logs and rollbacks for every branch.</p>
+</moul-aurora>
+```
+
+### `<moul-aurora>`
+
+Class: `MoulAurora` · Source: `ui/src/components/Aurora/Aurora.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `variant` | `variant` | `'aurora' \| 'blobs'` | `'aurora'` |
+
+**Slots**
+
+| Slot |
+| :--- |
+| (default) |
+
+**CSS Parts:** `background`
+
+## Noise
+
+A film-grain texture laid over its content (a hero, a card, a gradient) from an SVG turbulence mask in a token colour; `frequency` sets the grain, `is-animated` makes it flicker like film. Effects entry; still under reduced motion. Docs: [/docs/components/noise](/docs/components/noise)
+
+```html
+<moul-noise style="border-radius: 1rem">
+  <moul-aurora variant="blobs" style="padding: 6rem 2rem; border-radius: inherit">
+    <h1>Made by hand</h1>
+  </moul-aurora>
+</moul-noise>
+```
+
+### `<moul-noise>`
+
+Class: `MoulNoise` · Source: `ui/src/components/Noise/Noise.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `frequency` | `frequency` | `number` | `DEFAULT_FREQUENCY` |
+| `is-animated` | `isAnimated` | `boolean` | `false` |
+
+**Slots**
+
+| Slot |
+| :--- |
+| (default) |
+
+**CSS Parts:** `grain`
+
+## LightRays
+
+Soft blurred rays (`count`, default 7) fanning down from the top edge, each swaying and brightening at its own pace, behind a hero or a heading. Effects entry; still under reduced motion. Docs: [/docs/components/lightrays](/docs/components/lightrays)
+
+```html
+<moul-light-rays count="9" style="padding: 6rem 2rem">
+  <h1>Light where it matters</h1>
+</moul-light-rays>
+```
+
+### `<moul-light-rays>`
+
+Class: `MoulLightRays` · Source: `ui/src/components/LightRays/LightRays.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `count` | `count` | `number` | `DEFAULT_COUNT` |
+
+**Slots**
+
+| Slot |
+| :--- |
+| (default) |
+
+**CSS Parts:** `background`
+
+## Spotlight
+
+Light falling on a hero from above: `variant="cone"` slides in from a top corner (`placement="start|center|end"`), `lamp` widens a bright line and its cone of light, both once as they enter view (`play()` replays, `is-lit` shows it at once); `sway` swings two lights slowly. Effects entry; end state at once under reduced motion. Docs: [/docs/components/spotlight](/docs/components/spotlight)
+
+```html
+<moul-spotlight variant="lamp" style="padding: 5rem 2rem 4rem; text-align: center">
+  <h1>Build under a good light</h1>
+</moul-spotlight>
+```
+
+### `<moul-spotlight>`
+
+Class: `MoulSpotlight` · Source: `ui/src/components/Spotlight/Spotlight.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `variant` | `variant` | `'cone' \| 'lamp' \| 'sway'` | `'cone'` |
+| `placement` | `placement` | `'start' \| 'center' \| 'end'` | `'start'` |
+| `is-lit` | `isLit` | `boolean` | `false` |
+
+**Slots**
+
+| Slot |
+| :--- |
+| (default) |
+
+**CSS Parts:** `background`
+
+## BorderBeam
+
+Wraps a card or panel and sends a short bright beam round its border, following the rounded corners (the radius is the element's own `border-radius`); `is-reverse` turns it the other way. Effects entry; still under reduced motion. Docs: [/docs/components/borderbeam](/docs/components/borderbeam)
+
+```html
+<moul-border-beam>
+  <moul-card><moul-card-body>Pro: $24 a month</moul-card-body></moul-card>
+</moul-border-beam>
+```
+
+### `<moul-border-beam>`
+
+Class: `MoulBorderBeam` · Source: `ui/src/components/BorderBeam/BorderBeam.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `is-reverse` | `isReverse` | `boolean` | `false` |
+
+**Slots**
+
+| Slot |
+| :--- |
+| (default) |
+
+**CSS Parts:** `border`
+
+## ShineBorder
+
+Wraps a card or panel in a thin border whose colours drift slowly round it (`--shine-border-colors`); quieter than a border beam. Effects entry; still under reduced motion. Docs: [/docs/components/shineborder](/docs/components/shineborder)
+
+```html
+<moul-shine-border>
+  <moul-card><moul-card-body>Team: $48 a month</moul-card-body></moul-card>
+</moul-shine-border>
+```
+
+### `<moul-shine-border>`
+
+Class: `MoulShineBorder` · Source: `ui/src/components/ShineBorder/ShineBorder.ts`
+
+**Slots**
+
+| Slot |
+| :--- |
+| (default) |
+
+**CSS Parts:** `border`
+
+## Beams
+
+A background of faint SVG lines with light travelling along them, behind a hero or feature section: `variant="beams"` curves from a corner, `lines` waves across, `rain` falls and flashes where it lands. Effects entry; the lines stay and nothing travels under reduced motion. Docs: [/docs/components/beams](/docs/components/beams)
+
+```html
+<moul-beams variant="lines" style="padding: 4rem 1.5rem">
+  <h2>Ship on every push</h2>
+</moul-beams>
+```
+
+### `<moul-beams>`
+
+Class: `MoulBeams` · Source: `ui/src/components/Beams/Beams.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `variant` | `variant` | `'beams' \| 'lines' \| 'rain'` | `'beams'` |
+| `count` | `count` | `number \| undefined` | `undefined` |
+| `box` | `box` | `{ width: number; height: number }` | `{ width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT }` |
+
+**Slots**
+
+| Slot |
+| :--- |
+| (default) |
+
+**CSS Parts:** `background`
+
+## Backlight
+
+Wraps an image or video and draws a glow behind it in the media's own colours with an SVG filter, so it follows a playing video; `blur` (property `glowBlur`) and `saturation` tune it. Effects entry. Docs: [/docs/components/backlight](/docs/components/backlight)
+
+```html
+<moul-backlight blur="24">
+  <img src="/screenshot.png" alt="The editor with a preview panel open" />
+</moul-backlight>
+```
+
+### `<moul-backlight>`
+
+Class: `MoulBacklight` · Source: `ui/src/components/Backlight/Backlight.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `blur` | `glowBlur` | `number` | `DEFAULT_BLUR` |
+| `saturation` | `saturation` | `number` | `DEFAULT_SATURATION` |
+
+**Slots**
+
+| Slot |
+| :--- |
+| (default) |
+
+**CSS Parts:** `base`
+
+## FocusGroup
+
+A grid of tiles where the one under the pointer, or holding keyboard focus, stays sharp while its siblings blur, dim and shrink; suits image-led tiles. Effects entry; no transition under reduced motion. Docs: [/docs/components/focusgroup](/docs/components/focusgroup)
+
+```html
+<moul-focus-group>
+  <a href="/places/angkor"><img src="/angkor.jpg" alt="" /> Angkor Wat at dawn</a>
+  <a href="/places/koh-rong"><img src="/koh-rong.jpg" alt="" /> Koh Rong</a>
+</moul-focus-group>
+```
+
+### `<moul-focus-group>`
+
+Class: `MoulFocusGroup` · Source: `ui/src/components/FocusGroup/FocusGroup.ts`
+
+**Slots**
+
+| Slot |
+| :--- |
+| (default) |
+
+## EdgeBlur
+
+A scroll container (give it a height) whose content blurs out progressively toward its edges; `orientation="horizontal"` for a row, `edges="start|end"` for one side. Where scroll timelines exist, an edge clears when there is nothing more to scroll that way. Focusable by keyboard; label it with `aria-label`. Effects entry. Docs: [/docs/components/edgeblur](/docs/components/edgeblur)
+
+```html
+<moul-edge-blur aria-label="Release notes" style="height: 18rem">
+  <ul>…</ul>
+</moul-edge-blur>
+```
+
+### `<moul-edge-blur>`
+
+Class: `MoulEdgeBlur` · Source: `ui/src/components/EdgeBlur/EdgeBlur.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `orientation` | `orientation` | `'vertical' \| 'horizontal'` | `'vertical'` |
+| `edges` | `edges` | `'both' \| 'start' \| 'end'` | `'both'` |
+
+**Slots**
+
+| Slot |
+| :--- |
+| (default) |
+
+**CSS Parts:** `content`, `edge`, `edge-start`, `edge-end`
+
+## Orbit
+
+Icons, logos or avatars spaced evenly on a ring that turns slowly round a centre, staying upright (`radius`, `duration`, `is-reverse`, `show-path`, `pause-on-hover`; pauses while focus is inside). Nest another orbit in `slot="center"` for more rings. Effects entry; still under reduced motion. Docs: [/docs/components/orbit](/docs/components/orbit)
+
+```html
+<moul-orbit radius="128" show-path pause-on-hover>
+  <img src="/logos/one.svg" alt="One" />
+  <img src="/logos/two.svg" alt="Two" />
+  <moul-orbit slot="center" radius="64" duration="14" is-reverse>…</moul-orbit>
+</moul-orbit>
+```
+
+### `<moul-orbit>`
+
+Class: `MoulOrbit` · Source: `ui/src/components/Orbit/Orbit.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `radius` | `radius` | `number` | `DEFAULT_RADIUS` |
+| `duration` | `duration` | `number` | `DEFAULT_DURATION` |
+| `is-reverse` | `isReverse` | `boolean` | `false` |
+| `show-path` | `showPath` | `boolean` | `false` |
+| `pause-on-hover` | `pauseOnHover` | `boolean` | `false` |
+| `itemCount` | `itemCount` | `number` | `0` |
+
+**Slots**
+
+| Slot |
+| :--- |
+| (default) |
+| `center` |
+
+**CSS Parts:** `orbit`, `path`, `ring`, `center`
 
 ---
 

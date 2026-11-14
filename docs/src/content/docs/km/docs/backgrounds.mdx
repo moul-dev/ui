@@ -1,0 +1,156 @@
+---
+title: ផ្ទៃខាងក្រោយ និងពន្លឺ (Backgrounds and light)
+description: លំនាំ ពណ៌រសាត់ ធ្នឹមពន្លឺ ស៊ុមភ្លឺ ពន្លឺស្ពតឡាយ និងពន្លឺលើកាត សម្រាប់ផ្នែកនីមួយៗនៃទំព័រដើម គូរដោយ CSS និង SVG។
+---
+
+A landing page section on a flat background tends to look unfinished, and the usual fixes are heavy: a canvas loop, a WebGL shader, or a large image that has to be made again for the dark theme. Each one is a script or an asset that someone has to keep working.
+
+The second half of the landing kit gives each section a surface instead. There are patterns, colour that drifts, light that falls or travels along lines, borders that shine, and light that follows the pointer across a card. Everything is drawn with CSS and SVG. There is no canvas and no WebGL, every colour comes from the theme tokens, and every looping effect pauses while it is off screen. The [example landing page](/examples/landing/) uses one in every section, and its only script is still the two imports.
+
+```js
+import '@moul-dev/web-component'
+import '@moul-dev/web-component/effects'
+```
+
+Like the rest of the kit, these elements live in the effects entry. The card effects are the exception: `effect` is an attribute on `<moul-card>`, in the main entry, and on `<moul-bento-card>`.
+
+## What is in it
+
+| Piece | Element | What it does |
+| :-- | :-- | :-- |
+| [Pattern](/km/docs/components/pattern/) | `<moul-pattern>` | Dots, a grid, hexagons, stripes or diagonal lines, with cells that can light up |
+| [Perspective grid](/km/docs/components/perspectivegrid/) | `<moul-perspective-grid>` | A grid floor or tunnel receding into depth |
+| [Ripple](/km/docs/components/ripple/) | `<moul-ripple>` | Rings that pulse outward behind an icon or a button |
+| [Aurora](/km/docs/components/aurora/) | `<moul-aurora>` | Bands or blobs of colour drifting slowly |
+| [Noise](/km/docs/components/noise/) | `<moul-noise>` | A film-grain texture over its content |
+| [Beams](/km/docs/components/beams/) | `<moul-beams>` | Light travelling along curved, wavy or falling lines |
+| [Light rays](/km/docs/components/lightrays/) | `<moul-light-rays>` | Soft rays shining down from the top edge |
+| [Spotlight](/km/docs/components/spotlight/) | `<moul-spotlight>` | A cone, a lamp or a swaying pair of lights over a hero |
+| [Border beam](/km/docs/components/borderbeam/) | `<moul-border-beam>` | A short light travelling round a box's border |
+| [Shine border](/km/docs/components/shineborder/) | `<moul-shine-border>` | Colours drifting slowly round a box's border |
+| [Backlight](/km/docs/components/backlight/) | `<moul-backlight>` | A glow behind an image or video in its own colours |
+| [Card effects](/km/docs/components/card/#effects) | `<moul-card effect>` | Light that follows the pointer, a glare, a glowing edge |
+| [Focus group](/km/docs/components/focusgroup/) | `<moul-focus-group>` | The tile under the pointer stays sharp; the others blur |
+| [Edge blur](/km/docs/components/edgeblur/) | `<moul-edge-blur>` | Scrolling content blurs out at its edges |
+| [Orbit](/km/docs/components/orbit/) | `<moul-orbit>` | Icons or logos circling a centre on a ring |
+
+## Wrapping, or as a layer
+
+Most of these elements wrap the content they sit behind. The effect is drawn in a layer behind the element's content and fills the element's box. The element adds no padding and no background colour of its own, so give it the padding or height the section needs.
+
+```html
+<moul-aurora variant="blobs" style="padding: 6rem 2rem">
+  <h1>Ship on every push</h1>
+  <p>Previews, logs and rollbacks for every branch.</p>
+</moul-aurora>
+```
+
+Left empty, the same element is a layer for any box. Put it first in the box with `position: absolute; inset: 0; z-index: -1`, and give the box `position: relative` and `isolation: isolate`, so the layer sits over the box's background and behind its content. Layers stack in source order, so a pattern can sit over a spotlight in the same section.
+
+```html
+<section class="hero">
+  <moul-spotlight class="layer"></moul-spotlight>
+  <moul-pattern class="layer" variant="grid" fade="radial" is-animated></moul-pattern>
+  <h1>Web components for dashboards</h1>
+</section>
+```
+
+```css
+.hero {
+  position: relative;
+  isolation: isolate;
+}
+
+.hero .layer {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+}
+```
+
+Two kinds draw on top instead. `<moul-noise>` lays its grain over its content, and the two borders, `<moul-border-beam>` and `<moul-shine-border>`, draw a ring over the edge of what they wrap and take its radius from their own `border-radius`. All of them let the pointer through.
+
+## A page, section by section
+
+**Hero.** A cone of light from the top corner, under a grid that fades out toward the edges and lights a few cells at a time. The screenshot gets a beam round its frame, and the phone a backlight that picks up the colour on its screen.
+
+```html
+<section class="hero">
+  <moul-spotlight class="layer"></moul-spotlight>
+  <moul-pattern class="layer" variant="grid" fade="radial" is-animated count="10"></moul-pattern>
+  <h1>…</h1>
+
+  <moul-border-beam>
+    <moul-browser-frame url="moul.dev/admin">…</moul-browser-frame>
+  </moul-border-beam>
+
+  <moul-backlight blur="28">
+    <moul-phone-frame>
+      <moul-aurora variant="blobs">…</moul-aurora>
+    </moul-phone-frame>
+  </moul-backlight>
+</section>
+```
+
+**Logos.** A quiet dot pattern, faded at the edges, so the marquee does not float on nothing.
+
+```html
+<section class="logos">
+  <moul-pattern class="layer" variant="dots" fade="edges"></moul-pattern>
+  <moul-marquee fade-edges pause-on-hover>…</moul-marquee>
+</section>
+```
+
+**Features.** Light rays over the heading, light that follows the pointer on every bento card, and small pictures made of ripples and an orbit.
+
+```html
+<section class="features">
+  <moul-light-rays class="layer"></moul-light-rays>
+  <moul-bento-grid columns="3">
+    <moul-bento-card col-span="2" effect="spotlight glow">…</moul-bento-card>
+    <moul-bento-card effect="spotlight">
+      <moul-ripple slot="visual" count="4">…</moul-ripple>
+      …
+    </moul-bento-card>
+  </moul-bento-grid>
+</section>
+```
+
+**Call to action.** A grid floor running to the horizon, and a shining border round the install command.
+
+```html
+<section class="cta">
+  <moul-perspective-grid class="layer"></moul-perspective-grid>
+  <h2>Ship your landing page this week</h2>
+  <moul-shine-border style="border-radius: 999px">
+    <p><moul-typewriter text="bun add @moul-dev/web-component"></moul-typewriter></p>
+  </moul-shine-border>
+</section>
+```
+
+## Which one where
+
+| Section | Good fits |
+| :-- | :-- |
+| Hero | Spotlight, aurora, beams, light rays, an animated pattern |
+| Logos, stats | A faded pattern, noise |
+| Features | Card effects, orbit, ripple, focus group, border beam |
+| Pricing | Border beam or shine border on the plan you recommend, card glow |
+| Media | Backlight, border beam |
+| Call to action | Perspective grid, ripple, shine border, aurora |
+| Long lists | Edge blur |
+
+One or two per section is plenty. Light reads as light only against something calmer, so a page where every section moves loses the effect it was after.
+
+## Accessibility
+
+- **Decoration says so.** Every layer, ring and glow is `aria-hidden` and lets the pointer through. Content inside keeps its own semantics, focus order and text.
+- **Contrast is yours to check.** A pattern, a glow or a spotlight changes what is behind the text. Check the contrast where the effect is brightest, not where it is calmest, and fade a pattern away from the text with `fade`.
+- **Movement can stop.** Looping effects pause while they are off screen. An orbit stops while focus is inside it and, with `pause-on-hover`, while the pointer is over it.
+- **Reduced motion is honoured.** Under `prefers-reduced-motion: reduce` each element shows a still version that looks finished: patterns, colour and rays hold still, spotlights appear at once, beams stop travelling, and card light rests in the middle of the card.
+- **Forced colours win.** Where the system forces its own colours, as in Windows high contrast mode, the decorative layers are not drawn.
+- **Scrolling stays reachable.** `<moul-edge-blur>` is a scroll container that keyboard users can reach with Tab, and it keeps a focused item clear of the blurred edge.
+
+## Cost
+
+Everything here is CSS and SVG, and nothing runs while it is off screen, but blur and transparency still cost the graphics card on every frame. `<moul-edge-blur>` stacks several `backdrop-filter` layers, and the aurora, the backlight and the light rays blur large areas. On a page with several of them, keep the large blurred ones to a section or two, and check the page on a mid-range phone.

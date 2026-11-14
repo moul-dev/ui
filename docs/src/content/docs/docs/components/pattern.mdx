@@ -1,0 +1,173 @@
+---
+title: Pattern
+description: Dots, a grid, hexagons, stripes or diagonal lines behind content, with cells that can light up.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import LandingKitDemo from '@/components/demos/LandingKitDemo.astro';
+
+`<moul-pattern>` draws a quiet pattern behind whatever you put inside it: dots, a grid, a honeycomb of hexagons, broad diagonal stripes or fine diagonal lines. It suits a hero, a feature panel or an empty state, where a plain background looks unfinished. `fade` softens it toward the edges so the content in front stays readable, and `is-animated` lights up random cells or lets the pattern drift.
+
+<ComponentPreview align="stretch" minHeight="320px">
+  <moul-pattern variant="grid" fade="radial" is-animated style="display: grid; place-content: center; gap: 0.5rem; min-height: 18rem; padding: 2rem; text-align: center">
+    <moul-typography variant="h2">Ship on every push</moul-typography>
+    <moul-typography variant="body">Previews, rollbacks and logs in one place.</moul-typography>
+  </moul-pattern>
+  <LandingKitDemo />
+</ComponentPreview>
+
+It lives in the effects entry, with the rest of the landing kit:
+
+```js
+import '@moul-dev/web-component/effects'
+```
+
+```html
+<moul-pattern variant="grid" fade="radial" is-animated>
+  <h2>Ship on every push</h2>
+  <p>Previews, rollbacks and logs in one place.</p>
+</moul-pattern>
+```
+
+The pattern fills the element's box and paints behind its content. The element adds no padding and no background colour of its own, so give it the padding or height the section needs; the page or card colour shows between the dots and lines.
+
+## Variants
+
+`variant` picks the pattern. `dots` (the default) puts a dot in the middle of every cell, and `grid` draws a line along the top and left of every cell. `hexagons` is a honeycomb of outlines. `stripes` lays broad diagonal bands, and `lines` closely spaced diagonal hairlines.
+
+<ComponentPreview align="stretch" minHeight="320px">
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); gap: 1rem">
+    <moul-pattern variant="dots" style="display: grid; place-content: center; height: 9rem; border: 1px solid var(--color-border); border-radius: var(--radius-xl)"><span class="demo-label">dots</span></moul-pattern>
+    <moul-pattern variant="grid" style="display: grid; place-content: center; height: 9rem; border: 1px solid var(--color-border); border-radius: var(--radius-xl)"><span class="demo-label">grid</span></moul-pattern>
+    <moul-pattern variant="hexagons" style="display: grid; place-content: center; height: 9rem; border: 1px solid var(--color-border); border-radius: var(--radius-xl)"><span class="demo-label">hexagons</span></moul-pattern>
+    <moul-pattern variant="stripes" style="display: grid; place-content: center; height: 9rem; border: 1px solid var(--color-border); border-radius: var(--radius-xl)"><span class="demo-label">stripes</span></moul-pattern>
+    <moul-pattern variant="lines" style="display: grid; place-content: center; height: 9rem; border: 1px solid var(--color-border); border-radius: var(--radius-xl)"><span class="demo-label">lines</span></moul-pattern>
+  </div>
+</ComponentPreview>
+
+```html
+<moul-pattern variant="hexagons">…</moul-pattern>
+<moul-pattern variant="lines">…</moul-pattern>
+```
+
+## Fading
+
+`fade` masks the pattern so it thins out where you do not want it. `radial` keeps it in the middle and fades it toward every edge, which suits a centred heading. `top` and `bottom` fade it toward that edge, and `edges` fades a band along all four. `none` (the default) draws it edge to edge. The lit cells fade with the pattern.
+
+<ComponentPreview align="stretch" minHeight="320px">
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); gap: 1rem">
+    <moul-pattern variant="grid" fade="radial" style="display: grid; place-content: center; height: 10rem"><span class="demo-label">radial</span></moul-pattern>
+    <moul-pattern variant="grid" fade="top" style="display: grid; place-content: center; height: 10rem"><span class="demo-label">top</span></moul-pattern>
+    <moul-pattern variant="grid" fade="bottom" style="display: grid; place-content: center; height: 10rem"><span class="demo-label">bottom</span></moul-pattern>
+    <moul-pattern variant="grid" fade="edges" style="display: grid; place-content: center; height: 10rem"><span class="demo-label">edges</span></moul-pattern>
+  </div>
+</ComponentPreview>
+
+```html
+<moul-pattern variant="grid" fade="bottom">…</moul-pattern>
+```
+
+## Animation
+
+`is-animated` adds movement. On `grid` and `dots`, cells light up in the accent colour and fade out at random, and when a cell goes dark it lights up again somewhere else. `count` is how many cells are lit at once, from 1 to 64 (12 by default). The lit cells always line up with the drawn cells, whatever the element's size or `--pattern-size`, and they move to fit when the element is resized.
+
+On `stripes`, `lines` and `hexagons`, the pattern drifts slowly sideways instead, by one cell per loop, toward the inline end (leftward in right-to-left text).
+
+<ComponentPreview align="stretch" minHeight="320px">
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: 1rem">
+    <moul-pattern variant="dots" fade="radial" is-animated count="20" style="display: grid; place-content: center; height: 14rem"><span class="demo-label">dots, 20 lit</span></moul-pattern>
+    <moul-pattern variant="grid" fade="edges" is-animated count="6" style="display: grid; place-content: center; height: 14rem"><span class="demo-label">grid, 6 lit</span></moul-pattern>
+    <moul-pattern variant="stripes" fade="edges" is-animated style="display: grid; place-content: center; height: 14rem"><span class="demo-label">stripes, drifting</span></moul-pattern>
+  </div>
+</ComponentPreview>
+
+```html
+<moul-pattern variant="dots" fade="radial" is-animated count="20">…</moul-pattern>
+<moul-pattern variant="stripes" is-animated>…</moul-pattern>
+```
+
+The animation is CSS only, and pauses while the pattern is off screen.
+
+## Colours, size and speed
+
+The pattern is drawn in `--color-fg` at low strength, so it darkens a light page and lightens a dark one, and the lit cells use `--color-accent`, so they follow your `--brand-hue`. Five CSS properties change the look:
+
+- `--pattern-size` is the size of one cell: `24px` for `dots` and `stripes`, `40px` for `grid`, `10px` for `lines`. For `hexagons` it is the width of one hexagon, corner to corner (`40px`).
+- `--pattern-color` is the colour of the dots, lines and stripes.
+- `--pattern-line-width` (`1px`) and `--pattern-dot-size` (`2px` across) set the weight of `grid` and `lines`, and of `dots`. Hexagons are always drawn with a one-pixel line.
+- `--pattern-highlight` is the colour of a lit cell.
+- `--pattern-duration` is how long one lit cell takes to brighten and fade (`4s`), or how long the drift takes to move one cell (`6s` for `stripes`, `3s` for `lines`, `12s` for `hexagons`).
+
+<ComponentPreview align="stretch" minHeight="320px">
+  <moul-pattern variant="grid" fade="radial" is-animated count="8" style="--pattern-size: 28px; --pattern-color: color-mix(in oklab, var(--color-success) 30%, transparent); --pattern-highlight: color-mix(in oklab, var(--color-success) 40%, transparent); --pattern-duration: 3s; display: grid; place-content: center; gap: 0.5rem; min-height: 18rem; padding: 2rem; text-align: center">
+    <moul-typography variant="h3">All checks passed</moul-typography>
+    <moul-typography variant="body">Deployed to production in 42 seconds.</moul-typography>
+  </moul-pattern>
+</ComponentPreview>
+
+```css
+moul-pattern.status {
+  --pattern-size: 28px;
+  --pattern-color: color-mix(in oklab, var(--color-success) 30%, transparent);
+  --pattern-highlight: color-mix(in oklab, var(--color-success) 40%, transparent);
+  --pattern-duration: 3s;
+}
+```
+
+## Use as a layer
+
+To put a pattern behind a section you already have, leave the element empty and position it over the section, behind the content:
+
+<ComponentPreview align="stretch" minHeight="320px">
+  <section style="position: relative; isolation: isolate; display: grid; place-content: center; gap: 0.5rem; min-height: 18rem; padding: 2rem; text-align: center; border-radius: var(--radius-2xl); background: var(--color-bg)">
+    <moul-pattern variant="dots" fade="radial" is-animated style="position: absolute; inset: 0; z-index: -1"></moul-pattern>
+    <moul-typography variant="h2">Logs you can search</moul-typography>
+    <moul-typography variant="body">Every line from every deploy, kept for 30 days.</moul-typography>
+  </section>
+</ComponentPreview>
+
+```html
+<section style="position: relative; isolation: isolate">
+  <moul-pattern variant="dots" fade="radial" style="position: absolute; inset: 0; z-index: -1"></moul-pattern>
+  <h2>Logs you can search</h2>
+  <p>Every line from every deploy, kept for 30 days.</p>
+</section>
+```
+
+`isolation: isolate` on the section keeps the `z-index: -1` inside it, so the pattern paints above the section's own background and below its content. The pattern takes the section's corner radius when you give the element `border-radius: inherit`.
+
+## Accessibility
+
+The pattern is decoration. Its layer is hidden from screen readers with `aria-hidden`, and the element adds no role and never takes focus. The content inside is read, selected and focused as usual; the pattern paints behind it and takes no pointer events.
+
+The default colours are faint, between 6% and 25% of the text colour, so text in front keeps nearly all its contrast. If you strengthen `--pattern-color`, add a `fade` around the text, or check the contrast over the busiest part of the pattern. Lit cells take four seconds to brighten and fade, far slower than anything that counts as flashing.
+
+Where the system forces its own colours, as in Windows high contrast mode, the pattern is not drawn.
+
+Under `prefers-reduced-motion: reduce` nothing moves: the lit cells stay where they are, at different strengths, and the drifting patterns stand still.
+
+## Attributes and properties
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `variant` | `variant` | `'dots' \| 'grid' \| 'hexagons' \| 'stripes' \| 'lines'` | `'dots'` |
+| `fade` | `fade` | `'none' \| 'radial' \| 'top' \| 'bottom' \| 'edges'` | `'none'` |
+| `is-animated` | `isAnimated` | `boolean` | `false` |
+| `count` | `count` | `number`, 1 to 64 | `12` |
+
+| Slot | Description |
+| :-- | :-- |
+| (default) | The content shown in front of the pattern. Leave it empty to use the element as a layer. |
+
+| Part | Description |
+| :-- | :-- |
+| `background` | The decorative layer behind the content. It holds the pattern and the lit cells, and carries the `fade` mask. |
+
+| CSS property | Description | Default |
+| :-- | :-- | :-- |
+| `--pattern-size` | The size of one cell. For `hexagons`, the width of one hexagon. | `24px`; `40px` for `grid` and `hexagons`, `10px` for `lines` |
+| `--pattern-color` | The colour of the dots, lines and stripes. | `--color-fg` at 15%; 25% for `dots`, 6% for `stripes` |
+| `--pattern-line-width` | The width of the lines in `grid` and `lines`. | `1px` |
+| `--pattern-dot-size` | The diameter of each dot in `dots`. | `2px` |
+| `--pattern-highlight` | The colour of a lit cell. | `--color-accent` at 30%; 85% for `dots` |
+| `--pattern-duration` | One lit cell's cycle, or the time the drift takes to move one cell. | `4s`; drift `6s` for `stripes`, `3s` for `lines`, `12s` for `hexagons` |

@@ -17,6 +17,20 @@
  * marquee, bento grid, device frames and scroll progress).
  */
 
+export {
+  type AuroraVariant,
+  MoulAurora,
+  MoulAurora as Aurora,
+} from './components/Aurora'
+export {
+  MoulBacklight,
+  MoulBacklight as Backlight,
+} from './components/Backlight'
+export {
+  type BeamsVariant,
+  MoulBeams,
+  MoulBeams as Beams,
+} from './components/Beams'
 // Effect elements: `bun run gen:component <Name> --effect` adds an export for each.
 export {
   MoulBentoCard,
@@ -24,6 +38,10 @@ export {
   MoulBentoGrid,
   MoulBentoGrid as BentoGrid,
 } from './components/BentoGrid'
+export {
+  MoulBorderBeam,
+  MoulBorderBeam as BorderBeam,
+} from './components/BorderBeam'
 export {
   MoulBrowserFrame,
   MoulBrowserFrame as BrowserFrame,
@@ -38,6 +56,16 @@ export {
   MoulConfetti as Confetti,
 } from './components/Confetti'
 export {
+  type EdgeBlurEdges,
+  type EdgeBlurOrientation,
+  MoulEdgeBlur,
+  MoulEdgeBlur as EdgeBlur,
+} from './components/EdgeBlur'
+export {
+  MoulFocusGroup,
+  MoulFocusGroup as FocusGroup,
+} from './components/FocusGroup'
+export {
   type GradientTextEffect,
   MoulGradientText,
   MoulGradientText as GradientText,
@@ -48,10 +76,33 @@ export {
   MoulHighlight as Highlight,
 } from './components/Highlight'
 export {
+  MoulLightRays,
+  MoulLightRays as LightRays,
+} from './components/LightRays'
+export {
   type MarqueeDirection,
   MoulMarquee,
   MoulMarquee as Marquee,
 } from './components/Marquee'
+export {
+  MoulNoise,
+  MoulNoise as Noise,
+} from './components/Noise'
+export {
+  MoulOrbit,
+  MoulOrbit as Orbit,
+} from './components/Orbit'
+export {
+  MoulPattern,
+  MoulPattern as Pattern,
+  type PatternFade,
+  type PatternVariant,
+} from './components/Pattern'
+export {
+  MoulPerspectiveGrid,
+  MoulPerspectiveGrid as PerspectiveGrid,
+  type PerspectiveGridVariant,
+} from './components/PerspectiveGrid'
 export {
   MoulPhoneFrame,
   MoulPhoneFrame as PhoneFrame,
@@ -63,6 +114,10 @@ export {
   type RevealDirection,
 } from './components/Reveal'
 export {
+  MoulRipple,
+  MoulRipple as Ripple,
+} from './components/Ripple'
+export {
   MoulScramble,
   MoulScramble as Scramble,
   type ScrambleTrigger,
@@ -72,6 +127,16 @@ export {
   MoulScrollProgress as ScrollProgress,
   type ScrollProgressPlacement,
 } from './components/ScrollProgress'
+export {
+  MoulShineBorder,
+  MoulShineBorder as ShineBorder,
+} from './components/ShineBorder'
+export {
+  MoulSpotlight,
+  MoulSpotlight as Spotlight,
+  type SpotlightPlacement,
+  type SpotlightVariant,
+} from './components/Spotlight'
 export {
   MoulTextEntrance,
   MoulTextEntrance as TextEntrance,

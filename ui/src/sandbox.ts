@@ -2153,11 +2153,104 @@ export class MoulSandbox extends LitElement {
     `
   }
 
+  private renderBackgroundsSection(): TemplateResult {
+    const tile =
+      'display: grid; place-content: center; gap: 0.25rem; min-height: 11rem; padding: 1.5rem; text-align: center; border-radius: var(--radius-xl, 1rem); border: 1px solid var(--color-border)'
+    return html`
+      <div class="category-section" id="backgrounds">
+        <div class="section-header">
+          <h3 class="section-title">9. Backgrounds &amp; Light</h3>
+          <p class="section-subtitle">moul-pattern, moul-perspective-grid, moul-ripple, moul-aurora, moul-noise, moul-beams, moul-light-rays, moul-spotlight, moul-border-beam, moul-shine-border, moul-backlight, moul-focus-group, moul-edge-blur, moul-orbit; card effects</p>
+        </div>
+
+        <div class="section-grid">
+          <moul-pattern variant="grid" fade="radial" is-animated style=${tile}>
+            <strong>Pattern</strong><span>grid, radial fade, lit cells</span>
+          </moul-pattern>
+          <moul-perspective-grid style=${tile}>
+            <strong>Perspective grid</strong><span>floor</span>
+          </moul-perspective-grid>
+          <moul-ripple count="4" style="min-height: 11rem">
+            <moul-button size="sm">Ripple</moul-button>
+          </moul-ripple>
+          <moul-aurora variant="blobs" style=${tile}>
+            <strong>Aurora</strong><span>blobs</span>
+          </moul-aurora>
+          <moul-noise style="border-radius: var(--radius-xl, 1rem)">
+            <moul-aurora style=${`${tile}; border-radius: inherit`}>
+              <strong>Noise</strong><span>over an aurora</span>
+            </moul-aurora>
+          </moul-noise>
+          <moul-beams variant="lines" style=${tile}>
+            <strong>Beams</strong><span>lines</span>
+          </moul-beams>
+          <moul-light-rays style=${tile}>
+            <strong>Light rays</strong><span>seven rays</span>
+          </moul-light-rays>
+          <moul-spotlight variant="lamp" style=${`${tile}; padding-top: 3rem`}>
+            <strong>Spotlight</strong><span>lamp</span>
+          </moul-spotlight>
+          <moul-border-beam>
+            <moul-card>
+              <moul-card-header>Border beam</moul-card-header>
+              <moul-card-body>A light travels round the edge.</moul-card-body>
+            </moul-card>
+          </moul-border-beam>
+          <moul-shine-border>
+            <moul-card>
+              <moul-card-header>Shine border</moul-card-header>
+              <moul-card-body>Colours drift round the edge.</moul-card-body>
+            </moul-card>
+          </moul-shine-border>
+          <moul-card effect="spotlight glow" is-interactive>
+            <moul-card-header>Card effects</moul-card-header>
+            <moul-card-body>Spotlight and glow; point at it or tab to it.</moul-card-body>
+          </moul-card>
+          <moul-card effect="glare" is-interactive>
+            <moul-card-header>Glare</moul-card-header>
+            <moul-card-body>A band of light sweeps across on hover.</moul-card-body>
+          </moul-card>
+          <moul-backlight blur="24" style="display: grid; place-items: center; padding: 1.5rem">
+            <div style="width: 10rem; height: 6.5rem; border-radius: 0.75rem; background: linear-gradient(var(--color-chart-4), var(--color-chart-3) 55%, var(--color-chart-5))"></div>
+          </moul-backlight>
+          <moul-orbit radius="64" show-path pause-on-hover style="justify-self: center">
+            <moul-avatar name="Sophea Chan" size="sm"></moul-avatar>
+            <moul-avatar name="Dara Kim" size="sm"></moul-avatar>
+            <moul-avatar name="Vanna Ly" size="sm"></moul-avatar>
+            <moul-badge slot="center" tone="primary">Orbit</moul-badge>
+          </moul-orbit>
+          <moul-edge-blur aria-label="Recent deploys" style="height: 11rem; border-radius: var(--radius-xl, 1rem); border: 1px solid var(--color-border)">
+            <div style="display: grid; gap: 0.5rem; padding: 1rem">
+              ${[
+                'api-gateway',
+                'billing-worker',
+                'search-index',
+                'web-app',
+                'docs-site',
+                'mailer',
+                'scheduler',
+              ].map(
+                (name) =>
+                  html`<moul-card variant="flat"><strong>${name}</strong> deployed</moul-card>`,
+              )}
+            </div>
+          </moul-edge-blur>
+        </div>
+
+        <moul-focus-group style="margin-top: var(--spacing-4, 1rem)">
+          <moul-card><moul-card-header>Previews</moul-card-header><moul-card-body>Focus group: point at one card.</moul-card-body></moul-card>
+          <moul-card><moul-card-header>Logs</moul-card-header><moul-card-body>The others blur and dim.</moul-card-body></moul-card>
+          <moul-card><moul-card-header>Rollbacks</moul-card-header><moul-card-body>Keyboard focus works too.</moul-card-body></moul-card>
+        </moul-focus-group>
+      </div>
+    `
+  }
+
   private renderBlocksSection(): TemplateResult {
     return html`
       <div class="category-section" id="blocks">
         <div class="section-header">
-          <h3 class="section-title">9. Composite Blocks</h3>
+          <h3 class="section-title">10. Composite Blocks</h3>
           <p class="section-subtitle">moul-logs-viewer, moul-logs, moul-sidebar, moul-sidebar-user</p>
         </div>
 
@@ -2248,6 +2341,9 @@ export class MoulSandbox extends LitElement {
             <moul-sidebar-item key="landing" label="Landing Kit" badge="13">
               <span slot="icon">🚀</span>
             </moul-sidebar-item>
+            <moul-sidebar-item key="backgrounds" label="Backgrounds & Light" badge="14">
+              <span slot="icon">🌅</span>
+            </moul-sidebar-item>
             <moul-sidebar-item key="blocks" label="Composite Blocks" badge="12">
               <span slot="icon">📦</span>
             </moul-sidebar-item>
@@ -2327,6 +2423,11 @@ export class MoulSandbox extends LitElement {
             ${
               isAll || this.selectedCategory === 'landing'
                 ? this.renderLandingSection()
+                : nothing
+            }
+            ${
+              isAll || this.selectedCategory === 'backgrounds'
+                ? this.renderBackgroundsSection()
                 : nothing
             }
             ${

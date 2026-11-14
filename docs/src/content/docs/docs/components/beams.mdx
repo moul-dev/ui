@@ -1,0 +1,134 @@
+---
+title: Beams
+description: A background of faint lines with light travelling along them, for a hero or a feature section.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import LandingKitDemo from '@/components/demos/LandingKitDemo.astro';
+
+`<moul-beams>` draws faint lines behind a section and sends light along them: long curved beams sweeping in from a corner, waves running across the width, or beams falling like rain. Wrap the section's content in it. The lines fill the element, are redrawn to fit any size, and stay behind the content.
+
+<ComponentPreview align="stretch" minHeight="320px">
+  <moul-beams style="display: grid; place-items: center; min-height: 320px; padding: 3rem 1.5rem; border: 1px solid var(--color-border); border-radius: var(--radius-surface); text-align: center">
+    <div style="display: grid; justify-items: center; gap: 1rem; max-width: 30rem">
+      <moul-typography variant="h2">Ship on every push</moul-typography>
+      <p style="color: var(--color-muted)">Every branch gets a preview link, every merge goes live, and every deploy can be rolled back in one click.</p>
+      <moul-button>Start a project</moul-button>
+    </div>
+  </moul-beams>
+  <LandingKitDemo />
+</ComponentPreview>
+
+It lives in the effects entry, with the rest of the landing kit:
+
+```js
+import '@moul-dev/web-component/effects'
+```
+
+```html
+<moul-beams class="hero">
+  <h1>Ship on every push</h1>
+  <p>Every branch gets a preview link, and every deploy can be rolled back.</p>
+</moul-beams>
+```
+
+The element adds no padding and no background colour, so give it (or its parent) those, and a height if its content is short. It is `isolation: isolate`, and its lines sit behind its content but in front of its own background.
+
+## Variants
+
+`variant` sets which lines are drawn and how the light moves along them.
+
+`beams` (the default) sweeps long curved paths in from the top-left corner, with short pulses of light running along them at staggered times. In right-to-left text they come in from the top right.
+
+<ComponentPreview align="stretch" minHeight="320px">
+  <moul-beams style="min-height: 280px; border: 1px solid var(--color-border); border-radius: var(--radius-surface)"></moul-beams>
+</ComponentPreview>
+
+`lines` runs gentle waves across the width, with dashes of light flowing along them.
+
+<ComponentPreview align="stretch" minHeight="320px">
+  <moul-beams variant="lines" style="min-height: 280px; border: 1px solid var(--color-border); border-radius: var(--radius-surface)"></moul-beams>
+</ComponentPreview>
+
+`rain` drops beams of light from the top at staggered times, and each flashes briefly where it lands on the bottom edge.
+
+<ComponentPreview align="stretch" minHeight="320px">
+  <moul-beams variant="rain" style="min-height: 280px; border: 1px solid var(--color-border); border-radius: var(--radius-surface)"></moul-beams>
+</ComponentPreview>
+
+```html
+<moul-beams>…</moul-beams>
+<moul-beams variant="lines">…</moul-beams>
+<moul-beams variant="rain">…</moul-beams>
+```
+
+## Count
+
+`count` is the number of lines, from 1 to 48. It defaults to 24 for `beams` and 12 for `lines` and `rain`. The lines are laid out the same way every time for a given variant, count and size, so the background never jumps between renders.
+
+<ComponentPreview align="stretch" minHeight="320px">
+  <moul-beams variant="rain" count="32" style="min-height: 280px; border: 1px solid var(--color-border); border-radius: var(--radius-surface)"></moul-beams>
+</ComponentPreview>
+
+```html
+<moul-beams variant="rain" count="32">…</moul-beams>
+```
+
+## Colours and speed
+
+`--beams-color` is the colour of the faint lines, `--color-fg` at about 10% by default. Each pulse of light has a head in `--beams-light` (the theme's accent) and fades into `--beams-light-tail` (`--color-chart-4`) towards its tail, with a soft glow in the head colour. `--beams-duration` is the base cycle of a pulse: `10s` for `beams` and `8s` for `lines` and `rain`. Each line runs a little faster or slower than that, so the pulses never fall into step.
+
+<ComponentPreview align="stretch" minHeight="320px">
+  <moul-beams variant="lines" style="min-height: 280px; border: 1px solid var(--color-border); border-radius: var(--radius-surface); --beams-light: var(--color-chart-5); --beams-light-tail: var(--color-success); --beams-duration: 5s"></moul-beams>
+</ComponentPreview>
+
+```css
+moul-beams.hero {
+  --beams-light: var(--color-chart-5);
+  --beams-light-tail: var(--color-success);
+  --beams-duration: 5s;
+}
+```
+
+## As a layer
+
+Left empty, the element is a layer of its own. Put it first in a positioned box with `position: absolute; inset: 0; z-index: -1`, and give the box `isolation: isolate`, so the lines sit behind the box's content but over its background. An empty element lets the pointer through.
+
+```html
+<section style="position: relative; isolation: isolate; border-radius: 1.5rem">
+  <moul-beams variant="lines" style="position: absolute; inset: 0; z-index: -1; border-radius: inherit"></moul-beams>
+  <h2>Logs you can search</h2>
+</section>
+```
+
+The lines are SVG, drawn once for each size, and the light is CSS. It pauses while the element is off screen.
+
+## Accessibility
+
+`<moul-beams>` is never focusable and adds no role. The lines are decorative and hidden from assistive technology, so the content is read, and reached with Tab, as if the element were not there.
+
+The lines are faint and the pulses are thin, but moving light behind text still competes with it. Keep the text short and well clear of the background in contrast, and keep beams to one section of a page. Where the system forces its own colours, as in Windows high contrast mode, and when printing, the lines are not drawn.
+
+Under `prefers-reduced-motion: reduce` the faint lines stay and no light travels. Every third pulse rests partway along its line, so the background still looks lit.
+
+## Attributes and properties
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `variant` | `variant` | `'beams' \| 'lines' \| 'rain'` | `'beams'` |
+| `count` | `count` | `number` | 24 for `beams`, 12 for `lines` and `rain` |
+
+| Slot | Description |
+| :-- | :-- |
+| (default) | The content shown over the lines. |
+
+| Part | Description |
+| :-- | :-- |
+| `background` | The layer behind the content that holds the lines. It ignores the pointer. |
+
+| CSS property | Description | Default |
+| :-- | :-- | :-- |
+| `--beams-color` | The faint lines. | `--color-fg` at about 10% |
+| `--beams-light` | The head of each pulse, and its glow. | `var(--color-accent)` |
+| `--beams-light-tail` | The colour each pulse fades into towards its tail. | `var(--color-chart-4)` |
+| `--beams-duration` | The base cycle of a pulse. | `10s`, `8s` for `lines` and `rain` |

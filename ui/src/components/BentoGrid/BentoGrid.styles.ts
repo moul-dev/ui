@@ -189,3 +189,27 @@ export const bentoCardStyles = [
     }
   `,
 ]
+
+/**
+ * How the shared card effects (`styles/card-effects.styles.ts`) sit in a
+ * bento card's layers. Kept apart from `bentoCardStyles`, which is the card's
+ * own look.
+ */
+export const bentoCardEffectStyles = css`
+  /* Above the background art, under the visual and the text. */
+  [part="base"] > .card-spotlight {
+    z-index: 0;
+  }
+
+  /* The glow lies outside the card, so the host stops clipping and the inner
+     layout clips the art to the rounded corners instead. */
+  :host([effect~="glow"]) {
+    overflow: visible;
+    min-block-size: 0;
+  }
+
+  :host([effect~="glow"]) [part="base"] {
+    overflow: hidden;
+    border-radius: inherit;
+  }
+`

@@ -109,6 +109,33 @@ Where there is a mouse, the action waits out of sight below the text. Hovering t
 <moul-bento-grid style="--bento-gap: 1.5rem; --bento-row-height: minmax(14rem, auto)">…</moul-bento-grid>
 ```
 
+## Effects
+
+A card takes the same `effect` as [`moul-card`](/docs/components/card/#effects): a space-separated list of `spotlight`, a soft light that follows a mouse or pen; `glare`, a band of light that sweeps across once on hover; and `glow`, a turning gradient ring with a coloured glow outside the card. The spotlight sits above the `background` art and under the `visual` art and the text. Focus moving into the card shows the spotlight at the centre and sweeps the glare, as the pointer does. The same `--card-*` CSS properties set their colours, size and speed.
+
+<ComponentPreview align="stretch">
+  <moul-bento-grid style="--bento-gap: 2rem">
+    <moul-bento-card col-span="2" effect="spotlight glow">
+      <div slot="background" aria-hidden="true" style="background: radial-gradient(circle at 85% 0%, var(--color-accent-soft), transparent 65%)"></div>
+      <h3 slot="heading">Spotlight and glow</h3>
+      <p>Move the pointer across the card.</p>
+      <moul-link slot="action" href="#">See how previews work</moul-link>
+    </moul-bento-card>
+    <moul-bento-card effect="glare">
+      <h3 slot="heading">Glare</h3>
+      <p>Point at the card to sweep a band of light across it.</p>
+      <moul-link slot="action" href="#">Read about rollbacks</moul-link>
+    </moul-bento-card>
+  </moul-bento-grid>
+</ComponentPreview>
+
+```html
+<moul-bento-card col-span="2" effect="spotlight glow">…</moul-bento-card>
+<moul-bento-card effect="glare">…</moul-bento-card>
+```
+
+The glow lies outside the card, so give a grid with glowing cards a wider `--bento-gap`, such as `2rem`.
+
 ## Accessibility
 
 Neither element is focusable or adds a role. Each card reads in order: heading, description, then action. The grid never reorders cards to fill gaps, so the reading order and the tab order always match the order the cards appear in.
@@ -117,7 +144,7 @@ Give every card a heading. Screen reader users move through a page by its headin
 
 The action is in the accessibility tree and can take focus even while it is out of sight, and focus moving into a card shows it at once, so a keyboard user always sees the link they are on.
 
-Under `prefers-reduced-motion: reduce` nothing lifts, slides or grows, and the action is always shown.
+Under `prefers-reduced-motion: reduce` nothing lifts, slides or grows, and the action is always shown. The effects behave as on `moul-card`: the spotlight rests at the centre, the glare is a still sheen and the glow holds still. The effect layers are hidden from screen readers.
 
 ## Attributes and properties
 
@@ -133,6 +160,7 @@ Under `prefers-reduced-motion: reduce` nothing lifts, slides or grows, and the a
 | :-- | :-- | :-- | :-- |
 | `col-span` | `colSpan` | `number`, at most the grid's `columns` | `1` |
 | `row-span` | `rowSpan` | `number` | `1` |
+| `effect` | `effect` | `string`: a space-separated list of `'spotlight'`, `'glare'` and `'glow'` | unset (no effect) |
 
 ## Slots
 
@@ -164,3 +192,6 @@ Under `prefers-reduced-motion: reduce` nothing lifts, slides or grows, and the a
 | :-- | :-- |
 | `--bento-gap` | Space between the cards. Defaults to `var(--spacing-4)`. |
 | `--bento-row-height` | The height of one row, as `grid-auto-rows`. Defaults to `minmax(12rem, auto)`. |
+| `--card-spotlight-color`, `--card-spotlight-size` | The `spotlight` on a card, as on [`moul-card`](/docs/components/card/#effects). |
+| `--card-glare-color`, `--card-glare-duration` | The `glare` on a card. |
+| `--card-glow-color-1`, `--card-glow-color-2`, `--card-glow-size`, `--card-glow-width`, `--card-glow-duration` | The `glow` on a card. |

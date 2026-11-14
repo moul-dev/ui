@@ -1,0 +1,165 @@
+---
+title: Edge Blur (សមាសភាគ)
+description: ឯកសារណែនាំសម្រាប់សមាសភាគ Edge Blur Web Component
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import LandingKitDemo from '@/components/demos/LandingKitDemo.astro';
+
+`<moul-edge-blur>` is a scroll container whose content blurs out toward its edges, so a list or a column of text fades softly into the page instead of stopping at a hard line. The blur is not one flat layer: it ramps up across a band at each edge, light on the inside and strongest at the very edge.
+
+<ComponentPreview stack>
+  <moul-edge-blur aria-label="Deploy log" style="height: 18rem; width: 100%; max-width: 26rem; border: 1px solid var(--color-border); border-radius: 0.75rem">
+    <div style="display: grid; gap: 0.5rem; padding: 0.75rem">
+      <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.625rem 0.75rem; border-radius: 0.5rem; background: var(--color-surface-secondary)"><span style="flex: none; width: 2rem; height: 2rem; border-radius: 9999px; background: var(--color-chart-1)"></span><span><strong style="display: block">api-gateway</strong><span style="font-size: 0.875rem; color: var(--color-muted)">Deployed 2 minutes ago</span></span></div>
+      <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.625rem 0.75rem; border-radius: 0.5rem; background: var(--color-surface-secondary)"><span style="flex: none; width: 2rem; height: 2rem; border-radius: 9999px; background: var(--color-chart-2)"></span><span><strong style="display: block">billing-worker</strong><span style="font-size: 0.875rem; color: var(--color-muted)">Build started 5 minutes ago</span></span></div>
+      <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.625rem 0.75rem; border-radius: 0.5rem; background: var(--color-surface-secondary)"><span style="flex: none; width: 2rem; height: 2rem; border-radius: 9999px; background: var(--color-chart-3)"></span><span><strong style="display: block">search-index</strong><span style="font-size: 0.875rem; color: var(--color-muted)">Rolled back 12 minutes ago</span></span></div>
+      <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.625rem 0.75rem; border-radius: 0.5rem; background: var(--color-surface-secondary)"><span style="flex: none; width: 2rem; height: 2rem; border-radius: 9999px; background: var(--color-chart-4)"></span><span><strong style="display: block">web-app</strong><span style="font-size: 0.875rem; color: var(--color-muted)">Preview ready 20 minutes ago</span></span></div>
+      <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.625rem 0.75rem; border-radius: 0.5rem; background: var(--color-surface-secondary)"><span style="flex: none; width: 2rem; height: 2rem; border-radius: 9999px; background: var(--color-chart-5)"></span><span><strong style="display: block">mail-relay</strong><span style="font-size: 0.875rem; color: var(--color-muted)">Deployed 34 minutes ago</span></span></div>
+      <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.625rem 0.75rem; border-radius: 0.5rem; background: var(--color-surface-secondary)"><span style="flex: none; width: 2rem; height: 2rem; border-radius: 9999px; background: var(--color-chart-6)"></span><span><strong style="display: block">image-resizer</strong><span style="font-size: 0.875rem; color: var(--color-muted)">Build failed 1 hour ago</span></span></div>
+      <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.625rem 0.75rem; border-radius: 0.5rem; background: var(--color-surface-secondary)"><span style="flex: none; width: 2rem; height: 2rem; border-radius: 9999px; background: var(--color-chart-7)"></span><span><strong style="display: block">auth-service</strong><span style="font-size: 0.875rem; color: var(--color-muted)">Deployed 2 hours ago</span></span></div>
+      <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.625rem 0.75rem; border-radius: 0.5rem; background: var(--color-surface-secondary)"><span style="flex: none; width: 2rem; height: 2rem; border-radius: 9999px; background: var(--color-chart-8)"></span><span><strong style="display: block">docs-site</strong><span style="font-size: 0.875rem; color: var(--color-muted)">Preview ready 3 hours ago</span></span></div>
+      <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.625rem 0.75rem; border-radius: 0.5rem; background: var(--color-surface-secondary)"><span style="flex: none; width: 2rem; height: 2rem; border-radius: 9999px; background: var(--color-chart-1)"></span><span><strong style="display: block">metrics-collector</strong><span style="font-size: 0.875rem; color: var(--color-muted)">Deployed yesterday</span></span></div>
+      <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.625rem 0.75rem; border-radius: 0.5rem; background: var(--color-surface-secondary)"><span style="flex: none; width: 2rem; height: 2rem; border-radius: 9999px; background: var(--color-chart-2)"></span><span><strong style="display: block">queue-scheduler</strong><span style="font-size: 0.875rem; color: var(--color-muted)">Deployed yesterday</span></span></div>
+    </div>
+  </moul-edge-blur>
+  <LandingKitDemo />
+</ComponentPreview>
+
+It lives in the effects entry, with the rest of the landing kit:
+
+```js
+import '@moul-dev/web-component/effects'
+```
+
+```html
+<moul-edge-blur aria-label="Deploy log" style="height: 18rem">
+  <ul>…</ul>
+</moul-edge-blur>
+```
+
+The element is the scroller itself, so it needs a limit: give it a `height` or a `max-height`, or let a grid or flex parent size it.
+
+Pad the content, not the element. Padding on `<moul-edge-blur>` sits outside the blurred bands, so the blur would stop short of the edge; put it on your own wrapper, as above, or on `::part(content)`.
+
+## Scrolling and the blur
+
+Where the browser has scroll-driven animations, each edge blurs only while there is more to scroll that way. At the top the first line is sharp and the bottom edge is blurred; scroll down and the top edge blurs in over the band's length; reach the end and the bottom edge clears. Content that fits, with nothing to scroll, shows no blur at all. Nothing runs between scrolls: the browser ties the fade to the scroll position.
+
+Browsers without scroll-driven animations show both edges all the time. There, the element pads its content by the band's length at each blurred edge, so the first and last lines can still be scrolled clear of the blur.
+
+## Orientation
+
+`orientation="horizontal"` makes a row that scrolls sideways and blurs its inline start and end. Each child is one item in the row, `var(--spacing-4)` apart; change the spacing with `--edge-blur-gap`. In right-to-left text the start is on the right, and the blur follows it.
+
+<ComponentPreview stack>
+  <moul-edge-blur orientation="horizontal" aria-label="Topics" style="width: 100%; max-width: 28rem">
+    <span style="padding: 0.5rem 0.875rem; border-radius: 9999px; background: var(--color-accent-soft); color: var(--color-accent-soft-fg); white-space: nowrap">Previews</span>
+    <span style="padding: 0.5rem 0.875rem; border-radius: 9999px; background: var(--color-accent-soft); color: var(--color-accent-soft-fg); white-space: nowrap">Rollbacks</span>
+    <span style="padding: 0.5rem 0.875rem; border-radius: 9999px; background: var(--color-accent-soft); color: var(--color-accent-soft-fg); white-space: nowrap">Edge caching</span>
+    <span style="padding: 0.5rem 0.875rem; border-radius: 9999px; background: var(--color-accent-soft); color: var(--color-accent-soft-fg); white-space: nowrap">Search</span>
+    <span style="padding: 0.5rem 0.875rem; border-radius: 9999px; background: var(--color-accent-soft); color: var(--color-accent-soft-fg); white-space: nowrap">Alerts</span>
+    <span style="padding: 0.5rem 0.875rem; border-radius: 9999px; background: var(--color-accent-soft); color: var(--color-accent-soft-fg); white-space: nowrap">Secrets</span>
+    <span style="padding: 0.5rem 0.875rem; border-radius: 9999px; background: var(--color-accent-soft); color: var(--color-accent-soft-fg); white-space: nowrap">Cron jobs</span>
+    <span style="padding: 0.5rem 0.875rem; border-radius: 9999px; background: var(--color-accent-soft); color: var(--color-accent-soft-fg); white-space: nowrap">Audit trail</span>
+    <span style="padding: 0.5rem 0.875rem; border-radius: 9999px; background: var(--color-accent-soft); color: var(--color-accent-soft-fg); white-space: nowrap">Webhooks</span>
+    <span style="padding: 0.5rem 0.875rem; border-radius: 9999px; background: var(--color-accent-soft); color: var(--color-accent-soft-fg); white-space: nowrap">Billing</span>
+  </moul-edge-blur>
+</ComponentPreview>
+
+```html
+<moul-edge-blur orientation="horizontal" aria-label="Topics">
+  <span class="chip">Previews</span>
+  <span class="chip">Rollbacks</span>
+  <span class="chip">Edge caching</span>
+</moul-edge-blur>
+```
+
+A vertical edge blur clips content wider than itself; a horizontal one clips content taller than itself.
+
+## Edges
+
+`edges` picks which edges blur: `both` (the default), `start` (the top, or the inline start in a row) or `end` (the bottom, or the inline end). A feed that always opens at the top often needs only the end.
+
+<ComponentPreview stack>
+  <moul-edge-blur edges="end" aria-label="Release notes" style="height: 14rem; width: 100%; max-width: 26rem">
+    <div style="display: grid; gap: 0.75rem; padding-inline: 0.25rem">
+      <p><strong>Previews on every push.</strong> Each branch gets its own URL, rebuilt on every commit.</p>
+      <p><strong>One-click rollbacks.</strong> Every deploy is kept, so going back is a single step.</p>
+      <p><strong>Searchable logs.</strong> Filter by service, level or request id, across every region.</p>
+      <p><strong>Quiet alerts.</strong> Alerts wait until a problem lasts, and group what belongs together.</p>
+      <p><strong>Scheduled jobs.</strong> Run a task on a cron schedule, with its logs beside your deploys.</p>
+      <p><strong>Audit trail.</strong> See who changed what, and when, for every project setting.</p>
+    </div>
+  </moul-edge-blur>
+</ComponentPreview>
+
+```html
+<moul-edge-blur edges="end" aria-label="Release notes" style="height: 14rem">…</moul-edge-blur>
+```
+
+## Band and strength
+
+`--edge-blur-size` is the length of each blurred band, `4rem` by default. `--edge-blur-strength` is the blur at the very edge, `8px` by default; four layers step up to it, each twice as strong as the one before, so the blur ramps up across the band.
+
+Blur alone keeps the content's colour, so the edge reads as frosted rather than faded. `--edge-blur-fade-color` also fades the content into a colour toward the edge: set it to the surface behind the element, such as `var(--color-surface)` on a card, and the content melts into it. It is `transparent` by default, which leaves the blur alone, because the element cannot know what lies behind it.
+
+<ComponentPreview stack>
+  <moul-edge-blur aria-label="Release notes" style="--edge-blur-size: 5rem; --edge-blur-strength: 12px; --edge-blur-fade-color: var(--color-surface); height: 14rem; width: 100%; max-width: 26rem">
+    <div style="display: grid; gap: 0.75rem; padding-inline: 0.25rem">
+      <p><strong>Previews on every push.</strong> Each branch gets its own URL, rebuilt on every commit.</p>
+      <p><strong>One-click rollbacks.</strong> Every deploy is kept, so going back is a single step.</p>
+      <p><strong>Searchable logs.</strong> Filter by service, level or request id, across every region.</p>
+      <p><strong>Quiet alerts.</strong> Alerts wait until a problem lasts, and group what belongs together.</p>
+      <p><strong>Scheduled jobs.</strong> Run a task on a cron schedule, with its logs beside your deploys.</p>
+      <p><strong>Audit trail.</strong> See who changed what, and when, for every project setting.</p>
+    </div>
+  </moul-edge-blur>
+</ComponentPreview>
+
+```css
+moul-edge-blur.notes {
+  --edge-blur-size: 5rem;
+  --edge-blur-strength: 12px;
+  --edge-blur-fade-color: var(--color-surface);
+}
+```
+
+Every layer is a `backdrop-filter`, which the browser redraws as the content moves under it. Keep the strength modest and avoid many edge blurs on one screen, especially on low-powered phones.
+
+## Accessibility
+
+`<moul-edge-blur>` joins the tab order with `tabindex="0"`, so a keyboard user can reach it and scroll it with the arrow keys, Page Up, Page Down, Home and End, and it shows a focus ring while focused from the keyboard. A `tabindex` you set yourself is kept: set `tabindex="-1"` if the content never overflows and the extra tab stop would only get in the way.
+
+Give it a name with `aria-label` or `aria-labelledby`. Once named it takes `role="region"`, so screen readers announce what it holds and can list it among the page's landmarks; a role you set yourself is kept. Without a name it adds no role.
+
+The blur layers are `aria-hidden` and ignore the pointer, so the content under them can still be read, clicked and selected. The element sets `scroll-padding` to the band's length at each blurred edge, so a link or a button that takes focus inside it, or anything you bring in with `scrollIntoView()`, is scrolled clear of the blur rather than left underneath it.
+
+Where the system forces its own colours, as in Windows high contrast mode, and when printing, the blur is removed and the content shows plain.
+
+Under `prefers-reduced-motion: reduce` nothing changes: the element moves nothing on its own, and the fade of each edge follows only the reader's own scrolling.
+
+## Attributes and properties
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `orientation` | `orientation` | `'vertical' \| 'horizontal'` | `'vertical'` |
+| `edges` | `edges` | `'both' \| 'start' \| 'end'` | `'both'` |
+
+| Slot | Description |
+| :-- | :-- |
+| (default) | The content to scroll. In horizontal mode each child is one item in the row. |
+
+| Part | Description |
+| :-- | :-- |
+| `content` | The wrapper around the content. Pad the content here, not on the element. |
+| `edge` | Each blurred band. |
+| `edge-start` | The band at the top, or at the inline start in a row. |
+| `edge-end` | The band at the bottom, or at the inline end in a row. |
+
+| CSS property | Description | Default |
+| :-- | :-- | :-- |
+| `--edge-blur-size` | The length of each blurred band. | `4rem` |
+| `--edge-blur-strength` | The blur at the very edge. | `8px` |
+| `--edge-blur-fade-color` | A colour the content also fades into toward the edge. | `transparent` |
+| `--edge-blur-gap` | Space between the items in a horizontal row. | `var(--spacing-4)` |

@@ -1,4 +1,5 @@
 import { css } from 'lit'
+import { cardEffectStyles } from '../../styles/card-effects.styles'
 import { resetStyles } from '../../styles/reset.styles'
 import { semanticToneStyles } from '../../styles/semantic-tones'
 
@@ -114,6 +115,8 @@ export const cardStyles = [
       }
     }
   `,
+  // `effect`: spotlight, glare and glow. Keyboard focus on an interactive card shows them as hover does.
+  cardEffectStyles(css`:focus-visible`),
 ]
 
 /** Header / body / footer sections: layout only — the card owns padding and gaps. */

@@ -1,6 +1,18 @@
-import { html, LitElement, type PropertyValues } from 'lit'
+import { css, html, LitElement, nothing, type PropertyValues } from 'lit'
+import { cardEffectStyles } from '../../styles/card-effects.styles'
+import {
+  CardEffectsController,
+  cardGlareLayer,
+  cardGlowLayer,
+  cardSpotlightLayer,
+  parseCardEffects,
+} from '../../utils/card-effects'
 import { defineElement } from '../../utils/define-element'
-import { bentoCardStyles, bentoGridStyles } from './BentoGrid.styles'
+import {
+  bentoCardEffectStyles,
+  bentoCardStyles,
+  bentoGridStyles,
+} from './BentoGrid.styles'
 
 const DEFAULT_COLUMNS = 3
 
@@ -79,16 +91,25 @@ export class MoulBentoGrid extends LitElement {
  * columns. Where there is a mouse, the action waits out of sight below the
  * text: hovering the card, or moving focus into it, lifts the text and slides
  * the action up into view, and the art grows slightly. On touch screens the
- * action is always shown. It lives in the effects entry:
- * `import '@moul-dev/web-component/effects'`.
+ * action is always shown. `effect` takes the same light effects as
+ * `moul-card`, as a space-separated list: `spotlight` (a soft light that
+ * follows a mouse or pen, above the `background` art and under the rest),
+ * `glare` (a band of light that sweeps across once on hover) and `glow` (a
+ * turning gradient ring with a coloured glow outside the card). It lives in
+ * the effects entry: `import '@moul-dev/web-component/effects'`.
  *
  * Keyboard and screen readers: never focusable and adds no role; the heading,
  * description and action keep their own semantics and are read in that
  * order. The action is in the accessibility tree and can take focus even
  * while it is out of sight, and focus moving into the card shows it at once.
+ * The effect layers are empty and hidden from screen readers; focus moving
+ * into the card shows the spotlight at the centre and sweeps the glare, as
+ * hover does.
  *
  * Reduced motion: nothing lifts, slides or grows, and the action is always
- * shown.
+ * shown. The spotlight shows and hides at once and rests at the centre, the
+ * glare is a still sheen across the middle while hovered or focused, and the
+ * glow holds still.
  *
  * @slot visual - Art, a screenshot or a device frame, shown edge to edge above the text and taking the card's spare height.
  * @slot background - Decoration behind the whole card, such as a gradient wash or a pattern; keep it quiet so the text stays readable.
@@ -103,19 +124,41 @@ export class MoulBentoGrid extends LitElement {
  * @csspart content - The icon, heading and description.
  * @csspart icon - The wrapper around the icon.
  * @csspart action - The wrapper around the action.
+ *
+ * @cssprop --card-spotlight-color - The light at the centre of the `spotlight`. Defaults to the accent at 16% in the light theme and 28% in the dark.
+ * @cssprop --card-spotlight-size - How far the `spotlight` reaches from the pointer, as a radius. Defaults to `20rem`.
+ * @cssprop --card-glare-color - The band of the `glare`. Defaults to the accent at 14% in the light theme and white at 14% in the dark.
+ * @cssprop --card-glare-duration - How long the `glare` takes to cross. Defaults to `700ms`.
+ * @cssprop --card-glow-color-1 - The first `glow` colour. Defaults to `var(--color-accent)`.
+ * @cssprop --card-glow-color-2 - The second `glow` colour. Defaults to `var(--color-chart-4)`.
+ * @cssprop --card-glow-size - The blur of the `glow` outside the card. Defaults to `1.5rem`.
+ * @cssprop --card-glow-width - The width of the `glow` ring on the edge. Defaults to `1.5px`.
+ * @cssprop --card-glow-duration - One turn of the `glow`. Defaults to `6s`.
  */
 export class MoulBentoCard extends LitElement {
-  static override styles = bentoCardStyles
+  static override styles = [
+    bentoCardStyles,
+    // A bento card is never focusable itself, so focus inside it counts.
+    cardEffectStyles(css`:focus-within`),
+    bentoCardEffectStyles,
+  ]
 
   static override properties = {
     colSpan: { type: Number, attribute: 'col-span' },
     rowSpan: { type: Number, attribute: 'row-span' },
+    effect: { type: String, reflect: true },
   }
 
   /** Columns the card spans, at most the grid's `columns`. Defaults to 1. */
   declare colSpan: number
   /** Rows the card spans. Defaults to 1. */
   declare rowSpan: number
+  /**
+   * Light effects, as a space-separated list of `spotlight`, `glare` and
+   * `glow`, as on `moul-card`. Unknown names are ignored. Unset (the
+   * default) draws none.
+   */
+  declare effect: string | undefined
 
   private resizeObserver: ResizeObserver | null = null
   private writtenSpans = ''
@@ -124,6 +167,8 @@ export class MoulBentoCard extends LitElement {
     super()
     this.colSpan = 1
     this.rowSpan = 1
+    // Pointer tracking for the spotlight and off-screen pausing for the glow.
+    new CardEffectsController(this)
   }
 
   public override connectedCallback(): void {
@@ -193,24 +238,28 @@ export class MoulBentoCard extends LitElement {
   }
 
   protected override render() {
+    const effects = parseCardEffects(this.effect)
     return html`<div part="base">
-      <div part="background">
-        <slot name="background"></slot>
-      </div>
-      <div part="visual" ?hidden=${!this.hasSlotted('visual')}>
-        <slot name="visual" @slotchange=${this.handleSlotChange}></slot>
-      </div>
-      <div part="content">
-        <div part="icon" ?hidden=${!this.hasSlotted('icon')}>
-          <slot name="icon" @slotchange=${this.handleSlotChange}></slot>
+        <div part="background">
+          <slot name="background"></slot>
         </div>
-        <slot name="heading"></slot>
-        <div class="description"><slot></slot></div>
+        ${effects.has('spotlight') ? cardSpotlightLayer : nothing}
+        <div part="visual" ?hidden=${!this.hasSlotted('visual')}>
+          <slot name="visual" @slotchange=${this.handleSlotChange}></slot>
+        </div>
+        <div part="content">
+          <div part="icon" ?hidden=${!this.hasSlotted('icon')}>
+            <slot name="icon" @slotchange=${this.handleSlotChange}></slot>
+          </div>
+          <slot name="heading"></slot>
+          <div class="description"><slot></slot></div>
+        </div>
+        <div part="action" ?hidden=${!this.hasSlotted('action')}>
+          <slot name="action" @slotchange=${this.handleSlotChange}></slot>
+        </div>
       </div>
-      <div part="action" ?hidden=${!this.hasSlotted('action')}>
-        <slot name="action" @slotchange=${this.handleSlotChange}></slot>
-      </div>
-    </div>`
+      ${effects.has('glow') ? cardGlowLayer : nothing}
+      ${effects.has('glare') ? cardGlareLayer : nothing}`
   }
 }
 

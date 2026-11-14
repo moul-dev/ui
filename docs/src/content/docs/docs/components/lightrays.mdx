@@ -1,0 +1,139 @@
+---
+title: Light Rays
+description: Soft rays of light shining down from the top of a hero or a section.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import LandingKitDemo from '@/components/demos/LandingKitDemo.astro';
+
+`<moul-light-rays>` shines soft rays of light down from the top edge, as through a high window. The rays fan out at slightly different angles and widths, and each one sways a little and brightens and dims at its own slow pace, so the light never moves in step. Wrap a hero or a section in it and the light falls behind the content.
+
+<ComponentPreview align="stretch" minHeight="320px">
+  <moul-light-rays style="padding: 6rem 1.5rem 5rem; border-radius: var(--radius-xl); text-align: center">
+    <moul-typography variant="h2">Light where it matters</moul-typography>
+    <moul-typography variant="body">Rays from above, drawn in CSS.</moul-typography>
+  </moul-light-rays>
+  <LandingKitDemo />
+</ComponentPreview>
+
+It lives in the effects entry, with the rest of the landing kit:
+
+```js
+import '@moul-dev/web-component/effects'
+```
+
+```html
+<moul-light-rays>
+  <h1>Light where it matters</h1>
+  <p>Rays from above, drawn in CSS.</p>
+</moul-light-rays>
+```
+
+The element is a plain block with no padding and no background of its own: pad it and size it as you would the section it replaces. The rays come in above the top edge and are clipped to the element's corners.
+
+## Number of rays
+
+`count` sets how many rays shine, from 1 to 16; the default is 7. They are spread across the middle of the top edge and tilted away from the middle, so they fan out. Where each ray falls, and how it moves, comes from a fixed pattern rather than chance, so the light looks the same on every load and in every screenshot.
+
+<ComponentPreview align="stretch" minHeight="280px">
+  <div class="demo-row" style="align-items: stretch">
+    <moul-light-rays count="3" style="flex: 1 1 14rem; min-height: 14rem; padding: 1rem; border-radius: var(--radius-xl)">
+      <span class="demo-label">count="3"</span>
+    </moul-light-rays>
+    <moul-light-rays count="12" style="flex: 1 1 14rem; min-height: 14rem; padding: 1rem; border-radius: var(--radius-xl)">
+      <span class="demo-label">count="12"</span>
+    </moul-light-rays>
+  </div>
+</ComponentPreview>
+
+```html
+<moul-light-rays count="3">…</moul-light-rays>
+<moul-light-rays count="12">…</moul-light-rays>
+```
+
+## Colour, length and speed
+
+`--light-rays-color` is the colour of the light. White light would not show on a light page, so the default is tinted with the accent: a soft blue on a light page, and a pale, near-white blue on a dark one. The element sets how strongly it shows, 70% on a light page and 35% on a dark one, so give it a solid colour.
+
+`--light-rays-length` is how far down the rays reach, as a share of the element's height (`70%` by default); each ray reaches between 0.75 and 1.2 times it. `--light-rays-blur` sets how soft they are (`12px`); raise it for a hazier light. `--light-rays-duration` is the base length of a ray's cycle (`12s`); each ray runs at between 0.75 and 1.35 times it.
+
+<ComponentPreview align="stretch" minHeight="320px">
+  <moul-light-rays count="9" style="--light-rays-color: var(--color-chart-2); --light-rays-length: 100%; --light-rays-duration: 8s; padding: 6rem 1.5rem 5rem; border-radius: var(--radius-xl); text-align: center">
+    <moul-typography variant="h2">Golden hour</moul-typography>
+    <moul-typography variant="body">Warmer light that reaches the floor.</moul-typography>
+  </moul-light-rays>
+</ComponentPreview>
+
+```css
+moul-light-rays.warm {
+  --light-rays-color: var(--color-chart-2);
+  --light-rays-length: 100%;
+  --light-rays-duration: 8s;
+}
+```
+
+The animation is CSS only and pauses while the element is off screen.
+
+## Use as a layer
+
+Left empty, the element is just the light. Position it absolutely to fill a section and send it behind the section's content with `z-index: -1`. Give the section `position: relative` and `isolation: isolate`, so the layer stays inside it rather than slipping behind the page. If the section has rounded corners, give the layer `border-radius: inherit` too.
+
+<ComponentPreview align="stretch" minHeight="320px">
+  <div style="position: relative; isolation: isolate; padding: 6rem 1.5rem 5rem; border-radius: var(--radius-xl); text-align: center">
+    <moul-light-rays style="position: absolute; inset: 0; z-index: -1; border-radius: inherit"></moul-light-rays>
+    <moul-typography variant="h2">A section with a background</moul-typography>
+    <moul-typography variant="body">The light is a sibling of the content, not its parent.</moul-typography>
+  </div>
+</ComponentPreview>
+
+```html
+<section class="hero">
+  <moul-light-rays class="hero-background"></moul-light-rays>
+  <h1>A section with a background</h1>
+</section>
+```
+
+```css
+.hero {
+  position: relative;
+  isolation: isolate;
+}
+
+.hero-background {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+}
+```
+
+## Accessibility
+
+`<moul-light-rays>` is never focusable and adds no role. The rays are decoration: they are hidden from screen readers and pointer events pass through them, so the content inside is read, selected and clicked as it is.
+
+The rays brighten the background on a dark page and tint it on a light one. With the default colour, text in `--color-fg` keeps a contrast of at least 4.5:1, even at the brightest point of a ray; check it again if you choose a brighter colour.
+
+Where the system forces its own colours, as in Windows high contrast mode, the rays are not drawn.
+
+Under `prefers-reduced-motion: reduce` the rays hold still, each at its own angle and at a medium brightness.
+
+## Attributes and properties
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `count` | `count` | `number` (1 to 16) | `7` |
+
+| Slot | Description |
+| :-- | :-- |
+| (default) | The content to show in front of the light. Leave it empty to use the element as a background layer. |
+
+| Part | Description |
+| :-- | :-- |
+| `background` | The layer the rays are drawn in, behind the content. It fills the element and is clipped to its corners. |
+
+| CSS property | Description | Default |
+| :-- | :-- | :-- |
+| `--light-rays-color` | The colour of the light. | The accent mixed with white: 70% accent on a light page, 20% on a dark one |
+| `--light-rays-length` | How far down the rays reach, as a share of the height. | `70%` |
+| `--light-rays-blur` | How soft the rays are, as a blur radius. | `12px` |
+| `--light-rays-duration` | The base length of a ray's cycle. | `12s` |

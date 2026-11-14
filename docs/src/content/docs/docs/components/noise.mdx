@@ -1,0 +1,156 @@
+---
+title: Noise
+description: A film-grain texture laid over a hero, a card or a gradient.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import LandingKitDemo from '@/components/demos/LandingKitDemo.astro';
+
+`<moul-noise>` lays a fine film grain over whatever it wraps: a hero, a card, a gradient. It takes the flat, digital edge off smooth colour, the way grain does on a photograph. The grain covers the content too, text included, but clicks and text selection pass straight through it.
+
+<ComponentPreview align="stretch" minHeight="320px">
+  <moul-noise style="border-radius: var(--radius-xl)">
+    <moul-aurora variant="blobs" style="padding: 5rem 1.5rem; border-radius: inherit; text-align: center">
+      <moul-typography variant="h2">Made by hand</moul-typography>
+      <moul-typography variant="body">A gradient with grain over it, like film.</moul-typography>
+    </moul-aurora>
+  </moul-noise>
+  <LandingKitDemo />
+</ComponentPreview>
+
+It lives in the effects entry, with the rest of the landing kit:
+
+```js
+import '@moul-dev/web-component/effects'
+```
+
+```html
+<moul-noise>
+  <section class="hero">
+    <h1>Made by hand</h1>
+  </section>
+</moul-noise>
+```
+
+The element is a plain block with no padding and no background of its own. The grain fills it and follows its rounded corners, so round the element as you would its content. It sits over the content, in the element's own stacking context, so it never covers anything outside the element.
+
+## Grain size
+
+`frequency` sets how fine the grain is: the base frequency of the SVG noise it is drawn from. The default, `0.8`, is a fine film grain. Lower values give larger, softer specks, down to a cloudy texture at `0.2`; higher values give a finer, sharper grain, up to `2`. Values outside that range are clamped.
+
+`--noise-size` is the size of one tile of grain, `200px` by default. The grain is drawn once per tile and repeated, and it scales with the tile, so a larger tile also makes larger specks.
+
+<ComponentPreview align="stretch" minHeight="240px">
+  <div class="demo-row" style="align-items: stretch">
+    <moul-noise frequency="0.3" style="flex: 1 1 10rem; min-height: 10rem; padding: 1rem; border-radius: var(--radius-xl); background: var(--color-accent-soft); --noise-opacity: 0.25">
+      <span class="demo-label">0.3</span>
+    </moul-noise>
+    <moul-noise style="flex: 1 1 10rem; min-height: 10rem; padding: 1rem; border-radius: var(--radius-xl); background: var(--color-accent-soft); --noise-opacity: 0.25">
+      <span class="demo-label">0.8</span>
+    </moul-noise>
+    <moul-noise frequency="1.6" style="flex: 1 1 10rem; min-height: 10rem; padding: 1rem; border-radius: var(--radius-xl); background: var(--color-accent-soft); --noise-opacity: 0.25">
+      <span class="demo-label">1.6</span>
+    </moul-noise>
+  </div>
+</ComponentPreview>
+
+```html
+<moul-noise frequency="0.3">…</moul-noise>
+<moul-noise frequency="1.6">…</moul-noise>
+```
+
+## Colour and strength
+
+`--noise-color` is the colour of the grain. It defaults to `--color-fg`, the text colour, so the specks are dark on a light page and light on a dark one. `--noise-opacity` sets how strongly the grain shows, `0.12` by default: enough to see on a flat colour, faint enough to read through. Raise it for a rougher, printed look.
+
+<ComponentPreview align="stretch" minHeight="240px">
+  <moul-noise style="--noise-color: var(--color-snow); --noise-opacity: 0.2; padding: 4rem 1.5rem; border-radius: var(--radius-xl); background: linear-gradient(135deg, var(--color-accent), var(--color-chart-4)); text-align: center">
+    <moul-typography variant="h3" style="color: var(--color-snow)">Light grain on a dark gradient</moul-typography>
+  </moul-noise>
+</ComponentPreview>
+
+```css
+moul-noise.poster {
+  --noise-color: var(--color-snow);
+  --noise-opacity: 0.2;
+}
+```
+
+## Animation
+
+`is-animated` makes the grain jump to a new place ten times a second, like film running through a projector. It is off by default, since a still grain is enough for most pages and moving texture draws the eye. The animation stops while the element is off screen.
+
+<ComponentPreview align="stretch" minHeight="240px">
+  <moul-noise is-animated style="--noise-opacity: 0.2; padding: 4rem 1.5rem; border-radius: var(--radius-xl); background: var(--color-bg-subtle); text-align: center">
+    <moul-typography variant="h3">Now showing</moul-typography>
+  </moul-noise>
+</ComponentPreview>
+
+```html
+<moul-noise is-animated>…</moul-noise>
+```
+
+## Use as a layer
+
+Left empty, the element is just the grain. To texture a section without wrapping its content, position the element absolutely over the section, above its content with `z-index: 1`, and give it `pointer-events: none` so clicks reach the content under it. Give the section `position: relative` and `isolation: isolate`, and if the section has rounded corners, give the grain `border-radius: inherit`.
+
+<ComponentPreview align="stretch" minHeight="240px">
+  <div style="position: relative; isolation: isolate; padding: 4rem 1.5rem; border-radius: var(--radius-xl); background: var(--color-bg-subtle); text-align: center">
+    <moul-typography variant="h3">A section with grain over it</moul-typography>
+    <moul-typography variant="body">The grain is a sibling of the content, not its parent.</moul-typography>
+    <moul-noise style="position: absolute; inset: 0; z-index: 1; pointer-events: none; border-radius: inherit; --noise-opacity: 0.2"></moul-noise>
+  </div>
+</ComponentPreview>
+
+```html
+<section class="hero">
+  <h1>A section with grain over it</h1>
+  <moul-noise class="hero-grain"></moul-noise>
+</section>
+```
+
+```css
+.hero {
+  position: relative;
+  isolation: isolate;
+}
+
+.hero-grain {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  border-radius: inherit;
+}
+```
+
+## Accessibility
+
+`<moul-noise>` is never focusable and adds no role. The grain is decoration: it is hidden from screen readers and pointer events pass through it, so links, buttons and text under it work as they do without it.
+
+The specks fall on the text as well as the background, which lowers its contrast a little. At the default `0.12` the change is small; at higher values, keep the grain off body text or check the contrast with the grain in place.
+
+Where the system forces its own colours, as in Windows high contrast mode, the grain is not drawn.
+
+Under `prefers-reduced-motion: reduce` the grain holds still, even with `is-animated`.
+
+## Attributes and properties
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `frequency` | `frequency` | `number` (0.2 to 2) | `0.8` |
+| `is-animated` | `isAnimated` | `boolean` | `false` |
+
+| Slot | Description |
+| :-- | :-- |
+| (default) | The content to texture. Leave it empty to use the element as an overlay layer. |
+
+| Part | Description |
+| :-- | :-- |
+| `grain` | The grain layer. It lies over the content, fills the element and is clipped to its corners. |
+
+| CSS property | Description | Default |
+| :-- | :-- | :-- |
+| `--noise-color` | The colour of the grain. | `var(--color-fg)` |
+| `--noise-opacity` | How strongly the grain shows, from 0 to 1. | `0.12` |
+| `--noise-size` | The size of one tile of grain; the grain scales with it. | `200px` |

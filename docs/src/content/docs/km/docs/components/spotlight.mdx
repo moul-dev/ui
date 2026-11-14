@@ -1,0 +1,193 @@
+---
+title: Spotlight (សមាសភាគ)
+description: ឯកសារណែនាំសម្រាប់សមាសភាគ Spotlight Web Component
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import LandingKitDemo from '@/components/demos/LandingKitDemo.astro';
+
+`<moul-spotlight>` lets a soft light fall on a hero from above, to draw the eye to its heading: a long beam from a top corner, a lamp shining down from a bright line, or two beams that sway slowly. The beam and the lamp come on when the element first scrolls into view; the swaying beams move all the time. Wrap the hero's content in it and the light falls behind the content.
+
+<ComponentPreview align="stretch" minHeight="320px">
+  <moul-spotlight id="spotlight-demo" style="padding: 5rem 1.5rem; border-radius: var(--radius-xl); text-align: center">
+    <moul-typography variant="h2">Your work, in the spotlight</moul-typography>
+    <moul-typography variant="body">A beam of light that comes on as the page scrolls to it.</moul-typography>
+  </moul-spotlight>
+  <div class="demo-row">
+    <moul-button size="sm" variant="secondary" data-replay="spotlight-demo"><span>Replay</span></moul-button>
+  </div>
+  <LandingKitDemo />
+</ComponentPreview>
+
+It lives in the effects entry, with the rest of the landing kit:
+
+```js
+import '@moul-dev/web-component/effects'
+```
+
+```html
+<moul-spotlight>
+  <h1>Your work, in the spotlight</h1>
+  <p>A beam of light that comes on as the page scrolls to it.</p>
+</moul-spotlight>
+```
+
+The element is a plain block with no padding and no background of its own: pad it and size it as you would the section it replaces. The light is clipped to the element's corners.
+
+## Variants
+
+`variant` sets the kind of light.
+
+`cone` (the default) is a large, soft, elongated ellipse of light that falls diagonally from a top corner. When the element first scrolls into view it fades in and slides down the line of the beam into place.
+
+`lamp` is a bright thin line along the top edge with a glow around it and a cone of light spreading down from it, like a lamp over a table. On entry the line and the cone widen into place. The content sits below the line: the element's top padding sets how far below.
+
+<ComponentPreview align="stretch" minHeight="320px">
+  <moul-spotlight id="spotlight-lamp" variant="lamp" style="padding: 5rem 1.5rem 4rem; border-radius: var(--radius-xl); text-align: center">
+    <moul-typography variant="h2">Build under a good light</moul-typography>
+    <moul-typography variant="body">A line of light with a cone spreading down from it.</moul-typography>
+  </moul-spotlight>
+  <div class="demo-row">
+    <moul-button size="sm" variant="secondary" data-replay="spotlight-lamp"><span>Replay</span></moul-button>
+  </div>
+</ComponentPreview>
+
+`sway` is two soft beams hanging from the top corners. They swing slowly toward the middle and back, together, and keep going while the element is on screen. They fade in when the element first enters view.
+
+<ComponentPreview align="stretch" minHeight="320px">
+  <moul-spotlight variant="sway" style="padding: 5rem 1.5rem; border-radius: var(--radius-xl); text-align: center">
+    <moul-typography variant="h2">Opening night</moul-typography>
+    <moul-typography variant="body">Two beams that sway slowly, from the top corners.</moul-typography>
+  </moul-spotlight>
+</ComponentPreview>
+
+```html
+<moul-spotlight variant="lamp">…</moul-spotlight>
+<moul-spotlight variant="sway">…</moul-spotlight>
+```
+
+## Placement
+
+`placement` sets which top corner the `cone` falls from: `start` (the default), `center`, which shines straight down from the middle of the top edge, or `end`. `start` and `end` follow the reading direction, so in right-to-left text `start` is the top right. `lamp` and `sway` ignore it: the lamp is always centred and the sway beams always come from both corners.
+
+<ComponentPreview align="stretch" minHeight="320px">
+  <div class="demo-row" style="align-items: stretch">
+    <moul-spotlight id="spotlight-center" placement="center" style="flex: 1 1 14rem; min-height: 14rem; padding: 1rem; border-radius: var(--radius-xl)">
+      <span class="demo-label">center</span>
+    </moul-spotlight>
+    <moul-spotlight id="spotlight-end" placement="end" style="flex: 1 1 14rem; min-height: 14rem; padding: 1rem; border-radius: var(--radius-xl)">
+      <span class="demo-label">end</span>
+    </moul-spotlight>
+  </div>
+  <div class="demo-row">
+    <moul-button size="sm" variant="secondary" data-replay="spotlight-center spotlight-end"><span>Replay</span></moul-button>
+  </div>
+</ComponentPreview>
+
+```html
+<moul-spotlight placement="center">…</moul-spotlight>
+<moul-spotlight placement="end">…</moul-spotlight>
+```
+
+## Replaying and lighting at once
+
+The light comes on the first time the element enters the viewport, and stays on. `play()` puts it out and brings it on again, as for a replay button. The element sets the `is-lit` attribute when the light comes on; set it yourself to show the light in place without waiting for the element to scroll into view.
+
+```js
+document.querySelector('moul-spotlight').play()
+```
+
+```html
+<moul-spotlight is-lit>…</moul-spotlight>
+```
+
+## Colour and timing
+
+`--spotlight-color` is the colour of the light. White light would not show on a light page, so the default is the accent there, and a near-white tinted with the accent on a dark page. The element sets how strongly each part shows (the heart of a beam at about a third, its halo fainter, the lamp's line at full strength), so give it a solid colour.
+
+`--spotlight-duration` is how long the entrance of `cone` and `lamp` takes, `2s` by default. For `sway` it is the length of one swing, `8s` by default, and the beams fade in over a quarter of it.
+
+<ComponentPreview align="stretch" minHeight="320px">
+  <moul-spotlight id="spotlight-colour" variant="lamp" style="--spotlight-color: var(--color-chart-5); --spotlight-duration: 1.2s; padding: 5rem 1.5rem 4rem; border-radius: var(--radius-xl); text-align: center">
+    <moul-typography variant="h2">A cyan lamp</moul-typography>
+    <moul-typography variant="body">Lit in a little over a second.</moul-typography>
+  </moul-spotlight>
+  <div class="demo-row">
+    <moul-button size="sm" variant="secondary" data-replay="spotlight-colour"><span>Replay</span></moul-button>
+  </div>
+</ComponentPreview>
+
+```css
+moul-spotlight.cyan {
+  --spotlight-color: var(--color-chart-5);
+  --spotlight-duration: 1.2s;
+}
+```
+
+## Use as a layer
+
+Left empty, the element is just the light. Position it absolutely to fill a section and send it behind the section's content with `z-index: -1`. Give the section `position: relative` and `isolation: isolate`, so the layer stays inside it rather than slipping behind the page. If the section has rounded corners, give the layer `border-radius: inherit` too.
+
+<ComponentPreview align="stretch" minHeight="320px">
+  <div style="position: relative; isolation: isolate; padding: 5rem 1.5rem; border-radius: var(--radius-xl); text-align: center">
+    <moul-spotlight variant="sway" style="position: absolute; inset: 0; z-index: -1; border-radius: inherit"></moul-spotlight>
+    <moul-typography variant="h2">A section with a background</moul-typography>
+    <moul-typography variant="body">The light is a sibling of the content, not its parent.</moul-typography>
+  </div>
+</ComponentPreview>
+
+```html
+<section class="hero">
+  <moul-spotlight class="hero-background" variant="sway"></moul-spotlight>
+  <h1>A section with a background</h1>
+</section>
+```
+
+```css
+.hero {
+  position: relative;
+  isolation: isolate;
+}
+
+.hero-background {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+}
+```
+
+## Accessibility
+
+`<moul-spotlight>` is never focusable and adds no role. The light is decoration: it is hidden from screen readers and pointer events pass through it, so the content inside is read, selected and clicked as it is.
+
+The light brightens the background on a dark page and tints it on a light one. With the default colour, text in `--color-fg` keeps a contrast above 4.5:1 where a beam falls on it; check it again if you choose a brighter colour. The lamp's glow, just under its line, is the brightest part, so keep text at least 3rem below the line; the previews do it with 5rem of top padding.
+
+Where the system forces its own colours, as in Windows high contrast mode, the light is not drawn.
+
+Under `prefers-reduced-motion: reduce`, `cone` and `lamp` show the light in place from the start, with no entrance, and `sway` holds both beams still, leaning in from their corners.
+
+## Attributes and properties
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `variant` | `variant` | `'cone' \| 'lamp' \| 'sway'` | `'cone'` |
+| `placement` | `placement` | `'start' \| 'center' \| 'end'` | `'start'` |
+| `is-lit` | `isLit` | `boolean` | `false`, set on first entry |
+
+| Method | Description |
+| :-- | :-- |
+| `play()` | Puts the light out and brings it on again. Returns a promise that resolves once the entrance has started. |
+
+| Slot | Description |
+| :-- | :-- |
+| (default) | The content to light. Leave it empty to use the element as a background layer. |
+
+| Part | Description |
+| :-- | :-- |
+| `background` | The layer the light is drawn in, behind the content. It fills the element and is clipped to its corners. |
+
+| CSS property | Description | Default |
+| :-- | :-- | :-- |
+| `--spotlight-color` | The colour of the light. | `var(--color-accent)` on a light page, a near-white tinted with the accent on a dark one |
+| `--spotlight-duration` | The entrance of `cone` and `lamp`, or one swing of `sway`. | `2s`, `8s` for `sway` |

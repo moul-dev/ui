@@ -1,0 +1,141 @@
+---
+title: Aurora (សមាសភាគ)
+description: ឯកសារណែនាំសម្រាប់សមាសភាគ Aurora Web Component
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import LandingKitDemo from '@/components/demos/LandingKitDemo.astro';
+
+`<moul-aurora>` puts slow-moving colour behind content: soft bands of light drifting across the top of the area, like the northern lights, or large blurred blobs of colour that drift and change shape. Wrap a hero or a section in it and the colour sits behind the content. Each cycle takes tens of seconds, so it reads as a calm background rather than an animation.
+
+<ComponentPreview align="stretch" minHeight="320px">
+  <moul-aurora style="padding: 5rem 1.5rem; border-radius: var(--radius-xl); text-align: center">
+    <moul-typography variant="h2">Ship on every push</moul-typography>
+    <moul-typography variant="body">Previews, logs and rollbacks for every branch.</moul-typography>
+  </moul-aurora>
+  <LandingKitDemo />
+</ComponentPreview>
+
+It lives in the effects entry, with the rest of the landing kit:
+
+```js
+import '@moul-dev/web-component/effects'
+```
+
+```html
+<moul-aurora>
+  <h1>Ship on every push</h1>
+  <p>Previews, logs and rollbacks for every branch.</p>
+</moul-aurora>
+```
+
+The element is a plain block with no padding and no background of its own: pad it, size it and round its corners as you would the section it replaces. The colour fills it and is clipped to its corners.
+
+## Variants
+
+`variant` sets the kind of colour. `aurora` (the default) drifts two strips of slanted bands past each other across the top of the area, fading out toward the bottom, so a heading at the top sits in the colour and the text below it on the plain background. `blobs` fills the whole area with four large, blurred blobs that drift on their own paths and slowly change shape.
+
+<ComponentPreview align="stretch" minHeight="320px">
+  <moul-aurora variant="blobs" style="padding: 5rem 1.5rem; border-radius: var(--radius-xl); text-align: center">
+    <moul-typography variant="h2">Logs you can search</moul-typography>
+    <moul-typography variant="body">Every request, every build, in one place.</moul-typography>
+  </moul-aurora>
+</ComponentPreview>
+
+```html
+<moul-aurora variant="blobs">
+  <h2>Logs you can search</h2>
+</moul-aurora>
+```
+
+## Colours and speed
+
+`--aurora-color-1`, `--aurora-color-2` and `--aurora-color-3` set the three colours. They default to the theme's accent, a purple (`--color-chart-4`) and a cyan (`--color-chart-5`): neighbouring hues, so where they blend they stay clear rather than turning grey. Colours from opposite sides of the wheel, such as blue and orange, meet as a muddy brown in the blur, so keep the three close.
+
+`--aurora-opacity` sets how strongly the colour shows, from 0 to 1 (`0.6` by default). On a light page the colours are also mixed at 70% with transparent, so the field stays pale behind dark text; on a dark page they show at full strength. `--aurora-blur` sets how soft the colour is: `48px` for `aurora` and `64px` for `blobs`.
+
+`--aurora-duration` is the length of one drift, `20s` by default. Each band and blob runs at its own multiple of it and swings back the way it came, so the pattern never visibly repeats.
+
+<ComponentPreview align="stretch" minHeight="320px">
+  <moul-aurora style="--aurora-color-1: var(--color-chart-7); --aurora-color-2: var(--color-chart-5); --aurora-color-3: var(--color-chart-1); --aurora-duration: 12s; padding: 5rem 1.5rem; border-radius: var(--radius-xl); text-align: center">
+    <moul-typography variant="h2">All checks passed</moul-typography>
+    <moul-typography variant="body">Green, teal and blue, on a twelve-second drift.</moul-typography>
+  </moul-aurora>
+</ComponentPreview>
+
+```css
+moul-aurora.status {
+  --aurora-color-1: var(--color-chart-7);
+  --aurora-color-2: var(--color-chart-5);
+  --aurora-color-3: var(--color-chart-1);
+  --aurora-duration: 12s;
+}
+```
+
+The animation is CSS only and pauses while the element is off screen.
+
+## Use as a layer
+
+Left empty, the element is just the colour. Position it absolutely to fill a section and send it behind the section's content with `z-index: -1`. Give the section `position: relative` and `isolation: isolate`, so the layer stays inside it rather than slipping behind the page. If the section has rounded corners, give the layer `border-radius: inherit` too.
+
+<ComponentPreview align="stretch" minHeight="320px">
+  <div style="position: relative; isolation: isolate; padding: 5rem 1.5rem; border-radius: var(--radius-xl); text-align: center">
+    <moul-aurora variant="blobs" style="position: absolute; inset: 0; z-index: -1; border-radius: inherit"></moul-aurora>
+    <moul-typography variant="h2">A section with a background</moul-typography>
+    <moul-typography variant="body">The colour is a sibling of the content, not its parent.</moul-typography>
+  </div>
+</ComponentPreview>
+
+```html
+<section class="hero">
+  <moul-aurora class="hero-background" variant="blobs"></moul-aurora>
+  <h1>A section with a background</h1>
+</section>
+```
+
+```css
+.hero {
+  position: relative;
+  isolation: isolate;
+}
+
+.hero-background {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+}
+```
+
+## Accessibility
+
+`<moul-aurora>` is never focusable and adds no role. The colour layer is decoration: it is hidden from screen readers and pointer events pass through it, so the content inside is read, selected and clicked as it is.
+
+The colour changes the background under your text, so check the contrast of the text against the strongest part of the colour, not only against the page. The defaults keep dark text above 7:1 on a light page and light text above 4.5:1 on a dark one; brighter custom colours or a higher `--aurora-opacity` can take that away.
+
+Where the system forces its own colours, as in Windows high contrast mode, the colour layer is not drawn and the content stands on the plain background.
+
+Under `prefers-reduced-motion: reduce` nothing drifts: the bands or blobs hold still as a soft field of colour.
+
+## Attributes and properties
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `variant` | `variant` | `'aurora' \| 'blobs'` | `'aurora'` |
+
+| Slot | Description |
+| :-- | :-- |
+| (default) | The content to show in front of the colour. Leave it empty to use the element as a background layer. |
+
+| Part | Description |
+| :-- | :-- |
+| `background` | The colour layer behind the content. It fills the element and is clipped to its corners. |
+
+| CSS property | Description | Default |
+| :-- | :-- | :-- |
+| `--aurora-color-1` | The first colour. | `var(--color-accent)` |
+| `--aurora-color-2` | The second colour. | `var(--color-chart-4)` |
+| `--aurora-color-3` | The third colour. | `var(--color-chart-5)` |
+| `--aurora-opacity` | How strongly the colour shows, from 0 to 1. | `0.6` |
+| `--aurora-blur` | How soft the colour is, as a blur radius. | `48px`, `64px` for `blobs` |
+| `--aurora-duration` | Length of one drift. | `20s` |

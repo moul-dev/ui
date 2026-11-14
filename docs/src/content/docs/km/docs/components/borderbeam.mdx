@@ -1,0 +1,176 @@
+---
+title: Border Beam (សមាសភាគ)
+description: ឯកសារណែនាំសម្រាប់សមាសភាគ Border Beam Web Component
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import LandingKitDemo from '@/components/demos/LandingKitDemo.astro';
+
+`<moul-border-beam>` sends a short, bright beam round the border of a box at a steady speed, following its rounded corners. Use it on the one card you want the eye to land on: the plan you recommend, a sign-up panel, a product shot. Wrap the box in it; it draws a thin ring over the box's own edge and never clips or pads it.
+
+<ComponentPreview backdrop="page" minHeight="300px">
+  <moul-border-beam style="width: 100%; max-width: 22rem">
+    <moul-card>
+      <moul-card-header><strong>Pro</strong></moul-card-header>
+      <moul-card-body>
+        <p style="font-size: 2rem; font-weight: 700; line-height: 1.2">$24 <span style="font-size: 1rem; font-weight: 400; color: var(--color-muted)">a month</span></p>
+        <p style="color: var(--color-muted)">Unlimited projects, a preview link for every push, and logs kept for 30 days.</p>
+      </moul-card-body>
+      <moul-card-footer><moul-button>Choose Pro</moul-button></moul-card-footer>
+    </moul-card>
+  </moul-border-beam>
+  <LandingKitDemo />
+</ComponentPreview>
+
+It lives in the effects entry, with the rest of the landing kit:
+
+```js
+import '@moul-dev/web-component/effects'
+```
+
+```html
+<moul-border-beam>
+  <moul-card>
+    <moul-card-header><strong>Pro</strong></moul-card-header>
+    <moul-card-body>Unlimited projects and a preview link for every push.</moul-card-body>
+  </moul-card>
+</moul-border-beam>
+```
+
+## Wrapping a box
+
+The element is a block as wide as its container, and as tall as what it wraps. Its ring lies over the outer edge of that content, so the content keeps its own border, background and shadow; the beam shows only where it passes.
+
+The ring takes its corners from the element's `border-radius`, which defaults to the radius of `moul-card` and `moul-browser-frame` (`--radius-surface`). For a box with other corners, set `border-radius` on the element to match, and the beam follows those corners. Content that should take the same corners can use `border-radius: inherit`. For content narrower than its container, such as an image, give the element `width: fit-content` so the ring hugs it.
+
+<ComponentPreview backdrop="page" minHeight="300px">
+  <moul-border-beam style="width: 100%; max-width: 32rem">
+    <moul-browser-frame url="app.example.com/deploys">
+      <div role="img" aria-label="A list of three deploys, the newest one live" style="display: grid; gap: 0.75rem; padding: 1.25rem; min-height: 11rem; background: var(--color-bg)">
+        <div style="display: flex; align-items: center; gap: 0.75rem"><span style="width: 0.625rem; height: 0.625rem; border-radius: 50%; background: var(--color-success)"></span><div style="width: 45%; height: 0.625rem; border-radius: 999px; background: var(--color-fg)"></div></div>
+        <div style="display: flex; align-items: center; gap: 0.75rem"><span style="width: 0.625rem; height: 0.625rem; border-radius: 50%; background: var(--color-border)"></span><div style="width: 60%; height: 0.5rem; border-radius: 999px; background: var(--color-border)"></div></div>
+        <div style="display: flex; align-items: center; gap: 0.75rem"><span style="width: 0.625rem; height: 0.625rem; border-radius: 50%; background: var(--color-border)"></span><div style="width: 52%; height: 0.5rem; border-radius: 999px; background: var(--color-border)"></div></div>
+      </div>
+    </moul-browser-frame>
+  </moul-border-beam>
+</ComponentPreview>
+
+```html
+<moul-border-beam>
+  <moul-browser-frame url="app.example.com/deploys">…</moul-browser-frame>
+</moul-border-beam>
+
+<moul-border-beam style="width: fit-content; border-radius: 0.75rem">
+  <img src="/overview.png" alt="The overview dashboard" style="display: block; border-radius: inherit" />
+</moul-border-beam>
+```
+
+## Direction
+
+The beam goes clockwise from the top-left corner. `is-reverse` sends it the other way. In right-to-left text both are mirrored: the beam goes anticlockwise, and `is-reverse` sends it clockwise.
+
+<ComponentPreview backdrop="page" minHeight="220px">
+  <div class="demo-row" style="align-items: stretch">
+    <moul-border-beam style="width: 14rem">
+      <moul-card><moul-card-body>Clockwise, the default.</moul-card-body></moul-card>
+    </moul-border-beam>
+    <moul-border-beam is-reverse style="width: 14rem">
+      <moul-card><moul-card-body>Anticlockwise, with <code>is-reverse</code>.</moul-card-body></moul-card>
+    </moul-border-beam>
+  </div>
+</ComponentPreview>
+
+```html
+<moul-border-beam is-reverse>…</moul-border-beam>
+```
+
+## Size, width and speed
+
+`--border-beam-size` is the length of the beam (`80px`), `--border-beam-width` the width of the ring it shows through (`1.5px`), and `--border-beam-duration` the time for one trip round (`6s`). The speed is the length of the border over that time, so a large box takes the beam round faster than a small one.
+
+<ComponentPreview backdrop="page" minHeight="220px">
+  <moul-border-beam style="width: 100%; max-width: 22rem; --border-beam-size: 160px; --border-beam-width: 3px; --border-beam-duration: 4s">
+    <moul-card><moul-card-body>A longer, wider beam on a four-second trip.</moul-card-body></moul-card>
+  </moul-border-beam>
+</ComponentPreview>
+
+```css
+moul-border-beam.featured {
+  --border-beam-size: 160px;
+  --border-beam-width: 3px;
+  --border-beam-duration: 4s;
+}
+```
+
+## Colours
+
+The head of the beam is `--border-beam-color-from`, the theme's accent by default, and it fades through `--border-beam-color-to` (`--color-chart-4`) to nothing at its tail. Both default to tokens, so the beam follows light and dark themes and your `--brand-hue`.
+
+<ComponentPreview backdrop="page" minHeight="220px">
+  <moul-border-beam style="width: 100%; max-width: 22rem; --border-beam-color-from: var(--color-success); --border-beam-color-to: var(--color-chart-5)">
+    <moul-card><moul-card-body>All checks passed on the last deploy.</moul-card-body></moul-card>
+  </moul-border-beam>
+</ComponentPreview>
+
+```css
+moul-border-beam.healthy {
+  --border-beam-color-from: var(--color-success);
+  --border-beam-color-to: var(--color-chart-5);
+}
+```
+
+## As an overlay
+
+Left empty, the element is an overlay for any positioned box: give it `position: absolute; inset: 0; border-radius: inherit`, and it draws its ring round the box and lets the pointer through. Two overlays with the same duration send two beams round. `--border-beam-delay` starts a beam that far into its trip rather than making it wait, so a delay of half the duration puts the second beam on the far side.
+
+<ComponentPreview backdrop="page" minHeight="240px">
+  <div style="position: relative; width: 100%; max-width: 24rem; padding: 1.5rem; border-radius: 1rem; border: 1px solid var(--color-border); background: var(--color-surface)">
+    <strong>Team</strong>
+    <p style="color: var(--color-muted)">Shared projects, roles and an audit log for everyone on the account.</p>
+    <moul-border-beam style="position: absolute; inset: 0; border-radius: inherit"></moul-border-beam>
+    <moul-border-beam style="position: absolute; inset: 0; border-radius: inherit; --border-beam-delay: 3s; --border-beam-color-from: var(--color-chart-3); --border-beam-color-to: var(--color-chart-2)"></moul-border-beam>
+  </div>
+</ComponentPreview>
+
+```html
+<div class="panel" style="position: relative; border-radius: 1rem">
+  …
+  <moul-border-beam style="position: absolute; inset: 0; border-radius: inherit"></moul-border-beam>
+  <moul-border-beam
+    style="position: absolute; inset: 0; border-radius: inherit; --border-beam-delay: 3s"
+  ></moul-border-beam>
+</div>
+```
+
+The beam is CSS only. It moves along the box with `offset-path`, and where a browser cannot do that it shows a turning ring of colour instead. It pauses while the element is off screen.
+
+## Accessibility
+
+`<moul-border-beam>` is never focusable and adds no role. The ring is decorative and hidden from assistive technology, so the wrapped content is read, and reached with Tab, as if the element were not there.
+
+A moving light draws the eye, so use one per view. Where the system forces its own colours, as in Windows high contrast mode, and when printing, the ring is not drawn.
+
+Under `prefers-reduced-motion: reduce` the beam does not travel. A still, soft highlight rests on the corner where it would start: the top left, or the top right in right-to-left text.
+
+## Attributes and properties
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `is-reverse` | `isReverse` | `boolean` | `false` |
+
+| Slot | Description |
+| :-- | :-- |
+| (default) | The box to light up: a card, a frame, an image or a panel. |
+
+| Part | Description |
+| :-- | :-- |
+| `border` | The ring the beam shows through. It sits over the content's edge and ignores the pointer. |
+
+| CSS property | Description | Default |
+| :-- | :-- | :-- |
+| `--border-beam-size` | Length of the beam. | `80px` |
+| `--border-beam-width` | Width of the ring the beam shows through. | `1.5px` |
+| `--border-beam-duration` | Time for one trip round the border. | `6s` |
+| `--border-beam-delay` | How far into its trip the beam starts. It never waits. | `0s` |
+| `--border-beam-color-from` | Colour of the beam's head. | `var(--color-accent)` |
+| `--border-beam-color-to` | Colour the beam fades through towards its tail. | `var(--color-chart-4)` |
