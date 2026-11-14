@@ -1,0 +1,106 @@
+---
+title: Press Particles
+description: Wraps a button or any target and throws a small burst of particles from the point where it is pressed.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import CanvasDemo from '@/components/demos/CanvasDemo.astro';
+
+`<moul-press-particles>` throws a small burst of particles from wherever a button is pressed. They arc out, fall under gravity and fade within a second and a half: a little reward for a like, a vote or a "copy" that worked. Press the buttons below, with a mouse, a finger or the keyboard.
+
+<ComponentPreview minHeight="16rem">
+  <div style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center">
+    <moul-press-particles>
+      <moul-button variant="primary">Circles</moul-button>
+    </moul-press-particles>
+    <moul-press-particles shape="star" count="18" colors="var(--color-warning), var(--color-accent)">
+      <moul-button variant="secondary">Stars</moul-button>
+    </moul-press-particles>
+    <moul-press-particles glyphs="💖 ✨ 🎉" count="12" size="18" spread="100">
+      <moul-button variant="outline">Like</moul-button>
+    </moul-press-particles>
+    <moul-press-particles shape="square" gravity="0" spread="360" velocity="260" colors="var(--color-success)">
+      <moul-button variant="ghost">Drift</moul-button>
+    </moul-press-particles>
+  </div>
+  <CanvasDemo />
+</ComponentPreview>
+
+It lives in the canvas entry, which loads its file the first time the tag appears on the page:
+
+```js
+import '@moul-dev/web-component/canvas'
+// or register just this element, straight away:
+import '@moul-dev/web-component/canvas/press-particles'
+```
+
+```html
+<moul-press-particles glyphs="💖 ✨">
+  <moul-button>Like</moul-button>
+</moul-press-particles>
+```
+
+The press itself is untouched. The element listens to the press, never stops or delays it, so the button's own `click` and `press` events, form submission and focus all behave as if the element were not there.
+
+## Shapes and colours
+
+`shape` is `circle` (the default), `square`, `star` or `glyph`. `glyphs` lists emoji or characters for the `glyph` shape, separated by spaces or written together (`"🎉✨"` is two glyphs); setting it is enough to pick the shape. Emoji keep their own colours; other characters take the particle colour.
+
+`colors` takes any CSS colours or tokens, as a comma-separated attribute or an array property. Particles take them in turn. Without it a burst uses the theme's accent, success, warning and danger colours, which follow light and dark themes and your brand hue.
+
+```html
+<moul-press-particles shape="star" colors="var(--color-warning), var(--color-accent)">…</moul-press-particles>
+<moul-press-particles glyphs="👍 🔥 🙌">…</moul-press-particles>
+```
+
+## How the burst flies
+
+Each press throws `count` particles (14 by default, at most 120) in a cone. `angle` is the direction of the cone in degrees, with 90 straight up and 0 to the right; `spread` is its width, 140 degrees by default, and 360 throws every way. `velocity` is the launch speed in pixels per second and `gravity` the pull downward in pixels per second squared; `gravity="0"` lets the particles drift out and fade where they stop. `size` is the particle size in pixels.
+
+The particles fly on a canvas that covers the viewport in the top layer, so they can leave the button's box and pass over dialogs and sticky headers. The canvas exists only while particles are in flight; clicks always pass straight through it.
+
+## Pointer, touch and keyboard
+
+A mouse, a pen or a finger bursts from the exact point of the press, as soon as it goes down. A keyboard press, Enter or Space on a wrapped button, has no point, so it bursts from the centre of the button. A click from script (`button.click()`) counts as a press too. A disabled control throws nothing: one with `disabled`, `aria-disabled="true"` or `is-disabled`.
+
+## From code
+
+`burst()` throws a burst without a press. Pass a point in viewport pixels or an element to burst from its centre; with nothing, it bursts from the element's own centre. It returns a promise that resolves once the last particle has gone.
+
+```js
+const sparks = document.querySelector('moul-press-particles')
+await sparks.burst({ x: event.clientX, y: event.clientY })
+await sparks.burst(document.querySelector('#saved-badge'))
+```
+
+## Accessibility
+
+The element is never focusable and adds no role; the wrapped control is read and reached exactly as it would be on its own. The canvas is hidden from screen readers. The particles are decoration: say what the press did in words as well, for example by changing the button's label to "Liked" or with a toast.
+
+Under `prefers-reduced-motion: reduce` no particles are thrown and `burst()` resolves at once. Turning the setting on while particles are in flight clears them. The press works as usual.
+
+## Attributes and properties
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `count` | `count` | `number` (1 to 120) | `14` |
+| `shape` | `shape` | `'circle' \| 'square' \| 'star' \| 'glyph'` | `circle`, or `glyph` with `glyphs` |
+| `glyphs` | `glyphs` | `string` | `''` |
+| `colors` | `colors` | `string[]` (comma-separated as an attribute) | accent, success, warning, danger |
+| `angle` | `angle` | `number` (degrees) | `90` |
+| `spread` | `spread` | `number` (degrees, 0 to 360) | `140` |
+| `velocity` | `velocity` | `number` (px/s) | `480` |
+| `gravity` | `gravity` | `number` (px/s²) | `1200` |
+| `size` | `size` | `number` (px) | `8` |
+
+| Method | Description |
+| :-- | :-- |
+| `burst(origin?)` | Throws one burst from a point `{ x, y }` in viewport pixels, an element's centre, or the element's own centre. Resolves when every particle has gone. |
+
+| Slot | Description |
+| :-- | :-- |
+| (default) | The button or target that throws particles when pressed. |
+
+| Part | Description |
+| :-- | :-- |
+| `canvas` | The full-viewport canvas the particles are drawn on, shown only while they fly. |

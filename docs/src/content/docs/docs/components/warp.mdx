@@ -1,0 +1,129 @@
+---
+title: Warp
+description: Light-speed streaks rushing out of the centre, or a tunnel of rings and beams flowing toward a vanishing point, with an optional boost on hover or press.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import CanvasDemo from '@/components/demos/CanvasDemo.astro';
+
+`<moul-warp>` puts light-speed motion behind content: streaks of light rushing out of the centre toward the viewer, or a tunnel whose rings flow out of a vanishing point while beams of light run down its walls. With `boost`, the whole field speeds up while the pointer is over it. Move a mouse over the field below.
+
+<ComponentPreview align="stretch" minHeight="20rem">
+  <moul-warp boost="hover" style="padding: 6rem 1.5rem; border: 1px solid var(--color-border); border-radius: var(--radius-xl); text-align: center">
+    <moul-typography variant="h2">Builds in seconds</moul-typography>
+    <moul-typography variant="body">Cached, parallel and close to your users.</moul-typography>
+  </moul-warp>
+  <CanvasDemo />
+</ComponentPreview>
+
+It lives in the canvas entry, which loads its file the first time the tag appears on the page:
+
+```js
+import '@moul-dev/web-component/canvas'
+// or register just this element, straight away:
+import '@moul-dev/web-component/canvas/warp'
+```
+
+```html
+<moul-warp boost="hover">
+  <h1>Builds in seconds</h1>
+  <p>Cached, parallel and close to your users.</p>
+</moul-warp>
+```
+
+The element is a plain block with no padding and no background of its own: pad it, size it and round its corners as you would the section it replaces. The field fills it and follows its rounded corners.
+
+## Variants
+
+`variant` sets what is drawn. `streaks` (the default) flies through a field of points: far away they are short, thin and faint near the centre; as they pass they stretch into long, bright streaks toward the edges, with a soft glow where they come from.
+
+`grid` draws a tunnel instead. Lines run along its four walls from the edges of the element to a vanishing point in the middle, rings flow out of the distance toward the viewer, and beams of light race down the lines. The far end fades into whatever background the element is on.
+
+<ComponentPreview align="stretch" minHeight="20rem">
+  <moul-warp variant="grid" style="padding: 6rem 1.5rem; border: 1px solid var(--color-border); border-radius: var(--radius-xl); text-align: center">
+    <moul-typography variant="h2">Edge network</moul-typography>
+    <moul-typography variant="body">Three hundred cities, one deploy.</moul-typography>
+  </moul-warp>
+</ComponentPreview>
+
+```html
+<moul-warp variant="grid">
+  <h2>Edge network</h2>
+</moul-warp>
+```
+
+## Boost
+
+`boost` speeds the field up to five times its pace and eases it back again, over about half a second each way. `hover` boosts while a mouse or a pen is over the element; `press` boosts while a button, a pen or a finger is pressed on it. Leave it out (or write `none`) for a steady pace.
+
+<ComponentPreview align="stretch" minHeight="16rem">
+  <moul-warp boost="press" color="var(--color-chart-4)" style="color-scheme: dark; height: 16rem; border-radius: var(--radius-xl); background: var(--color-background)"></moul-warp>
+</ComponentPreview>
+
+```html
+<moul-warp boost="press" color="var(--color-chart-4)"></moul-warp>
+```
+
+The boost answers to the pointer alone. It changes nothing but the decoration, so there is no keyboard equivalent to miss.
+
+## Speed, density and colour
+
+`speed` multiplies the pace of both variants, 1 by default. `density` is the number of streaks per 10,000 square pixels, 9 by default, so a larger field gets more streaks rather than a sparser spread; it draws at most 600. `color` takes any CSS colour, tokens included: the accent colour by default, so the field follows the theme and the brand hue.
+
+`seed` picks the layout. The same seed draws the same field, which keeps the still frame under reduced motion the same on every visit.
+
+## Use as a layer
+
+Left empty, the element is just the field. Position it absolutely to fill a section and send it behind the section's content with `z-index: -1`. Give the section `position: relative` and `isolation: isolate`, so the layer stays inside it. A boost on hover then follows the pointer only where the content leaves the field uncovered, so set the boost on a field that wraps the content instead when the whole section should answer.
+
+```html
+<section class="hero">
+  <moul-warp class="hero-background" variant="grid"></moul-warp>
+  <h1>Edge network</h1>
+</section>
+```
+
+```css
+.hero {
+  position: relative;
+  isolation: isolate;
+}
+
+.hero-background {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+}
+```
+
+## Performance
+
+The streaks are sorted into four depths and every streak of one depth goes into a single stroke, so 600 streaks take four strokes a frame. The tunnel's beams and glow are small images rendered once per colour. The canvas follows the screen's pixel density up to 2×, stops drawing while the element is off screen or the tab is hidden, and picks up where it left off.
+
+## Accessibility
+
+`<moul-warp>` is never focusable and adds no role. The canvas is decoration: it is hidden from screen readers and pointer events pass through it, so the content inside is read, selected and clicked as it is. Fast motion behind text is hard to read past: keep the text short, and check its contrast against the brightest streaks.
+
+Where the system forces its own colours, as in Windows high contrast mode, the canvas is not drawn.
+
+Under `prefers-reduced-motion: reduce` one still frame is drawn: the streaks as short fixed lines out of the centre, or the tunnel with its beams held in place. The boost does nothing.
+
+## Attributes and properties
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `variant` | `variant` | `'streaks' \| 'grid'` | `'streaks'` |
+| `boost` | `boost` | `'none' \| 'hover' \| 'press'` | `'none'` |
+| `speed` | `speed` | `number` | `1` |
+| `density` | `density` | `number` | `9` |
+| `color` | `color` | `string` | `var(--color-accent)` |
+| `seed` | `seed` | `number` | `1` |
+
+| Slot | Description |
+| :-- | :-- |
+| (default) | The content to show in front of the field. Leave it empty to use the element as a background layer. |
+
+| Part | Description |
+| :-- | :-- |
+| `canvas` | The canvas the field is drawn on. It fills the element behind the content, follows its rounded corners and ignores the pointer. |

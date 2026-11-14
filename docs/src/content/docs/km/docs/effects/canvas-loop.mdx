@@ -61,6 +61,12 @@ Give the canvas its size in CSS; the controller only sets its backing store.
 
 `start()`, `stop()` and `drawOnce()` control the loop from code, and `isRunning` reports it.
 
+The first frame after `start()` (or after a pause) has a `delta` of 0, since there is no previous frame to measure from. A loop that stops itself once nothing moves should only decide so on a frame with time in it, or it will stop on that first frame before anything has had a chance to move.
+
 ## Reduced motion
 
 By default a single frame at time 0 is drawn and the loop stays stopped, and it switches back and forth if the user changes the setting while the page is open. Use `reducedMotion: 'run'` only when the movement is driven by the user, such as particles that follow the pointer.
+
+## Elements built on it
+
+The [canvas and WebGL elements](/docs/canvas/), from particles and starfields to the globe and the shader field, each run on this controller. They live in their own entry, `@moul-dev/web-component/canvas`, which loads each element only when a page uses it.

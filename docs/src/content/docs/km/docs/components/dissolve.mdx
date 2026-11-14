@@ -1,0 +1,138 @@
+---
+title: រលាយជាធូលី (Dissolve)
+description: រុំធាតុមួយ ហើយបំបែកវាទៅជាធូលីដែលរសាត់ទៅឆ្ងាយ នៅពេលវាត្រូវបានលុបចេញ។
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import CanvasDemo from '@/components/demos/CanvasDemo.astro';
+
+`<moul-dissolve>` gives a deletion a moment of weight. Wrap a list row, a card or a tag, call `dissolve()`, and the item is wiped away from one side while dust in its own colours peels off the moving edge and drifts off. With `collapse` the space it took closes up behind it. Delete a notification below, then bring them back.
+
+<ComponentPreview minHeight="20rem" align="stretch">
+  <div style="display: grid; gap: 0.5rem; width: min(100%, 26rem); margin-inline: auto">
+    <moul-dissolve id="note-1" collapse>
+      <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 0.75rem 0.75rem 1rem; border: 1px solid var(--color-border); border-radius: var(--radius-lg, 0.5rem); background: var(--color-surface)">
+        <span style="flex: 1">Sokha shared <strong>Kep weekend.pdf</strong></span>
+        <moul-button size="sm" variant="ghost" data-dissolve>Delete</moul-button>
+      </div>
+    </moul-dissolve>
+    <moul-dissolve id="note-2" collapse>
+      <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 0.75rem 0.75rem 1rem; border: 1px solid var(--color-border); border-radius: var(--radius-lg, 0.5rem); background: var(--color-accent-soft); color: var(--color-accent-soft-fg)">
+        <span style="flex: 1">Your invoice for November is ready</span>
+        <moul-button size="sm" variant="ghost" data-dissolve>Delete</moul-button>
+      </div>
+    </moul-dissolve>
+    <moul-dissolve id="note-3" collapse>
+      <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 0.75rem 0.75rem 1rem; border: 1px solid var(--color-border); border-radius: var(--radius-lg, 0.5rem); background: var(--color-warning-soft); color: var(--color-warning-soft-fg)">
+        <span style="flex: 1">Storage is 90% full</span>
+        <moul-button size="sm" variant="ghost" data-dissolve>Delete</moul-button>
+      </div>
+    </moul-dissolve>
+    <moul-button variant="secondary" data-dissolve-reset="note-1 note-2 note-3" style="justify-self: center; margin-top: 0.5rem">Bring them back</moul-button>
+  </div>
+  <CanvasDemo />
+  <script type="module" src="/demo/dissolve/demo.js"></script>
+</ComponentPreview>
+
+It lives in the canvas entry, which loads its file the first time the tag appears on the page:
+
+```js
+import '@moul-dev/web-component/canvas'
+// or register just this element, straight away:
+import '@moul-dev/web-component/canvas/dissolve'
+```
+
+```html
+<moul-dissolve collapse remove-on-end>
+  <li class="row">Sokha shared Kep weekend.pdf <button>Delete</button></li>
+</moul-dissolve>
+```
+
+```js
+row.querySelector('button').addEventListener('click', async () => {
+  nextRow?.focus()
+  await row.dissolve()
+  // The row has gone, its space has closed and it has removed itself.
+})
+```
+
+## How it works
+
+The item is not turned into an image; a page cannot copy its own elements into pixels. Instead the wipe is a mask over the real content, a soft edge that travels across it, and the dust is drawn on a canvas in the colours the item is made of. When `dissolve()` starts, the element reads the background and text colour at a grid of points over the item, so a card sheds its fill, a coloured badge sheds its colour and a line of text sheds its ink, each from where it sits.
+
+`duration` is how long the wipe takes to cross the item, 900 ms by default; the last grains drift on for up to a second and a quarter more. The dust is drawn on a canvas that covers the viewport in the top layer only while it is in flight, so it can drift past a list's edges and over anything that clips it.
+
+## Directions
+
+`direction` is the way the wipe travels and the dust drifts: `right` (the default), `left`, `up` or `down`.
+
+<ComponentPreview minHeight="14rem">
+  <div style="display: grid; gap: 1rem; justify-items: center">
+    <div style="display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center">
+      <moul-dissolve id="dir-right" style="display: inline-block">
+        <div style="display: grid; place-items: center; width: 7rem; height: 4.5rem; border-radius: var(--radius-lg, 0.5rem); background: var(--color-accent); color: var(--color-accent-fg); font-weight: 600">right</div>
+      </moul-dissolve>
+      <moul-dissolve id="dir-left" direction="left" style="display: inline-block">
+        <div style="display: grid; place-items: center; width: 7rem; height: 4.5rem; border-radius: var(--radius-lg, 0.5rem); background: var(--color-success); color: var(--color-success-fg); font-weight: 600">left</div>
+      </moul-dissolve>
+      <moul-dissolve id="dir-up" direction="up" style="display: inline-block">
+        <div style="display: grid; place-items: center; width: 7rem; height: 4.5rem; border-radius: var(--radius-lg, 0.5rem); background: var(--color-warning); color: var(--color-warning-fg); font-weight: 600">up</div>
+      </moul-dissolve>
+      <moul-dissolve id="dir-down" direction="down" style="display: inline-block">
+        <div style="display: grid; place-items: center; width: 7rem; height: 4.5rem; border-radius: var(--radius-lg, 0.5rem); background: var(--color-danger); color: var(--color-danger-fg); font-weight: 600">down</div>
+      </moul-dissolve>
+    </div>
+    <div style="display: flex; gap: 0.5rem">
+      <moul-button variant="primary" data-dissolve="dir-right dir-left dir-up dir-down">Dissolve</moul-button>
+      <moul-button variant="secondary" data-dissolve-reset="dir-right dir-left dir-up dir-down">Reset</moul-button>
+    </div>
+  </div>
+</ComponentPreview>
+
+```html
+<moul-dissolve direction="up">…</moul-dissolve>
+```
+
+## After it has gone
+
+Once the item has gone the promise resolves and `dissolveend` fires, bubbling from the element. What is left depends on two attributes:
+
+- With neither, the item stays in place, invisible and `inert`, and keeps its space. `isDissolved` is true, and `reset()` brings it back at once.
+- `collapse` closes up the space the item took, with a short ease, and then hides it.
+- `remove-on-end` removes the element from the page after `dissolveend`, so `await row.dissolve()` is the whole deletion. Combine it with `collapse` for a list.
+
+Calling `dissolve()` again while it runs returns the same promise. `reset()` during a dissolve stops it where it is and brings the item back without firing `dissolveend`.
+
+## Accessibility
+
+The element is never focusable and adds no role; until it dissolves, the item is read and reached as if the element were not there. From the first frame of `dissolve()` the item is `inert`: it cannot be pressed a second time and screen readers no longer reach it. Focus inside an inert item is lost, so move it first, to the next row or the list's heading, before you call `dissolve()`. The dust is decoration and hidden from screen readers: say what was deleted in words, for example in a toast that offers an undo.
+
+Under `prefers-reduced-motion: reduce` the item fades out over 200 ms with no wipe and no dust, then the promise resolves and `dissolveend` fires as usual; `collapse` closes the space at once. Turning the setting on during a dissolve skips to the end.
+
+## Attributes and properties
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `direction` | `direction` | `'right' \| 'left' \| 'up' \| 'down'` | `right` |
+| `duration` | `duration` | `number` (ms) | `900` |
+| `collapse` | `collapse` | `boolean` | `false` |
+| `remove-on-end` | `removeOnEnd` | `boolean` | `false` |
+| `is-dissolved` | `isDissolved` | `boolean`, read only | `false` |
+
+| Method | Description |
+| :-- | :-- |
+| `dissolve()` | Dissolves the item. Resolves once it has gone, and been removed with `remove-on-end`. |
+| `reset()` | Brings a dissolved item back at once, or stops a dissolve part way. |
+
+| Event | Description |
+| :-- | :-- |
+| `dissolveend` | Fired once the item has gone, before `remove-on-end` removes it. Bubbles and crosses shadow roots. |
+
+| Slot | Description |
+| :-- | :-- |
+| (default) | The item to dissolve. |
+
+| Part | Description |
+| :-- | :-- |
+| `content` | The wrapper around the item that the wipe masks. |
+| `canvas` | The full-viewport canvas the dust is drawn on while the item dissolves. |

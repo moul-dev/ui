@@ -40,6 +40,11 @@ interface GeneratorOptions {
   description: string
   /** Register in the effects entry (`@moul-dev/web-component/effects`) instead of the main one. */
   isEffect: boolean
+  /**
+   * Register in the canvas entry (`@moul-dev/web-component/canvas`), which
+   * loads the element on demand, and scaffold a canvas element.
+   */
+  isCanvas: boolean
   dryRun: boolean
 }
 
@@ -53,6 +58,9 @@ ${colors.yellow}Usage:${colors.reset}
 ${colors.yellow}Options:${colors.reset}
   --description, -d <text>   One-line description for JSDoc and the docs page
   --effect                   Register in @moul-dev/web-component/effects, not the main entry
+  --canvas                   A canvas or WebGL element, loaded on demand by
+                             @moul-dev/web-component/canvas (and importable on its
+                             own as @moul-dev/web-component/canvas/<name>)
   --dry-run                  Preview generated files without writing to disk
   --help, -h                 Show this help message
 
@@ -72,6 +80,7 @@ ${colors.yellow}Examples:${colors.reset}
   bun run gen:component Timeline
   bun run gen:component SegmentedControl -d "Segmented single-choice picker"
   bun run gen:component Marquee --effect -d "Endless row of logos, cards or text"
+  bun run gen:component Starfield --canvas -d "Twinkling stars and shooting stars"
 `)
 }
 
@@ -80,6 +89,7 @@ function parseArgs(args: string[]): GeneratorOptions {
   let description = ''
   let dryRun = false
   let isEffect = false
+  let isCanvas = false
 
   for (let i = 0; i < args.length; i++) {
     const arg = args[i]
@@ -90,6 +100,8 @@ function parseArgs(args: string[]): GeneratorOptions {
       dryRun = true
     } else if (arg === '--effect') {
       isEffect = true
+    } else if (arg === '--canvas') {
+      isCanvas = true
     } else if (arg === '--description' || arg === '-d') {
       description = args[++i] || ''
     } else if (!arg.startsWith('-') && !name) {
@@ -124,8 +136,210 @@ function parseArgs(args: string[]): GeneratorOptions {
       description ||
       `${componentName} Web Component built with Lit and Moul CSS tokens.`,
     isEffect,
+    isCanvas,
     dryRun,
   }
+}
+
+/** The element's `@moul-dev/web-component/canvas/<name>` subpath: its tag without `moul-`. */
+function canvasName(opts: Pick<GeneratorOptions, 'tagName'>): string {
+  return opts.tagName.replace(/^moul-/, '')
+}
+
+function generateCanvasComponentFile(opts: GeneratorOptions): string {
+  const { componentName, className, tagName, description } = opts
+  const styles = `${lowerFirst(componentName)}Styles`
+  return `import { html, LitElement, type PropertyValues } from 'lit'
+import { CanvasColorController } from '../../controllers/canvas-color.controller'
+import {
+  type CanvasFrame,
+  CanvasLoopController,
+} from '../../controllers/canvas-loop.controller'
+import { defineElement } from '../../utils/define-element'
+import { ${styles} } from './${componentName}.styles'
+
+/**
+ * ${description}
+ *
+ * Keyboard and screen readers: TODO. A decorative canvas is hidden from
+ * screen readers (\`aria-hidden\`); say so, or say what role and name the
+ * element announces and which keys operate it.
+ *
+ * Reduced motion: TODO. Say what the still frame shows, for example "the
+ * field is drawn once and does not move".
+ *
+ * @slot - Content shown over the effect.
+ * @csspart canvas - The canvas the effect is drawn on.
+ */
+export class ${className} extends LitElement {
+  static override styles = ${styles}
+
+  static override properties = {
+    color: { type: String },
+  }
+
+  /** Colour of the effect, any CSS colour or token. Defaults to the accent colour. */
+  declare color: string
+
+  private readonly palette = new CanvasColorController(this, {
+    probe: () => this.renderRoot.querySelector<HTMLElement>('.color-probe'),
+    colors: () => ({ main: this.color || 'var(--color-accent)' }),
+    onChange: () => this.loop.drawOnce(),
+  })
+
+  private readonly loop = new CanvasLoopController(this, {
+    canvas: () => this.renderRoot.querySelector('canvas'),
+    draw: (frame) => this.paint(frame),
+  })
+
+  constructor() {
+    super()
+    this.color = ''
+  }
+
+  protected override updated(changed: PropertyValues): void {
+    super.updated(changed)
+    if (changed.has('color')) this.palette.refresh()
+  }
+
+  private paint({ context, width, height }: CanvasFrame): void {
+    if (!context) return
+    context.clearRect(0, 0, width, height)
+    context.fillStyle = this.palette.get('main')
+    // TODO: draw the effect. \`time\` and \`delta\` on the frame drive the motion.
+  }
+
+  protected override render() {
+    return html\`
+      <canvas part="canvas" aria-hidden="true"></canvas>
+      <span class="color-probe"></span>
+      <div class="content"><slot></slot></div>
+    \`
+  }
+}
+
+defineElement('${tagName}', ${className})
+
+declare global {
+  interface HTMLElementTagNameMap {
+    '${tagName}': ${className}
+  }
+}
+`
+}
+
+function generateCanvasStylesFile(opts: GeneratorOptions): string {
+  return `import { css } from 'lit'
+import { canvasColorProbeStyles } from '../../controllers/canvas-color.controller'
+import { resetStyles } from '../../styles/reset.styles'
+
+export const ${lowerFirst(opts.componentName)}Styles = [
+  resetStyles,
+  canvasColorProbeStyles,
+  css\`
+    :host {
+      display: block;
+      position: relative;
+      isolation: isolate;
+    }
+
+    :host([hidden]) {
+      display: none;
+    }
+
+    canvas {
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      display: block;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .content {
+      position: relative;
+    }
+  \`,
+]
+`
+}
+
+function generateCanvasIndexFile(opts: GeneratorOptions): string {
+  const { componentName, className } = opts
+  return `export { ${className}, ${className} as ${componentName} } from './${componentName}'
+`
+}
+
+/** \`src/canvas/<name>.ts\`, the element's own entry, \`@moul-dev/web-component/canvas/<name>\`. */
+function generateCanvasEntryFile(opts: GeneratorOptions): string {
+  return `/** \`@moul-dev/web-component/canvas/${canvasName(opts)}\`: registers \`<${opts.tagName}>\` when imported. */
+export * from '../components/${opts.componentName}'
+`
+}
+
+function generateCanvasTestFile(opts: GeneratorOptions): string {
+  const { componentName, className, tagName } = opts
+  return `import { fixture, html } from '@open-wc/testing-helpers'
+import { describe, expect, it } from 'vitest'
+import './${componentName}'
+import type { ${className} } from './${componentName}'
+
+describe('<${tagName}>', () => {
+  it('is registered with an open shadow root and a canvas hidden from screen readers', async () => {
+    const el = await fixture<${className}>(html\`<${tagName}></${tagName}>\`)
+    expect(customElements.get('${tagName}')).toBeDefined()
+    const canvas = el.shadowRoot?.querySelector('canvas')
+    expect(canvas?.getAttribute('aria-hidden')).toBe('true')
+  })
+
+  // The element checklist (src/element-checklist.test.ts) fails while any
+  // it.todo remains in this file. Turn each into a real test, or delete it
+  // with a note in the JSDoc when it does not apply.
+  describe('keyboard and screen readers', () => {
+    it.todo('keeps its content readable and in the tab order')
+  })
+
+  describe('reduced motion', () => {
+    // mockReducedMotion(true) from src/test-setup.ts switches the setting on.
+    it.todo('draws one still frame when the user asks for reduced motion')
+  })
+})
+`
+}
+
+function generateCanvasMdxDoc(opts: GeneratorOptions): string {
+  const { componentName, tagName, description } = opts
+  const fence = '```'
+  return `---
+title: ${componentName}
+description: ${description}
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import CanvasDemo from '@/components/demos/CanvasDemo.astro';
+
+\`<${tagName}>\` TODO: say what it draws and when to reach for it.
+
+<ComponentPreview minHeight="20rem" align="stretch">
+  <${tagName} style="height: 18rem"></${tagName}>
+  <CanvasDemo />
+</ComponentPreview>
+
+It lives in the canvas entry, which loads its file the first time the tag appears on the page:
+
+${fence}js
+import '@moul-dev/web-component/canvas'
+// or register just this element, straight away:
+import '@moul-dev/web-component/canvas/${canvasName(opts)}'
+${fence}
+
+## Attributes & Properties
+
+| Name | Type | Default |
+| :--- | :--- | :--- |
+| \`color\` | \`string\` | \`var(--color-accent)\` |
+`
 }
 
 function generateComponentFile(opts: GeneratorOptions): string {
@@ -402,7 +616,9 @@ import '@moul-dev/web-component/style.css';
  * a translated title and description.
  */
 function generateKhmerMdxDoc(opts: GeneratorOptions): string {
-  const english = generateMdxDoc(opts)
+  const english = opts.isCanvas
+    ? generateCanvasMdxDoc(opts)
+    : generateMdxDoc(opts)
   return english.replace(
     /^---\ntitle: .*\ndescription: .*\n---/,
     `---\ntitle: ${opts.componentName} (សមាសភាគ)\ndescription: ឯកសារណែនាំសម្រាប់សមាសភាគ ${opts.componentName} Web Component\n---`,
@@ -446,6 +662,34 @@ export {
   )
   next = next.replace(mapClose, `\n    '${tagName}': ${className}\n  }\n}\n`)
   return next
+}
+
+/**
+ * Add an element to the canvas entry's loader map in `src/canvas.ts`, kept in
+ * tag order. Returns null when the anchor comment is missing.
+ */
+function updateCanvasTs(
+  content: string,
+  opts: Pick<GeneratorOptions, 'tagName'>,
+): string | null {
+  const anchor = /( *)\/\/ Canvas elements[^\n]*\n/
+  const match = content.match(anchor)
+  if (!match || match.index === undefined) return null
+  const indent = match[1]
+  const start = match.index + match[0].length
+  // From the anchor's own newline, so an empty map is found too.
+  const end = content.indexOf('\n}', start - 1)
+  if (end === -1) return null
+  const entries = content
+    .slice(start, end)
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean)
+  entries.push(
+    `'${opts.tagName}': () => import('./canvas/${canvasName(opts)}'),`,
+  )
+  entries.sort()
+  return `${content.slice(0, start)}${entries.map((line) => `${indent}${line}`).join('\n')}${content.slice(end)}`
 }
 
 /**
@@ -494,7 +738,12 @@ function main() {
   )
   const indexTsPath = join(rootDir, 'ui', 'src', 'index.ts')
   const effectsTsPath = join(rootDir, 'ui', 'src', 'effects.ts')
-  const entryPath = opts.isEffect ? effectsTsPath : indexTsPath
+  const canvasTsPath = join(rootDir, 'ui', 'src', 'canvas.ts')
+  const entryPath = opts.isCanvas
+    ? canvasTsPath
+    : opts.isEffect
+      ? effectsTsPath
+      : indexTsPath
   const khmerDocPath = docPath.replace(
     join('content', 'docs', 'docs'),
     join('content', 'docs', 'km', 'docs'),
@@ -515,30 +764,48 @@ function main() {
     }
   }
 
+  const c = opts.isCanvas
   const files = [
     {
       path: join(componentDir, `${opts.componentName}.ts`),
-      content: generateComponentFile(opts),
+      content: c
+        ? generateCanvasComponentFile(opts)
+        : generateComponentFile(opts),
       desc: 'LitElement class',
     },
     {
       path: join(componentDir, `${opts.componentName}.styles.ts`),
-      content: generateStylesFile(opts),
+      content: c ? generateCanvasStylesFile(opts) : generateStylesFile(opts),
       desc: 'Lit css`` styles',
     },
     {
       path: join(componentDir, `${opts.componentName}.test.ts`),
-      content: generateTestFile(opts),
+      content: c ? generateCanvasTestFile(opts) : generateTestFile(opts),
       desc: 'Vitest unit tests',
     },
     {
       path: join(componentDir, 'index.ts'),
-      content: generateIndexFile(opts),
+      content: c ? generateCanvasIndexFile(opts) : generateIndexFile(opts),
       desc: 'Barrel export',
     },
+    ...(c
+      ? [
+          {
+            path: join(
+              rootDir,
+              'ui',
+              'src',
+              'canvas',
+              `${canvasName(opts)}.ts`,
+            ),
+            content: generateCanvasEntryFile(opts),
+            desc: `Entry for @moul-dev/web-component/canvas/${canvasName(opts)}`,
+          },
+        ]
+      : []),
     {
       path: docPath,
-      content: generateMdxDoc(opts),
+      content: c ? generateCanvasMdxDoc(opts) : generateMdxDoc(opts),
       desc: 'Starlight MDX documentation stub',
     },
     {
@@ -572,9 +839,11 @@ function main() {
   }
 
   const entryContent = readFileSync(entryPath, 'utf-8')
-  const updatedEntry = opts.isEffect
-    ? updateEffectsTs(entryContent, opts)
-    : updateIndexTs(entryContent, opts)
+  const updatedEntry = opts.isCanvas
+    ? updateCanvasTs(entryContent, opts)
+    : opts.isEffect
+      ? updateEffectsTs(entryContent, opts)
+      : updateIndexTs(entryContent, opts)
   if (updatedEntry) {
     writeFileSync(entryPath, updatedEntry, 'utf-8')
     console.log(`  ${colors.green}✓ Updated${colors.reset} ${rel(entryPath)}`)

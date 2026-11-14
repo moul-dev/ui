@@ -1,0 +1,117 @@
+---
+title: Flow Field
+description: Flowing waves of light, or a vortex of particles swirling around the centre, drawn from smooth noise on a canvas behind a hero, a sign-up panel or an empty state.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import CanvasDemo from '@/components/demos/CanvasDemo.astro';
+
+`<moul-flow-field>` draws a slow, flowing field on a canvas behind its content. By default it is a handful of soft bands of colour that ripple across the area; with `variant="vortex"` it is hundreds of particles circling the centre, each trailing a short line of light. Both are driven by smooth noise, so the motion never repeats and never jerks. Use it behind a hero, a sign-up panel or an empty state that needs some life.
+
+<ComponentPreview minHeight="20rem" align="stretch">
+  <moul-flow-field follow-pointer style="height: 20rem; display: grid; place-items: center">
+    <div style="display: grid; gap: 0.75rem; justify-items: center; max-width: 26rem; padding: 0 1.5rem; text-align: center">
+      <strong style="font-size: 1.75rem; line-height: 1.2">Ship the page today</strong>
+      <span style="color: var(--color-muted)">Content, assets and forms in one place, ready when you are.</span>
+      <moul-button variant="primary">Start a project</moul-button>
+    </div>
+  </moul-flow-field>
+  <CanvasDemo />
+</ComponentPreview>
+
+It lives in the canvas entry, which loads its file the first time the tag appears on the page:
+
+```js
+import '@moul-dev/web-component/canvas'
+// or register just this element, straight away:
+import '@moul-dev/web-component/canvas/flow-field'
+```
+
+```html
+<moul-flow-field follow-pointer style="height: 20rem">
+  <section class="hero">…</section>
+</moul-flow-field>
+```
+
+Give the element a height, or let its content give it one: the field fills whatever box the element has. With `follow-pointer`, the waves lean toward a mouse or pen over them; move a pointer over the field above.
+
+## Vortex
+
+`variant="vortex"` sends particles around the centre of the area, each drawn slightly inward and pushed off course by the noise, so they spiral in loose, shifting streams. Each leaves a short trail that fades behind it. With `follow-pointer`, the centre of the swirl drifts toward a mouse or pen over the field.
+
+<ComponentPreview minHeight="20rem" align="stretch">
+  <moul-flow-field variant="vortex" follow-pointer style="height: 20rem; display: grid; place-items: center">
+    <strong style="font-size: 1.5rem">Everything, connected</strong>
+  </moul-flow-field>
+</ComponentPreview>
+
+```html
+<moul-flow-field variant="vortex" follow-pointer>
+  <strong>Everything, connected</strong>
+</moul-flow-field>
+```
+
+## Colours, count and pace
+
+`colors` takes a list of CSS colours or tokens, separated by commas (or as a JSON array, or an array property); each wave or particle takes one in turn. It is the accent and chart colours by default, which follow the theme. `count` is the number of waves, 5 by default and at most 12, or the number of particles in a vortex, which by default grows with the area, from 120 to 900. `speed` multiplies the pace, 1 by default.
+
+<ComponentPreview minHeight="14rem" align="stretch">
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: 1rem">
+    <moul-flow-field count="3" speed="2" colors="var(--color-success), var(--color-chart-4)" style="height: 13rem"></moul-flow-field>
+    <moul-flow-field variant="vortex" count="260" speed="0.6" colors="var(--color-warning), var(--color-danger)" style="height: 13rem"></moul-flow-field>
+  </div>
+</ComponentPreview>
+
+```html
+<moul-flow-field count="3" speed="2" colors="var(--color-success), var(--color-chart-4)"></moul-flow-field>
+<moul-flow-field variant="vortex" count="260" speed="0.6" colors="var(--color-warning), var(--color-danger)"></moul-flow-field>
+```
+
+## Blur
+
+`blur` softens the field, in pixels: 12 by default for waves, which turns the bands into glowing light, and 0 for the vortex, which keeps its trails crisp. The canvas reaches past the element's box by twice the blur and is clipped back to it, so the edges stay full rather than fading out.
+
+<ComponentPreview minHeight="12rem" align="stretch">
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: 1rem">
+    <moul-flow-field blur="0" style="height: 11rem"></moul-flow-field>
+    <moul-flow-field blur="32" style="height: 11rem"></moul-flow-field>
+  </div>
+</ComponentPreview>
+
+```html
+<moul-flow-field blur="0"></moul-flow-field>
+<moul-flow-field blur="32"></moul-flow-field>
+```
+
+## Cost
+
+Each wave is one stroke a frame. The vortex keeps its particles in typed arrays and draws every trail of one colour and brightness in a single stroke, so a full field costs a few dozen strokes a frame however many particles it holds. The canvas stops drawing while it is scrolled off screen or the tab is hidden. A large `blur` is the expensive part on a phone: the browser blurs the whole canvas every frame.
+
+## Accessibility
+
+The canvas is decorative and hidden from screen readers. The element takes no focus and adds no role: content in its slot is read and reached with Tab as usual, above the field. Bright, busy colours behind text cost contrast; set `--flow-field-opacity` to quiet the field, or put the text on a surface of its own.
+
+Under `prefers-reduced-motion: reduce` the field is drawn once and stays still: the waves where they begin, the vortex caught mid-swirl with its trails, and it no longer follows the pointer. The element reacts to the setting as soon as it changes.
+
+## Attributes and properties
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `variant` | `variant` | `'waves' \| 'vortex'` | `'waves'` |
+| `colors` | `colors` | `string[]`; the attribute is a comma-separated list or a JSON array | the accent and chart colours |
+| `count` | `count` | `number` | `5` waves; particles by area |
+| `speed` | `speed` | `number` | `1` |
+| `blur` | `blurRadius` | `number` (px) | `12` for waves, `0` for the vortex |
+| `follow-pointer` | `followPointer` | `boolean` | `false` |
+
+| Slot | Description |
+| :-- | :-- |
+| (default) | Content shown over the field. |
+
+| Part | Description |
+| :-- | :-- |
+| `canvas` | The canvas the field is drawn on. |
+
+| CSS property | Description | Default |
+| :-- | :-- | :-- |
+| `--flow-field-opacity` | Opacity of the field, to quiet it behind text. | `1` |

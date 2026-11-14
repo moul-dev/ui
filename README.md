@@ -22,12 +22,14 @@
 ├── rdt/                 # Requirements, design, and task list for the Lit rebuild
 ├── scripts/             # dev, gen:component, sync:llms, bump, verify-no-react, setup-hooks
 ├── ui/                  # @moul-dev/web-component
-│   ├── package.json     # Exports `.`, `./effects` and `./style.css`
+│   ├── package.json     # Exports `.`, `./effects`, `./canvas`, `./canvas/*` and `./style.css`
 │   ├── vite.config.ts   # Vite library build + Vitest (happy-dom)
 │   ├── index.html       # Kitchen-sink sandbox
 │   └── src/
 │       ├── index.ts     # Main entry point
 │       ├── effects.ts   # `@moul-dev/web-component/effects`: motion controllers and effect elements
+│       ├── canvas.ts    # `@moul-dev/web-component/canvas`: loads canvas and WebGL elements on demand
+│       ├── canvas/      # `@moul-dev/web-component/canvas/<name>`: one entry per canvas element
 │       ├── components/  # One folder per element: <Name>.ts, <Name>.styles.ts, index.ts
 │       ├── controllers/ # Lit reactive controllers
 │       ├── styles/      # style.css token layer, reset, semantic tones

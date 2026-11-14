@@ -1,0 +1,141 @@
+---
+title: ផ្ទៃមេឃពោរពេញដោយផ្កាយ (Starfield)
+description: មេឃពេលយប់ដែលមានផ្កាយភ្លឺភ្លែតបីកម្រិតជម្រៅ ជាមួយផ្កាយដុះ ឬភ្លៀងអាចម៍ផ្កាយដែលធ្លាក់កាត់។
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import CanvasDemo from '@/components/demos/CanvasDemo.astro';
+
+`<moul-starfield>` draws a night sky on a canvas: stars at three depths that drift slowly and twinkle, the nearest with a soft glow. Add shooting stars that streak across now and then, or a shower of meteors falling at an angle.
+
+<ComponentPreview align="stretch" minHeight="20rem">
+  <moul-starfield shooting-stars style="color-scheme: dark; padding: 6rem 1.5rem; border-radius: var(--radius-xl); background: var(--color-background); color: var(--color-foreground); text-align: center">
+    <moul-typography variant="h2">Ship after dark</moul-typography>
+    <moul-typography variant="body">Deploys that run while you sleep.</moul-typography>
+  </moul-starfield>
+  <CanvasDemo />
+</ComponentPreview>
+
+It lives in the canvas entry, which loads its file the first time the tag appears on the page:
+
+```js
+import '@moul-dev/web-component/canvas'
+// or register just this element, straight away:
+import '@moul-dev/web-component/canvas/starfield'
+```
+
+```html
+<moul-starfield shooting-stars class="night">
+  <h1>Ship after dark</h1>
+  <p>Deploys that run while you sleep.</p>
+</moul-starfield>
+```
+
+```css
+.night {
+  color-scheme: dark;
+  background: var(--color-background);
+  color: var(--color-foreground);
+}
+```
+
+The element has no background of its own, and its stars take the foreground colour: dark specks on a light page, light ones on a dark page. For a night sky in both themes, give the element (or its section) `color-scheme: dark`. Every Moul token is a light and a dark pair, so inside it `--color-background` is the dark one and the stars are light, whichever theme the page is in.
+
+## Shooting stars
+
+`shooting-stars` sends a bright streak across the sky now and then, from somewhere in its upper half and downward to the left or the right, flaring in and fading out within a second. Written alone it means about six a minute; a number sets how many a minute, on average. At most three cross at once.
+
+```html
+<moul-starfield shooting-stars="12"></moul-starfield>
+```
+
+## Meteors
+
+`meteors` rains thin streaks with fading tails, all falling the same way. Written alone it means ten at once; a number sets how many, up to 40. Each falls at its own speed and starts again upstream once it has left the sky, so the shower keeps going without a visible loop.
+
+`angle` sets the direction they fall, in degrees measured as in a maths class: 0 is to the right and 90 is up, so `270` is straight down, `240` (the default) is down and to the left, and `300` is down and to the right.
+
+<ComponentPreview align="stretch" minHeight="20rem">
+  <moul-starfield meteors="14" angle="235" density="2" style="color-scheme: dark; padding: 6rem 1.5rem; border-radius: var(--radius-xl); background: var(--color-background); color: var(--color-foreground); text-align: center">
+    <moul-typography variant="h2">Changelog</moul-typography>
+    <moul-typography variant="body">Forty releases since spring.</moul-typography>
+  </moul-starfield>
+</ComponentPreview>
+
+```html
+<moul-starfield meteors="14" angle="235" density="2"></moul-starfield>
+```
+
+## Stars, twinkle, speed and colour
+
+`density` is the number of stars per 10,000 square pixels, 3.5 by default, so a larger sky gets more stars rather than a sparser spread; it draws at most 700. About six in ten are far, small and faint, three in ten middling, and one in ten near, bright and haloed. `twinkle` sets how much they flicker, from 0 (steady) to 1 (fading almost out), 0.5 by default; each star flickers at its own pace.
+
+`speed` multiplies everything that moves: the stars' drift, the twinkle and the streaks. `color` takes any CSS colour, tokens included. On a light page, a soft colour reads as a field of dust rather than a sky.
+
+<ComponentPreview align="stretch" minHeight="16rem">
+  <moul-starfield density="6" twinkle="0.9" speed="0.6" color="var(--color-accent)" style="height: 16rem; border: 1px solid var(--color-border); border-radius: var(--radius-xl)"></moul-starfield>
+</ComponentPreview>
+
+```html
+<moul-starfield density="6" twinkle="0.9" speed="0.6" color="var(--color-accent)"></moul-starfield>
+```
+
+`seed` picks the layout. The same seed draws the same sky, which keeps the still frame under reduced motion the same on every visit; give two skies on one page different seeds.
+
+## Use as a layer
+
+Left empty, the element is just the sky. Position it absolutely to fill a section and send it behind the section's content with `z-index: -1`. Give the section `position: relative` and `isolation: isolate`, so the layer stays inside it.
+
+```html
+<section class="hero night">
+  <moul-starfield class="hero-background" meteors></moul-starfield>
+  <h1>Ship after dark</h1>
+</section>
+```
+
+```css
+.hero {
+  position: relative;
+  isolation: isolate;
+}
+
+.hero-background {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+}
+```
+
+## Performance
+
+Each star and streak is a small image rendered once per colour and stamped on every frame, so a full sky of 700 stars and 40 meteors stays well inside a frame on a phone. The canvas follows the screen's pixel density up to 2×, stops drawing while the element is off screen or the tab is hidden, and picks up where it left off.
+
+## Accessibility
+
+`<moul-starfield>` is never focusable and adds no role. The canvas is decoration: it is hidden from screen readers and pointer events pass through it, so the content inside is read, selected and clicked as it is.
+
+Where the system forces its own colours, as in Windows high contrast mode, the canvas is not drawn.
+
+Under `prefers-reduced-motion: reduce` the sky is drawn once and holds still: the stars neither twinkle nor drift, the meteors stay where they are as fixed streaks, and no shooting stars cross.
+
+## Attributes and properties
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `density` | `density` | `number` | `3.5` |
+| `twinkle` | `twinkle` | `number` | `0.5` |
+| `speed` | `speed` | `number` | `1` |
+| `shooting-stars` | `shootingStars` | `number` | `0` (none); `6` when written alone |
+| `meteors` | `meteors` | `number` | `0` (none); `10` when written alone |
+| `angle` | `angle` | `number` | `240` |
+| `color` | `color` | `string` | `var(--color-foreground)` |
+| `seed` | `seed` | `number` | `1` |
+
+| Slot | Description |
+| :-- | :-- |
+| (default) | The content to show in front of the sky. Leave it empty to use the element as a background layer. |
+
+| Part | Description |
+| :-- | :-- |
+| `canvas` | The canvas the sky is drawn on. It fills the element behind the content, follows its rounded corners and ignores the pointer. |

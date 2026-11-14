@@ -21,8 +21,11 @@ import {
   nothing,
   type TemplateResult,
 } from 'lit'
+import sandboxImage from './assets/hero.png'
 import { defineElement } from './utils/define-element'
 import './index'
+// Loads each canvas element's own module the first time its tag renders.
+import { type MoulDissolve, watchCanvasElements } from './canvas'
 import { fireConfetti, type MoulPageTransition } from './effects'
 import {
   type CommandPaletteItemData,
@@ -508,6 +511,8 @@ export class MoulSandbox extends LitElement {
 
   override connectedCallback(): void {
     super.connectedCallback()
+    // The demos render in this shadow root, out of the page watcher's sight.
+    if (this.shadowRoot) watchCanvasElements(this.shadowRoot)
     if (typeof document !== 'undefined') {
       const currentTheme =
         document.documentElement.dataset.theme ||
@@ -2462,11 +2467,88 @@ export class MoulSandbox extends LitElement {
     `
   }
 
+  private renderCanvasSection(): TemplateResult {
+    const panel =
+      'border: 1px solid var(--color-border); border-radius: var(--radius-xl, 1rem)'
+    const night =
+      'color-scheme: dark; padding: 3rem 1.5rem; border-radius: var(--radius-xl, 1rem); background: var(--color-background); color: var(--color-foreground); text-align: center'
+    const phnomPenh = { lat: 11.56, lng: 104.92, label: 'Phnom Penh' }
+    const dissolveRow = () =>
+      this.renderRoot.querySelector<MoulDissolve>('#sandbox-dissolve')
+    return html`
+      <div class="category-section" id="canvas">
+        <div class="section-header">
+          <h3 class="section-title">12. Canvas &amp; WebGL</h3>
+          <p class="section-subtitle">moul-particles, moul-starfield, moul-warp, moul-glyph-rain, moul-flow-field, moul-shader-field, moul-interactive-grid, moul-press-particles, moul-cursor-trail, moul-dissolve, moul-image-loader, moul-image-effect, moul-zoom-grid, moul-icon-cloud, moul-globe; loaded on demand by the canvas entry</p>
+        </div>
+
+        <div class="section-grid">
+          <moul-particles variant="links" style=${`padding: 3rem 1.5rem; ${panel}; text-align: center`}><strong>Particles · links</strong></moul-particles>
+          <moul-particles variant="sparkles" color="var(--color-foreground)" style=${night}><strong>Particles · sparkles</strong></moul-particles>
+          <moul-starfield meteors shooting-stars style=${night}><strong>Starfield</strong></moul-starfield>
+          <moul-warp boost="hover" style=${`padding: 3rem 1.5rem; ${panel}; text-align: center`}><strong>Warp · streaks</strong></moul-warp>
+          <moul-warp variant="grid" style=${`padding: 3rem 1.5rem; ${panel}; text-align: center`}><strong>Warp · grid</strong></moul-warp>
+          <moul-glyph-rain pointer-glow style="height: 14rem; display: grid; place-items: center; border-radius: var(--radius-xl, 0.75rem); overflow: hidden">
+            <strong style="font-size: 1.25rem">Every request, in order</strong>
+          </moul-glyph-rain>
+          <moul-glyph-rain variant="shift" glyphs="កខគឃង០១២៣៤៥៦៧៨៩" font-size="20" style="height: 10rem"></moul-glyph-rain>
+          <moul-flow-field follow-pointer style="height: 14rem; display: grid; place-items: center">
+            <strong style="font-size: 1.25rem">Ship the page today</strong>
+          </moul-flow-field>
+          <moul-flow-field variant="vortex" follow-pointer style="height: 14rem"></moul-flow-field>
+          <moul-shader-field interactive style="display: grid; place-items: center; min-height: 12rem; border-radius: var(--radius-xl, 0.75rem)"><strong>Shader field · dither</strong></moul-shader-field>
+          <moul-shader-field variant="clouds" interactive style="display: grid; place-items: center; min-height: 12rem; border-radius: var(--radius-xl, 0.75rem)"><strong>Shader field · clouds</strong></moul-shader-field>
+          <moul-interactive-grid variant="ripple" fade="radial" style="border-radius: var(--radius-xl, 0.75rem); border: 1px solid var(--color-border)">
+            <div style="display: grid; place-items: center; min-height: 10rem">Press for a ripple</div>
+          </moul-interactive-grid>
+          <moul-cursor-trail style="border-radius: var(--radius-xl, 0.75rem); background: var(--color-surface-secondary)">
+            <div style="display: grid; place-items: center; min-height: 10rem">Move the pointer here</div>
+          </moul-cursor-trail>
+          <div style="display: flex; flex-wrap: wrap; gap: var(--spacing-3, 0.75rem); align-items: center; justify-content: center">
+            <moul-press-particles glyphs="💖 ✨ 🎉"><moul-button variant="outline">Like</moul-button></moul-press-particles>
+            <moul-press-particles shape="star"><moul-button>Stars</moul-button></moul-press-particles>
+          </div>
+          <div style="display: grid; gap: var(--spacing-3, 0.75rem); align-content: center">
+            <moul-dissolve id="sandbox-dissolve" collapse>
+              <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; border: 1px solid var(--color-border); border-radius: var(--radius-lg, 0.5rem); background: var(--color-surface)">
+                <span style="flex: 1">Storage is 90% full</span>
+                <moul-button size="sm" variant="ghost" @press=${() => void dissolveRow()?.dissolve()}>Delete</moul-button>
+              </div>
+            </moul-dissolve>
+            <moul-button variant="secondary" @press=${() => dissolveRow()?.reset()}>Bring it back</moul-button>
+          </div>
+          <moul-image-loader src=${sandboxImage} alt="A sample picture" width="343" height="361" style="max-width: 16rem; border-radius: var(--radius-xl, 1rem)"></moul-image-loader>
+          <moul-image-effect src=${sandboxImage} alt="A sample picture" width="343" height="361" effect="particles" interactive style="max-width: 16rem; border-radius: var(--radius-xl, 1rem)"></moul-image-effect>
+          <moul-zoom-grid src=${sandboxImage} alt="A sample picture" width="343" height="361" columns="6" rows="6" style="max-width: 16rem; border-radius: var(--radius-xl, 1rem)"></moul-zoom-grid>
+          <moul-icon-cloud label="Tools" icon-size="36" style="max-width: 18rem">
+            ${['JS', 'TS', 'Go', 'Py', 'Rs', 'Kt', 'C', 'Sw', 'Rb', 'Ex', 'Lua', 'Zig'].map((name) => html`<span>${name}</span>`)}
+          </moul-icon-cloud>
+          <moul-globe
+            label="Routes"
+            show-labels
+            center="18, 104"
+            style="max-width: 20rem"
+            .arcs=${[
+              {
+                from: phnomPenh,
+                to: { lat: 35.68, lng: 139.69, label: 'Tokyo' },
+              },
+              {
+                from: phnomPenh,
+                to: { lat: 1.35, lng: 103.82, label: 'Singapore' },
+              },
+            ]}
+          ></moul-globe>
+        </div>
+      </div>
+    `
+  }
+
   private renderBlocksSection(): TemplateResult {
     return html`
       <div class="category-section" id="blocks">
         <div class="section-header">
-          <h3 class="section-title">12. Composite Blocks</h3>
+          <h3 class="section-title">13. Composite Blocks</h3>
           <p class="section-subtitle">moul-logs-viewer, moul-logs, moul-sidebar, moul-sidebar-user</p>
         </div>
 
@@ -2530,7 +2612,7 @@ export class MoulSandbox extends LitElement {
           </moul-sidebar-header>
 
           <moul-sidebar-group label="Kitchen Sink" collapsible>
-            <moul-sidebar-item key="all" label="All Categories" badge="12">
+            <moul-sidebar-item key="all" label="All Categories" badge="13">
               <span slot="icon">⚡</span>
             </moul-sidebar-item>
             <moul-sidebar-item key="actions" label="Actions" badge="4">
@@ -2565,6 +2647,9 @@ export class MoulSandbox extends LitElement {
             </moul-sidebar-item>
             <moul-sidebar-item key="motion" label="Pointer & Scroll" badge="18">
               <span slot="icon">🖱️</span>
+            </moul-sidebar-item>
+            <moul-sidebar-item key="canvas" label="Canvas & WebGL" badge="15">
+              <span slot="icon">🌌</span>
             </moul-sidebar-item>
             <moul-sidebar-item key="blocks" label="Composite Blocks" badge="12">
               <span slot="icon">📦</span>
@@ -2660,6 +2745,11 @@ export class MoulSandbox extends LitElement {
             ${
               isAll || this.selectedCategory === 'motion'
                 ? this.renderMotionSection()
+                : nothing
+            }
+            ${
+              isAll || this.selectedCategory === 'canvas'
+                ? this.renderCanvasSection()
                 : nothing
             }
             ${

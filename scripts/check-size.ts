@@ -6,12 +6,21 @@
  * Budgets live in `ui/size-budget.json` as raw bytes, which are the same on
  * every machine for the same source; gzip sizes are printed for reference.
  * The main entry's budget is what keeps `@moul-dev/web-component` from
- * paying for `@moul-dev/web-component/effects`.
+ * paying for `@moul-dev/web-component/effects`, and both of theirs keep them
+ * from paying for the canvas elements. Every file of the canvas entry (the
+ * loader, each element's file and the shared chunk) needs a budget of its
+ * own: a canvas file without one fails the check until `--write` records it.
  *
  *   bun run size           check `ui/dist` against the budgets (run build:ui first)
  *   bun run size --write   record the current sizes as the new budgets
  */
-import { existsSync, readFileSync, statSync, writeFileSync } from 'node:fs'
+import {
+  existsSync,
+  readdirSync,
+  readFileSync,
+  statSync,
+  writeFileSync,
+} from 'node:fs'
 import { join, resolve } from 'node:path'
 import { gzipSync } from 'node:zlib'
 
@@ -51,6 +60,22 @@ export function overBudget(results: SizeResult[]): SizeResult[] {
   )
 }
 
+/** The canvas entry's built files, under `dist/` and `dist/cdn/`, relative to `ui/`. */
+export function canvasFiles(root: string): string[] {
+  return ['dist', 'dist/cdn'].flatMap((dir) => {
+    const files: string[] = []
+    if (existsSync(join(root, dir, 'canvas.js'))) files.push(`${dir}/canvas.js`)
+    for (const sub of ['canvas', 'chunks']) {
+      const path = join(root, dir, sub)
+      if (!existsSync(path)) continue
+      for (const name of readdirSync(path).sort()) {
+        if (name.endsWith('.js')) files.push(`${dir}/${sub}/${name}`)
+      }
+    }
+    return files
+  })
+}
+
 const kb = (bytes: number) => `${(bytes / 1000).toFixed(2)} kB`
 const signed = (bytes: number) =>
   `${bytes > 0 ? '+' : ''}${bytes.toLocaleString('en-US')} B`
@@ -62,14 +87,18 @@ function main(): void {
   const missing = Object.keys(budget).filter(
     (file) => !existsSync(join(uiDir, file)),
   )
-  if (missing.length > 0) {
+  // `--write` drops the budget of a file that is no longer built.
+  if (missing.length > 0 && !write) {
     console.error(
       `${colors.red}✗ [size] Missing ${missing.join(', ')}. Run \`bun run build:ui\` first.${colors.reset}`,
     )
     process.exit(1)
   }
 
-  const results: SizeResult[] = Object.keys(budget).map((file) => ({
+  const files = [
+    ...new Set([...Object.keys(budget), ...canvasFiles(uiDir)]),
+  ].filter((file) => existsSync(join(uiDir, file)))
+  const results: SizeResult[] = files.map((file) => ({
     file,
     budget: budget[file],
     ...measure(join(uiDir, file)),
@@ -78,8 +107,12 @@ function main(): void {
   for (const result of results) {
     const diff = result.bytes - (result.budget ?? result.bytes)
     const color = diff > 0 ? colors.red : diff < 0 ? colors.green : colors.dim
+    const status =
+      result.budget === undefined
+        ? `${colors.red}no budget${colors.reset}`
+        : `${color}${diff === 0 ? 'at budget' : `${signed(diff)} vs budget`}${colors.reset}`
     console.log(
-      `  ${result.file.padEnd(22)} ${kb(result.bytes).padStart(10)}  ${colors.dim}gzip ${kb(result.gzipBytes).padStart(9)}${colors.reset}  ${color}${diff === 0 ? 'at budget' : `${signed(diff)} vs budget`}${colors.reset}`,
+      `  ${result.file.padEnd(36)} ${kb(result.bytes).padStart(10)}  ${colors.dim}gzip ${kb(result.gzipBytes).padStart(9)}${colors.reset}  ${status}`,
     )
   }
 
@@ -90,6 +123,17 @@ function main(): void {
       `${colors.green}✓ [size] Recorded current sizes in ui/size-budget.json.${colors.reset}`,
     )
     return
+  }
+
+  const unbudgeted = results.filter((result) => result.budget === undefined)
+  if (unbudgeted.length > 0) {
+    console.error(
+      `${colors.red}✗ [size] No budget for ${unbudgeted.map((r) => r.file).join(', ')}.${colors.reset}`,
+    )
+    console.error(
+      `  Run ${colors.cyan}bun run size --write${colors.reset} to record one, and say why in the change.`,
+    )
+    process.exit(1)
   }
 
   const over = overBudget(results)

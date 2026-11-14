@@ -1,0 +1,109 @@
+---
+title: Zoom Grid
+description: An image cut into a grid of boxes that swell and zoom in around the pointer, the rest of the grid giving way.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import CanvasDemo from '@/components/demos/CanvasDemo.astro';
+
+`<moul-zoom-grid>` cuts an image into a grid of boxes. The boxes near the pointer swell and show a closer view of the part of the image they cover, the rest of the grid gives way to make room, and everything eases back when the pointer leaves, as if a loupe passed over a contact sheet. Move a mouse over the picture below.
+
+<ComponentPreview align="stretch">
+  <moul-zoom-grid
+    src="/demo/imageslider/kep-coast.svg"
+    alt="A palm over a sandy shore and a green sea at Kep"
+    width="1600"
+    height="900"
+    style="border-radius: var(--radius-xl, 1rem)"
+  ></moul-zoom-grid>
+  <CanvasDemo />
+</ComponentPreview>
+
+It lives in the canvas entry, which loads its file the first time the tag appears on the page:
+
+```js
+import '@moul-dev/web-component/canvas'
+// or register just this element, straight away:
+import '@moul-dev/web-component/canvas/zoom-grid'
+```
+
+```html
+<moul-zoom-grid
+  src="/kep.jpg"
+  alt="A palm over a sandy shore and a green sea at Kep"
+  width="1600"
+  height="900"
+></moul-zoom-grid>
+```
+
+## Size
+
+Give `width` and `height`, the image's own size, as you would on an `<img>`. The element takes that shape before the image has loaded, so nothing below it moves when it arrives. Without them it takes the image's shape once it loads, starting at 4 by 3. You can also size it with CSS: an `aspect-ratio` or a `height` on the element wins over both, and `fit` says how the image fills a box of another shape.
+
+Round its corners with `border-radius` on the element.
+
+## The grid
+
+`columns` and `rows` set how many boxes there are, and `gap` the space between them in pixels. At rest it is the whole image with thin lines through it; with `gap="0"` it is the plain image until the pointer arrives. `zoom` is how far the box under the pointer swells, as a multiple of its resting size, and `radius` how many boxes around it swell with it.
+
+<ComponentPreview align="stretch">
+  <moul-zoom-grid
+    src="/demo/imageslider/tonle-sap-dusk.svg"
+    alt="Stilt houses on the Tonle Sap at dusk"
+    width="1600"
+    height="900"
+    columns="12"
+    rows="7"
+    gap="4"
+    zoom="3"
+    radius="2"
+    style="border-radius: var(--radius-xl, 1rem)"
+  ></moul-zoom-grid>
+</ComponentPreview>
+
+```html
+<moul-zoom-grid src="/tonle-sap.jpg" alt="Stilt houses on the Tonle Sap at dusk"
+  columns="12" rows="7" gap="4" zoom="3" radius="2"></moul-zoom-grid>
+```
+
+On a touch screen the grid swells under a finger held on it, and follows the finger as it slides sideways; a vertical swipe still scrolls the page.
+
+## Accessibility
+
+The element is one image to screen readers, named by `alt`, and is not focusable: the zoom is something to look at, with nothing to operate. Describe the picture in `alt`; an empty `alt=""` marks it as decorative and hides it. Without `alt` the element warns in the console.
+
+Drawing the image needs no special permission, so a cross-origin image works as it is; `crossorigin` is passed through if you set it.
+
+## Reduced motion
+
+When the reader asks their system for reduced motion, the image is drawn once as a plain grid of boxes and does not swell under the pointer.
+
+## Attributes & Properties
+
+| Name | Type | Default |
+| :--- | :--- | :--- |
+| `src` | `string` | `''` |
+| `alt` | `string` | none; `''` is decorative |
+| `width`, `height` | `number` | none: the image's own size, to reserve its shape |
+| `fit` | `'cover' \| 'contain' \| 'fill'` | `'cover'` |
+| `crossorigin` | `string` | none |
+| `columns` | `number` | `8` |
+| `rows` | `number` | `6` |
+| `gap` | `number` (px) | `2` |
+| `zoom` | `number` | `2.4` |
+| `radius` | `number` (boxes) | `1.6` |
+
+## Events
+
+| Name | When |
+| :--- | :--- |
+| `load` | The image has loaded and is drawn. |
+| `error` | The image could not be loaded. |
+
+## CSS
+
+| Name | Description |
+| :--- | :--- |
+| `::part(base)` | The box that is the image to screen readers. |
+| `::part(canvas)` | The canvas the grid is drawn on. |
+| `--zoom-grid-placeholder` | Colour of the boxes before the image loads. Defaults to `--color-surface-secondary`. |

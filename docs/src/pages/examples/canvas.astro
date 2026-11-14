@@ -1,0 +1,748 @@
+---
+/**
+ * The Phase 9 gate: every canvas and WebGL element on one page, a landing
+ * page for a build platform. Each element loads on demand and adds nothing
+ * to the base bundles. The page imports the style sheet and the canvas entry
+ * and nothing else: no `@moul-dev/web-component`, no effects entry. The
+ * canvas entry finds the tags below and loads each element's own file; the
+ * panel at the foot of the page lists them as they arrive.
+ *
+ * Every demo carries `data-gate` (its tag, with a suffix for a second
+ * variant) and `data-drive` (`pointer`, `press` or `none`) so a script can
+ * drive it and time its frames. The only script of the page's own is the
+ * load panel and the dissolve buttons' wiring.
+ */
+import '@moul-dev/web-component/style.css'
+import budget from '../../../../ui/size-budget.json'
+
+const sizes = budget as Record<string, number>
+const kb = (bytes: number) => `${(bytes / 1000).toFixed(1)} kB`
+const baseFiles = [
+  ['@moul-dev/web-component', 'dist/moul-ui.js'],
+  ['@moul-dev/web-component/effects', 'dist/effects.js'],
+] as const
+const canvasFiles = Object.keys(sizes)
+  .filter((file) => /^dist\/(?:canvas|chunks\/canvas)/.test(file))
+  .map((file) => ({
+    file: file.replace(/^dist\//, ''),
+    bytes: sizes[file],
+  }))
+
+const notes = [
+  {
+    id: 'gate-note-1',
+    text: 'Build #2481 finished in 41 seconds',
+    tone: 'surface',
+  },
+  {
+    id: 'gate-note-2',
+    text: 'Dara invited you to the Kep office project',
+    tone: 'accent',
+  },
+  { id: 'gate-note-3', text: 'Storage is 90% full', tone: 'warning' },
+]
+
+const routes = JSON.stringify([
+  {
+    from: { lat: 11.56, lng: 104.92, label: 'Phnom Penh' },
+    to: { lat: 35.68, lng: 139.69, label: 'Tokyo' },
+  },
+  {
+    from: { lat: 11.56, lng: 104.92, label: 'Phnom Penh' },
+    to: { lat: -33.87, lng: 151.21, label: 'Sydney' },
+  },
+  {
+    from: { lat: 11.56, lng: 104.92, label: 'Phnom Penh' },
+    to: { lat: 50.11, lng: 8.68, label: 'Frankfurt' },
+  },
+])
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Canvas example · Moul UI</title>
+    <meta
+      name="description"
+      content="Every canvas and WebGL element in Moul UI on one page, each loaded only because the page uses it."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap"
+    />
+  </head>
+  <body>
+    <header class="top">
+      <a class="brand" href="/">Moul UI</a>
+      <nav class="top-links" aria-label="Examples">
+        <a href="/examples/landing/">Landing</a>
+        <a href="/examples/motion/">Motion</a>
+        <a href="/examples/canvas/" aria-current="page">Canvas</a>
+        <a href="/docs/canvas/">Docs</a>
+      </nav>
+    </header>
+
+    <main>
+      <moul-starfield
+        class="hero"
+        meteors
+        shooting-stars
+        data-gate="moul-starfield"
+        data-drive="none"
+      >
+        <section aria-labelledby="hero-title">
+          <p class="eyebrow">Builds, logs and deploys</p>
+          <h1 id="hero-title">Ship after dark</h1>
+          <p class="lead">
+            Push before you sleep. By morning it is built, tested and running
+            close to every one of your users.
+          </p>
+          <div class="actions">
+            <moul-press-particles
+              shape="star"
+              data-gate="moul-press-particles"
+              data-drive="press"
+            >
+              <button class="button button-primary" type="button">Start building</button>
+            </moul-press-particles>
+            <moul-press-particles glyphs="💖 ✨ 🎉">
+              <button class="button" type="button">Like the demo</button>
+            </moul-press-particles>
+          </div>
+        </section>
+      </moul-starfield>
+
+      <moul-particles
+        class="band"
+        variant="links"
+        data-gate="moul-particles"
+        data-drive="pointer"
+      >
+        <section class="center" aria-labelledby="graph-title">
+          <h2 id="graph-title">One graph of your data</h2>
+          <p>Records, links and history, all connected. Move the pointer through it.</p>
+        </section>
+      </moul-particles>
+
+      <section class="split" aria-label="Speed and logs">
+        <moul-warp
+          class="tile"
+          boost="hover"
+          data-gate="moul-warp"
+          data-drive="pointer"
+        >
+          <div class="tile-text">
+            <h2>Builds in seconds</h2>
+            <p>Cached, parallel and close to your users. Hover to go faster.</p>
+          </div>
+        </moul-warp>
+        <moul-glyph-rain
+          class="tile"
+          pointer-glow
+          data-gate="moul-glyph-rain"
+          data-drive="pointer"
+        >
+          <div class="tile-text card">
+            <h2>Every request, in order</h2>
+            <p>The log streams as your app runs.</p>
+          </div>
+        </moul-glyph-rain>
+      </section>
+
+      <section class="split" aria-label="Fields">
+        <moul-warp
+          class="tile"
+          variant="grid"
+          data-gate="moul-warp-grid"
+          data-drive="none"
+        >
+          <div class="tile-text">
+            <h2>Edge in every region</h2>
+            <p>Requests travel the shortest way.</p>
+          </div>
+        </moul-warp>
+        <moul-glyph-rain
+          class="tile"
+          variant="shift"
+          glyphs="កខគឃងចឆជឈញ០១២៣៤៥៦៧៨៩"
+          font-size="20"
+          data-gate="moul-glyph-rain-shift"
+          data-drive="none"
+        >
+          <div class="tile-text card">
+            <h2>Khmer first</h2>
+            <p>Every glyph set works, Khmer included.</p>
+          </div>
+        </moul-glyph-rain>
+      </section>
+
+      <moul-flow-field
+        class="band"
+        follow-pointer
+        data-gate="moul-flow-field"
+        data-drive="pointer"
+      >
+        <section class="center" aria-labelledby="flow-title">
+          <div class="card narrow">
+            <h2 id="flow-title">Ship the page today</h2>
+            <p>Preview links for every branch, ready before the review is.</p>
+          </div>
+        </section>
+      </moul-flow-field>
+
+      <section class="split" aria-label="Shaders">
+        <moul-shader-field
+          class="tile"
+          interactive
+          data-gate="moul-shader-field"
+          data-drive="pointer"
+        >
+          <div class="tile-text card">
+            <h2>Builds that explain themselves</h2>
+            <p>Every step, every log line, kept for ninety days.</p>
+          </div>
+        </moul-shader-field>
+        <moul-shader-field
+          class="tile"
+          variant="clouds"
+          interactive
+          data-gate="moul-shader-field-clouds"
+          data-drive="pointer"
+        >
+          <div class="tile-text card">
+            <h2>Your files, above it all</h2>
+            <p>Storage that scales without a second thought.</p>
+          </div>
+        </moul-shader-field>
+      </section>
+
+      <section class="split" aria-label="Pointer effects">
+        <moul-flow-field
+          class="tile"
+          variant="vortex"
+          follow-pointer
+          data-gate="moul-flow-field-vortex"
+          data-drive="pointer"
+        >
+          <div class="tile-text card">
+            <h2>Everything, connected</h2>
+            <p>Webhooks, queues and jobs in one place.</p>
+          </div>
+        </moul-flow-field>
+        <moul-interactive-grid
+          class="tile"
+          variant="dots"
+          fade="radial"
+          data-gate="moul-interactive-grid"
+          data-drive="pointer"
+        >
+          <div class="tile-text">
+            <h2>Dots swell near the pointer</h2>
+            <p>The pattern is CSS; only lit dots are drawn.</p>
+          </div>
+        </moul-interactive-grid>
+      </section>
+
+      <moul-cursor-trail class="band" data-gate="moul-cursor-trail" data-drive="pointer">
+        <section class="center" aria-labelledby="trail-title">
+          <h2 id="trail-title">Glyphs follow the pointer</h2>
+          <p>Move across this band and watch them fall away.</p>
+        </section>
+      </moul-cursor-trail>
+
+      <section class="pair" aria-labelledby="inbox-title">
+        <div>
+          <h2 id="inbox-title">An inbox that lets go</h2>
+          <p>Delete a notification and it turns to dust in its own colours.</p>
+          <button class="button" type="button" data-dissolve-reset={notes.map((note) => note.id).join(' ')}>
+            Bring them back
+          </button>
+        </div>
+        <div class="notes" data-gate="moul-dissolve" data-drive="press">
+          {
+            notes.map((note) => (
+              <moul-dissolve id={note.id} collapse>
+                <div class={`note note-${note.tone}`}>
+                  <span>{note.text}</span>
+                  <button class="button button-small" type="button" data-dissolve>
+                    Delete
+                  </button>
+                </div>
+              </moul-dissolve>
+            ))
+          }
+        </div>
+      </section>
+
+      <section aria-labelledby="images-title">
+        <h2 id="images-title">Previews for every build</h2>
+        <p class="section-lead">A screenshot of each deploy, generated, styled and ready to inspect.</p>
+        <div class="images">
+          <figure>
+            <moul-image-loader
+              src="/demo/imageslider/mondulkiri-dawn.svg"
+              alt="Hills in mist at dawn in Mondulkiri"
+              width="1600"
+              height="900"
+              data-gate="moul-image-loader"
+              data-drive="none"
+            ></moul-image-loader>
+            <figcaption>Generated</figcaption>
+          </figure>
+          <figure>
+            <moul-image-effect
+              src="/demo/imageeffect/temple-sunrise.svg"
+              alt="A temple's towers against the sunrise"
+              width="1600"
+              height="1000"
+              effect="particles"
+              interactive
+              data-gate="moul-image-effect"
+              data-drive="pointer"
+            ></moul-image-effect>
+            <figcaption>Styled</figcaption>
+          </figure>
+          <figure>
+            <moul-zoom-grid
+              src="/demo/imageslider/kep-coast.svg"
+              alt="A palm over a sandy shore at Kep"
+              width="1600"
+              height="900"
+              data-gate="moul-zoom-grid"
+              data-drive="pointer"
+            ></moul-zoom-grid>
+            <figcaption>Inspected</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="pair" aria-labelledby="world-title">
+        <moul-icon-cloud
+          label="Moul components"
+          class="sphere"
+          data-gate="moul-icon-cloud"
+          data-drive="pointer"
+        >
+          <a href="/docs/components/terminal/" aria-label="Terminal">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="m7 9 3 3-3 3M12 15h5"></path></svg>
+          </a>
+          <img src="/demo/iconcloud/sun.svg" alt="Weather" />
+          <img src="/demo/iconcloud/note.svg" alt="Notes" />
+          <img src="/demo/iconcloud/pin.svg" alt="Maps" />
+          <img src="/demo/iconcloud/music.svg" alt="Music" />
+          <img src="/demo/iconcloud/camera.svg" alt="Camera" />
+          <img src="/demo/iconcloud/wallet.svg" alt="Wallet" />
+          <span>JS</span><span>TS</span><span>Go</span><span>Py</span><span>Rs</span><span>Kt</span>
+        </moul-icon-cloud>
+        <div>
+          <h2 id="world-title">Close to every user</h2>
+          <p>Your app runs in the region nearest each request, from Phnom Penh to Frankfurt.</p>
+        </div>
+        <moul-globe
+          label="Routes from Phnom Penh"
+          show-labels
+          center="18, 104"
+          class="sphere"
+          arcs={routes}
+          data-gate="moul-globe"
+          data-drive="pointer"
+        ></moul-globe>
+      </section>
+
+      <section class="gate" aria-labelledby="gate-title">
+        <h2 id="gate-title">How this page loads</h2>
+        <p class="section-lead">
+          This page imports the style sheet and <code>@moul-dev/web-component/canvas</code>, nothing
+          else. The canvas entry found the tags above and loaded each element's own file once.
+        </p>
+        <div class="gate-grid">
+          <div>
+            <h3>Loaded on this visit</h3>
+            <ol class="loads" data-loads aria-live="polite"></ol>
+          </div>
+          <div>
+            <h3>Bundle sizes</h3>
+            <table>
+              <thead>
+                <tr><th scope="col">File</th><th scope="col">Size</th></tr>
+              </thead>
+              <tbody>
+                {
+                  baseFiles.map(([name, file]) => (
+                    <tr>
+                      <td><code>{name}</code>, no canvas code</td>
+                      <td>{kb(sizes[file])}</td>
+                    </tr>
+                  ))
+                }
+                {
+                  canvasFiles.filter((entry) => !entry.file.startsWith('cdn/')).map((entry) => (
+                    <tr>
+                      <td><code>{entry.file}</code></td>
+                      <td>{kb(entry.bytes)}</td>
+                    </tr>
+                  ))
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span>Built with Moul UI canvas elements, loaded only because this page uses them.</span>
+      <a href="/docs/canvas/">How the canvas entry works</a>
+    </footer>
+
+    <script>
+      import { CANVAS_ELEMENTS } from '@moul-dev/web-component/canvas'
+
+      // The load panel: when each element was registered, after the page started.
+      const list = document.querySelector<HTMLOListElement>('[data-loads]')
+      for (const tag of Object.keys(CANVAS_ELEMENTS)) {
+        if (!document.querySelector(tag)) continue
+        void customElements.whenDefined(tag).then(() => {
+          const item = document.createElement('li')
+          item.dataset.tag = tag
+          item.innerHTML = `<code>&lt;${tag}&gt;</code> <span>${Math.round(performance.now())} ms</span>`
+          list?.append(item)
+        })
+      }
+
+      // The dissolve buttons: data-dissolve removes its own row,
+      // data-dissolve-reset="a b" brings those rows back.
+      document.addEventListener('click', (event) => {
+        const trigger = (event.target as Element | null)?.closest?.<HTMLElement>(
+          '[data-dissolve], [data-dissolve-reset]',
+        )
+        if (!trigger) return
+        if (trigger.hasAttribute('data-dissolve')) {
+          const row = trigger.closest('moul-dissolve') as
+            | (HTMLElement & { dissolve?: () => Promise<void> })
+            | null
+          void row?.dissolve?.()
+        }
+        for (const id of (trigger.dataset.dissolveReset ?? '').split(/\s+/)) {
+          const row = id
+            ? (document.getElementById(id) as (HTMLElement & { reset?: () => void }) | null)
+            : null
+          row?.reset?.()
+        }
+      })
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  /* Layout and type only. Everything that moves is an element. */
+  html {
+    background: var(--color-background);
+    color: var(--color-fg);
+    font-family: 'Google Sans', var(--font-family-base, system-ui), sans-serif;
+  }
+
+  body {
+    margin: 0;
+  }
+
+  a {
+    color: inherit;
+  }
+
+  h1,
+  h2,
+  h3 {
+    margin: 0 0 var(--spacing-3, 0.75rem);
+    line-height: 1.15;
+  }
+
+  p {
+    margin: 0 0 var(--spacing-4, 1rem);
+    color: var(--color-muted);
+  }
+
+  .top {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-4, 1rem);
+    padding: var(--spacing-3, 0.75rem) max(var(--spacing-6, 1.5rem), (100% - 72rem) / 2);
+    border-bottom: 1px solid var(--color-border-subtle);
+    background: var(--color-background);
+  }
+
+  .brand {
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .top-links {
+    display: flex;
+    gap: var(--spacing-1, 0.25rem);
+  }
+
+  .top-links a {
+    padding: var(--spacing-2, 0.5rem) var(--spacing-3, 0.75rem);
+    border-radius: 999px;
+    font-size: var(--font-size-sm, 0.875rem);
+    text-decoration: none;
+  }
+
+  .top-links a[aria-current='page'] {
+    background: var(--color-bg-subtle);
+  }
+
+  main > section,
+  main > moul-starfield,
+  main > moul-particles,
+  main > moul-flow-field,
+  main > moul-cursor-trail {
+    display: block;
+    padding: var(--spacing-16, 4rem) max(var(--spacing-6, 1.5rem), (100% - 72rem) / 2);
+  }
+
+  main > * + * {
+    border-top: 1px solid var(--color-border-subtle);
+  }
+
+  /* The night sky is dark in both themes. */
+  .hero {
+    color-scheme: dark;
+    min-height: 32rem;
+    display: grid;
+    align-content: center;
+    background: var(--color-background);
+    color: var(--color-fg);
+    text-align: center;
+  }
+
+  .hero p {
+    color: var(--color-muted);
+  }
+
+  .eyebrow {
+    margin-bottom: var(--spacing-2, 0.5rem);
+    font-size: var(--font-size-sm, 0.875rem);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    font-size: clamp(2.5rem, 7vw, 4.5rem);
+  }
+
+  h2 {
+    font-size: clamp(1.5rem, 3.5vw, 2.25rem);
+  }
+
+  .lead {
+    max-width: 34rem;
+    margin-inline: auto;
+    font-size: var(--font-size-lg, 1.125rem);
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--spacing-3, 0.75rem);
+  }
+
+  .button {
+    padding: 0.7rem 1.2rem;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    background: var(--color-surface);
+    color: var(--color-fg);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .button:focus-visible {
+    outline: 2px solid var(--color-focus-ring, var(--color-accent));
+    outline-offset: 2px;
+  }
+
+  .button-primary {
+    border-color: transparent;
+    background: var(--color-accent);
+    color: var(--color-accent-fg, var(--color-background));
+  }
+
+  .button-small {
+    padding: 0.35rem 0.8rem;
+    font-size: var(--font-size-sm, 0.875rem);
+  }
+
+  .band {
+    min-height: 20rem;
+    display: grid;
+    align-content: center;
+  }
+
+  .center {
+    text-align: center;
+  }
+
+  .split {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+    gap: var(--spacing-6, 1.5rem);
+  }
+
+  .tile {
+    min-height: 20rem;
+    display: grid;
+    place-items: center;
+    padding: var(--spacing-6, 1.5rem);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-2xl, 1rem);
+    overflow: clip;
+    text-align: center;
+  }
+
+  .tile-text p {
+    margin: 0;
+  }
+
+  .card {
+    padding: var(--spacing-5, 1.25rem);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-xl, 0.75rem);
+    background: color-mix(in oklab, var(--color-surface) 82%, transparent);
+  }
+
+  .narrow {
+    width: fit-content;
+    max-width: 100%;
+    margin-inline: auto;
+  }
+
+  .narrow p {
+    margin: 0;
+  }
+
+  .pair {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+    gap: var(--spacing-8, 2rem);
+    align-items: center;
+  }
+
+  .notes {
+    display: grid;
+    gap: var(--spacing-2, 0.5rem);
+  }
+
+  .note {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3, 0.75rem);
+    padding: 0.75rem 0.75rem 0.75rem 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg, 0.5rem);
+    background: var(--color-surface);
+  }
+
+  .note span {
+    flex: 1;
+  }
+
+  .note-accent {
+    background: var(--color-accent-soft);
+    color: var(--color-accent-soft-fg);
+  }
+
+  .note-warning {
+    background: var(--color-warning-soft);
+    color: var(--color-warning-soft-fg);
+  }
+
+  .section-lead {
+    max-width: 40rem;
+  }
+
+  .images {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+    gap: var(--spacing-6, 1.5rem);
+  }
+
+  figure {
+    margin: 0;
+  }
+
+  .images moul-image-loader,
+  .images moul-image-effect,
+  .images moul-zoom-grid {
+    border-radius: var(--radius-xl, 0.75rem);
+    overflow: clip;
+  }
+
+  figcaption {
+    margin-top: var(--spacing-2, 0.5rem);
+    color: var(--color-muted);
+    font-size: var(--font-size-sm, 0.875rem);
+  }
+
+  .sphere {
+    width: min(100%, 22rem);
+    margin-inline: auto;
+  }
+
+  .gate-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+    gap: var(--spacing-8, 2rem);
+  }
+
+  .loads {
+    display: grid;
+    gap: var(--spacing-1, 0.25rem);
+    margin: 0;
+    padding-left: 1.25rem;
+    font-size: var(--font-size-sm, 0.875rem);
+  }
+
+  .loads span {
+    color: var(--color-muted);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--font-size-sm, 0.875rem);
+  }
+
+  th,
+  td {
+    padding: var(--spacing-1, 0.25rem) var(--spacing-2, 0.5rem);
+    border-bottom: 1px solid var(--color-border-subtle);
+    text-align: left;
+  }
+
+  td:last-child,
+  th:last-child {
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  .footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--spacing-4, 1rem);
+    padding: var(--spacing-8, 2rem) max(var(--spacing-6, 1.5rem), (100% - 72rem) / 2);
+    border-top: 1px solid var(--color-border-subtle);
+    color: var(--color-muted);
+    font-size: var(--font-size-sm, 0.875rem);
+  }
+</style>

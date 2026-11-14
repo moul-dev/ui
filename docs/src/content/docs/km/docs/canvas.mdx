@@ -1,0 +1,139 @@
+---
+title: Canvas និង WebGL (Canvas and WebGL)
+description: ភាគល្អិត ផ្ទៃមេឃពោរពេញដោយផ្កាយ ភ្លៀងអក្សរ វាលលំហូរ បែបផែនរូបភាព ពពករូបតំណាង ផែនដី និងវាល shader លើ GPU ដែលនីមួយៗផ្ទុកតែនៅពេលទំព័រប្រើវាប៉ុណ្ណោះ។
+---
+
+The last group of effects is drawn rather than styled: particles that drift and make way for the pointer, a night sky, glyphs falling like rain, an image breaking into dots, a globe turning on its axis. CSS cannot draw these. Each needs a loop that paints a canvas many times a second, and one of them runs a shader on the graphics card.
+
+That makes them the heaviest elements Moul has, in bytes and in work per frame. So they follow one rule more than the rest: a page pays only for the ones it uses. They live in a third entry, which loads each element's code the first time its tag appears, and the main and effects bundles do not contain a byte of them.
+
+```js
+import '@moul-dev/web-component/canvas'
+```
+
+```html
+<moul-starfield meteors shooting-stars>
+  <h1>Ship after dark</h1>
+</moul-starfield>
+```
+
+The [canvas example page](/examples/canvas/) uses every one of them and loads nothing else.
+
+## What is in it
+
+Fields and backgrounds, which sit behind a hero or a section and wrap its content:
+
+| Piece | Element | What it does |
+| :-- | :-- | :-- |
+| [Particles](/docs/components/particles/) | `<moul-particles>` | Drifting dots, twinkling sparkles or a linked constellation that make way for the pointer |
+| [Starfield](/docs/components/starfield/) | `<moul-starfield>` | A twinkling night sky in three depths, with shooting stars or a meteor shower |
+| [Warp](/docs/components/warp/) | `<moul-warp>` | Light-speed streaks out of the centre, or a tunnel of rings and beams, with a boost on hover or press |
+| [Glyph rain](/docs/components/glyphrain/) | `<moul-glyph-rain>` | Columns of glyphs falling like rain, or a grid of glyphs shifting in place under a passing band of light |
+| [Flow field](/docs/components/flowfield/) | `<moul-flow-field>` | Flowing waves of light, or a vortex of particles swirling round the centre, from smooth noise |
+| [Shader field](/docs/components/shaderfield/) | `<moul-shader-field>` | A dithered dot field or drifting clouds drawn on the GPU, with a CSS gradient where WebGL is unavailable |
+| [Interactive grid](/docs/components/interactivegrid/) | `<moul-interactive-grid>` | A grid of cells or dots that light up, swell and ripple under the pointer |
+
+Effects that answer a press or the pointer:
+
+| Piece | Element | What it does |
+| :-- | :-- | :-- |
+| [Press particles](/docs/components/pressparticles/) | `<moul-press-particles>` | A burst of particles, stars or emoji from wherever a button is pressed |
+| [Cursor trail](/docs/components/cursortrail/) | `<moul-cursor-trail>` | Glyphs, a springy chain of dots or pictures that trail the pointer and fall away |
+| [Dissolve](/docs/components/dissolve/) | `<moul-dissolve>` | A removed item wipes away into dust in its own colours |
+
+Images and spheres:
+
+| Piece | Element | What it does |
+| :-- | :-- | :-- |
+| [Image loader](/docs/components/imageloader/) | `<moul-image-loader>` | An image that appears through a scanning pixel grid, as if being generated |
+| [Image effect](/docs/components/imageeffect/) | `<moul-image-effect>` | An image pixelated, dithered, as ASCII, colour-split, on a wave or as particles |
+| [Zoom grid](/docs/components/zoomgrid/) | `<moul-zoom-grid>` | An image cut into boxes that swell and zoom in around the pointer |
+| [Icon cloud](/docs/components/iconcloud/) | `<moul-icon-cloud>` | Icons or logos on a sphere that turns, leans toward the pointer and spins when dragged |
+| [Globe](/docs/components/globe/) | `<moul-globe>` | A dotted globe that turns on its axis, with pins and arcs that rise between places |
+
+## Loading on demand
+
+The canvas entry registers no element when it is imported. It holds a list of tags, each paired with an `import()` of that element's own file, and it watches the page. The first time one of the tags appears, now or after any later change to the page, it loads that file, which registers the element, and the browser upgrades every copy of the tag already in place. Until then the tag is an unknown element: its content shows, its canvas does not.
+
+```js
+import '@moul-dev/web-component/canvas'
+
+// Later, from anywhere: the globe's file loads now, not before.
+document.body.append(document.createElement('moul-globe'))
+```
+
+A shadow root is out of the page watcher's sight. A framework that renders into one (a Lit app, another custom element) points the watcher at it, or loads the elements it needs itself:
+
+```js
+import {
+  discoverCanvasElements,
+  loadCanvasElement,
+  watchCanvasElements,
+} from '@moul-dev/web-component/canvas'
+
+// Watch a shadow root for canvas tags, now and later.
+const stop = watchCanvasElements(this.shadowRoot)
+
+// Or look once, or load one element by its tag.
+await discoverCanvasElements(this.shadowRoot)
+await loadCanvasElement('moul-globe')
+```
+
+To skip the watcher altogether, import an element's own entry, which registers it straight away. The name is the tag without `moul-`:
+
+```js
+import '@moul-dev/web-component/canvas/globe'
+import '@moul-dev/web-component/canvas/shader-field'
+```
+
+The types of every element are exported from the canvas entry, so TypeScript knows `MoulGlobe` or `GlobeArc` without loading anything:
+
+```ts
+import type { GlobeArc, MoulGlobe } from '@moul-dev/web-component/canvas'
+```
+
+From a CDN, load `dist/cdn/canvas.js` with a module script. Its element files stay separate there too, so a page still downloads only what it uses.
+
+## What it costs to load
+
+Sizes of the npm build, before and after gzip. The loader is all a page pays up front; each element adds its own file and, the first time, the chunk the elements share.
+
+| File | Size | Gzip |
+| :-- | --: | --: |
+| `canvas.js`, the loader | 2.2 kB | 0.9 kB |
+| `chunks/canvas-shared.js`: the canvas loop, colours, pointer, noise, WebGL and image helpers | 19.7 kB | 6.2 kB |
+| Glyph rain, starfield, zoom grid, image loader, particles, warp | 8.2 to 9.4 kB each | 3.1 to 3.5 kB |
+| Flow field, press particles, cursor trail, interactive grid, dissolve | 10.5 to 12.0 kB each | 3.6 to 4.2 kB |
+| Icon cloud, shader field, image effect, globe (with its land mask) | 16.1 to 21.6 kB each | 5.5 to 7.3 kB |
+
+`@moul-dev/web-component` and `@moul-dev/web-component/effects` are the same size, to the byte, as before these elements existed. A test walks every import of both entries and fails if one reaches a canvas element, and every file above has a size budget of its own.
+
+## Colours and themes
+
+A canvas takes no `var()` and no `light-dark()`, so each element resolves its colours through the page: give `color`, or `colors` where an element takes several, any CSS colour or token, and the element works out what it means here. When the colours change under it, through a theme switch, a `data-theme` on an ancestor, the system's dark mode or a new brand hue, it resolves them again and redraws, without reloading anything.
+
+```html
+<moul-particles variant="links" color="var(--color-accent)"></moul-particles>
+<moul-flow-field colors="var(--color-chart-1), var(--color-chart-3), var(--color-chart-5)"></moul-flow-field>
+```
+
+The defaults come from the theme, so most pages set no colour at all.
+
+## Accessibility
+
+- **Decoration stays silent.** The canvas of every field, trail and burst is hidden from assistive technology, and the content it wraps reads as if the effect were not there. Glyphs drawn by glyph rain or a cursor trail are never read out.
+- **Images stay images.** The image loader, image effect and zoom grid are each one image to a screen reader, named by `alt`, and the image loader is `aria-busy` until it has revealed its picture.
+- **The spheres keep their content in the page.** The icon cloud's icons stay in the page as a group of links or buttons, and focusing one turns the sphere to bring it to the front. The globe is one image named by `label`, with a hidden list of its places and routes.
+- **Nothing gets in the way of a press.** Press particles never block or delay the press they decorate, a keyboard press bursts from the control's centre, and disabled controls throw nothing. A dissolving item turns inert at once, so move focus off it first.
+
+## Reduced motion
+
+Under `prefers-reduced-motion: reduce` every field draws one still frame and stops: the particles, stars, streaks, glyphs, waves and shader fields each hold a picture of themselves, seeded so it is the same every time, and the pointer no longer moves them. Press particles and the cursor trail draw nothing, a dissolve becomes a short fade, the image loader shows its picture at once, image effects are drawn once as stills, and the zoom grid stays flat. The icon cloud and the globe stop turning on their own but still turn when dragged, because then the movement is the reader's own hand. The setting is read live.
+
+## Cost
+
+Each element was driven by the pointer, by presses or left to run, with the processor slowed four times, Chrome's preset for a mid-range phone, while every frame was timed, on a desktop-sized window and a phone-sized one. Every canvas element held a median frame of 16.7 ms, which is 60 frames a second, with the slowest twentieth of frames at 16.8 ms or less. The heaviest script in any frame, the globe's, took under 4 ms.
+
+Every loop stops while its element is scrolled off screen or the tab is hidden, and the interaction effects (press particles, the cursor trail, the interactive grid, dissolve) stop their loop entirely once nothing is moving, so a page full of them costs nothing at rest.
+
+Two habits keep it that way on your own pages. Keep the fields that run on their own to one or two per screen: each pauses off screen, but every one in view is a loop. And on the shader field, keep the clouds for smaller areas on phones, where the graphics card pays for every pixel.

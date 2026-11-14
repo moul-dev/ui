@@ -1,0 +1,153 @@
+---
+title: Particles
+description: Drifting particles, twinkling sparkles or a constellation of linked dots that react to the pointer, behind a hero or a section.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import CanvasDemo from '@/components/demos/CanvasDemo.astro';
+
+`<moul-particles>` fills an area with small particles drawn on a canvas: soft dots that drift on a slow current, glints that sparkle and fade, or dots joined by faint lines into a constellation that redraws itself as it moves. Move a mouse over the field below and the particles make way for it.
+
+<ComponentPreview align="stretch" minHeight="20rem">
+  <moul-particles style="padding: 5.5rem 1.5rem; border: 1px solid var(--color-border); border-radius: var(--radius-xl); text-align: center">
+    <moul-typography variant="h2">Built in the open</moul-typography>
+    <moul-typography variant="body">Every release, every issue, every decision.</moul-typography>
+  </moul-particles>
+  <CanvasDemo />
+</ComponentPreview>
+
+It lives in the canvas entry, which loads its file the first time the tag appears on the page:
+
+```js
+import '@moul-dev/web-component/canvas'
+// or register just this element, straight away:
+import '@moul-dev/web-component/canvas/particles'
+```
+
+```html
+<moul-particles>
+  <h1>Built in the open</h1>
+  <p>Every release, every issue, every decision.</p>
+</moul-particles>
+```
+
+The element is a plain block with no padding and no background of its own: pad it, size it and round its corners as you would the section it replaces. The field fills it and follows its rounded corners.
+
+## Variants
+
+`variant` sets what is drawn. `particles` (the default) is soft dots at three depths: the far ones small, faint and slow, the near ones larger and brighter, all drifting on a current that bends slowly, so the field never repeats.
+
+`sparkles` draws four-point glints instead. Each one fades in, shines and fades out over one to four seconds, then appears somewhere else, while the whole field rises a little, like dust caught in the light. It reads best on a dark surface.
+
+<ComponentPreview align="stretch" minHeight="20rem">
+  <moul-particles variant="sparkles" color="var(--color-foreground)" style="color-scheme: dark; padding: 5.5rem 1.5rem; border-radius: var(--radius-xl); background: var(--color-background); color: var(--color-foreground); text-align: center">
+    <moul-typography variant="h2">Launch week</moul-typography>
+    <moul-typography variant="body">Five days, five releases.</moul-typography>
+  </moul-particles>
+</ComponentPreview>
+
+```html
+<moul-particles variant="sparkles" color="var(--color-foreground)" style="color-scheme: dark; background: var(--color-background)">
+  <h2>Launch week</h2>
+</moul-particles>
+```
+
+`links` joins dots that come within about 110 pixels of each other with a line, stronger the closer they are, and joins the pointer to the dots around it.
+
+<ComponentPreview align="stretch" minHeight="20rem">
+  <moul-particles variant="links" style="padding: 5.5rem 1.5rem; border: 1px solid var(--color-border); border-radius: var(--radius-xl); text-align: center">
+    <moul-typography variant="h2">One graph of your data</moul-typography>
+    <moul-typography variant="body">Records, links and history, all connected.</moul-typography>
+  </moul-particles>
+</ComponentPreview>
+
+```html
+<moul-particles variant="links">
+  <h2>One graph of your data</h2>
+</moul-particles>
+```
+
+## The pointer
+
+`pointer` sets what a mouse, a pen or a pressed finger does to the particles within 120 pixels of it. `repel` (the default) pushes them away, and they drift back once it has passed; `attract` draws them in to gather in a ring around it; `none` leaves them be. The pointer is followed over the content inside the element too, but the canvas itself never takes the pointer, so links and buttons in the content work as they would anywhere.
+
+<ComponentPreview align="stretch" minHeight="16rem">
+  <moul-particles pointer="attract" density="4.5" style="height: 16rem; border: 1px solid var(--color-border); border-radius: var(--radius-xl)"></moul-particles>
+</ComponentPreview>
+
+```html
+<moul-particles pointer="attract" density="4.5"></moul-particles>
+```
+
+## Density, size, speed and colour
+
+`density` is the number of particles per 10,000 square pixels, so a larger field gets more of them rather than a sparser spread: 3 by default for `particles`, 5 for `sparkles` and 1.6 for `links`. However large the field, it draws at most 360, 260 and 160 respectively, which keeps a full-screen hero well inside a frame on a phone. `size` is a dot's radius, or a glint's half length, in pixels, and `speed` multiplies the drift (0 holds the field still while the pointer still pushes it).
+
+`color` takes any CSS colour, tokens included: the accent colour by default. The field follows the theme, so a token colour changes with light and dark mode, and with the brand hue.
+
+<ComponentPreview align="stretch" minHeight="16rem">
+  <moul-particles density="6" size="2.4" speed="0.5" color="var(--color-chart-5)" style="height: 16rem; border: 1px solid var(--color-border); border-radius: var(--radius-xl)"></moul-particles>
+</ComponentPreview>
+
+```html
+<moul-particles density="6" size="2.4" speed="0.5" color="var(--color-chart-5)"></moul-particles>
+```
+
+`seed` picks the layout. The same seed draws the same field, which keeps the still frame under reduced motion the same on every visit; give two fields on one page different seeds so they do not look alike.
+
+## Use as a layer
+
+Left empty, the element is just the field. Position it absolutely to fill a section and send it behind the section's content with `z-index: -1`. Give the section `position: relative` and `isolation: isolate`, so the layer stays inside it. The pointer then reaches the field only where the content leaves it uncovered.
+
+```html
+<section class="hero">
+  <moul-particles class="hero-background" variant="links"></moul-particles>
+  <h1>One graph of your data</h1>
+</section>
+```
+
+```css
+.hero {
+  position: relative;
+  isolation: isolate;
+}
+
+.hero-background {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+}
+```
+
+## Performance
+
+The field is drawn on one canvas. Each particle is a small image rendered once per colour and stamped on every frame, and in `links` every line of one strength goes into a single stroke, so a full field costs a few milliseconds a frame on a phone. The canvas follows the screen's pixel density up to 2×, stops drawing while the element is off screen or the tab is hidden, and picks up where it left off.
+
+## Accessibility
+
+`<moul-particles>` is never focusable and adds no role. The canvas is decoration: it is hidden from screen readers and pointer events pass through it, so the content inside is read, selected and clicked as it is. Check the contrast of your text against the brightest part of the field, as you would against a background image.
+
+Where the system forces its own colours, as in Windows high contrast mode, the canvas is not drawn.
+
+Under `prefers-reduced-motion: reduce` the field is drawn once and holds still, and the pointer no longer moves it. Turning the setting on while the page is open swaps the moving field for the still one at once.
+
+## Attributes and properties
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `variant` | `variant` | `'particles' \| 'sparkles' \| 'links'` | `'particles'` |
+| `density` | `density` | `number` | `3`, `5` for sparkles, `1.6` for links |
+| `size` | `size` | `number` | `2.2`, `7` for sparkles, `2` for links |
+| `speed` | `speed` | `number` | `1` |
+| `color` | `color` | `string` | `var(--color-accent)` |
+| `pointer` | `pointer` | `'repel' \| 'attract' \| 'none'` | `'repel'` |
+| `seed` | `seed` | `number` | `1` |
+
+| Slot | Description |
+| :-- | :-- |
+| (default) | The content to show in front of the field. Leave it empty to use the element as a background layer. |
+
+| Part | Description |
+| :-- | :-- |
+| `canvas` | The canvas the particles are drawn on. It fills the element behind the content, follows its rounded corners and ignores the pointer. |

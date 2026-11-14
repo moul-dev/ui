@@ -1,0 +1,115 @@
+---
+title: Interactive Grid
+description: A grid of cells behind a section that light up, ripple or swell under the pointer and on a press.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import CanvasDemo from '@/components/demos/CanvasDemo.astro';
+
+`<moul-interactive-grid>` puts a quiet grid behind a hero, a section or a card and lets it answer the pointer. Cells light up under it and fade behind it, a press sends a ripple through the cells, or a dot matrix swells around it. Move a mouse over the grids below, and press on them.
+
+<ComponentPreview minHeight="20rem" align="stretch">
+  <moul-interactive-grid fade="radial" style="border-radius: var(--radius-xl, 0.75rem); border: 1px solid var(--color-border)">
+    <div style="display: grid; place-items: center; gap: 0.75rem; min-height: 18rem; padding: 2rem; text-align: center">
+      <strong style="font-size: 1.5rem">Cells that follow the pointer</strong>
+      <span style="color: var(--color-muted)">The pattern is CSS; only the lit cells are drawn.</span>
+      <moul-button variant="primary">Get started</moul-button>
+    </div>
+  </moul-interactive-grid>
+  <CanvasDemo />
+</ComponentPreview>
+
+It lives in the canvas entry, which loads its file the first time the tag appears on the page:
+
+```js
+import '@moul-dev/web-component/canvas'
+// or register just this element, straight away:
+import '@moul-dev/web-component/canvas/interactive-grid'
+```
+
+```html
+<moul-interactive-grid fade="radial">
+  <section class="hero">…</section>
+</moul-interactive-grid>
+```
+
+The grid sits behind the content, which stays in front and fully usable.
+
+## Variants
+
+`variant="highlight"` is the default: the cell under the pointer lights up, and the cells it has passed fade out behind it. `ripple` sends a ring of light out through the cells from wherever the grid is pressed, and lights the cell under the pointer faintly. `dots` draws a dot matrix whose dots swell and brighten near the pointer, within `radius` pixels (120 by default); it ripples on a press too.
+
+<ComponentPreview minHeight="16rem">
+  <div style="display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); width: 100%">
+    <moul-interactive-grid variant="ripple" style="border-radius: var(--radius-xl, 0.75rem); border: 1px solid var(--color-border)">
+      <div style="display: grid; place-items: center; min-height: 14rem; color: var(--color-muted)">Press for a ripple</div>
+    </moul-interactive-grid>
+    <moul-interactive-grid variant="dots" fade="edges" style="border-radius: var(--radius-xl, 0.75rem); border: 1px solid var(--color-border)">
+      <div style="display: grid; place-items: center; min-height: 14rem; color: var(--color-muted)">Dots swell near the pointer</div>
+    </moul-interactive-grid>
+  </div>
+</ComponentPreview>
+
+```html
+<moul-interactive-grid variant="ripple">…</moul-interactive-grid>
+<moul-interactive-grid variant="dots" fade="edges">…</moul-interactive-grid>
+```
+
+## Tiles and colours
+
+`cell-size` is the size of a cell in pixels, 40 by default and 20 for dots. `gap` turns the lines into separate rounded tiles with that many pixels between them. `colors` lights cells in one colour, or in a random pick of several: give CSS colours or tokens, comma-separated, or an array property. The accent colour is the default.
+
+<ComponentPreview minHeight="16rem" align="stretch">
+  <moul-interactive-grid gap="6" cell-size="48" colors="var(--color-accent), var(--color-success), var(--color-warning), var(--color-danger)" fade="bottom" style="border-radius: var(--radius-xl, 0.75rem)">
+    <div style="display: grid; place-items: center; min-height: 14rem; color: var(--color-muted)">Tiles in four colours</div>
+  </moul-interactive-grid>
+</ComponentPreview>
+
+```html
+<moul-interactive-grid gap="6" cell-size="48"
+  colors="var(--color-accent), var(--color-success), var(--color-warning), var(--color-danger)">…</moul-interactive-grid>
+```
+
+## Fading the edges
+
+`fade` softens the pattern toward its edges so it melts into the page: `radial` keeps the middle, `top` and `bottom` fade one side, `edges` fades all four, and `none` (the default) keeps it whole. Only the grid fades; the content over it does not.
+
+## Cost
+
+The lines, tiles and dots at rest are a CSS background, so a grid nobody touches costs nothing and still shows before script runs. Only the cells that are lit are drawn on a canvas, one colour at a time, and the drawing loop stops as soon as nothing is moving: a pointer resting on one cell draws no frames at all.
+
+## Styling
+
+| CSS property | Description | Default |
+| :-- | :-- | :-- |
+| `--interactive-grid-line` | Colour of the lines. | `var(--color-border)` |
+| `--interactive-grid-tile` | Colour of the tiles, with `gap`. | `var(--color-surface-secondary)` |
+| `--interactive-grid-dot` | Colour of the dots at rest. | `var(--color-border)` |
+
+`::part(pattern)` is the CSS pattern and `::part(canvas)` the canvas the lit cells are drawn on.
+
+## Accessibility
+
+The element is never focusable and adds no role; its content is read and reached as if the element were not there. The grid is decoration and hidden from screen readers. It answers only a pointer and carries nothing a keyboard user needs.
+
+Under `prefers-reduced-motion: reduce` the grid stays still: the pattern shows, but no cell lights up, fades or ripples. Turning the setting on clears anything lit.
+
+## Attributes and properties
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `variant` | `variant` | `'highlight' \| 'ripple' \| 'dots'` | `highlight` |
+| `cell-size` | `cellSize` | `number` (px) | `40`, or `20` for dots |
+| `gap` | `gap` | `number` (px) | `0` |
+| `colors` | `colors` | `string[]` (comma-separated as an attribute) | `var(--color-accent)` |
+| `radius` | `radius` | `number` (px, dots) | `120` |
+| `fade` | `fade` | `'radial' \| 'top' \| 'bottom' \| 'edges' \| 'none'` | `none` |
+
+| Slot | Description |
+| :-- | :-- |
+| (default) | Content shown over the grid. |
+
+| Part | Description |
+| :-- | :-- |
+| `pattern` | The CSS pattern of lines, tiles or dots. |
+| `canvas` | The canvas the lit cells and dots are drawn on. |

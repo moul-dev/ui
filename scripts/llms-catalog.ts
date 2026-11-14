@@ -1711,6 +1711,157 @@ transition.start(() => render(nextView), { direction: 'forward' })`,
     ],
   },
   {
+    title: 'Canvas & WebGL',
+    families: [
+      {
+        name: 'Particles',
+        docs: '/docs/components/particles',
+        summary:
+          'A canvas field of particles behind a hero or section: `variant="particles"` (soft dots at three depths drifting on slow noise), `sparkles` (four-point glints that fade in and out) or `links` (dots joined by lines when near, and to the pointer). `pointer="repel|attract|none"` (default repel, 120 px reach); `density` per 10,000 px² (defaults 3 / 5 / 1.6, capped at 360 / 260 / 160), `size`, `speed`, `color` (default accent), `seed`. Wraps content or works as an empty layer; the canvas is aria-hidden. Canvas entry (`import \'@moul-dev/web-component/canvas\'`). One still seeded frame under reduced motion; the pointer no longer moves it.',
+        tags: ['moul-particles'],
+        snippet: `<moul-particles variant="links" pointer="attract">
+  <h1>One graph of your data</h1>
+</moul-particles>`,
+      },
+      {
+        name: 'Starfield',
+        docs: '/docs/components/starfield',
+        summary:
+          'A canvas night sky: stars at three depths that drift and twinkle (`density` per 10,000 px², default 3.5, max 700; `twinkle` 0–1, default 0.5; `speed`). `shooting-stars` adds occasional streaks (attribute alone = 6 a minute, or a number a minute, at most 3 at once). `meteors` rains streaks falling at `angle` (degrees, maths convention: 270 straight down, default 240 down-left; attribute alone = 10, max 40). Stars take `color`, default foreground; give the element `color-scheme: dark` for a night sky in both themes. Canvas entry. One still seeded frame under reduced motion: meteors held as fixed streaks, no shooting stars.',
+        tags: ['moul-starfield'],
+        snippet: `<moul-starfield meteors shooting-stars style="color-scheme: dark; background: var(--color-background)">
+  <h1>Ship after dark</h1>
+</moul-starfield>`,
+      },
+      {
+        name: 'Warp',
+        docs: '/docs/components/warp',
+        summary:
+          'Light-speed motion on a canvas: `variant="streaks"` (streaks rushing out of the centre, longer and brighter as they pass; `density` per 10,000 px², default 9, max 600) or `grid` (a tunnel of rails and flowing rings with beams running toward the viewer, fading into any background). `boost="hover|press"` eases the pace up to 5× and back over about half a second; `speed`, `color` (default accent), `seed`. Canvas entry. One still frame under reduced motion (short fixed streaks, or the tunnel with beams in place); no boost.',
+        tags: ['moul-warp'],
+        snippet: `<moul-warp boost="hover">
+  <h1>Builds in seconds</h1>
+</moul-warp>`,
+      },
+      {
+        name: 'GlyphRain',
+        docs: '/docs/components/glyphrain',
+        summary:
+          'Glyphs drawn on a canvas behind its content: `variant="rain"` drops columns of glyphs, each led by a bright head with a fading, flickering trail; `shift` fills the area with glyphs that change in place while a band of light sweeps through. `glyphs` sets the characters (any text, Khmer and emoji kept whole), `font-size` (8 to 64, default 16), `speed`, `density` (0.05 to 1), `color`, `head-color`, and `pointer-glow` lights the glyphs near a mouse or pen. The canvas is hidden from screen readers. Canvas entry; a still frame under reduced motion.',
+        tags: ['moul-glyph-rain'],
+        snippet: `<moul-glyph-rain pointer-glow style="height: 20rem">
+  <section class="hero">…</section>
+</moul-glyph-rain>`,
+      },
+      {
+        name: 'FlowField',
+        docs: '/docs/components/flowfield',
+        summary:
+          'A field drawn from smooth noise on a canvas behind its content: `variant="waves"` ripples `count` translucent bands of colour (5 by default) softened by `blur` (12 px by default); `vortex` circles particles round the centre with short fading trails (count by area, 120 to 900, or `count` up to 1200; no blur by default). `colors` is a comma-separated list or JSON array of CSS colours or tokens (accent and chart tokens by default), `speed` sets the pace, and `follow-pointer` makes the waves lean toward a mouse or pen and the vortex drift to circle it. Canvas entry; a still frame under reduced motion.',
+        tags: ['moul-flow-field'],
+        snippet: `<moul-flow-field variant="vortex" follow-pointer style="height: 20rem">
+  <strong>Everything, connected</strong>
+</moul-flow-field>`,
+      },
+      {
+        name: 'ShaderField',
+        docs: '/docs/components/shaderfield',
+        summary:
+          'A full-bleed background drawn by a WebGL fragment shader behind slotted content: `variant="dither"` (default) quantises slowly drifting noise into 2–4 colours through an 8×8 Bayer dither, as round dots or `shape="square"` pixels (`pixel-size`, default 6); `variant="clouds"` drifts domain-warped fractal clouds over a sky. `colors` (up to four CSS colours or tokens, comma-separated or JSON; theme colours by default, following a theme switch without recompiling), `density` 0–1, `scale`, `speed` (0 holds still), `seed`, `interactive` (the field swells or parts under the pointer). Without WebGL, or while the context is lost, it shows a still CSS gradient of the same colours and sets `is-fallback`; it gives its WebGL context back when removed. Decorative (canvas hidden from screen readers); one still frame under reduced motion. Canvas entry.',
+        tags: ['moul-shader-field'],
+        snippet: `<moul-shader-field variant="clouds" interactive style="min-height: 20rem">
+  <h2>Your files, above it all</h2>
+</moul-shader-field>`,
+      },
+      {
+        name: 'InteractiveGrid',
+        docs: '/docs/components/interactivegrid',
+        summary:
+          'A grid behind its content whose cells light up under the pointer and fade (`variant="highlight"`), ripple out from a press (`ripple`), or a dot matrix that swells near the pointer (`dots`, `radius`); `cell-size`, `gap` for rounded tiles, `colors` (random pick of several), `fade="radial|top|bottom|edges"`. The pattern is CSS; only lit cells are drawn and the loop stops at rest. Canvas entry; a still pattern under reduced motion.',
+        tags: ['moul-interactive-grid'],
+        snippet: `<moul-interactive-grid fade="radial">
+  <section class="hero">…</section>
+</moul-interactive-grid>`,
+      },
+      {
+        name: 'PressParticles',
+        docs: '/docs/components/pressparticles',
+        summary:
+          'Wraps a button or any target and throws a small burst of particles from the press point (a keyboard press bursts from the control\'s centre) that arc out, fall and fade: `shape="circle|square|star|glyph"`, `glyphs="💖 ✨"` (emoji or characters), `colors` (comma-separated tokens), `count`, `angle`, `spread`, `velocity`, `gravity`, `size`; `burst(origin?)` from code. Drawn on a top-layer viewport canvas only while particles fly; never blocks the press; disabled controls throw nothing. Canvas entry; no particles under reduced motion.',
+        tags: ['moul-press-particles'],
+        snippet: `<moul-press-particles glyphs="💖 ✨ 🎉">
+  <moul-button>Like</moul-button>
+</moul-press-particles>`,
+      },
+      {
+        name: 'CursorTrail',
+        docs: '/docs/components/cursortrail',
+        summary:
+          'An area whose pointer leaves a trail drawn over the content (clicks pass through): `variant="glyphs"` (characters drop, flicker and fall; `glyphs` sets the set), `dots` (springy chain of `count` dots) or `images` (`<img slot="image">` stamped along the path, then tumbling away); `color`, `size`. Follows a sideways finger drag on touch. Canvas entry; no trail under reduced motion.',
+        tags: ['moul-cursor-trail'],
+        snippet: `<moul-cursor-trail variant="images">
+  <img slot="image" src="/kep.jpg" alt="" />
+  <section class="hero">…</section>
+</moul-cursor-trail>`,
+      },
+      {
+        name: 'Dissolve',
+        docs: '/docs/components/dissolve',
+        summary:
+          'Wraps an item (a list row, card or tag); `await el.dissolve()` wipes it away from one side (`direction="right|left|up|down"`, `duration` ms) while dust in the item\'s own colours drifts off, then fires `dissolveend`; `collapse` closes the space, `remove-on-end` removes the element, `reset()` brings it back. The item is inert from the first frame, so move focus first. Canvas entry; a 200 ms fade with no dust under reduced motion.',
+        tags: ['moul-dissolve'],
+        snippet: `<moul-dissolve collapse remove-on-end>
+  <div class="row">Sokha shared Kep weekend.pdf</div>
+</moul-dissolve>`,
+      },
+      {
+        name: 'ImageLoader',
+        docs: '/docs/components/imageloader',
+        summary:
+          'An image that appears as if generated: a shimmering pixel grid shows while it loads (and while `is-loading` is set), then a scan line sweeps down and coarse blocks resolve into the sharp image (`duration`, `pixel-size`). Fires `reveal` (`detail.src`); `replay()` plays it again. `aria-busy` until revealed. Colours come from `--image-loader-color`, `-highlight` and `-scan`. Canvas entry. Under reduced motion the grid is still and the image appears at once.',
+        tags: ['moul-image-loader'],
+        snippet: `<moul-image-loader src="/generated.png" alt="A generated picture of hills at dawn" width="1600" height="900"></moul-image-loader>`,
+      },
+      {
+        name: 'ImageEffect',
+        docs: '/docs/components/imageeffect',
+        summary:
+          'One image drawn with `effect="pixelate|dither|ascii|chromatic|wave|particles"`. `intensity` (0–1) sets how far it moves from the photo. With `interactive`, blocks resolve under the pointer, dither and ASCII brighten around it, the colour split follows it, a ripple spreads from it, and particles scatter and spring back. Dither and ASCII use `color` (ink) and `background` (paper), which follow the theme. Dither, ASCII and particles need same-origin or CORS images (`crossorigin`) and fall back to the plain image with a console note. Canvas entry. Each effect is a still picture under reduced motion.',
+        tags: ['moul-image-effect'],
+        snippet: `<moul-image-effect src="/temple.jpg" alt="A temple at sunrise" width="1600" height="1000" effect="dither" interactive></moul-image-effect>`,
+      },
+      {
+        name: 'ZoomGrid',
+        docs: '/docs/components/zoomgrid',
+        summary:
+          'An image (`src`, `alt`) cut into a grid of boxes (`columns`, `rows`, `gap`); the boxes near the pointer swell and show a closer view of their part of the image while the rest give way (`zoom`, `radius` in boxes). They ease back when the pointer leaves. Follows a held finger on touch screens. `width`/`height` reserve the shape before load, and `fit` works like object-fit. One image to screen readers. Canvas entry. A plain grid under reduced motion.',
+        tags: ['moul-zoom-grid'],
+        snippet: `<moul-zoom-grid src="/kep.jpg" alt="A palm over a sandy shore" width="1600" height="900" columns="8" rows="6" zoom="2.4"></moul-zoom-grid>`,
+      },
+      {
+        name: 'IconCloud',
+        docs: '/docs/components/iconcloud',
+        summary:
+          'Icons or logos (slotted `<img>`, inline `<svg>`, or links or buttons wrapping them; anything else becomes a text chip) spread evenly on a sphere drawn on a canvas. It turns slowly (`speed`, default 14), leans toward the pointer, spins when dragged, and carries on after release; `icon-size`, `radius`, `is-paused`. Pressing an icon fires a cancelable `press` (`detail: { item, index }`), then activates its link or button. The children stay in the page as a visually hidden group named by `label`; focusing a link turns its icon to the front and rings it. Monochrome SVGs take `--icon-cloud-icon-color`. Canvas entry. Under reduced motion there is no turning on its own and no lean; dragging still turns it.',
+        tags: ['moul-icon-cloud'],
+        snippet: `<moul-icon-cloud label="Integrations">
+  <a href="/integrations/github"><img src="/logos/github.svg" alt="GitHub" /></a>
+  <img src="/logos/stripe.svg" alt="Stripe" />
+</moul-icon-cloud>`,
+      },
+      {
+        name: 'Globe',
+        docs: '/docs/components/globe',
+        summary:
+          'A dotted globe turning slowly on its axis (`speed` degrees a second, default 8; `is-paused`), drawn on a canvas from the World Map land mask, with pins (`markers`) and great-circle arcs (`arcs`) that rise off the surface, draw in, then carry a travelling light. Places are `{ lat, lng, label }`, as properties or JSON attributes; `center` ("lat, lng") sets the first view; `show-labels` draws labels. Drag to turn (fingers sideways only); `turnTo(placeOrLabel)` turns to a place and holds it. One image to screen readers named by `label`, plus a hidden list of places and routes. Canvas entry. Under reduced motion it holds still on `center` with arcs drawn and no light or pulse; dragging still turns it.',
+        tags: ['moul-globe'],
+        snippet: `<moul-globe label="Our offices" show-labels center="11.56, 104.92"
+  arcs='[{ "from": { "lat": 11.56, "lng": 104.92, "label": "Phnom Penh" }, "to": { "lat": 35.68, "lng": 139.69, "label": "Tokyo" } }]'
+></moul-globe>`,
+      },
+    ],
+  },
+  {
     title: 'Composite Blocks',
     families: [
       {

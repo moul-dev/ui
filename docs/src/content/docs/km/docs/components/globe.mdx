@@ -1,0 +1,147 @@
+---
+title: ផែនដី (Globe)
+description: ផែនដីធ្វើពីចំណុចដែលបង្វិលយឺតៗលើអ័ក្សរបស់វា ដោយមានម្ជុលលើទីកន្លែង និងធ្នូដែលលើកឡើងរវាងទីកន្លែងទាំងនោះ។
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import CanvasDemo from '@/components/demos/CanvasDemo.astro';
+
+`<moul-globe>` draws the world in dots on a globe that turns slowly on its axis, pins the places you give it, and lifts arcs between them along the shortest route over the surface. Drag it to turn it. Use it for a "where we are" section, a set of regions, or a picture of where requests travel. For a flat map that shows every place at once, use [World Map](/docs/components/worldmap/).
+
+<ComponentPreview minHeight="26rem">
+  <moul-globe
+    label="Routes from the Phnom Penh office"
+    show-labels
+    center="18, 104"
+    style="max-width: 26rem"
+    arcs='[
+      { "from": { "lat": 11.56, "lng": 104.92, "label": "Phnom Penh" }, "to": { "lat": 35.68, "lng": 139.69, "label": "Tokyo" } },
+      { "from": { "lat": 11.56, "lng": 104.92, "label": "Phnom Penh" }, "to": { "lat": 1.35, "lng": 103.82, "label": "Singapore" } },
+      { "from": { "lat": 11.56, "lng": 104.92, "label": "Phnom Penh" }, "to": { "lat": -33.87, "lng": 151.21, "label": "Sydney" } },
+      { "from": { "lat": 11.56, "lng": 104.92, "label": "Phnom Penh" }, "to": { "lat": 28.61, "lng": 77.21, "label": "Delhi" } },
+      { "from": { "lat": 11.56, "lng": 104.92, "label": "Phnom Penh" }, "to": { "lat": 50.11, "lng": 8.68, "label": "Frankfurt" } }
+    ]'
+  ></moul-globe>
+  <CanvasDemo />
+</ComponentPreview>
+
+It lives in the canvas entry, which loads its file the first time the tag appears on the page:
+
+```js
+import '@moul-dev/web-component/canvas'
+// or register just this element, straight away:
+import '@moul-dev/web-component/canvas/globe'
+```
+
+```html
+<moul-globe label="Our offices" show-labels></moul-globe>
+
+<script type="module">
+  const globe = document.querySelector('moul-globe')
+  const phnomPenh = { lat: 11.56, lng: 104.92, label: 'Phnom Penh' }
+  globe.arcs = [
+    { from: phnomPenh, to: { lat: 35.68, lng: 139.69, label: 'Tokyo' } },
+    { from: phnomPenh, to: { lat: 1.35, lng: 103.82, label: 'Singapore' } },
+  ]
+</script>
+```
+
+The globe needs no image, no network request and no 3D library. The land comes from the same outline of the world as World Map (Natural Earth, public domain, sampled into 2° cells from 84°N to 58°S, so Antarctica is left out). The dots are spread evenly over the sphere, rather than on a grid of latitude and longitude, so they never bunch toward the poles, and the cells are blended where they meet so coastlines run in smooth lines rather than steps. A bigger globe gets more, finer dots.
+
+## Places
+
+Every place is an object with `lat` and `lng` in degrees, north and east positive, and an optional `label`. Set `markers` to pin places and `arcs` to join them; each arc is `{ from, to, label }`. Both are properties, and both also read a JSON array from their attribute. The ends of every arc are pinned too, so a globe of routes needs only `arcs`. Places without finite coordinates are skipped.
+
+An arc follows the great circle between its ends, the route a plane would fly, and rises off the surface on the way: the longer the route, the higher it rises. Where it passes behind the globe it is hidden, and where it rises past the outline it shows even on the far side.
+
+`show-labels` writes each pin's label beside it, to the right, or to the left when the right side would run out of room. Labels on pins turning away toward the edge fade out.
+
+<ComponentPreview minHeight="24rem">
+  <moul-globe
+    label="Regions"
+    show-labels
+    speed="-12"
+    center="20, -30"
+    style="max-width: 22rem; --globe-marker-color: var(--color-success); --globe-glow-color: var(--color-success)"
+    markers='[
+      { "lat": 50.11, "lng": 8.68, "label": "Frankfurt" },
+      { "lat": 39.04, "lng": -77.49, "label": "Virginia" },
+      { "lat": -23.55, "lng": -46.63, "label": "São Paulo" },
+      { "lat": 45.5, "lng": -73.57, "label": "Montreal" },
+      { "lat": 53.35, "lng": -6.26, "label": "Dublin" },
+      { "lat": 6.52, "lng": 3.38, "label": "Lagos" }
+    ]'
+  ></moul-globe>
+</ComponentPreview>
+
+## Turning
+
+The globe turns `speed` degrees a second on its own, 8 by default, eastward as the earth does; a negative `speed` turns it the other way and `0` or `is-paused` stops it. It faces `center` first, given as `"lat, lng"` or as JSON, or the first pin when there is no `center`.
+
+Drag it with a mouse, a pen or a finger to turn it; let go mid-drag and it carries on, then eases back into its own turn. A mouse or pen can tip it north and south too, up to 70°. A finger turns it sideways only, so a swipe up or down still scrolls the page (`touch-action: pan-y`).
+
+`turnTo()` brings a place to the front, by object or by the label of a pin, and holds it there until the globe is dragged. It returns a promise that resolves when the turn ends:
+
+```js
+await globe.turnTo('Tokyo')
+await globe.turnTo({ lat: 13.36, lng: 103.86 })
+```
+
+`currentView` reads the place at the centre of the visible face. When the arcs first come into view they draw in one after another, then a short light runs along each one, over and over, and the pins pulse. Call `play()` to draw the arcs in again. Everything stops while the globe is off screen or the tab is hidden, and picks up where it left off.
+
+## Colours
+
+The land dots take the foreground colour, fainter toward the edge, on a disc in `--color-bg-subtle`; the rim glow, the arcs and the pins take the accent colour. The globe follows the theme in light and dark, and switches the moment the theme does.
+
+```css
+moul-globe {
+  --globe-dot-color: var(--color-muted);
+  --globe-glow-color: var(--color-success);
+  --globe-arc-color: var(--color-success);
+  --globe-marker-color: var(--color-success);
+}
+```
+
+## Accessibility
+
+The globe is never focusable. Its drawing is one image, named by `label` ("Globe" when unset), so a screen reader does not read thousands of dots. After it comes a visually hidden list that reads out every labelled pin and every arc that has a label. An arc without its own label reads "Phnom Penh to Tokyo" when both of its ends are labelled. The labels drawn with `show-labels` are part of the picture, so the list is what a screen reader hears.
+
+Turning the globe is a pointer gesture. When a reader needs to reach a particular place, give them another way to it as well, such as a list of buttons that call `turnTo()`.
+
+Under `prefers-reduced-motion: reduce` the globe holds still, facing `center` (or the first pin), with every arc drawn in full, no travelling light and no pulsing pins. Dragging still turns it, since the reader's own hand moves it, but it stops the moment it is let go, and `turnTo()` jumps instead of turning.
+
+## Attributes and properties
+
+| Attribute | Property | Type | Default | Description |
+| :-- | :-- | :-- | :-- | :-- |
+| `label` | `label` | `string` | `'Globe'` | Accessible name of the globe. |
+| `markers` | `markers` | `GlobeMarker[]` | `[]` | Places to pin, `{ lat, lng, label }`. |
+| `arcs` | `arcs` | `GlobeArc[]` | `[]` | Arcs to draw, `{ from, to, label }`. |
+| `center` | `center` | `GlobePoint \| null` | first pin | The place the globe faces first, `"lat, lng"` or JSON. |
+| `speed` | `speed` | `number` | `8` | Degrees a second it turns on its own; negative turns it the other way. |
+| `show-labels` | `showLabels` | `boolean` | `false` | Draw each pin's label beside it. |
+| `is-paused` | `isPaused` | `boolean` | `false` | Stop turning on its own; dragging still turns it. |
+| | `currentView` | `{ lat, lng }` | | The place at the centre of the visible face (read only). |
+
+## Methods
+
+| Method | Description |
+| :-- | :-- |
+| `turnTo(place)` | Turns to a place (`{ lat, lng }` or a pin's label) and holds it there until the globe is dragged. Resolves when the turn ends. |
+| `play()` | Draws the arcs in again from the start. |
+
+## CSS parts and custom properties
+
+| Part | Description |
+| :-- | :-- |
+| `base` | The box that holds the canvas: one image to screen readers. |
+| `canvas` | The canvas the globe is drawn on. |
+
+| Property | Default | Description |
+| :-- | :-- | :-- |
+| `--globe-dot-color` | `var(--color-fg)` | The land dots, shaded by depth. |
+| `--globe-sphere-color` | `var(--color-bg-subtle)` | The disc behind the dots. |
+| `--globe-glow-color` | `var(--color-accent)` | The light around the rim. |
+| `--globe-marker-color` | `var(--color-accent)` | The pins and their pulse. |
+| `--globe-arc-color` | `var(--color-accent)` | The arcs and the light on them. |
+| `--globe-label-color` | `var(--color-fg)` | The labels drawn with `show-labels`. |

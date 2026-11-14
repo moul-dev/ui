@@ -1,0 +1,113 @@
+---
+title: Glyph Rain
+description: Columns of glyphs that fall like rain, or a grid of glyphs that shift in place, drawn on a canvas behind a hero, a terminal-styled section or a loading screen.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import CanvasDemo from '@/components/demos/CanvasDemo.astro';
+
+`<moul-glyph-rain>` draws characters on a canvas behind its content. By default they fall in columns, each led by a bright head that leaves a fading trail while the glyphs it passes flicker; with `variant="shift"` they fill the area and change in place while a slow band of light passes through. Use it behind a hero, a section about code or data, or a screen that waits on something. Move a mouse over the rain below: with `pointer-glow`, the glyphs around the pointer light up.
+
+<ComponentPreview minHeight="20rem" align="stretch">
+  <moul-glyph-rain pointer-glow style="height: 20rem; display: grid; place-items: center">
+    <div style="display: grid; gap: 0.75rem; justify-items: center; max-width: 26rem; padding: 1.5rem 1.75rem; text-align: center; border: 1px solid var(--color-border); border-radius: var(--radius-2xl, 1rem); background: color-mix(in oklab, var(--color-surface) 82%, transparent); backdrop-filter: blur(6px); box-shadow: var(--shadow-lg)">
+      <strong style="font-size: 1.375rem">Every request, in order</strong>
+      <span style="color: var(--color-muted)">The log streams as your app runs. Search it, pin a line, share a link.</span>
+      <moul-button variant="primary">Open the logs</moul-button>
+    </div>
+  </moul-glyph-rain>
+  <CanvasDemo />
+</ComponentPreview>
+
+It lives in the canvas entry, which loads its file the first time the tag appears on the page:
+
+```js
+import '@moul-dev/web-component/canvas'
+// or register just this element, straight away:
+import '@moul-dev/web-component/canvas/glyph-rain'
+```
+
+```html
+<moul-glyph-rain pointer-glow style="height: 20rem">
+  <section class="hero">…</section>
+</moul-glyph-rain>
+```
+
+Give the element a height, or let its content give it one: the canvas fills whatever box the element has.
+
+## Shifting in place
+
+`variant="shift"` fills the whole area with glyphs. Most sit dim; a broad band of light sweeps across them, and the glyphs keep changing as it passes, like the screen of a machine at work. `glyphs` takes any characters as one string, here Khmer letters and digits; letters with vowel signs or an emoji stay whole.
+
+<ComponentPreview minHeight="16rem" align="stretch">
+  <moul-glyph-rain variant="shift" glyphs="កខគឃងចឆជឈញដឋឌឍណតថទធនបផពភមយរលវសហឡអ០១២៣៤៥៦៧៨៩" font-size="20" style="height: 16rem"></moul-glyph-rain>
+</ComponentPreview>
+
+```html
+<moul-glyph-rain variant="shift" glyphs="កខគឃង០១២៣៤៥៦៧៨៩" font-size="20"></moul-glyph-rain>
+```
+
+## Size, pace and density
+
+`font-size` is the size of each glyph in pixels, 16 by default and from 8 to 64; the columns are as wide as the glyphs are tall. `speed` multiplies the pace of the fall or the band, 1 by default. `density`, from 0.05 to 1, is how full the area is: the share of columns falling at any moment, or the share of cells holding a glyph in a shift grid. It is 0.7 by default.
+
+<ComponentPreview minHeight="14rem" align="stretch">
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: 1rem">
+    <moul-glyph-rain font-size="11" density="1" speed="1.6" style="height: 13rem; border-radius: var(--radius-xl, 0.75rem); overflow: hidden"></moul-glyph-rain>
+    <moul-glyph-rain font-size="28" density="0.35" speed="0.6" glyphs="01" style="height: 13rem; border-radius: var(--radius-xl, 0.75rem); overflow: hidden"></moul-glyph-rain>
+  </div>
+</ComponentPreview>
+
+```html
+<moul-glyph-rain font-size="11" density="1" speed="1.6"></moul-glyph-rain>
+<moul-glyph-rain font-size="28" density="0.35" speed="0.6" glyphs="01"></moul-glyph-rain>
+```
+
+## Colours
+
+`color` is the colour of the glyphs and `head-color` the colour of each falling head and of the brightest cells. Both take any CSS colour or token. The glyphs are in the accent colour by default, with heads mixed toward the text colour, so they stand out in a light theme and a dark one alike. The element picks up a theme switch on its own.
+
+<ComponentPreview minHeight="14rem" align="stretch">
+  <moul-glyph-rain color="var(--color-success)" head-color="var(--color-foreground)" style="height: 13rem"></moul-glyph-rain>
+</ComponentPreview>
+
+```html
+<moul-glyph-rain color="var(--color-success)" head-color="var(--color-foreground)"></moul-glyph-rain>
+```
+
+The glyphs are set in the monospace token, `--font-family-mono`. Set `--glyph-rain-font-family` to draw them in another font.
+
+## Cost
+
+The glyphs are drawn once, in each colour, onto a small sheet, and every frame copies them from that sheet rather than setting text, so a full screen of rain stays cheap. The canvas stops drawing while it is scrolled off screen or the tab is hidden.
+
+## Accessibility
+
+The canvas is decorative and hidden from screen readers, so the glyphs are never read out. The element takes no focus and adds no role: content in its slot is read and reached with Tab as usual, and it sits above the glyphs. Keep text over the rain on a surface of its own, as in the first example, so it keeps its contrast.
+
+Under `prefers-reduced-motion: reduce` the glyphs are drawn once and stay still: rain shows its columns caught mid-fall, a shift grid shows its band of light where it starts, and the pointer glow is off. The element reacts to the setting as soon as it changes.
+
+## Attributes and properties
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `variant` | `variant` | `'rain' \| 'shift'` | `'rain'` |
+| `glyphs` | `glyphs` | `string` | digits, capital letters and symbols |
+| `font-size` | `fontSize` | `number` (px, 8 to 64) | `16` |
+| `speed` | `speed` | `number` | `1` |
+| `density` | `density` | `number` (0.05 to 1) | `0.7` |
+| `color` | `color` | CSS colour | `var(--color-accent)` |
+| `head-color` | `headColor` | CSS colour | the accent mixed toward the text colour |
+| `pointer-glow` | `pointerGlow` | `boolean` | `false` |
+
+| Slot | Description |
+| :-- | :-- |
+| (default) | Content shown over the glyphs. |
+
+| Part | Description |
+| :-- | :-- |
+| `canvas` | The canvas the glyphs are drawn on. |
+
+| CSS property | Description | Default |
+| :-- | :-- | :-- |
+| `--glyph-rain-font-family` | The font the glyphs are drawn in. | `var(--font-family-mono)` |

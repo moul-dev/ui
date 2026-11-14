@@ -141,24 +141,59 @@ export function minifyCssTemplatesPlugin(): Plugin {
  * packages are never duplicated, because both passes leave them as bare
  * imports for the app's bundler to resolve once.
  *
- * `--mode cdn` and `--mode cdn-effects` emit the same two entries under
- * `dist/cdn/` with everything inlined, for a plain `<script type="module">`
- * from a CDN, where bare specifiers cannot resolve.
+ * - `vite build --mode canvas` emits `dist/canvas.js`, the
+ *   `@moul-dev/web-component/canvas` entry, and one file per canvas and
+ *   WebGL element, `dist/canvas/<name>.js`, each also importable on its own
+ *   as `@moul-dev/web-component/canvas/<name>`. `canvas.js` holds no element:
+ *   it loads each element's file the first time its tag appears. Code the
+ *   elements share goes in one chunk, `dist/chunks/canvas-shared.js`.
+ *
+ * `--mode cdn`, `--mode cdn-effects` and `--mode cdn-canvas` emit the same
+ * entries under `dist/cdn/` with everything inlined, for a plain
+ * `<script type="module">` from a CDN, where bare specifiers cannot resolve.
+ * The canvas pass keeps its files split there too, so a page still loads
+ * only the elements it uses.
  */
 const ENTRIES = {
   main: { source: 'src/index.ts', fileName: 'moul-ui.js' },
   effects: { source: 'src/effects.ts', fileName: 'effects.js' },
 } as const
 
+/**
+ * The canvas pass's entries: the loader, plus one per file in
+ * `src/canvas/`, named after the file (`canvas/globe` for `globe.ts`).
+ */
+export function canvasEntries(): Record<string, string> {
+  const dir = resolve(__dirname, 'src/canvas')
+  const pieces = fs.existsSync(dir)
+    ? fs.readdirSync(dir).filter((name) => /^[a-z0-9-]+\.ts$/.test(name))
+    : []
+  return Object.fromEntries([
+    ['canvas', resolve(__dirname, 'src/canvas.ts')],
+    ...pieces.map((name) => [
+      `canvas/${name.replace(/\.ts$/, '')}`,
+      resolve(dir, name),
+    ]),
+  ])
+}
+
+/** Code the canvas elements share (controllers, helpers, styles and, on the CDN, Lit) goes in one chunk. */
+function canvasChunk(id: string): string | undefined {
+  return /\/(?:node_modules|src\/(?:controllers|utils|styles))\//.test(id)
+    ? 'shared'
+    : undefined
+}
+
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
-  const isCdn = mode === 'cdn' || mode === 'cdn-effects'
+  const isCdn = mode.startsWith('cdn')
+  const isCanvas = mode === 'canvas' || mode === 'cdn-canvas'
   const entry =
     mode === 'effects' || mode === 'cdn-effects'
       ? ENTRIES.effects
       : ENTRIES.main
   // Only the first pass clears `dist/`, writes declarations and copies assets.
-  const isFirstPass = !isCdn && entry === ENTRIES.main
+  const isFirstPass = !isCdn && !isCanvas && entry === ENTRIES.main
   return {
     test: {
       environment: 'happy-dom',
@@ -181,18 +216,38 @@ export default defineConfig(({ mode }) => {
       outDir: isCdn ? 'dist/cdn' : 'dist',
       emptyOutDir: isFirstPass,
       copyPublicDir: isFirstPass,
-      lib: {
-        entry: resolve(__dirname, entry.source),
-        formats: ['es'],
-        fileName: () => entry.fileName,
-      },
+      lib: isCanvas
+        ? {
+            entry: canvasEntries(),
+            formats: ['es'],
+            fileName: (_format: string, name: string) => `${name}.js`,
+          }
+        : {
+            entry: resolve(__dirname, entry.source),
+            formats: ['es'],
+            fileName: () => entry.fileName,
+          },
       rollupOptions: {
         external: isCdn ? [] : isRuntimeDependency,
+        // The canvas files import `utils/motion` for the reduced-motion check
+        // alone; without this, a bare `import "motion"` would stay behind and
+        // make every canvas element load the animation library for nothing.
+        ...(isCanvas
+          ? { treeshake: { moduleSideEffects: 'no-external' } }
+          : {}),
         output: {
           banner: '"use client";',
           // The CDN file is never re-bundled, so it can drop whitespace and
           // pure annotations, and inline the virtualizer's lazy layout chunk.
-          ...(isCdn ? { minify: true, codeSplitting: false } : {}),
+          // The canvas files stay split even there: loading on demand is the point.
+          ...(isCdn ? { minify: true } : {}),
+          ...(isCdn && !isCanvas ? { codeSplitting: false } : {}),
+          ...(isCanvas
+            ? {
+                chunkFileNames: 'chunks/canvas-[name].js',
+                manualChunks: canvasChunk,
+              }
+            : {}),
         },
       },
     },

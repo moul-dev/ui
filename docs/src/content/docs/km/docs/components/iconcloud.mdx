@@ -1,0 +1,139 @@
+---
+title: ពពករូបតំណាង (Icon Cloud)
+description: រូបតំណាង ឬនិមិត្តសញ្ញាដាក់លើស្វ៊ែរដែលបង្វិលយឺតៗ ផ្អៀងទៅរកព្រួញកណ្ដុរ ហើយវិលនៅពេលអូស។
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import CanvasDemo from '@/components/demos/CanvasDemo.astro';
+
+`<moul-icon-cloud>` spreads icons or logos evenly over a sphere and turns it slowly. Icons at the front are full size, icons at the back smaller and faded. The sphere leans toward the pointer and spins when you drag it. Use it for a "works with" or "built with" section, where the point is how many things there are rather than any one of them.
+
+<ComponentPreview minHeight="24rem">
+  <moul-icon-cloud label="Moul components" style="max-width: 24rem">
+    <a href="/docs/components/terminal/" aria-label="Terminal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2" /><path d="m7 9 3 3-3 3M12 15h5" /></svg></a>
+    <a href="/docs/components/charts/barchart/" aria-label="Bar chart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20h18M6 20v-8M11 20V5M16 20v-6M21 20V9" /></svg></a>
+    <a href="/docs/components/calendar/" aria-label="Calendar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M3 10h18M8 3v4M16 3v4" /></svg></a>
+    <a href="/docs/components/codeblock/" aria-label="Code block"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 7-5 5 5 5M15 7l5 5-5 5" /></svg></a>
+    <a href="/docs/components/chat/" aria-label="Chat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H9l-5 4Z" /></svg></a>
+    <a href="/docs/components/notificationbell/" aria-label="Notification bell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16v-5a6 6 0 0 1 12 0v5l2 2H4ZM10 20a2 2 0 0 0 4 0" /></svg></a>
+    <a href="/docs/components/searchfield/" aria-label="Search field"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="6" /><path d="m16 16 4 4" /></svg></a>
+    <a href="/docs/components/filetree/" aria-label="File tree"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z" /></svg></a>
+    <a href="/docs/components/switch/" aria-label="Switch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="8" rx="4" /><circle cx="16" cy="12" r="2" /></svg></a>
+    <a href="/docs/components/slider/" aria-label="Slider"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h3M11 12h9" /><circle cx="9" cy="12" r="2.5" /></svg></a>
+    <a href="/docs/components/table/" aria-label="Table"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="M3 10h18M3 15h18M10 5v14" /></svg></a>
+    <a href="/docs/components/taggroup/" aria-label="Tag group"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12V4h8l10 10-8 8Z" /><circle cx="7.5" cy="7.5" r="1" /></svg></a>
+    <a href="/docs/components/timeline/" aria-label="Timeline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8" /><path d="M12 8v4l3 2" /></svg></a>
+    <a href="/docs/components/globe/" aria-label="Globe"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8" /><path d="M4 12h16M12 4c2.5 2.5 2.5 13.5 0 16M12 4c-2.5 2.5-2.5 13.5 0 16" /></svg></a>
+    <a href="/docs/components/avatar/" aria-label="Avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="9" r="3.5" /><path d="M5 20c1-4 4-6 7-6s6 2 7 6" /></svg></a>
+    <a href="/docs/components/toast/" aria-label="Toast"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="6" width="16" height="9" rx="2" /><path d="M8 19h8" /></svg></a>
+    <a href="/docs/components/imageeffect/" aria-label="Image effect"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" /><circle cx="9" cy="10" r="1.5" /><path d="m21 16-5-5-8 8" /></svg></a>
+    <a href="/docs/components/inputotp/" aria-label="One-time code"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></svg></a>
+  </moul-icon-cloud>
+  <CanvasDemo />
+</ComponentPreview>
+
+Each icon in the demo is a link to that component's page: press one, or press Tab to move through them.
+
+It lives in the canvas entry, which loads its file the first time the tag appears on the page:
+
+```js
+import '@moul-dev/web-component/canvas'
+// or register just this element, straight away:
+import '@moul-dev/web-component/canvas/icon-cloud'
+```
+
+```html
+<moul-icon-cloud label="Integrations">
+  <a href="/integrations/github"><img src="/logos/github.svg" alt="GitHub" /></a>
+  <a href="/integrations/slack"><img src="/logos/slack.svg" alt="Slack" /></a>
+  <img src="/logos/stripe.svg" alt="Stripe" />
+</moul-icon-cloud>
+```
+
+## Icons
+
+Every child is one icon, placed on the sphere in order. A child can be:
+
+- an `<img>`, drawn as it is, colours and all;
+- an inline `<svg>`, drawn at the icon size. One drawn in `currentColor` takes `--icon-cloud-icon-color`, the foreground by default, so a set of monochrome icons follows the theme;
+- a link or a button wrapping either of those;
+- anything else with text, drawn as a round chip with its first two letters.
+
+<ComponentPreview minHeight="22rem">
+  <moul-icon-cloud label="Apps" icon-size="48" speed="20" style="max-width: 22rem">
+    <img src="/demo/iconcloud/sun.svg" alt="Weather" />
+    <img src="/demo/iconcloud/note.svg" alt="Notes" />
+    <img src="/demo/iconcloud/pin.svg" alt="Maps" />
+    <img src="/demo/iconcloud/music.svg" alt="Music" />
+    <img src="/demo/iconcloud/camera.svg" alt="Camera" />
+    <img src="/demo/iconcloud/wallet.svg" alt="Wallet" />
+    <span>JS</span>
+    <span>TS</span>
+    <span>Go</span>
+    <span>Py</span>
+    <span>Rs</span>
+    <span>Kt</span>
+  </moul-icon-cloud>
+</ComponentPreview>
+
+Each icon is drawn once into a picture of its own, at the screen's density, and every frame only places those pictures, so the cloud stays smooth with a few dozen icons. Fifteen to forty reads best: fewer leaves gaps, and more crowds the front. An inline SVG is drawn as an image, so it cannot see the page's CSS: give it its colours as attributes or `currentColor`, not `var()`. Images from another origin draw fine; nothing is read back from the canvas.
+
+## Motion
+
+The sphere turns `speed` degrees a second on its own (14 by default) and leans toward a mouse or pen over it, faster the nearer the edge. Drag it with a mouse, a pen or a finger to spin it; let go mid-drag and it carries on, then settles back into its own turn. On a touch screen a mostly vertical swipe still scrolls the page (`touch-action: pan-y`). `is-paused` stops the turn and the lean; dragging still works. The canvas stops drawing while the cloud is off screen or the tab is hidden.
+
+## Pressing an icon
+
+A press that does not drag fires `press` with the icon's element and index in `detail`. If the icon is a link or a button, or holds one, it is then activated, as a click on it would be. Cancel the event to handle the press yourself:
+
+```js
+cloud.addEventListener('press', (event) => {
+  event.preventDefault()
+  showDetails(event.detail.index)
+})
+```
+
+The pointer turns into a hand over icons that can be pressed.
+
+## Size
+
+The cloud is square and fills its container's width; give it a `max-width`, a `height` or another `aspect-ratio` to change that. The sphere fills the box unless `radius` sets it in CSS pixels. `icon-size` is the width of an icon at the front (40 by default); at the back an icon is half that.
+
+## Accessibility
+
+The children stay in the page, out of sight, in a group named by `label`. A screen reader reads each image's alt text and each link's name in order, so give every `<img>` an `alt` and every icon-only link an `aria-label`. The canvas is hidden from assistive technology.
+
+Links and buttons stay in the tab order. Focusing one turns the sphere to bring its icon to the front, rings it in `--icon-cloud-focus-color` (the focus colour) and holds the sphere still while focus stays inside. Enter follows a link as it always does.
+
+Under `prefers-reduced-motion: reduce` the sphere does not turn on its own or lean toward the pointer. Dragging still turns it, since the reader's own hand moves it, but it stops when let go, and focusing an icon brings it to the front at once.
+
+## Attributes and properties
+
+| Attribute | Property | Type | Default | Description |
+| :-- | :-- | :-- | :-- | :-- |
+| `label` | `label` | `string` | `''` | Accessible name of the group of icons. |
+| `radius` | `radius` | `number` | fills the box | Radius of the sphere in CSS pixels. |
+| `speed` | `speed` | `number` | `14` | How fast the sphere turns on its own, in degrees a second. |
+| `icon-size` | `iconSize` | `number` | `40` | Width of an icon at the front, in CSS pixels. |
+| `is-paused` | `isPaused` | `boolean` | `false` | Stop turning on its own and leaning toward the pointer. |
+| | `icons` | `Element[]` | | The slotted icons, in order (read only). |
+| | `focusedIndex` | `number` | `-1` | Index of the icon whose link or button has focus (read only). |
+
+## Events
+
+| Event | Detail | Description |
+| :-- | :-- | :-- |
+| `press` | `{ item: Element, index: number }` | An icon was pressed without dragging. Cancelable: cancel it to stop a link or button inside from being activated. |
+
+## CSS parts and custom properties
+
+| Part | Description |
+| :-- | :-- |
+| `base` | The box that holds the canvas. |
+| `canvas` | The canvas the icons are drawn on. |
+| `items` | The visually hidden group that holds the slotted icons. |
+
+| Property | Default | Description |
+| :-- | :-- | :-- |
+| `--icon-cloud-icon-color` | `var(--color-fg)` | Colour for monochrome SVGs drawn in `currentColor`, and for the letters on text chips. |
+| `--icon-cloud-focus-color` | `var(--color-focus)` | The ring round the focused icon. |

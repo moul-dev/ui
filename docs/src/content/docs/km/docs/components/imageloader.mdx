@@ -1,0 +1,129 @@
+---
+title: ការផ្ទុករូបភាព (Image Loader)
+description: រូបភាពដែលលេចឡើងតាមរយៈក្រឡាភីកសែលដែលស្កេនចុះក្រោម ដូចជាកំពុងត្រូវបានបង្កើត ជាមួយក្រឡាភ្លឺព្រិចៗខណៈពេលកំពុងផ្ទុក។
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import CanvasDemo from '@/components/demos/CanvasDemo.astro';
+import LandingKitDemo from '@/components/demos/LandingKitDemo.astro';
+
+`<moul-image-loader>` shows an image as if it were being generated. Until the image has loaded, a soft grid of pixels shimmers in its place. Then a scan line sweeps down, and behind it coarse blocks of the picture resolve into finer ones until the sharp image shows. It suits an image that takes a while to arrive, such as one an AI model is drawing, and it reads well as a reveal on any image.
+
+<ComponentPreview align="stretch">
+  <div style="display: grid; gap: 1rem; justify-items: start">
+    <moul-image-loader
+      id="imageloader-demo"
+      src="/demo/imageslider/mondulkiri-dawn.svg"
+      alt="Hills in layers of mist at dawn in Mondulkiri"
+      width="1600"
+      height="900"
+      style="width: 100%; border-radius: var(--radius-xl, 1rem)"
+    ></moul-image-loader>
+    <moul-button variant="secondary" data-replay="imageloader-demo">Generate again</moul-button>
+  </div>
+  <CanvasDemo />
+  <LandingKitDemo />
+</ComponentPreview>
+
+It lives in the canvas entry, which loads its file the first time the tag appears on the page:
+
+```js
+import '@moul-dev/web-component/canvas'
+// or register just this element, straight away:
+import '@moul-dev/web-component/canvas/image-loader'
+```
+
+```html
+<moul-image-loader
+  src="/mondulkiri.jpg"
+  alt="Hills in layers of mist at dawn in Mondulkiri"
+  width="1600"
+  height="900"
+></moul-image-loader>
+```
+
+## Waiting for an image
+
+The grid shows for as long as the image is loading. To keep it up while you wait for something else, such as a model that has not produced an image yet, set `is-loading`. Point `src` at the result whenever it is ready, and turn `is-loading` off: the reveal plays once both the image has loaded and `is-loading` is off.
+
+<ComponentPreview align="stretch">
+  <moul-image-loader
+    is-loading
+    alt="A generated picture, still on its way"
+    width="1600"
+    height="900"
+    style="width: 100%; border-radius: var(--radius-xl, 1rem)"
+  ></moul-image-loader>
+</ComponentPreview>
+
+```js
+const loader = document.querySelector('moul-image-loader')
+loader.isLoading = true
+const url = await generateImage(prompt)
+loader.src = url
+loader.isLoading = false
+loader.addEventListener('reveal', () => console.log('shown'), { once: true })
+```
+
+`replay()` plays the reveal again from the start and resolves when it is done. The reveal only moves while the element is on screen, so one further down the page waits until the reader gets there.
+
+## Look
+
+`duration` sets the length of the reveal in milliseconds, and `pixel-size` the size of the grid's pixels; the reveal starts from blocks twice that size. The grid's colours come from tokens, so it follows the theme; change them with `--image-loader-color`, `--image-loader-highlight` and `--image-loader-scan`.
+
+```css
+moul-image-loader {
+  --image-loader-highlight: var(--color-chart-3);
+  --image-loader-scan: var(--color-chart-3);
+}
+```
+
+Give `width` and `height`, the image's own size, so the element takes that shape before anything has loaded. You can also size it with CSS: an `aspect-ratio` or a `height` on the element wins over both.
+
+## Accessibility
+
+The element is one image to screen readers, named by `alt`, and is not focusable. It is marked busy (`aria-busy="true"`) until the image has revealed, so a screen reader waits for the picture rather than announcing a placeholder. An empty `alt=""` marks it as decorative and hides it; without `alt` it warns in the console.
+
+Drawing the image needs no special permission, so a cross-origin image works as it is.
+
+## Reduced motion
+
+When the reader asks their system for reduced motion, the loading grid is drawn once and does not shimmer, and the image appears at once, without the scan. The `reveal` event still fires.
+
+## Attributes & Properties
+
+| Name | Type | Default |
+| :--- | :--- | :--- |
+| `src` | `string` | `''` |
+| `alt` | `string` | none; `''` is decorative |
+| `width`, `height` | `number` | none: the image's own size, to reserve its shape |
+| `fit` | `'cover' \| 'contain' \| 'fill'` | `'cover'` |
+| `crossorigin` | `string` | none |
+| `is-loading` | `boolean` | `false` |
+| `duration` | `number` (ms) | `1800` |
+| `pixel-size` | `number` (px) | `12` |
+| `phase` | `'waiting' \| 'revealing' \| 'revealed'` | read-only |
+
+## Methods
+
+| Name | Description |
+| :--- | :--- |
+| `replay()` | Plays the reveal again; resolves when the image has revealed. |
+
+## Events
+
+| Name | Detail | When |
+| :--- | :--- | :--- |
+| `reveal` | `{ src }` | The image has finished revealing. |
+| `load` | none | The image has loaded. |
+| `error` | none | The image could not be loaded. |
+
+## CSS
+
+| Name | Description |
+| :--- | :--- |
+| `::part(base)` | The box that is the image to screen readers. |
+| `::part(canvas)` | The canvas the grid and the image are drawn on. |
+| `--image-loader-color` | Colour of the loading grid. Defaults to `--color-surface-secondary`. |
+| `--image-loader-highlight` | Colour the grid shimmers toward. Defaults to a mix of the accent and the grid colour. |
+| `--image-loader-scan` | Colour of the scan line. Defaults to `--color-accent`. |

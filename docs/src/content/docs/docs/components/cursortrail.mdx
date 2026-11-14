@@ -1,0 +1,125 @@
+---
+title: Cursor Trail
+description: Glyphs, a springy chain of dots or images that trail the pointer over an area and fall away.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import CanvasDemo from '@/components/demos/CanvasDemo.astro';
+
+`<moul-cursor-trail>` leaves a trail behind the pointer over an area: a hero, a card, a section about play. Glyphs drop from the pointer and flicker as they fall, a chain of dots follows it on springs, or the area's own pictures are stamped along the path and tumble away. Move a mouse over the panels below, or drag a finger across them.
+
+<ComponentPreview minHeight="18rem" align="stretch">
+  <moul-cursor-trail style="border-radius: var(--radius-xl, 0.75rem); border: 1px solid var(--color-border); background: var(--color-surface)">
+    <div style="display: grid; place-items: center; gap: 0.5rem; min-height: 16rem; padding: 2rem; text-align: center">
+      <strong style="font-size: 1.5rem">Build on the canvas entry</strong>
+      <span style="color: var(--color-muted)">Glyphs drop from the pointer and fall away.</span>
+      <moul-button variant="primary">Still clickable</moul-button>
+    </div>
+  </moul-cursor-trail>
+  <CanvasDemo />
+</ComponentPreview>
+
+It lives in the canvas entry, which loads its file the first time the tag appears on the page:
+
+```js
+import '@moul-dev/web-component/canvas'
+// or register just this element, straight away:
+import '@moul-dev/web-component/canvas/cursor-trail'
+```
+
+```html
+<moul-cursor-trail>
+  <section class="hero">…</section>
+</moul-cursor-trail>
+```
+
+The trail is drawn over the content on a canvas that every click passes through, so links, buttons and text selection underneath work as usual.
+
+## Glyphs
+
+`variant="glyphs"` is the default: characters drop from the pointer, flicker through other characters while they are young, then settle and fall away. `glyphs` is the set they are drawn from, the digits and the letters A to F unless you say otherwise; any characters work, Khmer digits included. `size` is the glyph size in pixels, 16 by default. The newest glyphs are drawn brighter, pushed toward the text colour.
+
+<ComponentPreview minHeight="14rem" align="stretch">
+  <moul-cursor-trail glyphs="០១២៣៤៥៦៧៨៩" size="20" color="var(--color-success)" style="border-radius: var(--radius-xl, 0.75rem); background: var(--color-surface-secondary)">
+    <div style="display: grid; place-items: center; min-height: 12rem; color: var(--color-muted)">Khmer digits, in the success colour</div>
+  </moul-cursor-trail>
+</ComponentPreview>
+
+```html
+<moul-cursor-trail glyphs="០១២៣៤៥៦៧៨៩" size="20" color="var(--color-success)">…</moul-cursor-trail>
+```
+
+## Dots
+
+`variant="dots"` follows the pointer with a chain of `count` dots (14 by default), each pulled toward the one ahead of it by a spring, so the chain stretches on a fast move and gathers when the pointer rests. `size` is the size of the leading dot; the rest shrink and fade toward the tail. The chain fades in when the pointer enters and out when it leaves.
+
+<ComponentPreview minHeight="14rem" align="stretch">
+  <moul-cursor-trail variant="dots" count="18" size="14" style="border-radius: var(--radius-xl, 0.75rem); background: var(--color-surface-secondary)">
+    <div style="display: grid; place-items: center; min-height: 12rem; color: var(--color-muted)">A springy chain of dots</div>
+  </moul-cursor-trail>
+</ComponentPreview>
+
+```html
+<moul-cursor-trail variant="dots" count="18" size="14">…</moul-cursor-trail>
+```
+
+## Images
+
+`variant="images"` stamps pictures along the path, one every so often, in turn. Each pops up under the pointer, holds for a moment, then tumbles away under gravity. Give the pictures as `<img slot="image">`; they are only drawn on the canvas, never shown in the page. `size` is the stamp height in pixels, 88 by default; each keeps its own aspect, within reason.
+
+<ComponentPreview minHeight="18rem" align="stretch">
+  <moul-cursor-trail variant="images" style="border-radius: var(--radius-xl, 0.75rem); background: var(--color-surface-secondary)">
+    <img slot="image" src="/demo/imageslider/kep-coast.svg" alt="" />
+    <img slot="image" src="/demo/imageslider/mondulkiri-dawn.svg" alt="" />
+    <img slot="image" src="/demo/imageslider/tonle-sap-dusk.svg" alt="" />
+    <img slot="image" src="/demo/imageslider/yeak-laom-lake.svg" alt="" />
+    <div style="display: grid; place-items: center; min-height: 16rem; color: var(--color-muted)">Places we went this year</div>
+  </moul-cursor-trail>
+</ComponentPreview>
+
+```html
+<moul-cursor-trail variant="images">
+  <img slot="image" src="/kep.jpg" alt="" />
+  <img slot="image" src="/mondulkiri.jpg" alt="" />
+  <h2>Places we went this year</h2>
+</moul-cursor-trail>
+```
+
+## Touch and cost
+
+A finger dragged across the area draws the trail too. The element lets the browser keep vertical swipes, so the page still scrolls under a thumb; set `touch-action: none` on it if the area should take every drag instead.
+
+Nothing is drawn while the pointer rests: the drawing loop starts on the first move and stops once the last glyph or picture has gone. Glyphs are drawn once per character and colour and then copied, and the trail keeps at most 160 glyphs or 24 pictures at a time.
+
+## Styling
+
+`color` (or `--cursor-trail-color`) sets the colour of the glyphs and dots, the accent colour by default. Any CSS colour or token works, and the trail follows light and dark themes. `::part(canvas)` is the canvas over the content.
+
+## Accessibility
+
+The element is never focusable and adds no role; its content is read and reached as if the element were not there. The canvas is hidden from screen readers, and so are the trail pictures, which are only drawn on it: give them `alt=""`. The trail follows only a pointer, so a keyboard user sees the area without it and misses nothing.
+
+Under `prefers-reduced-motion: reduce` no trail is drawn at all. Turning the setting on mid-trail clears it.
+
+## Attributes and properties
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `variant` | `variant` | `'glyphs' \| 'dots' \| 'images'` | `glyphs` |
+| `color` | `color` | `string` (CSS colour) | `var(--color-accent)` |
+| `glyphs` | `glyphs` | `string` | `0123456789ABCDEF` |
+| `size` | `size` | `number` (px) | `16`, `10` or `88` by variant |
+| `count` | `count` | `number` (dots, 2 to 40) | `14` |
+
+| Slot | Description |
+| :-- | :-- |
+| (default) | Content shown under the trail. |
+| `image` | Images stamped along the path with `variant="images"`. |
+
+| Part | Description |
+| :-- | :-- |
+| `canvas` | The canvas the trail is drawn on, over the content. |
+
+| CSS property | Description | Default |
+| :-- | :-- | :-- |
+| `--cursor-trail-color` | Colour of the glyphs and dots; the `color` attribute wins over it. | `var(--color-accent)` |

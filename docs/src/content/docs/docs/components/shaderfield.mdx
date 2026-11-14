@@ -1,0 +1,144 @@
+---
+title: Shader field
+description: A field of dithered dots or drifting clouds behind a hero or a section, drawn on the GPU with WebGL, with a CSS gradient where WebGL is unavailable.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import CanvasDemo from '@/components/demos/CanvasDemo.astro';
+
+`<moul-shader-field>` fills a hero or a section with a slow, textured field drawn by a fragment shader on the graphics card: dots quantised through an ordered dither, or soft clouds drifting across a sky. Every pixel is worked out on the GPU, so a full-width field costs the main thread almost nothing, and there is no image or video to download. Move a mouse over the field below.
+
+<ComponentPreview align="stretch" minHeight="22rem">
+  <moul-shader-field interactive style="display: grid; place-items: center; min-height: 20rem; padding: 3rem 1.5rem; border-radius: var(--radius-xl); text-align: center">
+    <div style="max-width: 30rem; padding: 1.5rem 1.75rem; border-radius: var(--radius-lg); background: color-mix(in oklch, var(--color-surface) 82%, transparent); backdrop-filter: blur(6px)">
+      <moul-typography variant="h2">Builds that explain themselves</moul-typography>
+      <moul-typography variant="body">Every step, every log line, every artefact, kept for ninety days.</moul-typography>
+    </div>
+  </moul-shader-field>
+  <CanvasDemo />
+</ComponentPreview>
+
+It lives in the canvas entry, which loads its file the first time the tag appears on the page:
+
+```js
+import '@moul-dev/web-component/canvas'
+// or register just this element, straight away:
+import '@moul-dev/web-component/canvas/shader-field'
+```
+
+```html
+<moul-shader-field interactive>
+  <h1>Builds that explain themselves</h1>
+  <p>Every step, every log line, every artefact, kept for ninety days.</p>
+</moul-shader-field>
+```
+
+The element is a plain block, like a `<section>`: size it, pad it and round its corners as you would the section it replaces. The field fills it, sits behind its content and is clipped to its corners; the content itself is never clipped, so a menu inside can still open past the edge.
+
+## Variants
+
+`variant="dither"` (the default) samples slowly drifting noise once per cell of a grid and quantises it into two to four colours through an 8 × 8 Bayer matrix, the ordered dither old printers and one-bit screens used for shading. With `shape="dot"` (the default) each inked cell is a round dot that grows where the field is strong, like a halftone; `shape="square"` draws plain square pixels. `pixel-size` sets the cell, in CSS pixels (`6` by default).
+
+<ComponentPreview align="stretch" minHeight="18rem">
+  <moul-shader-field shape="square" pixel-size="8" density="0.4" seed="2" colors="var(--color-background), var(--color-chart-4), var(--color-chart-2)" style="min-height: 16rem; border-radius: var(--radius-xl)"></moul-shader-field>
+</ComponentPreview>
+
+```html
+<moul-shader-field
+  shape="square"
+  pixel-size="8"
+  density="0.4"
+  colors="var(--color-background), var(--color-chart-4), var(--color-chart-2)"
+></moul-shader-field>
+```
+
+`variant="clouds"` draws soft fractal clouds over a sky. The noise that shapes the clouds is itself bent by a second, slower noise, which makes them billow and fold as they drift rather than slide past like a texture. The sky deepens toward the top and the clouds catch a lighter rim where they are thickest.
+
+<ComponentPreview align="stretch" minHeight="22rem">
+  <moul-shader-field variant="clouds" interactive style="display: grid; place-items: center; min-height: 20rem; padding: 3rem 1.5rem; border-radius: var(--radius-xl); text-align: center">
+    <div>
+      <moul-typography variant="h2">Your files, above it all</moul-typography>
+      <moul-typography variant="body">Synced across every device you sign in to.</moul-typography>
+    </div>
+  </moul-shader-field>
+</ComponentPreview>
+
+```html
+<moul-shader-field variant="clouds" interactive>
+  <h2>Your files, above it all</h2>
+</moul-shader-field>
+```
+
+## Colours, density and speed
+
+Without `colors`, the field takes its colours from the theme and follows a switch between light and dark at once: the shader keeps running and only its colours change. The dither runs from the surface through a soft accent to the accent; the clouds are surface-coloured over an accent-tinted sky.
+
+`colors` takes up to four CSS colours, tokens included, separated by commas (or as a JSON array, or as a property array in script). For the dither they are the background, then each ink from faint to strong; two colours give a one-bit look. For the clouds they are the sky, the cloud, the cloud's lit rim and the sky at the top. A colour with transparency, such as `transparent` for the dither's background, lets the page show through.
+
+`density` sets how much of the field is inked, or how overcast the sky is, from `0` to `1` (`0.5` by default). Lower it when text sits on the field. `scale` sets the size of the shapes: `2` makes them twice as large, `0.5` half. `speed` sets how fast they drift: `1` is calm, `0` holds the field still. `seed` picks which stretch of the endless field is shown: two fields with the same seed and size look alike, so give neighbours different seeds.
+
+When you mix your own colours with `color-mix()`, mix in `oklab` rather than `oklch`: a neutral colour such as the surface has no hue, and in `oklch` the mix can swing a blue through pink on its way to it.
+
+<ComponentPreview align="stretch" minHeight="18rem">
+  <moul-shader-field variant="clouds" density="0.8" scale="0.6" speed="2.5" seed="3" colors="var(--color-chart-4), color-mix(in oklab, var(--color-chart-3) 30%, var(--color-white)), var(--color-white), var(--color-chart-1)" style="min-height: 16rem; border-radius: var(--radius-xl)"></moul-shader-field>
+</ComponentPreview>
+
+```html
+<moul-shader-field
+  variant="clouds"
+  density="0.8"
+  scale="0.6"
+  speed="2.5"
+  colors="var(--color-chart-4), color-mix(in oklab, var(--color-chart-3) 30%, var(--color-white)), var(--color-white), var(--color-chart-1)"
+></moul-shader-field>
+```
+
+With `interactive`, the field answers the pointer: the dither swells into a denser patch that follows it, and the clouds part a little and brighten where it passes. A mouse or a pen drives it as it moves; a finger drives it while pressed, and scrolling the page still works.
+
+## Without WebGL
+
+Some browsers turn WebGL off (a locked-down work machine, an old graphics driver), and the graphics card can take a context back at any time. When there is no context, the shader fails to compile, or the context is lost, the element shows a still CSS gradient made from the same colours instead and sets the `is-fallback` attribute, so you can style that case:
+
+```css
+moul-shader-field[is-fallback] {
+  /* for example, a stronger panel behind the text */
+}
+```
+
+When a lost context comes back, the field picks up where it was and `is-fallback` is removed. Browsers allow only a handful of WebGL contexts per page, so the element gives its context back when it is removed from the page and asks for it again if it returns: a single-page app can mount and unmount fields freely.
+
+## Cost
+
+Each variant is one full-screen pass. Noise is read from a small texture, one read per octave: three octaves for the dither and five for the clouds. The canvas is drawn at no more than 1.5 device pixels per CSS pixel for dots, and at one per CSS pixel for square pixels (scaled up sharp) and for the soft clouds, which cuts the work on a 2x phone screen to between a half and a quarter. Like every canvas element, it pauses while it is off screen or the tab is hidden.
+
+## Attributes & Properties
+
+| Name | Type | Default |
+| :--- | :--- | :--- |
+| `variant` | `'dither' \| 'clouds'` | `'dither'` |
+| `colors` | `string[]`, or a comma-separated or JSON attribute | theme colours |
+| `density` | `number`, 0 to 1 | `0.5` |
+| `scale` (property `fieldScale`) | `number` | `1` |
+| `speed` | `number` | `1` |
+| `shape` | `'dot' \| 'square'` (dither) | `'dot'` |
+| `pixel-size` (property `pixelSize`) | `number`, CSS pixels, 2 to 64 | `6` |
+| `interactive` | `boolean` | `false` |
+| `seed` | `number` | `3` |
+| `is-fallback` | `boolean`, set by the element | |
+
+The read-only property `isWebgl` is `false` while the fallback shows.
+
+## Slots and parts
+
+| Name | Description |
+| :--- | :--- |
+| (default slot) | Content shown over the field. |
+| `canvas` part | The canvas the field is drawn on. |
+| `fallback` part | The CSS gradient shown without WebGL. |
+| `content` part | The wrapper around the slotted content. |
+
+## Accessibility and reduced motion
+
+The field is decoration: its canvas is hidden from screen readers and never takes focus, and the content inside reads and tabs as usual. A busy field can make text hard to read, so check the contrast of any text you put on it, lower `density`, or give the text a panel of its own, as in the first example.
+
+When the reader asks their system for reduced motion, the field is drawn once and holds still, and the pointer no longer moves it. A theme switch or a change of colour still redraws that still frame.

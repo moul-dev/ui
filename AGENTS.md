@@ -15,7 +15,7 @@ A multi-project monorepo workspace managed with **Bun**, featuring:
 ├── rdt/                 # Requirements, design, and task list for the Lit rebuild
 ├── scripts/             # dev, gen:component, sync:llms, size, bump, verify-no-react, setup-hooks
 ├── ui/                  # Component library package
-│   ├── package.json     # Library exports (`.`, `./effects` and `./style.css`)
+│   ├── package.json     # Library exports (`.`, `./effects`, `./canvas`, `./canvas/*` and `./style.css`)
 │   ├── vite.config.ts   # Vite library + CDN builds per entry, Vitest (happy-dom)
 │   ├── minify-css-templates.ts # Build-time minifier for Lit `css` templates
 │   ├── size-budget.json # Byte budget per published bundle (`bun run size`)
@@ -24,10 +24,13 @@ A multi-project monorepo workspace managed with **Bun**, featuring:
 │   └── src/
 │       ├── index.ts     # Main entry point
 │       ├── effects.ts   # Second entry point: motion controllers and effect elements
+│       ├── canvas.ts    # Third entry point: loads canvas and WebGL elements on demand
+│       ├── canvas/      # One entry per canvas element (`@moul-dev/web-component/canvas/<name>`)
 │       ├── element-checklist.test.ts # The five things every element ships with
 │       ├── styles/      # style.css token layer, reset, semantic tones
 │       ├── controllers/ # Press, LayoutIndicator, OverlayPresence, NumberSpring, FormInternals;
-│       │                # Pointer, Scroll, InView, Drag, TextSplit, CanvasLoop (effects entry)
+│       │                # Pointer, Scroll, InView, Drag, TextSplit, CanvasLoop (effects entry);
+│       │                # CanvasColor, CanvasPointer (canvas elements)
 │       ├── utils/       # defineElement, motion, focus trap, icons
 │       ├── sandbox.ts   # Sandbox sections (component order mirrored by the docs sidebar)
 │       └── components/  # <ComponentName>/<ComponentName>.ts, .styles.ts, index.ts
@@ -57,9 +60,10 @@ Run these commands from the root directory:
   ```bash
   bun run dev:docs
   ```
-- **Scaffold New Lit Component** (class, styles, test, index, docs MDX stub):
+- **Scaffold New Lit Component** (class, styles, test, index, docs MDX stub; `--effect` registers it in the effects entry, `--canvas` scaffolds a canvas element loaded on demand by the canvas entry):
   ```bash
   bun run gen:component <ComponentName>
+  bun run gen:component <ComponentName> --canvas
   ```
 - **Validate LLM Context Files** (fails if any custom element is undocumented):
   ```bash
@@ -106,6 +110,7 @@ Run these commands from the root directory:
 - **Native Platform APIs**: `ElementInternals` for form association, `<dialog>` for modals, the Popover API + CSS anchor positioning for overlays.
 - **Vite Library Mode**: Emits `dist/moul-ui.js` (prefixed with a `"use client";` banner for RSC frameworks) and `dist/src/index.d.ts`. Every runtime `dependency` stays a bare import so consumers load one copy of Lit; the build fails if anything from `node_modules` is inlined. A second pass (`vite build --mode cdn`) emits the self-contained, minified `dist/cdn/moul-ui.js` for `<script type="module">` use from a CDN. Every build pass minifies Lit `css` templates (`ui/minify-css-templates.ts`): comments are stripped and whitespace collapsed, so write style comments freely; they stay in the source and never ship. Vitest and the dev server see the styles as written.
 - **Effects Entry Point**: `@moul-dev/web-component/effects` (`src/effects.ts`) holds the motion controllers (pointer, scroll, in-view, drag, text splitting, canvas loop) and, from Phase 5 of `moul-ui-build-plan.md`, the effect elements. It is built in its own passes (`--mode effects`, `--mode cdn-effects`) so the main bundle stays byte-for-byte what it is without it; `ui/size-budget.json` holds every bundle to a byte budget, and `bun run size --write` raises one on purpose. Never export effects code from `src/index.ts`.
+- **Canvas Entry Point**: `@moul-dev/web-component/canvas` (`src/canvas.ts`) is the third entry, for the heaviest effects, drawn on a canvas or with WebGL (Phase 9 of `moul-ui-build-plan.md`). It registers no element: `CANVAS_ELEMENTS` maps each tag to a dynamic `import()`, and a `MutationObserver` loads an element's file the first time its tag appears (`watchCanvasElements(shadowRoot)` for shadow roots). Each element is also its own entry, `@moul-dev/web-component/canvas/<name>` (`src/canvas/<name>.ts`). `vite build --mode canvas` (and `cdn-canvas`) emit `dist/canvas.js`, `dist/canvas/<name>.js` and one shared chunk, `dist/chunks/canvas-shared.js`, for the controllers and helpers the elements share. Neither the main nor the effects entry may import a canvas element (`src/canvas.test.ts` walks their imports), and every canvas file has its own size budget. Canvases take no `var()` or `light-dark()`, so canvas elements resolve token colours through `CanvasColorController`, which also re-resolves them when the theme changes.
 - **Custom Elements Manifest**: `cem analyze` writes `dist/custom-elements.json`, the source of truth for `sync:llms`.
 - **No React**: `scripts/verify-no-react.ts` fails the build if React, React Aria, StyleX, or `@lit/react` appear in `ui/` or `docs/` manifests.
 
@@ -125,7 +130,7 @@ Every new element ships with five things, and `ui/src/element-checklist.test.ts`
 4. **Light and dark themes**: colours from tokens only, never literals outside `var()` fallbacks, masks and shadows.
 5. **A demo page and a test**: an English docs page that renders the element, its Khmer twin, and a test that names the tag.
 
-`bun run gen:component <Name>` (with `--effect` for the effects entry) scaffolds all five with `TODO` markers and `it.todo` tests where only the author can fill in the behaviour. The 79 elements that predate the checklist are listed in the test as exempt from the documentation checks until their JSDoc is written; the list only shrinks.
+`bun run gen:component <Name>` (with `--effect` for the effects entry, or `--canvas` for a canvas element) scaffolds all five with `TODO` markers and `it.todo` tests where only the author can fill in the behaviour. The 79 elements that predate the checklist are listed in the test as exempt from the documentation checks until their JSDoc is written; the list only shrinks.
 
 ## AI Coding Agent Guidelines for `@moul-dev/web-component`
 
@@ -134,7 +139,7 @@ Every new element ships with five things, and `ui/src/element-checklist.test.ts`
 
 When generating or editing code that uses `@moul-dev/web-component`:
 
-- **Imports**: `import '@moul-dev/web-component'` once registers every `<moul-*>` element. Import design tokens with `import '@moul-dev/web-component/style.css'`. Motion controllers and effect elements live in a second entry, `import '@moul-dev/web-component/effects'`; an app that never imports it ships none of that code. There is no `@moul-dev/web-component/react`, `@moul-dev/web-component/tokens`, or `@moul-dev/web-component/tokens.stylex` entry point.
+- **Imports**: `import '@moul-dev/web-component'` once registers every `<moul-*>` element. Import design tokens with `import '@moul-dev/web-component/style.css'`. Motion controllers and effect elements live in a second entry, `import '@moul-dev/web-component/effects'`; an app that never imports it ships none of that code. Canvas and WebGL elements (particles, starfield, glyph rain, warp, flow field, interactive grid, press particles, dissolve, cursor trail, zoom grid, image loader, image effect, icon cloud, globe, shader field) live in a third entry, `import '@moul-dev/web-component/canvas'`, which registers nothing up front and loads each element's own file the first time its tag appears in the page; inside a shadow root call `watchCanvasElements(shadowRoot)`, or import one element directly with `import '@moul-dev/web-component/canvas/<name>'` (the tag without `moul-`, e.g. `canvas/globe`). There is no `@moul-dev/web-component/react`, `@moul-dev/web-component/tokens`, or `@moul-dev/web-component/tokens.stylex` entry point.
 - **Markup, not JSX components**: Write native custom element tags (`<moul-button>`), never PascalCase components (`<Button>`). They work in plain HTML, Astro, Lit, Vue, Svelte, and React 19.
 - **Attributes are kebab-case**: Boolean state uses presence attributes such as `is-disabled`, `is-open`, `is-checked`, `is-required`. The matching JS property is camelCase (`el.isDisabled = true`).
 - **Rich data is set as properties**: Arrays, objects, and functions (`data`, `series`, `columns`, `items`, `logs`, `valueFormatter`) are assigned in JavaScript, not serialized into attributes.
@@ -158,6 +163,7 @@ When generating or editing code that uses `@moul-dev/web-component`:
 - **Backgrounds & Light**: `<moul-pattern>`, `<moul-perspective-grid>`, `<moul-ripple>`, `<moul-aurora>`, `<moul-noise>`, `<moul-light-rays>`, `<moul-spotlight>`, `<moul-border-beam>`, `<moul-shine-border>`, `<moul-beams>`, `<moul-backlight>`, `<moul-focus-group>`, `<moul-edge-blur>`, `<moul-orbit>`
 - **Navigation & Media**: `<moul-navbar>`, `<moul-banner>`, `<moul-navigation-menu>`, `<moul-navigation-menu-item>`, `<moul-navigation-menu-link>`, `<moul-dock>`, `<moul-dock-item>`, `<moul-dock-separator>`, `<moul-progress-nav>`, `<moul-carousel>`, `<moul-image-slider>`, `<moul-compare>`, `<moul-video-dialog>`, `<moul-world-map>`
 - **Pointer & Scroll**: `<moul-tilt>`, `<moul-magnetic>`, `<moul-glow-border>`, `<moul-hover-highlight>`, `<moul-direction-hover>`, `<moul-lens>`, `<moul-cursor>`, `<moul-mask-reveal>`, `<moul-pointer-parallax>`, `<moul-connector-beam>`, `<moul-scroll-text>`, `<moul-sticky-stack>`, `<moul-scroll-parallax>`, `<moul-sticky-scroll>`, `<moul-sticky-scroll-item>`, `<moul-tracing-beam>`, `<moul-scroll-frame>`, `<moul-page-transition>`
+- **Canvas & WebGL**: `<moul-particles>`, `<moul-starfield>`, `<moul-warp>`, `<moul-glyph-rain>`, `<moul-flow-field>`, `<moul-shader-field>`, `<moul-interactive-grid>`, `<moul-press-particles>`, `<moul-cursor-trail>`, `<moul-dissolve>`, `<moul-image-loader>`, `<moul-image-effect>`, `<moul-zoom-grid>`, `<moul-icon-cloud>`, `<moul-globe>`
 - **Composite Blocks**: `<moul-logs-viewer>`, `<moul-logs>`, `<moul-sidebar>`, `<moul-sidebar-aside>`, `<moul-sidebar-header>`, `<moul-sidebar-brand>`, `<moul-sidebar-group>`, `<moul-sidebar-item>`, `<moul-sidebar-divider>`, `<moul-sidebar-footer>`, `<moul-sidebar-user>`, `<moul-sidebar-main>`
 <!-- sync:llms:end -->
 

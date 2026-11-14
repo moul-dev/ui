@@ -51,6 +51,14 @@ export default defineConfig({
           find: /^@moul-dev\/web-component\/effects$/,
           replacement: uiSrc('effects.ts'),
         },
+        {
+          find: /^@moul-dev\/web-component\/canvas$/,
+          replacement: uiSrc('canvas.ts'),
+        },
+        {
+          find: /^@moul-dev\/web-component\/canvas\/([a-z0-9-]+)$/,
+          replacement: uiSrc('canvas/$1.ts'),
+        },
         { find: /^@moul-dev\/web-component$/, replacement: uiSrc('index.ts') },
       ],
     },

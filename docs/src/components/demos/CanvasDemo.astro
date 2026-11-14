@@ -1,0 +1,12 @@
+---
+/**
+ * Canvas and WebGL demo wiring. Loads the canvas entry, which registers no
+ * element itself: it watches the page and loads each canvas element's own
+ * file the first time its tag appears, so a docs page downloads only the
+ * elements it shows. Include it once per page.
+ */
+---
+
+<script>
+  import '@moul-dev/web-component/canvas'
+</script>

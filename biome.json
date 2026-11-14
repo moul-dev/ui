@@ -59,6 +59,7 @@
       },
       "correctness": {
         "useExhaustiveDependencies": "warn",
+        "useHookAtTopLevel": "off",
         "noUnusedImports": "warn",
         "noUnusedVariables": "warn"
       }

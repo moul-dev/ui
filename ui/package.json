@@ -11,6 +11,8 @@
   "sideEffects": [
     "./dist/moul-ui.js",
     "./dist/effects.js",
+    "./dist/canvas.js",
+    "./dist/canvas/*.js",
     "./dist/assets/style.css"
   ],
   "files": [
@@ -51,6 +53,16 @@
       "import": "./dist/effects.js",
       "default": "./dist/effects.js"
     },
+    "./canvas": {
+      "types": "./dist/src/canvas.d.ts",
+      "import": "./dist/canvas.js",
+      "default": "./dist/canvas.js"
+    },
+    "./canvas/*": {
+      "types": "./dist/src/canvas/*.d.ts",
+      "import": "./dist/canvas/*.js",
+      "default": "./dist/canvas/*.js"
+    },
     "./style.css": {
       "style": "./dist/assets/style.css",
       "default": "./dist/assets/style.css"
@@ -58,7 +70,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "bun ../scripts/verify-no-react.ts ui && tsc -b && vite build && vite build --mode effects && vite build --mode cdn && vite build --mode cdn-effects && cem analyze --config custom-elements-manifest.config.mjs && bun ../scripts/check-size.ts",
+    "build": "bun ../scripts/verify-no-react.ts ui && tsc -b && vite build && vite build --mode effects && vite build --mode canvas && vite build --mode cdn && vite build --mode cdn-effects && vite build --mode cdn-canvas && cem analyze --config custom-elements-manifest.config.mjs && bun ../scripts/check-size.ts",
     "build:watch": "vite build --watch",
     "lint": "biome check",
     "format": "biome format --write",

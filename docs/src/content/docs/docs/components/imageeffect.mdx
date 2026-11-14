@@ -1,0 +1,150 @@
+---
+title: Image Effect
+description: One image drawn pixelated, dithered, as ASCII, with its colours split, on a wave or as particles, optionally following the pointer.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import CanvasDemo from '@/components/demos/CanvasDemo.astro';
+
+`<moul-image-effect>` draws one image with an effect: in blocks, in dots of two colours, as characters, with its colour channels pulled apart, swaying on a wave, or as a field of particles. With `interactive` the pointer takes part. Move a mouse over the picture below: the blocks resolve into the sharp image around it.
+
+<ComponentPreview align="stretch">
+  <moul-image-effect
+    src="/demo/imageeffect/temple-sunrise.svg"
+    alt="A temple's towers against the sunrise, reflected in a pool"
+    width="1600"
+    height="1000"
+    effect="pixelate"
+    interactive
+    style="border-radius: var(--radius-xl, 1rem)"
+  ></moul-image-effect>
+  <CanvasDemo />
+</ComponentPreview>
+
+It lives in the canvas entry, which loads its file the first time the tag appears on the page:
+
+```js
+import '@moul-dev/web-component/canvas'
+// or register just this element, straight away:
+import '@moul-dev/web-component/canvas/image-effect'
+```
+
+```html
+<moul-image-effect
+  src="/temple.jpg"
+  alt="A temple's towers against the sunrise, reflected in a pool"
+  width="1600"
+  height="1000"
+  effect="dither"
+  interactive
+></moul-image-effect>
+```
+
+`intensity`, from 0 to 1, sets how far the picture moves from the photograph: bigger blocks, coarser dots, larger characters, a wider colour split, a taller wave, sparser particles. It defaults to 0.5.
+
+## Pixelate
+
+The image in square blocks, 18 pixels at the default intensity. With `interactive`, rings of finer and finer blocks open around the pointer, sharp at the centre, and close again when it leaves.
+
+<ComponentPreview align="stretch">
+  <moul-image-effect src="/demo/imageslider/tonle-sap-dusk.svg" alt="Stilt houses on the Tonle Sap at dusk" width="1600" height="900" effect="pixelate" intensity="0.4" interactive style="border-radius: var(--radius-xl, 1rem)"></moul-image-effect>
+</ComponentPreview>
+
+## Dither
+
+The image in dots of two colours, by ordered (Bayer) dithering, like an old screen or a newspaper. The ink is `color` and the paper `background`, the text and surface colours by default, so it follows the theme: on dark paper the ink is the light colour and marks the bright parts, so the picture still reads the right way round. With `interactive` the picture brightens around the pointer, as if a light were shone there.
+
+<ComponentPreview align="stretch">
+  <moul-image-effect src="/demo/imageeffect/temple-sunrise.svg" alt="A temple's towers against the sunrise" width="1600" height="1000" effect="dither" interactive style="border-radius: var(--radius-xl, 1rem)"></moul-image-effect>
+</ComponentPreview>
+
+```html
+<moul-image-effect effect="dither" color="var(--color-accent)" background="var(--color-surface)" …></moul-image-effect>
+```
+
+## ASCII
+
+The image as characters, from a space for the lightest parts to `@` for the darkest, in the monospace font (`--font-family-mono`). It takes the same `color` and `background` as dither. With `interactive` the picture brightens around the pointer here too.
+
+<ComponentPreview align="stretch">
+  <moul-image-effect src="/demo/imageeffect/temple-sunrise.svg" alt="A temple's towers against the sunrise" width="1600" height="1000" effect="ascii" interactive style="border-radius: var(--radius-xl, 1rem)"></moul-image-effect>
+</ComponentPreview>
+
+## Chromatic
+
+The red, green and blue channels drawn apart, as through a cheap lens, slowly circling. With `interactive` the split follows the pointer instead: none at the centre, widest toward the edges.
+
+<ComponentPreview align="stretch">
+  <moul-image-effect src="/demo/imageeffect/temple-sunrise.svg" alt="A temple's towers against the sunrise" width="1600" height="1000" effect="chromatic" style="border-radius: var(--radius-xl, 1rem)"></moul-image-effect>
+</ComponentPreview>
+
+## Wave
+
+The rows of the image pushed sideways by a wave that travels down it, like a reflection in water. With `interactive` the wave calms and a ripple spreads from the pointer's height.
+
+<ComponentPreview align="stretch">
+  <moul-image-effect src="/demo/imageeffect/temple-sunrise.svg" alt="A temple's towers against the sunrise" width="1600" height="1000" effect="wave" intensity="0.35" style="border-radius: var(--radius-xl, 1rem)"></moul-image-effect>
+</ComponentPreview>
+
+## Particles
+
+The image as a field of dots in its own colours, shimmering in place. With `interactive` the pointer pushes them aside and they spring back home when it moves on.
+
+<ComponentPreview align="stretch">
+  <moul-image-effect src="/demo/imageeffect/temple-sunrise.svg" alt="A temple's towers against the sunrise" width="1600" height="1000" effect="particles" intensity="0.3" interactive style="border-radius: var(--radius-xl, 1rem)"></moul-image-effect>
+</ComponentPreview>
+
+## Size
+
+Give `width` and `height`, the image's own size, as you would on an `<img>`. The element takes that shape before the image has loaded, so nothing below it moves when it arrives. Without them it takes the image's shape once it loads, starting at 4 by 3. An `aspect-ratio` or a `height` on the element wins over both, and `fit` says how the image fills a box of another shape. Round its corners with `border-radius` on the element.
+
+## Images from another site
+
+Pixelate, chromatic and wave only draw the image, which works for any image. Dither, ASCII and particles read its pixels, and a browser allows that only for an image from the same site, or one from another site that is served with CORS headers (`Access-Control-Allow-Origin`) and loaded with `crossorigin="anonymous"`. When the browser refuses, the element shows the plain image instead and says why in the console.
+
+```html
+<moul-image-effect src="https://images.example.com/temple.jpg" crossorigin="anonymous" effect="ascii" …></moul-image-effect>
+```
+
+## Accessibility
+
+The element is one image to screen readers, named by `alt`, and is not focusable: the effect is something to look at, with nothing to operate. Describe the picture in `alt`; an empty `alt=""` marks it as decorative and hides it. Without `alt` the element warns in the console.
+
+## Reduced motion
+
+When the reader asks their system for reduced motion, each effect is drawn once as a still picture: the colour split stops circling, the wave stops travelling, the particles sit at home, and the pointer no longer changes the picture.
+
+## Performance
+
+Each effect does its expensive work once: the image is drawn to its size, its pixels read and the blocks, dots, characters or particles prepared when the image, the size, the intensity or the theme changes. Pixelate, dither and ASCII without `interactive` then draw a single frame and stop. The moving effects pause while the element is off screen or the tab is hidden.
+
+## Attributes & Properties
+
+| Name | Type | Default |
+| :--- | :--- | :--- |
+| `src` | `string` | `''` |
+| `alt` | `string` | none; `''` is decorative |
+| `effect` | `'pixelate' \| 'dither' \| 'ascii' \| 'chromatic' \| 'wave' \| 'particles'` | `'pixelate'` |
+| `intensity` | `number` (0 to 1) | `0.5` |
+| `interactive` | `boolean` | `false` |
+| `color` | `string` (CSS colour) | `var(--color-foreground)` |
+| `background` | `string` (CSS colour) | `var(--color-surface)` |
+| `width`, `height` | `number` | none: the image's own size, to reserve its shape |
+| `fit` | `'cover' \| 'contain' \| 'fill'` | `'cover'` |
+| `crossorigin` | `string` | none |
+
+## Events
+
+| Name | When |
+| :--- | :--- |
+| `load` | The image has loaded and is drawn. |
+| `error` | The image could not be loaded. |
+
+## CSS
+
+| Name | Description |
+| :--- | :--- |
+| `::part(base)` | The box that is the image to screen readers. |
+| `::part(canvas)` | The canvas the effect is drawn on. |
+| `--image-effect-color` | Ink of dither and ASCII, when `color` is not set. Defaults to `--color-foreground`. |
+| `--image-effect-background` | Paper of dither and ASCII, when `background` is not set. Defaults to `--color-surface`. |
