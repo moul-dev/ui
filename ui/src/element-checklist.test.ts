@@ -44,11 +44,11 @@ const THIS_FILE = resolve(__filename)
 const DOCUMENTED_BEFORE_CHECKLIST = new Set<string>()
 
 /**
- * Elements that still lack a docs demo. `moul-chart-tooltip` is shown from a
- * chart's `point-hover` listener, and no chart page wires that up yet. Remove
- * it once one does.
+ * Elements that still lack a docs demo. It is empty now that the line and
+ * area chart pages wire `<moul-chart-tooltip>` to `point-hover`; the list only
+ * shrinks.
  */
-const WITHOUT_DEMO = new Set(['moul-chart-tooltip'])
+const WITHOUT_DEMO = new Set<string>()
 
 const KEYBOARD_LABEL = 'Keyboard and screen readers:'
 const REDUCED_MOTION_LABEL = 'Reduced motion:'

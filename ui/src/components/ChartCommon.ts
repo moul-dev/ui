@@ -34,6 +34,14 @@ export interface FunnelStage {
   [key: string]: unknown
 }
 
+/** One series' value at a hovered or scrubbed column; fits `<moul-chart-tooltip>`'s `payload`. */
+export interface PointHoverEntry {
+  key: string
+  name: string
+  value: unknown
+  color: string
+}
+
 export interface PointHoverDetail {
   point?: Record<string, unknown>
   series?: ChartSeries | string
@@ -41,6 +49,10 @@ export interface PointHoverDetail {
   label: string
   x: number
   y: number
+  /** The column's index in `data`, on charts that scrub. */
+  index?: number
+  /** Every series' value at that column, on charts that scrub. */
+  entries?: PointHoverEntry[]
 }
 
 export const CHART_COLORS = [
@@ -81,4 +93,18 @@ export function placeHoverCard(
   const above = anchor.top - box.top - gap - height
   const y = above >= 0 ? above : anchor.bottom - box.top + gap
   card.style.translate = `${Math.round(x)}px ${Math.round(y)}px`
+}
+
+/**
+ * How many categories apart to label the x axis so labels stay at least
+ * `minGap` px apart across `span` px: 1 labels every category. Count from the
+ * last category, so the latest one always keeps its label.
+ */
+export function axisLabelStride(
+  count: number,
+  span: number,
+  minGap = 56,
+): number {
+  const slots = Math.max(2, Math.floor(span / minGap))
+  return Math.max(1, Math.ceil(count / slots))
 }

@@ -1,2 +1,2 @@
-export type { LineChartProps } from './LineChart'
+export type { LineChartPauseChangeDetail, LineChartProps } from './LineChart'
 export { MoulLineChart, MoulLineChart as LineChart } from './LineChart'

@@ -1,0 +1,153 @@
+---
+title: Code Block
+description: Highlighted code with a copy button, line highlights and tabs for variants of a snippet.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+`<moul-code-block>` shows read-only source code, highlighted, with a copy button. Tabs hold variants of the same snippet, such as one install command per package manager, and blocks that share a `sync-key` switch together.
+
+<ComponentPreview align="stretch">
+<moul-code-block language="ts" filename="src/main.ts" highlight-lines="4" show-line-numbers code={`import '@moul-dev/web-component'
+import '@moul-dev/web-component/style.css'
+
+const feed = document.querySelector('moul-activity-feed')
+feed.push({ id: 1, title: 'Deploy finished', tone: 'success' })`}></moul-code-block>
+</ComponentPreview>
+
+```html
+<moul-code-block language="ts" filename="src/main.ts" highlight-lines="4" show-line-numbers>
+  import '@moul-dev/web-component'
+  const feed = document.querySelector('moul-activity-feed')
+</moul-code-block>
+```
+
+## Giving it code
+
+There are three ways, and the first one present wins:
+
+1. `tabs`, an array of `{ label, code, language?, filename?, highlightLines? }`, one tab each.
+2. `code`, a string, as a property or an attribute.
+3. The markup. Write the code as the element's text, or put each tab in a `<script type="text/plain">` or `<template>` child, named by `data-label` and described by `data-language`, `data-filename` and `data-highlight-lines`.
+
+Code from the markup is dedented, so it can sit indented with the rest of the page. A `<script type="text/plain">` keeps its text exactly as written, which suits HTML samples. A `<template>` is parsed as HTML first: text comes back unescaped, and an empty attribute value prints as a bare attribute (`is-open=""` shows as `is-open`), which is how Moul's boolean attributes are written.
+
+```html
+<moul-code-block language="html">
+  <script type="text/plain">
+    <moul-modal is-open>Saved</moul-modal>
+  </script>
+</moul-code-block>
+```
+
+## Tabs
+
+<ComponentPreview align="stretch" stack>
+<moul-code-block sync-key="pm" language="bash" data-props='{"tabs": [{"label": "bun", "code": "bun add @moul-dev/web-component"}, {"label": "npm", "code": "npm install @moul-dev/web-component"}, {"label": "pnpm", "code": "pnpm add @moul-dev/web-component"}]}'></moul-code-block>
+<moul-code-block sync-key="pm" language="bash" data-props='{"tabs": [{"label": "bun", "code": "bun run dev"}, {"label": "npm", "code": "npm run dev"}, {"label": "pnpm", "code": "pnpm dev"}]}'></moul-code-block>
+</ComponentPreview>
+
+Pick a package manager in one block above and the other follows: blocks with the same `sync-key` select the tab with the same label. Arrow keys move between tabs.
+
+```html
+<moul-code-block sync-key="pm" language="bash">
+  <script type="text/plain" data-label="bun">bun add @moul-dev/web-component</script>
+  <script type="text/plain" data-label="npm">npm install @moul-dev/web-component</script>
+</moul-code-block>
+```
+
+## Languages
+
+The built-in highlighter colours TypeScript, JavaScript, JSON, HTML, CSS, shell, Python, Rust, SQL, YAML and diffs, under their usual names and file extensions (`ts`, `tsx`, `jsonc`, `xml`, `scss`, `bash`, `py`, `rs`, `yml`, `patch` and so on). Anything else shows as plain text. It colours what readers scan for and does not parse, so an unusual construct is left plain rather than coloured wrong.
+
+<ComponentPreview align="stretch" stack>
+<moul-code-block language="rust" filename="engine/src/lib.rs" code={[
+  "/// Opens the store, creating it on first use.",
+  "pub fn open(path: &str) -> Result<Store, Error> {",
+  "    let store = Store::new(path)?;",
+  "    println!(\"opened {} records\", store.len());",
+  "    Ok(store)",
+  "}",
+].join('\n')}></moul-code-block>
+<moul-code-block language="sql" code={`select id, title, updated_at
+from records
+where collection = 'posts' and updated_at > now() - interval '1 day'
+order by updated_at desc
+limit 20;`}></moul-code-block>
+</ComponentPreview>
+
+## Long code
+
+Long lines scroll sideways; `is-wrapped` wraps them instead. `--code-block-max-height` caps the height, and the code scrolls inside it. A block that scrolls takes focus, so it can be scrolled from the keyboard.
+
+<ComponentPreview align="stretch">
+<moul-code-block language="json" is-wrapped style="--code-block-max-height: 12rem" code={[
+  "{",
+  "  \"id\": \"rec_01HZX4\",",
+  "  \"collection\": \"posts\",",
+  "  \"title\": \"A rather long title that wraps onto a second line instead of scrolling sideways\",",
+  "  \"tags\": [\"engine\", \"release\", \"notes\"],",
+  "  \"published\": true,",
+  "  \"views\": 12840,",
+  "  \"author\": { \"id\": \"usr_7\", \"name\": \"Dara\" }",
+  "}",
+].join('\n')}></moul-code-block>
+</ComponentPreview>
+
+## Colours
+
+Code colours come from the `--color-code-*` tokens, which follow light and dark mode. Set them on a block to give it a palette of its own, for example a dark block on a light page:
+
+```css
+moul-code-block.dark {
+  color-scheme: dark;
+}
+```
+
+Because every token is a `light-dark()` pair, `color-scheme: dark` on the element is enough.
+
+## Accessibility
+
+- The copy button is a native button named by `copy-label` ("Copy code"). After a copy, a polite live region says `copied-label` ("Copied"), or `copy-failed-label` if the browser refused the clipboard.
+- Without tabs, the code is a `role="group"` named by `label`, the filename or the language ("TypeScript code"). It takes focus only when it has to scroll.
+- With tabs, the tab row is a `tablist` with one tab stop: `Arrow Left` and `Arrow Right` move between tabs and select them, `Home` and `End` jump to the ends. The code is their `tabpanel` and always takes focus.
+- Line numbers are drawn with CSS counters, so they are never copied or read out. Highlighted lines are only shown; mention them in the text around the block if they matter.
+- Code is rendered as text, never as HTML, so a snippet cannot inject markup.
+- Under reduced motion, tabs switch at once instead of fading and easing the height, and the copy icon swaps without scaling.
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `code` | `code` | `string` | `''` |
+| `language` | `language` | `string` | `''` |
+| `filename` | `filename` | `string` | `''` |
+| `highlight-lines` | `highlightLines` | `string`, such as `"2, 4-6"` | `''` |
+| `show-line-numbers` | `showLineNumbers` | `boolean` | `false` |
+| `is-wrapped` | `isWrapped` | `boolean` | `false` |
+| `hide-copy` | `hideCopy` | `boolean` | `false` |
+| | `tabs` | `CodeBlockTab[]` | `[]` |
+| `selected-index` | `selectedIndex` | `number` | `0` |
+| `sync-key` | `syncKey` | `string` | `''` |
+| `label` | `label` | `string` | `''` |
+| `copy-label` | `copyLabel` | `string` | `'Copy code'` |
+| `copied-label` | `copiedLabel` | `string` | `'Copied'` |
+| `copy-failed-label` | `copyFailedLabel` | `string` | `'Could not copy'` |
+| | `currentCode` (read-only) | `string` | |
+
+| Method | Description |
+| :-- | :-- |
+| `copy()` | Copies the code shown now. Returns a `Promise<boolean>`. |
+
+| Event | Detail |
+| :-- | :-- |
+| `codecopy` | `{ code, language, isCopied }` |
+| `tabchange` | `{ index, label }`, when the user picks a tab |
+
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | The code as text, or one `<script type="text/plain">` or `<template>` per tab. Not rendered as is. |
+
+**CSS parts:** `base`, `header`, `filename`, `tabs`, `tab`, `indicator`, `copy-button`, `scroller`, `code`
+
+**CSS custom properties:** `--code-block-max-height` (default `none`), `--code-block-font-size` (default `var(--font-size-sm)`), and the `--color-code-*` tokens.

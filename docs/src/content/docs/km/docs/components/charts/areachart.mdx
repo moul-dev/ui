@@ -4,68 +4,104 @@ description: ឯកសារណែនាំសម្រាប់សមាសភ�
 ---
 
 import ComponentPreview from '@/components/ComponentPreview.astro';
+import ChartsDemo from '@/components/demos/ChartsDemo.astro';
 
-`<moul-area-chart>` plots `series` keys from `data` against `x-key`. Hover a point for the tooltip.
+`<moul-area-chart>` plots `series` keys from `data` against `x-key`, as filled areas under their lines. Drag or hover across the plot to read it: a guide snaps to the nearest month, a dot marks each series, and the tooltip lists every value. Click the plot and use the arrow keys to do the same from the keyboard.
 
 <ComponentPreview align="stretch">
-<moul-area-chart x-key="month" height="260" show-grid data-props='{"data":[{"month":"Jan","desktop":186,"mobile":80,"revenue":4200},{"month":"Feb","desktop":305,"mobile":200,"revenue":5100},{"month":"Mar","desktop":237,"mobile":120,"revenue":4800},{"month":"Apr","desktop":273,"mobile":190,"revenue":6100},{"month":"May","desktop":209,"mobile":130,"revenue":5600},{"month":"Jun","desktop":314,"mobile":240,"revenue":7300}],"series":[{"key":"desktop","name":"Desktop"},{"key":"mobile","name":"Mobile"}]}'></moul-area-chart>
+<moul-area-chart x-key="month" height="260" show-grid label="Visits by month" data-chart-tooltip="area-tip" data-props='{"data":[{"month":"Jan","desktop":186,"mobile":80},{"month":"Feb","desktop":305,"mobile":200},{"month":"Mar","desktop":237,"mobile":120},{"month":"Apr","desktop":273,"mobile":190},{"month":"May","desktop":209,"mobile":130},{"month":"Jun","desktop":314,"mobile":240}],"series":[{"key":"desktop","name":"Desktop"},{"key":"mobile","name":"Mobile"}]}'></moul-area-chart>
+<moul-chart-tooltip id="area-tip"></moul-chart-tooltip>
+<ChartsDemo />
 </ComponentPreview>
 
 ```html
-<moul-area-chart x-key="month" height="260" show-grid></moul-area-chart>
+<moul-area-chart x-key="month" height="260" label="Visits by month"></moul-area-chart>
+<moul-chart-tooltip id="area-tip"></moul-chart-tooltip>
 ```
 
 ```js
-const areaChart = document.querySelector('moul-area-chart')
-areaChart.data = [
-  {
-    "month": "Jan",
-    "desktop": 186,
-    "mobile": 80,
-    "revenue": 4200
-  },
-  {
-    "month": "Feb",
-    "desktop": 305,
-    "mobile": 200,
-    "revenue": 5100
-  },
-  {
-    "month": "Mar",
-    "desktop": 237,
-    "mobile": 120,
-    "revenue": 4800
-  },
-  {
-    "month": "Apr",
-    "desktop": 273,
-    "mobile": 190,
-    "revenue": 6100
-  },
-  {
-    "month": "May",
-    "desktop": 209,
-    "mobile": 130,
-    "revenue": 5600
-  },
-  {
-    "month": "Jun",
-    "desktop": 314,
-    "mobile": 240,
-    "revenue": 7300
-  }
+const chart = document.querySelector('moul-area-chart')
+const tip = document.querySelector('#area-tip')
+
+chart.data = [
+  { month: 'Jan', desktop: 186, mobile: 80 },
+  { month: 'Feb', desktop: 305, mobile: 200 },
+  { month: 'Mar', desktop: 237, mobile: 120 },
+  { month: 'Apr', desktop: 273, mobile: 190 },
+  { month: 'May', desktop: 209, mobile: 130 },
+  { month: 'Jun', desktop: 314, mobile: 240 },
 ]
-areaChart.series = [
-  {
-    "key": "desktop",
-    "name": "Desktop"
-  },
-  {
-    "key": "mobile",
-    "name": "Mobile"
-  }
+chart.series = [
+  { key: 'desktop', name: 'Desktop' },
+  { key: 'mobile', name: 'Mobile' },
 ]
+
+// The tooltip lives in the top layer, so it takes page coordinates
+chart.addEventListener('point-hover', (event) => {
+  const { label, entries, x, y } = event.detail
+  const box = chart.getBoundingClientRect()
+  tip.show({
+    label,
+    payload: entries,
+    x: box.left + scrollX + x,
+    y: box.top + scrollY + y,
+  })
+})
+chart.addEventListener('point-leave', () => tip.hide())
 ```
+
+## Scrubbing
+
+Scrubbing is on by default. The pointer snaps to the nearest category, so the guide never sits between two points. On a touch screen a horizontal drag scrubs and a vertical one still scrolls the page.
+
+Each move to a new category, or to a new series within it, fires `point-hover`. Its `detail` keeps the shape it always had, `{ point, series, value, label, x, y }` for the series nearest the pointer, and adds two fields:
+
+- `index`, the category's position in `data`;
+- `entries`, every series' value there as `{ key, name, value, color }`, which `<moul-chart-tooltip>` takes as its `payload`.
+
+`point-leave` fires when the pointer leaves the plot or the scrub stops. Set `scrub="false"` for a chart that only reacts to its dots.
+
+## Switching ranges
+
+When `data` changes, the areas morph from the old shape to the new one over 400ms instead of jumping. The old curve is read at the new categories, so a switch from 7 to 90 days works even though the number of points changes. Long ranges label every few categories, counted back from the latest one.
+
+<ComponentPreview align="stretch" stack>
+<moul-toggle-button-group selected-key="7" aria-label="Range" data-chart-range="range-chart">
+<moul-toggle-button value="7"><span>7 days</span></moul-toggle-button>
+<moul-toggle-button value="30"><span>30 days</span></moul-toggle-button>
+<moul-toggle-button value="90"><span>90 days</span></moul-toggle-button>
+</moul-toggle-button-group>
+<moul-area-chart id="range-chart" x-key="day" height="240" label="Visits" data-chart-tooltip="range-tip" data-props='{"series":[{"key":"web","name":"Web"},{"key":"mobile","name":"Mobile"}]}'></moul-area-chart>
+<moul-chart-tooltip id="range-tip"></moul-chart-tooltip>
+</ComponentPreview>
+
+```html
+<moul-toggle-button-group selected-key="7" aria-label="Range">
+  <moul-toggle-button value="7">7 days</moul-toggle-button>
+  <moul-toggle-button value="30">30 days</moul-toggle-button>
+  <moul-toggle-button value="90">90 days</moul-toggle-button>
+</moul-toggle-button-group>
+<moul-area-chart id="visits" x-key="day" label="Visits"></moul-area-chart>
+```
+
+```js
+const range = document.querySelector('moul-toggle-button-group')
+const chart = document.querySelector('#visits')
+
+range.addEventListener('selectionchange', async (event) => {
+  chart.data = await loadVisits(Number(event.detail.selectedKey))
+})
+```
+
+A live chart that sets `data` every few seconds morphs on each update too, and a scrub in progress keeps its category and reports the new values.
+
+## Accessibility
+
+- With scrubbing on, the plot is one tab stop exposed as a `role="slider"` named by `label` ("Area chart" when unset). Keyboard focus shows the latest category.
+- `Arrow Left` or `Arrow Down` and `Arrow Right` or `Arrow Up` step through the categories, `Home` and `End` jump to the first and last, and `Escape` or leaving focus hides the guide. Each step fires `point-hover`, so a tooltip follows the keyboard as it follows the pointer.
+- `aria-valuetext` reads the category and every value through `valueFormatter`, for example "Mar: Desktop 237, Mobile 120". The SVG is hidden from screen readers, since the slider carries its values.
+- With `scrub="false"` nothing takes focus and the values are only shown on hover, so give the page a table or text alternative.
+- Under reduced motion the areas appear without fading in, a data change jumps to the new shape, and the guide and dots move without gliding.
 
 ## API reference
 
@@ -75,14 +111,19 @@ areaChart.series = [
 | `height` | `height` | `number` | `300` |
 | `stacked` | `stacked` | `boolean` | `false` |
 | `show-grid` | `showGrid` | `boolean` | `true` |
+| `scrub` | `scrub` | `boolean` (`scrub="false"` turns it off) | `true` |
+| `label` | `label` | `string` | `''` (read as "Area chart") |
+| | `data` | `Record<string, unknown>[]` | `[]` |
+| | `series` | `ChartSeries[]` | `[]` (every numeric field) |
+| | `valueFormatter` | `(value) => string` | |
 
-| Event | Type |
+| Event | Detail |
 | :-- | :-- |
-| `point-hover` | `CustomEvent` |
-| `point-leave` | `CustomEvent` |
+| `point-hover` | `{ point, series, value, label, x, y, index, entries }`; `index` and `entries` come with scrubbing |
+| `point-leave` | none |
 
 | Slot | Description |
 | :-- | :-- |
-| `empty` | — |
+| `empty` | Shown instead of the chart when there is no data. |
 
-**CSS parts:** `empty`, `container`, `svg`, `grid`, `x-axis`, `series`, `area`, `line`, `stroke`, `points`, `point`
+**CSS parts:** `empty`, `container`, `svg`, `grid`, `x-axis`, `series`, `area`, `line`, `stroke`, `points`, `point`, `scrub-guide`, `scrub-dot`

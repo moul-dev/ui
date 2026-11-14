@@ -1,0 +1,183 @@
+---
+title: Timeline (សមាសភាគ)
+description: ព្រឹត្តិការណ៍សំខាន់ៗតាមបណ្ដោយខ្សែបញ្ឈរ ដែលមានក្បាលជាប់នៅលើ និងខ្សែដែលបំពេញពេលអ្នករំកិល។
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+`<moul-timeline>` lays out `<moul-timeline-item>` milestones on a vertical rail: a changelog, a roadmap, the stages of an order, or the history of a record. Each item has a heading (a version, a date, a title), a marker on the rail and content of any kind.
+
+Scroll through the roadmap below. On a wide page each heading sits in a column beside its content and stays stuck to the top while the content goes by, and the rail fills down to the middle of the viewport.
+
+<ComponentPreview align="stretch">
+<moul-timeline label="Roadmap" heading-level="3" style="--moul-timeline-sticky-top: 5rem">
+<moul-timeline-item heading="Shared workspaces" meta="Spring">
+<p>Invite your team to a workspace, give each person a role, and see who changed what in every record's history.</p>
+<p>Workspaces keep their own billing, so a client project can be handed over in one step when it ships.</p>
+</moul-timeline-item>
+<moul-timeline-item heading="Offline drafts" meta="Summer">
+<p>Edits made on a train or a flight are kept on the device and sync when the connection comes back, with a clear note of anything that clashed.</p>
+<p>Drafts are encrypted at rest and removed from the device once they sync.</p>
+</moul-timeline-item>
+<moul-timeline-item heading="Public API" meta="Autumn">
+<p>Everything the app can do, over a documented HTTP API with scoped keys and webhooks for the events you care about.</p>
+</moul-timeline-item>
+</moul-timeline>
+</ComponentPreview>
+
+```html
+<moul-timeline label="Roadmap" heading-level="3">
+  <moul-timeline-item heading="Shared workspaces" meta="Spring">
+    <p>Invite your team to a workspace, give each person a role…</p>
+  </moul-timeline-item>
+  <moul-timeline-item heading="Offline drafts" meta="Summer">
+    <p>Edits made on a train or a flight are kept on the device…</p>
+  </moul-timeline-item>
+  <moul-timeline-item heading="Public API" meta="Autumn">
+    <p>Everything the app can do, over a documented HTTP API…</p>
+  </moul-timeline-item>
+</moul-timeline>
+```
+
+The layout follows the timeline's own width, not the page's: below 40rem the heading stacks above its content and nothing sticks. `--moul-timeline-heading-width` sets the heading column (default `12rem`), and `--moul-timeline-sticky-top` moves the stuck headings below a fixed page header.
+
+## Progress
+
+`progress` decides what fills the rail.
+
+- `scroll` (the default) fills it as the reader scrolls: the filled part ends at the middle of the scroll container, and each plain marker lights up as the fill reaches it. Where the browser has CSS scroll-driven animations no script runs while scrolling; elsewhere a passive scroll listener measures once per frame, against the window.
+- `status` fills it through the items marked `complete` and down to the `current` one.
+- `none` leaves a plain rail.
+
+## Status and tone
+
+Give an item a `status` of `complete`, `current` or `upcoming` to show where a process stands. Complete items get a filled marker with a check, the current one a ring that pulses gently and `aria-current="step"`, and upcoming ones a dashed marker and a quieter heading. `tone` colours the marker: `primary` (the default), `accent`, `success`, `warning` or `error`.
+
+<ComponentPreview>
+<moul-timeline label="Order 1042" progress="status" style="width: min(100%, 30rem)">
+<moul-timeline-item heading="Ordered" meta="Mon 9 Nov, 10:24" status="complete" tone="success">
+<p>Paid with a card ending 4242.</p>
+</moul-timeline-item>
+<moul-timeline-item heading="Packed" meta="Tue 10 Nov, 16:02" status="complete" tone="success">
+<p>Two parcels from the Phnom Penh warehouse.</p>
+</moul-timeline-item>
+<moul-timeline-item heading="Out for delivery" meta="Today" status="current">
+<p>The courier expects to arrive between 2 and 4 pm.</p>
+</moul-timeline-item>
+<moul-timeline-item heading="Delivered" status="upcoming"></moul-timeline-item>
+</moul-timeline>
+</ComponentPreview>
+
+```html
+<moul-timeline label="Order 1042" progress="status">
+  <moul-timeline-item heading="Ordered" meta="Mon 9 Nov, 10:24" status="complete" tone="success">
+    <p>Paid with a card ending 4242.</p>
+  </moul-timeline-item>
+  <moul-timeline-item heading="Packed" meta="Tue 10 Nov, 16:02" status="complete" tone="success">
+    <p>Two parcels from the Phnom Penh warehouse.</p>
+  </moul-timeline-item>
+  <moul-timeline-item heading="Out for delivery" meta="Today" status="current">
+    <p>The courier expects to arrive between 2 and 4 pm.</p>
+  </moul-timeline-item>
+  <moul-timeline-item heading="Delivered" status="upcoming"></moul-timeline-item>
+</moul-timeline>
+```
+
+## Compact
+
+`density="compact"` is a tight list of small dots with the heading and meta on one line and nothing sticky, for a side panel, an audit log or a record's history. `<moul-history-ledger>` is built on it.
+
+<ComponentPreview>
+<moul-timeline label="Activity" density="compact" progress="none" style="width: min(100%, 24rem)">
+<moul-timeline-item heading="Dara published the post" meta="2 hours ago" status="current" tone="success"></moul-timeline-item>
+<moul-timeline-item heading="Lina changed the title" meta="Yesterday">
+<span>From “Hello” to “Hello, world”.</span>
+</moul-timeline-item>
+<moul-timeline-item heading="Dara added a cover image" meta="3 days ago"></moul-timeline-item>
+<moul-timeline-item heading="Dara created the draft" meta="Last week"></moul-timeline-item>
+</moul-timeline>
+</ComponentPreview>
+
+```html
+<moul-timeline label="Activity" density="compact" progress="none">
+  <moul-timeline-item heading="Dara published the post" meta="2 hours ago" status="current" tone="success"></moul-timeline-item>
+  <moul-timeline-item heading="Lina changed the title" meta="Yesterday">
+    From “Hello” to “Hello, world”.
+  </moul-timeline-item>
+  <moul-timeline-item heading="Dara created the draft" meta="Last week"></moul-timeline-item>
+</moul-timeline>
+```
+
+## Rich headings and markers
+
+The `heading` and `meta` slots take markup in place of the attributes, and the `marker` slot puts an icon or an avatar on the rail instead of the dot.
+
+<ComponentPreview>
+<moul-timeline label="Deploys" density="compact" progress="none" style="width: min(100%, 24rem)">
+<moul-timeline-item tone="success">
+<span slot="marker" style="font-size: 0.75rem" aria-hidden="true">🚀</span>
+<span slot="heading">Deployed <code>moul-api</code> to production</span>
+<span slot="meta">10:42</span>
+</moul-timeline-item>
+<moul-timeline-item>
+<moul-avatar slot="marker" size="xs" name="Lina Chea"></moul-avatar>
+<span slot="heading">Lina approved the release</span>
+<span slot="meta">10:30</span>
+</moul-timeline-item>
+</moul-timeline>
+</ComponentPreview>
+
+```html
+<moul-timeline-item>
+  <moul-avatar slot="marker" size="xs" name="Lina Chea"></moul-avatar>
+  <span slot="heading">Lina approved the release</span>
+  <span slot="meta">10:30</span>
+</moul-timeline-item>
+```
+
+## Accessibility
+
+- The timeline is a `role="list"` named by `label` (or your own `aria-label`), and each item a `listitem`, so screen readers say how many milestones there are. Nothing takes focus; the content keeps its own.
+- The rail and the markers, a slotted marker included, are hidden from screen readers.
+- `heading-level` turns every item heading into a heading of that level, so readers can jump between milestones.
+- `status="current"` sets `aria-current="step"` unless you set `aria-current` yourself. `complete` and `upcoming` add "Completed" or "Upcoming" after the heading as hidden text; `status-label` replaces the word, for another language.
+- Under reduced motion the current marker does not pulse and status changes take effect at once. The scroll-linked fill still follows the scroll, since it moves only as far and as fast as the reader scrolls.
+
+## API reference
+
+### `<moul-timeline>`
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `density` | `density` | `'comfortable' \| 'compact'` | `'comfortable'` |
+| `progress` | `progress` | `'scroll' \| 'status' \| 'none'` | `'scroll'` |
+| `heading-level` | `headingLevel` | `number` (1 to 6; 0 for none) | `0` |
+| `label` | `label` | `string` | `''` |
+| | `items` (read-only) | `MoulTimelineItem[]` | |
+
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | The `moul-timeline-item` elements. |
+
+**CSS parts:** `base`
+
+**CSS custom properties:** `--moul-timeline-heading-width` (default `12rem`), `--moul-timeline-sticky-top` (default `var(--spacing-4)`), `--moul-timeline-gap` (default `var(--spacing-8)`, or `var(--spacing-4)` when compact), `--moul-timeline-rail-color` (default `var(--color-border)`), `--moul-timeline-progress-color` (default `var(--color-accent)`).
+
+### `<moul-timeline-item>`
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `heading` | `heading` | `string` | `''` |
+| `meta` | `meta` | `string` | `''` |
+| `status` | `status` | `'complete' \| 'current' \| 'upcoming' \| ''` | `''` |
+| `status-label` | `statusLabel` | `string` | |
+| `tone` | `tone` | `'primary' \| 'accent' \| 'success' \| 'warning' \| 'error'` | `'primary'` |
+
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | The content. |
+| `heading` | A rich heading, used instead of `heading`. |
+| `meta` | Small text under the heading, used instead of `meta`. |
+| `marker` | An icon or avatar in place of the dot. |
+
+**CSS parts:** `base`, `rail`, `progress`, `aside`, `marker`, `heading`, `content`

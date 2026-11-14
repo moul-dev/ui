@@ -1,0 +1,90 @@
+---
+/**
+ * History ledger demo wiring, so the MDX previews stay plain markup:
+ *   data-history-ledger-demo          → gets sample versions, timed from now,
+ *                                       and restores after a short wait
+ *   data-history-ledger-demo="fail"   → the same, but every restore fails
+ */
+---
+
+<script>
+  import type {
+    HistoryRestoreDetail,
+    HistoryVersion,
+    MoulHistoryLedger,
+  } from '@moul-dev/web-component'
+
+  const HOUR = 3_600_000
+
+  function sampleVersions(): HistoryVersion[] {
+    const now = Date.now()
+    return [
+      {
+        id: 'v4',
+        label: 'Version 4',
+        author: { name: 'Dara Sok' },
+        timestamp: now - 2 * HOUR,
+        summary: 'Published the post and tagged it.',
+        changes: [
+          { field: 'Status', before: 'Draft', after: 'Published' },
+          { field: 'Tags', before: null, after: ['release', 'news'] },
+        ],
+      },
+      {
+        id: 'v3',
+        label: 'Version 3',
+        author: { name: 'Lina Chea' },
+        timestamp: now - 26 * HOUR,
+        summary: 'Tightened the title and the summary.',
+        changes: [
+          { field: 'Title', before: 'Hello', after: 'Hello, world' },
+          {
+            field: 'Summary',
+            before: 'A first post.',
+            after: 'What we shipped this month, and why.',
+          },
+        ],
+      },
+      {
+        id: 'v2',
+        label: 'Version 2',
+        author: { name: 'Dara Sok' },
+        timestamp: now - 3 * 24 * HOUR,
+        summary: 'Added a cover image.',
+        changes: [{ field: 'Cover', before: null, after: 'cover.jpg' }],
+      },
+      {
+        id: 'v1',
+        label: 'Version 1',
+        author: { name: 'Dara Sok' },
+        timestamp: now - 8 * 24 * HOUR,
+        summary: 'Created the draft.',
+      },
+    ]
+  }
+
+  const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+
+  function setUp(): void {
+    for (const ledger of document.querySelectorAll<MoulHistoryLedger>(
+      '[data-history-ledger-demo]:not([data-ready])',
+    )) {
+      ledger.dataset.ready = ''
+      ledger.versions = sampleVersions()
+      ledger.current = 'v4'
+      const fails = ledger.dataset.historyLedgerDemo === 'fail'
+      ledger.addEventListener('restore', (event) => {
+        const { waitUntil } = (event as CustomEvent<HistoryRestoreDetail>)
+          .detail
+        waitUntil(
+          wait(900).then(() => {
+            if (fails) throw new Error('The server could not be reached.')
+          }),
+        )
+      })
+    }
+  }
+
+  setUp()
+  document.addEventListener('astro:page-load', setUp)
+</script>

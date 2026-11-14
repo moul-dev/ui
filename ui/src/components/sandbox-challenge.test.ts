@@ -129,6 +129,7 @@ describe('Adversarial Challenge: Pure Lit Sandbox (ui/src/sandbox.ts)', () => {
       expect(root.querySelector('#overlays')).not.toBeNull()
       expect(root.querySelector('#forms')).not.toBeNull()
       expect(root.querySelector('#charts')).not.toBeNull()
+      expect(root.querySelector('#developer')).not.toBeNull()
       expect(root.querySelector('#blocks')).not.toBeNull()
     })
 
@@ -138,6 +139,7 @@ describe('Adversarial Challenge: Pure Lit Sandbox (ui/src/sandbox.ts)', () => {
       'overlays',
       'forms',
       'charts',
+      'developer',
       'blocks',
     ] as const
 

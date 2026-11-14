@@ -4,10 +4,12 @@ import { resetStyles } from '../../styles/reset.styles'
 export const chartTooltipStyles = [
   resetStyles,
   css`
+    /* The popover UA style sets inset: 0, which would stretch the host to the
+       viewport's width and throw off translate(-50%); it sizes to its card. */
     :host {
       position: absolute;
-      top: 0;
-      left: 0;
+      inset: 0 auto auto 0;
+      width: max-content;
       z-index: var(--z-tooltip, 1500);
       margin: 0;
       padding: 0;

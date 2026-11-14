@@ -37,9 +37,9 @@ export const CATEGORIES: ComponentCategory[] = [
         name: 'AreaChart',
         docs: '/docs/components/charts/areachart',
         summary:
-          'D3-powered area chart with optional stacking, grid lines, and hover tooltips.',
+          'Area chart with optional stacking that you scrub with the pointer or arrow keys (slider semantics), and that morphs between data sets such as 7/30/90-day ranges.',
         tags: ['moul-area-chart'],
-        snippet: `<moul-area-chart id="revenue" x-key="month" height="280" stacked></moul-area-chart>`,
+        snippet: `<moul-area-chart id="revenue" label="Revenue" x-key="month" height="280" stacked></moul-area-chart>`,
         script: `const chart = document.querySelector('#revenue')
 chart.data = [
   { month: 'Jan', web: 120, mobile: 80 },
@@ -64,21 +64,23 @@ chart.series = [{ key: 'count', name: 'Sign-ups' }]`,
       {
         name: 'LineChart',
         docs: '/docs/components/charts/linechart',
-        summary: 'Multi-series line chart with configurable D3 curve.',
+        summary:
+          'Multi-series line chart with pointer and keyboard scrubbing; `is-live` turns it into a real-time feed with `push()`, `max-points`, a gliding line and a pause button.',
         tags: ['moul-line-chart'],
-        snippet: `<moul-line-chart id="latency" x-key="time" curve="monotoneX"></moul-line-chart>`,
+        snippet: `<moul-line-chart id="latency" label="Latency" x-key="time" is-live max-points="40"></moul-line-chart>`,
         script: `const chart = document.querySelector('#latency')
-chart.data = [{ time: '10:00', p50: 42, p99: 180 }, { time: '10:05', p50: 39, p99: 150 }]
 chart.series = [{ key: 'p50', name: 'p50' }, { key: 'p99', name: 'p99' }]
-chart.valueFormatter = (v) => \`\${v} ms\``,
+chart.valueFormatter = (v) => \`\${v} ms\`
+setInterval(() => chart.push({ time: new Date().toLocaleTimeString(), p50: 40, p99: 160 }), 1000)`,
       },
       {
         name: 'DoughnutChart',
         docs: '/docs/components/charts/doughnutchart',
         summary:
-          'Doughnut / pie chart with a centered label and sublabel slot.',
+          'Doughnut, pie or half-circle chart whose centre shows the hovered slice; set `value`/`min`/`max` for a gauge that sweeps and counts to each new value.',
         tags: ['moul-doughnut-chart'],
-        snippet: `<moul-doughnut-chart id="traffic" center-label="12.4k" center-sublabel="Visits"></moul-doughnut-chart>`,
+        snippet: `<moul-doughnut-chart id="traffic" center-label="12.4k" center-sublabel="Visits"></moul-doughnut-chart>
+<moul-doughnut-chart shape="half" height="170" value="72" center-sublabel="Disk used"></moul-doughnut-chart>`,
         script: `document.querySelector('#traffic').data = [
   { name: 'Direct', value: 5400 },
   { name: 'Search', value: 4100 },
@@ -914,6 +916,118 @@ await card.setOpen(true)`,
         script: `await submitPayment()
 document.querySelector('moul-confetti').fire({ variant: 'rocket' })
 // or: import { fireConfetti } from '@moul-dev/web-component/effects'`,
+      },
+    ],
+  },
+  {
+    title: 'Data & Developer',
+    families: [
+      {
+        name: 'ActivityFeed',
+        docs: '/docs/components/activityfeed',
+        summary:
+          'Live event stream, newest first, for audit trails and request logs; events with a `payload` expand into highlighted JSON, and new events wait while the pointer or focus is inside or while paused.',
+        tags: ['moul-activity-feed'],
+        snippet: `<moul-activity-feed id="requests" label="Requests"></moul-activity-feed>`,
+        script: `const feed = document.querySelector('#requests')
+feed.events = [{ id: 1, title: 'Deploy finished', tone: 'success', timestamp: Date.now() }]
+feed.push({ id: 2, title: 'POST /api/records', badge: '201', tone: 'success', timestamp: Date.now(), payload: { id: 'rec_8f2' } })`,
+      },
+      {
+        name: 'CodeBlock',
+        docs: '/docs/components/codeblock',
+        summary:
+          'Read-only highlighted code (TS/JS, JSON, HTML, CSS, shell, Python, Rust, SQL, YAML, diff) with a copy button, line highlights, line numbers and tabs; blocks sharing a `sync-key` switch tabs together.',
+        tags: ['moul-code-block'],
+        snippet: `<moul-code-block language="ts" filename="main.ts" highlight-lines="2" show-line-numbers>
+  import '@moul-dev/web-component'
+  document.querySelector('moul-toast-region')
+</moul-code-block>
+<moul-code-block language="bash" sync-key="pm">
+  <script type="text/plain" data-label="bun">bun add @moul-dev/web-component</script>
+  <script type="text/plain" data-label="npm">npm install @moul-dev/web-component</script>
+</moul-code-block>`,
+      },
+      {
+        name: 'CodeComparison',
+        docs: '/docs/components/codecomparison',
+        summary:
+          'Two versions of a snippet compared line by line, split side by side or unified, with removed and added lines and the edited part of each line marked.',
+        tags: ['moul-code-comparison'],
+        snippet: `<moul-code-comparison language="ts" before-label="v1" after-label="v2">
+  <script type="text/plain">button.onPress = save</script>
+  <script type="text/plain">button.addEventListener('press', save)</script>
+</moul-code-comparison>`,
+      },
+      {
+        name: 'FileTree',
+        docs: '/docs/components/filetree',
+        summary:
+          'Folders and files built from a list of paths, with icons by file type, selection and expansion by path, on moul-tree.',
+        tags: ['moul-file-tree'],
+        snippet: `<moul-file-tree id="files" label="Project files"></moul-file-tree>`,
+        script: `const files = document.querySelector('#files')
+files.files = ['src/index.ts', 'src/components/Button.ts', 'package.json', 'README.md']
+files.selectedKey = 'src/index.ts'
+files.addEventListener('action', (e) => openFile(e.detail.path))`,
+      },
+      {
+        name: 'HistoryLedger',
+        docs: '/docs/components/historyledger',
+        summary:
+          'Version history of a record, newest first, with before→after field changes and one-click restore.',
+        tags: ['moul-history-ledger'],
+        snippet: `<moul-history-ledger id="history"></moul-history-ledger>`,
+        script: `const history = document.querySelector('#history')
+history.versions = [
+  { id: 'v2', label: 'Version 2', author: 'Dara', timestamp: Date.now(), summary: 'Published',
+    changes: [{ field: 'Status', before: 'Draft', after: 'Published' }] },
+  { id: 'v1', label: 'Version 1', author: 'Dara', timestamp: Date.now() - 86400000 },
+]
+history.current = 'v2'
+history.addEventListener('restore', (e) => e.detail.waitUntil(api.restore(e.detail.version.id)))`,
+      },
+      {
+        name: 'RelationshipGraph',
+        docs: '/docs/components/relationshipgraph',
+        summary:
+          'Layered graph of nodes and links (source depends on target); hovering, focusing or selecting a node traces its upstream dependencies and downstream dependents.',
+        tags: ['moul-relationship-graph'],
+        snippet: `<moul-relationship-graph id="services" label="Service map" trace="both" show-legend></moul-relationship-graph>`,
+        script: `const graph = document.querySelector('#services')
+graph.nodes = [
+  { id: 'web', label: 'Web app', group: 'Clients' },
+  { id: 'api', label: 'API', group: 'Services' },
+  { id: 'db', label: 'Postgres', group: 'Data' },
+]
+graph.links = [
+  { source: 'web', target: 'api', label: 'calls' },
+  { source: 'api', target: 'db' },
+]
+graph.addEventListener('node-action', (e) => console.log(e.detail.id))`,
+      },
+      {
+        name: 'Terminal',
+        docs: '/docs/components/terminal',
+        summary:
+          'Terminal window that types its commands and prints their output line by line when scrolled into view; the copy button copies just the commands.',
+        tags: ['moul-terminal', 'moul-terminal-line'],
+        snippet: `<moul-terminal label="zsh">
+  <moul-terminal-line is-command>bun add @moul-dev/web-component</moul-terminal-line>
+  <moul-terminal-line tone="success">✓ installed</moul-terminal-line>
+</moul-terminal>`,
+      },
+      {
+        name: 'Timeline',
+        docs: '/docs/components/timeline',
+        summary:
+          'Vertical milestones on a rail with sticky headings, a scroll- or status-linked progress line, and a compact density for record history.',
+        tags: ['moul-timeline', 'moul-timeline-item'],
+        snippet: `<moul-timeline label="Order 1042" progress="status">
+  <moul-timeline-item heading="Ordered" meta="Mon 9 Nov" status="complete" tone="success">Paid.</moul-timeline-item>
+  <moul-timeline-item heading="Out for delivery" meta="Today" status="current">Arrives 2–4 pm.</moul-timeline-item>
+  <moul-timeline-item heading="Delivered" status="upcoming"></moul-timeline-item>
+</moul-timeline>`,
       },
     ],
   },

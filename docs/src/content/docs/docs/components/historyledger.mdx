@@ -1,0 +1,118 @@
+---
+title: History Ledger
+description: A record's version history with before-and-after changes and one-click restore.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import HistoryLedgerDemo from '@/components/demos/HistoryLedgerDemo.astro';
+
+`<moul-history-ledger>` shows the saved versions of a record, newest first, on a compact `<moul-timeline>`. Each version shows who saved it and when, a summary, and the fields it changed as an expandable before→after list. The current version is marked; every other one has a Restore button.
+
+Open the changes of a version, then restore an older one. The button shows the restore running, then the result, and the restored version becomes current.
+
+<ComponentPreview>
+<moul-history-ledger data-history-ledger-demo style="width: min(100%, 30rem)"></moul-history-ledger>
+<HistoryLedgerDemo />
+</ComponentPreview>
+
+```html
+<moul-history-ledger id="history"></moul-history-ledger>
+```
+
+```js
+const history = document.querySelector('#history')
+
+history.versions = [
+  {
+    id: 'v4',
+    label: 'Version 4',
+    author: { name: 'Dara Sok' },
+    timestamp: '2026-11-14T09:30:00Z',
+    summary: 'Published the post and tagged it.',
+    changes: [
+      { field: 'Status', before: 'Draft', after: 'Published' },
+      { field: 'Tags', before: null, after: ['release', 'news'] },
+    ],
+  },
+  {
+    id: 'v3',
+    label: 'Version 3',
+    author: 'Lina Chea',
+    timestamp: 1763050200000,
+    summary: 'Tightened the title.',
+    changes: [{ field: 'Title', before: 'Hello', after: 'Hello, world' }],
+  },
+]
+history.current = 'v4'
+
+history.addEventListener('restore', (event) => {
+  const { version, waitUntil } = event.detail
+  waitUntil(api.restore(recordId, version.id))
+})
+```
+
+## Versions
+
+`versions` is an array, newest first. Each version needs an `id`; the rest is optional.
+
+- `label`: the row's title. Defaults to the id.
+- `author`: a name, or `{ name, avatar }` with an image URL. An avatar with initials shows beside the name either way.
+- `timestamp`: a `Date`, an ISO string or milliseconds. It shows relative ("2 hours ago", "yesterday"), in the language of the page around the ledger, with the full date and time in a `<time datetime>` and its tooltip. The relative times refresh once a minute.
+- `summary`: a line about the version.
+- `changes`: `{ field, before, after }` for each field that changed. Strings show as they are, empty values as "Empty", and objects as JSON; set `valueFormatter(value, change)` to format them your way.
+
+## Restoring
+
+A Restore button fires `restore`, which bubbles and is cancelable. Call `event.detail.waitUntil(promise)` during the event to hand the ledger your restore: the button shows it pending, then "Restored" or "Restore failed", and the version becomes `current` only if the promise resolves. Without `waitUntil` the version becomes current at once. `preventDefault()` stops the restore, for example after a confirmation the user declines.
+
+While a restore runs the other Restore buttons are disabled. If you replace `versions` before the promise settles (say, with a new version the restore created on the server), the ledger leaves `current` to you.
+
+If the restore fails, the button shows it and you still have the error from your own promise:
+
+<ComponentPreview>
+<moul-history-ledger data-history-ledger-demo="fail" style="width: min(100%, 30rem)"></moul-history-ledger>
+</ComponentPreview>
+
+`is-read-only` hides every Restore button, for people who may look but not restore.
+
+## Other languages
+
+`labels` replaces the words the ledger shows and reads, merged over the English defaults: `restore`, `restoring`, `restored`, `restoreFailed`, `current`, `changes(count)`, `empty`, `changedFrom`, `changedTo` and `noHistory`. `label` names the list ("Version history").
+
+```js
+history.label = 'ប្រវត្តិកំណែ'
+history.labels = {
+  restore: 'ស្ដារ',
+  current: 'បច្ចុប្បន្ន',
+  changes: (count) => `ការផ្លាស់ប្ដូរ ${count}`,
+}
+```
+
+## Accessibility
+
+- The versions are a list named by `label`, and the current one is marked `aria-current="true"`.
+- Every control is a button in the tab order. Each Restore button is named after its version ("Restore Version 3"), and the button announces its pending, restored and failed states.
+- The changes button has `aria-expanded` and `aria-controls`; Enter or Space opens and closes the list, where screen readers hear "Status changed from Draft to Published".
+- When a restored row's button goes away, focus moves to that row's title instead of being lost.
+- Under reduced motion the changes open and close at once and the chevron turns instantly.
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| | `versions` | `HistoryVersion[]` | `[]` |
+| `current` | `current` | `string` | `''` |
+| `label` | `label` | `string` | `'Version history'` |
+| `is-read-only` | `isReadOnly` | `boolean` | `false` |
+| | `labels` | `Partial<HistoryLedgerLabels>` | `{}` |
+| | `valueFormatter` | `(value: unknown, change: HistoryChange) => string` | |
+
+| Event | Detail |
+| :-- | :-- |
+| `restore` | `{ version, waitUntil(promise) }`. Cancelable. |
+
+| Slot | Description |
+| :-- | :-- |
+| `empty` | Shown when there are no versions (default "No history yet"). |
+
+**CSS parts:** `base`, `timeline`, `version`, `title`, `summary`, `changes-toggle`, `changes`, `restore`, `empty`

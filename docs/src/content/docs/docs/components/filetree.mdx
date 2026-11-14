@@ -1,0 +1,142 @@
+---
+title: File Tree
+description: Folders and files that open and close, built from a list of paths.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import FileTreeDemo from '@/components/demos/FileTreeDemo.astro';
+
+`<moul-file-tree>` shows folders and files that open and close, on top of `<moul-tree>`. Give it a list of paths and it builds the folders, sorts folders before files, and picks an icon for each file from its extension.
+
+<ComponentPreview>
+<div class="demo-stack" style="width: min(100%, 20rem)">
+<moul-file-tree id="project-files" label="Project files" selected-key="src/components/Button.ts" data-props='{"files":["src/index.ts","src/components/Button.ts","src/components/Button.styles.ts","src/components/button.test.ts","src/styles/tokens.css","public/logo.svg","docs/getting-started.md","docs/","package.json","README.md","tsconfig.json",".env.example"]}'></moul-file-tree>
+<span class="demo-label">Selected</span>
+<code data-file-tree-output="project-files">src/components/Button.ts</code>
+</div>
+<FileTreeDemo />
+</ComponentPreview>
+
+```html
+<moul-file-tree id="files" label="Project files"></moul-file-tree>
+```
+
+```js
+const files = document.querySelector('#files')
+
+files.files = [
+  'src/index.ts',
+  'src/components/Button.ts',
+  'src/styles/tokens.css',
+  'public/logo.svg',
+  'package.json',
+  'README.md',
+]
+files.selectedKey = 'src/components/Button.ts' // opens src and src/components
+
+files.addEventListener('selectionchange', (event) => {
+  console.log(event.detail.path) // 'src/index.ts'
+})
+files.addEventListener('action', (event) => {
+  openFile(event.detail.path) // double-click or Enter
+})
+```
+
+## Files
+
+`files` takes paths, nested nodes, or both in one array.
+
+- A path is folder names joined with `/`. The folders on the way are created for you and shared between paths, and a path that ends in `/` is an empty folder.
+- A node is `{ name, children }` for a folder or `{ name }` for a file. `meta` adds short text after the name, such as a git status or a size, and `isDisabled` keeps it from being selected or activated.
+- Folders come first, then files, each in natural order (`Card2` before `Card10`). `sort="none"` keeps your order.
+
+Each file gets an icon for its kind: code, markup, styles, data and config, docs, images, or a plain page. They are tinted with the chart colours, so they follow the theme.
+
+<ComponentPreview>
+<moul-file-tree label="Changes" style="width: min(100%, 20rem)" data-props='{"files":[{"name":"src","children":[{"name":"main.rs","meta":"M"},{"name":"routes.rs","meta":"A"},{"name":"legacy.rs","meta":"D","isDisabled":true}]},{"name":"migrations","children":[{"name":"0004_add_tags.sql","meta":"A"}]},{"name":"Cargo.toml","meta":"M"}],"expanded":["src","migrations"]}'></moul-file-tree>
+</ComponentPreview>
+
+```js
+files.files = [
+  {
+    name: 'src',
+    children: [
+      { name: 'main.rs', meta: 'M' },
+      { name: 'routes.rs', meta: 'A' },
+      { name: 'legacy.rs', meta: 'D', isDisabled: true },
+    ],
+  },
+  { name: 'Cargo.toml', meta: 'M' },
+]
+files.expanded = ['src']
+```
+
+## Selecting and opening
+
+`selected-key` (`selectedKey`) is the selected path, and `expanded` the open folder paths. Setting `selectedKey` from code opens the folders above it, so the selection is always in view. `expandAll()` and `collapseAll()` open and close everything, and `entry(path)` looks up a file or folder.
+
+A click on a folder's row opens or closes it, and selects it. A click on a file selects it; a double-click or `Enter` activates it and fires `action`, the moment to open the file. Like every Moul element, the file tree fires events for what the user does, never for what your code sets.
+
+## Loading folders later
+
+A folder node with `isFolder: true` and no `children` shows a chevron but holds nothing yet. When the user opens it, `expandedchange` fires with its `entry`; fetch its children and set `files` again. They grow into the open folder.
+
+<ComponentPreview>
+<moul-file-tree label="Dependencies" data-file-tree-lazy style="width: min(100%, 20rem)" data-props='{"files":[{"name":"node_modules","isFolder":true},{"name":"package.json"},{"name":"bun.lock"}]}'></moul-file-tree>
+</ComponentPreview>
+
+```js
+files.addEventListener('expandedchange', async (event) => {
+  const { entry, isExpanded } = event.detail
+  if (!isExpanded || entry.children.length > 0) return
+  const children = await api.listFolder(entry.path)
+  files.files = withChildren(files.files, entry.path, children)
+})
+```
+
+## Events
+
+Each event bubbles out of the file tree with the path and its `entry`: `{ name, path, isFolder, children, isDisabled, meta, source }`, where `source` is what you passed in `files`.
+
+- `selectionchange`: `{ path, entry }`.
+- `expandedchange`: `{ path, entry, isExpanded, expanded }`, with every open folder after the change.
+- `action`: `{ path, entry }`. Cancelable: `preventDefault()` keeps a folder from opening or closing on `Enter`.
+
+## Accessibility
+
+The keyboard and screen reader behaviour is `<moul-tree>`'s:
+
+- The tree is one tab stop, named by `label` ("Files"). `Arrow Up` and `Arrow Down` move through the visible items; `Arrow Right` opens a folder or moves into it, `Arrow Left` closes it or moves to its parent; `Home`, `End`, `*` (open every sibling folder) and typing a name work as in a file manager.
+- `Enter` activates the item, `Space` selects it.
+- Each item is a `treeitem` named by its name alone. The icons are hidden from screen readers and the `meta` text is not read, so put anything people need to hear in the name.
+- Under reduced motion folders open and close at once and the guide lines appear without drawing.
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| | `files` | `(string \| FileTreeNode)[]` | `[]` |
+| `selected-key` | `selectedKey` | `string` | `''` |
+| | `expanded` | `string[]` | `[]` |
+| `sort` | `sort` | `'folders-first' \| 'none'` | `'folders-first'` |
+| `label` | `label` | `string` | `'Files'` |
+
+| Method | Description |
+| :-- | :-- |
+| `expandAll()` | Opens every folder. |
+| `collapseAll()` | Closes every folder. |
+| `entry(path)` | Returns the `FileTreeEntry` at `path`, or `null`. |
+
+| Event | Detail |
+| :-- | :-- |
+| `selectionchange` | `{ path, entry }` |
+| `expandedchange` | `{ path, entry, isExpanded, expanded }` |
+| `action` | `{ path, entry }`. Cancelable. |
+
+| Slot | Description |
+| :-- | :-- |
+| `empty` | Shown when `files` is empty (default "No files"). |
+
+**CSS parts:** `tree`, `icon`, `meta`, `empty`
+
+**CSS custom properties:** `--moul-file-tree-indent` (default `1.25rem`), how far each level is indented.

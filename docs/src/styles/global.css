@@ -410,7 +410,8 @@ html:root[data-theme] {
   align-items: stretch;
 }
 
-.moul-preview[data-align="stretch"] .moul-preview-canvas > * {
+/* Popovers (chart tooltips) live in the top layer, where 100% means the viewport. */
+.moul-preview[data-align="stretch"] .moul-preview-canvas > :not([popover]) {
   width: 100%;
 }
 

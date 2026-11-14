@@ -80,6 +80,7 @@ export type {
   FunnelStage,
   HeatmapDataItem,
   PointHoverDetail,
+  PointHoverEntry,
 } from './components/ChartCommon'
 export {
   CHART_COLORS,
@@ -122,7 +123,10 @@ export {
   MoulDatePicker,
   MoulDatePicker as DatePicker,
 } from './components/DatePicker'
-export type { DoughnutChartProps } from './components/DoughnutChart'
+export type {
+  DoughnutChartProps,
+  DoughnutChartShape,
+} from './components/DoughnutChart'
 export {
   MoulDoughnutChart,
   MoulDoughnutChart as DoughnutChart,
@@ -212,7 +216,10 @@ export {
   MoulInputOTP as InputOTP,
 } from './components/InputOTP'
 export { MoulKbd, MoulKbd as Kbd } from './components/Kbd'
-export type { LineChartProps } from './components/LineChart'
+export type {
+  LineChartPauseChangeDetail,
+  LineChartProps,
+} from './components/LineChart'
 export {
   MoulLineChart,
   MoulLineChart as LineChart,
@@ -519,6 +526,8 @@ export {
 // Reusable Lit Reactive Controllers
 export {
   type Breakpoint,
+  CopyController,
+  type CopyControllerOptions,
   clampValue,
   computeBreakpoint,
   FormInternalsController,
@@ -550,7 +559,95 @@ export {
 import type { MoulAccordion, MoulAccordionItem } from './components/Accordion'
 import type { MoulAlert } from './components/Alert'
 import type { MoulAlertDialog } from './components/AlertDialog'
+
+// Phase 3: Data and developer
+export {
+  type ActivityEvent,
+  type ActivityFeedExpandedChangeDetail,
+  type ActivityFeedPauseChangeDetail,
+  type ActivityFeedTimeFormat,
+  MoulActivityFeed,
+  MoulActivityFeed as ActivityFeed,
+} from './components/ActivityFeed'
+export {
+  type CodeBlockCopyDetail,
+  type CodeBlockTab,
+  type CodeBlockTabChangeDetail,
+  MoulCodeBlock,
+  MoulCodeBlock as CodeBlock,
+} from './components/CodeBlock'
+export {
+  type CodeComparisonCopyDetail,
+  type CodeComparisonLayout,
+  type CodeComparisonSide,
+  type DiffKind,
+  type DiffLine,
+  diffLines,
+  MoulCodeComparison,
+  MoulCodeComparison as CodeComparison,
+} from './components/CodeComparison'
+export {
+  type FileTreeActionDetail,
+  type FileTreeEntry,
+  type FileTreeExpandedChangeDetail,
+  type FileTreeNode,
+  type FileTreeSelectionChangeDetail,
+  type FileTreeSort,
+  MoulFileTree,
+  MoulFileTree as FileTree,
+} from './components/FileTree'
+export {
+  type HistoryAuthor,
+  type HistoryChange,
+  type HistoryLedgerLabels,
+  type HistoryRestoreDetail,
+  type HistoryVersion,
+  MoulHistoryLedger,
+  MoulHistoryLedger as HistoryLedger,
+} from './components/HistoryLedger'
+export {
+  describeRelationshipNode,
+  type GraphDirection,
+  type GraphLayout,
+  layoutGraph,
+  MoulRelationshipGraph,
+  MoulRelationshipGraph as RelationshipGraph,
+  type RelationshipGraphDirection,
+  type RelationshipGraphLink,
+  type RelationshipGraphNode,
+  type RelationshipGraphNodeActionDetail,
+  type RelationshipGraphRelations,
+  type RelationshipGraphSelectionChangeDetail,
+  type RelationshipGraphTrace,
+  type RelationshipGraphTraceChangeDetail,
+} from './components/RelationshipGraph'
+export {
+  MoulTerminal,
+  MoulTerminal as Terminal,
+  MoulTerminalLine,
+  MoulTerminalLine as TerminalLine,
+  type TerminalLineState,
+  type TerminalLineTone,
+} from './components/Terminal'
+export {
+  MoulTimeline,
+  MoulTimeline as Timeline,
+  MoulTimelineItem,
+  MoulTimelineItem as TimelineItem,
+  type TimelineDensity,
+  type TimelineItemStatus,
+  type TimelineProgress,
+} from './components/Timeline'
+export {
+  type CodeToken,
+  type CodeTokenType,
+  highlightLines,
+  languageLabel,
+  tokenize,
+} from './utils/highlight'
+
 // Custom Element Type Imports for Global HTMLElementTagNameMap
+import type { MoulActivityFeed } from './components/ActivityFeed'
 import type { MoulAnimatedList } from './components/AnimatedList'
 import type { MoulAreaChart } from './components/AreaChart'
 import type { MoulAvatar, MoulAvatarGroup } from './components/Avatar'
@@ -572,6 +669,8 @@ import type {
 import type { MoulChartContainer } from './components/ChartContainer'
 import type { MoulChartTooltip } from './components/ChartTooltip'
 import type { MoulCheckbox, MoulCheckboxGroup } from './components/Checkbox'
+import type { MoulCodeBlock } from './components/CodeBlock'
+import type { MoulCodeComparison } from './components/CodeComparison'
 import type { MoulComboBox, MoulComboBoxItem } from './components/ComboBox'
 import type { MoulCommandPalette } from './components/CommandPalette'
 import type { MoulDatePicker } from './components/DatePicker'
@@ -585,11 +684,13 @@ import type {
 } from './components/DropdownMenu'
 import type { MoulEmptyState } from './components/EmptyState'
 import type { MoulExpandableCard } from './components/ExpandableCard'
+import type { MoulFileTree } from './components/FileTree'
 import type { MoulFileUpload } from './components/FileUpload'
 import type { MoulFocusMode } from './components/FocusMode'
 import type { MoulForm } from './components/Form'
 import type { MoulFunnelChart } from './components/FunnelChart'
 import type { MoulHeatmapChart } from './components/HeatmapChart'
+import type { MoulHistoryLedger } from './components/HistoryLedger'
 import type { MoulHoverCard } from './components/HoverCard'
 import type { MoulIconMorph } from './components/IconMorph'
 import type { MoulInputOTP } from './components/InputOTP'
@@ -610,6 +711,7 @@ import type { MoulPopover } from './components/Popover'
 import type { MoulProgressBar } from './components/ProgressBar'
 import type { MoulPullToRefresh } from './components/PullToRefresh'
 import type { MoulRadio, MoulRadioGroup } from './components/RadioGroup'
+import type { MoulRelationshipGraph } from './components/RelationshipGraph'
 import type { MoulResultCard } from './components/ResultCard'
 import type { MoulSearchField } from './components/SearchField'
 import type { MoulSelect, MoulSelectItem } from './components/Select'
@@ -639,9 +741,11 @@ import type { MoulSwitch } from './components/Switch'
 import type { MoulTable } from './components/Table'
 import type { MoulTab, MoulTabPanel, MoulTabs } from './components/Tabs'
 import type { MoulTag, MoulTagGroup } from './components/TagGroup'
+import type { MoulTerminal, MoulTerminalLine } from './components/Terminal'
 import type { MoulTextArea } from './components/TextArea'
 import type { MoulTextField } from './components/TextField'
 import type { MoulThemeToggle } from './components/ThemeToggle'
+import type { MoulTimeline, MoulTimelineItem } from './components/Timeline'
 import type { MoulToast, MoulToastRegion } from './components/Toast'
 import type { MoulToggleButton } from './components/ToggleButton'
 import type { MoulToggleButtonGroup } from './components/ToggleButtonGroup'
@@ -770,5 +874,15 @@ declare global {
     'moul-tour-step': MoulTourStep
     'moul-focus-mode': MoulFocusMode
     'moul-expandable-card': MoulExpandableCard
+    'moul-timeline': MoulTimeline
+    'moul-timeline-item': MoulTimelineItem
+    'moul-history-ledger': MoulHistoryLedger
+    'moul-activity-feed': MoulActivityFeed
+    'moul-code-block': MoulCodeBlock
+    'moul-code-comparison': MoulCodeComparison
+    'moul-terminal': MoulTerminal
+    'moul-terminal-line': MoulTerminalLine
+    'moul-file-tree': MoulFileTree
+    'moul-relationship-graph': MoulRelationshipGraph
   }
 }

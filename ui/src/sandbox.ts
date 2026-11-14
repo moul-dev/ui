@@ -27,9 +27,11 @@ import { fireConfetti } from './effects'
 import {
   type CommandPaletteItemData,
   type FileUploadContext,
+  type MoulActivityFeed,
   type MoulAnimatedList,
   type MoulButton,
   type MoulFocusMode,
+  type MoulLineChart,
   type MoulNotificationBell,
   type MoulNumberTicker,
   type MoulResultCard,
@@ -54,6 +56,65 @@ const TABLE_COLUMNS: TableColumn[] = [
     })),
   },
   { key: 'activity', title: 'Last Active', sortable: false },
+]
+
+const SB_VERSIONS = [
+  {
+    id: 'v3',
+    label: 'Published',
+    author: 'Kim Ly',
+    timestamp: Date.now() - 2 * 3_600_000,
+    summary: 'Status set to published',
+    changes: [{ field: 'Status', before: 'Draft', after: 'Published' }],
+  },
+  {
+    id: 'v2',
+    label: 'Title edited',
+    author: 'Dara',
+    timestamp: Date.now() - 26 * 3_600_000,
+    changes: [{ field: 'Title', before: 'Hello', after: 'Hello, world' }],
+  },
+  {
+    id: 'v1',
+    label: 'Created',
+    author: 'Dara',
+    timestamp: Date.now() - 3 * 86_400_000,
+  },
+]
+
+const SB_FILES = [
+  'src/index.ts',
+  'src/components/Button.ts',
+  'src/components/CodeBlock.ts',
+  'src/styles/style.css',
+  'docs/index.mdx',
+  'package.json',
+  'README.md',
+]
+
+const SB_GRAPH = {
+  nodes: [
+    { id: 'web', label: 'Web app', group: 'Clients' },
+    { id: 'admin', label: 'Admin console', group: 'Clients' },
+    { id: 'api', label: 'API', group: 'Services' },
+    { id: 'auth', label: 'Auth', group: 'Services' },
+    { id: 'db', label: 'Postgres', group: 'Data' },
+    { id: 'files', label: 'File store', group: 'Data' },
+  ],
+  links: [
+    { source: 'web', target: 'api' },
+    { source: 'admin', target: 'api' },
+    { source: 'api', target: 'auth' },
+    { source: 'api', target: 'db' },
+    { source: 'api', target: 'files' },
+    { source: 'auth', target: 'db' },
+  ],
+}
+
+const SB_CODE_TABS = [
+  { label: 'bun', code: 'bun add @moul-dev/web-component' },
+  { label: 'npm', code: 'npm install @moul-dev/web-component' },
+  { label: 'pnpm', code: 'pnpm add @moul-dev/web-component' },
 ]
 
 /** Pretends to upload a file in about two seconds, reporting progress. */
@@ -514,6 +575,24 @@ export class MoulSandbox extends LitElement {
       bell.prepend(item)
       bell.count += 1
     }
+  }
+
+  private sandboxRequestCount = 0
+
+  private pushSandboxRequest(): void {
+    const feed = this.renderRoot.querySelector<MoulActivityFeed>('#sb-activity')
+    const n = ++this.sandboxRequestCount
+    const status = [200, 201, 404, 500][n % 4] as number
+    feed?.push({
+      id: `sb-${n}`,
+      title: `${status === 201 ? 'POST' : 'GET'} /api/records/${n}`,
+      badge: String(status),
+      tone: status >= 500 ? 'error' : status >= 400 ? 'warning' : 'success',
+      timestamp: Date.now(),
+      payload: { status, record: { id: n, title: `Record ${n}` } },
+    })
+    const chart = this.renderRoot.querySelector<MoulLineChart>('#sb-live')
+    chart?.push({ t: `#${n}`, value: 40 + Math.round(Math.random() * 50) })
   }
 
   private handleSidebarSelect(e: CustomEvent<{ selectedKey: string }>): void {
@@ -1757,11 +1836,81 @@ export class MoulSandbox extends LitElement {
     `
   }
 
+  private renderDeveloperSection(): TemplateResult {
+    return html`
+      <div class="category-section" id="developer">
+        <div class="section-header">
+          <h3 class="section-title">6. Data & Developer</h3>
+          <p class="section-subtitle">moul-timeline, moul-history-ledger, moul-activity-feed, moul-code-block, moul-code-comparison, moul-terminal, moul-file-tree, moul-relationship-graph</p>
+        </div>
+
+        <div class="section-grid">
+          <moul-card>
+            <moul-card-header><h4 style="margin: 0;">Record history</h4></moul-card-header>
+            <moul-card-body>
+              <moul-history-ledger .versions=${SB_VERSIONS} current="v3"></moul-history-ledger>
+            </moul-card-body>
+          </moul-card>
+          <moul-card>
+            <moul-card-header><h4 style="margin: 0;">Timeline</h4></moul-card-header>
+            <moul-card-body>
+              <moul-timeline density="compact" progress="status" label="Release">
+                <moul-timeline-item heading="Planned" meta="Nov 2" status="complete" tone="success">Scope agreed.</moul-timeline-item>
+                <moul-timeline-item heading="In review" meta="Today" status="current">Two approvals left.</moul-timeline-item>
+                <moul-timeline-item heading="Released" status="upcoming"></moul-timeline-item>
+              </moul-timeline>
+            </moul-card-body>
+          </moul-card>
+        </div>
+
+        <div class="section-grid">
+          <div class="demo-col">
+            <div class="demo-row">
+              <moul-button size="sm" variant="secondary" @click=${this.pushSandboxRequest}>Push request</moul-button>
+            </div>
+            <moul-activity-feed id="sb-activity" label="Requests" style="--activity-feed-max-height: 18rem"></moul-activity-feed>
+          </div>
+          <moul-card>
+            <moul-card-header><h4 style="margin: 0;">Live line chart</h4></moul-card-header>
+            <moul-card-body>
+              <moul-line-chart id="sb-live" is-live max-points="20" x-key="t" height="200" label="Response time"></moul-line-chart>
+              <moul-doughnut-chart shape="half" height="160" value="64" center-sublabel="Quota"></moul-doughnut-chart>
+            </moul-card-body>
+          </moul-card>
+        </div>
+
+        <div class="section-grid">
+          <div class="demo-col">
+            <moul-code-block language="bash" sync-key="sb-pm" .tabs=${SB_CODE_TABS}></moul-code-block>
+            <moul-code-comparison
+              language="ts"
+              before-code=${'button.onPress = () => save()'}
+              after-code=${"button.addEventListener('press', () => save())"}
+            ></moul-code-comparison>
+            <moul-terminal label="zsh" is-static>
+              <moul-terminal-line is-command>bun test</moul-terminal-line>
+              <moul-terminal-line tone="success">✓ 213 pass</moul-terminal-line>
+            </moul-terminal>
+          </div>
+          <moul-card>
+            <moul-card-header><h4 style="margin: 0;">Files and dependencies</h4></moul-card-header>
+            <moul-card-body>
+              <div class="demo-col">
+                <moul-file-tree label="Project files" .files=${SB_FILES} .expanded=${['src', 'src/components']}></moul-file-tree>
+                <moul-relationship-graph label="Service map" .nodes=${SB_GRAPH.nodes} .links=${SB_GRAPH.links}></moul-relationship-graph>
+              </div>
+            </moul-card-body>
+          </moul-card>
+        </div>
+      </div>
+    `
+  }
+
   private renderBlocksSection(): TemplateResult {
     return html`
       <div class="category-section" id="blocks">
         <div class="section-header">
-          <h3 class="section-title">6. Composite Blocks</h3>
+          <h3 class="section-title">7. Composite Blocks</h3>
           <p class="section-subtitle">moul-logs-viewer, moul-logs, moul-sidebar, moul-sidebar-user</p>
         </div>
 
@@ -1825,7 +1974,7 @@ export class MoulSandbox extends LitElement {
           </moul-sidebar-header>
 
           <moul-sidebar-group label="Kitchen Sink" collapsible>
-            <moul-sidebar-item key="all" label="All Categories" badge="6">
+            <moul-sidebar-item key="all" label="All Categories" badge="7">
               <span slot="icon">⚡</span>
             </moul-sidebar-item>
             <moul-sidebar-item key="actions" label="Actions" badge="4">
@@ -1842,6 +1991,9 @@ export class MoulSandbox extends LitElement {
             </moul-sidebar-item>
             <moul-sidebar-item key="charts" label="Charts & Analytics" badge="12">
               <span slot="icon">📊</span>
+            </moul-sidebar-item>
+            <moul-sidebar-item key="developer" label="Data & Developer" badge="10">
+              <span slot="icon">🧩</span>
             </moul-sidebar-item>
             <moul-sidebar-item key="blocks" label="Composite Blocks" badge="12">
               <span slot="icon">📦</span>
@@ -1907,6 +2059,11 @@ export class MoulSandbox extends LitElement {
             ${
               isAll || this.selectedCategory === 'charts'
                 ? this.renderChartsSection()
+                : nothing
+            }
+            ${
+              isAll || this.selectedCategory === 'developer'
+                ? this.renderDeveloperSection()
                 : nothing
             }
             ${

@@ -119,6 +119,20 @@ export const COMPONENT_CATEGORIES: ComponentCategory[] = [
     ],
   },
   {
+    key: 'developer',
+    label: 'Data & Developer',
+    slugs: [
+      'docs/components/activityfeed',
+      'docs/components/codeblock',
+      'docs/components/codecomparison',
+      'docs/components/filetree',
+      'docs/components/historyledger',
+      'docs/components/relationshipgraph',
+      'docs/components/terminal',
+      'docs/components/timeline',
+    ],
+  },
+  {
     key: 'blocks',
     label: 'Composite Blocks',
     slugs: ['docs/blocks/logs', 'docs/blocks/sidebar'],

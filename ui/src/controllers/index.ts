@@ -7,7 +7,13 @@
  * - OverlayPresenceController: Two-phase mount/unmount and top-layer exit animation orchestration
  * - NumberSpringController: Physics spring numeric ticker with clamping and settling threshold
  * - FormInternalsController: ElementInternals form association, validation, and detached form warnings
+ * - CopyController: clipboard copy with a short-lived copied state for copy buttons and live regions
  */
+
+export {
+  CopyController,
+  type CopyControllerOptions,
+} from './copy.controller'
 
 export {
   FormInternalsController,

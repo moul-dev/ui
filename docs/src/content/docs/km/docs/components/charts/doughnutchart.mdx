@@ -4,38 +4,77 @@ description: ឯកសារណែនាំសម្រាប់សមាសភ�
 ---
 
 import ComponentPreview from '@/components/ComponentPreview.astro';
+import ChartsDemo from '@/components/demos/ChartsDemo.astro';
 
-`<moul-doughnut-chart>` shows shares of a total with an optional center label.
+`<moul-doughnut-chart>` shows shares of a total with an optional label in the hole. Hover or focus a slice and the centre shows its value and name, counting from one slice to the next, then returns to the label.
 
 <ComponentPreview>
-<moul-doughnut-chart height="260" center-label="990" center-sublabel="Visitors" style="width: min(100%, 22rem)" data-props='{"data":[{"name":"Organic","value":420},{"name":"Referral","value":260},{"name":"Social","value":190},{"name":"Email","value":120}]}'></moul-doughnut-chart>
+<moul-doughnut-chart height="260" center-label="990" center-sublabel="Visitors" label="Visitors by source" style="width: min(100%, 22rem)" data-props='{"data":[{"name":"Organic","value":420},{"name":"Referral","value":260},{"name":"Social","value":190},{"name":"Email","value":120}]}'></moul-doughnut-chart>
 </ComponentPreview>
 
 ```html
-<moul-doughnut-chart height="260" center-label="990" center-sublabel="Visitors" style="width: min(100%, 22rem)"></moul-doughnut-chart>
+<moul-doughnut-chart height="260" center-label="990" center-sublabel="Visitors" label="Visitors by source"></moul-doughnut-chart>
 ```
 
 ```js
-const doughnutChart = document.querySelector('moul-doughnut-chart')
-doughnutChart.data = [
-  {
-    "name": "Organic",
-    "value": 420
-  },
-  {
-    "name": "Referral",
-    "value": 260
-  },
-  {
-    "name": "Social",
-    "value": 190
-  },
-  {
-    "name": "Email",
-    "value": 120
-  }
+const chart = document.querySelector('moul-doughnut-chart')
+chart.data = [
+  { name: 'Organic', value: 420 },
+  { name: 'Referral', value: 260 },
+  { name: 'Social', value: 190 },
+  { name: 'Email', value: 120 },
 ]
 ```
+
+Slotted `center` content replaces the label and stays put: the centre only follows the slices when it draws its own label.
+
+## Half circle
+
+`shape="half"` draws the ring over the top half, with the centre on its flat edge. The half ring is as wide as the chart allows, so give it a shorter `height` than a full one.
+
+<ComponentPreview>
+<moul-doughnut-chart shape="half" height="190" center-label="990" center-sublabel="Visitors" style="width: min(100%, 22rem)" data-props='{"data":[{"name":"Organic","value":420},{"name":"Referral","value":260},{"name":"Social","value":190},{"name":"Email","value":120}]}'></moul-doughnut-chart>
+</ComponentPreview>
+
+```html
+<moul-doughnut-chart shape="half" height="190" center-label="990" center-sublabel="Visitors"></moul-doughnut-chart>
+```
+
+## Gauge
+
+Set `value` and the chart becomes a gauge: a track from `min` to `max` (0 to 100 by default) and one arc filled to the value. Each new value sweeps the arc there on a spring while the number in the centre counts along with it. Set `value` back to `null` to return to the slices.
+
+<ComponentPreview stack>
+<div class="demo-row" style="gap: 2rem; flex-wrap: wrap; justify-content: center">
+<moul-doughnut-chart id="disk-gauge" shape="half" height="170" value="72" center-sublabel="Disk used" inner-radius-ratio="0.78" style="width: 14rem" data-percent></moul-doughnut-chart>
+<moul-doughnut-chart id="cpu-gauge" value="38" center-sublabel="CPU" inner-radius-ratio="0.8" color="var(--color-success)" height="170" style="width: 11rem" data-percent></moul-doughnut-chart>
+</div>
+<div class="demo-row">
+<moul-button size="sm" variant="secondary" data-gauge-shuffle="disk-gauge"><span>New disk reading</span></moul-button>
+<moul-button size="sm" variant="secondary" data-gauge-shuffle="cpu-gauge"><span>New CPU reading</span></moul-button>
+</div>
+<ChartsDemo />
+</ComponentPreview>
+
+```html
+<moul-doughnut-chart shape="half" height="170" value="72" center-sublabel="Disk used" inner-radius-ratio="0.78"></moul-doughnut-chart>
+<moul-doughnut-chart value="38" center-sublabel="CPU" color="var(--color-success)"></moul-doughnut-chart>
+```
+
+```js
+const gauge = document.querySelector('moul-doughnut-chart')
+gauge.valueFormatter = (value) => `${value}%`
+gauge.value = 81 // sweeps from 72 to 81
+```
+
+The centre shows the value through `valueFormatter`, with as many decimals as the value has, unless `center-label` gives it fixed text. Values outside the range are held at its ends. `color` paints the arc (default `var(--color-chart-1)`), and `--doughnut-track-color` the track.
+
+## Accessibility
+
+- Every slice is a `Tab` stop with a focus ring. Focusing one highlights it, shows it in the centre and fires `point-hover`; blurring fires `point-leave`. Each slice is named "name: value".
+- The SVG is a `role="img"` named by `label`, else `center-label`, else "Doughnut chart". Some screen readers announce only that name, so give the page a table or text alternative for the shares.
+- A gauge takes no focus. It is one `role="meter"` named by `label`, else `center-sublabel`, else "Gauge", with `aria-valuenow`, `aria-valuemin`, `aria-valuemax` and the formatted value as `aria-valuetext`. Value changes are not announced.
+- Under reduced motion the slices appear without fading in, and the centre number and the gauge arc jump to each new value instead of counting and sweeping.
 
 ## API reference
 
@@ -47,15 +86,26 @@ doughnutChart.data = [
 | `center-sublabel` | `centerSublabel` | `string` | `''` |
 | `pad-angle` | `padAngle` | `number` | `0.02` |
 | `corner-radius` | `cornerRadius` | `number` | `4` |
+| `shape` | `shape` | `'full' \| 'half'` | `'full'` |
+| `value` | `value` | `number \| null` | `null` |
+| `min` | `min` | `number` | `0` |
+| `max` | `max` | `number` | `100` |
+| `color` | `color` | `string` | `''` (read as `var(--color-chart-1)`) |
+| `label` | `label` | `string` | `''` |
+| | `data` | `DoughnutDataItem[]` | `[]` |
+| | `valueFormatter` | `(value) => string` | |
+| | `isGauge` (read-only) | `boolean` | |
 
-| Event | Type |
+| Event | Detail |
 | :-- | :-- |
-| `point-hover` | `CustomEvent` |
-| `point-leave` | `CustomEvent` |
+| `point-hover` | `{ point, series, value, label, x, y }` for the slice |
+| `point-leave` | none |
 
 | Slot | Description |
 | :-- | :-- |
-| `empty` | — |
-| `center` | — |
+| `empty` | Shown when there is no data and no gauge `value`. |
+| `center` | Replaces the centre label and sublabel. |
 
-**CSS parts:** `empty`, `wrapper`, `svg`, `slice`, `center`, `center-label`, `center-sublabel`
+**CSS parts:** `empty`, `wrapper`, `svg`, `slice`, `track`, `value-arc`, `center`, `center-label`, `center-sublabel`
+
+**CSS custom properties:** `--doughnut-track-color` (default `var(--color-fill-track)`), the gauge track.

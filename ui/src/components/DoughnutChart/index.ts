@@ -1,5 +1,5 @@
 export type { DoughnutDataItem } from '../ChartCommon'
-export type { DoughnutChartProps } from './DoughnutChart'
+export type { DoughnutChartProps, DoughnutChartShape } from './DoughnutChart'
 export {
   MoulDoughnutChart,
   MoulDoughnutChart as DoughnutChart,

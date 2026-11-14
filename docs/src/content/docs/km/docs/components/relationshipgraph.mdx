@@ -1,0 +1,148 @@
+---
+title: Relationship Graph (សមាសភាគ)
+description: ថ្នាំង និងតំណភ្ជាប់រវាងពួកវា រៀបជាស្រទាប់ៗ; ដាក់ទស្សន៍ទ្រនិចលើថ្នាំងមួយ ដើម្បីតាមដានអ្វីៗដែលវាពឹងផ្អែក និងអ្វីៗដែលពឹងផ្អែកលើវា។
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import RelationshipGraphDemo from '@/components/demos/RelationshipGraphDemo.astro';
+
+`<moul-relationship-graph>` draws nodes and the links between them, laid out in layers so every link runs one way. Use it for service maps, package dependencies, data lineage and any other web of relationships. Hover, focus or select a node to trace its path: what it depends on lights up in one colour, what depends on it in another, and everything else fades back.
+
+Hover a service below, or tab into the graph and move with the arrow keys.
+
+<ComponentPreview stack align="stretch">
+<moul-toggle-button-group selected-key="both" aria-label="Trace" data-graph-trace="services-graph" style="align-self: center">
+<moul-toggle-button value="both"><span>Both ways</span></moul-toggle-button>
+<moul-toggle-button value="upstream"><span>Dependencies</span></moul-toggle-button>
+<moul-toggle-button value="downstream"><span>Dependents</span></moul-toggle-button>
+</moul-toggle-button-group>
+<moul-relationship-graph id="services-graph" class="demo-graph" label="Service map" show-legend data-graph-sample="services"></moul-relationship-graph>
+<p class="demo-graph-details" data-graph-details="services-graph" aria-live="polite">Hover, focus or select a node to trace its path.</p>
+<details class="demo-graph-list" data-graph-list="services-graph"><summary>The service map as a list</summary></details>
+<RelationshipGraphDemo />
+</ComponentPreview>
+
+```html
+<moul-relationship-graph id="services" label="Service map" show-legend></moul-relationship-graph>
+```
+
+```js
+const graph = document.querySelector('#services')
+
+graph.nodes = [
+  { id: 'web', label: 'Web app', group: 'Clients' },
+  { id: 'api', label: 'API', description: 'Rust service', group: 'Services' },
+  { id: 'auth', label: 'Auth', group: 'Services' },
+  { id: 'db', label: 'Postgres', group: 'Data' },
+]
+
+// Each link points from a node to something it depends on
+graph.links = [
+  { source: 'web', target: 'api', label: 'calls' },
+  { source: 'api', target: 'auth' },
+  { source: 'api', target: 'db' },
+  { source: 'auth', target: 'db' },
+]
+```
+
+## Nodes and links
+
+A node is `{ id, label?, description?, group?, tone? }`. The `id` is what links, `selected-key` and the events refer to, and `label` is the name in the box (the `id` when there is none). `description` adds a second, quieter line, such as a kind or a version. Long text is cut short with an ellipsis; hover the node to read all of it.
+
+A link is `{ source, target, label? }` and means *`source` depends on `target`*: the web app depends on the API, the API depends on the database. Arrows point from the node that depends to the one it depends on, the way a call or an import goes. A `label` draws a short word on the link, such as "reads" or "calls".
+
+Links to ids that are not in `nodes`, links from a node to itself and repeated links are left out. Cycles are fine: the layout runs one link of each cycle backwards, drawn dashed, and tracing follows it like any other.
+
+## Layout
+
+The layout puts the nodes nothing depends on in the first layer and each other node one layer past the deepest node that depends on it, so the deepest dependencies end up last. It then orders each layer to keep crossings down and lines nodes up with their neighbours. A link that skips layers bends around the nodes between.
+
+Layers run left to right. With `direction="vertical"` they run top to bottom, which suits narrow screens and long chains.
+
+<ComponentPreview>
+<moul-relationship-graph id="packages-graph" class="demo-graph" direction="vertical" label="Package dependencies" data-graph-sample="packages"></moul-relationship-graph>
+</ComponentPreview>
+
+```html
+<moul-relationship-graph direction="vertical" label="Package dependencies"></moul-relationship-graph>
+```
+
+The drawing shrinks to fit the width it is given, down to three quarters of its size so the labels stay readable. Past that it scrolls. `--relationship-graph-max-height` caps its height the same way.
+
+## Tracing a path
+
+Tracing starts from the node under the pointer, else the focused node, else the selected one, so selecting a node pins its trace while the pointer looks around. Its dependencies, direct or not, light up in the upstream colour, and the nodes that depend on it in the downstream colour. The links along the path carry a dash that flows the way the arrows point.
+
+`trace="upstream"` traces only what a node depends on: what has to be up for it to work. `trace="downstream"` traces only what depends on it: what breaks when it fails. The default is `both`.
+
+`tracechange` fires each time the traced node changes, with its `id` and the `upstream` and `downstream` ids, nearest first, so a page can show details beside the graph, as the line under the first example does. `upstreamOf(id)` and `downstreamOf(id)` answer the same question at any time.
+
+```js
+graph.addEventListener('tracechange', (event) => {
+  const { id, upstream, downstream } = event.detail
+  details.textContent = id
+    ? `${id}: ${upstream.length} dependencies, ${downstream.length} dependents`
+    : ''
+})
+```
+
+## Selecting and opening nodes
+
+A click or `Space` selects a node and fires `selectionchange` with `{ selectedKey, node }`; doing it again clears the selection, and `selectedKey` is then `''`. Set `selected-key` (or `selectedKey`) yourself to select from code; that fires no event.
+
+A double-click or `Enter` fires `node-action` with `{ id, node }`. Open a detail panel or go to the node's page from it.
+
+```js
+graph.addEventListener('node-action', (event) => {
+  location.href = `/services/${event.detail.id}`
+})
+```
+
+## Groups and colours
+
+Nodes with the same `group` share a chart colour, shown as a dot before the label, in the order the groups first appear. `show-legend` lists the groups and their colours under the drawing. A node's `tone` (`primary`, `accent`, `success`, `warning`, `error`) colours its dot instead, for status such as a failing service.
+
+The trace colours are `--relationship-graph-upstream-color` (default `var(--color-accent)`) and `--relationship-graph-downstream-color` (default `var(--color-chart-2)`).
+
+## Accessibility
+
+- The drawing is a `role="group"` named by `label` (default "Relationship graph"), and it is one tab stop. The stop starts on the selected node, else the first, and moves with the arrow keys.
+- Each node is a `role="button"`, with `aria-pressed` for the selection. Its name spells out its direct links: "API, Rust service, depends on Auth, Billing, Search and Redis, used by Web app, Mobile app and Admin console". Pass `describeNode(node, { dependsOn, usedBy })` to word it yourself, for example in another language.
+- Along the links (`Arrow Right` and `Arrow Left` in a horizontal graph, `Arrow Down` and `Arrow Up` in a vertical one), focus moves to the nearest linked node in the next or previous layer, or to the nearest node there when none is linked. Across the links it moves to the next or previous node in the same layer. `Home` and `End` go to the first and last node.
+- `Space` selects, `Enter` fires `node-action`, and `Escape` clears the selection and the trace. Focusing a node traces it, as hovering does.
+- The links, arrowheads and link labels are hidden from screen readers; the node names carry the same facts. The layout is not mirrored under `dir="rtl"`.
+- A drawing is still harder to take in by ear than a list, so give the page a text alternative as well, like the list under the first example. `upstreamOf()` and `downstreamOf()` make one easy to build.
+- Under reduced motion traced links carry no flowing dash, and nodes and links dim and light up at once instead of fading.
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| | `nodes` | `RelationshipGraphNode[]` | `[]` |
+| | `links` | `RelationshipGraphLink[]` | `[]` |
+| `direction` | `direction` | `'horizontal' \| 'vertical'` | `'horizontal'` |
+| `trace` | `trace` | `'both' \| 'upstream' \| 'downstream'` | `'both'` |
+| `selected-key` | `selectedKey` | `string` | `''` |
+| `label` | `label` | `string` | `''` (read as "Relationship graph") |
+| `show-legend` | `showLegend` | `boolean` | `false` |
+| | `describeNode` | `(node, { dependsOn, usedBy }) => string` | |
+
+| Method | Description |
+| :-- | :-- |
+| `upstreamOf(id)` | Every node `id` depends on, directly or not, nearest first. |
+| `downstreamOf(id)` | Every node that depends on `id`, directly or not, nearest first. |
+| `focusNode(id)` | Moves focus and the tab stop to a node. Returns a `Promise<void>`. |
+
+| Event | Detail |
+| :-- | :-- |
+| `selectionchange` | `{ selectedKey: string, node: RelationshipGraphNode \| null }`, after a click, `Space` or `Escape`. |
+| `node-action` | `{ id: string, node: RelationshipGraphNode }`, after `Enter` or a double-click. |
+| `tracechange` | `{ id: string \| null, upstream: string[], downstream: string[] }`. |
+
+| Slot | Description |
+| :-- | :-- |
+| `empty` | Shown instead of the drawing when there are no nodes. |
+
+**CSS parts:** `base`, `svg`, `node`, `node-box`, `link`, `link-label`, `legend`, `empty`
+
+**CSS custom properties:** `--relationship-graph-upstream-color` (default `var(--color-accent)`), `--relationship-graph-downstream-color` (default `var(--color-chart-2)`), `--relationship-graph-max-height` (default `none`).

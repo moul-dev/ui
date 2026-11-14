@@ -1,8 +1,10 @@
 import { type CSSResultGroup, css } from 'lit'
 import { resetStyles } from '../../styles/reset.styles'
+import { chartScrubStyles } from '../ChartScrub'
 
 export const areaChartStyles: CSSResultGroup = [
   resetStyles,
+  chartScrubStyles,
   css`
     :host {
       display: block;
@@ -77,6 +79,11 @@ export const areaChartStyles: CSSResultGroup = [
 
     .point-marker:hover {
       r: 6;
+    }
+
+    /* Too many points to mark each one; the scrub dot marks the one being read. */
+    .points-group.is-dense .point-marker {
+      opacity: 0;
     }
 
     [part~="empty"],

@@ -1,0 +1,108 @@
+---
+title: Activity Feed (សមាសភាគ)
+description: លំហូរព្រឹត្តិការណ៍ផ្ទាល់ ថ្មីបំផុតនៅខាងលើ ដែល payload របស់វាពង្រីកជា JSON មានពណ៌សម្គាល់។
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import ActivityFeedDemo from '@/components/demos/ActivityFeedDemo.astro';
+
+`<moul-activity-feed>` shows events as they happen, newest first: audit trails, request logs, deploys, sign-ups. New events arrive at the top and push the others down. An event with a `payload` opens to show it as formatted, highlighted JSON, with a copy button.
+
+Start the stream, then rest the pointer on the feed: new events wait instead of moving the rows under it.
+
+<ComponentPreview align="stretch" stack>
+<div class="demo-row">
+<moul-button size="sm" variant="secondary" data-activity-stream="requests"><span>Start stream</span></moul-button>
+<moul-button size="sm" variant="ghost" data-activity-push="requests"><span>Add one</span></moul-button>
+</div>
+<moul-activity-feed id="requests" label="Requests" data-activity-seed style="--activity-feed-max-height: 22rem"></moul-activity-feed>
+<ActivityFeedDemo />
+</ComponentPreview>
+
+```html
+<moul-activity-feed id="requests" label="Requests"></moul-activity-feed>
+```
+
+```js
+const feed = document.querySelector('#requests')
+
+feed.events = [
+  { id: 2, title: 'POST /api/records', badge: '201', tone: 'success', timestamp: Date.now(), payload: { id: 'rec_8f2' } },
+  { id: 1, title: 'Deploy finished', description: 'moul-api', timestamp: Date.now() - 60_000 },
+]
+
+// As events come in
+source.addEventListener('message', (message) => feed.push(JSON.parse(message.data)))
+```
+
+## Events
+
+Each event is an object:
+
+| Field | Type | |
+| :-- | :-- | :-- |
+| `id` | `string \| number` | Identifies the event. Pushing an event with a known id updates it where it is. |
+| `title` | `string` | What happened. |
+| `description` | `string` | A second line: who, where, how long. |
+| `timestamp` | `Date \| number \| string` | When it happened. |
+| `tone` | `'primary' \| 'accent' \| 'success' \| 'warning' \| 'error'` | Colours the dot. |
+| `badge` | `string` | A short tag after the title, such as a status code. |
+| `payload` | any JSON value, or a JSON string | Shown when the event is opened. |
+
+Set `events` to the whole list, newest first, or call `push()` as events arrive. `push(c, b)` puts `c` above `b`. The feed keeps at most `max` events (200) and drops the oldest.
+
+Payloads are formatted with two-space indents and highlighted. A string that is not JSON shows as plain text, and a payload longer than 50,000 characters is cut so one huge event cannot stall the page.
+
+## Holding new events
+
+While the pointer is over the feed or focus is inside it, new events wait, so a row never moves under a click. A pill at the top says how many are waiting; choosing it shows them, and leaving the feed shows them too. The header's Pause button holds events until Resume, whatever the pointer does. Events already on screen still update while the feed holds.
+
+## Times
+
+`time-format` is `relative` ("2 min ago", the default, refreshed every 15 seconds), `time` (14:03:27) or `datetime`. `locale` picks the language; the browser's is the default. Each time is a `<time>` whose tooltip shows the full date.
+
+<ComponentPreview align="stretch">
+<moul-activity-feed id="audit" label="Audit trail" time-format="time" data-activity-seed hide-header></moul-activity-feed>
+</ComponentPreview>
+
+`hide-header` removes the header, for a feed inside a card that has its own title.
+
+## Accessibility
+
+- The events are a list named by `label`. With `is-live` they are a polite `role="log"` instead, and screen readers announce each event as it arrives. Leave it off for busy streams, such as request logs, where announcements would never stop.
+- Rows with a payload are buttons with `aria-expanded`, and they form one tab stop: `Arrow Down` and `Arrow Up` move between them, `Home` and `End` jump to the first and last, and `Enter` or `Space` opens or closes one. An open payload is a region named "Payload" whose copy button follows its row.
+- The pause button says what it will do: "Pause" or "Resume".
+- The dot's tone is only shown, so put the outcome in the title or badge too (as the status codes above do).
+- Under reduced motion events appear at once, payloads open and close without easing, and the live dot does not pulse.
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| | `events` | `ActivityEvent[]` | `[]` |
+| `max` | `max` | `number` | `200` |
+| `is-paused` | `isPaused` | `boolean` | `false` |
+| `is-live` | `isLive` | `boolean` | `false` |
+| `label` | `label` | `string` | `'Activity'` |
+| `hide-header` | `hideHeader` | `boolean` | `false` |
+| `time-format` | `timeFormat` | `'relative' \| 'time' \| 'datetime'` | `'relative'` |
+| `locale` | `locale` | `string` | the browser's |
+| | `pendingCount` (read-only) | `number` | |
+
+| Method | Description |
+| :-- | :-- |
+| `push(...events)` | Adds events to the top, newest first; a known id is updated in place. |
+| `showPending()` | Shows every waiting event now, even while paused. |
+
+| Event | Detail |
+| :-- | :-- |
+| `expandedchange` | `{ id, isExpanded, event }`, when the user opens or closes a payload |
+| `pausechange` | `{ isPaused }`, when the pause button is used |
+
+| Slot | Description |
+| :-- | :-- |
+| `empty` | Shown when there are no events. |
+
+**CSS parts:** `base`, `header`, `label`, `status`, `pause-button`, `pending`, `list`, `row`, `payload`, `copy-button`
+
+**CSS custom properties:** `--activity-feed-max-height` (default `28rem`).

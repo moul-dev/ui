@@ -1,0 +1,64 @@
+---
+/**
+ * File tree demo wiring, so the MDX previews stay plain markup:
+ *   data-file-tree-output="id"  → shows the selected path of #id in this element
+ *   data-file-tree-lazy         → loads the children of a folder that has none
+ *                                 yet, 600ms after it first opens
+ */
+---
+
+<script>
+  import type {
+    FileTreeExpandedChangeDetail,
+    FileTreeNode,
+    FileTreeSelectionChangeDetail,
+    MoulFileTree,
+  } from '@moul-dev/web-component'
+
+  const LAZY: Record<string, string[]> = {
+    node_modules: ['lit', 'motion', 'd3-shape'],
+  }
+
+  function setUp(): void {
+    for (const output of document.querySelectorAll<HTMLElement>(
+      '[data-file-tree-output]:not([data-ready])',
+    )) {
+      output.dataset.ready = ''
+      const tree = document.getElementById(output.dataset.fileTreeOutput ?? '')
+      tree?.addEventListener('selectionchange', (event) => {
+        const { path } = (event as CustomEvent<FileTreeSelectionChangeDetail>)
+          .detail
+        output.textContent = path
+      })
+    }
+
+    for (const tree of document.querySelectorAll<MoulFileTree>(
+      '[data-file-tree-lazy]:not([data-ready])',
+    )) {
+      tree.dataset.ready = ''
+      tree.addEventListener('expandedchange', (event) => {
+        const { entry, isExpanded } = (
+          event as CustomEvent<FileTreeExpandedChangeDetail>
+        ).detail
+        const names = LAZY[entry.path]
+        if (!isExpanded || !names || entry.children.length > 0) return
+        setTimeout(() => {
+          tree.files = (tree.files as FileTreeNode[]).map((node) =>
+            node.name === entry.path
+              ? {
+                  ...node,
+                  children: names.map((name) => ({
+                    name,
+                    children: [{ name: 'package.json' }, { name: 'index.js' }],
+                  })),
+                }
+              : node,
+          )
+        }, 600)
+      })
+    }
+  }
+
+  setUp()
+  document.addEventListener('astro:page-load', setUp)
+</script>

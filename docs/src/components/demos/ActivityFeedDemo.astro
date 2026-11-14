@@ -1,0 +1,98 @@
+---
+/**
+ * Activity feed demo wiring, so the MDX previews stay plain markup:
+ *   data-activity-stream="id"  → click starts or stops a stream of sample
+ *                                requests into #id, one every 1.2 seconds
+ *   data-activity-push="id"    → click pushes one sample request into #id
+ * Feeds marked `data-activity-seed` get a few events when the page loads.
+ */
+---
+
+<script>
+  import type { ActivityEvent, MoulActivityFeed } from '@moul-dev/web-component'
+
+  const ROUTES = [
+    ['GET', '/api/collections/posts/records', 200],
+    ['POST', '/api/collections/posts/records', 201],
+    ['PATCH', '/api/collections/posts/records/rec_8f2', 200],
+    ['DELETE', '/api/collections/posts/records/rec_1a9', 204],
+    ['GET', '/api/collections/users/records/usr_404', 404],
+    ['POST', '/api/files', 413],
+    ['POST', '/api/auth/token', 500],
+  ] as const
+  let next = 1
+
+  function sample(at = Date.now()): ActivityEvent {
+    const [method, path, status] = ROUTES[Math.floor(Math.random() * ROUTES.length)]
+    const ms = 4 + Math.floor(Math.random() * 180)
+    const id = next++
+    const tone = status >= 500 ? 'error' : status >= 400 ? 'warning' : 'success'
+    return {
+      id,
+      title: `${method} ${path}`,
+      badge: String(status),
+      tone,
+      description: `${['admin', 'web', 'cron'][id % 3]} · ${ms} ms`,
+      timestamp: at,
+      payload: {
+        request: {
+          method,
+          path,
+          headers: { 'content-type': 'application/json' },
+          ...(method === 'POST' || method === 'PATCH'
+            ? { body: { title: 'Release notes', published: id % 2 === 0 } }
+            : {}),
+        },
+        response: {
+          status,
+          duration_ms: ms,
+          ...(status >= 400
+            ? { error: status === 404 ? 'not_found' : status === 413 ? 'too_large' : 'internal' }
+            : { id: `rec_${(id * 2654435761).toString(36).slice(-4)}` }),
+        },
+      },
+    }
+  }
+
+  const streams = new Map<string, ReturnType<typeof setInterval>>()
+
+  function feed(id: string): MoulActivityFeed | null {
+    return document.getElementById(id) as MoulActivityFeed | null
+  }
+
+  function seed(): void {
+    for (const el of document.querySelectorAll<MoulActivityFeed>('[data-activity-seed]')) {
+      if (el.events.length) continue
+      const now = Date.now()
+      el.events = [sample(now - 4_000), sample(now - 95_000), sample(now - 610_000), sample(now - 4_000_000)]
+    }
+  }
+
+  document.addEventListener('click', (event) => {
+    const button = (event.target as Element | null)?.closest?.<HTMLElement>(
+      '[data-activity-stream], [data-activity-push]',
+    )
+    if (!button) return
+    const { activityStream, activityPush } = button.dataset
+    if (activityPush) {
+      feed(activityPush)?.push(sample())
+      return
+    }
+    if (!activityStream) return
+    const running = streams.get(activityStream)
+    if (running) {
+      clearInterval(running)
+      streams.delete(activityStream)
+      button.querySelector('span')!.textContent = 'Start stream'
+      return
+    }
+    streams.set(
+      activityStream,
+      setInterval(() => feed(activityStream)?.push(sample()), 1200),
+    )
+    button.querySelector('span')!.textContent = 'Stop stream'
+  })
+
+  customElements.whenDefined('moul-activity-feed').then(seed)
+  document.addEventListener('astro:page-load', seed)
+</script>

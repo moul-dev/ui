@@ -53,6 +53,15 @@ export const doughnutChartStyles: CSSResultGroup = [
       pointer-events: none;
     }
 
+    /* Gauge: an unfilled track under the value arc. The arc's sweep is drawn from script. */
+    .gauge-track {
+      fill: var(--doughnut-track-color, var(--color-fill-track, currentColor));
+    }
+
+    .gauge-value {
+      pointer-events: none;
+    }
+
     .center-container {
       position: absolute;
       pointer-events: none;
@@ -64,6 +73,13 @@ export const doughnutChartStyles: CSSResultGroup = [
       border-radius: 50%;
       box-sizing: border-box;
       padding: var(--spacing-2, 0.5rem);
+    }
+
+    /* A half ring's centre sits on the flat edge, like a speedometer readout. */
+    .center-container.is-half {
+      justify-content: flex-end;
+      border-radius: 0;
+      padding-bottom: 0;
     }
 
     .center-labels {

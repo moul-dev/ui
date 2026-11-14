@@ -1,0 +1,177 @@
+---
+/**
+ * Chart demo wiring, so the MDX previews stay plain markup:
+ *   data-chart-tooltip="id"  on a chart → its `point-hover` shows #id (a
+ *                            `<moul-chart-tooltip>`) with every series' value,
+ *                            and `point-leave` hides it
+ *   data-chart-range="id"    on a `<moul-toggle-button-group>` → its selected
+ *                            key (a number of days) swaps #id's data
+ *   data-gauge-shuffle="id"  on a button → click gives the #id gauge a new value
+ *   data-live-feed           on a live `<moul-line-chart>` → pushes a CPU and
+ *                            memory reading every second while the page shows
+ *   data-percent             on a chart → formats its values as percentages
+ */
+---
+
+<script>
+  import type {
+    MoulAreaChart,
+    MoulChartTooltip,
+    MoulDoughnutChart,
+    MoulLineChart,
+    PointHoverDetail,
+  } from '@moul-dev/web-component'
+
+  type Row = Record<string, unknown>
+
+  /** A small seeded generator, so a range looks the same each time it is picked. */
+  function seeded(seed: number): () => number {
+    let state = seed
+    return () => {
+      state = (state * 1664525 + 1013904223) % 4294967296
+      return state / 4294967296
+    }
+  }
+
+  const END = new Date(2026, 10, 14)
+  const dayLabel = new Intl.DateTimeFormat('en', {
+    month: 'short',
+    day: 'numeric',
+  })
+
+  /** `days` daily rows of web and mobile visits, ending on 14 November. */
+  function visits(days: number): Row[] {
+    const random = seeded(days)
+    return Array.from({ length: days }, (_, i) => {
+      const date = new Date(END)
+      date.setDate(END.getDate() - (days - 1 - i))
+      const t = i / Math.max(days - 1, 1)
+      return {
+        day: dayLabel.format(date),
+        web: Math.round(220 + 90 * Math.sin(t * 6 + days) + 40 * random()),
+        mobile: Math.round(140 + 60 * Math.cos(t * 5 + days / 3) + 30 * random()),
+      }
+    })
+  }
+
+  function wireTooltips(root: ParentNode): void {
+    for (const chart of root.querySelectorAll<HTMLElement & {
+      valueFormatter?: (value: unknown) => string
+    }>('[data-chart-tooltip]')) {
+      if (chart.dataset.tooltipWired) continue
+      chart.dataset.tooltipWired = ''
+      const tooltip = (): MoulChartTooltip | null =>
+        document.getElementById(
+          chart.dataset.chartTooltip ?? '',
+        ) as MoulChartTooltip | null
+      chart.addEventListener('point-hover', (event) => {
+        const detail = (event as CustomEvent<PointHoverDetail>).detail
+        const tip = tooltip()
+        if (!tip) return
+        const box = chart.getBoundingClientRect()
+        const series =
+          typeof detail.series === 'object' ? detail.series : undefined
+        tip.show({
+          label: detail.label,
+          payload: detail.entries ?? [
+            { name: series?.name ?? detail.label, value: detail.value, color: series?.color },
+          ],
+          valueFormatter: chart.valueFormatter,
+          // The tooltip sits in the top layer, so it takes page coordinates.
+          x: box.left + window.scrollX + detail.x,
+          y: box.top + window.scrollY + detail.y,
+        })
+      })
+      chart.addEventListener('point-leave', () => tooltip()?.hide())
+    }
+  }
+
+  function wireRanges(root: ParentNode): void {
+    for (const group of root.querySelectorAll<HTMLElement & {
+      selectedKey?: string
+    }>('[data-chart-range]')) {
+      const chart = document.getElementById(
+        group.dataset.chartRange ?? '',
+      ) as MoulAreaChart | null
+      if (!chart || group.dataset.rangeWired) continue
+      group.dataset.rangeWired = ''
+      const apply = (key: string | undefined) => {
+        const days = Number(key) || 7
+        chart.data = visits(days)
+      }
+      apply(group.getAttribute('selected-key') ?? undefined)
+      group.addEventListener('selectionchange', (event) => {
+        apply((event as CustomEvent<{ selectedKey: string }>).detail.selectedKey)
+      })
+    }
+  }
+
+  function wireLiveFeeds(root: ParentNode): void {
+    for (const chart of root.querySelectorAll<MoulLineChart>(
+      'moul-line-chart[data-live-feed]',
+    )) {
+      if (chart.dataset.feedWired) continue
+      chart.dataset.feedWired = ''
+      const random = seeded(42)
+      const time = new Intl.DateTimeFormat('en', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false,
+      })
+      let cpu = 46
+      let memory = 58
+      const next = (at: number): Row => {
+        cpu = Math.min(95, Math.max(5, cpu + (random() - 0.5) * 18))
+        memory = Math.min(90, Math.max(30, memory + (random() - 0.5) * 6))
+        return {
+          time: time.format(at),
+          cpu: Math.round(cpu),
+          memory: Math.round(memory),
+        }
+      }
+      const max = Number(chart.getAttribute('max-points')) || 30
+      const now = Date.now()
+      chart.valueFormatter = (value: number) => `${value}%`
+      chart.data = Array.from({ length: max }, (_, i) =>
+        next(now - (max - 1 - i) * 1000),
+      )
+      const timer = window.setInterval(() => {
+        if (!chart.isConnected) {
+          window.clearInterval(timer)
+          return
+        }
+        if (!document.hidden) chart.push(next(Date.now()))
+      }, 1000)
+    }
+  }
+
+  document.addEventListener('click', (event) => {
+    const button = (event.target as Element | null)?.closest?.<HTMLElement>(
+      '[data-gauge-shuffle]',
+    )
+    if (!button) return
+    const gauge = document.getElementById(
+      button.dataset.gaugeShuffle ?? '',
+    ) as MoulDoughnutChart | null
+    if (gauge) gauge.value = Math.round(15 + Math.random() * 80)
+  })
+
+  function wirePercent(root: ParentNode): void {
+    for (const chart of root.querySelectorAll<HTMLElement & {
+      valueFormatter?: (value: number) => string
+    }>('[data-percent]')) {
+      chart.valueFormatter = (value: number) => `${value}%`
+    }
+  }
+
+  function wire(): void {
+    wirePercent(document)
+    wireTooltips(document)
+    wireRanges(document)
+    wireLiveFeeds(document)
+  }
+
+  wire()
+  document.addEventListener('astro:page-load', wire)
+</script>

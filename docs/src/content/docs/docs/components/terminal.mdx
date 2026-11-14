@@ -1,0 +1,103 @@
+---
+title: Terminal
+description: A terminal window that types its commands and prints their output, line by line.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+`<moul-terminal>` plays a terminal session. Each command types itself after the prompt, and the output below it appears once it has run, one line after another. Use it on landing and docs pages to show an install or a CLI at work. Playback starts when the terminal scrolls into view.
+
+<ComponentPreview align="stretch">
+<moul-terminal label="zsh">
+<moul-terminal-line is-command><span>bun add @moul-dev/web-component</span></moul-terminal-line>
+<moul-terminal-line tone="muted"><span>Resolving dependencies</span></moul-terminal-line>
+<moul-terminal-line tone="success"><span>✓ installed @moul-dev/web-component</span></moul-terminal-line>
+<moul-terminal-line tone="muted"><span>1 package installed [1.21s]</span></moul-terminal-line>
+<moul-terminal-line is-command delay="900"><span>bun run dev</span></moul-terminal-line>
+<moul-terminal-line><span>VITE ready in 312 ms</span></moul-terminal-line>
+<moul-terminal-line tone="success"><span>➜ Local: http://localhost:5173/</span></moul-terminal-line>
+</moul-terminal>
+</ComponentPreview>
+
+```html
+<moul-terminal label="zsh">
+  <moul-terminal-line is-command>bun add @moul-dev/web-component</moul-terminal-line>
+  <moul-terminal-line tone="muted">Resolving dependencies</moul-terminal-line>
+  <moul-terminal-line tone="success">✓ installed @moul-dev/web-component</moul-terminal-line>
+  <moul-terminal-line is-command delay="900">bun run dev</moul-terminal-line>
+  <moul-terminal-line>VITE ready in 312 ms</moul-terminal-line>
+</moul-terminal>
+```
+
+## Lines
+
+Every line is a `<moul-terminal-line>`. With `is-command` it types itself after the prompt; without, it is output and appears when the playback reaches it. `tone` colours output as `success`, `warning`, `error` or `muted`. A line's content can be any inline markup; a command types its text.
+
+`delay` is the pause in milliseconds before a line starts, and `prompt` replaces the terminal's prompt for one line. Lines added while the session plays wait their turn; lines added after it ends appear at once, so a page can keep appending output.
+
+## Playback
+
+`typing-speed` sets the milliseconds per typed character (40) and `line-delay` the pause before each line (400). When the session ends the terminal fires `complete` and shows a replay button; `replay()` does the same from code. `is-looping` starts over two seconds after the end, and `is-static` shows every line at once with no playback at all.
+
+<ComponentPreview align="stretch">
+<moul-terminal label="bun test" prompt="❯" is-static>
+<moul-terminal-line is-command><span>bun test</span></moul-terminal-line>
+<moul-terminal-line tone="success"><span>✓ 213 pass</span></moul-terminal-line>
+<moul-terminal-line tone="warning"><span>! 1 skip</span></moul-terminal-line>
+<moul-terminal-line tone="error"><span>✗ 1 fail · CodeBlock.test.ts</span></moul-terminal-line>
+</moul-terminal>
+</ComponentPreview>
+
+The window keeps the room of its full session from the start, so the page below it never moves while lines appear.
+
+## Copying
+
+The copy button copies the commands, one per line, without prompts or output, ready to paste into a shell. It is hidden when there are no commands, or with `hide-copy`.
+
+## Accessibility
+
+- The window is a `role="group"` named by `label` ("Terminal").
+- Every line's full text is in the page from the start, so screen readers read the whole session whatever the playback shows. The prompt, the typed copy and the cursor are hidden from them.
+- The copy and replay buttons are native buttons reached with `Tab`; after a copy, a polite live region says "Copied".
+- Under reduced motion every line shows at once, with no typing, fading or blinking cursor, and there is no replay button. Turning the setting on mid-playback finishes the session at once.
+
+## API reference
+
+### `<moul-terminal>`
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `label` | `label` | `string` | `'Terminal'` |
+| `prompt` | `prompt` | `string` | `'$'` |
+| `typing-speed` | `typingSpeed` | `number` (ms per character) | `40` |
+| `line-delay` | `lineDelay` | `number` (ms) | `400` |
+| `is-static` | `isStatic` | `boolean` | `false` |
+| `is-looping` | `isLooping` | `boolean` | `false` |
+| `hide-copy` | `hideCopy` | `boolean` | `false` |
+| | `lines` (read-only) | `MoulTerminalLine[]` | |
+| | `commands` (read-only) | `string` | |
+
+| Method | Description |
+| :-- | :-- |
+| `replay()` | Plays the session again from the first line. |
+| `finish()` | Shows every line at once and stops the playback. |
+| `copy()` | Copies the commands. Returns a `Promise<boolean>`. |
+
+| Event | Detail |
+| :-- | :-- |
+| `complete` | The last line has played. |
+
+**CSS parts:** `base`, `header`, `title`, `copy-button`, `replay-button`, `body`
+
+**CSS custom properties:** `--terminal-min-height` (default `auto`), and the `--color-code-*` tokens for its colours.
+
+### `<moul-terminal-line>`
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `is-command` | `isCommand` | `boolean` | `false` |
+| `prompt` | `prompt` | `string` | the terminal's |
+| `tone` | `tone` | `'success' \| 'warning' \| 'error' \| 'muted'` | |
+| `delay` | `delay` | `number` (ms) | the terminal's `line-delay` |
+
+**CSS parts:** `prompt`, `content`

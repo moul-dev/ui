@@ -639,6 +639,32 @@
   /* Ordinal stages (funnels): first and last step of an indigo → teal sweep. */
   --color-chart-ordinal-from: oklch(0.64 0.18 277);
   --color-chart-ordinal-to: oklch(0.8 0.1 180);
+
+  /* ── Code Syntax (13 tokens) ──────────────────────────────────── */
+  /* Code blocks, comparisons and payloads. Override them on an element to give
+     its code a palette of its own, e.g. a dark block on a light page. */
+  --color-code-bg: light-dark(
+    oklch(0.985 0.002 285),
+    oklch(0.17 0.006 285.885)
+  );
+  --color-code-fg: light-dark(
+    oklch(0.274 0.006 286.033),
+    oklch(0.92 0.004 286.32)
+  );
+  --color-code-comment: light-dark(oklch(0.56 0.02 265), oklch(0.66 0.02 265));
+  --color-code-keyword: light-dark(oklch(0.54 0.2 20), oklch(0.74 0.16 15));
+  --color-code-string: light-dark(oklch(0.45 0.13 255), oklch(0.82 0.09 235));
+  --color-code-number: light-dark(oklch(0.5 0.17 258), oklch(0.78 0.12 250));
+  --color-code-function: light-dark(oklch(0.5 0.2 300), oklch(0.78 0.13 300));
+  --color-code-type: light-dark(oklch(0.52 0.14 50), oklch(0.8 0.12 65));
+  --color-code-property: light-dark(oklch(0.48 0.13 230), oklch(0.8 0.1 220));
+  --color-code-tag: light-dark(oklch(0.5 0.15 150), oklch(0.8 0.15 150));
+  --color-code-attr: light-dark(oklch(0.5 0.17 258), oklch(0.78 0.12 250));
+  --color-code-variable: light-dark(oklch(0.52 0.14 50), oklch(0.8 0.12 65));
+  --color-code-punctuation: light-dark(
+    oklch(0.442 0.017 285.786),
+    oklch(0.705 0.015 286.067)
+  );
 }
 
 /* ── Theme Selectors ────────────────────────────────────────────── */

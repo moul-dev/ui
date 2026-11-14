@@ -1,0 +1,203 @@
+---
+/**
+ * Relationship graph demo wiring, so the MDX previews stay plain markup:
+ *   data-graph-sample="services|packages" → assigns that sample's nodes and links
+ *   data-graph-trace="id"   → a toggle group whose selection sets #id's `trace`
+ *   data-graph-details="id" → text that describes #id's traced node
+ *   data-graph-list="id"    → a list filled with #id's nodes and their links,
+ *                              as a text alternative to the drawing
+ */
+---
+
+<style is:global>
+  .demo-graph {
+    width: 100%;
+  }
+
+  .demo-graph-details {
+    min-height: 2.5rem;
+    margin: 0;
+    color: var(--color-fg-subtle);
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-sm);
+    text-align: center;
+  }
+
+  .demo-graph-details strong {
+    color: var(--color-fg);
+  }
+
+  .demo-graph-list {
+    width: 100%;
+    font-size: var(--font-size-sm);
+  }
+
+  .demo-graph-list summary {
+    cursor: pointer;
+    color: var(--color-fg-subtle);
+  }
+
+  .demo-graph-list ul {
+    margin: 0.5rem 0 0;
+    padding-inline-start: 1.25rem;
+  }
+</style>
+
+<script>
+  import type {
+    MoulRelationshipGraph,
+    RelationshipGraphLink,
+    RelationshipGraphNode,
+    RelationshipGraphTrace,
+  } from '@moul-dev/web-component'
+
+  const SAMPLES: Record<
+    string,
+    { nodes: RelationshipGraphNode[]; links: RelationshipGraphLink[] }
+  > = {
+    services: {
+      nodes: [
+        { id: 'web', label: 'Web app', description: 'Astro', group: 'Clients' },
+        { id: 'mobile', label: 'Mobile app', description: 'iOS · Android', group: 'Clients' },
+        { id: 'admin', label: 'Admin console', group: 'Clients' },
+        { id: 'api', label: 'API', description: 'Rust service', group: 'Services' },
+        { id: 'auth', label: 'Auth', group: 'Services' },
+        { id: 'billing', label: 'Billing', group: 'Services' },
+        { id: 'search', label: 'Search', group: 'Services' },
+        { id: 'db', label: 'Postgres', description: 'primary', group: 'Data' },
+        { id: 'cache', label: 'Redis', group: 'Data' },
+        { id: 'queue', label: 'Job queue', group: 'Data' },
+        { id: 'stripe', label: 'Stripe', group: 'External' },
+      ],
+      links: [
+        { source: 'web', target: 'api', label: 'calls' },
+        { source: 'mobile', target: 'api' },
+        { source: 'admin', target: 'api' },
+        { source: 'admin', target: 'auth' },
+        { source: 'api', target: 'auth' },
+        { source: 'api', target: 'billing' },
+        { source: 'api', target: 'search' },
+        { source: 'api', target: 'cache' },
+        { source: 'auth', target: 'db' },
+        { source: 'billing', target: 'db' },
+        { source: 'billing', target: 'queue' },
+        { source: 'billing', target: 'stripe' },
+        { source: 'search', target: 'cache' },
+      ],
+    },
+    packages: {
+      nodes: [
+        { id: 'docs', label: 'docs', description: 'Astro site', group: 'Workspace' },
+        { id: 'wc', label: '@moul-dev/web-component', group: 'Workspace' },
+        { id: 'lit', label: 'lit', group: 'Dependencies' },
+        { id: 'motion', label: 'motion', group: 'Dependencies' },
+        { id: 'd3-scale', label: 'd3-scale', group: 'Dependencies' },
+        { id: 'd3-shape', label: 'd3-shape', group: 'Dependencies' },
+        { id: 'lit-html', label: 'lit-html', group: 'Dependencies' },
+        { id: 'reactive', label: '@lit/reactive-element', group: 'Dependencies' },
+        { id: 'd3-array', label: 'd3-array', group: 'Dependencies' },
+        { id: 'd3-path', label: 'd3-path', group: 'Dependencies' },
+      ],
+      links: [
+        { source: 'docs', target: 'wc' },
+        { source: 'wc', target: 'lit' },
+        { source: 'wc', target: 'motion' },
+        { source: 'wc', target: 'd3-scale' },
+        { source: 'wc', target: 'd3-shape' },
+        { source: 'lit', target: 'lit-html' },
+        { source: 'lit', target: 'reactive' },
+        { source: 'd3-scale', target: 'd3-array' },
+        { source: 'd3-shape', target: 'd3-path' },
+      ],
+    },
+  }
+
+  const graphById = (id: string | undefined) =>
+    document.getElementById(id ?? '') as MoulRelationshipGraph | null
+
+  const names = (graph: MoulRelationshipGraph, ids: string[]) =>
+    ids
+      .map((id) => graph.nodes.find((node) => node.id === id))
+      .map((node) => node?.label || node?.id || '')
+
+  function fillList(list: HTMLElement, graph: MoulRelationshipGraph): void {
+    const ul = list.querySelector('ul') ?? list.appendChild(document.createElement('ul'))
+    ul.replaceChildren(
+      ...graph.nodes.map((node) => {
+        const dependsOn = graph.links
+          .filter((link) => link.source === node.id)
+          .map((link) => link.target)
+        const li = document.createElement('li')
+        const strong = document.createElement('strong')
+        strong.textContent = node.label || node.id
+        li.append(
+          strong,
+          dependsOn.length
+            ? ` depends on ${names(graph, dependsOn).join(', ')}`
+            : ' depends on nothing',
+        )
+        return li
+      }),
+    )
+  }
+
+  function hydrate(): void {
+    for (const el of document.querySelectorAll<MoulRelationshipGraph>(
+      '[data-graph-sample]',
+    )) {
+      const sample = SAMPLES[el.dataset.graphSample ?? '']
+      if (!sample) continue
+      el.nodes = sample.nodes
+      el.links = sample.links
+    }
+    for (const list of document.querySelectorAll<HTMLElement>('[data-graph-list]')) {
+      const graph = graphById(list.dataset.graphList)
+      if (graph) fillList(list, graph)
+    }
+  }
+
+  document.addEventListener('selectionchange', (event) => {
+    const group = (event.target as Element | null)?.closest?.<HTMLElement>(
+      '[data-graph-trace]',
+    )
+    const graph = graphById(group?.dataset.graphTrace)
+    const key = (event as CustomEvent<{ selectedKey?: string }>).detail?.selectedKey
+    if (graph && key) graph.trace = key as RelationshipGraphTrace
+  })
+
+  document.addEventListener('tracechange', (event) => {
+    const graph = event.target as MoulRelationshipGraph
+    const details = document.querySelector<HTMLElement>(
+      `[data-graph-details="${graph.id}"]`,
+    )
+    if (!details) return
+    const { id, upstream, downstream } = (
+      event as CustomEvent<{ id: string | null; upstream: string[]; downstream: string[] }>
+    ).detail
+    if (!id) {
+      details.textContent = 'Hover, focus or select a node to trace its path.'
+      return
+    }
+    const strong = document.createElement('strong')
+    strong.textContent = names(graph, [id])[0] ?? id
+    const parts: string[] = []
+    if (graph.trace !== 'downstream') {
+      parts.push(
+        upstream.length
+          ? `depends on ${upstream.length} (${names(graph, upstream).join(', ')})`
+          : 'depends on nothing',
+      )
+    }
+    if (graph.trace !== 'upstream') {
+      parts.push(
+        downstream.length
+          ? `${downstream.length} depend on it (${names(graph, downstream).join(', ')})`
+          : 'nothing depends on it',
+      )
+    }
+    details.replaceChildren(strong, ` ${parts.join(' · ')}`)
+  })
+
+  hydrate()
+  document.addEventListener('astro:page-load', hydrate)
+</script>

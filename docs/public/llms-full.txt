@@ -55,10 +55,10 @@ Without a bundler, load the self-contained CDN build (Lit and the other dependen
 
 ## AreaChart
 
-D3-powered area chart with optional stacking, grid lines, and hover tooltips. Docs: [/docs/components/charts/areachart](/docs/components/charts/areachart)
+Area chart with optional stacking that you scrub with the pointer or arrow keys (slider semantics), and that morphs between data sets such as 7/30/90-day ranges. Docs: [/docs/components/charts/areachart](/docs/components/charts/areachart)
 
 ```html
-<moul-area-chart id="revenue" x-key="month" height="280" stacked></moul-area-chart>
+<moul-area-chart id="revenue" label="Revenue" x-key="month" height="280" stacked></moul-area-chart>
 ```
 
 ```js
@@ -85,6 +85,8 @@ Class: `MoulAreaChart` · Source: `ui/src/components/AreaChart/AreaChart.ts`
 | `height` | `height` | `number` | `300` |
 | `stacked` | `stacked` | `boolean` | `false` |
 | `show-grid` | `showGrid` | `boolean` | `true` |
+| `scrub` | `scrub` | `boolean` | `true` |
+| `label` | `label` | `string` | `''` |
 
 **Properties** (JavaScript only — set on the element instance)
 
@@ -107,7 +109,7 @@ Class: `MoulAreaChart` · Source: `ui/src/components/AreaChart/AreaChart.ts`
 | :--- |
 | `empty` |
 
-**CSS Parts:** `empty`, `container`, `svg`, `grid`, `x-axis`, `series`, `area`, `line`, `stroke`, `points`, `point`
+**CSS Parts:** `container`, `scrub-guide`, `scrub-dot`, `empty`, `svg`, `grid`, `x-axis`, `series`, `area`, `line`, `stroke`, `points`, `point`
 
 ## BarChart
 
@@ -162,17 +164,17 @@ Class: `MoulBarChart` · Source: `ui/src/components/BarChart/BarChart.ts`
 
 ## LineChart
 
-Multi-series line chart with configurable D3 curve. Docs: [/docs/components/charts/linechart](/docs/components/charts/linechart)
+Multi-series line chart with pointer and keyboard scrubbing; `is-live` turns it into a real-time feed with `push()`, `max-points`, a gliding line and a pause button. Docs: [/docs/components/charts/linechart](/docs/components/charts/linechart)
 
 ```html
-<moul-line-chart id="latency" x-key="time" curve="monotoneX"></moul-line-chart>
+<moul-line-chart id="latency" label="Latency" x-key="time" is-live max-points="40"></moul-line-chart>
 ```
 
 ```js
 const chart = document.querySelector('#latency')
-chart.data = [{ time: '10:00', p50: 42, p99: 180 }, { time: '10:05', p50: 39, p99: 150 }]
 chart.series = [{ key: 'p50', name: 'p50' }, { key: 'p99', name: 'p99' }]
 chart.valueFormatter = (v) => `${v} ms`
+setInterval(() => chart.push({ time: new Date().toLocaleTimeString(), p50: 40, p99: 160 }), 1000)
 ```
 
 ### `<moul-line-chart>`
@@ -187,12 +189,17 @@ Class: `MoulLineChart` · Source: `ui/src/components/LineChart/LineChart.ts`
 | `height` | `height` | `number` | `300` |
 | `show-grid` | `showGrid` | `boolean` | `true` |
 | `curve` | `curve` | `string` | `'monotoneX'` |
+| `scrub` | `scrub` | `boolean` | `true` |
+| `label` | `label` | `string` | `''` |
+| `is-live` | `isLive` | `boolean` | `false` |
+| `is-paused` | `isPaused` | `boolean` | `false` |
+| `max-points` | `maxPoints` | `number` | `0` |
 
 **Properties** (JavaScript only — set on the element instance)
 
 | Property | Type | Default |
 | :--- | :--- | :--- |
-| `data` | `Record<string, unknown>[]` | `[]` |
+| `data` | `Row[]` | `[]` |
 | `series` | `ChartSeries[]` | `[]` |
 | `valueFormatter` | `(value: any) => string \| undefined` | `undefined` |
 
@@ -202,6 +209,7 @@ Class: `MoulLineChart` · Source: `ui/src/components/LineChart/LineChart.ts`
 | :--- | :--- |
 | `point-hover` | `CustomEvent` |
 | `point-leave` | `CustomEvent` |
+| `pausechange` | — |
 
 **Slots**
 
@@ -209,14 +217,15 @@ Class: `MoulLineChart` · Source: `ui/src/components/LineChart/LineChart.ts`
 | :--- |
 | `empty` |
 
-**CSS Parts:** `empty`, `grid`, `line`, `point`
+**CSS Parts:** `container`, `line`, `point`, `grid`, `track`, `head`, `pause-button`, `scrub-guide`, `scrub-dot`, `empty`
 
 ## DoughnutChart
 
-Doughnut / pie chart with a centered label and sublabel slot. Docs: [/docs/components/charts/doughnutchart](/docs/components/charts/doughnutchart)
+Doughnut, pie or half-circle chart whose centre shows the hovered slice; set `value`/`min`/`max` for a gauge that sweeps and counts to each new value. Docs: [/docs/components/charts/doughnutchart](/docs/components/charts/doughnutchart)
 
 ```html
 <moul-doughnut-chart id="traffic" center-label="12.4k" center-sublabel="Visits"></moul-doughnut-chart>
+<moul-doughnut-chart shape="half" height="170" value="72" center-sublabel="Disk used"></moul-doughnut-chart>
 ```
 
 ```js
@@ -241,6 +250,12 @@ Class: `MoulDoughnutChart` · Source: `ui/src/components/DoughnutChart/DoughnutC
 | `center-sublabel` | `centerSublabel` | `string` | `''` |
 | `pad-angle` | `padAngle` | `number` | `0.02` |
 | `corner-radius` | `cornerRadius` | `number` | `4` |
+| `shape` | `shape` | `'full' \| 'half'` | `'full'` |
+| `value` | `value` | `number \| null` | `null` |
+| `min` | `min` | `number` | `0` |
+| `max` | `max` | `number` | `100` |
+| `color` | `color` | `string` | `''` |
+| `label` | `label` | `string` | `''` |
 
 **Properties** (JavaScript only — set on the element instance)
 
@@ -263,7 +278,7 @@ Class: `MoulDoughnutChart` · Source: `ui/src/components/DoughnutChart/DoughnutC
 | `center` |
 | `empty` |
 
-**CSS Parts:** `empty`, `wrapper`, `svg`, `slice`, `center`, `center-label`, `center-sublabel`
+**CSS Parts:** `wrapper`, `svg`, `slice`, `track`, `value-arc`, `center`, `center-label`, `center-sublabel`, `empty`
 
 ## HeatmapChart
 
@@ -3705,6 +3720,470 @@ Class: `MoulConfetti` · Source: `ui/src/components/Confetti/Confetti.ts`
 | (default) |
 
 **CSS Parts:** `canvas`
+
+---
+
+# Data & Developer
+
+## ActivityFeed
+
+Live event stream, newest first, for audit trails and request logs; events with a `payload` expand into highlighted JSON, and new events wait while the pointer or focus is inside or while paused. Docs: [/docs/components/activityfeed](/docs/components/activityfeed)
+
+```html
+<moul-activity-feed id="requests" label="Requests"></moul-activity-feed>
+```
+
+```js
+const feed = document.querySelector('#requests')
+feed.events = [{ id: 1, title: 'Deploy finished', tone: 'success', timestamp: Date.now() }]
+feed.push({ id: 2, title: 'POST /api/records', badge: '201', tone: 'success', timestamp: Date.now(), payload: { id: 'rec_8f2' } })
+```
+
+### `<moul-activity-feed>`
+
+Class: `MoulActivityFeed` · Source: `ui/src/components/ActivityFeed/ActivityFeed.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `max` | `max` | `number` | `200` |
+| `is-paused` | `isPaused` | `boolean` | `false` |
+| `is-live` | `isLive` | `boolean` | `false` |
+| `label` | `label` | `string` | `'Activity'` |
+| `hide-header` | `hideHeader` | `boolean` | `false` |
+| `time-format` | `timeFormat` | `'relative' \| 'time' \| 'datetime'` | `'relative'` |
+| `locale` | `locale` | `string \| undefined` | `undefined` |
+| `shown` | `shown` | `array` | `[]` |
+| `isHolding` | `isHolding` | `boolean` | `false` |
+
+**Properties** (JavaScript only — set on the element instance)
+
+| Property | Type | Default |
+| :--- | :--- | :--- |
+| `events` | `ActivityEvent[]` | `[]` |
+
+**Events**
+
+| Event | Type |
+| :--- | :--- |
+| `pausechange` | `CustomEvent` |
+| `expandedchange` | `CustomEvent` |
+
+**Slots**
+
+| Slot |
+| :--- |
+| `empty` |
+
+**CSS Parts:** `base`, `header`, `label`, `status`, `pause-button`, `pending`, `list`, `row`, `payload`, `copy-button`
+
+## CodeBlock
+
+Read-only highlighted code (TS/JS, JSON, HTML, CSS, shell, Python, Rust, SQL, YAML, diff) with a copy button, line highlights, line numbers and tabs; blocks sharing a `sync-key` switch tabs together. Docs: [/docs/components/codeblock](/docs/components/codeblock)
+
+```html
+<moul-code-block language="ts" filename="main.ts" highlight-lines="2" show-line-numbers>
+  import '@moul-dev/web-component'
+  document.querySelector('moul-toast-region')
+</moul-code-block>
+<moul-code-block language="bash" sync-key="pm">
+  <script type="text/plain" data-label="bun">bun add @moul-dev/web-component</script>
+  <script type="text/plain" data-label="npm">npm install @moul-dev/web-component</script>
+</moul-code-block>
+```
+
+### `<moul-code-block>`
+
+Class: `MoulCodeBlock` · Source: `ui/src/components/CodeBlock/CodeBlock.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `code` | `code` | `string` | `''` |
+| `language` | `language` | `string` | `''` |
+| `filename` | `filename` | `string` | `''` |
+| `highlight-lines` | `highlightLines` | `string` | `''` |
+| `show-line-numbers` | `showLineNumbers` | `boolean` | `false` |
+| `is-wrapped` | `isWrapped` | `boolean` | `false` |
+| `hide-copy` | `hideCopy` | `boolean` | `false` |
+| `selected-index` | `selectedIndex` | `number` | `0` |
+| `sync-key` | `syncKey` | `string` | `''` |
+| `label` | `label` | `string` | `''` |
+| `copy-label` | `copyLabel` | `string` | `'Copy code'` |
+| `copied-label` | `copiedLabel` | `string` | `'Copied'` |
+| `copy-failed-label` | `copyFailedLabel` | `string` | `'Could not copy'` |
+| `lightSources` | `lightSources` | `array` | `[]` |
+| `isOverflowing` | `isOverflowing` | `boolean` | `false` |
+
+**Properties** (JavaScript only — set on the element instance)
+
+| Property | Type | Default |
+| :--- | :--- | :--- |
+| `tabs` | `CodeBlockTab[]` | `[]` |
+
+**Events**
+
+| Event | Type |
+| :--- | :--- |
+| `codecopy` | `CustomEvent` |
+| `tabchange` | `CustomEvent` |
+
+**Slots**
+
+| Slot |
+| :--- |
+| (default) |
+
+**CSS Parts:** `base`, `header`, `filename`, `tabs`, `tab`, `indicator`, `copy-button`, `scroller`, `code`, `body`
+
+## CodeComparison
+
+Two versions of a snippet compared line by line, split side by side or unified, with removed and added lines and the edited part of each line marked. Docs: [/docs/components/codecomparison](/docs/components/codecomparison)
+
+```html
+<moul-code-comparison language="ts" before-label="v1" after-label="v2">
+  <script type="text/plain">button.onPress = save</script>
+  <script type="text/plain">button.addEventListener('press', save)</script>
+</moul-code-comparison>
+```
+
+### `<moul-code-comparison>`
+
+Class: `MoulCodeComparison` · Source: `ui/src/components/CodeComparison/CodeComparison.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `before-code` | `beforeCode` | `string` | `''` |
+| `after-code` | `afterCode` | `string` | `''` |
+| `language` | `language` | `string` | `''` |
+| `before-label` | `beforeLabel` | `string` | `''` |
+| `after-label` | `afterLabel` | `string` | `''` |
+| `layout` | `layout` | `'split' \| 'unified'` | `'split'` |
+| `removed-label` | `removedLabel` | `string` | `'Removed'` |
+| `added-label` | `addedLabel` | `string` | `'Added'` |
+| `lightSources` | `lightSources` | `array` | `[]` |
+| `isNarrow` | `isNarrow` | `boolean` | `false` |
+
+**Events**
+
+| Event | Type |
+| :--- | :--- |
+| `codecopy` | `CustomEvent` |
+
+**Slots**
+
+| Slot |
+| :--- |
+| (default) |
+
+**CSS Parts:** `base`, `header`, `label`, `stats`, `copy-button`, `scroller`, `diff`
+
+## FileTree
+
+Folders and files built from a list of paths, with icons by file type, selection and expansion by path, on moul-tree. Docs: [/docs/components/filetree](/docs/components/filetree)
+
+```html
+<moul-file-tree id="files" label="Project files"></moul-file-tree>
+```
+
+```js
+const files = document.querySelector('#files')
+files.files = ['src/index.ts', 'src/components/Button.ts', 'package.json', 'README.md']
+files.selectedKey = 'src/index.ts'
+files.addEventListener('action', (e) => openFile(e.detail.path))
+```
+
+### `<moul-file-tree>`
+
+Class: `MoulFileTree` · Source: `ui/src/components/FileTree/FileTree.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `selected-key` | `selectedKey` | `string` | `''` |
+| `sort` | `sort` | `'folders-first' \| 'none'` | `'folders-first'` |
+| `label` | `label` | `string` | `'Files'` |
+
+**Properties** (JavaScript only — set on the element instance)
+
+| Property | Type | Default |
+| :--- | :--- | :--- |
+| `files` | `(string \| FileTreeNode)[]` | `[]` |
+| `expanded` | `string[]` | `[]` |
+
+**Events**
+
+| Event | Type |
+| :--- | :--- |
+| `type` | `CustomEvent` |
+| `selectionchange` | — |
+| `expandedchange` | — |
+| `action` | — |
+
+**Slots**
+
+| Slot |
+| :--- |
+| `empty` |
+
+**CSS Parts:** `tree`, `icon`, `meta`, `empty`
+
+## HistoryLedger
+
+Version history of a record, newest first, with before→after field changes and one-click restore. Docs: [/docs/components/historyledger](/docs/components/historyledger)
+
+```html
+<moul-history-ledger id="history"></moul-history-ledger>
+```
+
+```js
+const history = document.querySelector('#history')
+history.versions = [
+  { id: 'v2', label: 'Version 2', author: 'Dara', timestamp: Date.now(), summary: 'Published',
+    changes: [{ field: 'Status', before: 'Draft', after: 'Published' }] },
+  { id: 'v1', label: 'Version 1', author: 'Dara', timestamp: Date.now() - 86400000 },
+]
+history.current = 'v2'
+history.addEventListener('restore', (e) => e.detail.waitUntil(api.restore(e.detail.version.id)))
+```
+
+### `<moul-history-ledger>`
+
+Class: `MoulHistoryLedger` · Source: `ui/src/components/HistoryLedger/HistoryLedger.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `current` | `current` | `string` | `''` |
+| `label` | `label` | `string` | `'Version history'` |
+| `is-read-only` | `isReadOnly` | `boolean` | `false` |
+
+**Properties** (JavaScript only — set on the element instance)
+
+| Property | Type | Default |
+| :--- | :--- | :--- |
+| `versions` | `HistoryVersion[]` | `[]` |
+| `labels` | `Partial<HistoryLedgerLabels>` | `{}` |
+| `valueFormatter` | `\| ((value: unknown, change: HistoryChange) => string) \| undefined` | `undefined` |
+
+**Events**
+
+| Event | Type |
+| :--- | :--- |
+| `restore` | `CustomEvent` |
+
+**Slots**
+
+| Slot |
+| :--- |
+| `empty` |
+
+**CSS Parts:** `base`, `timeline`, `version`, `title`, `summary`, `changes-toggle`, `changes`, `restore`, `empty`
+
+## RelationshipGraph
+
+Layered graph of nodes and links (source depends on target); hovering, focusing or selecting a node traces its upstream dependencies and downstream dependents. Docs: [/docs/components/relationshipgraph](/docs/components/relationshipgraph)
+
+```html
+<moul-relationship-graph id="services" label="Service map" trace="both" show-legend></moul-relationship-graph>
+```
+
+```js
+const graph = document.querySelector('#services')
+graph.nodes = [
+  { id: 'web', label: 'Web app', group: 'Clients' },
+  { id: 'api', label: 'API', group: 'Services' },
+  { id: 'db', label: 'Postgres', group: 'Data' },
+]
+graph.links = [
+  { source: 'web', target: 'api', label: 'calls' },
+  { source: 'api', target: 'db' },
+]
+graph.addEventListener('node-action', (e) => console.log(e.detail.id))
+```
+
+### `<moul-relationship-graph>`
+
+Class: `MoulRelationshipGraph` · Source: `ui/src/components/RelationshipGraph/RelationshipGraph.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `direction` | `direction` | `RelationshipGraphDirection` | `'horizontal'` |
+| `trace` | `trace` | `'both' \| 'upstream' \| 'downstream'` | `'both'` |
+| `selected-key` | `selectedKey` | `string` | `''` |
+| `label` | `label` | `string` | `''` |
+| `show-legend` | `showLegend` | `boolean` | `false` |
+| `hovered` | `hovered` | `string \| null` | `null` |
+| `focused` | `focused` | `string \| null` | `null` |
+| `isReduced` | `isReduced` | `boolean` | `false` |
+
+**Properties** (JavaScript only — set on the element instance)
+
+| Property | Type | Default |
+| :--- | :--- | :--- |
+| `nodes` | `RelationshipGraphNode[]` | `[]` |
+| `links` | `RelationshipGraphLink[]` | `[]` |
+| `describeNode` | `( node: RelationshipGraphNode, relations: RelationshipGraphRelations, ) => string \| undefined` | `undefined` |
+
+**Events**
+
+| Event | Type |
+| :--- | :--- |
+| `tracechange` | `CustomEvent` |
+| `type` | `CustomEvent` |
+| `selectionchange` | — |
+| `node-action` | — |
+
+**Slots**
+
+| Slot |
+| :--- |
+| `empty` |
+
+**CSS Parts:** `base`, `svg`, `node`, `node-box`, `link`, `link-label`, `legend`, `empty`
+
+## Terminal
+
+Terminal window that types its commands and prints their output line by line when scrolled into view; the copy button copies just the commands. Docs: [/docs/components/terminal](/docs/components/terminal)
+
+```html
+<moul-terminal label="zsh">
+  <moul-terminal-line is-command>bun add @moul-dev/web-component</moul-terminal-line>
+  <moul-terminal-line tone="success">✓ installed</moul-terminal-line>
+</moul-terminal>
+```
+
+### `<moul-terminal>`
+
+Class: `MoulTerminal` · Source: `ui/src/components/Terminal/Terminal.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `label` | `label` | `string` | `'Terminal'` |
+| `prompt` | `prompt` | `string` | `'$'` |
+| `typing-speed` | `typingSpeed` | `number` | `40` |
+| `line-delay` | `lineDelay` | `number` | `400` |
+| `is-static` | `isStatic` | `boolean` | `false` |
+| `is-looping` | `isLooping` | `boolean` | `false` |
+| `hide-copy` | `hideCopy` | `boolean` | `false` |
+| `isComplete` | `isComplete` | `boolean` | `false` |
+| `hasCommands` | `hasCommands` | `boolean` | `false` |
+
+**Events**
+
+| Event | Type |
+| :--- | :--- |
+| `complete` | `Event` |
+
+**Slots**
+
+| Slot |
+| :--- |
+| (default) |
+
+**CSS Parts:** `base`, `header`, `title`, `copy-button`, `replay-button`, `body`
+
+### `<moul-terminal-line>`
+
+Class: `MoulTerminalLine` · Source: `ui/src/components/Terminal/TerminalLine.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `is-command` | `isCommand` | `boolean` | `false` |
+| `prompt` | `prompt` | `string \| undefined` | `undefined` |
+| `tone` | `tone` | `'success' \| 'warning' \| 'error' \| 'muted' \| undefined` | `undefined` |
+| `delay` | `delay` | `number \| undefined` | `undefined` |
+| `data-state` | `state` | `string` | `'shown'` |
+
+**Properties** (JavaScript only — set on the element instance)
+
+| Property | Type | Default |
+| :--- | :--- | :--- |
+| `typed` | `number` | `0` |
+| `defaultPrompt` | `string` | `'$'` |
+
+**Slots**
+
+| Slot |
+| :--- |
+| (default) |
+
+**CSS Parts:** `prompt`, `content`
+
+## Timeline
+
+Vertical milestones on a rail with sticky headings, a scroll- or status-linked progress line, and a compact density for record history. Docs: [/docs/components/timeline](/docs/components/timeline)
+
+```html
+<moul-timeline label="Order 1042" progress="status">
+  <moul-timeline-item heading="Ordered" meta="Mon 9 Nov" status="complete" tone="success">Paid.</moul-timeline-item>
+  <moul-timeline-item heading="Out for delivery" meta="Today" status="current">Arrives 2–4 pm.</moul-timeline-item>
+  <moul-timeline-item heading="Delivered" status="upcoming"></moul-timeline-item>
+</moul-timeline>
+```
+
+### `<moul-timeline>`
+
+Class: `MoulTimeline` · Source: `ui/src/components/Timeline/Timeline.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `density` | `density` | `'comfortable' \| 'compact'` | `'comfortable'` |
+| `progress` | `progress` | `'scroll' \| 'status' \| 'none'` | `'scroll'` |
+| `heading-level` | `headingLevel` | `number` | `0` |
+| `label` | `label` | `string` | `''` |
+
+**Slots**
+
+| Slot |
+| :--- |
+| (default) |
+
+**CSS Parts:** `base`
+
+### `<moul-timeline-item>`
+
+Class: `MoulTimelineItem` · Source: `ui/src/components/Timeline/TimelineItem.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `heading` | `heading` | `string` | `''` |
+| `meta` | `meta` | `string` | `''` |
+| `status` | `status` | `'complete' \| 'current' \| 'upcoming' \| ''` | `''` |
+| `status-label` | `statusLabel` | `string \| undefined` | `undefined` |
+| `tone` | `tone` | `'primary' \| 'accent' \| 'success' \| 'warning' \| 'error' \| ''` | `''` |
+| `density` | `density` | `string` | `'comfortable'` |
+| `progress` | `progress` | `string` | `'scroll'` |
+| `headingLevel` | `headingLevel` | `number` | `0` |
+| `isFirst` | `isFirst` | `boolean` | `false` |
+| `isLast` | `isLast` | `boolean` | `false` |
+
+**Slots**
+
+| Slot |
+| :--- |
+| (default) |
+| `heading` |
+| `meta` |
+| `marker` |
+
+**CSS Parts:** `base`, `rail`, `progress`, `aside`, `marker`, `heading`, `content`
 
 ---
 

@@ -1,0 +1,91 @@
+---
+title: Code Comparison
+description: Two versions of a snippet side by side, with removed and added lines marked.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+
+`<moul-code-comparison>` compares two versions of a snippet line by line. Removed lines are marked on the before side and added lines on the after side, with gaps that keep the two sides level. When a line was edited rather than replaced, the part that changed is marked more strongly. Use it in migration guides, changelogs and code review screens.
+
+<ComponentPreview align="stretch">
+<moul-code-comparison language="ts" before-label="Before" after-label="After" before-code={`const button = document.querySelector('moul-button')
+button.onPress = () => save()
+button.setAttribute('disabled', '')`} after-code={`const button = document.querySelector('moul-button')
+button.addEventListener('press', () => save())
+button.isDisabled = true`}></moul-code-comparison>
+</ComponentPreview>
+
+```html
+<moul-code-comparison language="ts" before-label="v1" after-label="v2">
+  <script type="text/plain">const x = 1</script>
+  <script type="text/plain">const x = 2</script>
+</moul-code-comparison>
+```
+
+Give the two versions as `before-code` and `after-code`, or in the markup as two `<script type="text/plain">` or `<template>` children, the first one before. A child's `data-label` names its side and `data-language` sets the language, as in [`<moul-code-block>`](/docs/components/codeblock).
+
+## Layout
+
+`layout="split"`, the default, puts the versions side by side. In a container narrower than 36rem it shows one column instead, so it stays readable on a phone. `layout="unified"` always shows one column, with each run of removals above its additions and both line numbers in the gutter.
+
+<ComponentPreview align="stretch">
+<moul-code-comparison layout="unified" language="yaml" before-label="moul.yml" after-label="moul.yml" before-code={[
+  "server:",
+  "  port: 8090",
+  "  cors: \"*\"",
+  "storage:",
+  "  path: ./data",
+].join('\n')} after-code={[
+  "server:",
+  "  port: 8090",
+  "  cors:",
+  "    - https://admin.moul.dev",
+  "storage:",
+  "  path: ./data",
+  "  backups: daily",
+].join('\n')}></moul-code-comparison>
+</ComponentPreview>
+
+Lines wrap rather than scroll sideways, so the two sides of a split view always line up. Cap the height with `--code-comparison-max-height`.
+
+## How lines are matched
+
+The comparison finds the longest run of lines the two versions share, after setting aside the lines they both start and end with, and marks everything else as removed or added. It compares whole lines, so a change in indentation counts as a change. Very large inputs, where the two changed middles would take more than four million comparisons, are shown as replaced wholesale instead of diffed.
+
+## Accessibility
+
+- The coloured view is hidden from screen readers. They read a plain version instead: a group named "Changes from Before to After" that says how many lines were removed and added, then reads every line in order, prefixed with "Removed" or "Added" when it changed. Set `removed-label` and `added-label` to translate those words.
+- The copy buttons are native buttons named "Copy" plus the side's label, and say "Copied" in a polite live region. Split view has one per side; unified view copies the after side.
+- Removed and added lines carry a `-` or `+` sign as well as a colour, so the difference does not rest on colour alone.
+- Nothing moves except the copy icon, which swaps without scaling under reduced motion.
+
+## API reference
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `before-code` | `beforeCode` | `string` | `''` |
+| `after-code` | `afterCode` | `string` | `''` |
+| `language` | `language` | `string` | `''` |
+| `before-label` | `beforeLabel` | `string` | `'Before'` |
+| `after-label` | `afterLabel` | `string` | `'After'` |
+| `layout` | `layout` | `'split' \| 'unified'` | `'split'` |
+| `removed-label` | `removedLabel` | `string` | `'Removed'` |
+| `added-label` | `addedLabel` | `string` | `'Added'` |
+
+| Method | Description |
+| :-- | :-- |
+| `copy(side)` | Copies `'before'` or `'after'` (the default). Returns a `Promise<boolean>`. |
+
+| Event | Detail |
+| :-- | :-- |
+| `codecopy` | `{ code, side, isCopied }` |
+
+| Slot | Description |
+| :-- | :-- |
+| `(default)` | Two `<script type="text/plain">` or `<template>` children, before and after. Not rendered as is. |
+
+**CSS parts:** `base`, `header`, `label`, `stats`, `copy-button`, `scroller`, `diff`
+
+**CSS custom properties:** `--code-comparison-max-height` (default `none`), `--code-block-font-size`, and the `--color-code-*` tokens.
+
+`diffLines(before, after)` is exported too, for line diffs of your own: it takes two arrays of lines and returns `{ kind, before?, after? }` for every line, in reading order.

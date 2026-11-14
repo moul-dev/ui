@@ -4,68 +4,80 @@ description: ឯកសារណែនាំសម្រាប់សមាសភ�
 ---
 
 import ComponentPreview from '@/components/ComponentPreview.astro';
+import ChartsDemo from '@/components/demos/ChartsDemo.astro';
 
-`<moul-line-chart>` connects each series with a smooth curve.
+`<moul-line-chart>` connects each series with a smooth curve. Drag or hover across the plot to read it: a guide snaps to the nearest month and a dot marks each series. Click the plot and use the arrow keys to do the same from the keyboard.
 
 <ComponentPreview align="stretch">
-<moul-line-chart x-key="month" height="260" show-grid data-props='{"data":[{"month":"Jan","desktop":186,"mobile":80,"revenue":4200},{"month":"Feb","desktop":305,"mobile":200,"revenue":5100},{"month":"Mar","desktop":237,"mobile":120,"revenue":4800},{"month":"Apr","desktop":273,"mobile":190,"revenue":6100},{"month":"May","desktop":209,"mobile":130,"revenue":5600},{"month":"Jun","desktop":314,"mobile":240,"revenue":7300}],"series":[{"key":"desktop","name":"Desktop"},{"key":"mobile","name":"Mobile"}]}'></moul-line-chart>
+<moul-line-chart x-key="month" height="260" show-grid label="Visits by month" data-chart-tooltip="line-tip" data-props='{"data":[{"month":"Jan","desktop":186,"mobile":80},{"month":"Feb","desktop":305,"mobile":200},{"month":"Mar","desktop":237,"mobile":120},{"month":"Apr","desktop":273,"mobile":190},{"month":"May","desktop":209,"mobile":130},{"month":"Jun","desktop":314,"mobile":240}],"series":[{"key":"desktop","name":"Desktop"},{"key":"mobile","name":"Mobile"}]}'></moul-line-chart>
+<moul-chart-tooltip id="line-tip"></moul-chart-tooltip>
+<ChartsDemo />
 </ComponentPreview>
 
 ```html
-<moul-line-chart x-key="month" height="260" show-grid></moul-line-chart>
+<moul-line-chart x-key="month" height="260" label="Visits by month"></moul-line-chart>
 ```
 
 ```js
-const lineChart = document.querySelector('moul-line-chart')
-lineChart.data = [
-  {
-    "month": "Jan",
-    "desktop": 186,
-    "mobile": 80,
-    "revenue": 4200
-  },
-  {
-    "month": "Feb",
-    "desktop": 305,
-    "mobile": 200,
-    "revenue": 5100
-  },
-  {
-    "month": "Mar",
-    "desktop": 237,
-    "mobile": 120,
-    "revenue": 4800
-  },
-  {
-    "month": "Apr",
-    "desktop": 273,
-    "mobile": 190,
-    "revenue": 6100
-  },
-  {
-    "month": "May",
-    "desktop": 209,
-    "mobile": 130,
-    "revenue": 5600
-  },
-  {
-    "month": "Jun",
-    "desktop": 314,
-    "mobile": 240,
-    "revenue": 7300
-  }
+const chart = document.querySelector('moul-line-chart')
+chart.data = [
+  { month: 'Jan', desktop: 186, mobile: 80 },
+  { month: 'Feb', desktop: 305, mobile: 200 },
+  { month: 'Mar', desktop: 237, mobile: 120 },
+  { month: 'Apr', desktop: 273, mobile: 190 },
+  { month: 'May', desktop: 209, mobile: 130 },
+  { month: 'Jun', desktop: 314, mobile: 240 },
 ]
-lineChart.series = [
-  {
-    "key": "desktop",
-    "name": "Desktop"
-  },
-  {
-    "key": "mobile",
-    "name": "Mobile"
-  }
+chart.series = [
+  { key: 'desktop', name: 'Desktop' },
+  { key: 'mobile', name: 'Mobile' },
 ]
 ```
+
+Scrubbing works as it does on `<moul-area-chart>`: `point-hover` carries the series nearest the pointer plus `index` and every series' value in `entries`, ready for a `<moul-chart-tooltip>`. Set `scrub="false"` for a chart that only reacts to its dots.
+
+## Live
+
+`is-live` turns the chart into a real-time feed. `push()` appends a reading, or an array of them, and `max-points` keeps only the latest ones. The newest reading sits at the right edge with a pulsing dot, and the line glides left to make room for each new one, over the time since the previous push (at most a second), so a steady feed scrolls without stopping. Live charts draw no dot on every point; scrub to read a value.
+
+The pause button in the corner freezes the view while readings keep arriving; resuming jumps to the latest. Scrubbing holds the view still too, so the value under the guide does not slide away.
+
+<ComponentPreview align="stretch">
+<moul-line-chart is-live max-points="40" x-key="time" height="240" show-grid label="Server load" data-live-feed data-chart-tooltip="live-tip" data-props='{"series":[{"key":"cpu","name":"CPU"},{"key":"memory","name":"Memory"}]}'></moul-line-chart>
+<moul-chart-tooltip id="live-tip"></moul-chart-tooltip>
+</ComponentPreview>
+
+```html
+<moul-line-chart is-live max-points="40" x-key="time" label="Server load"></moul-line-chart>
+```
+
+```js
+const chart = document.querySelector('moul-line-chart')
+chart.series = [
+  { key: 'cpu', name: 'CPU' },
+  { key: 'memory', name: 'Memory' },
+]
+chart.valueFormatter = (value) => `${value}%`
+
+const source = new EventSource('/metrics')
+source.onmessage = (event) => chart.push(JSON.parse(event.data))
+
+chart.addEventListener('pausechange', (event) => {
+  console.log(event.detail.isPaused ? 'paused' : 'live')
+})
+```
+
+`data` always holds the latest readings, paused or not. `is-paused` freezes only what is drawn, so the app can pause from its own controls by setting it; only the built-in button fires `pausechange`. The line glides once `max-points` is set, since the gap between readings depends on it. Labels along the bottom thin out to one every few readings and glide with the line.
+
+`push()` works without `is-live` too: it appends and trims, and the chart redraws without gliding.
+
+## Accessibility
+
+- With scrubbing on, the plot is one tab stop exposed as a `role="slider"` named by `label` ("Line chart" when unset). Keyboard focus shows the latest category; `Arrow` keys step, `Home` and `End` jump, and `Escape` or leaving focus hides the guide.
+- `aria-valuetext` reads the category and every value through `valueFormatter`, for example "10:42:07: CPU 61%, Memory 48%".
+- In live mode the pause button follows the plot in tab order. It is a native button named "Pause live updates" with `aria-pressed`, toggled by `Enter` or `Space`. New readings are not announced.
+- With `scrub="false"` nothing in the plot takes focus, and the SVG is one `role="img"` named by `label`; give the page a table or text alternative.
+- Under reduced motion the lines appear without fading in, a live line jumps to each reading instead of gliding, the newest dot does not pulse, and the guide moves without gliding.
 
 ## API reference
 
@@ -75,14 +87,27 @@ lineChart.series = [
 | `height` | `height` | `number` | `300` |
 | `show-grid` | `showGrid` | `boolean` | `true` |
 | `curve` | `curve` | `string` | `'monotoneX'` |
+| `scrub` | `scrub` | `boolean` (`scrub="false"` turns it off) | `true` |
+| `label` | `label` | `string` | `''` (read as "Line chart") |
+| `is-live` | `isLive` | `boolean` | `false` |
+| `is-paused` | `isPaused` | `boolean` | `false` |
+| `max-points` | `maxPoints` | `number` | `0` (keep every reading) |
+| | `data` | `Record<string, unknown>[]` | `[]` |
+| | `series` | `ChartSeries[]` | `[]` (every numeric field) |
+| | `valueFormatter` | `(value) => string` | |
 
-| Event | Type |
+| Method | Description |
 | :-- | :-- |
-| `point-hover` | `CustomEvent` |
-| `point-leave` | `CustomEvent` |
+| `push(row \| rows)` | Appends readings, keeps the latest `max-points`, and glides a live chart left. |
+
+| Event | Detail |
+| :-- | :-- |
+| `point-hover` | `{ point, series, value, label, x, y, index, entries }`; `index` and `entries` come with scrubbing |
+| `point-leave` | none |
+| `pausechange` | `{ isPaused }`, from the built-in pause button |
 
 | Slot | Description |
 | :-- | :-- |
-| `empty` | — |
+| `empty` | Shown instead of the chart when there is no data. |
 
-**CSS parts:** `empty`, `grid`, `line`, `point`
+**CSS parts:** `empty`, `container`, `grid`, `line`, `point`, `track`, `head`, `pause-button`, `scrub-guide`, `scrub-dot`

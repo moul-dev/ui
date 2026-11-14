@@ -1,8 +1,10 @@
 import { css } from 'lit'
 import { resetStyles } from '../../styles/reset.styles'
+import { chartScrubStyles } from '../ChartScrub'
 
 export const lineChartStyles = [
   resetStyles,
+  chartScrubStyles,
   css`
     :host {
       display: block;
@@ -12,6 +14,17 @@ export const lineChartStyles = [
       font-family: var(--font-family-base, inherit);
       color: var(--color-fg, inherit);
       overflow: hidden;
+    }
+
+    .chart-frame {
+      position: relative;
+      width: 100%;
+    }
+
+    .chart-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
     }
 
     .chart-svg {
@@ -66,6 +79,68 @@ export const lineChartStyles = [
       r: 6;
     }
 
+    /* Live mode: the newest point pulses, and a small button pauses the feed. */
+    .live-head {
+      pointer-events: none;
+    }
+
+    .live-halo {
+      pointer-events: none;
+      opacity: 0.25;
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: live-pulse 1.6s var(--ease-out, ease-out) infinite;
+    }
+
+    @keyframes live-pulse {
+      0% {
+        transform: scale(0.5);
+        opacity: 0.45;
+      }
+      100% {
+        transform: scale(1.6);
+        opacity: 0;
+      }
+    }
+
+    .live-toggle {
+      position: absolute;
+      top: var(--spacing-1, 0.25rem);
+      right: var(--spacing-1, 0.25rem);
+      display: grid;
+      place-items: center;
+      width: 1.75rem;
+      height: 1.75rem;
+      padding: 0;
+      border: 1px solid var(--color-border, currentColor);
+      border-radius: var(--radius-full, 9999px);
+      background: var(--color-surface, transparent);
+      color: var(--color-fg-subtle, currentColor);
+      cursor: pointer;
+      transition:
+        background-color var(--duration-fast, 150ms) var(--ease-smooth, ease),
+        color var(--duration-fast, 150ms) var(--ease-smooth, ease);
+    }
+
+    .live-toggle:hover {
+      background: var(--color-surface-hover, transparent);
+      color: var(--color-fg, currentColor);
+    }
+
+    .live-toggle:focus-visible {
+      outline: 2px solid var(--color-focus, currentColor);
+      outline-offset: 2px;
+    }
+
+    .live-toggle[aria-pressed='true'] {
+      color: var(--color-accent, currentColor);
+    }
+
+    .live-toggle svg {
+      width: 0.875rem;
+      height: 0.875rem;
+    }
+
     [part~="empty"],
     .empty-state {
       display: flex;
@@ -89,8 +164,14 @@ export const lineChartStyles = [
       .series-path,
       .line-path,
       .chart-line,
-      .point-marker {
+      .point-marker,
+      .live-toggle {
         transition: none;
+      }
+
+      .live-halo {
+        animation: none;
+        opacity: 0;
       }
     }
   `,
