@@ -1,0 +1,110 @@
+---
+title: Magnetic
+description: Wraps a button or link so it drifts toward the pointer and springs back when the pointer moves away.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import LandingKitDemo from '@/components/demos/LandingKitDemo.astro';
+
+`<moul-magnetic>` wraps one button or link and pulls it toward the pointer, as if the pointer were a magnet. Bring a mouse close to the button below: it starts to drift before the pointer reaches it, follows it while the pointer is over it, and springs back to its place when the pointer moves away.
+
+<ComponentPreview backdrop="mesh" minHeight="14rem">
+  <moul-magnetic>
+    <moul-button variant="primary">Book a trip</moul-button>
+  </moul-magnetic>
+  <LandingKitDemo />
+</ComponentPreview>
+
+It lives in the effects entry, with the rest of the motion elements:
+
+```js
+import '@moul-dev/web-component/effects'
+```
+
+```html
+<moul-magnetic>
+  <moul-button variant="primary">Book a trip</moul-button>
+</moul-magnetic>
+```
+
+Put one control inside: a `<moul-button>`, a `<button>` or a link. The element is as large as the control, and the space the control takes in the layout never changes, so nothing around it moves.
+
+## Strength and reach
+
+`strength` is the share of the distance to the pointer the control drifts, from 0 to 1; it is 0.3 by default. `reach` is how far past the control's edge, in pixels, the pointer still pulls; it is 40 by default. The pull fades in smoothly across the reach, so the control never jumps when the pointer comes close. With `reach="0"` only a pointer over the control pulls it.
+
+<ComponentPreview backdrop="mesh" minHeight="14rem">
+  <div style="display: flex; flex-wrap: wrap; gap: 3rem; align-items: center; justify-content: center">
+    <moul-magnetic strength="0.15" reach="24">
+      <moul-button variant="secondary">Gentle</moul-button>
+    </moul-magnetic>
+    <moul-magnetic strength="0.6" reach="80">
+      <moul-button variant="outline">Strong</moul-button>
+    </moul-magnetic>
+  </div>
+</ComponentPreview>
+
+```html
+<moul-magnetic strength="0.15" reach="24">…</moul-magnetic>
+<moul-magnetic strength="0.6" reach="80">…</moul-magnetic>
+```
+
+## A label that follows further
+
+The element writes the drift as `--magnetic-x` and `--magnetic-y`, in pixels, and they reach everything inside the control. Use them to move a label or an icon a little further than the body, so the control looks as if it had depth.
+
+<ComponentPreview backdrop="mesh" minHeight="14rem">
+  <moul-magnetic strength="0.4" reach="60">
+    <moul-button variant="primary">
+      <span style="display: inline-block; translate: calc(var(--magnetic-x, 0px) * 0.5) calc(var(--magnetic-y, 0px) * 0.5); transition: translate 150ms ease-out">Explore Angkor</span>
+    </moul-button>
+  </moul-magnetic>
+</ComponentPreview>
+
+```html
+<moul-magnetic strength="0.4" reach="60">
+  <moul-button variant="primary">
+    <span class="label">Explore Angkor</span>
+  </moul-button>
+</moul-magnetic>
+
+<style>
+  moul-magnetic .label {
+    display: inline-block;
+    translate: calc(var(--magnetic-x, 0px) * 0.5) calc(var(--magnetic-y, 0px) * 0.5);
+    transition: translate 150ms ease-out;
+  }
+</style>
+```
+
+## Pointers and cost
+
+Only a mouse or a pen pulls the control; on a touch screen it stays put, and a tap presses it as usual. The pointer can pull from outside the control, so the element follows the pointer across the page, at most once per frame: it reads its own box, works out the drift, and writes it only when it changes. The control moves by the `translate` property alone, with a short transition while the pointer pulls and a spring, `--magnetic-duration` long, when it lets go. When the pointer leaves the window, the control springs back.
+
+## Accessibility
+
+The element is never focusable and adds no role. Focus goes straight to the wrapped control, which keeps its own name and role, and nothing moves when it is focused or pressed from the keyboard.
+
+Under `prefers-reduced-motion: reduce` the control stays in its place and does not follow the pointer. The element reacts to the setting as soon as it changes, and lets go of a control it was pulling.
+
+## Attributes and properties
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `strength` | `strength` | `number` (0 to 1) | `0.3` |
+| `reach` | `reach` | `number` (px) | `40` |
+| | `isPulled` | `boolean`, read only | `false` |
+
+| Slot | Description |
+| :-- | :-- |
+| (default) | The one button or link to pull. |
+
+| Part | Description |
+| :-- | :-- |
+| `body` | The wrapper that drifts; it holds the control. |
+
+| CSS property | Description | Default |
+| :-- | :-- | :-- |
+| `--magnetic-x` | Written by the element: the horizontal drift, in `px`. | `0px` |
+| `--magnetic-y` | Written by the element: the vertical drift, in `px`. | `0px` |
+| `--magnetic-duration` | How long the control takes to spring back. | `700ms` |

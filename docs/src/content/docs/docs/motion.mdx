@@ -1,0 +1,103 @@
+---
+title: Pointer and scroll motion
+description: Effects that follow the pointer or the reader's scroll, from a card that tilts and a lens to text that lights up, cards that stack and transitions between pages.
+---
+
+The effects people remember from a good product page move with them: a card leans toward the pointer, a line follows them down an article, a panel swaps its picture as they read. They are also the effects that most often make a page slow. Each one is usually a script that listens to every pointer move or scroll event and lays the page out again in response, and on a phone that work is enough to drop frames.
+
+The motion lab gives each of them an element, built to two rules. Every effect must hold 60 frames a second on a mid-range phone, and every effect must switch off when the reader asks their system for reduced motion. The [motion example page](/examples/motion/) uses all of them, and its only script is still the two imports.
+
+```js
+import '@moul-dev/web-component'
+import '@moul-dev/web-component/effects'
+```
+
+Like the rest of the kits, these elements live in the effects entry. The velocity marquee is an attribute, `scroll-velocity`, on the `<moul-marquee>` you already have.
+
+## What is in it
+
+Effects that follow the pointer:
+
+| Piece | Element | What it does |
+| :-- | :-- | :-- |
+| [Tilt](/docs/components/tilt/) | `<moul-tilt>` | A card or image tilts in 3D toward the pointer, with an optional glare |
+| [Magnetic](/docs/components/magnetic/) | `<moul-magnetic>` | A button drifts toward the pointer and springs back |
+| [Glow border](/docs/components/glowborder/) | `<moul-glow-border>` | A border that lights up on the side nearest the pointer |
+| [Hover highlight](/docs/components/hoverhighlight/) | `<moul-hover-highlight>` | One highlight that slides between items as the pointer or focus moves |
+| [Direction hover](/docs/components/directionhover/) | `<moul-direction-hover>` | An overlay that slides in from the side the pointer entered |
+| [Lens](/docs/components/lens/) | `<moul-lens>` | A round magnifier that follows the pointer over images or any content |
+| [Cursor](/docs/components/cursor/) | `<moul-cursor>` | Replaces the cursor over an area with a smooth dot, ring, arrow or label |
+| [Mask reveal](/docs/components/maskreveal/) | `<moul-mask-reveal>` | A circle under the pointer uncovers a hidden layer |
+| [Pointer parallax](/docs/components/pointerparallax/) | `<moul-pointer-parallax>` | Layers shift at different depths as the pointer moves |
+| [Connector beam](/docs/components/connectorbeam/) | `<moul-connector-beam>` | A line between two elements with a light running along it |
+
+Effects that follow the scroll:
+
+| Piece | Element | What it does |
+| :-- | :-- | :-- |
+| [Scroll text](/docs/components/scrolltext/) | `<moul-scroll-text>` | Words that light up one by one as the reader scrolls |
+| [Velocity marquee](/docs/components/marquee/#speed-with-the-scroll) | `<moul-marquee scroll-velocity>` | A marquee that speeds up with the scroll and runs backward on the way up |
+| [Sticky stack](/docs/components/stickystack/) | `<moul-sticky-stack>` | Cards or sections that stack on top of each other as the page scrolls |
+| [Scroll parallax](/docs/components/scrollparallax/) | `<moul-scroll-parallax>` | Rows or columns that slide at different speeds as the page scrolls |
+| [Sticky scroll](/docs/components/stickyscroll/) | `<moul-sticky-scroll>` | Steps of text scroll past a pinned panel that shows each step's picture |
+| [Tracing beam](/docs/components/tracingbeam/) | `<moul-tracing-beam>` | A line beside an article that fills as the reader scrolls through it |
+| [Scroll frame](/docs/components/scrollframe/) | `<moul-scroll-frame>` | A screen tilted back lies flat as it scrolls into view |
+| [Page transition](/docs/components/pagetransition/) | `<moul-page-transition>` | An animated wipe, slide, circle or fade between pages |
+
+## Following the pointer
+
+The pointer effects share one controller. It reads the pointer's place at most once per animation frame, writes it as CSS variables, and lets the stylesheet do the rest, so moving the pointer never lays the page out again and never re-renders an element. Most effects move by `transform` and `opacity` alone, which the browser can hand to the graphics card.
+
+Only a mouse or a pen drives them. On a touch screen there is no pointer to follow between taps, so a tilt stays flat and the cursor stays the system's own. The exceptions are the ones a finger can use: the mask reveal follows a pressed finger, the lens appears under a finger held down, and the direction hover shows its overlay on a tap.
+
+```html
+<moul-tilt glare max-tilt="10">
+  <article class="card">…</article>
+</moul-tilt>
+
+<moul-magnetic strength="0.4">
+  <moul-button variant="primary">Plan the trip</moul-button>
+</moul-magnetic>
+```
+
+## Following the scroll
+
+The scroll effects run on the browser's own scroll-driven animations where it has them, in current Chromium and Safari. There, no script runs while the reader scrolls: the browser moves the timeline and the effect with it. Elsewhere a passive scroll listener writes one variable per frame and the same CSS does the rest.
+
+Each effect follows the box it scrolls in, the page or a scrolling panel, the same box the browser's sticky positioning and timelines follow. A box that clips with `overflow: hidden` counts as one, and since it never scrolls, an effect inside it never moves. Clip with `overflow: clip` instead: it hides the overflow the same way and does not capture sticky elements or timelines.
+
+```css
+/* Not overflow: hidden, which would freeze the effects inside. */
+.section {
+  overflow: clip;
+}
+```
+
+## Between pages
+
+`<moul-page-transition>` animates the change from one page to the next with view transitions, as a wipe, a slide, a circle that grows from the click, or a fade. Put one on every page. For transitions between documents the browser must see the opt-in before the new page first renders, which a module script loads too late for, so load the effects entry with `blocking="render"` or write the element's CSS into the head. In a single-page app, wrap the change in `start()`.
+
+```astro
+---
+import { pageTransitionCss } from '@moul-dev/web-component/effects'
+---
+<head>
+  <style set:html={pageTransitionCss('wipe', 600)}></style>
+</head>
+<body>
+  <moul-page-transition effect="wipe" duration="600"></moul-page-transition>
+</body>
+```
+
+## Accessibility
+
+- **Reduced motion switches the effects off.** Under `prefers-reduced-motion: reduce` a tilt stays flat, magnetic buttons and parallax layers hold still, the cursor stays the system's own, the glow border lights evenly, the mask reveal uncovers its whole layer at once, words in scroll text are all at full strength, stacks still stack but do not shrink, scroll frames lie flat, beams hold still and pages change without a transition. The setting is read live, so changing it takes effect without a reload.
+- **Two effects keep tracking, by design.** The lens keeps following the pointer without its grow-in, and the tracing beam keeps filling with the reader's scroll without its glowing head, because in both the movement is the reader's own hand and nothing moves of its own accord.
+- **Nothing depends on the pointer.** Whatever an effect shows on hover is reachable by keyboard: the hover highlight follows focus, the direction hover shows its overlay when focus is inside, the mask reveal uncovers its layer when focus is inside it, and a focused card in a sticky stack scrolls back into view.
+- **Decoration stays out of the way.** Beams, borders, lenses and cursors are hidden from assistive technology; the content they decorate reads as if they were not there. Split text reads as one sentence.
+
+## Cost
+
+Each effect on the [motion example page](/examples/motion/) was driven for two seconds, by the pointer or by the scroll, with the processor slowed four times, Chrome's preset for a mid-range phone, while every frame was timed. Every one held a median frame of 16.7 ms, which is 60 frames a second, with the slowest twentieth of frames at 16.8 ms or less, on a desktop-sized window and, for the scroll effects, a phone-sized one. The page itself runs no script beyond the two imports.
+
+Two habits keep it that way on your own pages. Use as few `backdrop-filter` and blur effects as you can around the moving ones, since those cost the graphics card on every frame. And keep effects that run on their own, such as connector beams and marquees, to a handful per screen: each pauses off screen, but every one in view costs a little.

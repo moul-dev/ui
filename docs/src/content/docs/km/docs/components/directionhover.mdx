@@ -1,0 +1,129 @@
+---
+title: Direction Hover (សមាសភាគ)
+description: ឯកសារណែនាំសម្រាប់សមាសភាគ Direction Hover Web Component
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import LandingKitDemo from '@/components/demos/LandingKitDemo.astro';
+
+`<moul-direction-hover>` shows a picture with an overlay that follows the hand. Move the pointer in from the left and the caption sweeps in from the left; leave through the bottom and it drops out through the bottom. The picture zooms in a little while the overlay is in.
+
+<ComponentPreview>
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: 1rem; width: 100%">
+    <moul-direction-hover style="aspect-ratio: 4 / 3">
+      <img src="/demo/imageslider/kep-coast.svg" alt="The coast at Kep, with fishing boats" />
+      <div slot="overlay" style="display: grid; gap: 0.125rem">
+        <strong>Kep</strong>
+        <span>Crab market and sunsets</span>
+      </div>
+    </moul-direction-hover>
+    <moul-direction-hover style="aspect-ratio: 4 / 3">
+      <img src="/demo/imageslider/mondulkiri-dawn.svg" alt="Hills in Mondulkiri at dawn" />
+      <div slot="overlay" style="display: grid; gap: 0.125rem">
+        <strong>Mondulkiri</strong>
+        <span>Waterfalls and green hills</span>
+      </div>
+    </moul-direction-hover>
+    <moul-direction-hover style="aspect-ratio: 4 / 3">
+      <img src="/demo/imageslider/tonle-sap-dusk.svg" alt="Stilt houses on the Tonle Sap at dusk" />
+      <div slot="overlay" style="display: grid; gap: 0.125rem">
+        <strong>Tonle Sap</strong>
+        <span>Floating villages at dusk</span>
+      </div>
+    </moul-direction-hover>
+  </div>
+  <LandingKitDemo />
+</ComponentPreview>
+
+It lives in the effects entry:
+
+```js
+import '@moul-dev/web-component/effects'
+```
+
+```html
+<moul-direction-hover style="aspect-ratio: 4 / 3">
+  <img src="/kep.jpg" alt="The coast at Kep, with fishing boats" />
+  <div slot="overlay" style="display: grid">
+    <strong>Kep</strong>
+    <span>Crab market and sunsets</span>
+  </div>
+</moul-direction-hover>
+```
+
+Put the picture in the default slot. A slotted `img`, `video` or `picture` is cropped to fill the box, so give the element a size or an `aspect-ratio`. Anything else in the default slot, a card or a gradient, fills it as you lay it out. Put the caption, title or actions in the `overlay` slot; they sit at the bottom of the overlay, over a scrim that keeps light text readable on any picture.
+
+## Links and buttons in the overlay
+
+The overlay is always in the page, so its links and buttons stay in the tab order. Tabbing to one slides the overlay up from the bottom, and it stays until focus leaves.
+
+<ComponentPreview>
+  <moul-direction-hover style="width: min(22rem, 100%); aspect-ratio: 16 / 10">
+    <img src="/demo/imageslider/yeak-laom-lake.svg" alt="Yeak Laom crater lake in Ratanakiri" />
+    <div slot="overlay" style="display: grid; gap: 0.5rem; justify-items: start">
+      <strong>Yeak Laom lake</strong>
+      <span>A round crater lake in the forest of Ratanakiri.</span>
+      <moul-button size="sm" variant="secondary">Plan a visit</moul-button>
+    </div>
+  </moul-direction-hover>
+</ComponentPreview>
+
+On a touch screen there is no pointer to follow, so a tap shows the overlay from the bottom and a tap anywhere else hides it.
+
+## Styling
+
+The scrim is `--direction-hover-overlay-background`, a gradient of the theme's `--color-overlay` rising from the bottom, and the text colour is `--direction-hover-overlay-color`. `--direction-hover-zoom` sets how far the picture zooms (`1` turns it off), `--direction-hover-duration` how long a slide takes, and `--direction-hover-radius` the corners.
+
+```css
+moul-direction-hover {
+  --direction-hover-radius: 0.5rem;
+  --direction-hover-zoom: 1.1;
+  --direction-hover-overlay-background: var(--color-overlay);
+}
+```
+
+## Accessibility
+
+The element is never focusable and adds no role. The overlay's content is read by screen readers after the picture whether it is shown or not, so write it as part of the content, not as a hint. Give the picture its own `alt` text.
+
+When focus moves inside the element, the overlay slides in from the bottom and stays until focus leaves, so a keyboard reader sees what a pointer reader sees. The element clips its overlay with `overflow: clip`, so focusing a link in the overlay never scrolls the picture.
+
+Where the system forces its own colours, as in Windows high contrast mode, the overlay gets the system background and text colours.
+
+Under `prefers-reduced-motion: reduce` the overlay fades in and out where it is, without sliding, and the picture does not zoom.
+
+## Cost
+
+The side is worked out once as the pointer crosses the edge, from where it crosses, so nothing runs while the pointer moves inside. The slide and the zoom are `translate` and `scale` transitions, which the browser runs on the compositor.
+
+## Attributes and properties
+
+The element has no attributes. It reports its state on itself, for styling from outside:
+
+| Attribute | Values | Description |
+| :-- | :-- | :-- |
+| `data-state` | `in`, `out` | Whether the overlay is in, or on its way out. Absent before the first reveal. |
+| `data-edge` | `top`, `right`, `bottom`, `left` | The side the overlay came in from, or leaves toward. |
+
+| Property | Type | Description |
+| :-- | :-- | :-- |
+| `isRevealed` (read-only) | `boolean` | Whether the overlay is in, or on its way in. |
+
+| Slot | Description |
+| :-- | :-- |
+| (default) | The picture: an `img`, a `video`, or any element. |
+| `overlay` | What slides in: a caption, a title, links or buttons. |
+
+| Part | Description |
+| :-- | :-- |
+| `media` | The box round the picture; it zooms while the overlay is in. |
+| `overlay` | The panel that slides in, with a scrim behind the text. |
+
+| CSS property | Description | Default |
+| :-- | :-- | :-- |
+| `--direction-hover-radius` | The corner radius. | `var(--radius-xl)` |
+| `--direction-hover-duration` | How long a slide takes. | `var(--duration-slow)` |
+| `--direction-hover-zoom` | The picture's scale while the overlay is in. | `1.05` |
+| `--direction-hover-overlay-background` | The scrim behind the overlay. | a gradient of `var(--color-overlay)` |
+| `--direction-hover-overlay-color` | The overlay's text colour. | `var(--color-snow)` |
+| `--direction-hover-padding` | Space round the overlay's content. | `var(--spacing-4)` |

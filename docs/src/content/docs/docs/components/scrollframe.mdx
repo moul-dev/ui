@@ -1,0 +1,106 @@
+---
+title: Scroll Frame
+description: A screen that starts tilted back and lies flat as the reader scrolls it into view, while its heading rises into place.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import LandingKitDemo from '@/components/demos/LandingKitDemo.astro';
+
+`<moul-scroll-frame>` holds a product shot that unfolds as the reader reaches it. The screen starts tilted back, like a laptop lid half open, and lies flat as it scrolls into view, while the heading above it rises into its place. Scroll inside the box below.
+
+<ComponentPreview backdrop="plain" align="stretch">
+  <div style="height: 26rem; overflow-y: auto; border: 1px solid var(--color-border); border-radius: var(--radius-xl, 0.75rem); background: var(--color-bg)">
+    <div style="display: grid; place-items: center; height: 22rem; color: var(--color-muted)">Scroll down ↓</div>
+    <moul-scroll-frame style="padding: 0 1.5rem 3rem">
+      <h3 slot="header" style="margin: 0; text-align: center; font-size: 1.75rem">Every booking, one screen</h3>
+      <moul-browser-frame url="trips.example.com/today">
+        <div role="img" aria-label="A dashboard with a sidebar, three figures and a chart" style="display: grid; grid-template-columns: 6rem 1fr; min-height: 15rem; background: var(--color-bg)">
+          <div style="display: grid; align-content: start; gap: 0.75rem; padding: 1rem; border-inline-end: 1px solid var(--color-border); background: var(--color-surface)">
+            <div style="width: 60%; height: 0.625rem; border-radius: 999px; background: var(--color-fg)"></div>
+            <div style="width: 85%; height: 0.5rem; border-radius: 999px; background: var(--color-accent-soft)"></div>
+            <div style="width: 70%; height: 0.5rem; border-radius: 999px; background: var(--color-border)"></div>
+            <div style="width: 78%; height: 0.5rem; border-radius: 999px; background: var(--color-border)"></div>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: 3.5rem 1fr; gap: 0.75rem; padding: 1rem">
+            <div style="border: 1px solid var(--color-border); border-radius: 0.75rem; background: var(--color-surface)"></div>
+            <div style="border: 1px solid var(--color-border); border-radius: 0.75rem; background: var(--color-surface)"></div>
+            <div style="border: 1px solid var(--color-border); border-radius: 0.75rem; background: var(--color-surface)"></div>
+            <div style="grid-column: 1 / -1; border: 1px solid var(--color-border); border-radius: 0.75rem; background: linear-gradient(to top, var(--color-accent-soft), var(--color-surface))"></div>
+          </div>
+        </div>
+      </moul-browser-frame>
+    </moul-scroll-frame>
+    <div style="height: 8rem"></div>
+  </div>
+  <LandingKitDemo />
+</ComponentPreview>
+
+It lives in the effects entry, with the rest of the motion elements:
+
+```js
+import '@moul-dev/web-component/effects'
+```
+
+```html
+<moul-scroll-frame>
+  <h2 slot="header">Every booking, one screen</h2>
+  <moul-browser-frame url="trips.example.com/today">
+    <img src="/dashboard.png" alt="The bookings dashboard with today's arrivals" />
+  </moul-browser-frame>
+</moul-scroll-frame>
+```
+
+Put the screen in the default slot: a [browser frame](/docs/components/browserframe/), a [phone frame](/docs/components/phoneframe/), an image or any box. The `header` slot is optional; without it the screen tilts alone.
+
+## When it lies flat
+
+The tilt follows the element's passage through the viewport, or through the scroll container it sits in. It starts as the top of the element enters at the bottom of the view, and the screen is flat by the time the middle of the element reaches the middle of the view. From there on it stays flat, so a reader who has scrolled past sees a plain screen. Scrolling back up tilts it back.
+
+## How far it tilts
+
+`tilt` is how far back the screen starts, in degrees, from 0 to 60; it is 20 by default. `--scroll-frame-scale` is the scale it starts at, 1.05 by default, easing to 1 as it lies flat. `--scroll-frame-perspective` is the distance of the viewer from the screen: a smaller value looks deeper. `--scroll-frame-header-shift` is how far below its place the heading starts.
+
+```html
+<moul-scroll-frame tilt="35" style="--scroll-frame-scale: 0.9; --scroll-frame-perspective: 800px">
+  …
+</moul-scroll-frame>
+```
+
+## Cost
+
+Where the browser has scroll-driven animations, the tilt and the heading are CSS animations on a view timeline: the browser runs them as the reader scrolls, and no script runs at all. Elsewhere a passive scroll listener writes the progress once per frame, and the same transforms are worked out in CSS. Either way only transforms change, so the page is never laid out again.
+
+## Styling
+
+`::part(base)` is the wrapper whose passage drives the tilt, `::part(header)` holds the heading and `::part(frame)` is the layer that tilts. `--scroll-frame-gap` sets the space between the heading and the screen.
+
+## Accessibility
+
+The element is never focusable and adds no role. The heading and the screen are read in order with their own semantics, and anything focusable inside is reached with Tab as usual, tilted or not. Give a screenshot alt text that says what it shows.
+
+Under `prefers-reduced-motion: reduce` the screen is flat and the heading in place from the start, and no script follows the scroll. The element reacts to the setting as soon as it changes.
+
+## Attributes and properties
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `tilt` | `tilt` | `number` (degrees, 0 to 60) | `20` |
+| | `isNative` | `boolean`, read only: a view timeline drives the tilt | depends on the browser |
+
+| Slot | Description |
+| :-- | :-- |
+| (default) | The screen: a browser frame, a phone frame, an image or any box. |
+| `header` | A heading or intro above the screen that rises into place. |
+
+| Part | Description |
+| :-- | :-- |
+| `base` | The wrapper whose passage through the viewport drives the tilt. |
+| `header` | The wrapper of the `header` slot. |
+| `frame` | The wrapper that tilts; it holds the screen. |
+
+| CSS property | Description | Default |
+| :-- | :-- | :-- |
+| `--scroll-frame-scale` | The scale the screen starts at, easing to 1 as it lies flat. | `1.05` |
+| `--scroll-frame-perspective` | The distance of the viewer from the screen; smaller looks deeper. | `1000px` |
+| `--scroll-frame-header-shift` | How far below its place the heading starts. | `3rem` |
+| `--scroll-frame-gap` | The space between the heading and the screen. | `var(--spacing-8)` |

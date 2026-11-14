@@ -1,0 +1,159 @@
+---
+title: Hover Highlight (សមាសភាគ)
+description: ឯកសារណែនាំសម្រាប់សមាសភាគ Hover Highlight Web Component
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import LandingKitDemo from '@/components/demos/LandingKitDemo.astro';
+
+`<moul-hover-highlight>` puts a single highlight behind a set of items, such as feature cards, a row of links or a list. As the pointer moves across them the highlight slides from one to the next and takes each item's size, instead of every item lighting up on its own. It fades out when the pointer leaves, and follows keyboard focus as well.
+
+<ComponentPreview align="stretch">
+  <moul-hover-highlight style="display: grid; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); gap: 0.25rem; --hover-highlight-radius: 1rem">
+    <a href="#angkor" style="display: grid; gap: 0.25rem; padding: 1.25rem; color: inherit; text-decoration: none">
+      <strong>Angkor</strong>
+      <span style="color: var(--color-muted)">Temples at dawn, by bicycle or tuk-tuk.</span>
+    </a>
+    <a href="#kampot" style="display: grid; gap: 0.25rem; padding: 1.25rem; color: inherit; text-decoration: none">
+      <strong>Kampot</strong>
+      <span style="color: var(--color-muted)">Pepper farms and a slow river.</span>
+    </a>
+    <a href="#kep" style="display: grid; gap: 0.25rem; padding: 1.25rem; color: inherit; text-decoration: none">
+      <strong>Kep</strong>
+      <span style="color: var(--color-muted)">The crab market and the sea at sunset.</span>
+    </a>
+    <a href="#koh-rong" style="display: grid; gap: 0.25rem; padding: 1.25rem; color: inherit; text-decoration: none">
+      <strong>Koh Rong</strong>
+      <span style="color: var(--color-muted)">White sand and glowing plankton.</span>
+    </a>
+    <a href="#mondulkiri" style="display: grid; gap: 0.25rem; padding: 1.25rem; color: inherit; text-decoration: none">
+      <strong>Mondulkiri</strong>
+      <span style="color: var(--color-muted)">Green hills, waterfalls and elephants.</span>
+    </a>
+    <a href="#battambang" style="display: grid; gap: 0.25rem; padding: 1.25rem; color: inherit; text-decoration: none">
+      <strong>Battambang</strong>
+      <span style="color: var(--color-muted)">Colonial streets and the bamboo train.</span>
+    </a>
+  </moul-hover-highlight>
+  <LandingKitDemo />
+</ComponentPreview>
+
+It lives in the effects entry:
+
+```js
+import '@moul-dev/web-component/effects'
+```
+
+```html
+<moul-hover-highlight style="display: grid; grid-template-columns: repeat(3, 1fr)">
+  <a href="/angkor">…</a>
+  <a href="/kampot">…</a>
+  <a href="/kep">…</a>
+</moul-hover-highlight>
+```
+
+The direct children are the items. The element is a block, so lay the items out by setting `display` on it, as a grid or a flex row; the highlight is placed on its own and never takes a cell.
+
+## Items behind a surface
+
+The highlight sits behind the items, so it shows only where an item is transparent. That suits text, links and outlined cards. For cards with their own background, leave a gap between them and let the highlight spill past each card with a negative `--hover-highlight-inset`:
+
+<ComponentPreview align="stretch" backdrop="page">
+  <moul-hover-highlight style="display: grid; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); gap: 1.25rem; padding: 0.75rem; --hover-highlight-inset: -0.5rem; --hover-highlight-background: var(--color-accent-soft)">
+    <moul-card><moul-card-header>Deploys</moul-card-header><moul-card-body>Every push builds a preview.</moul-card-body></moul-card>
+    <moul-card><moul-card-header>Logs</moul-card-header><moul-card-body>Search a week of requests.</moul-card-body></moul-card>
+    <moul-card><moul-card-header>Rollbacks</moul-card-header><moul-card-body>One click back to the last build.</moul-card-body></moul-card>
+  </moul-hover-highlight>
+</ComponentPreview>
+
+```html
+<moul-hover-highlight style="--hover-highlight-inset: -0.5rem; gap: 1.25rem">
+  <moul-card>…</moul-card>
+  <moul-card>…</moul-card>
+</moul-hover-highlight>
+```
+
+The highlight takes each item's own corner radius; for square items it uses `--radius-lg`, and `--hover-highlight-radius` sets one for all.
+
+## A navigation row
+
+With `is-persistent` the highlight does not fade when the pointer leaves. It returns to the current item, the one with `aria-current`, `data-active` or `aria-selected="true"` (on the item or inside it), or else stays on the last item it was on. That makes a pill that glides along a navigation row and settles back on the page you are on.
+
+<ComponentPreview>
+  <nav aria-label="Trip sections">
+    <moul-hover-highlight is-persistent style="display: flex; gap: 0.25rem; padding: 0.25rem; border-radius: 9999px; background: var(--color-surface-secondary); --hover-highlight-radius: 9999px; --hover-highlight-background: var(--color-surface)">
+      <a href="#overview" aria-current="page" style="padding: 0.5rem 1rem; color: inherit; text-decoration: none">Overview</a>
+      <a href="#getting-there" style="padding: 0.5rem 1rem; color: inherit; text-decoration: none">Getting there</a>
+      <a href="#where-to-stay" style="padding: 0.5rem 1rem; color: inherit; text-decoration: none">Where to stay</a>
+      <a href="#eating" style="padding: 0.5rem 1rem; color: inherit; text-decoration: none">Eating</a>
+    </moul-hover-highlight>
+  </nav>
+</ComponentPreview>
+
+```html
+<nav aria-label="Trip sections">
+  <moul-hover-highlight is-persistent style="display: flex">
+    <a href="/overview" aria-current="page">Overview</a>
+    <a href="/getting-there">Getting there</a>
+    <a href="/where-to-stay">Where to stay</a>
+  </moul-hover-highlight>
+</nav>
+```
+
+The element watches those attributes, so when your router moves `aria-current` to another link, the highlight moves with it the next time the pointer is away.
+
+## Choosing the items
+
+`item-selector` picks the items from anywhere inside the element instead of the direct children, for markup you cannot flatten, such as the `li` elements of a list.
+
+```html
+<moul-hover-highlight item-selector="li">
+  <ul>
+    <li><a href="/angkor">Angkor</a></li>
+    <li><a href="/kampot">Kampot</a></li>
+  </ul>
+</moul-hover-highlight>
+```
+
+The item under the highlight gets a `data-highlighted` attribute, so you can change its text colour to sit on the highlight:
+
+```css
+moul-hover-highlight [data-highlighted] {
+  color: var(--color-accent);
+}
+```
+
+## Accessibility
+
+The element is never focusable and adds no role; the items keep their own semantics and tab order. When keyboard focus moves into an item (`:focus-visible`), the highlight slides there as it does for the pointer, so it doubles as a focus indicator. Keep the items' own focus ring too: the highlight is a soft fill, not a ring. The highlight is decorative and hidden from screen readers. A finger moves nothing.
+
+Where the system forces its own colours, as in Windows high contrast mode, the fill becomes an outline in the system highlight colour.
+
+Under `prefers-reduced-motion: reduce` the highlight does not slide or resize. It appears on each item at once and only fades in and out.
+
+## Cost
+
+The highlight moves only when the pointer crosses into another item, never on every movement: one measurement of the item and one change to the highlight's place and size. Nothing else on the page is laid out again.
+
+## Attributes and properties
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `item-selector` | `itemSelector` | `string` | `''` (the direct children) |
+| `is-persistent` | `isPersistent` | `boolean` | `false` |
+| | `items` (read-only) | `HTMLElement[]` | |
+
+| Slot | Description |
+| :-- | :-- |
+| (default) | The items: the direct children, unless `item-selector` picks others. |
+
+| Part | Description |
+| :-- | :-- |
+| `highlight` | The shape behind the hovered item. |
+
+| CSS property | Description | Default |
+| :-- | :-- | :-- |
+| `--hover-highlight-background` | The highlight's fill. | `var(--color-fill-hover)` |
+| `--hover-highlight-radius` | The highlight's corner radius. | the item's radius, or `var(--radius-lg)` |
+| `--hover-highlight-inset` | How far inside the item the highlight's edge sits; negative values spill past it. | `0px` |
+| `--hover-highlight-duration` | How long a slide takes. | `var(--duration-base)` |

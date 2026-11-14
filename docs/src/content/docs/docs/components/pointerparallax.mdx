@@ -1,0 +1,99 @@
+---
+title: Pointer Parallax
+description: Layers that shift by different amounts as the pointer moves, so a flat hero gains depth.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import LandingKitDemo from '@/components/demos/LandingKitDemo.astro';
+
+`<moul-pointer-parallax>` moves its layers by different amounts as the pointer moves, so a flat scene gains depth: the sky barely moves, the near hills move most, and the title drifts the other way. Move a mouse over the scene below.
+
+<ComponentPreview backdrop="plain" align="stretch">
+  <moul-pointer-parallax strength="28" style="height: 18rem; overflow: clip; border-radius: var(--radius-2xl, 1rem); background: linear-gradient(to bottom, var(--color-accent-soft), var(--color-surface))">
+    <div data-depth="0.15" aria-hidden="true" style="position: absolute; top: 2.5rem; right: 18%; width: 4.5rem; aspect-ratio: 1; border-radius: 50%; background: var(--color-chart-2); opacity: 0.9"></div>
+    <svg data-depth="0.45" aria-hidden="true" viewBox="0 0 400 100" preserveAspectRatio="none" style="position: absolute; left: -2rem; bottom: 0; width: calc(100% + 4rem); height: 55%"><path d="M0 70 C40 40 80 35 120 55 S200 20 250 45 S330 30 400 50 V100 H0 Z" style="fill: var(--color-chart-7); opacity: 0.45" /></svg>
+    <svg data-depth="1" aria-hidden="true" viewBox="0 0 400 100" preserveAspectRatio="none" style="position: absolute; left: -2.5rem; bottom: -1.5rem; width: calc(100% + 5rem); height: 45%"><path d="M0 60 C60 30 110 70 170 50 S280 25 330 55 S380 60 400 45 V100 H0 Z" style="fill: var(--color-chart-7)" /></svg>
+    <div data-depth="-0.35" style="position: absolute; inset: 0; display: grid; place-content: center; text-align: center">
+      <strong style="font-size: clamp(1.75rem, 5vw, 2.75rem); letter-spacing: -0.02em">Mondulkiri</strong>
+      <span style="color: var(--color-muted)">Hills, forest and waterfalls in the east.</span>
+    </div>
+  </moul-pointer-parallax>
+  <LandingKitDemo />
+</ComponentPreview>
+
+It lives in the effects entry, with the rest of the motion elements:
+
+```js
+import '@moul-dev/web-component/effects'
+```
+
+```html
+<moul-pointer-parallax strength="28" style="height: 18rem; overflow: clip">
+  <div class="sun" data-depth="0.15" aria-hidden="true"></div>
+  <img class="far-hills" src="/far-hills.svg" alt="" data-depth="0.45" />
+  <img class="near-hills" src="/near-hills.svg" alt="" data-depth="1" />
+  <div class="title" data-depth="-0.35">
+    <strong>Mondulkiri</strong>
+  </div>
+</moul-pointer-parallax>
+```
+
+## Layers and depth
+
+Every child is a layer. Position the layers however you like, usually absolutely inside the element, which is `position: relative`. Give each one a `data-depth`, usually between -1 and 1: 0 stays still, 1 moves the full `strength`, and a negative depth moves the other way, which reads as nearer than the pointer. A child without a `data-depth` stays still. Changing `data-depth` later takes effect at once.
+
+`strength` is how far, in pixels, a layer of depth 1 travels with the pointer at the element's edge; it is 24 by default. Layers move past their edges by up to that much, so let them overhang the element a little and give the element `overflow: clip`.
+
+Each layer moves by the CSS `translate` property, which leaves `transform` free for your own use. Position layers with `inset`, margins or `transform`; a `translate` of your own on a layer would replace the parallax.
+
+## Following the pointer across the page
+
+By default the layers follow the pointer while it is over the element and drift back to the centre when it leaves. `scope="page"` follows the pointer anywhere on the page, measured from the element's centre, so a hero background reacts before the pointer reaches it. The layers stop at their furthest when the pointer is past the element's edge, and the element does no work while it is off screen.
+
+<ComponentPreview backdrop="mesh" minHeight="16rem">
+  <moul-pointer-parallax scope="page" strength="40" style="width: 100%; max-width: 32rem; height: 14rem">
+    <img data-depth="0.3" src="/demo/imageslider/tonle-sap-dusk.svg" alt="Stilt houses on the Tonle Sap at dusk" style="position: absolute; left: 4%; top: 12%; width: 42%; border-radius: var(--radius-xl, 0.75rem); box-shadow: var(--shadow-lg)" />
+    <img data-depth="-0.5" src="/demo/imageslider/yeak-laom-lake.svg" alt="The round crater lake at Yeak Laom" style="position: absolute; right: 4%; top: 4%; width: 38%; border-radius: var(--radius-xl, 0.75rem); box-shadow: var(--shadow-lg)" />
+    <img data-depth="0.9" src="/demo/imageslider/kep-coast.svg" alt="Fishing boats off the coast at Kep" style="position: absolute; left: 30%; bottom: 0; width: 40%; border-radius: var(--radius-xl, 0.75rem); box-shadow: var(--shadow-lg)" />
+  </moul-pointer-parallax>
+</ComponentPreview>
+
+```html
+<moul-pointer-parallax scope="page" strength="40">
+  <img data-depth="0.3" src="/tonle-sap.jpg" alt="Stilt houses on the Tonle Sap at dusk" />
+  <img data-depth="-0.5" src="/yeak-laom.jpg" alt="The round crater lake at Yeak Laom" />
+  <img data-depth="0.9" src="/kep.jpg" alt="Fishing boats off the coast at Kep" />
+</moul-pointer-parallax>
+```
+
+## Pointers and cost
+
+Only a mouse or a pen moves the layers; on a touch screen they stay still. However many layers it holds, the element writes two numbers once per frame, and each layer works out its own offset in CSS from its depth, which is written once. The layers move by transforms alone, so the page is never laid out again. A short transition, `--pointer-parallax-duration` long, smooths the movement into a float.
+
+## Accessibility
+
+The element is never focusable and adds no role, and the layers keep their own semantics and are read in order. Shapes and pictures that only decorate should be hidden from screen readers by you, with `aria-hidden="true"` or an empty `alt`.
+
+Under `prefers-reduced-motion: reduce` every layer stays in its place. The element reacts to the setting as soon as it changes.
+
+## Attributes and properties
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `strength` | `strength` | `number` (px) | `24` |
+| `scope` | `scope` | `'element' \| 'page'` | `'element'` |
+| | `offset` | `{ x: number, y: number }`, read only, each -1 to 1 | `{ x: 0, y: 0 }` |
+
+On each child:
+
+| Attribute | Type | Default |
+| :-- | :-- | :-- |
+| `data-depth` | `number`, usually -1 to 1 | none: the child stays still |
+
+| Slot | Description |
+| :-- | :-- |
+| (default) | The layers, each an element with a `data-depth`. |
+
+| CSS property | Description | Default |
+| :-- | :-- | :-- |
+| `--pointer-parallax-duration` | How long a layer takes to catch up with the pointer, and to drift back. | `600ms` |

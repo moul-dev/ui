@@ -1,0 +1,127 @@
+---
+title: Lens
+description: A round magnifier that follows the pointer over images or any content.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import LandingKitDemo from '@/components/demos/LandingKitDemo.astro';
+
+`<moul-lens>` puts a round magnifier under the pointer that shows what is beneath it, larger. Wrap a photo, a map, a chart or any other content in it; move the pointer over the painting below to look at the stilt house and the palms.
+
+<ComponentPreview backdrop="page" minHeight="320px">
+  <moul-lens style="width: 100%; max-width: 36rem; border-radius: var(--radius-xl); overflow: hidden">
+    <img src="/demo/compare/painting.svg" alt="Rice paddies, two sugar palms and a stilt house, painted at dusk" width="1200" height="675" style="display: block; width: 100%; height: auto" />
+  </moul-lens>
+  <LandingKitDemo />
+</ComponentPreview>
+
+It lives in the effects entry:
+
+```js
+import '@moul-dev/web-component/effects'
+```
+
+```html
+<moul-lens>
+  <img src="/paddies.jpg" alt="Rice paddies and a stilt house at dusk" />
+</moul-lens>
+```
+
+`zoom` is how many times larger the content shows, 2 by default, and `size` is the width of the lens in pixels, 160 by default. The lens stays inside the element's box, and takes its corners from the element's `border-radius`.
+
+On a touch screen the lens appears where the finger presses and follows it until the page starts to scroll; lifting the finger hides it.
+
+## Any content
+
+The lens is not limited to images. It shows a copy of your content, made the first time the lens is needed and made again whenever the content changes. The copy sits next to your content in the light DOM, so the page's CSS styles it exactly as it styles your content, and it wraps at the same width.
+
+<ComponentPreview backdrop="page" minHeight="300px">
+  <moul-lens zoom="2.5" size="180" style="width: 100%; max-width: 26rem">
+    <div style="padding: 1.25rem; border: 1px solid var(--color-border); border-radius: var(--radius-xl); background: var(--color-surface); font-size: 0.75rem; line-height: 1.6">
+      <strong style="font-size: 0.875rem">Mekong express, Phnom Penh to Siem Reap</strong>
+      <table style="width: 100%; margin-top: 0.5rem; border-collapse: collapse">
+        <tbody>
+          <tr><td>Sisowath Quay</td><td style="text-align: end">07:30</td></tr>
+          <tr><td>Kampong Chhnang</td><td style="text-align: end">09:45</td></tr>
+          <tr><td>Chong Kneas pier</td><td style="text-align: end">13:10</td></tr>
+          <tr><td>Siem Reap, by tuk-tuk</td><td style="text-align: end">13:50</td></tr>
+        </tbody>
+      </table>
+      <p style="margin: 0.5rem 0 0; font-size: 0.625rem; color: var(--color-muted)">From August to November only. In the dry season the lake is too low and the boat stops at Kampong Chhnang.</p>
+    </div>
+  </moul-lens>
+</ComponentPreview>
+
+```html
+<moul-lens zoom="2.5" size="180">
+  <div class="timetable">…</div>
+</moul-lens>
+```
+
+A few things are not mirrored: bare text that is not inside an element, a `<canvas>`, and a `<video>` (the copy would play on its own). Give the element no padding or border of its own, and style the content inside it instead, so the copy lines up with what it magnifies.
+
+An image with a `srcset` gets a `sizes` in the copy that asks for a source sharp enough to be shown `zoom` times larger, so a photo stays crisp in the lens.
+
+## A lens that stays put
+
+`is-static` keeps the lens in one place, with no pointer needed, to call out a detail. `position-x` and `position-y` set where it is centred: a CSS length or percentage of the content, or a bare number, read as a percentage. Both are `50%` by default.
+
+<ComponentPreview backdrop="page" minHeight="320px">
+  <moul-lens is-static position-x="60" position-y="55" zoom="2.5" size="150" style="width: 100%; max-width: 36rem; border-radius: var(--radius-xl); overflow: hidden">
+    <img src="/demo/compare/painting.svg" alt="Rice paddies at dusk, with the stilt house shown larger" width="1200" height="675" style="display: block; width: 100%; height: auto" />
+  </moul-lens>
+</ComponentPreview>
+
+```html
+<moul-lens is-static position-x="60" position-y="55" zoom="2.5" size="150">
+  <img src="/paddies.jpg" alt="Rice paddies at dusk, with the stilt house shown larger" />
+</moul-lens>
+```
+
+## Styling
+
+The lens shows `--lens-background` where the content is transparent, the page background by default, and has a thin ring in `--lens-border-color` and a shadow. Style it further through `::part(lens)`.
+
+```css
+moul-lens {
+  --lens-border-color: var(--color-accent);
+}
+
+moul-lens::part(lens) {
+  border-radius: 1rem;
+}
+```
+
+## Cost
+
+The copy is made once, when the lens is first needed. While the pointer moves, the element writes its position once per frame and moves the lens and the copy with transforms, so the page is never laid out again. The position is written in registered properties that do not inherit, so the copy is never restyled as the lens moves.
+
+## Accessibility
+
+The lens is a visual aid. The element never takes focus and adds no role; your content is read once, at its normal size. The copy is `aria-hidden` and `inert`, so screen readers skip it and nothing in it takes focus. Readers who need the content larger can zoom the page, which the lens never blocks, and `is-static` shows the lens without a pointer. When printing, the lens is not drawn.
+
+Under `prefers-reduced-motion: reduce` the lens appears and goes at once instead of growing and fading. It still follows the pointer directly, without easing, because the movement is the reader's own.
+
+## Attributes and properties
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `zoom` | `zoom` | `number` | `2` |
+| `size` | `size` | `number` (px) | `160` |
+| `is-static` | `isStatic` | `boolean` | `false` |
+| `position-x` | `positionX` | `string` (length or percentage) | `'50%'` |
+| `position-y` | `positionY` | `string` (length or percentage) | `'50%'` |
+
+| Slot | Description |
+| :-- | :-- |
+| (default) | The content to magnify: an image, a map, a chart, any elements. |
+| `lens` | Used by the element for the copy of your content. Do not put anything in it. |
+
+| Part | Description |
+| :-- | :-- |
+| `lens` | The round lens. |
+
+| CSS property | Description | Default |
+| :-- | :-- | :-- |
+| `--lens-background` | What shows in the lens where the content is transparent. | `var(--color-bg)` |
+| `--lens-border-color` | The ring round the lens. | `var(--color-border)` |

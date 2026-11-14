@@ -7,9 +7,14 @@
  * a testimonials carousel, a video and a world map. The page loads the main
  * and effects entries and carries no animation code of its own: no
  * keyframes, no transitions, no script beyond the two imports. Every piece
- * of motion, light and navigation is an element or an attribute.
+ * of motion, light and navigation is an element or an attribute. The page
+ * transition to the motion example writes its document-level CSS into the
+ * head at build time, so the transition is opted in before first render.
  */
 import '@moul-dev/web-component/style.css'
+import { pageTransitionCss } from '../../../../ui/src/components/PageTransition/PageTransition.styles'
+
+const transitionCss = pageTransitionCss('wipe', 600)
 
 const testimonials = [
   {
@@ -78,8 +83,10 @@ const frameworks = [
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap"
     />
+    <style set:html={transitionCss}></style>
   </head>
   <body>
+    <moul-page-transition effect="wipe" duration="600"></moul-page-transition>
     <moul-scroll-progress></moul-scroll-progress>
 
     <moul-navbar variant="floating" effect="glass shrink" hide-on-scroll>
@@ -95,6 +102,7 @@ const frameworks = [
             <moul-navigation-menu-link href="/docs/landing-kit/" label="Landing kit" description="Text effects, reveals, marquees and device frames."></moul-navigation-menu-link>
             <moul-navigation-menu-link href="/docs/backgrounds/" label="Backgrounds and light" description="Patterns, aurora, beams and card light."></moul-navigation-menu-link>
             <moul-navigation-menu-link href="/docs/site-kit/" label="Navigation and media" description="Navbar, menus, carousels, video and maps."></moul-navigation-menu-link>
+            <moul-navigation-menu-link href="/examples/motion/" label="Pointer and scroll" description="Tilt, lens, sticky stacks and scroll text, on one page."></moul-navigation-menu-link>
             <moul-navigation-menu-link href="/docs/components/chat/" label="AI kit" description="Chat, prompt input and streaming answers."></moul-navigation-menu-link>
         </moul-navigation-menu-item>
         <moul-navigation-menu-item label="Docs">

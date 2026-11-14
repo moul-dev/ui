@@ -2,6 +2,8 @@ import { fixture, html } from '@open-wc/testing-helpers'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   type IntersectionMock,
+  type ManualFrames,
+  manualAnimationFrames,
   mockIntersectionObserver,
   mockReducedMotion,
   triggerResize,
@@ -456,5 +458,247 @@ describe('<moul-marquee>', () => {
       expect(block).toMatch(/\.track\s*\{\s*overflow: hidden auto/)
       expect(block).toContain('mask-image: none')
     })
+  })
+})
+
+/** Gives the page a scroll range of 2000px. */
+function mockPage() {
+  const page = document.scrollingElement ?? document.documentElement
+  let top = 0
+  Object.defineProperties(page, {
+    scrollHeight: { configurable: true, get: () => 3000 },
+    clientHeight: { configurable: true, get: () => 1000 },
+    scrollTop: {
+      configurable: true,
+      get: () => top,
+      set: (value: number) => {
+        top = value
+      },
+    },
+  })
+  return {
+    scrollTo(value: number) {
+      top = value
+      window.dispatchEvent(new Event('scroll'))
+    },
+    restore() {
+      const own = page as unknown as Record<string, unknown>
+      delete own.scrollHeight
+      delete own.clientHeight
+      delete own.scrollTop
+    },
+  }
+}
+
+interface FakeAnimation {
+  animationName: string
+  playbackRate: number
+  currentTime: number
+  effect: { getComputedTiming(): { duration: number } }
+  updatePlaybackRate: ReturnType<typeof vi.fn>
+}
+
+/** Stands in for the groups' CSS animations, which happy-dom does not run. */
+function fakeAnimations(el: MoulMarquee, count = 2): FakeAnimation[] {
+  const animations = Array.from({ length: count }, () => {
+    const animation: FakeAnimation = {
+      animationName: 'moul-marquee-row',
+      playbackRate: 1,
+      currentTime: 1500,
+      effect: { getComputedTiming: () => ({ duration: 10_000 }) },
+      updatePlaybackRate: vi.fn((rate: number) => {
+        animation.playbackRate = rate
+      }),
+    }
+    return animation
+  })
+  const other = {
+    animationName: 'something-else',
+    updatePlaybackRate: vi.fn(),
+  }
+  ;(shadow(el) as unknown as { getAnimations: () => unknown[] }).getAnimations =
+    () => [...animations, other]
+  return animations
+}
+
+describe('<moul-marquee scroll-velocity>', () => {
+  let io: IntersectionMock
+  let frames: ManualFrames
+  let page: ReturnType<typeof mockPage>
+  let now = 0
+
+  /** Scrolls the page to `top`, `ms` after the last frame, and runs one frame. */
+  const scrollPage = (top: number, ms = 16) => {
+    now += ms
+    page.scrollTo(top)
+    frames.step(now)
+  }
+
+  /** Runs `count` frames with nothing scrolling. */
+  const idle = (count: number) => {
+    for (let index = 0; index < count; index++) {
+      now += 16
+      frames.step(now)
+    }
+  }
+
+  async function mount(attributes = 'scroll-velocity') {
+    const wrapper = document.createElement('div')
+    wrapper.innerHTML = `<moul-marquee ${attributes}><span>Ash</span><span>Birch</span></moul-marquee>`
+    document.body.append(wrapper)
+    const el = wrapper.querySelector('moul-marquee') as MoulMarquee
+    await el.updateComplete
+    io.enter(el)
+    await el.updateComplete
+    const animations = fakeAnimations(el)
+    return { el, animations }
+  }
+
+  beforeEach(() => {
+    io = mockIntersectionObserver()
+    frames = manualAnimationFrames()
+    page = mockPage()
+    now = 1000
+    vi.spyOn(performance, 'now').mockImplementation(() => now)
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] })
+  })
+
+  afterEach(() => {
+    document.body.innerHTML = ''
+    vi.useRealTimers()
+    vi.restoreAllMocks()
+    page.restore()
+    frames.restore()
+    io.restore()
+  })
+
+  it('reads the attribute: no value means 2, a missing or bad value turns it off', async () => {
+    const { el } = await mount()
+    expect(el.scrollVelocity).toBe(2)
+    el.setAttribute('scroll-velocity', '3.5')
+    expect(el.scrollVelocity).toBe(3.5)
+    el.setAttribute('scroll-velocity', '-1')
+    expect(el.scrollVelocity).toBe(0)
+    el.setAttribute('scroll-velocity', 'fast')
+    expect(el.scrollVelocity).toBe(0)
+    el.removeAttribute('scroll-velocity')
+    expect(el.scrollVelocity).toBe(0)
+  })
+
+  it('leaves the speed alone without it', async () => {
+    const { animations } = await mount('')
+    scrollPage(200)
+    scrollPage(600)
+    idle(5)
+    for (const animation of animations) {
+      expect(animation.updatePlaybackRate).not.toHaveBeenCalled()
+    }
+  })
+
+  it('speeds up with the scroll, easing toward the target rather than jumping', async () => {
+    const { animations } = await mount('scroll-velocity="2"')
+    // 16px per 16ms is 1000 px/s: aim for 1 + 2 × 1 = 3 times the speed.
+    scrollPage(16)
+    scrollPage(32)
+    scrollPage(48)
+    const first = animations[0].playbackRate
+    expect(first).toBeGreaterThan(1)
+    expect(first).toBeLessThan(3)
+    for (let top = 64; top <= 800; top += 16) scrollPage(top)
+    expect(animations[0].playbackRate).toBeCloseTo(3, 1)
+    // Every group runs at the same rate, so the loop keeps its seam.
+    expect(animations[1].playbackRate).toBe(animations[0].playbackRate)
+  })
+
+  it('stops speeding up past 3000 px/s', async () => {
+    const { animations } = await mount('scroll-velocity="2"')
+    for (let top = 200; top <= 10_000; top += 200) scrollPage(top)
+    expect(animations[0].playbackRate).toBeCloseTo(7, 1)
+  })
+
+  it('runs backward while the reader scrolls up', async () => {
+    const { animations } = await mount('scroll-velocity="2"')
+    page.scrollTo(1000)
+    idle(2)
+    for (let top = 984; top >= 200; top -= 16) scrollPage(top)
+    expect(animations[0].playbackRate).toBeCloseTo(-3, 1)
+  })
+
+  it('moves the loop a whole number of loops ahead before running it backward', async () => {
+    const { animations } = await mount('scroll-velocity="2"')
+    page.scrollTo(1000)
+    idle(2)
+    for (let top = 984; top >= 600; top -= 16) scrollPage(top)
+    expect(animations[0].playbackRate).toBeLessThan(0)
+    // 1500ms into a 10s loop, plus 1000 loops: the same frame, far from the start.
+    expect(animations[0].currentTime).toBe(1500 + 10_000 * 1000)
+    expect(animations[1].currentTime).toBe(animations[0].currentTime)
+  })
+
+  it('eases back to its own speed once the reader stops, then stops working', async () => {
+    const { animations } = await mount('scroll-velocity="2"')
+    for (let top = 16; top <= 320; top += 16) scrollPage(top)
+    expect(animations[0].playbackRate).toBeGreaterThan(2)
+    // The scroll controller reports a stop 120ms after the last scroll.
+    vi.advanceTimersByTime(200)
+    idle(60)
+    expect(animations[0].playbackRate).toBe(1)
+    expect(frames.pending).toBe(0)
+  })
+
+  it('stays at its own speed while off screen', async () => {
+    const { el, animations } = await mount('scroll-velocity="2"')
+    for (let top = 16; top <= 160; top += 16) scrollPage(top)
+    expect(animations[0].playbackRate).toBeGreaterThan(1)
+    io.leave(el)
+    await el.updateComplete
+    scrollPage(400)
+    expect(animations[0].playbackRate).toBe(1)
+    scrollPage(800)
+    expect(animations[0].playbackRate).toBe(1)
+  })
+
+  it('goes back to its own speed and stops listening when turned off', async () => {
+    const { el, animations } = await mount('scroll-velocity="2"')
+    for (let top = 16; top <= 160; top += 16) scrollPage(top)
+    el.scrollVelocity = 0
+    await el.updateComplete
+    expect(animations[0].playbackRate).toBe(1)
+    animations[0].updatePlaybackRate.mockClear()
+    scrollPage(800)
+    idle(5)
+    expect(animations[0].updatePlaybackRate).not.toHaveBeenCalled()
+  })
+
+  it('goes back to its own speed when removed from the page', async () => {
+    const { el, animations } = await mount('scroll-velocity="2"')
+    for (let top = 16; top <= 160; top += 16) scrollPage(top)
+    el.remove()
+    expect(animations[0].playbackRate).toBe(1)
+  })
+
+  it('does not follow the scroll under reduced motion, and reacts to the setting', async () => {
+    const motion = mockReducedMotion(true)
+    try {
+      const { el, animations } = await mount('scroll-velocity="2"')
+      scrollPage(200)
+      scrollPage(400)
+      expect(animations[0].updatePlaybackRate).not.toHaveBeenCalled()
+
+      motion.set(false)
+      await el.updateComplete
+      fakeAnimations(el)
+      scrollPage(416)
+      scrollPage(432)
+      const live = (
+        shadow(el) as unknown as { getAnimations: () => FakeAnimation[] }
+      ).getAnimations()[0]
+      expect(live.playbackRate).toBeGreaterThan(1)
+
+      motion.set(true)
+      expect(live.playbackRate).toBe(1)
+    } finally {
+      motion.restore()
+    }
   })
 })

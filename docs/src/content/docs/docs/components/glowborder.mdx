@@ -1,0 +1,131 @@
+---
+title: Glow Border
+description: A border that lights up on the side nearest the pointer.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import LandingKitDemo from '@/components/demos/LandingKitDemo.astro';
+
+`<moul-glow-border>` lights the edge of a box on the side nearest the pointer. As the pointer moves, the light slides round the edge after it; it brightens as the pointer comes close and fades once the pointer is more than `proximity` pixels away. On a grid of cards, a pointer passing between two of them lights the facing edges of both.
+
+<ComponentPreview backdrop="page" minHeight="320px">
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: 1rem; width: 100%; max-width: 44rem">
+    <moul-glow-border>
+      <moul-card>
+        <moul-card-header><strong>Phnom Penh</strong></moul-card-header>
+        <moul-card-body>Two deploy regions, logs kept for 30 days.</moul-card-body>
+      </moul-card>
+    </moul-glow-border>
+    <moul-glow-border>
+      <moul-card>
+        <moul-card-header><strong>Siem Reap</strong></moul-card-header>
+        <moul-card-body>A preview link for every push.</moul-card-body>
+      </moul-card>
+    </moul-glow-border>
+    <moul-glow-border>
+      <moul-card>
+        <moul-card-header><strong>Kampot</strong></moul-card-header>
+        <moul-card-body>Backups every hour, kept for a week.</moul-card-body>
+      </moul-card>
+    </moul-glow-border>
+  </div>
+  <LandingKitDemo />
+</ComponentPreview>
+
+It lives in the effects entry:
+
+```js
+import '@moul-dev/web-component/effects'
+```
+
+```html
+<moul-glow-border>
+  <moul-card>
+    <moul-card-header><strong>Phnom Penh</strong></moul-card-header>
+    <moul-card-body>Two deploy regions, logs kept for 30 days.</moul-card-body>
+  </moul-card>
+</moul-glow-border>
+```
+
+Only a mouse or a pen lights the border. On a touch screen nothing changes: there is no pointer to follow until the finger is already down.
+
+## Wrapping a box
+
+The element is a block as wide as its container and as tall as what it wraps. Its ring lies over the outer edge of that content, so the content keeps its own border, background and shadow, and the light shows only where it falls.
+
+The ring takes its corners from the element's `border-radius`, which defaults to the radius of `moul-card` (`--radius-surface`). For a box with other corners, set `border-radius` on the element to match. For content narrower than its container, give the element `width: fit-content` so the ring hugs it.
+
+Left empty, the element is an overlay. Place it inside any positioned box, cover the box, and take its corners:
+
+```html
+<div style="position: relative; border-radius: 1rem">
+  …
+  <moul-glow-border style="position: absolute; inset: 0; border-radius: inherit"></moul-glow-border>
+</div>
+```
+
+An empty element lets the pointer through to the box beneath it.
+
+## Reach and spread
+
+`proximity` is how far outside the box, in pixels, the pointer still lights it: the light is full while the pointer is over the box and fades to nothing over this distance. It is 64 by default; `0` lights the border only while the pointer is over the box. `spread` is how much of the edge the light covers, in degrees round the box's centre, 80 by default.
+
+`blur` adds a soft halo round the lit arc, as wide as the number of pixels you give it.
+
+<ComponentPreview backdrop="page" minHeight="300px">
+  <moul-glow-border proximity="160" spread="140" blur="10" style="width: 100%; max-width: 24rem; border-radius: 1rem; --glow-border-width: 3px">
+    <div style="padding: 2rem; border-radius: inherit; border: 1px solid var(--color-border); background: var(--color-surface)">
+      <strong>Wide and soft</strong>
+      <p style="margin: 0.5rem 0 0; color: var(--color-muted)">The light reaches 160 pixels out, covers 140 degrees of the edge and carries a 10 pixel halo.</p>
+    </div>
+  </moul-glow-border>
+</ComponentPreview>
+
+```html
+<moul-glow-border proximity="160" spread="140" blur="10" style="--glow-border-width: 3px">…</moul-glow-border>
+```
+
+## Colours
+
+The light runs through three colours from the theme: the accent and two chart colours, so it follows the brand hue and works in light and dark. Give it your own with `--glow-border-colors`, a comma-separated list of any length, and change the width of the ring with `--glow-border-width`. `--glow-border-duration` sets how long the light takes to catch up with the pointer and to fade, `0.4s` by default.
+
+```css
+moul-glow-border {
+  --glow-border-colors: var(--color-success), var(--color-chart-3);
+  --glow-border-width: 1px;
+  --glow-border-duration: 0.25s;
+}
+```
+
+## Cost
+
+The element follows the pointer only while its box is on screen. While a mouse moves nearby it writes an angle and a brightness once per frame; the arc is a gradient masked to a ring, so the page is never laid out again, and nothing runs while the pointer is still. `blur` adds a blurred copy of the ring that is painted again whenever the light moves, so keep it to a few boxes.
+
+## Accessibility
+
+The ring is decorative. It is hidden from assistive technology, never takes focus and adds no role, so the wrapped content is read and reached with Tab as if the element were not there. Where the system forces its own colours, as in Windows high contrast mode, and when printing, the ring is not drawn.
+
+Under `prefers-reduced-motion: reduce` the light does not follow the pointer or slide round the edge. While the pointer is over the box the whole ring lights evenly, and it goes dark again when the pointer leaves, without fading. An empty overlay stays dark.
+
+## Attributes and properties
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `proximity` | `proximity` | `number` (px) | `64` |
+| `spread` | `spread` | `number` (degrees) | `80` |
+| `blur` | `glowBlur` | `number` (px) | `0` |
+
+| Slot | Description |
+| :-- | :-- |
+| (default) | The box to light up: a card, a tile, an image or a panel. |
+
+| Part | Description |
+| :-- | :-- |
+| `border` | The ring the light shows through. It sits over the content's edge and ignores the pointer. |
+| `halo` | The blurred light round the arc, drawn only when `blur` is above 0. |
+
+| CSS property | Description | Default |
+| :-- | :-- | :-- |
+| `--glow-border-width` | Width of the ring. | `2px` |
+| `--glow-border-colors` | The colours along the lit arc, as a comma-separated list. | `var(--color-accent), var(--color-chart-4), var(--color-chart-2)` |
+| `--glow-border-duration` | How long the light takes to catch up with the pointer and to fade. | `0.4s` |

@@ -1,0 +1,153 @@
+---
+title: Scroll Parallax
+description: Rows or columns of cards and images that slide at different speeds as the page scrolls past them.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import LandingKitDemo from '@/components/demos/LandingKitDemo.astro';
+
+`<moul-scroll-parallax>` slides its children at different speeds while the page scrolls past it. Each child is a track: a row that slides sideways, the rows taking turns left and right, or a column that slides up or down. It suits a hero wall of product shots or a gallery of three columns.
+
+Scroll inside the frame below.
+
+<ComponentPreview align="stretch">
+  <div style="height: 26rem; overflow: auto; border: 1px solid var(--color-border); border-radius: 0.75rem; background: var(--color-bg)">
+    <div style="display: grid; place-items: center; height: 14rem; padding: 1.5rem; text-align: center; color: var(--color-fg-subtle)">Scroll down</div>
+    <moul-scroll-parallax speed="360" style="padding-block: 1rem">
+      <div style="display: flex; justify-content: center; gap: 1rem">
+        <div style="flex: none; display: grid; place-items: end start; width: 12rem; height: 8rem; padding: 0.75rem; border-radius: 0.75rem; color: var(--color-fg-on-primary); background: linear-gradient(135deg, var(--color-chart-1), var(--color-chart-3))">Angkor Wat</div>
+        <div style="flex: none; display: grid; place-items: end start; width: 12rem; height: 8rem; padding: 0.75rem; border-radius: 0.75rem; color: var(--color-fg-on-primary); background: linear-gradient(135deg, var(--color-chart-2), var(--color-chart-4))">Bayon</div>
+        <div style="flex: none; display: grid; place-items: end start; width: 12rem; height: 8rem; padding: 0.75rem; border-radius: 0.75rem; color: var(--color-fg-on-primary); background: linear-gradient(135deg, var(--color-chart-5), var(--color-chart-1))">Ta Prohm</div>
+        <div style="flex: none; display: grid; place-items: end start; width: 12rem; height: 8rem; padding: 0.75rem; border-radius: 0.75rem; color: var(--color-fg-on-primary); background: linear-gradient(135deg, var(--color-chart-3), var(--color-chart-6))">Banteay Srei</div>
+        <div style="flex: none; display: grid; place-items: end start; width: 12rem; height: 8rem; padding: 0.75rem; border-radius: 0.75rem; color: var(--color-fg-on-primary); background: linear-gradient(135deg, var(--color-chart-7), var(--color-chart-2))">Preah Khan</div>
+        <div style="flex: none; display: grid; place-items: end start; width: 12rem; height: 8rem; padding: 0.75rem; border-radius: 0.75rem; color: var(--color-fg-on-primary); background: linear-gradient(135deg, var(--color-chart-4), var(--color-chart-5))">Beng Mealea</div>
+      </div>
+      <div style="display: flex; justify-content: center; gap: 1rem">
+        <div style="flex: none; display: grid; place-items: end start; width: 12rem; height: 8rem; padding: 0.75rem; border-radius: 0.75rem; color: var(--color-fg-on-primary); background: linear-gradient(135deg, var(--color-chart-6), var(--color-chart-3))">Kampot</div>
+        <div style="flex: none; display: grid; place-items: end start; width: 12rem; height: 8rem; padding: 0.75rem; border-radius: 0.75rem; color: var(--color-fg-on-primary); background: linear-gradient(135deg, var(--color-chart-1), var(--color-chart-7))">Kep</div>
+        <div style="flex: none; display: grid; place-items: end start; width: 12rem; height: 8rem; padding: 0.75rem; border-radius: 0.75rem; color: var(--color-fg-on-primary); background: linear-gradient(135deg, var(--color-chart-2), var(--color-chart-5))">Koh Rong</div>
+        <div style="flex: none; display: grid; place-items: end start; width: 12rem; height: 8rem; padding: 0.75rem; border-radius: 0.75rem; color: var(--color-fg-on-primary); background: linear-gradient(135deg, var(--color-chart-4), var(--color-chart-1))">Bokor</div>
+        <div style="flex: none; display: grid; place-items: end start; width: 12rem; height: 8rem; padding: 0.75rem; border-radius: 0.75rem; color: var(--color-fg-on-primary); background: linear-gradient(135deg, var(--color-chart-3), var(--color-chart-2))">Koh Tonsay</div>
+        <div style="flex: none; display: grid; place-items: end start; width: 12rem; height: 8rem; padding: 0.75rem; border-radius: 0.75rem; color: var(--color-fg-on-primary); background: linear-gradient(135deg, var(--color-chart-5), var(--color-chart-6))">Sihanoukville</div>
+      </div>
+      <div style="display: flex; justify-content: center; gap: 1rem">
+        <div style="flex: none; display: grid; place-items: end start; width: 12rem; height: 8rem; padding: 0.75rem; border-radius: 0.75rem; color: var(--color-fg-on-primary); background: linear-gradient(135deg, var(--color-chart-7), var(--color-chart-4))">Mondulkiri</div>
+        <div style="flex: none; display: grid; place-items: end start; width: 12rem; height: 8rem; padding: 0.75rem; border-radius: 0.75rem; color: var(--color-fg-on-primary); background: linear-gradient(135deg, var(--color-chart-2), var(--color-chart-6))">Ratanakiri</div>
+        <div style="flex: none; display: grid; place-items: end start; width: 12rem; height: 8rem; padding: 0.75rem; border-radius: 0.75rem; color: var(--color-fg-on-primary); background: linear-gradient(135deg, var(--color-chart-1), var(--color-chart-5))">Kratie</div>
+        <div style="flex: none; display: grid; place-items: end start; width: 12rem; height: 8rem; padding: 0.75rem; border-radius: 0.75rem; color: var(--color-fg-on-primary); background: linear-gradient(135deg, var(--color-chart-6), var(--color-chart-2))">Stung Treng</div>
+        <div style="flex: none; display: grid; place-items: end start; width: 12rem; height: 8rem; padding: 0.75rem; border-radius: 0.75rem; color: var(--color-fg-on-primary); background: linear-gradient(135deg, var(--color-chart-3), var(--color-chart-7))">Preah Vihear</div>
+        <div style="flex: none; display: grid; place-items: end start; width: 12rem; height: 8rem; padding: 0.75rem; border-radius: 0.75rem; color: var(--color-fg-on-primary); background: linear-gradient(135deg, var(--color-chart-4), var(--color-chart-3))">Battambang</div>
+      </div>
+    </moul-scroll-parallax>
+    <div style="height: 16rem"></div>
+  </div>
+  <LandingKitDemo />
+</ComponentPreview>
+
+It lives in the effects entry:
+
+```js
+import '@moul-dev/web-component/effects'
+```
+
+```html
+<moul-scroll-parallax>
+  <div class="row">…</div>
+  <div class="row">…</div>
+  <div class="row">…</div>
+</moul-scroll-parallax>
+```
+
+Each child is one track, in any markup you like: here a row of cards laid out with flexbox.
+
+## How far the tracks move
+
+`speed` is how far, in pixels, a track travels while the element crosses the screen, from the moment its top edge comes into view to the moment its bottom edge leaves: 300 by default. A track is in its own place when the element is in the middle of the screen and travels half the distance each way from there.
+
+So that the ends of a row never show an empty gap, make each row wider than the element and centre its content, as the demo does with `justify-content: center`; it overflows on both sides, and the element clips whatever slides outside it. To let tracks spill out of the element instead, set `overflow: visible` on it.
+
+`data-speed` on a track multiplies the distance for that track alone. A negative number reverses it and `0` holds the track still, which is how to keep one row of headline text steady between two moving rows.
+
+```html
+<moul-scroll-parallax speed="480">
+  <div class="row">…</div>
+  <h2 data-speed="0">Places to go</h2>
+  <div class="row" data-speed="-1.5">…</div>
+</moul-scroll-parallax>
+```
+
+## Columns
+
+`orientation="columns"` sets the tracks side by side, each taking an equal share of the width, and slides them up and down: the first and third rise while the middle one falls, as in a three-column gallery.
+
+<ComponentPreview align="stretch">
+  <div style="height: 24rem; overflow: auto; border: 1px solid var(--color-border); border-radius: 0.75rem; background: var(--color-bg)">
+    <div style="display: grid; place-items: center; height: 8rem; color: var(--color-fg-subtle)">Scroll down</div>
+    <moul-scroll-parallax orientation="columns" speed="240" style="padding: 1rem; --scroll-parallax-gap: 1rem">
+      <div style="display: grid; gap: 1rem">
+        <div style="height: 9rem; border-radius: 0.75rem; background: linear-gradient(160deg, var(--color-chart-1), var(--color-chart-3))"></div>
+        <div style="height: 12rem; border-radius: 0.75rem; background: linear-gradient(160deg, var(--color-chart-4), var(--color-chart-2))"></div>
+        <div style="height: 9rem; border-radius: 0.75rem; background: linear-gradient(160deg, var(--color-chart-5), var(--color-chart-7))"></div>
+        <div style="height: 11rem; border-radius: 0.75rem; background: linear-gradient(160deg, var(--color-chart-6), var(--color-chart-1))"></div>
+      </div>
+      <div style="display: grid; gap: 1rem">
+        <div style="height: 12rem; border-radius: 0.75rem; background: linear-gradient(160deg, var(--color-chart-2), var(--color-chart-5))"></div>
+        <div style="height: 9rem; border-radius: 0.75rem; background: linear-gradient(160deg, var(--color-chart-3), var(--color-chart-6))"></div>
+        <div style="height: 11rem; border-radius: 0.75rem; background: linear-gradient(160deg, var(--color-chart-7), var(--color-chart-4))"></div>
+        <div style="height: 9rem; border-radius: 0.75rem; background: linear-gradient(160deg, var(--color-chart-1), var(--color-chart-2))"></div>
+      </div>
+      <div style="display: grid; gap: 1rem">
+        <div style="height: 10rem; border-radius: 0.75rem; background: linear-gradient(160deg, var(--color-chart-6), var(--color-chart-4))"></div>
+        <div style="height: 12rem; border-radius: 0.75rem; background: linear-gradient(160deg, var(--color-chart-2), var(--color-chart-7))"></div>
+        <div style="height: 9rem; border-radius: 0.75rem; background: linear-gradient(160deg, var(--color-chart-3), var(--color-chart-1))"></div>
+        <div style="height: 10rem; border-radius: 0.75rem; background: linear-gradient(160deg, var(--color-chart-5), var(--color-chart-3))"></div>
+      </div>
+    </moul-scroll-parallax>
+    <div style="height: 10rem"></div>
+  </div>
+</ComponentPreview>
+
+```html
+<moul-scroll-parallax orientation="columns" speed="240">
+  <div class="column">…</div>
+  <div class="column">…</div>
+  <div class="column">…</div>
+</moul-scroll-parallax>
+```
+
+## Cost
+
+Where the browser has scroll-driven animations, a native view timeline drives every track, and no script runs while the reader scrolls; elsewhere one passive scroll listener writes a single number per frame. Tracks move by the individual `translate` property alone, so a transform of your own on a track is kept and nothing is laid out again. Each track gets its own compositing layer only while the element is near the screen. In right-to-left text the rows mirror, the first sliding toward the inline end.
+
+The element finds the box it scrolls in by itself, the page or a scrolling panel as in the demos above.
+
+## Accessibility
+
+The element adds no role and never takes focus: the tracks and everything in them are read, and reached with Tab, in their order. The movement is decoration, so nothing is announced. A row that slides partly out of view still holds its links; a keyboard user reaching one scrolls the page as usual.
+
+Under `prefers-reduced-motion: reduce` the tracks hold still in their own place, and the element is an ordinary set of rows or columns. When printing, they lie still too.
+
+## Attributes and properties
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `orientation` | `orientation` | `'rows' \| 'columns'` | `'rows'` |
+| `speed` | `speed` | `number` (px) | `300` |
+
+On a track:
+
+| Attribute | Type | Description |
+| :-- | :-- | :-- |
+| `data-speed` | `number` | Multiplies `speed` for this track. Negative reverses it; `0` holds it still. |
+
+| Slot | Description |
+| :-- | :-- |
+| (default) | The tracks: one element per row or column, each holding its cards or images. |
+
+| Part | Description |
+| :-- | :-- |
+| `tracks` | The box that lays the tracks out in rows or columns. |
+
+| CSS property | Description | Default |
+| :-- | :-- | :-- |
+| `--scroll-parallax-gap` | Space between the tracks. | `var(--spacing-4)` |

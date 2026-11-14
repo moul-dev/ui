@@ -15,9 +15,12 @@
  *
  * Effect elements: confetti; the landing kit (text effects, reveals,
  * marquee, bento grid, device frames and scroll progress); backgrounds and
- * light; and site navigation and media (navbar, navigation menu, banner,
- * dock, progress nav, carousel, image slider, compare, video dialog and
- * world map).
+ * light; site navigation and media (navbar, navigation menu, banner, dock,
+ * progress nav, carousel, image slider, compare, video dialog and world
+ * map); and pointer and scroll motion (tilt, magnetic, glow border, hover
+ * highlight, direction hover, lens, cursor, mask reveal, pointer parallax,
+ * connector beam, scroll text, sticky stack, scroll parallax, sticky scroll,
+ * tracing beam, scroll frame and page transition).
  */
 
 export {
@@ -77,6 +80,22 @@ export {
   MoulConfetti as Confetti,
 } from './components/Confetti'
 export {
+  type ConnectorBeamPoint,
+  connectorBeamPath,
+  MoulConnectorBeam,
+  MoulConnectorBeam as ConnectorBeam,
+} from './components/ConnectorBeam'
+export {
+  type CursorScope,
+  type CursorVariant,
+  MoulCursor,
+  MoulCursor as Cursor,
+} from './components/Cursor'
+export {
+  MoulDirectionHover,
+  MoulDirectionHover as DirectionHover,
+} from './components/DirectionHover'
+export {
   type DockOrientation,
   MoulDock,
   MoulDock as Dock,
@@ -96,6 +115,11 @@ export {
   MoulFocusGroup as FocusGroup,
 } from './components/FocusGroup'
 export {
+  glowAngle,
+  MoulGlowBorder,
+  MoulGlowBorder as GlowBorder,
+} from './components/GlowBorder'
+export {
   type GradientTextEffect,
   MoulGradientText,
   MoulGradientText as GradientText,
@@ -106,20 +130,38 @@ export {
   MoulHighlight as Highlight,
 } from './components/Highlight'
 export {
+  MoulHoverHighlight,
+  MoulHoverHighlight as HoverHighlight,
+} from './components/HoverHighlight'
+export {
   type ImageSliderEffect,
   type ImageSliderSlideChangeDetail,
   MoulImageSlider,
   MoulImageSlider as ImageSlider,
 } from './components/ImageSlider'
 export {
+  MoulLens,
+  MoulLens as Lens,
+} from './components/Lens'
+export {
   MoulLightRays,
   MoulLightRays as LightRays,
 } from './components/LightRays'
+export {
+  type MagneticOffset,
+  MoulMagnetic,
+  MoulMagnetic as Magnetic,
+  magneticOffset,
+} from './components/Magnetic'
 export {
   type MarqueeDirection,
   MoulMarquee,
   MoulMarquee as Marquee,
 } from './components/Marquee'
+export {
+  MoulMaskReveal,
+  MoulMaskReveal as MaskReveal,
+} from './components/MaskReveal'
 export {
   MoulNavbar,
   MoulNavbar as Navbar,
@@ -144,6 +186,14 @@ export {
   MoulOrbit as Orbit,
 } from './components/Orbit'
 export {
+  MoulPageTransition,
+  MoulPageTransition as PageTransition,
+  type PageTransitionDirection,
+  type PageTransitionEffect,
+  type PageTransitionOptions,
+  pageTransitionCss,
+} from './components/PageTransition'
+export {
   MoulPattern,
   MoulPattern as Pattern,
   type PatternFade,
@@ -159,6 +209,12 @@ export {
   MoulPhoneFrame as PhoneFrame,
   type PhoneFrameVariant,
 } from './components/PhoneFrame'
+export {
+  MoulPointerParallax,
+  MoulPointerParallax as PointerParallax,
+  type PointerParallaxScope,
+  parseDepth,
+} from './components/PointerParallax'
 export {
   MoulProgressNav,
   MoulProgressNav as ProgressNav,
@@ -179,10 +235,26 @@ export {
   type ScrambleTrigger,
 } from './components/Scramble'
 export {
+  MoulScrollFrame,
+  MoulScrollFrame as ScrollFrame,
+} from './components/ScrollFrame'
+export {
+  MoulScrollParallax,
+  MoulScrollParallax as ScrollParallax,
+  type ScrollParallaxOrientation,
+} from './components/ScrollParallax'
+export {
   MoulScrollProgress,
   MoulScrollProgress as ScrollProgress,
   type ScrollProgressPlacement,
 } from './components/ScrollProgress'
+export {
+  MoulScrollText,
+  MoulScrollText as ScrollText,
+  type ScrollTextGeometry,
+  type ScrollTextRange,
+  scrollTextRange,
+} from './components/ScrollText'
 export {
   MoulShineBorder,
   MoulShineBorder as ShineBorder,
@@ -194,10 +266,27 @@ export {
   type SpotlightVariant,
 } from './components/Spotlight'
 export {
+  MoulStickyScroll,
+  MoulStickyScroll as StickyScroll,
+  MoulStickyScrollItem,
+  MoulStickyScrollItem as StickyScrollItem,
+  type StickyScrollStepChangeDetail,
+} from './components/StickyScroll'
+export {
+  MoulStickyStack,
+  MoulStickyStack as StickyStack,
+} from './components/StickyStack'
+export {
   MoulTextEntrance,
   MoulTextEntrance as TextEntrance,
   type TextEntranceEffect,
 } from './components/TextEntrance'
+export { MoulTilt, MoulTilt as Tilt } from './components/Tilt'
+export {
+  MoulTracingBeam,
+  MoulTracingBeam as TracingBeam,
+  tracingBeamProgress,
+} from './components/TracingBeam'
 export {
   MoulTypewriter,
   MoulTypewriter as Typewriter,

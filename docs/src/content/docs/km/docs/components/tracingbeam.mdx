@@ -1,0 +1,134 @@
+---
+title: Tracing beam (សមាសភាគ)
+description: ឯកសារណែនាំសម្រាប់សមាសភាគ Tracing beam Web Component
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import LandingKitDemo from '@/components/demos/LandingKitDemo.astro';
+
+`<moul-tracing-beam>` draws a line in the gutter beside an article. As the reader scrolls, the line fills from the top with a gradient, its bright head travelling down beside the text they are reading, and the dot at the top lights once they start. It suits a long post, a changelog or a step-by-step guide.
+
+Scroll the box below.
+
+<ComponentPreview align="stretch">
+  <div style="height: 26rem; overflow: auto; padding: 1.5rem 1.5rem 3rem; border-radius: var(--radius-xl, 1rem); background: var(--color-surface)">
+    <div style="min-height: 15rem; display: grid; align-content: start; gap: 0.5rem">
+      <strong style="font-size: 1.25rem">Three days on the south coast</strong>
+      <span style="color: var(--color-fg-subtle)">Scroll down: the line starts filling when the first day reaches the middle of this box.</span>
+    </div>
+    <moul-tracing-beam>
+      <div style="display: grid; gap: 1rem">
+      <h3 style="margin: 0">Day one: Phnom Penh to Kampot</h3>
+      <p style="margin: 0">The bus leaves the Central Market at seven and takes the national road south. By the time the traffic thins out past Takeo, the paddy fields run flat to the horizon, broken only by sugar palms and the odd pagoda roof.</p>
+      <div style="aspect-ratio: 16 / 7; border-radius: var(--radius-lg, 0.75rem); background: linear-gradient(135deg, var(--color-chart-5), var(--color-chart-7))" role="img" aria-label="Rice fields south of Phnom Penh"></div>
+      <p style="margin: 0">Kampot is slow in the best way. Rent a bicycle, cross the old bridge and follow the river until the town gives way to pepper farms.</p>
+      <h3 style="margin: 0.5rem 0 0">Day two: Bokor</h3>
+      <p style="margin: 0">The road up the mountain climbs through cloud forest to the old hill station. Go early, before the mist rolls in, and bring a jacket: the top is ten degrees cooler than the coast.</p>
+      <p style="margin: 0">On the way down, stop at the waterfall and the Wat Sampov Pram lookout. On a clear day you can see Phu Quoc across the water.</p>
+      <h3 style="margin: 0.5rem 0 0">Day three: Kep</h3>
+      <p style="margin: 0">Kep is half an hour by tuk-tuk. Eat crab at the market, pepper and all, then walk the trail round the national park as the sun goes down over the islands.</p>
+      <div style="aspect-ratio: 16 / 7; border-radius: var(--radius-lg, 0.75rem); background: linear-gradient(135deg, var(--color-chart-2), var(--color-chart-3))" role="img" aria-label="Sunset over the islands off Kep"></div>
+      <p style="margin: 0">Take the morning boat to Koh Tonsay if the sea is calm. The island has no roads, a handful of guesthouses and the best grilled fish on the coast.</p>
+      </div>
+    </moul-tracing-beam>
+  </div>
+  <LandingKitDemo />
+</ComponentPreview>
+
+It lives in the effects entry, with the rest of the motion kit:
+
+```js
+import '@moul-dev/web-component/effects'
+```
+
+```html
+<moul-tracing-beam>
+  <h2>Day one: Phnom Penh to Kampot</h2>
+  <p>The bus leaves the Central Market at seven…</p>
+  <img src="/trip/fields.jpg" alt="Rice fields south of Phnom Penh" />
+  <h2>Day two: Bokor</h2>
+  <p>The road up the mountain climbs through cloud forest…</p>
+</moul-tracing-beam>
+```
+
+The element adds a gutter on the inline start, the right in right-to-left text, and the line runs the full height of the article. It follows the content as images load or the text reflows, and it follows the nearest scroll container: the page, or a panel with `overflow: auto` as in the demo.
+
+## When the beam fills
+
+The beam starts when the top of the article comes halfway down the view, and it is full when the end of the article comes into view. Because it ends there, rather than when the end reaches the middle of the screen, it always fills, even when the article is the last thing on the page.
+
+`--tracing-beam-start` moves the starting line: a percentage of the view, or a length from its top.
+
+```css
+moul-tracing-beam {
+  --tracing-beam-start: 30%;
+}
+```
+
+A short article, one that fits in the view below that line, fills from the moment it is fully in view until its top reaches the line.
+
+## Styling
+
+`--tracing-beam-from` and `--tracing-beam-to` set the two ends of the gradient; the head and the lit dot take the second. `--tracing-beam-track` colours the unfilled line. `--tracing-beam-gutter` sets the space the line sits in, `--tracing-beam-width` its thickness and `--tracing-beam-dot-size` the dot. Every part is also reachable through `::part()`.
+
+<ComponentPreview align="stretch">
+  <div style="height: 18rem; overflow: auto; padding: 1.5rem 1.5rem 3rem; border-radius: var(--radius-xl, 1rem); background: var(--color-surface)">
+    <moul-tracing-beam style="--tracing-beam-from: var(--color-chart-2); --tracing-beam-to: var(--color-chart-3); --tracing-beam-width: 3px; --tracing-beam-start: 30%">
+      <div style="display: grid; gap: 0.75rem">
+      <h3 style="margin: 0">Fish amok, step by step</h3>
+      <p style="margin: 0"><strong>1.</strong> Pound lemongrass, galangal, turmeric, kaffir lime zest, garlic and shallots into a smooth kroeung.</p>
+      <p style="margin: 0"><strong>2.</strong> Stir the paste into thick coconut cream with fish sauce, palm sugar and an egg.</p>
+      <p style="margin: 0"><strong>3.</strong> Fold in firm white fish cut into bite-sized pieces.</p>
+      <p style="margin: 0"><strong>4.</strong> Line small banana-leaf cups with noni leaves and fill them with the mixture.</p>
+      <p style="margin: 0"><strong>5.</strong> Steam for twenty minutes, until the custard is just set.</p>
+      <p style="margin: 0"><strong>6.</strong> Top with a spoon of coconut cream and thin strips of lime leaf, and serve with rice.</p>
+      </div>
+    </moul-tracing-beam>
+  </div>
+</ComponentPreview>
+
+```css
+moul-tracing-beam {
+  --tracing-beam-from: var(--color-chart-2);
+  --tracing-beam-to: var(--color-chart-3);
+  --tracing-beam-width: 3px;
+}
+```
+
+## Cost
+
+Where the browser has scroll-driven animations (Chrome and Edge 115, Safari 26), a view timeline in CSS moves the beam and no script runs while the reader scrolls. Elsewhere a passive scroll listener moves it once per frame. Either way the beam is a strip moved by a transform, so the page is never laid out again as it fills.
+
+## Accessibility
+
+The line, the beam and the dot are decorative and hidden from assistive technology. The element is never focusable and adds no role, so the article is read, and its links reached with Tab, as if the element were not there. Where the system forces its own colours, as in Windows high contrast mode, the line and the beam are drawn in system colours. When printing, the line is left out.
+
+Under `prefers-reduced-motion: reduce` the beam keeps following the scroll, because the reader is the one moving it; it has no easing, spring or lag of its own, so it is never ahead of or behind the page. The glowing head is not drawn, and the line simply fills.
+
+## Attributes and properties
+
+`<moul-tracing-beam>` has no attributes of its own; style it with the CSS properties below.
+
+| Slot | Description |
+| :-- | :-- |
+| (default) | The article: headings, paragraphs, images, any content. |
+
+| Part | Description |
+| :-- | :-- |
+| `rail` | The column in the gutter that holds the line and the dot. |
+| `track` | The unfilled line, the full height of the content. |
+| `beam` | The filled part of the line. |
+| `head` | The glowing point at the end of the beam. |
+| `dot` | The ring at the top of the line. |
+| `dot-light` | The light inside the dot, shown once reading starts. |
+| `content` | The wrapper round the article, after the gutter. |
+
+| CSS property | Description | Default |
+| :-- | :-- | :-- |
+| `--tracing-beam-start` | How far down the view the article's top must come before the beam starts. | `50%` |
+| `--tracing-beam-gutter` | The space on the inline start that holds the line. | `2.5rem` |
+| `--tracing-beam-width` | The thickness of the line. | `2px` |
+| `--tracing-beam-dot-size` | The size of the dot at the top. | `1.125rem` |
+| `--tracing-beam-from` | The colour at the top of the beam. | `var(--color-chart-5)` |
+| `--tracing-beam-to` | The colour at the head of the beam and of the lit dot. | `var(--color-chart-4)` |
+| `--tracing-beam-track` | The colour of the unfilled line. | `var(--color-border)` |

@@ -1,0 +1,131 @@
+---
+title: Sticky Stack (សមាសភាគ)
+description: ឯកសារណែនាំសម្រាប់សមាសភាគ Sticky Stack Web Component
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import LandingKitDemo from '@/components/demos/LandingKitDemo.astro';
+
+`<moul-sticky-stack>` piles its children up as the reader scrolls. Each child sticks near the top of the screen, the next one slides up over it a little lower, and the edges of the earlier ones peek out above it like a stack of cards. A card that is covered shrinks slightly and dims, so the pile reads as depth.
+
+Scroll inside the frame below.
+
+<ComponentPreview align="stretch">
+  <div style="height: 28rem; overflow: auto; border: 1px solid var(--color-border); border-radius: 0.75rem; background: var(--color-bg)">
+    <div style="padding: 1.5rem 1.5rem 0; text-align: center; color: var(--color-fg-subtle)">Four days on the south coast</div>
+    <moul-sticky-stack style="--sticky-stack-top: 1.5rem; padding: 1.5rem 1.5rem 10rem; max-width: 30rem; margin: 0 auto">
+      <article style="display: grid; gap: 0.5rem; min-height: 15rem; padding: 1.5rem; border: 1px solid var(--color-border); border-radius: 1rem; background: var(--color-surface); box-shadow: var(--shadow-md)">
+        <span style="color: var(--color-fg-subtle)">Day 1</span>
+        <strong style="font-size: 1.5rem">Phnom Penh to Kampot</strong>
+        <span>Three hours on the new road, then a slow evening by the river.</span>
+        <div style="height: 4rem; border-radius: 0.75rem; background: linear-gradient(135deg, var(--color-chart-1), var(--color-chart-3))"></div>
+      </article>
+      <article style="display: grid; gap: 0.5rem; min-height: 15rem; padding: 1.5rem; border: 1px solid var(--color-border); border-radius: 1rem; background: var(--color-surface); box-shadow: var(--shadow-md)">
+        <span style="color: var(--color-fg-subtle)">Day 2</span>
+        <strong style="font-size: 1.5rem">Bokor mountain</strong>
+        <span>The old hill station in the clouds, and the long road back down.</span>
+        <div style="height: 4rem; border-radius: 0.75rem; background: linear-gradient(135deg, var(--color-chart-4), var(--color-chart-2))"></div>
+      </article>
+      <article style="display: grid; gap: 0.5rem; min-height: 15rem; padding: 1.5rem; border: 1px solid var(--color-border); border-radius: 1rem; background: var(--color-surface); box-shadow: var(--shadow-md)">
+        <span style="color: var(--color-fg-subtle)">Day 3</span>
+        <strong style="font-size: 1.5rem">Crab market in Kep</strong>
+        <span>Crab with green Kampot pepper, fished from the water in front of you.</span>
+        <div style="height: 4rem; border-radius: 0.75rem; background: linear-gradient(135deg, var(--color-chart-5), var(--color-chart-7))"></div>
+      </article>
+      <article style="display: grid; gap: 0.5rem; min-height: 15rem; padding: 1.5rem; border: 1px solid var(--color-border); border-radius: 1rem; background: var(--color-surface); box-shadow: var(--shadow-md)">
+        <span style="color: var(--color-fg-subtle)">Day 4</span>
+        <strong style="font-size: 1.5rem">Koh Tonsay</strong>
+        <span>A boat to Rabbit Island, hammocks and nothing else to do.</span>
+        <div style="height: 4rem; border-radius: 0.75rem; background: linear-gradient(135deg, var(--color-chart-6), var(--color-chart-1))"></div>
+      </article>
+    </moul-sticky-stack>
+  </div>
+  <LandingKitDemo />
+</ComponentPreview>
+
+It lives in the effects entry:
+
+```js
+import '@moul-dev/web-component/effects'
+```
+
+```html
+<moul-sticky-stack>
+  <article class="card">…</article>
+  <article class="card">…</article>
+  <article class="card">…</article>
+</moul-sticky-stack>
+```
+
+Every child is a card, in any markup you like. Give them an opaque background, since each one slides over the last. They stay where you put them in the DOM, so your own styles and links keep working.
+
+## How it sticks
+
+The stack is plain CSS `position: sticky`. The first child sticks `--sticky-stack-top` from the top of the scrolling box, and each next one `--sticky-stack-step` lower, which is how much of each earlier card stays in view. Before they stack, the children are `--sticky-stack-gap` apart.
+
+```css
+moul-sticky-stack {
+  --sticky-stack-top: 5rem; /* below a sticky navbar */
+  --sticky-stack-step: 1.25rem;
+  --sticky-stack-gap: 3rem;
+}
+```
+
+The pile holds together until the end of the stack scrolls up past it, then leaves as one. To keep the finished pile on screen a little longer, pad the end of the `stack` part, or the element itself:
+
+```css
+moul-sticky-stack::part(stack) {
+  padding-block-end: 30vh;
+}
+```
+
+Sticky elements only stick inside the box that scrolls, so no element between the stack and that box may set `overflow: hidden`. Inside a scrolling panel, as in the demo above, the stack follows the panel; nothing else is needed.
+
+## Shrink and dim
+
+Each covered card shrinks from its top edge while the cards after it arrive, and the one at the bottom of the pile ends at `min-scale`, 0.9 by default. The cards in between end evenly between that and full size. `min-scale="1"` turns the shrink off. `--sticky-stack-dim` is how much the bottom card darkens, 0.2 by default; `0` turns it off.
+
+```html
+<moul-sticky-stack min-scale="0.85" style="--sticky-stack-dim: 0.35">…</moul-sticky-stack>
+```
+
+The stack changes only the `scale` and `filter` of each card, never a transform of your own, and never its size, so the page is not laid out again while the reader scrolls. Where the browser has scroll-driven animations a native view timeline drives every card, and no script runs while the reader scrolls; elsewhere one passive scroll listener writes a single number per frame. The stack measures its cards only when they or the screen change size.
+
+## Whole sections
+
+The children can be full-height sections instead of cards, for a page that turns over one section at a time. Set the step and the gap to nothing so each section covers the last completely.
+
+```html
+<moul-sticky-stack min-scale="0.94" style="--sticky-stack-top: 0; --sticky-stack-step: 0; --sticky-stack-gap: 0">
+  <section style="min-height: 100vh">…</section>
+  <section style="min-height: 100vh">…</section>
+  <section style="min-height: 100vh">…</section>
+</moul-sticky-stack>
+```
+
+## Accessibility
+
+The stack adds no role and never takes focus: the cards are read, and their links and buttons reached with Tab, in their order. A card that later cards cover would hide a control focused inside it, so when keyboard focus moves into a covered card (Shift+Tab back up the pile, for example) the stack scrolls back until that card is on top. Focus that comes from a pointer, on the strip of a card that peeks out, leaves the scroll alone.
+
+Under `prefers-reduced-motion: reduce` the cards still stick and stack, because that is layout the reader moves with their own scrolling, but they no longer shrink or dim, and the scroll back to a focused card jumps instead of gliding. When printing, the cards lie flat one after another.
+
+## Attributes and properties
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `min-scale` | `minScale` | `number`, 0.5 to 1 | `0.9` |
+
+| Slot | Description |
+| :-- | :-- |
+| (default) | The cards or sections to stack, each one an element. |
+
+| Part | Description |
+| :-- | :-- |
+| `stack` | The column that holds the children. Pad its end to hold the finished pile in view a little longer. |
+
+| CSS property | Description | Default |
+| :-- | :-- | :-- |
+| `--sticky-stack-top` | Where the first child sticks, from the top of the scrolling box. | `var(--spacing-4)` |
+| `--sticky-stack-step` | How much lower each next child sticks, so the earlier ones peek out. | `var(--spacing-4)` |
+| `--sticky-stack-gap` | The space between children before they stack. | `var(--spacing-8)` |
+| `--sticky-stack-dim` | How much the bottom card darkens, from 0 to 1. | `0.2` |

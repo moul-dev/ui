@@ -1,0 +1,152 @@
+---
+title: Cursor (សមាសភាគ)
+description: ឯកសារណែនាំសម្រាប់សមាសភាគ Cursor Web Component
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import LandingKitDemo from '@/components/demos/LandingKitDemo.astro';
+
+`<moul-cursor>` swaps the mouse cursor for a follower of its own while the pointer is over its content: a dot with a ring that trails it on a spring, an arrow with a pill of text, or a smooth arrow. The follower grows over links and buttons and shrinks a little when you press. Move a mouse over the box below.
+
+<ComponentPreview backdrop="mesh" minHeight="16rem">
+  <moul-cursor style="display: grid; place-items: center; gap: 1rem; width: 100%; min-height: 14rem; padding: 1.5rem; box-sizing: border-box; border: 1px dashed var(--color-border); border-radius: 1rem">
+    <p style="margin: 0; text-align: center">The dot sits on the pointer; the ring catches up.</p>
+    <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; justify-content: center">
+      <moul-button>Book a boat</moul-button>
+      <moul-button variant="secondary">See the route</moul-button>
+    </div>
+  </moul-cursor>
+  <LandingKitDemo />
+</ComponentPreview>
+
+It lives in the effects entry:
+
+```js
+import '@moul-dev/web-component/effects'
+```
+
+```html
+<moul-cursor>
+  <section class="hero">…</section>
+</moul-cursor>
+```
+
+The follower appears only for a mouse. A touch screen and a pen keep their usual behaviour, and the system cursor comes back whenever the pointer leaves the element, moves over a text field or a frame, or the window loses focus.
+
+## Variants
+
+`variant="dot"` (the default) puts a small dot right on the pointer and a ring that trails it. `variant="label"` draws an arrow with a pill of text from `label` beside it, which follows a beat behind, for a hero that says "Explore" or a canvas that says "Drag". `variant="arrow"` draws a smooth arrow in place of the system one.
+
+<ComponentPreview backdrop="mesh" minHeight="14rem">
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); gap: 1rem; width: 100%">
+    <moul-cursor style="display: grid; place-items: center; min-height: 10rem; border-radius: 1rem; background: var(--color-surface)">
+      <span>dot</span>
+    </moul-cursor>
+    <moul-cursor variant="label" label="Explore" style="display: grid; place-items: center; min-height: 10rem; border-radius: 1rem; background: var(--color-surface)">
+      <span>label</span>
+    </moul-cursor>
+    <moul-cursor variant="arrow" style="display: grid; place-items: center; min-height: 10rem; border-radius: 1rem; background: var(--color-surface)">
+      <span>arrow</span>
+    </moul-cursor>
+  </div>
+</ComponentPreview>
+
+```html
+<moul-cursor variant="label" label="Explore">…</moul-cursor>
+<moul-cursor variant="arrow">…</moul-cursor>
+```
+
+## Labels on hover
+
+Any element inside with a `data-cursor-label` attribute shows that text beside the pointer while it is hovered, in every variant: the ring of the dot variant opens into a pill round it. Use it for a short verb over a gallery or a map.
+
+<ComponentPreview backdrop="mesh" minHeight="14rem">
+  <moul-cursor style="display: grid; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); gap: 1rem; width: 100%">
+    <img data-cursor-label="View" src="/demo/imageslider/kep-coast.svg" alt="The coast at Kep" style="width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 1rem" />
+    <img data-cursor-label="View" src="/demo/imageslider/tonle-sap-dusk.svg" alt="The Tonle Sap at dusk" style="width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 1rem" />
+    <img data-cursor-label="Play" src="/demo/imageslider/yeak-laom-lake.svg" alt="Yeak Laom lake" style="width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 1rem" />
+  </moul-cursor>
+</ComponentPreview>
+
+```html
+<moul-cursor>
+  <img data-cursor-label="View" src="/kep.jpg" alt="The coast at Kep" />
+  <img data-cursor-label="Play" src="/lake.jpg" alt="Yeak Laom lake" />
+</moul-cursor>
+```
+
+The label is drawn for the eye only and is hidden from screen readers, so it must repeat what the content already says, never add to it.
+
+## The whole page
+
+`scope="page"` replaces the cursor over the whole page. The element can then sit anywhere, empty, for example once in your layout. An inner `<moul-cursor>` still takes over inside its own area, so a page-wide dot can turn into a "Drag" label over one section.
+
+```html
+<body>
+  <moul-cursor scope="page"></moul-cursor>
+  …
+  <moul-cursor variant="label" label="Drag">
+    <moul-carousel>…</moul-carousel>
+  </moul-cursor>
+</body>
+```
+
+Use the page scope with care. Many people set a larger or high-contrast system cursor, and a follower replaces theirs with yours. An area, such as a hero or a gallery, is usually enough.
+
+## Styling
+
+The dot, the ring and the arrow take `--cursor-color`, the text colour by default, with a thin `--cursor-outline` in the page background colour so they show on light and dark alike. `--cursor-size` sets the ring's diameter, and `--cursor-label-background` and `--cursor-label-color` the pill.
+
+```css
+moul-cursor {
+  --cursor-color: var(--color-accent);
+  --cursor-size: 3rem;
+  --cursor-label-background: var(--color-fg);
+  --cursor-label-color: var(--color-bg);
+}
+```
+
+## Accessibility
+
+The element is never focusable and adds no role. The content keeps its own semantics and focus order, and keyboard focus rings are untouched. The follower is decorative and hidden from assistive technology.
+
+The system cursor is hidden only while the follower shows, and comes back over text fields (so the text cursor is never lost), over frames, when the pointer leaves, and for touch and pen. Where the system forces its own colours, as in Windows high contrast mode, the system cursor stays and no follower is drawn.
+
+Under `prefers-reduced-motion: reduce` no follower is drawn and the system cursor stays as it is. If the setting is turned on while the follower shows, the system cursor comes back at once.
+
+## Cost
+
+The follower is drawn in the top layer, as a manual popover, so transformed or clipped ancestors (a tilted card, a carousel track) never move or cut it. It is placed by `translate` alone, once per animation frame, and its frame loop stops as soon as it has caught up with a still pointer, so a resting mouse costs nothing.
+
+The system cursor is hidden with a small stylesheet the element adds to the document (or the shadow root it sits in). Inside other components' shadow roots it reaches the common parts (`button`, `base`, `control`, `link`, `trigger`, `item`); a control that sets its own cursor on another inner part may still show its hand there.
+
+## Attributes and properties
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `variant` | `variant` | `'dot' \| 'label' \| 'arrow'` | `'dot'` |
+| `label` | `label` | `string` | `''` |
+| `scope` | `scope` | `'element' \| 'page'` | `'element'` |
+| | `isActive` (read-only) | `boolean` | |
+
+| Attribute on content | Description |
+| :-- | :-- |
+| `data-cursor-label` | Text shown beside the pointer while the element is hovered. |
+
+| Slot | Description |
+| :-- | :-- |
+| (default) | The content the cursor is replaced over. With `scope="page"` it simply shows. |
+
+| Part | Description |
+| :-- | :-- |
+| `follower` | The layer that holds the follower; it ignores the pointer. |
+| `lead` | The part right on the pointer: the dot or the arrow. |
+| `trail` | The part that trails: the ring, or the pill with the label. |
+
+| CSS property | Description | Default |
+| :-- | :-- | :-- |
+| `--cursor-color` | The dot, the ring and the arrow. | `var(--color-fg)` |
+| `--cursor-outline` | The thin outline round the arrow and the dot. | `var(--color-bg)` |
+| `--cursor-size` | The diameter of the ring. | `2.25rem` |
+| `--cursor-label-background` | The pill's fill. | `var(--color-primary-solid)` |
+| `--cursor-label-color` | The pill's text. | `var(--color-fg-on-primary)` |

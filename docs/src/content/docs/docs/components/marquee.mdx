@@ -80,6 +80,40 @@ The marquee is as wide as its container, never as wide as its items. Make each i
 <moul-marquee speed="90" style="--marquee-gap: 1rem">…</moul-marquee>
 ```
 
+## Speed with the scroll
+
+`scroll-velocity` lets the reader's scrolling drive the marquee. It speeds up while they scroll, runs backward while they scroll up, and eases back to its own pace and direction when they stop. The value is how much faster it gets: each 1000 pixels per second of scrolling adds that many times its own speed, so with `scroll-velocity="2"` it runs three times as fast while the reader scrolls 1000 pixels a second. Scrolling faster than 3000 pixels a second adds nothing more. Written without a value, the attribute means `2`. Scroll this page to see the two rows below.
+
+<ComponentPreview stack>
+  <moul-marquee scroll-velocity="3" speed="60" fade-edges style="font-size: 2.5rem; font-weight: 700; letter-spacing: -0.02em">
+    <span>Phnom Penh</span>
+    <span>·</span>
+    <span>Siem Reap</span>
+    <span>·</span>
+    <span>Kampot</span>
+    <span>·</span>
+  </moul-marquee>
+  <moul-marquee scroll-velocity="3" speed="60" direction="end" fade-edges style="font-size: 2.5rem; font-weight: 700; letter-spacing: -0.02em; color: var(--color-muted)">
+    <span>Battambang</span>
+    <span>·</span>
+    <span>Kep</span>
+    <span>·</span>
+    <span>Mondulkiri</span>
+    <span>·</span>
+  </moul-marquee>
+</ComponentPreview>
+
+```html
+<moul-marquee scroll-velocity="3">
+  <span>Phnom Penh</span>
+  <span>Siem Reap</span>
+  <span>Kampot</span>
+</moul-marquee>
+<moul-marquee scroll-velocity="3" direction="end">…</moul-marquee>
+```
+
+The marquee changes the playback rate of the animation that is already running, so it never jumps or starts again, and the page is never laid out again while it speeds up. It follows the scroll of the page, measured once per frame by a passive listener, and does no work while it is off screen, where it rests at its own speed.
+
 ## Pausing
 
 `pause-on-hover` holds the items still while the pointer is over the marquee, which suits cards a reader may want to finish. `is-paused` holds them still until you remove it. The marquee also pauses on its own while focus is inside it and while it is off screen, so it costs nothing when nobody can see it.
@@ -111,7 +145,7 @@ In React, Vue or any framework that renders the items, the framework owns them a
 
 Any focus inside the marquee pauses it. Focus from the keyboard also returns the row to its start and lets it scroll, so each item a keyboard user tabs to is in view; the movement starts again from the beginning once focus leaves. A list of logos with no links in it has nothing to focus, so the logos' `alt` text carries their meaning.
 
-Under `prefers-reduced-motion: reduce` nothing moves and no clones are made. The row scrolls by hand instead, with a scrollbar, so every item stays within reach, and the edges do not fade.
+Under `prefers-reduced-motion: reduce` nothing moves and no clones are made. The row scrolls by hand instead, with a scrollbar, so every item stays within reach, and the edges do not fade. `scroll-velocity` stops following the scroll.
 
 ## Attributes and properties
 
@@ -122,6 +156,7 @@ Under `prefers-reduced-motion: reduce` nothing moves and no clones are made. The
 | `pause-on-hover` | `pauseOnHover` | `boolean` | `false` |
 | `fade-edges` | `fadeEdges` | `boolean` | `false` |
 | `is-paused` | `isPaused` | `boolean` | `false` |
+| `scroll-velocity` | `scrollVelocity` | `number` (extra speed per 1000 px/s of scrolling; no value means `2`) | `0` (off) |
 
 | Slot | Description |
 | :-- | :-- |

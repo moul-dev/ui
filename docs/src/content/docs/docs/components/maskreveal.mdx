@@ -1,0 +1,107 @@
+---
+title: Mask Reveal
+description: A circle under the pointer that uncovers a hidden layer.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import LandingKitDemo from '@/components/demos/LandingKitDemo.astro';
+
+`<moul-mask-reveal>` lays two layers in the same place and cuts a circle under the pointer, so the layer underneath shows through wherever the pointer goes. The default slot is the layer everyone sees; the `revealed` slot is the one beneath. Move over the sketch below and the finished painting appears.
+
+<ComponentPreview backdrop="page" minHeight="320px">
+  <moul-mask-reveal style="width: 100%; max-width: 36rem; border-radius: var(--radius-xl); overflow: hidden">
+    <img src="/demo/compare/sketch.svg" alt="Pencil sketch of rice paddies, two sugar palms and a stilt house" width="1200" height="675" style="display: block; width: 100%; height: auto" />
+    <img slot="revealed" src="/demo/compare/painting.svg" alt="The same scene painted at dusk, with a pink sky and green and gold paddies" width="1200" height="675" style="display: block; width: 100%; height: auto" />
+  </moul-mask-reveal>
+  <LandingKitDemo />
+</ComponentPreview>
+
+It lives in the effects entry:
+
+```js
+import '@moul-dev/web-component/effects'
+```
+
+```html
+<moul-mask-reveal>
+  <img src="/sketch.jpg" alt="Pencil sketch of the paddies" />
+  <img slot="revealed" src="/painting.jpg" alt="The same scene painted at dusk" />
+</moul-mask-reveal>
+```
+
+The element is as large as the larger of its two layers, and both start at its top-left corner, so give them the same size. Both layers are cut by the same circle, the hidden one to it and the visible one around it, so the circle shows only the hidden layer whatever the backgrounds are. Text works as well as pictures.
+
+<ComponentPreview backdrop="page" minHeight="260px">
+  <moul-mask-reveal reveal-size="200" style="max-width: 34rem">
+    <p style="margin: 0; font-size: clamp(1.75rem, 5vw, 2.75rem); font-weight: 700; line-height: 1.15; letter-spacing: -0.02em">Phnom Penh wakes at five, before the heat.</p>
+    <p slot="revealed" style="margin: 0; font-size: clamp(1.75rem, 5vw, 2.75rem); font-weight: 700; line-height: 1.15; letter-spacing: -0.02em; color: var(--color-accent)">By then Psar Thmei is selling iced coffee.</p>
+  </moul-mask-reveal>
+</ComponentPreview>
+
+```html
+<moul-mask-reveal reveal-size="200">
+  <p>Phnom Penh wakes at five, before the heat.</p>
+  <p slot="revealed">By then Psar Thmei is selling iced coffee.</p>
+</moul-mask-reveal>
+```
+
+## The circle
+
+`reveal-size` is how wide the circle grows, in pixels, while the pointer is over the element: 240 by default. `size` is how wide it stays at rest, when the pointer is elsewhere: 0 by default, so it shrinks out of sight. A small resting size, such as `size="24"`, leaves a dot behind as a hint that something is underneath.
+
+The circle eases after the pointer as it moves, grows as the pointer arrives and shrinks as it leaves. `--mask-reveal-duration` sets how long the growing and shrinking take, `0.3s` by default.
+
+On a touch screen the circle opens where the finger presses and follows it until the page starts to scroll; lifting the finger closes it.
+
+## Uncovering all of it
+
+`is-revealed` uncovers the whole hidden layer: the circle grows until it covers the element. Remove the attribute and it shrinks back. Use it for a button that shows the answer, or to show the hidden layer to readers who cannot point.
+
+<ComponentPreview backdrop="page" minHeight="300px" stack>
+  <moul-mask-reveal id="mask-reveal-toggle" style="width: 100%; max-width: 30rem; border-radius: var(--radius-xl); overflow: hidden">
+    <img src="/demo/compare/sketch.svg" alt="Pencil sketch of the paddies" width="1200" height="675" style="display: block; width: 100%; height: auto" />
+    <img slot="revealed" src="/demo/compare/painting.svg" alt="The paddies painted at dusk" width="1200" height="675" style="display: block; width: 100%; height: auto" />
+  </moul-mask-reveal>
+  <moul-button variant="secondary" onclick="const el = document.getElementById('mask-reveal-toggle'); el.isRevealed = !el.isRevealed">Show the painting</moul-button>
+</ComponentPreview>
+
+```js
+const reveal = document.querySelector('moul-mask-reveal')
+button.addEventListener('click', () => {
+  reveal.isRevealed = !reveal.isRevealed
+})
+```
+
+## Cost
+
+While the pointer moves, the element writes the circle's centre once per frame and the layers are cut by a mask and a clip path, so the page is never laid out again. The centre and the radius are registered properties that do not inherit, so the content inside the layers is never restyled.
+
+## Accessibility
+
+The element never takes focus and adds no role. Both layers are ordinary content, read in order with the visible layer first. When the hidden layer only repeats the visible one in another style, mark it `aria-hidden="true"` so it is not read twice.
+
+Focus on anything inside the hidden layer, such as a link or a button, uncovers the whole layer until focus leaves, so a keyboard user always sees what is focused. If the hidden layer says something a reader needs and holds nothing focusable, give keyboard users a control that sets `is-revealed`, as in the example above. When printing, only the visible layer is shown.
+
+Under `prefers-reduced-motion: reduce` no circle follows the pointer. The whole hidden layer shows at once while the pointer is over the element, a finger presses it or focus is inside it, and hides at once when it leaves.
+
+## Attributes and properties
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `size` | `size` | `number` (px) | `0` |
+| `reveal-size` | `revealSize` | `number` (px) | `240` |
+| `is-revealed` | `isRevealed` | `boolean` | `false` |
+
+| Slot | Description |
+| :-- | :-- |
+| (default) | The visible layer. |
+| `revealed` | The hidden layer, uncovered under the pointer. |
+
+| Part | Description |
+| :-- | :-- |
+| `content` | The visible layer, with a hole where the circle is. |
+| `revealed` | The hidden layer, cut to the circle. |
+
+| CSS property | Description | Default |
+| :-- | :-- | :-- |
+| `--mask-reveal-duration` | How long the circle takes to grow and shrink. | `0.3s` |

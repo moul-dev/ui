@@ -1181,7 +1181,7 @@ answer.sources = [{ title: 'Records API', url: 'https://moul.dev/docs/records' }
         name: 'Marquee',
         docs: '/docs/components/marquee',
         summary:
-          'An endless row or column of logos, cards or text; copies are inert and hidden from screen readers, it pauses on focus (and on hover with `pause-on-hover`), and becomes a row you scroll by hand under reduced motion. Effects entry.',
+          "An endless row or column of logos, cards or text; copies are inert and hidden from screen readers, it pauses on focus (and on hover with `pause-on-hover`), and becomes a row you scroll by hand under reduced motion. `scroll-velocity` (a number; the attribute alone means 2) speeds it up with the reader's scroll and runs it backward while they scroll up. Effects entry.",
         tags: ['moul-marquee'],
         snippet: `<moul-marquee fade-edges pause-on-hover speed="40">
   <img src="/logos/one.svg" alt="One" />
@@ -1511,6 +1511,202 @@ answer.sources = [{ title: 'Records API', url: 'https://moul.dev/docs/records' }
         snippet: `<moul-world-map label="Our offices" show-labels
   arcs='[{ "from": { "lat": 11.56, "lng": 104.92, "label": "Phnom Penh" }, "to": { "lat": 38.72, "lng": -9.14, "label": "Lisbon" } }]'
 ></moul-world-map>`,
+      },
+    ],
+  },
+  {
+    title: 'Pointer & Scroll',
+    families: [
+      {
+        name: 'Tilt',
+        docs: '/docs/components/tilt',
+        summary:
+          'Wraps a card or image and tilts it in 3D toward a mouse or pen, springing back flat on leave (`max-tilt` degrees, `perspective`, `hover-scale`, `is-reversed`, `glare` for a light that follows the pointer). Parts of a `transform-style: preserve-3d` box can be lifted with `translate: 0 0 2rem`. Flat under reduced motion. Effects entry.',
+        tags: ['moul-tilt'],
+        snippet: `<moul-tilt glare max-tilt="12" style="border-radius: 1rem">
+  <div class="card" style="border-radius: inherit">…</div>
+</moul-tilt>`,
+      },
+      {
+        name: 'Magnetic',
+        docs: '/docs/components/magnetic',
+        summary:
+          'Wraps one button or link so it drifts toward a mouse or pen within `reach` px (default 40) by `strength` of the distance (0 to 1, default 0.3) and springs back. Writes `--magnetic-x`/`--magnetic-y` so an inner label can follow further. Focus goes to the control; still under reduced motion. Effects entry.',
+        tags: ['moul-magnetic'],
+        snippet: `<moul-magnetic strength="0.4" reach="60">
+  <moul-button variant="primary">Book a trip</moul-button>
+</moul-magnetic>`,
+      },
+      {
+        name: 'GlowBorder',
+        docs: '/docs/components/glowborder',
+        summary:
+          'Wraps a box (or overlays it when empty) and lights its border on the side nearest a mouse or pen, fading out `proximity` px (64) away; `spread` (degrees, 80) sets the lit arc, `blur` adds a halo, `--glow-border-colors` sets the gradient. Tracks the pointer only while on screen; decorative. Effects entry.',
+        tags: ['moul-glow-border'],
+        snippet: `<moul-glow-border proximity="96" spread="100">
+  <moul-card><moul-card-body>Pro plan</moul-card-body></moul-card>
+</moul-glow-border>`,
+      },
+      {
+        name: 'HoverHighlight',
+        docs: '/docs/components/hoverhighlight',
+        summary:
+          'One highlight that slides behind a set of items (direct children, or `item-selector`) to the one under the mouse or pen, or with keyboard focus, taking its size and radius; it fades out on leave, or with `is-persistent` rests on the `aria-current`/`data-active` item or the last one. The hovered item gets `data-highlighted`. Effects entry.',
+        tags: ['moul-hover-highlight'],
+        snippet: `<moul-hover-highlight is-persistent style="display: flex">
+  <a href="/overview" aria-current="page">Overview</a>
+  <a href="/getting-there">Getting there</a>
+  <a href="/where-to-stay">Where to stay</a>
+</moul-hover-highlight>`,
+      },
+      {
+        name: 'DirectionHover',
+        docs: '/docs/components/directionhover',
+        summary:
+          'A picture whose `overlay` slot slides in from the edge the pointer entered and out toward the edge it left, while the picture zooms slightly; focus inside or a tap shows it from the bottom. State is reported as `data-state` and `data-edge`. Effects entry.',
+        tags: ['moul-direction-hover'],
+        snippet: `<moul-direction-hover style="aspect-ratio: 4 / 3">
+  <img src="/kep.jpg" alt="The coast at Kep, with fishing boats" />
+  <div slot="overlay"><strong>Kep</strong> Crab market and sunsets</div>
+</moul-direction-hover>`,
+      },
+      {
+        name: 'Lens',
+        docs: '/docs/components/lens',
+        summary:
+          'A round magnifier (`size` px, 160) that follows the pointer over an image or any content and shows it `zoom` times larger (2), using an aria-hidden, inert light-DOM copy so page CSS still applies; `is-static` with `position-x`/`position-y` fixes it in place. Effects entry.',
+        tags: ['moul-lens'],
+        snippet: `<moul-lens zoom="2.5" size="180">
+  <img src="/paddies.jpg" alt="Rice paddies and a stilt house at dusk" />
+</moul-lens>`,
+      },
+      {
+        name: 'Cursor',
+        docs: '/docs/components/cursor',
+        summary:
+          'Replaces the mouse cursor over its content (or the whole page with `scope="page"`) with a smooth follower: `variant="dot"` (dot plus trailing ring), `label` (arrow plus pill showing `label`) or `arrow`. It grows over links and buttons, and any `data-cursor-label` shows beside the pointer. Mouse only; text fields, frames, touch, reduced motion and forced colours keep the system cursor. Effects entry.',
+        tags: ['moul-cursor'],
+        snippet: `<moul-cursor variant="label" label="Explore">
+  <section class="hero">…</section>
+  <img data-cursor-label="View" src="/kep.jpg" alt="The coast at Kep" />
+</moul-cursor>`,
+      },
+      {
+        name: 'MaskReveal',
+        docs: '/docs/components/maskreveal',
+        summary:
+          'Two stacked layers; a circle under the pointer uncovers the `revealed` slot beneath the default slot. The circle grows from `size` (0) to `reveal-size` (240 px) on hover, follows a pressed finger, and `is-revealed` (or focus inside the hidden layer) uncovers it all. Effects entry.',
+        tags: ['moul-mask-reveal'],
+        snippet: `<moul-mask-reveal reveal-size="200">
+  <img src="/sketch.jpg" alt="Pencil sketch of the paddies" />
+  <img slot="revealed" src="/painting.jpg" alt="The same scene painted at dusk" />
+</moul-mask-reveal>`,
+      },
+      {
+        name: 'PointerParallax',
+        docs: '/docs/components/pointerparallax',
+        summary:
+          'Layered children shift with the pointer by their `data-depth` (usually -1 to 1; negative moves the other way) times `strength` px; `scope="page"` follows the pointer anywhere on the page. Layers move by the `translate` property, so position them another way. Still under reduced motion. Effects entry.',
+        tags: ['moul-pointer-parallax'],
+        snippet: `<moul-pointer-parallax strength="28" style="height: 18rem; overflow: clip">
+  <img data-depth="0.3" src="/far.svg" alt="" />
+  <img data-depth="1" src="/near.svg" alt="" />
+  <h1 data-depth="-0.3">Mondulkiri</h1>
+</moul-pointer-parallax>`,
+      },
+      {
+        name: 'ConnectorBeam',
+        docs: '/docs/components/connectorbeam',
+        summary:
+          'A line between two elements named by id (`from`, `to`) with a short light running along it, for sources flowing into a hub or a request reaching a server. A layer (`position: absolute; inset: 0; z-index: -1`) inside a `position: relative; isolation: isolate` box; `curvature` bows it, `start-x-offset`/`start-y-offset`/`end-x-offset`/`end-y-offset` move its ends, `is-reversed`, `duration` and `delay` (ms) time the light. Redrawn only on resize; paused off screen; decorative and `aria-hidden`. Effects entry.',
+        tags: ['moul-connector-beam'],
+        snippet: `<div style="position: relative; isolation: isolate; display: flex; justify-content: space-between">
+  <div id="source">📄</div>
+  <div id="hub">M</div>
+  <moul-connector-beam from="source" to="hub" curvature="40"></moul-connector-beam>
+</div>`,
+      },
+      {
+        name: 'ScrollText',
+        docs: '/docs/components/scrolltext',
+        summary:
+          'Text whose words light up one by one, from dim (`--scroll-text-dim`) to full, as the reader scrolls; write the text inside it or set `text`. `is-pinned` makes a tall section (`--scroll-text-length`, 250vh) with the text held in the viewport while it lights. One scroll timeline drives every word through CSS; Khmer splits at word boundaries; read once as a sentence. Effects entry.',
+        tags: ['moul-scroll-text'],
+        snippet: `<h2><moul-scroll-text>Every change to your data is kept, with who made it and when.</moul-scroll-text></h2>
+<moul-scroll-text is-pinned>Ship on Friday. Previews for every branch, logs you can search, and a rollback that takes one click.</moul-scroll-text>`,
+      },
+      {
+        name: 'StickyStack',
+        docs: '/docs/components/stickystack',
+        summary:
+          'Children (cards or full sections) stick near the top one after another and pile up as the page scrolls, each a `--sticky-stack-step` lower so the earlier ones peek out; covered cards shrink (to `min-scale`, 0.9) and dim (`--sticky-stack-dim`) on a native view timeline with a scroll-listener fallback. Keyboard focus in a covered card scrolls back to it. Under reduced motion they still stack but do not shrink. Effects entry.',
+        tags: ['moul-sticky-stack'],
+        snippet: `<moul-sticky-stack min-scale="0.9" style="--sticky-stack-top: 5rem">
+  <article class="card">…</article>
+  <article class="card">…</article>
+  <article class="card">…</article>
+</moul-sticky-stack>`,
+      },
+      {
+        name: 'ScrollParallax',
+        docs: '/docs/components/scrollparallax',
+        summary:
+          'Each child is a track that slides as the element crosses the screen: rows (default) alternate left and right, `orientation="columns"` alternate up and down; `speed` is the travel in px (300) and `data-speed` on a track multiplies it (negative reverses, 0 holds still). Moves by `translate` on a native view timeline; still under reduced motion. Effects entry.',
+        tags: ['moul-scroll-parallax'],
+        snippet: `<moul-scroll-parallax speed="360">
+  <div class="row">…cards…</div>
+  <div class="row">…cards…</div>
+  <div class="row" data-speed="0">…</div>
+</moul-scroll-parallax>`,
+      },
+      {
+        name: 'StickyScroll',
+        docs: '/docs/components/stickyscroll',
+        summary:
+          "A walk-through in steps: each `moul-sticky-scroll-item` has text and a `media` slot; text scrolls in one column while a pinned panel shows the active step's media (the last step whose text has reached a line 40% down the screen, even after a jump), crossfading, and fires `stepchange` (`{ current, previous, item }`). Optional `--sticky-scroll-tint` per item, `--sticky-scroll-end-space` for room after the last step; under 600px wide it becomes one column with media above the text. Effects entry.",
+        tags: ['moul-sticky-scroll', 'moul-sticky-scroll-item'],
+        snippet: `<moul-sticky-scroll style="--sticky-scroll-end-space: 40vh">
+  <moul-sticky-scroll-item>
+    <h3>Open the app</h3><p>Sign in with your phone number.</p>
+    <img slot="media" src="/steps/sign-in.png" alt="The sign-in screen" />
+  </moul-sticky-scroll-item>
+  <moul-sticky-scroll-item>
+    <h3>Choose who gets it</h3><p>Pick a saved contact.</p>
+    <img slot="media" src="/steps/contacts.png" alt="Saved contacts" />
+  </moul-sticky-scroll-item>
+</moul-sticky-scroll>`,
+      },
+      {
+        name: 'TracingBeam',
+        docs: '/docs/components/tracingbeam',
+        summary:
+          'Wraps an article; a gradient line in the inline-start gutter fills as the reader scrolls through it, with a glowing head and a dot that lights once reading starts. Starts when the article top reaches `--tracing-beam-start` (50% of the view) and fills when its end is in view, so it always completes. Native view timeline where supported, passive scroll fallback elsewhere; follows the nearest scroll container. Decorative. Effects entry.',
+        tags: ['moul-tracing-beam'],
+        snippet: `<moul-tracing-beam>
+  <h2>Day one: Phnom Penh to Kampot</h2>
+  <p>The bus leaves the Central Market at seven…</p>
+</moul-tracing-beam>`,
+      },
+      {
+        name: 'ScrollFrame',
+        docs: '/docs/components/scrollframe',
+        summary:
+          'A screen (`moul-browser-frame`, `moul-phone-frame`, image) that starts tilted back by `tilt` degrees (default 20) and lies flat as it scrolls into view, with a `header` slot that rises into place. Uses a native CSS view timeline where supported, otherwise a scroll fallback that follows the nearest scroll container. Flat under reduced motion. Effects entry.',
+        tags: ['moul-scroll-frame'],
+        snippet: `<moul-scroll-frame>
+  <h2 slot="header">Every booking, one screen</h2>
+  <moul-browser-frame url="trips.example.com/today"><img src="/dashboard.png" alt="The bookings dashboard" /></moul-browser-frame>
+</moul-scroll-frame>`,
+      },
+      {
+        name: 'PageTransition',
+        docs: '/docs/components/pagetransition',
+        summary:
+          'Animated change of page through view transitions: `effect` is `wipe` (a panel of `--page-transition-color` sweeps across), `slide`, `circle` (grows from the click point) or `fade`, over `duration` ms. One per page opts the site in to cross-document transitions (load the effects entry with `blocking="render"` or inline `pageTransitionCss(effect, duration)` in <head>); in SPAs, `start(update, { direction, x, y })` wraps `document.startViewTransition`. Plays in reverse when going back or in RTL. No transition under reduced motion. Renders nothing. Effects entry.',
+        tags: ['moul-page-transition'],
+        snippet: `<moul-page-transition effect="wipe"></moul-page-transition>`,
+        script: `const transition = document.querySelector('moul-page-transition')
+transition.start(() => render(nextView), { direction: 'forward' })`,
       },
     ],
   },

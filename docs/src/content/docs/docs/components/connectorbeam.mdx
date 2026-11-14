@@ -1,0 +1,147 @@
+---
+title: Connector Beam
+description: A line between two elements with a short light running along it, to show that one thing feeds another.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import LandingKitDemo from '@/components/demos/LandingKitDemo.astro';
+
+`<moul-connector-beam>` draws a line from one element to another and sends a short light along it, over and over, to show that one thing feeds another: sources flowing into a hub, a request travelling from a browser to a server. Put it inside the box that holds both elements and name them by id with `from` and `to`.
+
+<ComponentPreview backdrop="page" minHeight="22rem">
+  <div style="position: relative; isolation: isolate; display: flex; align-items: center; justify-content: space-between; gap: 2rem; width: 100%; max-width: 30rem; padding: 0.5rem">
+    <div style="display: flex; flex-direction: column; gap: 1rem">
+      <div id="cb-docs" style="display: grid; place-items: center; width: 3rem; height: 3rem; border-radius: 9999px; border: 1px solid var(--color-border); background: var(--color-surface); box-shadow: var(--shadow-sm); font-size: 1.25rem">📄</div>
+      <div id="cb-mail" style="display: grid; place-items: center; width: 3rem; height: 3rem; border-radius: 9999px; border: 1px solid var(--color-border); background: var(--color-surface); box-shadow: var(--shadow-sm); font-size: 1.25rem">✉️</div>
+      <div id="cb-chat" style="display: grid; place-items: center; width: 3rem; height: 3rem; border-radius: 9999px; border: 1px solid var(--color-border); background: var(--color-surface); box-shadow: var(--shadow-sm); font-size: 1.25rem">💬</div>
+      <div id="cb-drive" style="display: grid; place-items: center; width: 3rem; height: 3rem; border-radius: 9999px; border: 1px solid var(--color-border); background: var(--color-surface); box-shadow: var(--shadow-sm); font-size: 1.25rem">🗂️</div>
+      <div id="cb-calendar" style="display: grid; place-items: center; width: 3rem; height: 3rem; border-radius: 9999px; border: 1px solid var(--color-border); background: var(--color-surface); box-shadow: var(--shadow-sm); font-size: 1.25rem">📅</div>
+    </div>
+    <div id="cb-hub" style="display: grid; place-items: center; width: 4.5rem; height: 4.5rem; border-radius: 9999px; border: 1px solid var(--color-border); background: var(--color-surface); box-shadow: var(--shadow-md); font-size: 1.5rem; font-weight: 700; color: var(--color-accent)">M</div>
+    <div id="cb-user" style="display: grid; place-items: center; width: 3rem; height: 3rem; border-radius: 9999px; border: 1px solid var(--color-border); background: var(--color-surface); box-shadow: var(--shadow-sm); font-size: 1.25rem">👤</div>
+    <moul-connector-beam from="cb-docs" to="cb-hub" curvature="-40" end-y-offset="-12"></moul-connector-beam>
+    <moul-connector-beam from="cb-mail" to="cb-hub" curvature="-15" end-y-offset="-6" delay="400"></moul-connector-beam>
+    <moul-connector-beam from="cb-chat" to="cb-hub" delay="800"></moul-connector-beam>
+    <moul-connector-beam from="cb-drive" to="cb-hub" curvature="15" end-y-offset="6" delay="1200"></moul-connector-beam>
+    <moul-connector-beam from="cb-calendar" to="cb-hub" curvature="40" end-y-offset="12" delay="1600"></moul-connector-beam>
+    <moul-connector-beam from="cb-hub" to="cb-user" duration="2000"></moul-connector-beam>
+  </div>
+  <LandingKitDemo />
+</ComponentPreview>
+
+It lives in the effects entry:
+
+```js
+import '@moul-dev/web-component/effects'
+```
+
+```html
+<div class="flow">
+  <div id="source" class="node">📄</div>
+  <div id="hub" class="node">M</div>
+  <moul-connector-beam from="source" to="hub"></moul-connector-beam>
+</div>
+```
+
+```css
+.flow {
+  position: relative;
+  isolation: isolate;
+}
+```
+
+## Placing the beam
+
+The beam covers its box as a layer, with `position: absolute; inset: 0; z-index: -1`, the same way the [backgrounds](/docs/backgrounds/) do. Give the box `position: relative`, so the beam covers it, and `isolation: isolate`, so the beam sits over the box's own background and behind everything in it. The line runs from the centre of one element to the centre of the other, so give the elements a background of their own: they hide the ends of the line, and it looks as if it starts at their edge.
+
+`from` and `to` are ids in the same document, or in the same shadow root when the beam is inside another component. Either element can come before or after the beam, or be added later: the beam waits for it. Use one beam per line; any number of them can share a box.
+
+## Curves and offsets
+
+`curvature` bows the line into an arc. It lifts the middle of the line by that many pixels; a negative value bows it downward. `start-x-offset` and `start-y-offset` move the start away from the centre of the `from` element, and `end-x-offset` and `end-y-offset` move the end, in pixels, so several lines can arrive at one element side by side.
+
+<ComponentPreview backdrop="page" minHeight="14rem">
+  <div style="position: relative; isolation: isolate; display: flex; align-items: center; justify-content: space-between; width: 100%; max-width: 30rem; padding: 2rem 0.5rem 0">
+    <div id="cb-phnom-penh" style="padding: 0.5rem 0.875rem; border-radius: var(--radius-lg, 0.75rem); border: 1px solid var(--color-border); background: var(--color-surface); font-weight: 600">Phnom Penh</div>
+    <div id="cb-siem-reap" style="padding: 0.5rem 0.875rem; border-radius: var(--radius-lg, 0.75rem); border: 1px solid var(--color-border); background: var(--color-surface); font-weight: 600">Siem Reap</div>
+    <moul-connector-beam from="cb-phnom-penh" to="cb-siem-reap" curvature="70"></moul-connector-beam>
+    <moul-connector-beam from="cb-phnom-penh" to="cb-siem-reap" curvature="-50" is-reversed delay="1500" style="--connector-beam-from: var(--color-success); --connector-beam-to: var(--color-success)"></moul-connector-beam>
+  </div>
+</ComponentPreview>
+
+```html
+<moul-connector-beam from="phnom-penh" to="siem-reap" curvature="70"></moul-connector-beam>
+<moul-connector-beam from="phnom-penh" to="siem-reap" curvature="-50" is-reversed></moul-connector-beam>
+```
+
+## Direction and timing
+
+The light runs from `from` to `to`; `is-reversed` sends it back the other way, for a reply or a return trip. `duration` is the time one run takes, in milliseconds (3000 by default), and `delay` is the time before the first run. Give the beams in one box different delays and they take turns instead of firing together.
+
+<ComponentPreview backdrop="page" minHeight="12rem">
+  <div style="position: relative; isolation: isolate; display: flex; align-items: center; justify-content: space-between; width: 100%; max-width: 30rem; padding: 0.5rem">
+    <div id="cb-browser" style="padding: 0.75rem 1rem; border-radius: var(--radius-lg, 0.75rem); border: 1px solid var(--color-border); background: var(--color-surface); font-weight: 600">Browser</div>
+    <div id="cb-server" style="padding: 0.75rem 1rem; border-radius: var(--radius-lg, 0.75rem); border: 1px solid var(--color-border); background: var(--color-surface); font-weight: 600">Server</div>
+    <moul-connector-beam from="cb-browser" to="cb-server" start-y-offset="-8" end-y-offset="-8" duration="2000"></moul-connector-beam>
+    <moul-connector-beam from="cb-browser" to="cb-server" start-y-offset="8" end-y-offset="8" duration="2000" delay="1000" is-reversed style="--connector-beam-from: var(--color-success); --connector-beam-to: var(--color-success)"></moul-connector-beam>
+  </div>
+</ComponentPreview>
+
+```html
+<moul-connector-beam from="browser" to="server" start-y-offset="-8" end-y-offset="-8" duration="2000"></moul-connector-beam>
+<moul-connector-beam from="browser" to="server" start-y-offset="8" end-y-offset="8" duration="2000" delay="1000" is-reversed></moul-connector-beam>
+```
+
+## Styling
+
+The line is `--connector-beam-track`, `var(--color-border)` by default, and `--connector-beam-width` thick, `2px` by default. The light fades from `--connector-beam-from` at the `from` end to `--connector-beam-to` at the `to` end, a chart colour and the accent colour by default, so it follows the theme in light and dark. Set them on one beam or on the box, for all of its beams.
+
+```css
+.flow {
+  --connector-beam-width: 3px;
+  --connector-beam-from: var(--color-chart-2);
+  --connector-beam-to: var(--color-chart-3);
+}
+```
+
+`::part(track)` is the line and `::part(light)` the light, if you need more.
+
+## Cost
+
+The beam measures where the two elements are only when the box or either element changes size, never while the light runs. The light is one CSS animation of a dash along the line, measured in thousandths of the line, so nothing is laid out again while it moves. It stops while the box is off screen.
+
+## Accessibility
+
+The beam is never focusable, adds no role and is hidden from assistive technology: it is decoration. If what connects to what matters, say it in the content too, for example in a caption or a list.
+
+Where the system forces its own colours, as in Windows high contrast mode, the line is drawn in the system's text colour and the light is left out.
+
+Under `prefers-reduced-motion: reduce` the light does not run. The line stays, drawn in the light's colours, so the connection still shows.
+
+## Attributes and properties
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `from` | `from` | `string` (an id) | `''` |
+| `to` | `to` | `string` (an id) | `''` |
+| `curvature` | `curvature` | `number` (px) | `0` |
+| `is-reversed` | `isReversed` | `boolean` | `false` |
+| `duration` | `duration` | `number` (ms) | `3000` |
+| `delay` | `delay` | `number` (ms) | `0` |
+| `start-x-offset` | `startXOffset` | `number` (px) | `0` |
+| `start-y-offset` | `startYOffset` | `number` (px) | `0` |
+| `end-x-offset` | `endXOffset` | `number` (px) | `0` |
+| `end-y-offset` | `endYOffset` | `number` (px) | `0` |
+
+| Part | Description |
+| :-- | :-- |
+| `svg` | The drawing that covers the box. |
+| `track` | The line from one element to the other. |
+| `light` | The light that runs along the line. |
+
+| CSS property | Description | Default |
+| :-- | :-- | :-- |
+| `--connector-beam-width` | Width of the line. | `2px` |
+| `--connector-beam-track` | Colour of the line. | `var(--color-border)` |
+| `--connector-beam-from` | Colour of the light at the `from` end. | `var(--color-chart-4)` |
+| `--connector-beam-to` | Colour of the light at the `to` end. | `var(--color-accent)` |

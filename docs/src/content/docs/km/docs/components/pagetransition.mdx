@@ -1,0 +1,129 @@
+---
+title: Page transition (សមាសភាគ)
+description: ឯកសារណែនាំសម្រាប់សមាសភាគ Page transition Web Component
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import LandingKitDemo from '@/components/demos/LandingKitDemo.astro';
+
+`<moul-page-transition>` animates the change from one page to the next. Put one in every page of a site and following a link to another page on the same site plays the transition: a panel of colour wipes across the screen, the new page slides in, grows out of a circle from where you clicked, or the pages cross-fade. It draws nothing itself and needs no other change to your links.
+
+Press a button to change the place below. The whole screen takes part, as it would between two pages.
+
+<ComponentPreview align="stretch" stack>
+  <moul-page-transition id="page-transition-demo" effect="wipe" duration="700"></moul-page-transition>
+  <div id="page-transition-place" style="display: grid; gap: 0.25rem; padding: 1.5rem; border-radius: var(--radius-xl, 1rem); background: var(--color-surface-secondary); min-height: 7rem; align-content: center">
+    <strong style="font-size: 1.5rem">Kampot</strong>
+    <span style="color: var(--color-fg-subtle)">Pepper farms and a slow river under Bokor.</span>
+  </div>
+  <div style="display: flex; flex-wrap: wrap; gap: 0.5rem">
+    <moul-button data-page-effect="wipe">Wipe</moul-button>
+    <moul-button variant="secondary" data-page-effect="slide">Slide</moul-button>
+    <moul-button variant="secondary" data-page-effect="circle">Circle</moul-button>
+    <moul-button variant="secondary" data-page-effect="fade">Fade</moul-button>
+    <moul-button variant="ghost" data-page-effect="back">Back</moul-button>
+  </div>
+  <LandingKitDemo />
+</ComponentPreview>
+
+<script type="module" src="/demo/pagetransition/demo.js"></script>
+
+It lives in the effects entry, with the rest of the motion kit:
+
+```js
+import '@moul-dev/web-component/effects'
+```
+
+## Between pages
+
+For a site of separate pages, put the element in the layout every page shares. It opts the site in to the browser's cross-document view transitions and adds the effect's animation.
+
+The browser decides whether to animate when the new page first draws, so the opt-in has to be there by then. A module script normally runs after that first frame, so load the effects entry with `blocking="render"`: the new page then waits for it before drawing, and every change of page animates.
+
+```html
+<head>
+  <script type="module" blocking="render" src="/moul-effects.js"></script>
+</head>
+<body>
+  <moul-page-transition effect="wipe"></moul-page-transition>
+  …
+</body>
+```
+
+If you would rather not hold the first paint for a script, render the CSS into the head from the server instead. `pageTransitionCss(effect, duration)` returns the same text the element adds; with it inline, the transition plays even when the script arrives late. Only the two details that need the script fall back: the `circle` grows from the centre, and going back plays forward.
+
+```js
+import { pageTransitionCss } from '@moul-dev/web-component/effects'
+
+const css = pageTransitionCss('wipe', 600) // put it in a <style> in <head>
+```
+
+Where a browser does not honour `blocking`, the inline CSS is the dependable route. Without either, a change of page animates only when the script happens to arrive before the first frame, and otherwise simply has no animation. Nothing breaks.
+
+Both the page you leave and the page you arrive on need the element, with the same effect. Only links within the same site animate; links to other sites, new tabs, downloads and reloads behave as they always have.
+
+Going back through the history plays the `wipe` and the `slide` the other way, and in right-to-left text they move from right to left. The `circle` grows from the point you clicked or tapped, or from the link that had keyboard focus.
+
+## In a single-page app
+
+In an app that changes views without loading a page, call `start()` with the function that changes the view. It runs that function inside `document.startViewTransition()`, so the browser animates from the old view to the new one with the element's effect, and it resolves once the animation has finished.
+
+```js
+const transition = document.querySelector('moul-page-transition')
+
+router.on('change', (to, from) => {
+  transition.start(() => render(to), {
+    direction: to.depth < from.depth ? 'backward' : 'forward',
+  })
+})
+```
+
+Where the browser has no view transitions, `start()` runs the function at once and resolves. If the function throws or rejects, so does `start()`. The second argument can also set `x` and `y`, the point in the viewport the `circle` grows from; by default it is the last press, or the focused element, or the centre of the screen.
+
+## Effects
+
+| Effect | What it does |
+| :-- | :-- |
+| `wipe` | A panel of colour sweeps across, covering the old page and uncovering the new one. The default. |
+| `slide` | The new page slides in from the inline end over the old one, which drifts a little the other way. |
+| `circle` | The new page grows out of a circle from where the reader clicked or tapped. |
+| `fade` | The two pages cross-fade. |
+
+`duration` sets the length of the whole transition in milliseconds, 600 by default. The wipe's panel takes `--page-transition-color`, the accent colour by default. The transition is drawn above the whole page, so set the colour on `:root`.
+
+```css
+:root {
+  --page-transition-color: var(--color-chart-4);
+}
+```
+
+The element only animates transitions it started itself, between pages or through `start()`. Other view transitions on the page, such as an image that grows into its detail page, keep their own animation.
+
+## Accessibility
+
+The element is never focusable, adds no role and draws nothing. Links, the back button and focus work exactly as they do without it: the animation is a picture of the two pages drawn over them for a moment, so it never takes the reader's clicks or keys, and nothing is announced twice. In a single-page app, moving focus to the new view and announcing it stay your router's job, as they would without the element.
+
+Under `prefers-reduced-motion: reduce` there is no transition at all: the opt-in to cross-page transitions sits inside `prefers-reduced-motion: no-preference`, and `start()` runs the update straight away. The new page simply appears.
+
+## Browser support
+
+Transitions within one page arrived in Chrome 111, Safari 18 and Firefox 144; transitions between pages in Chrome 126 and Safari 18.2. Elsewhere pages change as they always have, without an animation, and nothing breaks.
+
+## Attributes and properties
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `effect` | `effect` | `'wipe' \| 'slide' \| 'circle' \| 'fade'` | `'wipe'` |
+| `duration` | `duration` | `number` (ms) | `600` |
+
+| Method | Description |
+| :-- | :-- |
+| `start(update?, options?)` | Runs `update` inside a view transition with the element's effect and resolves when it has finished. `options` takes `direction` (`'forward'` or `'backward'`) and `x`, `y` (where the `circle` grows from, in viewport pixels). Without view transitions or under reduced motion it just runs `update`. |
+
+| Export | Description |
+| :-- | :-- |
+| `pageTransitionCss(effect, duration)` | The document-level CSS the element adds, to inline in `<head>` from the server. |
+
+| CSS property | Description | Default |
+| :-- | :-- | :-- |
+| `--page-transition-color` | The colour of the `wipe` panel. Set it on `:root`. | `var(--color-accent)` |

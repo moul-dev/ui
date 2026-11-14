@@ -1,0 +1,150 @@
+---
+title: Sticky Scroll
+description: A walk-through in steps, whose text scrolls past a pinned panel that shows the picture of the step being read.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import LandingKitDemo from '@/components/demos/LandingKitDemo.astro';
+
+`<moul-sticky-scroll>` explains something in steps. The text of each step scrolls by in one column while a panel in the other stays pinned and shows the picture, video or mock-up of the step being read, fading from one to the next. The step the reader is on, the last one whose text has reached a line two fifths of the way down the screen, is the active one: its text is at full strength and the others are dimmed.
+
+Scroll inside the frame below.
+
+<ComponentPreview align="stretch">
+  <div style="height: 28rem; overflow: auto; border: 1px solid var(--color-border); border-radius: 0.75rem; background: var(--color-bg)">
+    <div style="padding: 2rem 1.5rem 0; color: var(--color-fg-subtle)">Sending money home, in four steps</div>
+    <moul-sticky-scroll style="padding: 0 1.5rem; --sticky-scroll-media-height: 14rem; --sticky-scroll-end-space: 14rem">
+      <moul-sticky-scroll-item>
+        <h3 style="margin: 0 0 0.5rem">Open the app</h3>
+        <p style="margin: 0">Sign in with your phone number and the code we send you. No branch visit, no forms on paper.</p>
+        <div slot="media" role="img" aria-label="A phone showing the sign-in screen" style="display: grid; place-items: center; background: linear-gradient(135deg, var(--color-chart-1), var(--color-chart-3)); color: var(--color-fg-on-primary); font-size: 2.5rem">📱</div>
+      </moul-sticky-scroll-item>
+      <moul-sticky-scroll-item>
+        <h3 style="margin: 0 0 0.5rem">Choose who gets it</h3>
+        <p style="margin: 0">Pick a saved contact in Battambang or Siem Reap, or scan the KHQR code they show you.</p>
+        <div slot="media" role="img" aria-label="A list of saved contacts" style="display: grid; place-items: center; background: linear-gradient(135deg, var(--color-chart-4), var(--color-chart-2)); color: var(--color-fg-on-primary); font-size: 2.5rem">👥</div>
+      </moul-sticky-scroll-item>
+      <moul-sticky-scroll-item>
+        <h3 style="margin: 0 0 0.5rem">Enter the amount</h3>
+        <p style="margin: 0">In riel or in dollars. The fee and the rate are shown before you confirm, not after.</p>
+        <div slot="media" role="img" aria-label="The amount screen with the fee shown" style="display: grid; place-items: center; background: linear-gradient(135deg, var(--color-chart-5), var(--color-chart-7)); color: var(--color-fg-on-primary); font-size: 2.5rem">💵</div>
+      </moul-sticky-scroll-item>
+      <moul-sticky-scroll-item>
+        <h3 style="margin: 0 0 0.5rem">Done</h3>
+        <p style="margin: 0">They get a message as soon as the money arrives, and you keep the receipt.</p>
+        <div slot="media" role="img" aria-label="A receipt with a green tick" style="display: grid; place-items: center; background: linear-gradient(135deg, var(--color-chart-6), var(--color-chart-1)); color: var(--color-fg-on-primary); font-size: 2.5rem">✅</div>
+      </moul-sticky-scroll-item>
+    </moul-sticky-scroll>
+  </div>
+  <LandingKitDemo />
+</ComponentPreview>
+
+It lives in the effects entry:
+
+```js
+import '@moul-dev/web-component/effects'
+```
+
+```html
+<moul-sticky-scroll>
+  <moul-sticky-scroll-item>
+    <h3>Open the app</h3>
+    <p>Sign in with your phone number.</p>
+    <img slot="media" src="/steps/sign-in.png" alt="The sign-in screen" />
+  </moul-sticky-scroll-item>
+  <moul-sticky-scroll-item>
+    <h3>Choose who gets it</h3>
+    <p>Pick a saved contact or scan their code.</p>
+    <img slot="media" src="/steps/contacts.png" alt="A list of saved contacts" />
+  </moul-sticky-scroll-item>
+</moul-sticky-scroll>
+```
+
+Each `<moul-sticky-scroll-item>` is one step: its text in the default slot and one element in its `media` slot. The media fills the panel; an `<img>` or a `<video>` is cropped to it with `object-fit: cover`.
+
+## How it is laid out
+
+The media stays in each item, where you wrote it. The items lay their text and their media straight into the element's two-column grid: every step's text takes the next row of the first column, and every step's media panel spans the whole second column, so the panels lie on top of each other and each sticks within that column. Only the active one is shown. Nothing in your markup is moved.
+
+The panel pins in the middle of the scrolling box, or at `--sticky-scroll-top` if you set it; `--sticky-scroll-media-height` sets its height, `18rem` by default, and `--sticky-scroll-media-width` the width of its column as a grid track, `1fr` by default. `--sticky-scroll-spacing` is the space above and below each step's text, and so how long the reader spends on it.
+
+```css
+moul-sticky-scroll {
+  --sticky-scroll-media-width: 1.2fr;
+  --sticky-scroll-media-height: 22rem;
+  --sticky-scroll-spacing: 6rem;
+}
+```
+
+The active step is the last one whose text has reached a reading line two fifths of the way down the visible area, so leave some room after the last step, or it can never get there. `--sticky-scroll-end-space` adds that room inside the element, and the panel stays pinned through it; the demo uses `14rem`, a little over half the height of its frame. The element finds the box it scrolls in by itself, the page or a scrolling panel as above, and no element between them may set `overflow: hidden`.
+
+When the element is under 600 pixels wide, as on a phone, the grid becomes one column: each step's media sits above its text, and nothing is pinned or dimmed.
+
+## Following the steps
+
+Each time another step becomes active the element fires `stepchange`. `detail.current` and `detail.previous` are the indexes of the new and old steps, and `detail.item` is the new step's element; `activeIndex` reads the current one at any time.
+
+```js
+document.querySelector('moul-sticky-scroll').addEventListener('stepchange', (event) => {
+  console.log(`Step ${event.detail.current + 1}`)
+})
+```
+
+## Tint
+
+Give a step `--sticky-scroll-tint` and the element's background turns to that colour while the step is active. Use a soft token so the text keeps its contrast in both themes.
+
+```html
+<moul-sticky-scroll-item style="--sticky-scroll-tint: var(--color-bg-subtle)">…</moul-sticky-scroll-item>
+```
+
+`--sticky-scroll-dim` is the opacity of the text of the steps that are not active, `0.45` by default. Set it to `1` to keep every step at full strength.
+
+## Accessibility
+
+Neither element adds a role or takes focus. Each step's text and media are read together, in order, and the media of the steps that are not active stays readable: it is faded out of sight, not hidden, so give an image its `alt` text. When keyboard focus moves into a step, in its text or in its media, that step becomes active, so the panel always shows the step the keyboard is in, and a link or button in a panel is never focused while invisible.
+
+Dimmed text has less contrast, which is the point of the effect; if a step has to be read at full strength, raise `--sticky-scroll-dim`.
+
+Under `prefers-reduced-motion: reduce` the panel swaps from one step's media to the next at once, and the text and the tint change without fading.
+
+## Attributes and properties
+
+`<moul-sticky-scroll>`:
+
+| Property | Type | Description |
+| :-- | :-- | :-- |
+| `activeIndex` | `number` (read-only) | The index of the active step, or `-1` while there are none. |
+
+`<moul-sticky-scroll-item>`:
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `is-active` | `isActive` | `boolean`, set by the parent | `false` |
+
+| Slot | Element | Description |
+| :-- | :-- | :-- |
+| (default) | `moul-sticky-scroll` | The `moul-sticky-scroll-item` steps. |
+| (default) | `moul-sticky-scroll-item` | The step's text: a heading and a paragraph or two. |
+| `media` | `moul-sticky-scroll-item` | The picture, video or panel shown while the step is active. It fills the panel. |
+
+| Part | Element | Description |
+| :-- | :-- | :-- |
+| `grid` | `moul-sticky-scroll` | The two-column grid the steps lay their text and media into. |
+| `content` | `moul-sticky-scroll-item` | The text of the step. |
+| `media` | `moul-sticky-scroll-item` | The panel that shows the step's media. |
+
+| Event | Detail | Description |
+| :-- | :-- | :-- |
+| `stepchange` | `{ current, previous, item }` | Another step became active, by scrolling or by keyboard focus. |
+
+| CSS property | Description | Default |
+| :-- | :-- | :-- |
+| `--sticky-scroll-media-width` | Width of the media column, as a grid track. | `1fr` |
+| `--sticky-scroll-media-height` | Height of the media panel. | `18rem` |
+| `--sticky-scroll-top` | Where the panel pins, from the top of the scrolling box. | centred |
+| `--sticky-scroll-gap` | Space between the columns. | `var(--spacing-8)` |
+| `--sticky-scroll-spacing` | Space above and below each step's text. | `var(--spacing-8)` |
+| `--sticky-scroll-end-space` | Room after the last step, so it can reach the reading line while the panel stays pinned. | `0px` |
+| `--sticky-scroll-dim` | Opacity of the text of inactive steps. | `0.45` |
+| `--sticky-scroll-tint` | Set on an item: the background while that step is active. | none |

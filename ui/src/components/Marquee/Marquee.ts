@@ -1,6 +1,10 @@
 import { html, LitElement, type PropertyValues } from 'lit'
 import { keyed } from 'lit/directives/keyed.js'
 import { InViewController } from '../../controllers/in-view.controller'
+import {
+  ScrollController,
+  type ScrollState,
+} from '../../controllers/scroll.controller'
 import { defineElement } from '../../utils/define-element'
 import { prefersReducedMotion, watchReducedMotion } from '../../utils/motion'
 import { marqueeStyles } from './Marquee.styles'
@@ -18,6 +22,31 @@ const MAX_COPIES = 50
 /** Marks the light-DOM copies the element makes, so it can find and ignore them. */
 const COPY_ATTRIBUTE = 'data-marquee-copy'
 
+/** `scroll-velocity` written without a value: twice as fast again per 1000 px/s of scrolling. */
+const DEFAULT_SCROLL_VELOCITY = 2
+
+/** Scrolling faster than this, in px/s, speeds the marquee up no further. */
+const MAX_SCROLL_SPEED = 3000
+
+/** How quickly the speed follows the scroll, as a time constant in ms: about three of these to settle. */
+const RATE_EASE_MS = 140
+
+/**
+ * Loops of the animation kept in hand before running backward, so a long
+ * scroll up never rewinds it past its start (where it would stop dead).
+ */
+const HEADROOM_LOOPS = 1000
+
+/** `scroll-velocity` with no value turns it on; a missing, negative or unreadable value turns it off. */
+const scrollVelocityConverter = {
+  fromAttribute(value: string | null): number {
+    if (value === null) return 0
+    if (value.trim() === '') return DEFAULT_SCROLL_VELOCITY
+    const number = Number(value)
+    return Number.isFinite(number) && number > 0 ? number : 0
+  },
+}
+
 /**
  * An endless row of logos, cards or short text that moves at a steady speed,
  * as in a "trusted by" strip or a wall of testimonials. Put the items in it
@@ -27,7 +56,11 @@ const COPY_ATTRIBUTE = 'data-marquee-copy'
  * page, never from its content, so give it one), `speed` how fast in pixels
  * per second, and `fade-edges` fades both ends. The copies are light-DOM
  * siblings of your items, so your page's CSS styles them too; the element
- * rebuilds them when the items change. It lives in the effects entry:
+ * rebuilds them when the items change. With `scroll-velocity` it also
+ * follows the reader: it speeds up as they scroll, runs backward while they
+ * scroll up, and eases back to its own pace when they stop, by changing the
+ * playback rate of the running animation (nothing is re-rendered or
+ * restarted). It lives in the effects entry:
  * `import '@moul-dev/web-component/effects'`.
  *
  * Keyboard and screen readers: never focusable and adds no role. Screen
@@ -39,6 +72,7 @@ const COPY_ATTRIBUTE = 'data-marquee-copy'
  *
  * Reduced motion: nothing moves and no copies are made. The row scrolls by
  * hand instead, so every item stays reachable, and the edges do not fade.
+ * `scroll-velocity` stops following the scroll.
  *
  * @slot - The items, each one an element. Text outside an element is shown but not repeated.
  *
@@ -60,6 +94,11 @@ export class MoulMarquee extends LitElement {
     },
     fadeEdges: { type: Boolean, reflect: true, attribute: 'fade-edges' },
     isPaused: { type: Boolean, reflect: true, attribute: 'is-paused' },
+    scrollVelocity: {
+      type: Number,
+      attribute: 'scroll-velocity',
+      converter: scrollVelocityConverter,
+    },
     copyCount: { state: true },
     isBrowsing: { state: true },
   }
@@ -74,6 +113,13 @@ export class MoulMarquee extends LitElement {
   declare fadeEdges: boolean
   /** Hold the content still. */
   declare isPaused: boolean
+  /**
+   * How much the reader's scrolling speeds the marquee up: scrolling at
+   * 1000 px/s adds this many times its own speed (up to 3000 px/s), and
+   * scrolling up runs it backward. 0 (default) leaves it at its own pace;
+   * the attribute written without a value means 2.
+   */
+  declare scrollVelocity: number
   /** Sets of copies in the light DOM, each shown as one more group. */
   private declare copyCount: number
   /** Keyboard focus is inside: the row stops at its start and scrolls instead. */
@@ -92,6 +138,22 @@ export class MoulMarquee extends LitElement {
   private groupLength = 0
   private gap = 0
 
+  /** Follows the page's scroll speed while `scroll-velocity` is on. */
+  private scrolling: ScrollController | null = null
+  /**
+   * The scroll controller writes a progress variable each frame; this
+   * element is never in the page, so that write costs no style work.
+   */
+  private readonly velocitySink: HTMLElement | null =
+    typeof document === 'undefined' ? null : document.createElement('span')
+  /** The playback rate the groups run at now, and the one it is easing toward. */
+  private rate = 1
+  private targetRate = 1
+  private rateFrame = 0
+  private lastRateTime = 0
+  /** The groups' running animations, read once per render. */
+  private groupAnimations: Animation[] | null = null
+
   constructor() {
     super()
     this.direction = 'start'
@@ -99,6 +161,7 @@ export class MoulMarquee extends LitElement {
     this.pauseOnHover = false
     this.fadeEdges = false
     this.isPaused = false
+    this.scrollVelocity = 0
     this.copyCount = 0
     this.isBrowsing = false
     // Pausing goes through `animation-play-state` in the stylesheet, so hover,
@@ -119,12 +182,18 @@ export class MoulMarquee extends LitElement {
         attributes: true,
       })
     }
-    this.stopWatchingMotion = watchReducedMotion(() => this.scheduleSync())
+    this.stopWatchingMotion = watchReducedMotion(() => {
+      this.scheduleSync()
+      this.syncVelocity()
+    })
     // Copies made now are part of the first render. Items the parser adds
     // later reach the mutation observer.
     this.syncCopies()
     // On a reconnect the shadow tree is already there; the first connect waits for firstUpdated.
-    if (this.hasUpdated) this.observeSizes()
+    if (this.hasUpdated) {
+      this.observeSizes()
+      this.syncVelocity()
+    }
   }
 
   public override disconnectedCallback(): void {
@@ -141,6 +210,7 @@ export class MoulMarquee extends LitElement {
     this.copiedFrom = []
     this.copyCount = 0
     this.isBrowsing = false
+    this.stopFollowingScroll()
   }
 
   protected override willUpdate(changed: PropertyValues): void {
@@ -157,6 +227,9 @@ export class MoulMarquee extends LitElement {
 
   protected override updated(changed: PropertyValues): void {
     super.updated(changed)
+    // A render may have made the groups afresh, with new animations.
+    this.groupAnimations = null
+    if (changed.has('scrollVelocity')) this.syncVelocity()
     // The groups were made afresh (see render), so watch the new first group.
     if (
       changed.has('copyCount') &&
@@ -172,6 +245,107 @@ export class MoulMarquee extends LitElement {
     } else if (changed.has('speed')) {
       this.writeDuration()
     }
+  }
+
+  /** Follows the scroll while `scroll-velocity` is on and motion is allowed; otherwise runs at its own pace. */
+  private syncVelocity(): void {
+    const isOn =
+      this.isConnected && this.scrollVelocity > 0 && !prefersReducedMotion()
+    if (!isOn) {
+      this.stopFollowingScroll()
+      return
+    }
+    if (this.scrolling) return
+    const sink = this.velocitySink
+    this.scrolling = new ScrollController(this, {
+      // Only direction and velocity are wanted, never a native progress animation.
+      forceFallback: true,
+      ...(sink ? { styleTarget: () => sink } : {}),
+      onScroll: this.handleScrollState,
+    })
+  }
+
+  private stopFollowingScroll(): void {
+    if (this.scrolling) {
+      this.scrolling.hostDisconnected()
+      this.removeController(this.scrolling)
+      this.scrolling = null
+    }
+    this.restAtOwnSpeed()
+  }
+
+  /** Stops easing and puts the groups back at their own speed. */
+  private restAtOwnSpeed(): void {
+    if (this.rateFrame) cancelAnimationFrame(this.rateFrame)
+    this.rateFrame = 0
+    this.lastRateTime = 0
+    this.targetRate = 1
+    if (this.rate !== 1) {
+      this.rate = 1
+      this.applyRate(1)
+    }
+  }
+
+  /** Sets the speed to aim for from the reader's scroll speed and direction. */
+  private readonly handleScrollState = (state: ScrollState): void => {
+    // Off screen the groups are paused anyway: rest at the normal speed and do no work per frame.
+    if (!this.inView.isInView) {
+      this.restAtOwnSpeed()
+      return
+    }
+    const speed = Math.min(Math.abs(state.velocity), MAX_SCROLL_SPEED)
+    const factor = Number.isFinite(this.scrollVelocity)
+      ? Math.max(0, this.scrollVelocity)
+      : 0
+    const magnitude = 1 + (factor * speed) / 1000
+    const isUp = state.velocity < 0 && state.direction === 'backward'
+    this.targetRate = isUp ? -magnitude : magnitude
+    if (this.targetRate !== this.rate && !this.rateFrame) {
+      this.rateFrame = requestAnimationFrame(this.easeRate)
+    }
+  }
+
+  /** Moves the playback rate a step toward its target each frame, and stops once it is there. */
+  private readonly easeRate = (time: number): void => {
+    this.rateFrame = 0
+    const elapsed = this.lastRateTime ? time - this.lastRateTime : 16
+    this.lastRateTime = time
+    const step = 1 - Math.exp(-Math.max(0, elapsed) / RATE_EASE_MS)
+    let next = this.rate + (this.targetRate - this.rate) * step
+    const isSettled = Math.abs(this.targetRate - next) < 0.01
+    if (isSettled) next = this.targetRate
+    this.rate = next
+    this.applyRate(next)
+    if (isSettled) this.lastRateTime = 0
+    else this.rateFrame = requestAnimationFrame(this.easeRate)
+  }
+
+  /** Changes the speed of the running groups in place, so the row neither jumps nor restarts. */
+  private applyRate(rate: number): void {
+    for (const animation of this.marqueeAnimations()) {
+      if (rate < 0) keepHeadroom(animation)
+      if (typeof animation.updatePlaybackRate === 'function') {
+        animation.updatePlaybackRate(rate)
+      } else {
+        animation.playbackRate = rate
+      }
+    }
+  }
+
+  /** The CSS animations that move the groups, read once per render. */
+  private marqueeAnimations(): Animation[] {
+    if (!this.groupAnimations) {
+      const root = this.renderRoot as ShadowRoot | undefined
+      const all =
+        typeof root?.getAnimations === 'function' ? root.getAnimations() : []
+      this.groupAnimations = all.filter((animation) =>
+        String(
+          (animation as Animation & { animationName?: string }).animationName ??
+            '',
+        ).startsWith('moul-marquee'),
+      )
+    }
+    return this.groupAnimations
   }
 
   private get track(): HTMLElement | null {
@@ -376,6 +550,19 @@ function makeCopy(original: Element, set: number): Element {
   copy.setAttribute('aria-hidden', 'true')
   copy.setAttribute('inert', '')
   return copy
+}
+
+/**
+ * Moves a looping animation a whole number of loops ahead, which shows the
+ * same frame, when it is too close to its start to run backward for long.
+ * Every group gets the same shift, so they stay in step.
+ */
+function keepHeadroom(animation: Animation): void {
+  const time = animation.currentTime
+  const duration = animation.effect?.getComputedTiming().duration
+  if (typeof time !== 'number' || typeof duration !== 'number') return
+  if (!(duration > 0) || time >= duration * (HEADROOM_LOOPS / 2)) return
+  animation.currentTime = time + duration * HEADROOM_LOOPS
 }
 
 function isInsideCopy(node: Node): boolean {

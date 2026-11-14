@@ -23,7 +23,7 @@ import {
 } from 'lit'
 import { defineElement } from './utils/define-element'
 import './index'
-import { fireConfetti } from './effects'
+import { fireConfetti, type MoulPageTransition } from './effects'
 import {
   type CommandPaletteItemData,
   type FileUploadContext,
@@ -466,6 +466,7 @@ export class MoulSandbox extends LitElement {
     selectedTab: { type: String, state: true },
     textValue: { type: String, state: true },
     activityMode: { type: String, state: true },
+    transitionPage: { type: Number, state: true },
   }
 
   declare selectedCategory: string
@@ -483,10 +484,12 @@ export class MoulSandbox extends LitElement {
   declare selectedTab: string
   declare textValue: string
   declare activityMode: 'calendar' | 'hour'
+  declare transitionPage: number
 
   constructor() {
     super()
     this.selectedCategory = 'all'
+    this.transitionPage = 1
     this.theme = 'dark'
     this.counter = 0
     this.isPending = false
@@ -2329,11 +2332,141 @@ export class MoulSandbox extends LitElement {
     `
   }
 
+  private renderMotionSection(): TemplateResult {
+    const panel =
+      'border: 1px solid var(--color-border); border-radius: var(--radius-xl, 1rem)'
+    const node =
+      'width: 2.5rem; height: 2.5rem; border-radius: 9999px; border: 1px solid var(--color-border); background: var(--color-surface)'
+    const places = ['Kampot', 'Bokor', 'Kep', 'Koh Tonsay']
+    return html`
+      <div class="category-section" id="motion">
+        <div class="section-header">
+          <h3 class="section-title">11. Pointer &amp; Scroll</h3>
+          <p class="section-subtitle">moul-tilt, moul-magnetic, moul-glow-border, moul-hover-highlight, moul-direction-hover, moul-lens, moul-cursor, moul-mask-reveal, moul-pointer-parallax, moul-connector-beam, moul-scroll-text, moul-sticky-stack, moul-scroll-parallax, moul-sticky-scroll, moul-tracing-beam, moul-scroll-frame, moul-page-transition; marquee scroll-velocity</p>
+        </div>
+
+        <div class="section-grid">
+          <moul-tilt glare style="border-radius: var(--radius-xl, 0.75rem)">
+            <div style="padding: 2rem; border-radius: inherit; background: linear-gradient(135deg, var(--color-chart-1), var(--color-chart-5))">Tilt: point at me</div>
+          </moul-tilt>
+          <div style="display: grid; place-items: center">
+            <moul-magnetic><moul-button variant="primary">Magnetic</moul-button></moul-magnetic>
+          </div>
+          <moul-pointer-parallax strength="20" style="height: 9rem; overflow: clip; border-radius: var(--radius-xl, 0.75rem); background: var(--color-bg-subtle)">
+            <div data-depth="0.3" aria-hidden="true" style="position: absolute; inset: 30% 55% 30% 15%; border-radius: 50%; background: var(--color-chart-2)"></div>
+            <div data-depth="-0.6" style="position: absolute; inset: 0; display: grid; place-items: center">Pointer parallax</div>
+          </moul-pointer-parallax>
+          <moul-glow-border>
+            <moul-card><moul-card-header>Glow border</moul-card-header><moul-card-body>Move the pointer near the edge.</moul-card-body></moul-card>
+          </moul-glow-border>
+          <moul-mask-reveal reveal-size="160">
+            <p style="margin: 0; font-size: 1.5rem; font-weight: 700">Point here to look underneath.</p>
+            <p slot="revealed" style="margin: 0; font-size: 1.5rem; font-weight: 700; color: var(--color-accent)">Here is the layer underneath.</p>
+          </moul-mask-reveal>
+          <moul-lens zoom="2.5" size="140">
+            <div style=${`padding: 1rem; font-size: 0.7rem; ${panel}`}>Small print: the ferry runs August to November only.</div>
+          </moul-lens>
+          <moul-direction-hover style="aspect-ratio: 16 / 10">
+            <div style="height: 100%; background: linear-gradient(135deg, var(--color-chart-2), var(--color-chart-5))"></div>
+            <div slot="overlay" style="display: grid"><strong>Kep</strong><span>Point from any side</span></div>
+          </moul-direction-hover>
+          <moul-cursor variant="label" label="Explore" style=${`display: grid; place-items: center; min-height: 8rem; ${panel}; border-style: dashed`}>
+            <span>Move a mouse here</span>
+          </moul-cursor>
+          <div style="position: relative; isolation: isolate; display: flex; align-items: center; justify-content: space-between; padding: 1rem">
+            <div style="display: grid; gap: 0.75rem">
+              ${['sb-cb-a', 'sb-cb-b', 'sb-cb-c'].map((id) => html`<div id=${id} style=${node}></div>`)}
+            </div>
+            <div id="sb-cb-hub" style=${`${node}; width: 3.5rem; height: 3.5rem`}></div>
+            <moul-connector-beam from="sb-cb-a" to="sb-cb-hub" curvature="-30"></moul-connector-beam>
+            <moul-connector-beam from="sb-cb-b" to="sb-cb-hub" delay="500"></moul-connector-beam>
+            <moul-connector-beam from="sb-cb-c" to="sb-cb-hub" curvature="30" delay="1000"></moul-connector-beam>
+          </div>
+        </div>
+
+        <moul-hover-highlight is-persistent style="display: flex; gap: 0.25rem; margin-top: var(--spacing-4, 1rem); --hover-highlight-radius: 9999px">
+          ${['Overview', 'Routes', 'Stays'].map(
+            (name, i) =>
+              html`<a href="#" aria-current=${i === 0 ? 'page' : 'false'} style="padding: 0.5rem 1rem; color: inherit; text-decoration: none">${name}</a>`,
+          )}
+        </moul-hover-highlight>
+
+        <moul-marquee scroll-velocity="3" fade-edges style="margin-top: var(--spacing-4, 1rem); font-size: 1.75rem; font-weight: 700">
+          <span>Phnom Penh ·</span><span>Siem Reap ·</span><span>Kampot ·</span><span>Kep ·</span>
+        </moul-marquee>
+
+        <div class="section-grid" style="margin-top: var(--spacing-4, 1rem)">
+          <div style=${`height: 14rem; overflow: auto; padding: 0 1.5rem; ${panel}`}>
+            <p style="height: 10rem">Scroll this box: the words light up.</p>
+            <moul-scroll-text style="font-size: 1.5rem; font-weight: 650">Every change is kept, with who made it and when, and one click puts it back.</moul-scroll-text>
+            <p style="height: 12rem"></p>
+          </div>
+          <div style=${`height: 14rem; overflow: auto; padding: 1rem 1.5rem 3rem; ${panel}`}>
+            <div style="min-height: 8rem">Scroll this box: the line fills as you read.</div>
+            <moul-tracing-beam>
+              ${places.map((place) => html`<h4>${place}</h4><p style="min-height: 6rem">A day on the south coast.</p>`)}
+            </moul-tracing-beam>
+          </div>
+          <div style=${`height: 14rem; overflow: auto; ${panel}`}>
+            <moul-sticky-stack style="padding: 1rem 1rem 8rem">
+              ${places.map((place) => html`<moul-card style="min-height: 9rem"><moul-card-header>${place}</moul-card-header><moul-card-body>Scroll: the cards stack.</moul-card-body></moul-card>`)}
+            </moul-sticky-stack>
+          </div>
+          <div style=${`height: 14rem; overflow: auto; ${panel}`}>
+            <div style="height: 8rem"></div>
+            <moul-scroll-parallax speed="240">
+              ${[0, 1, 2].map(
+                (row) =>
+                  html`<div style="display: flex; justify-content: center; gap: 0.75rem">${[
+                    1, 2, 3, 4, 5, 6,
+                  ].map(
+                    (n) =>
+                      html`<div style=${`flex: none; width: 7rem; height: 4rem; border-radius: 0.5rem; background: var(--color-chart-${((n + row) % 7) + 1})`}></div>`,
+                  )}</div>`,
+              )}
+            </moul-scroll-parallax>
+            <div style="height: 8rem"></div>
+          </div>
+          <div style=${`height: 18rem; overflow: auto; padding: 0 1rem; ${panel}`}>
+            <moul-sticky-scroll style="--sticky-scroll-media-height: 9rem; --sticky-scroll-end-space: 10rem">
+              ${['Plan', 'Book', 'Go'].map(
+                (step, i) =>
+                  html`<moul-sticky-scroll-item><h4>${step}</h4><p>Step ${i + 1} of three.</p><div slot="media" role="img" aria-label=${step} style=${`background: var(--color-chart-${i + 1})`}></div></moul-sticky-scroll-item>`,
+              )}
+            </moul-sticky-scroll>
+          </div>
+          <div style=${`height: 16rem; overflow-y: auto; ${panel}`}>
+            <div style="height: 12rem; padding: 1rem">Scroll this box: the screen lies flat.</div>
+            <moul-scroll-frame>
+              <strong slot="header">Scroll frame</strong>
+              <moul-browser-frame url="moul.dev"><div style="height: 8rem; background: var(--color-surface)"></div></moul-browser-frame>
+            </moul-scroll-frame>
+          </div>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: var(--spacing-4, 1rem); margin-top: var(--spacing-4, 1rem)">
+          <moul-page-transition id="sandbox-transition" effect="circle"></moul-page-transition>
+          <moul-button
+            @press=${() =>
+              (
+                this.renderRoot.querySelector(
+                  '#sandbox-transition',
+                ) as MoulPageTransition | null
+              )?.start(() => {
+                this.transitionPage += 1
+              })}
+          >Change page</moul-button>
+          <span>Page ${this.transitionPage}</span>
+        </div>
+      </div>
+    `
+  }
+
   private renderBlocksSection(): TemplateResult {
     return html`
       <div class="category-section" id="blocks">
         <div class="section-header">
-          <h3 class="section-title">10. Composite Blocks</h3>
+          <h3 class="section-title">12. Composite Blocks</h3>
           <p class="section-subtitle">moul-logs-viewer, moul-logs, moul-sidebar, moul-sidebar-user</p>
         </div>
 
@@ -2397,7 +2530,7 @@ export class MoulSandbox extends LitElement {
           </moul-sidebar-header>
 
           <moul-sidebar-group label="Kitchen Sink" collapsible>
-            <moul-sidebar-item key="all" label="All Categories" badge="11">
+            <moul-sidebar-item key="all" label="All Categories" badge="12">
               <span slot="icon">⚡</span>
             </moul-sidebar-item>
             <moul-sidebar-item key="actions" label="Actions" badge="4">
@@ -2429,6 +2562,9 @@ export class MoulSandbox extends LitElement {
             </moul-sidebar-item>
             <moul-sidebar-item key="site" label="Navigation & Media" badge="11">
               <span slot="icon">🧭</span>
+            </moul-sidebar-item>
+            <moul-sidebar-item key="motion" label="Pointer & Scroll" badge="18">
+              <span slot="icon">🖱️</span>
             </moul-sidebar-item>
             <moul-sidebar-item key="blocks" label="Composite Blocks" badge="12">
               <span slot="icon">📦</span>
@@ -2519,6 +2655,11 @@ export class MoulSandbox extends LitElement {
             ${
               isAll || this.selectedCategory === 'site'
                 ? this.renderSiteSection()
+                : nothing
+            }
+            ${
+              isAll || this.selectedCategory === 'motion'
+                ? this.renderMotionSection()
                 : nothing
             }
             ${

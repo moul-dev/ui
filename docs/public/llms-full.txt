@@ -4713,7 +4713,7 @@ Class: `MoulHighlight` · Source: `ui/src/components/Highlight/Highlight.ts`
 
 ## Marquee
 
-An endless row or column of logos, cards or text; copies are inert and hidden from screen readers, it pauses on focus (and on hover with `pause-on-hover`), and becomes a row you scroll by hand under reduced motion. Effects entry. Docs: [/docs/components/marquee](/docs/components/marquee)
+An endless row or column of logos, cards or text; copies are inert and hidden from screen readers, it pauses on focus (and on hover with `pause-on-hover`), and becomes a row you scroll by hand under reduced motion. `scroll-velocity` (a number; the attribute alone means 2) speeds it up with the reader's scroll and runs it backward while they scroll up. Effects entry. Docs: [/docs/components/marquee](/docs/components/marquee)
 
 ```html
 <moul-marquee fade-edges pause-on-hover speed="40">
@@ -4735,6 +4735,7 @@ Class: `MoulMarquee` · Source: `ui/src/components/Marquee/Marquee.ts`
 | `pause-on-hover` | `pauseOnHover` | `boolean` | `false` |
 | `fade-edges` | `fadeEdges` | `boolean` | `false` |
 | `is-paused` | `isPaused` | `boolean` | `false` |
+| `scroll-velocity` | `scrollVelocity` | `number` | `0` |
 | `copyCount` | `copyCount` | `number` | `0` |
 | `isBrowsing` | `isBrowsing` | `boolean` | `false` |
 
@@ -5786,6 +5787,530 @@ Class: `MoulWorldMap` · Source: `ui/src/components/WorldMap/WorldMap.ts`
 | `isDrawing` | `isDrawing` | `boolean` | `false` |
 
 **CSS Parts:** `base`, `map`, `land`, `arc`, `beam`, `marker`, `label`
+
+---
+
+# Pointer & Scroll
+
+## Tilt
+
+Wraps a card or image and tilts it in 3D toward a mouse or pen, springing back flat on leave (`max-tilt` degrees, `perspective`, `hover-scale`, `is-reversed`, `glare` for a light that follows the pointer). Parts of a `transform-style: preserve-3d` box can be lifted with `translate: 0 0 2rem`. Flat under reduced motion. Effects entry. Docs: [/docs/components/tilt](/docs/components/tilt)
+
+```html
+<moul-tilt glare max-tilt="12" style="border-radius: 1rem">
+  <div class="card" style="border-radius: inherit">…</div>
+</moul-tilt>
+```
+
+### `<moul-tilt>`
+
+Class: `MoulTilt` · Source: `ui/src/components/Tilt/Tilt.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `max-tilt` | `maxTilt` | `number` | `DEFAULT_MAX_TILT` |
+| `perspective` | `perspective` | `number` | `DEFAULT_PERSPECTIVE` |
+| `hover-scale` | `hoverScale` | `number` | `DEFAULT_HOVER_SCALE` |
+| `is-reversed` | `isReversed` | `boolean` | `false` |
+| `glare` | `glare` | `boolean` | `false` |
+
+**Slots**
+
+| Slot |
+| :--- |
+| (default) |
+
+**CSS Parts:** `surface`, `glare`
+
+## Magnetic
+
+Wraps one button or link so it drifts toward a mouse or pen within `reach` px (default 40) by `strength` of the distance (0 to 1, default 0.3) and springs back. Writes `--magnetic-x`/`--magnetic-y` so an inner label can follow further. Focus goes to the control; still under reduced motion. Effects entry. Docs: [/docs/components/magnetic](/docs/components/magnetic)
+
+```html
+<moul-magnetic strength="0.4" reach="60">
+  <moul-button variant="primary">Book a trip</moul-button>
+</moul-magnetic>
+```
+
+### `<moul-magnetic>`
+
+Class: `MoulMagnetic` · Source: `ui/src/components/Magnetic/Magnetic.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `strength` | `strength` | `number` | `DEFAULT_STRENGTH` |
+| `reach` | `reach` | `number` | `DEFAULT_REACH` |
+
+**Slots**
+
+| Slot |
+| :--- |
+| (default) |
+
+**CSS Parts:** `body`
+
+## GlowBorder
+
+Wraps a box (or overlays it when empty) and lights its border on the side nearest a mouse or pen, fading out `proximity` px (64) away; `spread` (degrees, 80) sets the lit arc, `blur` adds a halo, `--glow-border-colors` sets the gradient. Tracks the pointer only while on screen; decorative. Effects entry. Docs: [/docs/components/glowborder](/docs/components/glowborder)
+
+```html
+<moul-glow-border proximity="96" spread="100">
+  <moul-card><moul-card-body>Pro plan</moul-card-body></moul-card>
+</moul-glow-border>
+```
+
+### `<moul-glow-border>`
+
+Class: `MoulGlowBorder` · Source: `ui/src/components/GlowBorder/GlowBorder.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `proximity` | `proximity` | `number` | `DEFAULT_PROXIMITY` |
+| `spread` | `spread` | `number` | `DEFAULT_SPREAD` |
+| `blur` | `glowBlur` | `number` | `0` |
+
+**Slots**
+
+| Slot |
+| :--- |
+| (default) |
+
+**CSS Parts:** `border`, `halo`
+
+## HoverHighlight
+
+One highlight that slides behind a set of items (direct children, or `item-selector`) to the one under the mouse or pen, or with keyboard focus, taking its size and radius; it fades out on leave, or with `is-persistent` rests on the `aria-current`/`data-active` item or the last one. The hovered item gets `data-highlighted`. Effects entry. Docs: [/docs/components/hoverhighlight](/docs/components/hoverhighlight)
+
+```html
+<moul-hover-highlight is-persistent style="display: flex">
+  <a href="/overview" aria-current="page">Overview</a>
+  <a href="/getting-there">Getting there</a>
+  <a href="/where-to-stay">Where to stay</a>
+</moul-hover-highlight>
+```
+
+### `<moul-hover-highlight>`
+
+Class: `MoulHoverHighlight` · Source: `ui/src/components/HoverHighlight/HoverHighlight.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `item-selector` | `itemSelector` | `string` | `''` |
+| `is-persistent` | `isPersistent` | `boolean` | `false` |
+
+**Slots**
+
+| Slot |
+| :--- |
+| (default) |
+
+**CSS Parts:** `highlight`
+
+## DirectionHover
+
+A picture whose `overlay` slot slides in from the edge the pointer entered and out toward the edge it left, while the picture zooms slightly; focus inside or a tap shows it from the bottom. State is reported as `data-state` and `data-edge`. Effects entry. Docs: [/docs/components/directionhover](/docs/components/directionhover)
+
+```html
+<moul-direction-hover style="aspect-ratio: 4 / 3">
+  <img src="/kep.jpg" alt="The coast at Kep, with fishing boats" />
+  <div slot="overlay"><strong>Kep</strong> Crab market and sunsets</div>
+</moul-direction-hover>
+```
+
+### `<moul-direction-hover>`
+
+Class: `MoulDirectionHover` · Source: `ui/src/components/DirectionHover/DirectionHover.ts`
+
+**Slots**
+
+| Slot |
+| :--- |
+| (default) |
+| `overlay` |
+
+**CSS Parts:** `media`, `overlay`
+
+## Lens
+
+A round magnifier (`size` px, 160) that follows the pointer over an image or any content and shows it `zoom` times larger (2), using an aria-hidden, inert light-DOM copy so page CSS still applies; `is-static` with `position-x`/`position-y` fixes it in place. Effects entry. Docs: [/docs/components/lens](/docs/components/lens)
+
+```html
+<moul-lens zoom="2.5" size="180">
+  <img src="/paddies.jpg" alt="Rice paddies and a stilt house at dusk" />
+</moul-lens>
+```
+
+### `<moul-lens>`
+
+Class: `MoulLens` · Source: `ui/src/components/Lens/Lens.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `zoom` | `zoom` | `number` | `DEFAULT_ZOOM` |
+| `size` | `size` | `number` | `DEFAULT_SIZE` |
+| `is-static` | `isStatic` | `boolean` | `false` |
+| `position-x` | `positionX` | `string` | `DEFAULT_POSITION` |
+| `position-y` | `positionY` | `string` | `DEFAULT_POSITION` |
+
+**Slots**
+
+| Slot |
+| :--- |
+| (default) |
+| `lens` |
+
+**CSS Parts:** `lens`
+
+## Cursor
+
+Replaces the mouse cursor over its content (or the whole page with `scope="page"`) with a smooth follower: `variant="dot"` (dot plus trailing ring), `label` (arrow plus pill showing `label`) or `arrow`. It grows over links and buttons, and any `data-cursor-label` shows beside the pointer. Mouse only; text fields, frames, touch, reduced motion and forced colours keep the system cursor. Effects entry. Docs: [/docs/components/cursor](/docs/components/cursor)
+
+```html
+<moul-cursor variant="label" label="Explore">
+  <section class="hero">…</section>
+  <img data-cursor-label="View" src="/kep.jpg" alt="The coast at Kep" />
+</moul-cursor>
+```
+
+### `<moul-cursor>`
+
+Class: `MoulCursor` · Source: `ui/src/components/Cursor/Cursor.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `variant` | `variant` | `'dot' \| 'label' \| 'arrow'` | `'dot'` |
+| `label` | `label` | `string` | `''` |
+| `scope` | `scope` | `'element' \| 'page'` | `'element'` |
+
+**Slots**
+
+| Slot |
+| :--- |
+| (default) |
+
+**CSS Parts:** `follower`, `lead`, `trail`
+
+## MaskReveal
+
+Two stacked layers; a circle under the pointer uncovers the `revealed` slot beneath the default slot. The circle grows from `size` (0) to `reveal-size` (240 px) on hover, follows a pressed finger, and `is-revealed` (or focus inside the hidden layer) uncovers it all. Effects entry. Docs: [/docs/components/maskreveal](/docs/components/maskreveal)
+
+```html
+<moul-mask-reveal reveal-size="200">
+  <img src="/sketch.jpg" alt="Pencil sketch of the paddies" />
+  <img slot="revealed" src="/painting.jpg" alt="The same scene painted at dusk" />
+</moul-mask-reveal>
+```
+
+### `<moul-mask-reveal>`
+
+Class: `MoulMaskReveal` · Source: `ui/src/components/MaskReveal/MaskReveal.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `size` | `size` | `number` | `DEFAULT_SIZE` |
+| `reveal-size` | `revealSize` | `number` | `DEFAULT_REVEAL_SIZE` |
+| `is-revealed` | `isRevealed` | `boolean` | `false` |
+
+**Slots**
+
+| Slot |
+| :--- |
+| (default) |
+| `revealed` |
+
+**CSS Parts:** `content`, `revealed`
+
+## PointerParallax
+
+Layered children shift with the pointer by their `data-depth` (usually -1 to 1; negative moves the other way) times `strength` px; `scope="page"` follows the pointer anywhere on the page. Layers move by the `translate` property, so position them another way. Still under reduced motion. Effects entry. Docs: [/docs/components/pointerparallax](/docs/components/pointerparallax)
+
+```html
+<moul-pointer-parallax strength="28" style="height: 18rem; overflow: clip">
+  <img data-depth="0.3" src="/far.svg" alt="" />
+  <img data-depth="1" src="/near.svg" alt="" />
+  <h1 data-depth="-0.3">Mondulkiri</h1>
+</moul-pointer-parallax>
+```
+
+### `<moul-pointer-parallax>`
+
+Class: `MoulPointerParallax` · Source: `ui/src/components/PointerParallax/PointerParallax.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `strength` | `strength` | `number` | `DEFAULT_STRENGTH` |
+| `scope` | `scope` | `'element' \| 'page'` | `'element'` |
+
+**Slots**
+
+| Slot |
+| :--- |
+| (default) |
+
+## ConnectorBeam
+
+A line between two elements named by id (`from`, `to`) with a short light running along it, for sources flowing into a hub or a request reaching a server. A layer (`position: absolute; inset: 0; z-index: -1`) inside a `position: relative; isolation: isolate` box; `curvature` bows it, `start-x-offset`/`start-y-offset`/`end-x-offset`/`end-y-offset` move its ends, `is-reversed`, `duration` and `delay` (ms) time the light. Redrawn only on resize; paused off screen; decorative and `aria-hidden`. Effects entry. Docs: [/docs/components/connectorbeam](/docs/components/connectorbeam)
+
+```html
+<div style="position: relative; isolation: isolate; display: flex; justify-content: space-between">
+  <div id="source">📄</div>
+  <div id="hub">M</div>
+  <moul-connector-beam from="source" to="hub" curvature="40"></moul-connector-beam>
+</div>
+```
+
+### `<moul-connector-beam>`
+
+Class: `MoulConnectorBeam` · Source: `ui/src/components/ConnectorBeam/ConnectorBeam.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `from` | `from` | `string` | `''` |
+| `to` | `to` | `string` | `''` |
+| `curvature` | `curvature` | `number` | `0` |
+| `is-reversed` | `isReversed` | `boolean` | `false` |
+| `duration` | `duration` | `number` | `DEFAULT_DURATION` |
+| `delay` | `delay` | `number` | `0` |
+| `start-x-offset` | `startXOffset` | `number` | `0` |
+| `start-y-offset` | `startYOffset` | `number` | `0` |
+| `end-x-offset` | `endXOffset` | `number` | `0` |
+| `end-y-offset` | `endYOffset` | `number` | `0` |
+| `geometry` | `geometry` | `BeamGeometry \| null` | `null` |
+
+**CSS Parts:** `svg`, `track`, `light`
+
+## ScrollText
+
+Text whose words light up one by one, from dim (`--scroll-text-dim`) to full, as the reader scrolls; write the text inside it or set `text`. `is-pinned` makes a tall section (`--scroll-text-length`, 250vh) with the text held in the viewport while it lights. One scroll timeline drives every word through CSS; Khmer splits at word boundaries; read once as a sentence. Effects entry. Docs: [/docs/components/scrolltext](/docs/components/scrolltext)
+
+```html
+<h2><moul-scroll-text>Every change to your data is kept, with who made it and when.</moul-scroll-text></h2>
+<moul-scroll-text is-pinned>Ship on Friday. Previews for every branch, logs you can search, and a rollback that takes one click.</moul-scroll-text>
+```
+
+### `<moul-scroll-text>`
+
+Class: `MoulScrollText` · Source: `ui/src/components/ScrollText/ScrollText.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `text` | `text` | `string` | `''` |
+| `is-pinned` | `isPinned` | `boolean` | `false` |
+
+**CSS Parts:** `stage`, `text`
+
+## StickyStack
+
+Children (cards or full sections) stick near the top one after another and pile up as the page scrolls, each a `--sticky-stack-step` lower so the earlier ones peek out; covered cards shrink (to `min-scale`, 0.9) and dim (`--sticky-stack-dim`) on a native view timeline with a scroll-listener fallback. Keyboard focus in a covered card scrolls back to it. Under reduced motion they still stack but do not shrink. Effects entry. Docs: [/docs/components/stickystack](/docs/components/stickystack)
+
+```html
+<moul-sticky-stack min-scale="0.9" style="--sticky-stack-top: 5rem">
+  <article class="card">…</article>
+  <article class="card">…</article>
+  <article class="card">…</article>
+</moul-sticky-stack>
+```
+
+### `<moul-sticky-stack>`
+
+Class: `MoulStickyStack` · Source: `ui/src/components/StickyStack/StickyStack.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `min-scale` | `minScale` | `number` | `DEFAULT_MIN_SCALE` |
+
+**Slots**
+
+| Slot |
+| :--- |
+| (default) |
+
+**CSS Parts:** `stack`
+
+## ScrollParallax
+
+Each child is a track that slides as the element crosses the screen: rows (default) alternate left and right, `orientation="columns"` alternate up and down; `speed` is the travel in px (300) and `data-speed` on a track multiplies it (negative reverses, 0 holds still). Moves by `translate` on a native view timeline; still under reduced motion. Effects entry. Docs: [/docs/components/scrollparallax](/docs/components/scrollparallax)
+
+```html
+<moul-scroll-parallax speed="360">
+  <div class="row">…cards…</div>
+  <div class="row">…cards…</div>
+  <div class="row" data-speed="0">…</div>
+</moul-scroll-parallax>
+```
+
+### `<moul-scroll-parallax>`
+
+Class: `MoulScrollParallax` · Source: `ui/src/components/ScrollParallax/ScrollParallax.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `orientation` | `orientation` | `'rows' \| 'columns'` | `'rows'` |
+| `speed` | `speed` | `number` | `DEFAULT_SPEED` |
+
+**Slots**
+
+| Slot |
+| :--- |
+| (default) |
+
+**CSS Parts:** `tracks`
+
+## StickyScroll
+
+A walk-through in steps: each `moul-sticky-scroll-item` has text and a `media` slot; text scrolls in one column while a pinned panel shows the active step's media (the last step whose text has reached a line 40% down the screen, even after a jump), crossfading, and fires `stepchange` (`{ current, previous, item }`). Optional `--sticky-scroll-tint` per item, `--sticky-scroll-end-space` for room after the last step; under 600px wide it becomes one column with media above the text. Effects entry. Docs: [/docs/components/stickyscroll](/docs/components/stickyscroll)
+
+```html
+<moul-sticky-scroll style="--sticky-scroll-end-space: 40vh">
+  <moul-sticky-scroll-item>
+    <h3>Open the app</h3><p>Sign in with your phone number.</p>
+    <img slot="media" src="/steps/sign-in.png" alt="The sign-in screen" />
+  </moul-sticky-scroll-item>
+  <moul-sticky-scroll-item>
+    <h3>Choose who gets it</h3><p>Pick a saved contact.</p>
+    <img slot="media" src="/steps/contacts.png" alt="Saved contacts" />
+  </moul-sticky-scroll-item>
+</moul-sticky-scroll>
+```
+
+### `<moul-sticky-scroll>`
+
+Class: `MoulStickyScroll` · Source: `ui/src/components/StickyScroll/StickyScroll.ts`
+
+**Events**
+
+| Event | Type |
+| :--- | :--- |
+| `stepchange` | `CustomEvent` |
+
+**Slots**
+
+| Slot |
+| :--- |
+| (default) |
+
+**CSS Parts:** `grid`
+
+### `<moul-sticky-scroll-item>`
+
+Class: `MoulStickyScrollItem` · Source: `ui/src/components/StickyScroll/StickyScrollItem.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `is-active` | `isActive` | `boolean` | `false` |
+
+**Slots**
+
+| Slot |
+| :--- |
+| (default) |
+| `media` |
+
+**CSS Parts:** `content`, `media`
+
+## TracingBeam
+
+Wraps an article; a gradient line in the inline-start gutter fills as the reader scrolls through it, with a glowing head and a dot that lights once reading starts. Starts when the article top reaches `--tracing-beam-start` (50% of the view) and fills when its end is in view, so it always completes. Native view timeline where supported, passive scroll fallback elsewhere; follows the nearest scroll container. Decorative. Effects entry. Docs: [/docs/components/tracingbeam](/docs/components/tracingbeam)
+
+```html
+<moul-tracing-beam>
+  <h2>Day one: Phnom Penh to Kampot</h2>
+  <p>The bus leaves the Central Market at seven…</p>
+</moul-tracing-beam>
+```
+
+### `<moul-tracing-beam>`
+
+Class: `MoulTracingBeam` · Source: `ui/src/components/TracingBeam/TracingBeam.ts`
+
+**Slots**
+
+| Slot |
+| :--- |
+| (default) |
+
+**CSS Parts:** `rail`, `track`, `beam`, `head`, `dot`, `dot-light`, `content`
+
+## ScrollFrame
+
+A screen (`moul-browser-frame`, `moul-phone-frame`, image) that starts tilted back by `tilt` degrees (default 20) and lies flat as it scrolls into view, with a `header` slot that rises into place. Uses a native CSS view timeline where supported, otherwise a scroll fallback that follows the nearest scroll container. Flat under reduced motion. Effects entry. Docs: [/docs/components/scrollframe](/docs/components/scrollframe)
+
+```html
+<moul-scroll-frame>
+  <h2 slot="header">Every booking, one screen</h2>
+  <moul-browser-frame url="trips.example.com/today"><img src="/dashboard.png" alt="The bookings dashboard" /></moul-browser-frame>
+</moul-scroll-frame>
+```
+
+### `<moul-scroll-frame>`
+
+Class: `MoulScrollFrame` · Source: `ui/src/components/ScrollFrame/ScrollFrame.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `tilt` | `tilt` | `number` | `DEFAULT_TILT` |
+| `hasHeader` | `hasHeader` | `boolean` | `false` |
+
+**Slots**
+
+| Slot |
+| :--- |
+| (default) |
+| `header` |
+
+**CSS Parts:** `base`, `header`, `frame`
+
+## PageTransition
+
+Animated change of page through view transitions: `effect` is `wipe` (a panel of `--page-transition-color` sweeps across), `slide`, `circle` (grows from the click point) or `fade`, over `duration` ms. One per page opts the site in to cross-document transitions (load the effects entry with `blocking="render"` or inline `pageTransitionCss(effect, duration)` in <head>); in SPAs, `start(update, { direction, x, y })` wraps `document.startViewTransition`. Plays in reverse when going back or in RTL. No transition under reduced motion. Renders nothing. Effects entry. Docs: [/docs/components/pagetransition](/docs/components/pagetransition)
+
+```html
+<moul-page-transition effect="wipe"></moul-page-transition>
+```
+
+```js
+const transition = document.querySelector('moul-page-transition')
+transition.start(() => render(nextView), { direction: 'forward' })
+```
+
+### `<moul-page-transition>`
+
+Class: `MoulPageTransition` · Source: `ui/src/components/PageTransition/PageTransition.ts`
+
+**Attributes**
+
+| Attribute | Property | Type | Default |
+| :--- | :--- | :--- | :--- |
+| `effect` | `effect` | `'fade' \| 'wipe' \| 'slide' \| 'circle'` | `DEFAULT_EFFECT` |
+| `duration` | `duration` | `number` | `DEFAULT_DURATION` |
 
 ---
 

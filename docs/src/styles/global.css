@@ -336,7 +336,10 @@ html:root[data-theme] {
 .moul-preview {
   margin: 1.5rem 0;
   border-radius: var(--radius-surface);
-  overflow: hidden;
+  /* Clip, not hidden: `hidden` makes the card a scroll container, which
+     traps `position: sticky` and native `view()` timelines inside it, so the
+     scroll effects in a preview would never move with the page. */
+  overflow: clip;
   background: var(--color-surface);
   box-shadow: var(--shadow-surface);
   isolation: isolate;

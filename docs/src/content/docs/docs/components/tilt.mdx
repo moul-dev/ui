@@ -1,0 +1,130 @@
+---
+title: Tilt
+description: A card or image that tilts in 3D toward the pointer and springs back flat when it leaves.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import LandingKitDemo from '@/components/demos/LandingKitDemo.astro';
+
+`<moul-tilt>` leans a card, an image or any box toward the pointer, as if the pointer pressed on that corner, and lets it spring back flat when the pointer leaves. With `glare`, a soft light follows the pointer over the surface. Move a mouse over the card below.
+
+<ComponentPreview backdrop="mesh" minHeight="22rem">
+  <moul-tilt glare style="width: 18rem; border-radius: var(--radius-2xl, 1rem)">
+    <div style="overflow: hidden; border: 1px solid var(--color-border); border-radius: inherit; background: var(--color-surface); box-shadow: var(--shadow-lg)">
+      <img src="/demo/imageslider/kep-coast.svg" alt="Fishing boats off the coast at Kep at sunset" style="display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover" />
+      <div style="padding: 1rem 1.25rem 1.25rem">
+        <strong style="display: block; font-size: 1.0625rem">Kep</strong>
+        <span style="color: var(--color-muted)">Crab market, quiet beaches, and the islands beyond.</span>
+      </div>
+    </div>
+  </moul-tilt>
+  <LandingKitDemo />
+</ComponentPreview>
+
+It lives in the effects entry, with the rest of the motion elements:
+
+```js
+import '@moul-dev/web-component/effects'
+```
+
+```html
+<moul-tilt glare style="border-radius: 1rem">
+  <div class="card">
+    <img src="/kep.jpg" alt="Fishing boats off the coast at Kep at sunset" />
+    <p>Kep</p>
+  </div>
+</moul-tilt>
+```
+
+Give the element the `border-radius` of the box inside it, and give the box `border-radius: inherit`: the surface, the glare and the box then share one radius, so the light keeps to the card's corners.
+
+## How far it leans
+
+`max-tilt` is how far the box leans, in degrees, with the pointer on an edge; it is 10 by default and never more than 45. `perspective` is the distance of the viewer from the box, in pixels: a smaller value looks deeper. `hover-scale` grows the box a little while the pointer is over it, 1.03 by default; `1` keeps its size. `is-reversed` leans the box away from the pointer instead of toward it, as if the pointer lifted that corner.
+
+<ComponentPreview backdrop="mesh" minHeight="16rem">
+  <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center">
+    <moul-tilt max-tilt="20" perspective="600" style="border-radius: var(--radius-xl, 0.75rem)">
+      <div style="display: grid; place-items: center; width: 11rem; height: 8rem; border: 1px solid var(--color-border); border-radius: inherit; background: var(--color-surface); box-shadow: var(--shadow-md)">Deep, 20°</div>
+    </moul-tilt>
+    <moul-tilt is-reversed hover-scale="1" style="border-radius: var(--radius-xl, 0.75rem)">
+      <div style="display: grid; place-items: center; width: 11rem; height: 8rem; border: 1px solid var(--color-border); border-radius: inherit; background: var(--color-surface); box-shadow: var(--shadow-md)">Reversed</div>
+    </moul-tilt>
+  </div>
+</ComponentPreview>
+
+```html
+<moul-tilt max-tilt="20" perspective="600">…</moul-tilt>
+<moul-tilt is-reversed hover-scale="1">…</moul-tilt>
+```
+
+## Raised parts
+
+Parts of the box can rise off its surface and float above it as it tilts. Give the box `transform-style: preserve-3d`, then lift any part of it with `translate: 0 0 2rem`; the further it rises, the more it moves against the surface. A box that clips its content (`overflow: hidden`) or sets `opacity`, `filter` or `isolation` is drawn flat, so lift parts of a box without those.
+
+<ComponentPreview backdrop="mesh" minHeight="22rem">
+  <moul-tilt max-tilt="14" style="border-radius: var(--radius-2xl, 1rem)">
+    <div style="transform-style: preserve-3d; width: 18rem; padding: 1.25rem; border: 1px solid var(--color-border); border-radius: inherit; background: var(--color-surface); box-shadow: var(--shadow-lg)">
+      <strong style="display: block; translate: 0 0 2.5rem; font-size: 1.125rem">Mondulkiri at dawn</strong>
+      <span style="display: block; translate: 0 0 1.5rem; margin-block: 0.25rem 1rem; color: var(--color-muted)">Mist over the hills of Sen Monorom.</span>
+      <img src="/demo/imageslider/mondulkiri-dawn.svg" alt="Hills under morning mist" style="display: block; width: 100%; aspect-ratio: 16 / 10; object-fit: cover; border-radius: var(--radius-lg, 0.5rem); translate: 0 0 4rem" />
+    </div>
+  </moul-tilt>
+</ComponentPreview>
+
+```html
+<moul-tilt max-tilt="14">
+  <div class="card" style="transform-style: preserve-3d">
+    <strong style="translate: 0 0 2.5rem">Mondulkiri at dawn</strong>
+    <img src="/mondulkiri.jpg" alt="Hills under morning mist" style="translate: 0 0 4rem" />
+  </div>
+</moul-tilt>
+```
+
+## Pointers and cost
+
+Only a mouse or a pen tilts the box. On a touch screen it stays flat, so a finger scrolling past never sets it rocking.
+
+The tilt is one transform on one element. The pointer is read at most once per frame, and its position is written to the surface as properties that do not pass down into the box, so the content inside is not restyled while the pointer moves and the page is never laid out again. The box springs back flat with a short spring, `--tilt-duration` long.
+
+## Styling
+
+`::part(surface)` is the layer that tilts and `::part(glare)` the light over it. `--tilt-glare-color` sets the colour at the centre of the glare: a soft white, a little brighter in light themes. The glare shows best over a picture; on a white card a white light has nothing to show against, so give it a colour there. `--tilt-duration` is how long the box takes to settle flat, `700ms` by default.
+
+```css
+moul-tilt {
+  --tilt-glare-color: color-mix(in oklab, var(--color-white) 30%, transparent);
+  --tilt-duration: 900ms;
+}
+```
+
+## Accessibility
+
+The element is never focusable and adds no role: the content is read and reached with Tab as if the element were not there, and focus does not tilt it. The glare is decorative and hidden from screen readers, and it is not drawn where the system forces its own colours.
+
+Under `prefers-reduced-motion: reduce` the box stays flat and does not grow, and the glare does not show. The element reacts to the setting as soon as it changes.
+
+## Attributes and properties
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `max-tilt` | `maxTilt` | `number` (degrees, 0 to 45) | `10` |
+| `perspective` | `perspective` | `number` (px) | `1000` |
+| `hover-scale` | `hoverScale` | `number` | `1.03` |
+| `is-reversed` | `isReversed` | `boolean` | `false` |
+| `glare` | `glare` | `boolean` | `false` |
+| | `isTilted` | `boolean`, read only | `false` |
+
+| Slot | Description |
+| :-- | :-- |
+| (default) | The box to tilt: a card, an image or a panel. |
+
+| Part | Description |
+| :-- | :-- |
+| `surface` | The layer that tilts; it holds the content and the glare. |
+| `glare` | The soft light that follows the pointer, shown with `glare`. |
+
+| CSS property | Description | Default |
+| :-- | :-- | :-- |
+| `--tilt-glare-color` | The colour at the centre of the glare. | a soft white |
+| `--tilt-duration` | How long the box takes to settle flat after the pointer leaves. | `700ms` |

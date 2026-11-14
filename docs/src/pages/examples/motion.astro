@@ -1,0 +1,748 @@
+---
+/**
+ * The Phase 8 gate: every pointer and scroll effect on one page, a travel
+ * guide to the south coast. Each effect holds 60 frames a second on a
+ * mid-range phone and switches off under reduced motion; every demo carries
+ * `data-gate` (its name) and `data-drive` (`pointer` or `scroll`) so a
+ * script can drive it and measure the frames.
+ *
+ * Like the landing page, the page carries no animation code of its own: no
+ * keyframes, no transitions, no script beyond the two imports. The one
+ * exception is the page transition's document-level CSS, written into the
+ * head at build time so a cross-document transition is opted in to before
+ * the page first renders (a module script runs too late for that).
+ */
+import '@moul-dev/web-component/style.css'
+import { pageTransitionCss } from '../../../../ui/src/components/PageTransition/PageTransition.styles'
+
+const transitionCss = pageTransitionCss('wipe', 600)
+
+const places = [
+  {
+    name: 'Kep',
+    image: '/demo/imageslider/kep-coast.svg',
+    alt: 'Fishing boats off the coast at Kep',
+    note: 'The crab market at sunset.',
+  },
+  {
+    name: 'Mondulkiri',
+    image: '/demo/imageslider/mondulkiri-dawn.svg',
+    alt: 'Hills under morning mist in Mondulkiri',
+    note: 'Forest, waterfalls and cool mornings.',
+  },
+  {
+    name: 'Tonle Sap',
+    image: '/demo/imageslider/tonle-sap-dusk.svg',
+    alt: 'Stilt houses on the Tonle Sap at dusk',
+    note: 'Floating villages on the great lake.',
+  },
+]
+
+const days = [
+  {
+    title: 'Day 1 · Phnom Penh to Kampot',
+    text: 'The morning bus follows National Road 3 south. By lunch you are on the river.',
+  },
+  {
+    title: 'Day 2 · Bokor mountain',
+    text: 'A winding road up through the cloud forest to the old hill station.',
+  },
+  {
+    title: 'Day 3 · Crab market in Kep',
+    text: 'Crab cooked with green Kampot pepper, eaten by the water.',
+  },
+  {
+    title: 'Day 4 · Koh Tonsay',
+    text: 'A short boat ride to Rabbit Island: hammocks, a beach and nothing to do.',
+  },
+]
+
+const steps = [
+  {
+    title: 'Choose your days',
+    text: 'Pick the dates and how many of you are travelling. Prices update as you go.',
+    media: 'Dates',
+    tint: 'var(--color-bg-subtle)',
+  },
+  {
+    title: 'Pick where to stay',
+    text: 'A riverside guesthouse in Kampot, a bungalow in Kep, or both.',
+    media: 'Stays',
+    tint: 'var(--color-surface-secondary)',
+  },
+  {
+    title: 'Add the boat to Koh Tonsay',
+    text: 'The boat leaves from Kep pier at nine and comes back at four.',
+    media: 'Boat',
+    tint: 'var(--color-bg-subtle)',
+  },
+  {
+    title: 'Pay and get your tickets',
+    text: 'Tickets arrive by email and in the app, ready to show on the bus.',
+    media: 'Tickets',
+    tint: 'var(--color-surface-secondary)',
+  },
+]
+
+const tiles = [1, 2, 3, 4, 5, 6, 7, 8]
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Motion example · Moul UI</title>
+    <meta
+      name="description"
+      content="Every pointer and scroll effect in Moul UI on one page, with no hand-written animation."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap"
+    />
+    <style set:html={transitionCss}></style>
+  </head>
+  <body>
+    <moul-page-transition effect="wipe" duration="600"></moul-page-transition>
+
+    <header class="top">
+      <a class="brand" href="/">Moul UI</a>
+      <moul-hover-highlight
+        class="top-links"
+        is-persistent
+        data-gate="hover-highlight"
+        data-drive="pointer"
+      >
+        <a href="/examples/landing/">Landing</a>
+        <a href="/examples/motion/" aria-current="page">Motion</a>
+        <a href="/docs/motion/">Docs</a>
+        <a href="/theme/">Theme</a>
+      </moul-hover-highlight>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="hero-title">
+        <moul-pointer-parallax
+          class="layer hero-layers"
+          scope="page"
+          strength="36"
+          data-gate="pointer-parallax"
+          data-drive="pointer"
+        >
+          <img data-depth="0.25" src="/demo/imageslider/tonle-sap-dusk.svg" alt="" class="float float-a" />
+          <img data-depth="-0.45" src="/demo/imageslider/yeak-laom-lake.svg" alt="" class="float float-b" />
+          <img data-depth="0.8" src="/demo/imageslider/kep-coast.svg" alt="" class="float float-c" />
+        </moul-pointer-parallax>
+
+        <p class="eyebrow">Five days on the south coast</p>
+        <h1 id="hero-title">Pepper, crab and an island with no roads</h1>
+        <p class="lede">
+          Every effect on this page follows your pointer or your scroll, and
+          every one stops when you ask your system for reduced motion.
+        </p>
+        <div class="actions">
+          <moul-magnetic strength="0.4" reach="60" data-gate="magnetic" data-drive="pointer">
+            <moul-button size="lg" variant="primary">Plan the trip</moul-button>
+          </moul-magnetic>
+          <moul-link href="#itinerary">Read the itinerary →</moul-link>
+        </div>
+      </section>
+
+      <section class="statement" aria-label="Why the south coast">
+        <moul-scroll-text is-pinned class="statement-text" data-gate="scroll-text" data-drive="scroll">
+          Slow mornings on the Kampot river, green pepper on the vine, crab
+          from the market in Kep, and a boat to an island where the only
+          sound is the sea.
+        </moul-scroll-text>
+      </section>
+
+      <section aria-labelledby="places-title">
+        <h2 id="places-title">Where you will stay</h2>
+        <div class="grid-3" data-gate="tilt" data-drive="pointer">
+          {
+            places.map((place) => (
+              <moul-tilt glare max-tilt="10" class="place">
+                <article class="place-card">
+                  <img src={place.image} alt={place.alt} />
+                  <div class="place-body">
+                    <h3>{place.name}</h3>
+                    <p>{place.note}</p>
+                  </div>
+                </article>
+              </moul-tilt>
+            ))
+          }
+        </div>
+      </section>
+
+      <section aria-labelledby="gallery-title">
+        <h2 id="gallery-title">Seen on the way</h2>
+        <div class="grid-3" data-gate="direction-hover" data-drive="pointer">
+          {
+            places.map((place) => (
+              <moul-direction-hover class="photo">
+                <img src={place.image} alt={place.alt} />
+                <div slot="overlay" class="overlay">
+                  <strong>{place.name}</strong>
+                  <span>{place.note}</span>
+                </div>
+              </moul-direction-hover>
+            ))
+          }
+        </div>
+      </section>
+
+      <section aria-labelledby="marquee-title" class="marquees">
+        <h2 id="marquee-title" class="visually-hidden">Places on the route</h2>
+        <div data-gate="marquee" data-drive="scroll">
+          <moul-marquee scroll-velocity="3" fade-edges class="big-marquee">
+            <span>Phnom Penh</span><span aria-hidden="true">·</span>
+            <span>Kampot</span><span aria-hidden="true">·</span>
+            <span>Bokor</span><span aria-hidden="true">·</span>
+            <span>Kep</span><span aria-hidden="true">·</span>
+          </moul-marquee>
+          <moul-marquee scroll-velocity="3" direction="end" fade-edges class="big-marquee quiet">
+            <span>Koh Tonsay</span><span aria-hidden="true">·</span>
+            <span>Battambang</span><span aria-hidden="true">·</span>
+            <span>Mondulkiri</span><span aria-hidden="true">·</span>
+            <span>Siem Reap</span><span aria-hidden="true">·</span>
+          </moul-marquee>
+        </div>
+      </section>
+
+      <section aria-labelledby="itinerary-title" id="itinerary">
+        <h2 id="itinerary-title">Day by day</h2>
+        <moul-tracing-beam class="article" data-gate="tracing-beam" data-drive="scroll">
+          {
+            days.map((day) => (
+              <>
+                <h3>{day.title}</h3>
+                <p>{day.text}</p>
+                <p>
+                  Leave early, before the heat. Carry water, a hat and small
+                  notes in riel for the tuk-tuk; most drivers will wait while
+                  you look around.
+                </p>
+              </>
+            ))
+          }
+        </moul-tracing-beam>
+      </section>
+
+      <section aria-labelledby="days-title">
+        <h2 id="days-title">Four days, one on top of the other</h2>
+        <moul-sticky-stack class="stack" data-gate="sticky-stack" data-drive="scroll">
+          {
+            days.map((day, index) => (
+              <article class="day-card">
+                <span class="day-number">{index + 1}</span>
+                <h3>{day.title}</h3>
+                <p>{day.text}</p>
+              </article>
+            ))
+          }
+        </moul-sticky-stack>
+      </section>
+
+      <section aria-labelledby="tiles-title" class="tiles-section">
+        <moul-scroll-parallax speed="420" data-gate="scroll-parallax" data-drive="scroll">
+          <div class="tile-row">
+            {tiles.map((n) => <span class="tile" style={`background: var(--color-chart-${(n % 7) + 1})`} />)}
+          </div>
+          <h2 id="tiles-title" data-speed="0">Places to go next</h2>
+          <div class="tile-row">
+            {tiles.map((n) => <span class="tile" style={`background: var(--color-chart-${((n + 3) % 7) + 1})`} />)}
+          </div>
+        </moul-scroll-parallax>
+      </section>
+
+      <section aria-labelledby="book-title">
+        <h2 id="book-title">Booking takes four steps</h2>
+        <moul-sticky-scroll class="steps" data-gate="sticky-scroll" data-drive="scroll">
+          {
+            steps.map((step) => (
+              <moul-sticky-scroll-item style={`--sticky-scroll-tint: ${step.tint}`}>
+                <h3>{step.title}</h3>
+                <p>{step.text}</p>
+                <div slot="media" class="step-media" role="img" aria-label={`The ${step.media.toLowerCase()} screen`}>
+                  <strong>{step.media}</strong>
+                </div>
+              </moul-sticky-scroll-item>
+            ))
+          }
+        </moul-sticky-scroll>
+      </section>
+
+      <section aria-labelledby="app-title">
+        <moul-scroll-frame data-gate="scroll-frame" data-drive="scroll">
+          <h2 slot="header" id="app-title">Every booking, one screen</h2>
+          <moul-browser-frame url="trips.example.com/today">
+            <div class="app-screen">
+              <moul-stat label="Travellers" value="4"></moul-stat>
+              <moul-stat label="Nights" value="4"></moul-stat>
+              <moul-stat label="Total" value="612" prefix="$"></moul-stat>
+            </div>
+          </moul-browser-frame>
+        </moul-scroll-frame>
+      </section>
+
+      <section aria-labelledby="flow-title">
+        <h2 id="flow-title">One booking, every confirmation</h2>
+        <div class="flow" data-gate="connector-beam" data-drive="pointer">
+          <div class="flow-sources">
+            <div id="g-bus" class="node" role="img" aria-label="Bus">🚌</div>
+            <div id="g-stay" class="node" role="img" aria-label="Guesthouse">🏡</div>
+            <div id="g-boat" class="node" role="img" aria-label="Boat">⛵</div>
+          </div>
+          <div id="g-hub" class="node node-hub">M</div>
+          <div id="g-you" class="node" role="img" aria-label="You">🙂</div>
+          <moul-connector-beam from="g-bus" to="g-hub" curvature="-40" end-y-offset="-8"></moul-connector-beam>
+          <moul-connector-beam from="g-stay" to="g-hub" delay="500"></moul-connector-beam>
+          <moul-connector-beam from="g-boat" to="g-hub" curvature="40" end-y-offset="8" delay="1000"></moul-connector-beam>
+          <moul-connector-beam from="g-hub" to="g-you" duration="2000"></moul-connector-beam>
+        </div>
+      </section>
+
+      <section aria-labelledby="plans-title">
+        <h2 id="plans-title">Choose a pace</h2>
+        <div class="grid-3" data-gate="glow-border" data-drive="pointer">
+          <moul-glow-border proximity="96">
+            <moul-card><moul-card-header>Easy</moul-card-header><moul-card-body>Two towns, long lunches, no early starts.</moul-card-body></moul-card>
+          </moul-glow-border>
+          <moul-glow-border proximity="96">
+            <moul-card><moul-card-header>Classic</moul-card-header><moul-card-body>Kampot, Bokor, Kep and the island.</moul-card-body></moul-card>
+          </moul-glow-border>
+          <moul-glow-border proximity="96">
+            <moul-card><moul-card-header>Full</moul-card-header><moul-card-body>All of it, plus the caves at Phnom Chhngok.</moul-card-body></moul-card>
+          </moul-glow-border>
+        </div>
+      </section>
+
+      <section aria-labelledby="look-title">
+        <h2 id="look-title">Look closer</h2>
+        <div class="grid-2">
+          <moul-mask-reveal reveal-size="220" class="picture" data-gate="mask-reveal" data-drive="pointer">
+            <img src="/demo/compare/sketch.svg" alt="Pencil sketch of rice paddies and a stilt house" width="1200" height="675" />
+            <img slot="revealed" src="/demo/compare/painting.svg" alt="The same scene painted at dusk" width="1200" height="675" />
+          </moul-mask-reveal>
+          <moul-lens zoom="2.5" class="picture" data-gate="lens" data-drive="pointer">
+            <img src="/demo/compare/painting.svg" alt="Rice paddies, sugar palms and a stilt house at dusk" width="1200" height="675" />
+          </moul-lens>
+        </div>
+      </section>
+
+      <section aria-labelledby="photos-title">
+        <h2 id="photos-title">Photos from the trip</h2>
+        <moul-cursor variant="label" label="View" class="grid-3" data-gate="cursor" data-drive="pointer">
+          {
+            places.map((place) => (
+              <img class="photo-plain" data-cursor-label="View" src={place.image} alt={place.alt} />
+            ))
+          }
+        </moul-cursor>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span>Built with Moul UI elements only, with no animation code of its own.</span>
+      <a href="/examples/landing/">Back to the landing page</a>
+    </footer>
+
+    <script>
+      import '@moul-dev/web-component'
+      import '@moul-dev/web-component/effects'
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  /* Layout and type only. Motion comes from the elements. */
+  html {
+    background: var(--color-background);
+    color: var(--color-fg);
+    font-family: 'Google Sans', var(--font-family-base, system-ui), sans-serif;
+  }
+
+  body {
+    margin: 0;
+  }
+
+  a {
+    color: inherit;
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .top {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-4, 1rem);
+    padding: var(--spacing-3, 0.75rem) max(var(--spacing-6, 1.5rem), (100% - 72rem) / 2);
+    border-bottom: 1px solid var(--color-border-subtle);
+    background: var(--color-background);
+  }
+
+  .brand {
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .top-links {
+    display: flex;
+    gap: var(--spacing-1, 0.25rem);
+    --hover-highlight-radius: 999px;
+  }
+
+  .top-links a {
+    padding: var(--spacing-2, 0.5rem) var(--spacing-3, 0.75rem);
+    font-size: var(--font-size-sm, 0.875rem);
+    text-decoration: none;
+  }
+
+  /* Sections run the full width; the padding keeps content in a 72rem column.
+     None clips its overflow, so sticky and scroll-linked effects follow the page. */
+  main > section {
+    position: relative;
+    isolation: isolate;
+    padding: var(--spacing-16, 4rem) max(var(--spacing-6, 1.5rem), (100% - 72rem) / 2);
+  }
+
+  main > section + section {
+    border-top: 1px solid var(--color-border-subtle);
+  }
+
+  .layer {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+  }
+
+  .hero {
+    min-height: 34rem;
+    text-align: center;
+    overflow: clip;
+  }
+
+  /* The pictures sit in the margins, clear of the headline, and drift there. */
+  .float {
+    position: absolute;
+    width: min(15rem, 19vw);
+    border-radius: var(--radius-xl, 1rem);
+    box-shadow: var(--shadow-lg);
+    opacity: 0.6;
+  }
+
+  /* Above and below the headline's rows, never beside them. */
+  .float-a {
+    top: 52%;
+    left: 2%;
+  }
+
+  .float-b {
+    top: 3%;
+    right: 2%;
+  }
+
+  .float-c {
+    bottom: 6%;
+    right: 9%;
+  }
+
+  @media (max-width: 48rem) {
+    .float {
+      opacity: 0.25;
+    }
+  }
+
+  .eyebrow {
+    margin: var(--spacing-8, 2rem) 0 0;
+    color: var(--color-fg-subtle);
+    font-size: var(--font-size-sm, 0.875rem);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    margin: var(--spacing-4, 1rem) auto;
+    max-width: 18ch;
+    font-size: clamp(2.5rem, 7vw, 4.5rem);
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+  }
+
+  h2 {
+    margin: 0 0 var(--spacing-8, 2rem);
+    font-size: clamp(1.75rem, 4vw, 2.75rem);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    text-align: center;
+  }
+
+  h3 {
+    margin: 0;
+    font-size: 1.125rem;
+  }
+
+  .lede {
+    max-width: 36rem;
+    margin: 0 auto;
+    color: var(--color-fg-subtle);
+    font-size: 1.25rem;
+    line-height: 1.6;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--spacing-3, 0.75rem);
+    margin-top: var(--spacing-8, 2rem);
+  }
+
+  .statement {
+    padding-block: 0;
+  }
+
+  .statement-text {
+    max-width: 48rem;
+    margin-inline: auto;
+    font-size: clamp(2rem, 5vw, 3.25rem);
+    font-weight: 650;
+    line-height: 1.2;
+  }
+
+  .grid-3 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    gap: var(--spacing-6, 1.5rem);
+  }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+    gap: var(--spacing-6, 1.5rem);
+  }
+
+  .place {
+    border-radius: var(--radius-xl, 1rem);
+  }
+
+  .place-card {
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    border-radius: inherit;
+    background: var(--color-surface);
+    box-shadow: var(--shadow-md);
+  }
+
+  .place-card img,
+  .photo img,
+  .photo-plain {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+  }
+
+  .place-body {
+    display: grid;
+    gap: var(--spacing-1, 0.25rem);
+    padding: var(--spacing-4, 1rem);
+  }
+
+  .place-body p {
+    margin: 0;
+    color: var(--color-fg-subtle);
+  }
+
+  .photo,
+  .photo-plain {
+    border-radius: var(--radius-xl, 1rem);
+  }
+
+  .overlay {
+    display: grid;
+    align-content: end;
+    gap: var(--spacing-1, 0.25rem);
+  }
+
+  .marquees {
+    display: grid;
+    gap: var(--spacing-4, 1rem);
+    padding-inline: 0;
+  }
+
+  .big-marquee {
+    --marquee-gap: var(--spacing-6, 1.5rem);
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  .big-marquee.quiet {
+    color: var(--color-fg-subtle);
+  }
+
+  .article {
+    max-width: 40rem;
+    margin-inline: auto;
+    font-size: 1.0625rem;
+    line-height: 1.7;
+  }
+
+  .article h3 {
+    margin-top: var(--spacing-8, 2rem);
+    font-size: 1.375rem;
+  }
+
+  .stack {
+    max-width: 36rem;
+    margin-inline: auto;
+    padding-bottom: 30vh;
+    --sticky-stack-top: 6rem;
+  }
+
+  .day-card {
+    display: grid;
+    gap: var(--spacing-2, 0.5rem);
+    min-height: 14rem;
+    box-sizing: border-box;
+    padding: var(--spacing-6, 1.5rem);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl, 1rem);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-md);
+  }
+
+  .day-card p {
+    margin: 0;
+    color: var(--color-fg-subtle);
+  }
+
+  .day-number {
+    color: var(--color-accent);
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .tiles-section {
+    overflow-x: clip;
+  }
+
+  .tile-row {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-4, 1rem);
+    margin-block: var(--spacing-6, 1.5rem);
+  }
+
+  .tile {
+    flex: none;
+    width: 12rem;
+    height: 7rem;
+    border-radius: var(--radius-lg, 0.75rem);
+    opacity: 0.85;
+  }
+
+  .steps {
+    --sticky-scroll-media-height: 22rem;
+    --sticky-scroll-end-space: 40vh;
+    --sticky-scroll-spacing: 6rem;
+  }
+
+  .steps p {
+    color: var(--color-fg-subtle);
+    font-size: 1.0625rem;
+    line-height: 1.6;
+  }
+
+  .step-media {
+    display: grid;
+    place-items: center;
+    height: 100%;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl, 1rem);
+    background: linear-gradient(160deg, var(--color-accent-soft, var(--color-bg-subtle)), var(--color-surface));
+    font-size: 2rem;
+  }
+
+  .app-screen {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+    gap: var(--spacing-4, 1rem);
+    min-height: 16rem;
+    padding: var(--spacing-6, 1.5rem);
+    background: var(--color-bg-subtle);
+  }
+
+  .flow {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 34rem;
+    margin-inline: auto;
+  }
+
+  .flow-sources {
+    display: grid;
+    gap: var(--spacing-6, 1.5rem);
+  }
+
+  .node {
+    display: grid;
+    place-items: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    background: var(--color-surface);
+    box-shadow: var(--shadow-sm);
+    font-size: 1.5rem;
+  }
+
+  .node-hub {
+    width: 5rem;
+    height: 5rem;
+    font-weight: 700;
+  }
+
+  .picture {
+    overflow: hidden;
+    border-radius: var(--radius-xl, 1rem);
+  }
+
+  .picture img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--spacing-4, 1rem);
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: var(--spacing-8, 2rem) var(--spacing-6, 1.5rem);
+    border-top: 1px solid var(--color-border);
+    color: var(--color-fg-subtle);
+    font-size: var(--font-size-sm, 0.875rem);
+  }
+</style>

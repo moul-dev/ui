@@ -1,0 +1,118 @@
+---
+title: Scroll Text
+description: Text whose words light up one after another as the reader scrolls.
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import LandingKitDemo from '@/components/demos/LandingKitDemo.astro';
+
+`<moul-scroll-text>` shows a statement in dim grey and lights it word by word as the reader scrolls, so it reads itself out at the pace of the scroll. Scroll this page: each word lights as it rises past a line a little below the middle of the window.
+
+<ComponentPreview align="stretch">
+  <moul-scroll-text style="font-size: clamp(1.5rem, 4vw, 2.25rem); font-weight: 650; line-height: 1.25; letter-spacing: -0.01em; max-width: 34rem; margin-inline: auto">
+    Every change to your data is kept, with who made it and when. Look back at any record, see what it was last Tuesday, and put it back in one step.
+  </moul-scroll-text>
+  <LandingKitDemo />
+</ComponentPreview>
+
+It lives in the effects entry:
+
+```js
+import '@moul-dev/web-component/effects'
+```
+
+```html
+<h2>
+  <moul-scroll-text>
+    Every change to your data is kept, with who made it and when.
+  </moul-scroll-text>
+</h2>
+```
+
+Write the text inside the element, or set `text`. The text is in the page's HTML, so it shows, unlit, before the script loads. Markup inside counts only for its text: the element shows one run of words. It is a block, so put it inside your own heading or paragraph, and style its font as you would theirs.
+
+## Pinned
+
+`is-pinned` turns the element into a tall section. Its text stays in the middle of the viewport while the reader scrolls through the section, lights word by word over most of that distance, and moves on with the page once the section ends. `--scroll-text-length` is the height of the section, `250vh` by default: the longer it is, the slower the words light.
+
+The text is pinned with `position: sticky`, so no ancestor of the element may clip its overflow (`overflow: hidden`), or it stays put. In a scroll box, as below, set `--scroll-text-pin-height` to the box's height; on the page it is the viewport's.
+
+<ComponentPreview align="stretch">
+  <div style="height: 24rem; overflow: auto; border: 1px solid var(--color-border); border-radius: var(--radius-xl, 1rem)">
+    <p style="margin: 0; padding: 2rem 1.5rem; color: var(--color-muted)">Scroll inside this box.</p>
+    <moul-scroll-text is-pinned style="--scroll-text-length: 64rem; --scroll-text-pin-height: 24rem; padding-inline: 1.5rem; font-size: clamp(1.5rem, 4vw, 2rem); font-weight: 650; line-height: 1.25">
+      Ship on Friday. Previews for every branch, logs you can search, and a rollback that takes one click.
+    </moul-scroll-text>
+    <p style="margin: 0; padding: 2rem 1.5rem 6rem; color: var(--color-muted)">The section ends here, and the text moves on with it.</p>
+  </div>
+</ComponentPreview>
+
+```html
+<moul-scroll-text is-pinned>
+  Ship on Friday. Previews for every branch, logs you can search,
+  and a rollback that takes one click.
+</moul-scroll-text>
+```
+
+```css
+moul-scroll-text {
+  --scroll-text-length: 300vh;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+}
+```
+
+## Khmer and other languages
+
+The text is split at word boundaries for its language, read from the nearest `lang` attribute, so Khmer, which has no spaces between words, lights one word at a time and never splits a letter from its marks.
+
+<ComponentPreview align="stretch">
+  <moul-scroll-text lang="km" style="font-size: clamp(1.5rem, 4vw, 2rem); font-weight: 600; line-height: 1.6; max-width: 34rem; margin-inline: auto">
+    ភ្នំពេញគឺជារាជធានីនៃព្រះរាជាណាចក្រកម្ពុជា
+  </moul-scroll-text>
+</ComponentPreview>
+
+```html
+<moul-scroll-text lang="km">ភ្នំពេញគឺជារាជធានីនៃព្រះរាជាណាចក្រកម្ពុជា</moul-scroll-text>
+```
+
+## Styling
+
+A word that is not lit yet has an opacity of `--scroll-text-dim`, `0.2` by default, so it keeps the colour of the text around it in light and dark. Raise it for text that must stay readable before it lights.
+
+```css
+moul-scroll-text {
+  --scroll-text-dim: 0.35;
+}
+```
+
+`::part(text)` is the run of words and `::part(stage)` the box that holds it, the part that stays in the viewport when pinned.
+
+## How it follows the scroll
+
+The element follows the page, or the nearest ancestor that scrolls (`overflow: auto` or `scroll`); a wrapper that only clips its overflow does not count. One number, how far that container is scrolled, drives every word through CSS. In browsers with scroll-driven animations a native scroll timeline moves it and no script runs while the reader scrolls; elsewhere one passive listener writes it once per frame. Where the words light is worked out from the element's size and place when they change, never while scrolling, and text near the end of the page, which can never rise as far as the reading line, lights early enough to finish.
+
+## Accessibility
+
+The element is never focusable and adds no role. The words are hidden from screen readers and a visually hidden copy holds the whole text, so it is read once, as one sentence, lit or not.
+
+A dim word has little contrast, so do not hide anything the reader needs in words that only light late. Where the system forces its own colours, as in Windows high contrast mode, and when printing, every word is shown at full strength.
+
+Under `prefers-reduced-motion: reduce` every word is shown at full strength and nothing follows the scroll. A pinned section is not pinned: the text sits in the flow of the page like a paragraph.
+
+## Attributes and properties
+
+| Attribute | Property | Type | Default |
+| :-- | :-- | :-- | :-- |
+| `text` | `text` | `string` | `''` (the text inside) |
+| `is-pinned` | `isPinned` | `boolean` | `false` |
+
+| Part | Description |
+| :-- | :-- |
+| `stage` | The box that holds the text; in a pinned section it stays in the viewport. |
+| `text` | The text, one span per word. |
+
+| CSS property | Description | Default |
+| :-- | :-- | :-- |
+| `--scroll-text-dim` | Opacity of a word that is not lit yet. | `0.2` |
+| `--scroll-text-length` | Height of a pinned section. | `250vh` |
+| `--scroll-text-pin-height` | Height of the area the text is pinned in. | `100svh` |
