@@ -101,6 +101,32 @@ export function noInlinedDependenciesPlugin(): Plugin {
 }
 
 /**
+ * Strips comments and collapses whitespace in Lit `css` templates, which Lit
+ * would otherwise ship as written (see `minify-css-templates.ts`). Build only:
+ * Vitest and the dev server keep the styles as authored, and tests read them.
+ */
+export function minifyCssTemplatesPlugin(): Plugin {
+  return {
+    name: 'minify-css-templates',
+    apply: 'build',
+    enforce: 'pre',
+    async transform(code, id) {
+      if (
+        !id.endsWith('.ts') ||
+        id.includes('/node_modules/') ||
+        !/\bcss\b/.test(code)
+      ) {
+        return null
+      }
+      // Imported on first use, so loading this config never loads TypeScript.
+      const { minifyCssTemplates } = await import('./minify-css-templates')
+      const minified = minifyCssTemplates(code, id)
+      return minified === code ? null : { code: minified, map: null }
+    },
+  }
+}
+
+/**
  * The package has two entry points, each built in its own pass:
  *
  * - `vite build` emits the main entry, `dist/moul-ui.js`, plus the type
@@ -141,6 +167,7 @@ export default defineConfig(({ mode }) => {
     },
     plugins: [
       banReactImportsPlugin(),
+      minifyCssTemplatesPlugin(),
       ...(isFirstPass
         ? [
             dts({ tsconfigPath: './tsconfig.app.json' }) as any,

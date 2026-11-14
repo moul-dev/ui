@@ -17,6 +17,7 @@ A multi-project monorepo workspace managed with **Bun**, featuring:
 ├── ui/                  # Component library package
 │   ├── package.json     # Library exports (`.`, `./effects` and `./style.css`)
 │   ├── vite.config.ts   # Vite library + CDN builds per entry, Vitest (happy-dom)
+│   ├── minify-css-templates.ts # Build-time minifier for Lit `css` templates
 │   ├── size-budget.json # Byte budget per published bundle (`bun run size`)
 │   ├── custom-elements-manifest.config.mjs
 │   ├── index.html       # Kitchen-sink sandbox (`bun run dev:ui`)
@@ -103,7 +104,7 @@ Run these commands from the root directory:
 - **Lit 3 Custom Elements**: Every component is a `LitElement` subclass registered with an idempotent `defineElement('moul-*', Class)` and an open Shadow Root.
 - **CSS Token Layer**: `ui/src/styles/style.css` defines `:root` custom properties (OKLCH + `light-dark()`), emitted to `dist/assets/style.css` and exported as `@moul-dev/web-component/style.css`. Brand hooks: `--brand-hue`, `--brand-chroma-multiplier`, `--brand-font-family`, `--brand-font-scale`, `--brand-radius-factor`, `--brand-density-factor`.
 - **Native Platform APIs**: `ElementInternals` for form association, `<dialog>` for modals, the Popover API + CSS anchor positioning for overlays.
-- **Vite Library Mode**: Emits `dist/moul-ui.js` (prefixed with a `"use client";` banner for RSC frameworks) and `dist/src/index.d.ts`. Every runtime `dependency` stays a bare import so consumers load one copy of Lit; the build fails if anything from `node_modules` is inlined. A second pass (`vite build --mode cdn`) emits the self-contained, minified `dist/cdn/moul-ui.js` for `<script type="module">` use from a CDN.
+- **Vite Library Mode**: Emits `dist/moul-ui.js` (prefixed with a `"use client";` banner for RSC frameworks) and `dist/src/index.d.ts`. Every runtime `dependency` stays a bare import so consumers load one copy of Lit; the build fails if anything from `node_modules` is inlined. A second pass (`vite build --mode cdn`) emits the self-contained, minified `dist/cdn/moul-ui.js` for `<script type="module">` use from a CDN. Every build pass minifies Lit `css` templates (`ui/minify-css-templates.ts`): comments are stripped and whitespace collapsed, so write style comments freely; they stay in the source and never ship. Vitest and the dev server see the styles as written.
 - **Effects Entry Point**: `@moul-dev/web-component/effects` (`src/effects.ts`) holds the motion controllers (pointer, scroll, in-view, drag, text splitting, canvas loop) and, from Phase 5 of `moul-ui-build-plan.md`, the effect elements. It is built in its own passes (`--mode effects`, `--mode cdn-effects`) so the main bundle stays byte-for-byte what it is without it; `ui/size-budget.json` holds every bundle to a byte budget, and `bun run size --write` raises one on purpose. Never export effects code from `src/index.ts`.
 - **Custom Elements Manifest**: `cem analyze` writes `dist/custom-elements.json`, the source of truth for `sync:llms`.
 - **No React**: `scripts/verify-no-react.ts` fails the build if React, React Aria, StyleX, or `@lit/react` appear in `ui/` or `docs/` manifests.
