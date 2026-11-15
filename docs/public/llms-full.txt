@@ -19,11 +19,14 @@ import '@moul-dev/web-component'
 import '@moul-dev/web-component/style.css'
 ```
 
-Without a bundler, load the self-contained CDN build (Lit and the other dependencies inlined):
+Without a bundler, load the CDN build from `dist/cdn/`. It needs no import map: Lit, motion and the other dependencies are bundled into chunks under `dist/cdn/chunks/` that the entries share, so a page that loads more than one entry runs one copy of each. Pin the exact version in every URL, because the entries import those chunks by relative URL and every file must come from the same release.
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@moul-dev/web-component/dist/assets/style.css" />
-<script type="module" src="https://cdn.jsdelivr.net/npm/@moul-dev/web-component/dist/cdn/moul-ui.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@moul-dev/web-component@1.0.0-rc.1/dist/assets/style.css" />
+<script type="module" src="https://cdn.jsdelivr.net/npm/@moul-dev/web-component@1.0.0-rc.1/dist/cdn/moul-ui.js"></script>
+<!-- Only on pages that use them: effect elements, and canvas elements loaded on demand. -->
+<script type="module" src="https://cdn.jsdelivr.net/npm/@moul-dev/web-component@1.0.0-rc.1/dist/cdn/effects.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@moul-dev/web-component@1.0.0-rc.1/dist/cdn/canvas.js"></script>
 ```
 
 `dist/moul-ui.js` (the package entry) keeps `lit`, `@lit/context`, `@lit-labs/virtualizer`, `motion`, and `d3-*` as bare imports so a bundler shares one copy of Lit with your app. Do not load it directly in a `<script>` tag.

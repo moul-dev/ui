@@ -10,10 +10,11 @@ import '@moul-dev/web-component'
 import { PointerController } from '@moul-dev/web-component/effects'
 ```
 
-Without a bundler, load the CDN build next to the main one:
+Without a bundler, load the CDN build next to the main one, from the same version. The two import Lit and motion from shared chunks in `dist/cdn/chunks/`, so the page runs one copy of each:
 
 ```html
-<script type="module" src="https://cdn.jsdelivr.net/npm/@moul-dev/web-component/dist/cdn/effects.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@moul-dev/web-component@1.0.0-rc.1/dist/cdn/moul-ui.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@moul-dev/web-component@1.0.0-rc.1/dist/cdn/effects.js"></script>
 ```
 
 ## Controllers

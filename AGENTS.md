@@ -13,10 +13,10 @@ A multi-project monorepo workspace managed with **Bun**, featuring:
 ├── biome.json           # Lint & format rules (ui/ and docs/)
 ├── AGENTS.md            # This file
 ├── rdt/                 # Requirements, design, and task list for the Lit rebuild
-├── scripts/             # dev, gen:component, sync:llms, size, bump, verify-no-react, setup-hooks
+├── scripts/             # dev, gen:component, sync:llms, size, check-cdn, bump, verify-no-react, setup-hooks
 ├── ui/                  # Component library package
 │   ├── package.json     # Library exports (`.`, `./effects`, `./canvas`, `./canvas/*` and `./style.css`)
-│   ├── vite.config.ts   # Vite library + CDN builds per entry, Vitest (happy-dom)
+│   ├── vite.config.ts   # Vite library build per entry, one CDN build, Vitest (happy-dom)
 │   ├── minify-css-templates.ts # Build-time minifier for Lit `css` templates
 │   ├── size-budget.json # Byte budget per published bundle (`bun run size`)
 │   ├── custom-elements-manifest.config.mjs
@@ -77,7 +77,7 @@ Run these commands from the root directory:
   ```bash
   bun run test
   ```
-- **Check Bundle Sizes** against `ui/size-budget.json` (also the last step of `build:ui`); `--write` records new budgets when growth is intended:
+- **Check Bundle Sizes** against `ui/size-budget.json` (also run by `build:ui`); `--write` records new budgets when growth is intended:
   ```bash
   bun run size
   bun run size --write
@@ -87,7 +87,7 @@ Run these commands from the root directory:
   bun run lint
   bun run format
   ```
-- **Build UI Library** (verify-no-react → `tsc -b` → `vite build` per entry, npm and CDN → `cem analyze` → manifest compaction → size check):
+- **Build UI Library** (verify-no-react → `tsc -b` → `vite build` per npm entry, then one CDN pass → `cem analyze` → manifest compaction → size check → CDN check):
   ```bash
   bun run build:ui
   ```
@@ -108,9 +108,9 @@ Run these commands from the root directory:
 - **Lit 3 Custom Elements**: Every component is a `LitElement` subclass registered with an idempotent `defineElement('moul-*', Class)` and an open Shadow Root.
 - **CSS Token Layer**: `ui/src/styles/style.css` defines `:root` custom properties (OKLCH + `light-dark()`), emitted to `dist/assets/style.css` and exported as `@moul-dev/web-component/style.css`. Brand hooks: `--brand-hue`, `--brand-chroma-multiplier`, `--brand-font-family`, `--brand-font-scale`, `--brand-radius-factor`, `--brand-density-factor`.
 - **Native Platform APIs**: `ElementInternals` for form association, `<dialog>` for modals, the Popover API + CSS anchor positioning for overlays.
-- **Vite Library Mode**: Emits `dist/moul-ui.js` (prefixed with a `"use client";` banner for RSC frameworks) and `dist/src/index.d.ts`. Every runtime `dependency` stays a bare import so consumers load one copy of Lit; the build fails if anything from `node_modules` is inlined. A second pass (`vite build --mode cdn`) emits the self-contained, minified `dist/cdn/moul-ui.js` for `<script type="module">` use from a CDN. Every build pass minifies Lit `css` templates (`ui/minify-css-templates.ts`): comments are stripped and whitespace collapsed, so write style comments freely; they stay in the source and never ship. Vitest and the dev server see the styles as written.
-- **Effects Entry Point**: `@moul-dev/web-component/effects` (`src/effects.ts`) holds the motion controllers (pointer, scroll, in-view, drag, text splitting, canvas loop) and, from Phase 5 of `moul-ui-build-plan.md`, the effect elements. It is built in its own passes (`--mode effects`, `--mode cdn-effects`) so the main bundle stays byte-for-byte what it is without it; `ui/size-budget.json` holds every bundle to a byte budget, and `bun run size --write` raises one on purpose. Never export effects code from `src/index.ts`.
-- **Canvas Entry Point**: `@moul-dev/web-component/canvas` (`src/canvas.ts`) is the third entry, for the heaviest effects, drawn on a canvas or with WebGL (Phase 9 of `moul-ui-build-plan.md`). It registers no element: `CANVAS_ELEMENTS` maps each tag to a dynamic `import()`, and a `MutationObserver` loads an element's file the first time its tag appears (`watchCanvasElements(shadowRoot)` for shadow roots). Each element is also its own entry, `@moul-dev/web-component/canvas/<name>` (`src/canvas/<name>.ts`). `vite build --mode canvas` (and `cdn-canvas`) emit `dist/canvas.js`, `dist/canvas/<name>.js` and one shared chunk, `dist/chunks/canvas-shared.js`, for the controllers and helpers the elements share. Neither the main nor the effects entry may import a canvas element (`src/canvas.test.ts` walks their imports), and every canvas file has its own size budget. Canvases take no `var()` or `light-dark()`, so canvas elements resolve token colours through `CanvasColorController`, which also re-resolves them when the theme changes.
+- **Vite Library Mode**: Emits `dist/moul-ui.js` (prefixed with a `"use client";` banner for RSC frameworks) and `dist/src/index.d.ts`. Every runtime `dependency` stays a bare import so consumers load one copy of Lit; the build fails if anything from `node_modules` is inlined. A last pass (`vite build --mode cdn`) builds every entry, minified and with nothing external, into `dist/cdn/` for `<script type="module">` use from a CDN. It is one pass so the entries share one Lit, one motion and their common code through `dist/cdn/chunks/` (see `cdnChunkGroups` in `ui/vite.config.ts`), and `scripts/check-cdn.ts` fails the build if Lit or motion lands in more than one CDN file, if `moul-ui.js` imports effects or canvas code, or if a canvas element reaches motion. Every build pass minifies Lit `css` templates (`ui/minify-css-templates.ts`): comments are stripped and whitespace collapsed, so write style comments freely; they stay in the source and never ship. Vitest and the dev server see the styles as written.
+- **Effects Entry Point**: `@moul-dev/web-component/effects` (`src/effects.ts`) holds the motion controllers (pointer, scroll, in-view, drag, text splitting, canvas loop) and, from Phase 5 of `moul-ui-build-plan.md`, the effect elements. Its npm build is its own pass (`--mode effects`) so the main bundle stays byte-for-byte what it is without it; `ui/size-budget.json` holds every bundle to a byte budget, and `bun run size --write` raises one on purpose. Never export effects code from `src/index.ts`.
+- **Canvas Entry Point**: `@moul-dev/web-component/canvas` (`src/canvas.ts`) is the third entry, for the heaviest effects, drawn on a canvas or with WebGL (Phase 9 of `moul-ui-build-plan.md`). It registers no element: `CANVAS_ELEMENTS` maps each tag to a dynamic `import()`, and a `MutationObserver` loads an element's file the first time its tag appears (`watchCanvasElements(shadowRoot)` for shadow roots). Each element is also its own entry, `@moul-dev/web-component/canvas/<name>` (`src/canvas/<name>.ts`). `vite build --mode canvas` emits `dist/canvas.js`, `dist/canvas/<name>.js` and one shared chunk, `dist/chunks/canvas-shared.js`, for the controllers and helpers the elements share. Neither the main nor the effects entry may import a canvas element (`src/canvas.test.ts` walks their imports), and every canvas file has its own size budget. Canvases take no `var()` or `light-dark()`, so canvas elements resolve token colours through `CanvasColorController`, which also re-resolves them when the theme changes.
 - **Custom Elements Manifest**: `cem analyze` writes `dist/custom-elements.json`, the source of truth for `sync:llms`. The config drops private members (they are not API), and `scripts/compact-manifest.ts` rewrites the file without indentation; read it with `jq`.
 - **No React**: `scripts/verify-no-react.ts` fails the build if React, React Aria, StyleX, or `@lit/react` appear in `ui/` or `docs/` manifests.
 

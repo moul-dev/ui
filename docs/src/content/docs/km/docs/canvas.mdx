@@ -92,7 +92,7 @@ The types of every element are exported from the canvas entry, so TypeScript kno
 import type { GlobeArc, MoulGlobe } from '@moul-dev/web-component/canvas'
 ```
 
-From a CDN, load `dist/cdn/canvas.js` with a module script. Its element files stay separate there too, so a page still downloads only what it uses.
+From a CDN, load `dist/cdn/canvas.js` with a module script, from the same version as the other entries. Its element files stay separate there too, so a page still downloads only what it uses. They import Lit from the same chunk as `moul-ui.js` and `effects.js`, so a page that loads all three runs one copy of it, and no canvas element downloads motion.
 
 ## What it costs to load
 

@@ -54,7 +54,7 @@ Most of the new elements are motion: text effects, backgrounds, pointer and scro
 | `@moul-dev/web-component/effects` | 60 motion and landing-page elements, and the motion controllers they share |
 | `@moul-dev/web-component/canvas` | 15 canvas and WebGL elements, each downloaded the first time its tag appears |
 
-Each import is built in its own pass. Every published file has a byte budget, and the build fails when a file grows past it, so the main import cannot quietly start paying for the effects.
+On npm, each import is built in its own pass. Every published file has a byte budget, and the build fails when a file grows past it, so the main import cannot quietly start paying for the effects.
 
 The canvas import registers nothing up front. It is a loader of about 2 KB that watches the page and downloads an element's own file the first time its tag appears, so a page without `<moul-globe>` never loads the globe.
 
@@ -68,6 +68,39 @@ import '@moul-dev/web-component/canvas'  // <moul-globe> downloads when it appea
 The loader cannot see inside a shadow root. There, call `watchCanvasElements(shadowRoot)`, or import one element directly with `import '@moul-dev/web-component/canvas/globe'`.
 
 Every element ships with the same five things, and a test fails until it does: a description in the Custom Elements Manifest, keyboard and screen reader behaviour, a reduced-motion path, light and dark themes from tokens alone, and a docs page with a test. The 79 elements that predate the rule meet it too.
+
+---
+
+## One Lit on a CDN Page
+
+Each import also has a CDN build under `dist/cdn/`, for pages without a bundler. Until now each was built on its own, with everything it needed inlined, so a page that loaded all three ran three copies of Lit and two of motion.
+
+Lit warns against that. Each copy brings its own `ReactiveElement` and its own template engine, so elements from different files share neither, and the page downloads the same runtime three times.
+
+The CDN files are now built in one pass. Lit, motion and the code more than one import uses go into `dist/cdn/chunks/`, and each entry imports what it needs from there by relative URL:
+
+| File | Holds | Loaded by |
+| :-- | :-- | :-- |
+| `chunks/lit.js` | Lit's runtime | every entry |
+| `chunks/motion.js` | motion | `moul-ui.js` and `effects.js` |
+| `chunks/shared.js` | what every import uses: element registration, the reset styles, the reduced-motion check, the canvas loop | every entry |
+| `chunks/shared-main-effects.js`, `chunks/shared-effects-canvas.js` | what exactly those imports share | those imports |
+| `chunks/canvas-shared.js` | colours, pointer, noise, WebGL and image helpers | canvas elements |
+
+A chunk holds only code that every entry loading it uses. `moul-ui.js` still downloads no effects or canvas code, `canvas.js` still loads nothing until a canvas tag appears, and no canvas element downloads motion. The build checks all of this, and fails if Lit or motion ends up in more than one file. A page that loads all three imports now downloads 356 KB gzipped instead of 391 KB.
+
+Pin the version in CDN URLs. The entries and their chunks must come from the same release, and a URL without a version can be cached at a different release for each file:
+
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@moul-dev/web-component@1.0.0-rc.1/dist/assets/style.css" />
+<script type="module" src="https://cdn.jsdelivr.net/npm/@moul-dev/web-component@1.0.0-rc.1/dist/cdn/moul-ui.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@moul-dev/web-component@1.0.0-rc.1/dist/cdn/effects.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@moul-dev/web-component@1.0.0-rc.1/dist/cdn/canvas.js"></script>
+```
+
+If you host the files yourself, copy the whole `dist/cdn/` folder, `chunks/` included.
+
+The same work fixed a crash. motion reads `process.env.NODE_ENV` and expects the app's bundler to replace it, so on a CDN page the first spring animation threw `process is not defined`. The CDN build now sets it.
 
 ---
 
@@ -91,11 +124,11 @@ These are additions. One CSS part on `<moul-button>` was renamed; it is under Up
 
 ## What It Costs
 
-More elements in the main import make it heavier. Since alpha.2 it went from 112 KB to 236 KB gzipped, and the CDN file from 155 KB to 269 KB.
+More elements in the main import make it heavier. Since alpha.2 it went from 112 KB to 236 KB gzipped, and what a CDN page loads for it from 155 KB to 266 KB.
 
 The bundles would be heavier still. Lit ships its `css` templates as written, comments and indentation included, so the build now minifies them, which takes more than 140 KB off each main bundle before compression.
 
-`effects.js` is about 100 KB gzipped, and only pages that import it pay for it. With the canvas import, a page pays for the elements it actually shows: each one is 2.7 to 6.5 KB gzipped on the CDN, plus an 11 KB chunk they share.
+`effects.js` is about 100 KB gzipped, and only pages that import it pay for it. With the canvas import, a page pays for the elements it actually shows: each one is 2.7 to 6.0 KB gzipped on the CDN, plus 12 KB of chunks they share, Lit included.
 
 ---
 
@@ -123,6 +156,7 @@ If a later step fails, re-running the job skips publishing, because npm already 
 - **From alpha.1:** read the [alpha.2 notes](/km/changelog/1-0-0-alpha-2) too: remove CSS that centered collapsed sidebar rows, and position the collapse toggle through its wrapper.
 - **`<moul-button>` parts:** `::part(spinner)` is gone. The pending loader is now a `<moul-icon-morph>` in `::part(icon)`, which also shows the success and error marks. `is-pending` still means `state="pending"` and still blocks presses.
 - **Effects and canvas:** nothing changes unless you import them.
+- **CDN:** the entry paths are the same, but each entry now imports chunks from `dist/cdn/chunks/`. Pin the version in the URL, and if you host the files yourself, copy all of `dist/cdn/`.
 - **Tools that read the manifest:** it is compact JSON now. Internal state fields, private members and the phantom `type` events are gone.
 
 ---

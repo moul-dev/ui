@@ -319,21 +319,28 @@ bun add @moul-dev/web-component
 npm install @moul-dev/web-component
 \`\`\``
 
-const SETUP = `\`\`\`js
+/** Import and CDN setup. CDN URLs pin `version`: each entry imports chunks shared with the others by relative URL, so every file must come from the same release. */
+function setup(version: string): string {
+  const cdn = `https://cdn.jsdelivr.net/npm/@moul-dev/web-component@${version}/dist`
+  return `\`\`\`js
 // Registers every <moul-*> custom element (side-effect import).
 import '@moul-dev/web-component'
 // CSS token layer: colors, spacing, radii, typography, motion.
 import '@moul-dev/web-component/style.css'
 \`\`\`
 
-Without a bundler, load the self-contained CDN build (Lit and the other dependencies inlined):
+Without a bundler, load the CDN build from \`dist/cdn/\`. It needs no import map: Lit, motion and the other dependencies are bundled into chunks under \`dist/cdn/chunks/\` that the entries share, so a page that loads more than one entry runs one copy of each. Pin the exact version in every URL, because the entries import those chunks by relative URL and every file must come from the same release.
 
 \`\`\`html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@moul-dev/web-component/dist/assets/style.css" />
-<script type="module" src="https://cdn.jsdelivr.net/npm/@moul-dev/web-component/dist/cdn/moul-ui.js"></script>
+<link rel="stylesheet" href="${cdn}/assets/style.css" />
+<script type="module" src="${cdn}/cdn/moul-ui.js"></script>
+<!-- Only on pages that use them: effect elements, and canvas elements loaded on demand. -->
+<script type="module" src="${cdn}/cdn/effects.js"></script>
+<script type="module" src="${cdn}/cdn/canvas.js"></script>
 \`\`\`
 
 \`dist/moul-ui.js\` (the package entry) keeps \`lit\`, \`@lit/context\`, \`@lit-labs/virtualizer\`, \`motion\`, and \`d3-*\` as bare imports so a bundler shares one copy of Lit with your app. Do not load it directly in a \`<script>\` tag.`
+}
 
 const CORE_RULES = `- **Imports**: \`import '@moul-dev/web-component'\` once registers every \`<moul-*>\` element. Import design tokens with \`import '@moul-dev/web-component/style.css'\`. Motion controllers and effect elements live in a second entry, \`import '@moul-dev/web-component/effects'\`; an app that never imports it ships none of that code. Canvas and WebGL elements (particles, starfield, glyph rain, warp, flow field, interactive grid, press particles, dissolve, cursor trail, zoom grid, image loader, image effect, icon cloud, globe, shader field) live in a third entry, \`import '@moul-dev/web-component/canvas'\`, which registers nothing up front and loads each element's own file the first time its tag appears in the page; inside a shadow root call \`watchCanvasElements(shadowRoot)\`, or import one element directly with \`import '@moul-dev/web-component/canvas/<name>'\` (the tag without \`moul-\`, e.g. \`canvas/globe\`). There is no \`@moul-dev/web-component/react\`, \`@moul-dev/web-component/tokens\`, or \`@moul-dev/web-component/tokens.stylex\` entry point.
 - **Markup, not JSX components**: Write native custom element tags (\`<moul-button>\`), never PascalCase components (\`<Button>\`). They work in plain HTML, Astro, Lit, Vue, Svelte, and React 19.
@@ -358,7 +365,7 @@ function renderLlmsTxt(categories: ComponentCategory[], version: string) {
     '',
     INSTALL,
     '',
-    SETUP,
+    setup(version),
     '',
     '## Core Rules for LLMs & AI Coding Agents',
     '',
@@ -405,7 +412,7 @@ function renderLlmsFull(
     '',
     INSTALL,
     '',
-    SETUP,
+    setup(version),
     '',
     '## Conventions',
     '',
@@ -468,7 +475,7 @@ Use this file as system context when generating code that uses Moul UI. For the 
 
 ${INSTALL}
 
-${SETUP}
+${setup(version)}
 
 ## 2. Rules
 

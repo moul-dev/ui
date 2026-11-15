@@ -70,7 +70,7 @@ bun run dev:docs   # Astro dev server
 | :--- | :--- |
 | `bun run dev` | Runs the sandbox and docs dev servers with combined, color-coded logs |
 | `bun run build` | Builds the library, then the docs site |
-| `bun run build:ui` | Checks for React dependencies, type-checks, builds both entry points into `ui/dist` with Vite, writes `dist/custom-elements.json`, and checks bundle sizes |
+| `bun run build:ui` | Checks for React dependencies, type-checks, builds every entry point for npm and the CDN into `ui/dist` with Vite, writes `dist/custom-elements.json`, checks bundle sizes, and checks that the CDN files share one Lit and one motion |
 | `bun run build:docs` | Checks for React dependencies and builds the static docs site into `docs/dist` |
 | `bun run test` | Runs the Vitest suite for `@moul-dev/web-component` |
 | `bun run types:check` | Type-checks `ui` (`tsc -b`) and `docs` (`astro check`) |
