@@ -1,5 +1,6 @@
 import * as fc from 'fast-check'
 import { describe, expect, it } from 'vitest'
+import { cdnProblems, staticImports } from '../../scripts/check-cdn'
 import {
   bumpVersion,
   changelogSlug,
@@ -164,5 +165,107 @@ describe('SemVer bump (Req 15.10, 15.11)', () => {
 
   it('formats changelog dates as UTC YYYY-MM-DD', () => {
     expect(utcIsoDate(new Date('2026-10-31T23:30:00-05:00'))).toBe('2026-11-01')
+  })
+})
+
+describe('CDN build check', () => {
+  // Minified the way Rolldown writes the CDN files: banner, then imports.
+  const lit =
+    '"use client";var e=globalThis;(e.litHtmlVersions??=[]).push(`3.3.3`),(e.reactiveElementVersions??=[]).push(`2.1.2`),(e.litElementVersions??=[]).push(`4.2.2`);export{e as t};'
+  const motion =
+    '"use client";var e=[`setup`,`read`,`resolveKeyframes`,`preUpdate`,`update`,`preRender`,`render`,`postRender`];export{e as t};'
+  const build: Record<string, string> = {
+    'moul-ui.js':
+      '"use client";import{t as e}from"./chunks/lit.js";import{t}from"./chunks/motion.js";import"./chunks/shared.js";var n=()=>import(`./chunks/flow.js`);',
+    'effects.js':
+      '"use client";import{t as e}from"./chunks/lit.js";import{t}from"./chunks/motion.js";',
+    'canvas.js':
+      '"use client";var e={"moul-globe":()=>import(`./canvas/globe.js`)};',
+    'canvas/globe.js':
+      '"use client";import{t as e}from"../chunks/lit.js";import{t as n}from"../chunks/shared.js";',
+    'chunks/flow.js': '"use client";var e=1;export{e as t};',
+    'chunks/lit.js': lit,
+    'chunks/motion.js': motion,
+    'chunks/shared.js':
+      '"use client";import{t as e}from"./lit.js";export{e as t};',
+  }
+
+  it('reads the static imports at the top of a minified file', () => {
+    expect(staticImports('canvas/globe.js', build['canvas/globe.js'])).toEqual([
+      'chunks/lit.js',
+      'chunks/shared.js',
+    ])
+    // Side-effect imports count; `import()` further down does not.
+    expect(staticImports('moul-ui.js', build['moul-ui.js'])).toEqual([
+      'chunks/lit.js',
+      'chunks/motion.js',
+      'chunks/shared.js',
+    ])
+    expect(staticImports('canvas.js', build['canvas.js'])).toEqual([])
+  })
+
+  it('passes a build with one Lit, one motion and separate entries', () => {
+    expect(cdnProblems(build)).toEqual([])
+  })
+
+  it('fails when Lit is bundled into a second file', () => {
+    const problems = cdnProblems({
+      ...build,
+      'effects.js': build['effects.js'] + lit.replace('"use client";', ''),
+    })
+    expect(problems).toHaveLength(1)
+    expect(problems[0]).toMatch(
+      /^lit is bundled 2 times, in chunks\/lit\.js, effects\.js\./,
+    )
+  })
+
+  it('fails when motion is bundled into a second file', () => {
+    const problems = cdnProblems({
+      ...build,
+      'moul-ui.js': build['moul-ui.js'] + motion.replace('"use client";', ''),
+    })
+    expect(problems).toEqual([
+      expect.stringMatching(/^motion is bundled 2 times/),
+    ])
+  })
+
+  it('fails when a runtime marker is missing, so the check cannot go blind', () => {
+    expect(
+      cdnProblems({ ...build, 'chunks/motion.js': '"use client";export{};' }),
+    ).toEqual([expect.stringMatching(/^No CDN file carries motion's marker/)])
+  })
+
+  it('fails when the main entry imports the effects or a canvas entry', () => {
+    expect(
+      cdnProblems({
+        ...build,
+        'moul-ui.js': `"use client";import"./effects.js";${build['moul-ui.js'].slice(13)}`,
+      }),
+    ).toEqual([expect.stringMatching(/^moul-ui\.js imports effects\.js\./)])
+  })
+
+  it('fails when the canvas loader imports an element up front', () => {
+    expect(
+      cdnProblems({
+        ...build,
+        'canvas.js': '"use client";import"./canvas/globe.js";',
+      }),
+    ).toEqual([
+      expect.stringMatching(/^canvas\.js imports canvas\/globe\.js, chunks\//),
+    ])
+  })
+
+  it('fails when a canvas element reaches motion through a shared chunk', () => {
+    expect(
+      cdnProblems({
+        ...build,
+        'chunks/shared.js':
+          '"use client";import{t as e}from"./lit.js";import"./motion.js";export{e as t};',
+      }),
+    ).toEqual([
+      expect.stringMatching(
+        /^canvas\/globe\.js loads motion \(chunks\/motion\.js\)/,
+      ),
+    ])
   })
 })

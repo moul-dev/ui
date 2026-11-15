@@ -8,8 +8,9 @@
  * The main entry's budget is what keeps `@moul-dev/web-component` from
  * paying for `@moul-dev/web-component/effects`, and both of theirs keep them
  * from paying for the canvas elements. Every file of the canvas entry (the
- * loader, each element's file and the shared chunk) needs a budget of its
- * own: a canvas file without one fails the check until `--write` records it.
+ * loader, each element's file and the shared chunk) and every file of the
+ * CDN build (its entries and the chunks they share) needs a budget of its
+ * own: a file without one fails the check until `--write` records it.
  *
  *   bun run size           check `ui/dist` against the budgets (run build:ui first)
  *   bun run size --write   record the current sizes as the new budgets
@@ -60,20 +61,33 @@ export function overBudget(results: SizeResult[]): SizeResult[] {
   )
 }
 
-/** The canvas entry's built files, under `dist/` and `dist/cdn/`, relative to `ui/`. */
-export function canvasFiles(root: string): string[] {
-  return ['dist', 'dist/cdn'].flatMap((dir) => {
-    const files: string[] = []
-    if (existsSync(join(root, dir, 'canvas.js'))) files.push(`${dir}/canvas.js`)
-    for (const sub of ['canvas', 'chunks']) {
-      const path = join(root, dir, sub)
-      if (!existsSync(path)) continue
-      for (const name of readdirSync(path).sort()) {
-        if (name.endsWith('.js')) files.push(`${dir}/${sub}/${name}`)
-      }
+/**
+ * Built files that need a budget beyond the ones `size-budget.json` names:
+ * the canvas entry's files under `dist/`, and every file under `dist/cdn/`,
+ * relative to `ui/`.
+ */
+export function budgetedFiles(root: string): string[] {
+  const files: string[] = []
+  if (existsSync(join(root, 'dist/canvas.js'))) files.push('dist/canvas.js')
+  for (const sub of ['dist/canvas', 'dist/chunks']) {
+    const path = join(root, sub)
+    if (!existsSync(path)) continue
+    for (const name of readdirSync(path).sort()) {
+      if (name.endsWith('.js')) files.push(`${sub}/${name}`)
     }
-    return files
-  })
+  }
+  const walk = (dir: string) => {
+    const path = join(root, dir)
+    if (!existsSync(path)) return
+    for (const entry of readdirSync(path, { withFileTypes: true }).sort(
+      (a, b) => a.name.localeCompare(b.name),
+    )) {
+      if (entry.isDirectory()) walk(`${dir}/${entry.name}`)
+      else if (entry.name.endsWith('.js')) files.push(`${dir}/${entry.name}`)
+    }
+  }
+  walk('dist/cdn')
+  return files
 }
 
 const kb = (bytes: number) => `${(bytes / 1000).toFixed(2)} kB`
@@ -96,7 +110,7 @@ function main(): void {
   }
 
   const files = [
-    ...new Set([...Object.keys(budget), ...canvasFiles(uiDir)]),
+    ...new Set([...Object.keys(budget), ...budgetedFiles(uiDir)]),
   ].filter((file) => existsSync(join(uiDir, file)))
   const results: SizeResult[] = files.map((file) => ({
     file,
@@ -112,7 +126,7 @@ function main(): void {
         ? `${colors.red}no budget${colors.reset}`
         : `${color}${diff === 0 ? 'at budget' : `${signed(diff)} vs budget`}${colors.reset}`
     console.log(
-      `  ${result.file.padEnd(36)} ${kb(result.bytes).padStart(10)}  ${colors.dim}gzip ${kb(result.gzipBytes).padStart(9)}${colors.reset}  ${status}`,
+      `  ${result.file.padEnd(42)} ${kb(result.bytes).padStart(10)}  ${colors.dim}gzip ${kb(result.gzipBytes).padStart(9)}${colors.reset}  ${status}`,
     )
   }
 
