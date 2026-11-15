@@ -8,10 +8,14 @@
  *   means a second `ReactiveElement` ("Multiple versions of Lit loaded"); a
  *   second motion means a second frame loop. The markers below are strings
  *   each runtime's code carries, and they survive minification.
- * - `moul-ui.js` imports no effects or canvas entry.
- * - `canvas.js` imports nothing up front, so an element's file loads only
- *   when its tag appears.
+ * - `moul-ui.js` imports no effects, canvas or elements entry.
+ * - `canvas.js` and `loader.js` import nothing up front, so an element's
+ *   file loads only when its tag appears.
  * - No canvas element loads motion; they check reduced motion and nothing else.
+ * - The elements entries (`loader.js`, `elements/*`) share only Lit and
+ *   motion with the bundles (`moul-ui.js`, `effects.js`, the canvas
+ *   entries). Any other file in common would mean one of them changed shape
+ *   to make room for the other, and an element pulling in a bundle's chunk.
  *
  *   bun scripts/check-cdn.ts   check `ui/dist/cdn` (the last step of `bun run build:ui`)
  */
@@ -89,23 +93,55 @@ export function cdnProblems(files: CdnFiles): string[] {
     runtimeFiles.set(runtime, carriers)
   }
 
+  const isElementsEntry = (name: string) =>
+    name === 'loader.js' || name.startsWith('elements/')
+  const isBundleEntry = (name: string) =>
+    name === 'moul-ui.js' ||
+    name === 'effects.js' ||
+    name === 'canvas.js' ||
+    name.startsWith('canvas/')
   const isEntryOtherThanMain = (name: string) =>
-    name === 'effects.js' || name === 'canvas.js' || name.startsWith('canvas/')
+    (isBundleEntry(name) && name !== 'moul-ui.js') || isElementsEntry(name)
   const fromMain = [...staticClosure(files, 'moul-ui.js')].filter(
     isEntryOtherThanMain,
   )
   if (fromMain.length > 0) {
     problems.push(
-      `moul-ui.js imports ${fromMain.join(', ')}. A page that loads only the main entry must not download effects or canvas code.`,
+      `moul-ui.js imports ${fromMain.join(', ')}. A page that loads only the main entry must not download effects, canvas or per-element code.`,
     )
   }
 
-  const fromLoader = [...staticClosure(files, 'canvas.js')].filter(
-    (name) => name !== 'canvas.js',
+  for (const loader of ['canvas.js', 'loader.js']) {
+    if (files[loader] === undefined) continue
+    const fromLoader = [...staticClosure(files, loader)].filter(
+      (name) => name !== loader,
+    )
+    if (fromLoader.length > 0) {
+      problems.push(
+        `${loader} imports ${fromLoader.join(', ')} up front. The loader must import nothing until a tag appears.`,
+      )
+    }
+  }
+
+  const runtimes = new Set(
+    [...runtimeFiles.values()].flatMap((carriers) => [...carriers]),
   )
-  if (fromLoader.length > 0) {
+  const reachedFrom = (isEntry: (name: string) => boolean) =>
+    new Set(
+      names.filter(isEntry).flatMap((name) => [...staticClosure(files, name)]),
+    )
+  const fromBundles = reachedFrom(isBundleEntry)
+  const shared = [...reachedFrom(isElementsEntry)].filter(
+    (name) => fromBundles.has(name) && !runtimes.has(name),
+  )
+  // Without every runtime's marker it cannot tell Lit's file from any
+  // other; that problem is reported above.
+  const sawEveryRuntime = [...runtimeFiles.values()].every(
+    (carriers) => carriers.size > 0,
+  )
+  if (shared.length > 0 && sawEveryRuntime) {
     problems.push(
-      `canvas.js imports ${fromLoader.join(', ')} up front. The loader must import nothing until a canvas tag appears.`,
+      `The elements entries and the bundles both load ${shared.join(', ')}. They share Lit and motion and nothing else, so neither changes shape for the other and no element downloads a bundle's chunk.`,
     )
   }
 

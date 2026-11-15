@@ -1,6 +1,7 @@
 /// <reference types="vitest" />
 import fs from 'node:fs'
 import { resolve } from 'node:path'
+import { parseAst, type ResolvedConfig, transformWithOxc } from 'vite'
 import dts from 'vite-plugin-dts'
 import { defineConfig, type Plugin } from 'vitest/config'
 
@@ -131,13 +132,96 @@ interface Statement {
   type: string
   start: number
   end: number
-  declaration?: { type: string; id?: { name: string } | null } | null
+  importKind?: string
+  declaration?: {
+    type: string
+    id?: { name: string } | null
+    declarations?: Array<{ id: { type: string; name?: string } }>
+  } | null
   source?: { value: unknown; start: number; end: number } | null
   specifiers?: Array<{
     type: string
+    importKind?: string
     imported?: { type: string; name?: string }
     local: { type: string; name?: string }
   }>
+}
+
+/** Every identifier name inside an AST node, wherever it appears. */
+function identifiersIn(node: unknown, into = new Set<string>()): Set<string> {
+  if (Array.isArray(node)) {
+    for (const child of node) identifiersIn(child, into)
+  } else if (node && typeof node === 'object') {
+    const fields = node as Record<string, unknown>
+    if (fields.type === 'Identifier' && typeof fields.name === 'string') {
+      into.add(fields.name)
+    }
+    for (const value of Object.values(fields)) {
+      if (value && typeof value === 'object') identifiersIn(value, into)
+    }
+  }
+  return into
+}
+
+/** The names a top-level statement declares, other than types. */
+function declaredNames(statement: Statement): string[] {
+  const declaration =
+    statement.type === 'ExportNamedDeclaration'
+      ? statement.declaration
+      : (statement as Statement['declaration'])
+  if (declaration?.type === 'FunctionDeclaration') {
+    return declaration.id ? [declaration.id.name] : []
+  }
+  if (declaration?.type === 'VariableDeclaration') {
+    return (declaration.declarations ?? []).flatMap((declarator) =>
+      declarator.id.type === 'Identifier' && declarator.id.name
+        ? [declarator.id.name]
+        : [],
+    )
+  }
+  return []
+}
+
+/**
+ * The exports of a module (parsed with types) that work without motion:
+ * those whose declarations reach no value imported from `motion`, directly
+ * or through the module's other declarations. Over-counts what a
+ * declaration uses, so it can only err towards keeping motion.
+ */
+export function motionFreeExports(body: Statement[]): string[] {
+  const motionValues = new Set<string>()
+  const mentions = new Map<string, Set<string>>()
+  const exported: string[] = []
+  for (const statement of body) {
+    if (statement.type === 'ImportDeclaration') {
+      if (statement.source?.value !== 'motion') continue
+      if (statement.importKind === 'type') continue
+      for (const spec of statement.specifiers ?? []) {
+        if (spec.importKind !== 'type' && spec.local.name) {
+          motionValues.add(spec.local.name)
+        }
+      }
+      continue
+    }
+    const names = declaredNames(statement)
+    const used = identifiersIn(statement)
+    for (const name of names) mentions.set(name, used)
+    if (statement.type === 'ExportNamedDeclaration' && !statement.source) {
+      exported.push(...names)
+      for (const spec of statement.specifiers ?? []) {
+        if (spec.local.name) exported.push(spec.local.name)
+      }
+    }
+  }
+  const needsMotion = (name: string, seen: Set<string>): boolean => {
+    if (motionValues.has(name)) return true
+    if (seen.has(name)) return false
+    seen.add(name)
+    return [...(mentions.get(name) ?? [])].some(
+      (used) => used !== name && needsMotion(used, seen),
+    )
+  }
+  return exported.filter((name) => !needsMotion(name, new Set()))
 }
 
 /**
@@ -153,15 +237,22 @@ interface Statement {
  * points every import that takes nothing else at it. `utils/motion.ts`
  * imports them from there and re-exports them, so they are still bundled
  * once. The npm build compiles the module as written.
+ *
+ * The elements entries' copies (see `elementsNamespacePlugin`) split off
+ * more: every export that works without motion (`motionFreeExports`: the
+ * checks, the easing and spring constants, the pose helpers), so
+ * `elements/button.js`, which reads `EASE_OUT`, does not download motion
+ * either. The bundles keep the two-function split, and their bytes.
  */
 export function reducedMotionModulePlugin(): Plugin {
   const motionModule = resolve(__dirname, 'src/utils/motion.ts')
   const srcDir = `${resolve(__dirname, 'src')}/`
   const specifier = 'moul:reduced-motion'
   const virtualId = `\0${specifier}`
-  const names = ['prefersReducedMotion', 'watchReducedMotion']
-  /** Whether an import or re-export takes the reduced-motion checks and nothing else. */
-  const takesOnlyChecks = (statement: Statement): boolean => {
+  const checks = ['prefersReducedMotion', 'watchReducedMotion']
+  let motionFree: string[] | undefined
+  /** Whether an import or re-export takes `names` and nothing else. */
+  const takesOnly = (statement: Statement, names: string[]): boolean => {
     const taken = (statement.specifiers ?? []).map((spec) =>
       spec.type === 'ImportSpecifier'
         ? spec.imported
@@ -184,23 +275,34 @@ export function reducedMotionModulePlugin(): Plugin {
       return id === specifier ? virtualId : null
     },
     load(id) {
-      if (id !== virtualId) return null
-      return { code: fs.readFileSync(motionModule, 'utf8'), moduleType: 'ts' }
+      return withoutElementsNamespace(id) === virtualId
+        ? { code: fs.readFileSync(motionModule, 'utf8'), moduleType: 'ts' }
+        : null
     },
-    async transform(code, id) {
+    async transform(code, namespacedId) {
+      // The elements entries' copies (see `elementsNamespacePlugin`) are cut
+      // the same way as the modules they copy.
+      const id = withoutElementsNamespace(namespacedId)
       if (!id.startsWith(srcDir) || !code.includes('motion')) return null
       const body = this.parse(code).body as unknown as Statement[]
+      motionFree ??= motionFreeExports(
+        parseAst(fs.readFileSync(motionModule, 'utf8'), { lang: 'ts' })
+          .body as unknown as Statement[],
+      )
+      const names = namespacedId === id ? checks : motionFree
       // [start, end, replacement], applied from the end so offsets hold.
       const edits: Array<[number, number, string]> = []
+      const moved: string[] = []
       for (const statement of body) {
         if (id === motionModule) {
-          const { declaration } = statement
+          const declared = declaredNames(statement)
           if (
             statement.type === 'ExportNamedDeclaration' &&
-            declaration?.type === 'FunctionDeclaration' &&
-            names.includes(declaration.id?.name ?? '')
+            declared.length > 0 &&
+            declared.every((name) => names.includes(name))
           ) {
             edits.push([statement.start, statement.end, ''])
+            moved.push(...declared)
           }
           continue
         }
@@ -210,17 +312,19 @@ export function reducedMotionModulePlugin(): Plugin {
             statement.type !== 'ExportNamedDeclaration') ||
           typeof source?.value !== 'string' ||
           !source.value.endsWith('motion') ||
-          !takesOnlyChecks(statement) ||
-          (await this.resolve(source.value, id))?.id !== motionModule
+          !takesOnly(statement, names) ||
+          withoutElementsNamespace(
+            (await this.resolve(source.value, namespacedId))?.id ?? '',
+          ) !== motionModule
         ) {
           continue
         }
         edits.push([source.start, source.end, JSON.stringify(specifier)])
       }
       if (id === motionModule) {
-        if (edits.length !== names.length) {
+        if (moved.length !== names.length) {
           this.error(
-            `[reducedMotionModulePlugin] Expected src/utils/motion.ts to export the functions ${names.join(' and ')}; update the plugin to match.`,
+            `[reducedMotionModulePlugin] Expected src/utils/motion.ts to declare ${names.join(', ')} in exports of their own; update the plugin to match.`,
           )
         }
         edits.push([
@@ -291,12 +395,163 @@ export function canvasEntries(): Record<string, string> {
   ])
 }
 
-/** Every entry of the CDN pass, by output name: the main and effects entries and the canvas pass's. */
+/**
+ * The elements pass's entries: the loader, plus one per file in
+ * `src/elements/`, named after the file (`elements/button` for
+ * `button.ts`). `bun run sync:elements` writes those files.
+ */
+export function elementEntries(): Record<string, string> {
+  const dir = resolve(__dirname, 'src/elements')
+  const pieces = fs.existsSync(dir)
+    ? fs.readdirSync(dir).filter((name) => /^[a-z0-9-]+\.ts$/.test(name))
+    : []
+  return Object.fromEntries([
+    ['loader', resolve(__dirname, 'src/loader.ts')],
+    ...pieces.map((name) => [
+      `elements/${name.replace(/\.ts$/, '')}`,
+      resolve(dir, name),
+    ]),
+  ])
+}
+
+/**
+ * Elements entries only (the npm elements pass, and their copies in the CDN
+ * pass). The build applies `package.json`'s `sideEffects`, which lists
+ * built files, to `src/` as well, so it takes every component module for
+ * free of side effects, and drops an import that runs one only to register
+ * its element: `Button.ts`'s `import '../IconMorph/IconMorph'`. The bundles
+ * never notice, because their entries export every component anyway; one
+ * element's file would lose the elements it renders. This marks each module
+ * that registers an element as having side effects, so those imports stay.
+ */
+export function elementModulesHaveSideEffectsPlugin(options: {
+  onlyCopies: boolean
+}): Plugin {
+  const srcDir = `${resolve(__dirname, 'src')}/`
+  return {
+    name: 'element-modules-have-side-effects',
+    apply: 'build',
+    transform(code, id) {
+      if (options.onlyCopies && !id.startsWith(ELEMENTS_NAMESPACE)) return null
+      return withoutElementsNamespace(id).startsWith(srcDir) &&
+        /\bdefineElement\(\s*['"]moul-/.test(code)
+        ? { moduleSideEffects: true }
+        : null
+    },
+  }
+}
+
+/**
+ * npm elements pass only. The loader imports canvas elements from
+ * `./canvas/<name>`, which the canvas pass builds; here they stay imports
+ * of those files rather than second copies of the elements.
+ */
+export function canvasPiecesExternalPlugin(): Plugin {
+  const loader = resolve(__dirname, 'src/loader.ts')
+  return {
+    name: 'canvas-pieces-external',
+    enforce: 'pre',
+    resolveId(source, importer) {
+      return importer === loader && /^\.\/canvas\/[a-z0-9-]+$/.test(source)
+        ? { id: `${source}.js`, external: true }
+        : null
+    },
+  }
+}
+
+/**
+ * Every entry of the CDN pass, by output name: the main and effects
+ * entries, the canvas pass's, and the elements pass's.
+ */
 export function cdnEntries(): Record<string, string> {
   return {
     'moul-ui': resolve(__dirname, ENTRIES.main.source),
     effects: resolve(__dirname, ENTRIES.effects.source),
     ...canvasEntries(),
+    ...elementEntries(),
+  }
+}
+
+/** Whether a CDN entry is the loader or one element's file. */
+function isElementsEntry(name: string): boolean {
+  return name === 'loader' || name.startsWith('elements/')
+}
+
+/** The prefix of the elements entries' own copies of modules in the CDN pass. */
+const ELEMENTS_NAMESPACE = '\0moul-elements:'
+
+/** A module id without the elements namespace: the file it copies. */
+export function withoutElementsNamespace(id: string): string {
+  return id.startsWith(ELEMENTS_NAMESPACE)
+    ? id.slice(ELEMENTS_NAMESPACE.length)
+    : id
+}
+
+/**
+ * CDN build only. `elements/<name>.js` must hold one element's code in
+ * chunks of its own, and `moul-ui.js` and `effects.js` hold the same code
+ * inline. A module lands in exactly one chunk, so one build cannot do both.
+ * Instead, everything the elements entries import is a copy of its own,
+ * under `\0moul-elements:`, except Lit's runtime and motion, which every
+ * entry shares. A page that loads `moul-ui.js` and the loader runs one Lit
+ * and one motion, the loader skips the tags `moul-ui.js` registered, and
+ * the bundles are exactly what they were before the elements entries.
+ */
+export function elementsNamespacePlugin(): Plugin {
+  const elementsDir = `${resolve(__dirname, 'src/elements')}/`
+  let config: ResolvedConfig | undefined
+  return {
+    name: 'elements-namespace',
+    apply: 'build',
+    enforce: 'pre',
+    configResolved(resolved) {
+      // `vitest/config` types this hook with Vitest's own copy of Vite.
+      config = resolved as unknown as ResolvedConfig
+    },
+    async resolveId(source, importer, options) {
+      if (
+        !importer ||
+        !(
+          importer.startsWith(ELEMENTS_NAMESPACE) ||
+          importer.startsWith(elementsDir)
+        )
+      ) {
+        return null
+      }
+      const resolved = await this.resolve(
+        source,
+        withoutElementsNamespace(importer),
+        { ...options, skipSelf: true },
+      )
+      if (
+        !resolved ||
+        resolved.external ||
+        LIT_RUNTIME.test(resolved.id) ||
+        MOTION.test(resolved.id)
+      ) {
+        return resolved
+      }
+      // Keeps what the package says about side effects, so tree-shaking
+      // drops the same unused modules from a copy as from the original.
+      return { ...resolved, id: `${ELEMENTS_NAMESPACE}${resolved.id}` }
+    },
+    load(id) {
+      if (!id.startsWith(ELEMENTS_NAMESPACE)) return null
+      const file = withoutElementsNamespace(id)
+      // A copy of another plugin's virtual module is that plugin's to load.
+      if (file.startsWith('\0')) return null
+      const code = fs.readFileSync(file, 'utf8')
+      if (!/\.ts$/.test(file)) return { code, moduleType: 'js' }
+      // Vite compiles TypeScript by file path and skips `\0` ids, so a copy
+      // is compiled here, by its file's path, with the same tsconfig.
+      return transformWithOxc(
+        code,
+        file,
+        { lang: 'ts', sourcemap: false },
+        undefined,
+        config,
+      ).then((result) => ({ code: result.code, moduleType: 'js' }))
+    },
   }
 }
 
@@ -349,6 +604,9 @@ export function cdnChunkGroups(entries: Record<string, string>) {
     if (!families) {
       const reached = new Map<string, Set<Family>>()
       for (const [name, entry] of Object.entries(entries)) {
+        // Their modules are copies no other entry reaches (see
+        // `elementsNamespacePlugin`), so they need no family chunks.
+        if (isElementsEntry(name)) continue
         if (!graph.getModuleInfo(entry)) {
           throw new Error(
             `[cdnChunkGroups] The CDN pass has no module ${entry}.`,
@@ -419,9 +677,11 @@ export function cdnChunkGroups(entries: Record<string, string>) {
 export default defineConfig(({ mode }) => {
   const isCdn = mode === 'cdn'
   const isCanvas = mode === 'canvas'
+  const isElements = mode === 'elements'
   const entry = mode === 'effects' ? ENTRIES.effects : ENTRIES.main
   // Only the first pass clears `dist/`, writes declarations and copies assets.
-  const isFirstPass = !isCdn && !isCanvas && entry === ENTRIES.main
+  const isFirstPass =
+    !isCdn && !isCanvas && !isElements && entry === ENTRIES.main
   return {
     // motion's ES build reads `process.env.NODE_ENV` and leaves it to the
     // app's bundler to replace. Nothing replaces it on a CDN, so without
@@ -456,8 +716,18 @@ export default defineConfig(({ mode }) => {
           ]
         : []),
       ...(isCdn
-        ? [reducedMotionModulePlugin()]
+        ? [
+            elementsNamespacePlugin(),
+            reducedMotionModulePlugin(),
+            elementModulesHaveSideEffectsPlugin({ onlyCopies: true }),
+          ]
         : [noInlinedDependenciesPlugin()]),
+      ...(isElements
+        ? [
+            canvasPiecesExternalPlugin(),
+            elementModulesHaveSideEffectsPlugin({ onlyCopies: false }),
+          ]
+        : []),
     ],
     build: {
       target: 'esnext',
@@ -466,9 +736,13 @@ export default defineConfig(({ mode }) => {
       // `public/` holds the sandbox's favicon and icons, not package assets.
       copyPublicDir: false,
       lib:
-        isCanvas || isCdn
+        isCanvas || isCdn || isElements
           ? {
-              entry: isCdn ? cdnEntries() : canvasEntries(),
+              entry: isCdn
+                ? cdnEntries()
+                : isElements
+                  ? elementEntries()
+                  : canvasEntries(),
               formats: ['es'],
               fileName: (_format: string, name: string) => `${name}.js`,
             }
@@ -493,12 +767,29 @@ export default defineConfig(({ mode }) => {
                 manualChunks: canvasChunk,
               }
             : {}),
+          ...(isElements
+            ? { chunkFileNames: 'chunks/elements-[name].js' }
+            : {}),
           // The CDN files are never re-bundled, so they can drop whitespace
           // and pure annotations.
           ...(isCdn
             ? {
                 minify: true,
-                chunkFileNames: 'chunks/[name].js',
+                // The elements entries' chunks hold their own copies of
+                // modules, so they are named apart from the bundles' chunks.
+                chunkFileNames: (chunk: {
+                  name: string
+                  moduleIds: readonly string[]
+                }) =>
+                  !chunk.moduleIds.some((id) =>
+                    id.startsWith(ELEMENTS_NAMESPACE),
+                  )
+                    ? 'chunks/[name].js'
+                    : // A copy of a virtual module is named after its id,
+                      // `_moul-elements__moul_reduced-motion`.
+                      chunk.name.startsWith('_moul-elements_')
+                      ? `chunks/elements-${chunk.name.replace(/^_moul-elements_+moul_/, '')}.js`
+                      : 'chunks/elements-[name].js',
                 codeSplitting: { groups: cdnChunkGroups(cdnEntries()) },
               }
             : {}),

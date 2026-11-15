@@ -12,6 +12,15 @@
  * CDN build (its entries and the chunks they share) needs a budget of its
  * own: a file without one fails the check until `--write` records it.
  *
+ * Each `elements/<name>.js` entry, in `dist/` and in `dist/cdn/`, is held to
+ * one budget for itself and every chunk it imports statically, keyed
+ * `dist/elements/button.js with its chunks`: what importing that one
+ * element costs. Its chunks need no budgets of their own, since where one
+ * chunk ends and the next begins moves whenever another element starts
+ * sharing a module, and the total does not. A CDN element's total counts
+ * Lit and motion when it loads them, so an element that starts to load
+ * motion shows up as 53 kB.
+ *
  *   bun run size           check `ui/dist` against the budgets (run build:ui first)
  *   bun run size --write   record the current sizes as the new budgets
  */
@@ -24,6 +33,7 @@ import {
 } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { gzipSync } from 'node:zlib'
+import { readCdnFiles, staticClosure } from './check-cdn'
 
 const colors = {
   reset: '\x1b[0m',
@@ -40,6 +50,7 @@ const budgetPath = join(uiDir, 'size-budget.json')
 export type SizeBudget = Record<string, number>
 
 export interface SizeResult {
+  /** The budget's key: a file, or an element entry with its chunks. */
   file: string
   bytes: number
   gzipBytes: number
@@ -54,6 +65,59 @@ export function measure(file: string): { bytes: number; gzipBytes: number } {
   }
 }
 
+/** The suffix of an element entry's budget key, which counts its chunks too. */
+export const WITH_CHUNKS = ' with its chunks'
+
+/** A budget's key, and the files it counts, relative to `ui/`. */
+export interface Measured {
+  key: string
+  files: string[]
+}
+
+/**
+ * Each `elements/<name>.js` under `dist/` and `dist/cdn/`, with every file
+ * it imports statically.
+ */
+export function elementEntries(root: string): Measured[] {
+  const items: Measured[] = []
+  for (const base of ['dist', 'dist/cdn']) {
+    const dir = join(root, base)
+    if (!existsSync(join(dir, 'elements'))) continue
+    const files = readCdnFiles(join(dir, 'elements'))
+    const all = readCdnFiles(dir)
+    for (const name of Object.keys(files).sort()) {
+      const entry = `elements/${name}`
+      items.push({
+        key: `${base}/${entry}${WITH_CHUNKS}`,
+        files: [...staticClosure(all, entry)]
+          .sort()
+          .map((file) => `${base}/${file}`),
+      })
+    }
+  }
+  return items
+}
+
+/** Every budget to check: single files, and element entries with their chunks, whose chunks need no budget of their own. */
+export function measuredItems(root: string, budget: SizeBudget): Measured[] {
+  const elements = elementEntries(root)
+  // An element's own files and chunks are counted in its total. Lit and
+  // motion are too, but they are the bundles' as well, and keep budgets of
+  // their own.
+  const counted = new Set(
+    elements
+      .flatMap((item) => item.files)
+      .filter((file) => /\/(?:elements\/|chunks\/elements-)/.test(file)),
+  )
+  const files = [
+    ...new Set([
+      ...Object.keys(budget).filter((key) => !key.endsWith(WITH_CHUNKS)),
+      ...budgetedFiles(root),
+    ]),
+  ].filter((file) => existsSync(join(root, file)) && !counted.has(file))
+  return [...files.map((file) => ({ key: file, files: [file] })), ...elements]
+}
+
 /** Files over budget, with how far over they are. */
 export function overBudget(results: SizeResult[]): SizeResult[] {
   return results.filter(
@@ -63,12 +127,14 @@ export function overBudget(results: SizeResult[]): SizeResult[] {
 
 /**
  * Built files that need a budget beyond the ones `size-budget.json` names:
- * the canvas entry's files under `dist/`, and every file under `dist/cdn/`,
- * relative to `ui/`.
+ * the canvas entry's files and the loader under `dist/`, the chunks under
+ * `dist/chunks/`, and every file under `dist/cdn/`, relative to `ui/`.
  */
 export function budgetedFiles(root: string): string[] {
   const files: string[] = []
-  if (existsSync(join(root, 'dist/canvas.js'))) files.push('dist/canvas.js')
+  for (const loader of ['dist/canvas.js', 'dist/loader.js']) {
+    if (existsSync(join(root, loader))) files.push(loader)
+  }
   for (const sub of ['dist/canvas', 'dist/chunks']) {
     const path = join(root, sub)
     if (!existsSync(path)) continue
@@ -99,7 +165,7 @@ function main(): void {
   const budget = JSON.parse(readFileSync(budgetPath, 'utf8')) as SizeBudget
 
   const missing = Object.keys(budget).filter(
-    (file) => !existsSync(join(uiDir, file)),
+    (key) => !existsSync(join(uiDir, key.replace(WITH_CHUNKS, ''))),
   )
   // `--write` drops the budget of a file that is no longer built.
   if (missing.length > 0 && !write) {
@@ -109,24 +175,41 @@ function main(): void {
     process.exit(1)
   }
 
-  const files = [
-    ...new Set([...Object.keys(budget), ...budgetedFiles(uiDir)]),
-  ].filter((file) => existsSync(join(uiDir, file)))
-  const results: SizeResult[] = files.map((file) => ({
-    file,
-    budget: budget[file],
-    ...measure(join(uiDir, file)),
-  }))
+  const results: SizeResult[] = measuredItems(uiDir, budget).map((item) => {
+    const sizes = item.files.map((file) => measure(join(uiDir, file)))
+    return {
+      file: item.key,
+      budget: budget[item.key],
+      bytes: sizes.reduce((sum, size) => sum + size.bytes, 0),
+      gzipBytes: sizes.reduce((sum, size) => sum + size.gzipBytes, 0),
+    }
+  })
+  const width = Math.max(42, ...results.map((result) => result.file.length))
 
+  // Element entries at budget are counted, not listed: there are hundreds.
+  let quietElements = 0
   for (const result of results) {
     const diff = result.bytes - (result.budget ?? result.bytes)
+    if (
+      result.file.endsWith(WITH_CHUNKS) &&
+      result.budget !== undefined &&
+      diff === 0
+    ) {
+      quietElements++
+      continue
+    }
     const color = diff > 0 ? colors.red : diff < 0 ? colors.green : colors.dim
     const status =
       result.budget === undefined
         ? `${colors.red}no budget${colors.reset}`
         : `${color}${diff === 0 ? 'at budget' : `${signed(diff)} vs budget`}${colors.reset}`
     console.log(
-      `  ${result.file.padEnd(42)} ${kb(result.bytes).padStart(10)}  ${colors.dim}gzip ${kb(result.gzipBytes).padStart(9)}${colors.reset}  ${status}`,
+      `  ${result.file.padEnd(width)} ${kb(result.bytes).padStart(10)}  ${colors.dim}gzip ${kb(result.gzipBytes).padStart(9)}${colors.reset}  ${status}`,
+    )
+  }
+  if (quietElements > 0) {
+    console.log(
+      `  ${colors.dim}${quietElements} element entries with their chunks, each at budget${colors.reset}`,
     )
   }
 

@@ -198,10 +198,10 @@ function main() {
       `"version": "${nextVersion}"`,
     ),
   )
-  // CDN URLs in the docs pin the exact version, because each CDN entry
-  // imports the chunks it shares with the others by relative URL and every
-  // file must come from one release. Changelog entries keep the version
-  // they shipped with.
+  // CDN URLs in the docs and the npm README pin the exact version, because
+  // each CDN entry imports the chunks it shares with the others by relative
+  // URL and every file must come from one release. Changelog entries keep
+  // the version they shipped with.
   const docsDir = 'docs/src/content/docs'
   const pinned = `@moul-dev/web-component@${currentVersion}/`
   const docsPages = readdirSync(join(rootDir, docsDir), { recursive: true })
@@ -210,8 +210,8 @@ function main() {
       (page) => page.endsWith('.mdx') && !/(^|[\\/])changelog[\\/]/.test(page),
     )
     .sort()
-  for (const page of docsPages) {
-    const relativePath = join(docsDir, page)
+    .map((page) => join(docsDir, page))
+  for (const relativePath of [...docsPages, 'ui/README.md']) {
     if (!readFileSync(join(rootDir, relativePath), 'utf8').includes(pinned)) {
       continue
     }

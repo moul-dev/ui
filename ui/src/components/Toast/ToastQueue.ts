@@ -4,6 +4,8 @@ import type { SemanticTone, VisualVariant } from '../../styles/semantic-tones'
 import { defineElement } from '../../utils/define-element'
 import { prefersReducedMotion, SPRING_GENTLE } from '../../utils/motion'
 import '../Button/Button'
+// `toastQueue.add()` creates `<moul-toast>`, so the region brings it along.
+import './Toast'
 import type { MoulToast } from './Toast'
 import { toastRegionStyles } from './Toast.styles'
 

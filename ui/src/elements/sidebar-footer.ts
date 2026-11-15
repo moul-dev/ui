@@ -1,0 +1,8 @@
+/**
+ * `@moul-dev/web-component/elements/sidebar-footer`: registers
+ * `<moul-sidebar-footer>` and the rest of its family, `<moul-sidebar>`,
+ * `<moul-sidebar-aside>`, `<moul-sidebar-brand>`, `<moul-sidebar-divider>`,
+ * `<moul-sidebar-group>`, `<moul-sidebar-header>`, `<moul-sidebar-item>`,
+ * `<moul-sidebar-main>` and `<moul-sidebar-user>`, when imported.
+ */
+export * from '../components/Sidebar'

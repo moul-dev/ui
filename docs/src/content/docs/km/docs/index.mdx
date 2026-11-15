@@ -79,6 +79,54 @@ Component នីមួយៗគឺជា Custom Element ស្តង់ដារ
 
 ---
 
+## Import ម្តងមួយ Element
+
+`import '@moul-dev/web-component'` Register App Elements ទាំង 121 ដូច្នេះទំព័រដែលមានប៊ូតុងតែមួយ ក៏នៅតែដឹក Charts, Chat និង Code Blocks ទៅជាមួយដែរ។ ដើម្បីដឹកតែអ្វីដែលទំព័រប្រើ សូម Import Element នីមួយៗដាច់ដោយឡែក៖
+
+```ts
+import '@moul-dev/web-component/style.css';
+import '@moul-dev/web-component/elements/button';
+import '@moul-dev/web-component/elements/text-field';
+```
+
+Path គឺជា Tag ដោយគ្មាន `moul-` សម្រាប់គ្រប់ Element ក្នុង Main និង [Effects](/km/docs/effects/) Imports (`elements/tilt`, `elements/reveal`)។ Import នីមួយៗ Register Element របស់វា និង Elements ដែលវា Render ដូចជា Icon ក្នុង `<moul-button>` ហើយមិន Register អ្វីផ្សេងទៀតទេ៖ `elements/button` មានទំហំ 35 KB មុនពេល Bundler របស់អ្នក Minify ចំណែក Import ទាំងមូលមានទំហំ 1 MB។ Lit, motion និង Dependencies ផ្សេងទៀតនៅជា Bare Imports ដូច្នេះ Bundler របស់អ្នកប្រើច្បាប់តែមួយរួមជាមួយ App របស់អ្នក។ [Canvas Elements](/km/docs/canvas/) រក្សា Paths ផ្ទាល់ខ្លួន ដូចជា `@moul-dev/web-component/canvas/globe`។
+
+Element មួយនាំយកគ្រួសាររបស់វាមកជាមួយ៖ `elements/tabs` Register `<moul-tabs>`, `<moul-tab>` និង `<moul-tab-panel>` ហើយ `elements/tab` ក៏ដូចគ្នាដែរ។ Import មួយសម្រាប់ Component នីមួយៗដែលអ្នកប្រើ ដូច្នេះ Card ដែលមានប៊ូតុងនៅខាងក្នុង ត្រូវការពីរ៖
+
+```ts
+import '@moul-dev/web-component/elements/card';
+import '@moul-dev/web-component/elements/button';
+```
+
+Class និង Types របស់ Element មកពី Path ដដែល៖
+
+```ts
+import { MoulButton, type ButtonVariant } from '@moul-dev/web-component/elements/button';
+```
+
+ជ្រើសរើសរបៀបតែមួយសម្រាប់ App មួយ។ Imports ទាំងមូល និង Elements តែមួយៗ ត្រូវបាន Build ដាច់ពីគ្នា ដូច្នេះ Element ដែល Import តាមរបៀបទាំងពីរ នឹងត្រូវ Bundle ពីរដង ហើយច្បាប់ទីពីរត្រូវបានរំលង ដោយមានការព្រមាននៅក្នុង Console។
+
+### ផ្ទុក Element នីមួយៗនៅពេលវាលេចឡើង
+
+`@moul-dev/web-component/loader` មិន Register អ្វីជាមុនទេ។ វាតាមដានទំព័រ ហើយផ្ទុក File ផ្ទាល់របស់ Element នៅពេល Tag របស់វាលេចឡើងជាលើកដំបូង សម្រាប់គ្រប់ Element ក្នុង Library រួមទាំង Canvas Elements ផងដែរ៖
+
+```ts
+import '@moul-dev/web-component/loader';
+```
+
+ជាមួយ Bundler វាដាក់ Element នីមួយៗក្នុង Chunk ផ្ទាល់ខ្លួន ដែលផ្ទុកតាមតម្រូវការ។ បើគ្មាន Bundler ទេ Loader គឺជា Script តែមួយគត់ដែលទំព័រត្រូវការ៖
+
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@moul-dev/web-component@1.0.0-rc.1/dist/assets/style.css" />
+<script type="module" src="https://cdn.jsdelivr.net/npm/@moul-dev/web-component@1.0.0-rc.1/dist/cdn/loader.js"></script>
+```
+
+Loader មានទំហំ 2.4 KB (gzip)។ ទំព័រដែលបង្ហាញ `<moul-switch>` ទាញយកសរុបតែ 12 KB (gzip) រួមទាំង Lit ចំណែក `moul-ui.js` និង Chunks របស់វាមានទំហំ 266 KB។ Elements ប្រហែលពាក់កណ្តាល រួមទាំង `<moul-button>` ធ្វើចលនាជាមួយ motion ហើយក៏ផ្ទុក motion ទំហំ 19 KB ដែរ ម្តងក្នុងមួយទំព័រ។ រក្សា Version ក្នុង URLs៖ Files ទាំងនេះ Import Chunks រួមតាម Relative URL ដូច្នេះគ្រប់ File ត្រូវតែមកពី Release តែមួយ។
+
+Loader មើលមិនឃើញខាងក្នុង Shadow Root ទេ។ នៅទីនោះ សូមហៅ `watchElements(shadowRoot)` ឬ `discoverElements(root)` ម្តង។ វាមិនប៉ះ Tags ដែលបាន Register រួចហើយទេ ដូច្នេះទំព័រអាចផ្ទុក `moul-ui.js`, `effects.js` ឬ `canvas.js` ផងដែរ។ ដាក់ Script Tag របស់ Loader នៅក្រោយ Tags ទាំងនោះ ដើម្បីឱ្យវា Register Elements របស់វា មុនពេល Loader ពិនិត្យមើល។
+
+---
+
 ## មុនពេល Elements ត្រូវបាន Register
 
 មុនពេល Definition របស់វាផ្ទុករួច Tag `<moul-*>` នៅជា Element ដែល Browser មិនទាន់ស្គាល់ ដូច្នេះអត្ថបទដែលដាក់ក្នុង Slot បង្ហាញដោយគ្មាន Style មួយភ្លែត។ ដើម្បីលាក់ Elements រហូតដល់វាត្រូវបាន Register សូមបន្ថែម Rule នេះទៅក្នុង Stylesheet របស់អ្នក៖
@@ -89,4 +137,4 @@ Component នីមួយៗគឺជា Custom Element ស្តង់ដារ
 }
 ```
 
-Rule នេះត្រូវនឹងគ្រប់ Custom Element ដែលមិនទាន់ត្រូវបាន Define ទោះជារបស់ Moul ឬមិនមែនក៏ដោយ។ ប្រើវាតែពេលទំព័រ Import គ្រប់ Entry ដែលមាន Tags នៅក្នុងទំព័រនោះ៖ Element ពី Entry ដែលអ្នកមិនដែល Import ដូចជា [`@moul-dev/web-component/effects`](/km/docs/effects/) នឹងនៅលាក់ជានិច្ច។
+Rule នេះត្រូវនឹងគ្រប់ Custom Element ដែលមិនទាន់ត្រូវបាន Define ទោះជារបស់ Moul ឬមិនមែនក៏ដោយ។ ប្រើវាតែពេលគ្រប់ Tag ក្នុងទំព័រត្រូវបាន Define៖ Element ពី Entry ដែលអ្នកមិនដែល Import ដូចជា [`@moul-dev/web-component/effects`](/km/docs/effects/) ឬ Element តែមួយដែលអ្នកភ្លេច Import នឹងនៅលាក់ជានិច្ច។ Loader Define គ្រប់ Moul Tag ដែលវាឃើញ។

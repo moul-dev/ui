@@ -88,6 +88,54 @@ Each component is a standard custom element built on **Lit 3** and **Shadow DOM*
 
 ---
 
+## One Element at a Time
+
+`import '@moul-dev/web-component'` registers all 121 app elements, so a page with one button still ships the charts, the chat and the code blocks. To ship only what a page uses, import each element on its own:
+
+```ts
+import '@moul-dev/web-component/style.css';
+import '@moul-dev/web-component/elements/button';
+import '@moul-dev/web-component/elements/text-field';
+```
+
+The path is the tag without `moul-`, for every element in the main and [effects](/docs/effects/) imports (`elements/tilt`, `elements/reveal`). Each import registers its element and the elements it renders, such as the icon inside `<moul-button>`, and nothing else: `elements/button` is 35 KB before your bundler minifies it, where the whole import is 1 MB. Lit, motion and the other dependencies stay bare imports, so your bundler shares one copy of each with your app. [Canvas elements](/docs/canvas/) keep their own paths, such as `@moul-dev/web-component/canvas/globe`.
+
+An element brings its family: `elements/tabs` registers `<moul-tabs>`, `<moul-tab>` and `<moul-tab-panel>`, and so does `elements/tab`. Import one for each component you use, so a card that holds a button needs two:
+
+```ts
+import '@moul-dev/web-component/elements/card';
+import '@moul-dev/web-component/elements/button';
+```
+
+An element's class and types come from the same path:
+
+```ts
+import { MoulButton, type ButtonVariant } from '@moul-dev/web-component/elements/button';
+```
+
+Pick one style per app. The whole imports and the single elements are built separately, so an element imported both ways is bundled twice, and the second copy is skipped with a warning in the console.
+
+### Load Each Element When It Appears
+
+`@moul-dev/web-component/loader` registers nothing up front. It watches the page and loads an element's own file the first time its tag appears, for every element in the library, canvas ones included:
+
+```ts
+import '@moul-dev/web-component/loader';
+```
+
+With a bundler, that puts each element in a chunk of its own that loads on demand. Without one, the loader is the one script a page needs:
+
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@moul-dev/web-component@1.0.0-rc.1/dist/assets/style.css" />
+<script type="module" src="https://cdn.jsdelivr.net/npm/@moul-dev/web-component@1.0.0-rc.1/dist/cdn/loader.js"></script>
+```
+
+The loader is 2.4 KB gzipped. A page that shows a `<moul-switch>` then downloads 12 KB gzipped in all, Lit included, where `moul-ui.js` and its chunks are 266 KB. About half the elements, `<moul-button>` among them, animate with motion and load its 19 KB too, once per page. Keep the version in the URLs: the files import shared chunks by relative URL, so every file must come from the same release.
+
+The loader cannot see inside a shadow root. There, call `watchElements(shadowRoot)`, or `discoverElements(root)` once. It leaves tags that are already registered alone, so a page can load `moul-ui.js`, `effects.js` or `canvas.js` too. Put the loader's script tag after theirs, so they register their elements before it looks.
+
+---
+
 ## Before the Elements Register
 
 Until its definition loads, a `<moul-*>` tag is an element the browser does not know yet, so its slotted text shows unstyled for a moment. To hide elements until they register, add this to your own stylesheet:
@@ -98,4 +146,4 @@ Until its definition loads, a `<moul-*>` tag is an element the browser does not 
 }
 ```
 
-The rule matches every custom element that is not defined yet, Moul's or not. Use it only when the page imports every entry whose tags it contains: an element from an entry you never import, such as [`@moul-dev/web-component/effects`](/docs/effects/), stays hidden.
+The rule matches every custom element that is not defined yet, Moul's or not. Use it only when every tag on the page gets defined: an element from an entry you never import, such as [`@moul-dev/web-component/effects`](/docs/effects/), or a single element you forgot to import, stays hidden. The loader defines every Moul tag it sees.

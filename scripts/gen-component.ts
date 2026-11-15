@@ -69,6 +69,8 @@ ${colors.yellow}Generates:${colors.reset}
   ui/src/components/<ComponentName>/<ComponentName>.styles.ts  Lit css\`\` styles
   ui/src/components/<ComponentName>/<ComponentName>.test.ts    Vitest + @open-wc/testing-helpers
   ui/src/components/<ComponentName>/index.ts                   Barrel export
+  ui/src/elements/<kebab-name>.ts                              Its own entry, @moul-dev/web-component/elements/<kebab-name>
+                                                               (not for --canvas), and its line in ui/src/loader.ts
   docs/src/content/docs/docs/components/<slug>.mdx             Starlight MDX stub with <ComponentPreview>
   docs/src/content/docs/km/docs/components/<slug>.mdx          Khmer twin of the docs page
 
@@ -829,6 +831,9 @@ function main() {
     console.log(
       `\n  ${colors.cyan}~${colors.reset} Register the element in ${rel(entryPath)}`,
     )
+    console.log(
+      `  ${colors.cyan}~${colors.reset} Run sync:elements: ${opts.isCanvas ? '' : `ui/src/elements/${opts.tagName.replace(/^moul-/, '')}.ts and `}the loader's map in ui/src/loader.ts`,
+    )
     return
   }
 
@@ -850,6 +855,23 @@ function main() {
   } else {
     console.warn(
       `  ${colors.yellow}⚠ Could not locate export anchors in ${rel(entryPath)}; register the element there manually.${colors.reset}`,
+    )
+  }
+
+  // The element's own entry (`@moul-dev/web-component/elements/<name>`)
+  // and its line in the loader's map come from the components themselves.
+  const sync = Bun.spawnSync(['bun', 'scripts/sync-elements.ts'], {
+    cwd: rootDir,
+    stdout: 'ignore',
+    stderr: 'pipe',
+  })
+  if (sync.exitCode === 0) {
+    console.log(
+      `  ${colors.green}✓ Updated${colors.reset} the element entries and ui/src/loader.ts`,
+    )
+  } else {
+    console.warn(
+      `  ${colors.yellow}⚠ sync:elements failed; run ${colors.cyan}bun run sync:elements${colors.yellow} to see why.${colors.reset}`,
     )
   }
 

@@ -1,6 +1,7 @@
 import * as fc from 'fast-check'
 import { describe, expect, it } from 'vitest'
 import { cdnProblems, staticImports } from '../../scripts/check-cdn'
+import { definedTags, elementProblems } from '../../scripts/check-elements'
 import {
   bumpVersion,
   changelogSlug,
@@ -188,6 +189,12 @@ describe('CDN build check', () => {
     'chunks/motion.js': motion,
     'chunks/shared.js':
       '"use client";import{t as e}from"./lit.js";export{e as t};',
+    'loader.js':
+      '"use client";var e={"moul-button":()=>import(`./elements/button.js`),"moul-globe":()=>import(`./canvas/globe.js`)};',
+    'elements/button.js':
+      '"use client";import{t as e}from"../chunks/elements-Button.js";export{e as MoulButton};',
+    'chunks/elements-Button.js':
+      '"use client";import{t as e}from"./lit.js";import{t}from"./motion.js";export{e as t};',
   }
 
   it('reads the static imports at the top of a minified file', () => {
@@ -255,6 +262,47 @@ describe('CDN build check', () => {
     ])
   })
 
+  it('fails when the full loader imports an element up front', () => {
+    expect(
+      cdnProblems({
+        ...build,
+        'loader.js': '"use client";import"./elements/button.js";',
+      }),
+    ).toEqual([
+      expect.stringMatching(
+        /^loader\.js imports elements\/button\.js, chunks\/elements-Button\.js/,
+      ),
+    ])
+  })
+
+  it('fails when the main entry imports an element entry', () => {
+    expect(
+      cdnProblems({
+        ...build,
+        'moul-ui.js': `"use client";import"./elements/button.js";${build['moul-ui.js'].slice(13)}`,
+      }),
+    ).toEqual([
+      expect.stringMatching(/^moul-ui\.js imports elements\/button\.js\./),
+      expect.stringMatching(
+        /^The elements entries and the bundles both load elements\/button\.js, chunks\/elements-Button\.js\./,
+      ),
+    ])
+  })
+
+  it('fails when an element loads a chunk the bundles load, other than Lit and motion', () => {
+    expect(
+      cdnProblems({
+        ...build,
+        'chunks/elements-Button.js':
+          '"use client";import{t as e}from"./lit.js";import"./shared.js";export{e as t};',
+      }),
+    ).toEqual([
+      expect.stringMatching(
+        /^The elements entries and the bundles both load chunks\/shared\.js\./,
+      ),
+    ])
+  })
+
   it('fails when a canvas element reaches motion through a shared chunk', () => {
     expect(
       cdnProblems({
@@ -265,6 +313,71 @@ describe('CDN build check', () => {
     ).toEqual([
       expect.stringMatching(
         /^canvas\/globe\.js loads motion \(chunks\/motion\.js\)/,
+      ),
+    ])
+  })
+})
+
+describe('element files check', () => {
+  // A main bundle that defines both tags, and an element file whose chunk
+  // defines the button and imports the icon's chunk for its side effect.
+  const build: Record<string, string> = {
+    'moul-ui.js':
+      '"use client";var e=(e,t)=>customElements.define(e,t),a=class{},b=class{};e(`moul-button`,a);e(`moul-icon-morph`,b);',
+    'elements/button.js':
+      '"use client";import{t as e}from"../chunks/elements-Button.js";export{e as MoulButton};',
+    'chunks/elements-Button.js':
+      '"use client";import{t as n}from"./elements-define-element.js";import"./elements-IconMorph.js";var t=class{};n(`moul-button`,t);export{t};',
+    'chunks/elements-IconMorph.js':
+      '"use client";import{t as n}from"./elements-define-element.js";var r=class{};n(`moul-icon-morph`,r);',
+    'chunks/elements-define-element.js':
+      '"use client";function e(e,t){customElements.get(e)||customElements.define(e,t)}export{e as t};',
+  }
+  const expected = { 'elements/button.js': ['moul-button', 'moul-icon-morph'] }
+  const allTags = ['moul-button', 'moul-icon-morph']
+
+  it('reads definitions, minified or not, and nothing else', () => {
+    expect([
+      ...definedTags(
+        'e(`moul-a`,t);defineElement("moul-b", MoulB);x.querySelector("moul-c");y(`moul-d`);',
+      ),
+    ]).toEqual(['moul-a', 'moul-b'])
+  })
+
+  it('passes an element file that defines what its source registers', () => {
+    expect(elementProblems('dist', build, expected, allTags)).toEqual([])
+  })
+
+  it('fails when the build dropped an import kept for its side effect', () => {
+    const chunk = build['chunks/elements-Button.js'].replace(
+      'import"./elements-IconMorph.js";',
+      '',
+    )
+    expect(
+      elementProblems(
+        'dist',
+        { ...build, 'chunks/elements-Button.js': chunk },
+        expected,
+        allTags,
+      ),
+    ).toEqual([
+      expect.stringMatching(
+        /^dist: elements\/button\.js does not define moul-icon-morph,/,
+      ),
+    ])
+  })
+
+  it('fails rather than pass blind when it sees no definitions in the bundles', () => {
+    expect(
+      elementProblems(
+        'dist',
+        { ...build, 'moul-ui.js': '"use client";' },
+        expected,
+        allTags,
+      ),
+    ).toEqual([
+      expect.stringMatching(
+        /^dist: the bundles show no definition of moul-button, moul-icon-morph\./,
       ),
     ])
   })

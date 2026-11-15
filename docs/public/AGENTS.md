@@ -23,21 +23,28 @@ import '@moul-dev/web-component'
 import '@moul-dev/web-component/style.css'
 ```
 
-Without a bundler, load the CDN build from `dist/cdn/`. It needs no import map: Lit, motion and the other dependencies are bundled into chunks under `dist/cdn/chunks/` that the entries share, so a page that loads more than one entry runs one copy of each. Pin the exact version in every URL, because the entries import those chunks by relative URL and every file must come from the same release.
+To ship only the elements a page uses, import each one instead, at its tag without `moul-`. Each registers its element, the rest of its family (`elements/tabs` brings `<moul-tab>` and `<moul-tab-panel>`) and the elements they render, and nothing else, so import one for each component you use. Use one style per app: an element imported both ways is bundled twice.
+
+```js
+import '@moul-dev/web-component/elements/button'
+// <moul-tabs>, <moul-tab> and <moul-tab-panel>
+import '@moul-dev/web-component/elements/tabs'
+```
+
+Without a bundler, load the CDN build from `dist/cdn/`. It needs no import map: Lit, motion and the other dependencies are bundled into chunks under `dist/cdn/chunks/` that the files share, so a page runs one copy of each. `loader.js` is the one script a page needs: it registers nothing up front and loads each element's own file the first time its tag appears, for every element. Pin the exact version in every URL, because the files import their chunks by relative URL and every file must come from the same release.
 
 ```html
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@moul-dev/web-component@1.0.0-rc.1/dist/assets/style.css" />
-<script type="module" src="https://cdn.jsdelivr.net/npm/@moul-dev/web-component@1.0.0-rc.1/dist/cdn/moul-ui.js"></script>
-<!-- Only on pages that use them: effect elements, and canvas elements loaded on demand. -->
-<script type="module" src="https://cdn.jsdelivr.net/npm/@moul-dev/web-component@1.0.0-rc.1/dist/cdn/effects.js"></script>
-<script type="module" src="https://cdn.jsdelivr.net/npm/@moul-dev/web-component@1.0.0-rc.1/dist/cdn/canvas.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@moul-dev/web-component@1.0.0-rc.1/dist/cdn/loader.js"></script>
 ```
+
+To register whole imports up front instead, load `moul-ui.js`, and `effects.js` and `canvas.js` on pages that use them. The loader leaves tags they registered alone; on a page with both, put the loader's script tag last.
 
 `dist/moul-ui.js` (the package entry) keeps `lit`, `@lit/context`, `@lit-labs/virtualizer`, `motion`, and `d3-*` as bare imports so a bundler shares one copy of Lit with your app. Do not load it directly in a `<script>` tag.
 
 ## 2. Rules
 
-- **Imports**: `import '@moul-dev/web-component'` once registers every `<moul-*>` element. Import design tokens with `import '@moul-dev/web-component/style.css'`. Motion controllers and effect elements live in a second entry, `import '@moul-dev/web-component/effects'`; an app that never imports it ships none of that code. Canvas and WebGL elements (particles, starfield, glyph rain, warp, flow field, interactive grid, press particles, dissolve, cursor trail, zoom grid, image loader, image effect, icon cloud, globe, shader field) live in a third entry, `import '@moul-dev/web-component/canvas'`, which registers nothing up front and loads each element's own file the first time its tag appears in the page; inside a shadow root call `watchCanvasElements(shadowRoot)`, or import one element directly with `import '@moul-dev/web-component/canvas/<name>'` (the tag without `moul-`, e.g. `canvas/globe`). There is no `@moul-dev/web-component/react`, `@moul-dev/web-component/tokens`, or `@moul-dev/web-component/tokens.stylex` entry point.
+- **Imports**: `import '@moul-dev/web-component'` once registers every `<moul-*>` element. Import design tokens with `import '@moul-dev/web-component/style.css'`. Motion controllers and effect elements live in a second entry, `import '@moul-dev/web-component/effects'`; an app that never imports it ships none of that code. Canvas and WebGL elements (particles, starfield, glyph rain, warp, flow field, interactive grid, press particles, dissolve, cursor trail, zoom grid, image loader, image effect, icon cloud, globe, shader field) live in a third entry, `import '@moul-dev/web-component/canvas'`, which registers nothing up front and loads each element's own file the first time its tag appears in the page; inside a shadow root call `watchCanvasElements(shadowRoot)`, or import one element directly with `import '@moul-dev/web-component/canvas/<name>'` (the tag without `moul-`, e.g. `canvas/globe`). To ship only what a page uses, import single elements instead of the main and effects entries: `import '@moul-dev/web-component/elements/<name>'` (the tag without `moul-`, e.g. `elements/button`) registers that element, the rest of its family (`elements/tabs` also registers `<moul-tab>` and `<moul-tab-panel>`) and the elements they render; import one per component used, and never mix them with the whole entries in one app, which bundles those elements twice. `import '@moul-dev/web-component/loader'` (or `dist/cdn/loader.js` without a bundler) loads every element, canvas ones included, the first time its tag appears; inside a shadow root call `watchElements(shadowRoot)`. There is no `@moul-dev/web-component/react`, `@moul-dev/web-component/tokens`, or `@moul-dev/web-component/tokens.stylex` entry point.
 - **Markup, not JSX components**: Write native custom element tags (`<moul-button>`), never PascalCase components (`<Button>`). They work in plain HTML, Astro, Lit, Vue, Svelte, and React 19.
 - **Attributes are kebab-case**: Boolean state uses presence attributes such as `is-disabled`, `is-open`, `is-checked`, `is-required`. The matching JS property is camelCase (`el.isDisabled = true`).
 - **Rich data is set as properties**: Arrays, objects, and functions (`data`, `series`, `columns`, `items`, `logs`, `valueFormatter`) are assigned in JavaScript, not serialized into attributes.
