@@ -423,6 +423,13 @@ export default defineConfig(({ mode }) => {
   // Only the first pass clears `dist/`, writes declarations and copies assets.
   const isFirstPass = !isCdn && !isCanvas && entry === ENTRIES.main
   return {
+    // motion's ES build reads `process.env.NODE_ENV` and leaves it to the
+    // app's bundler to replace. Nothing replaces it on a CDN, so without
+    // this the first spring animation throws "process is not defined". The
+    // npm build leaves it for the app's bundler, as motion intends.
+    ...(isCdn
+      ? { define: { 'process.env.NODE_ENV': JSON.stringify('production') } }
+      : {}),
     test: {
       environment: 'happy-dom',
       globals: true,

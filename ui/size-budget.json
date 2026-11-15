@@ -1,7 +1,7 @@
 {
   "dist/moul-ui.js": 1051099,
   "dist/effects.js": 433180,
-  "dist/cdn/moul-ui.js": 952044,
+  "dist/cdn/moul-ui.js": 952007,
   "dist/cdn/effects.js": 358550,
   "dist/canvas.js": 2167,
   "dist/canvas/cursor-trail.js": 10917,
@@ -39,8 +39,8 @@
   "dist/cdn/chunks/canvas-shared.js": 9791,
   "dist/cdn/chunks/flow.js": 12798,
   "dist/cdn/chunks/lit.js": 15000,
-  "dist/cdn/chunks/motion.js": 55125,
+  "dist/cdn/chunks/motion.js": 53050,
   "dist/cdn/chunks/shared-effects-canvas.js": 2240,
-  "dist/cdn/chunks/shared-main-effects.js": 29953,
+  "dist/cdn/chunks/shared-main-effects.js": 29916,
   "dist/cdn/chunks/shared.js": 5802
 }
