@@ -1,0 +1,2764 @@
+---
+title: v1.0.0-rc.1 — The First Release Candidate, With Every Component Live
+description: The first release candidate for 1.0.0. Moul UI grows from 79 elements to 196 across three imports (`@moul-dev/web-component`, `/effects` and `/canvas`), existing elements gain states, gestures and live data, releases publish to npm from CI, and every component has a live preview below.
+date: 2026-11-14
+author: Phearak S. Tha
+avatar: https://github.com/thasophearak.png
+---
+
+import ComponentPreview from '@/components/ComponentPreview.astro';
+import ActivityFeedDemo from '@/components/demos/ActivityFeedDemo.astro';
+import ActivityHeatmap from '@/components/demos/ActivityHeatmap.astro';
+import AiKitDemo from '@/components/demos/AiKitDemo.astro';
+import AnimatedListDemo from '@/components/demos/AnimatedListDemo.astro';
+import ButtonDemo from '@/components/demos/ButtonDemo.astro';
+import CanvasDemo from '@/components/demos/CanvasDemo.astro';
+import ChartsDemo from '@/components/demos/ChartsDemo.astro';
+import ConfettiDemo from '@/components/demos/ConfettiDemo.astro';
+import ExpandableCardDemo from '@/components/demos/ExpandableCardDemo.astro';
+import FileTreeDemo from '@/components/demos/FileTreeDemo.astro';
+import FileUploadDemo from '@/components/demos/FileUploadDemo.astro';
+import FocusModeDemo from '@/components/demos/FocusModeDemo.astro';
+import HistoryLedgerDemo from '@/components/demos/HistoryLedgerDemo.astro';
+import HoverCardDemo from '@/components/demos/HoverCardDemo.astro';
+import IconMorphDemo from '@/components/demos/IconMorphDemo.astro';
+import LandingKitDemo from '@/components/demos/LandingKitDemo.astro';
+import NotificationBellDemo from '@/components/demos/NotificationBellDemo.astro';
+import NumberTickerDemo from '@/components/demos/NumberTickerDemo.astro';
+import PullToRefreshDemo from '@/components/demos/PullToRefreshDemo.astro';
+import RelationshipGraphDemo from '@/components/demos/RelationshipGraphDemo.astro';
+import ResultCardDemo from '@/components/demos/ResultCardDemo.astro';
+import SelectionToolbarDemo from '@/components/demos/SelectionToolbarDemo.astro';
+import SlideToConfirmDemo from '@/components/demos/SlideToConfirmDemo.astro';
+import StepLoaderDemo from '@/components/demos/StepLoaderDemo.astro';
+import StepperDemo from '@/components/demos/StepperDemo.astro';
+import ThemeToggleDemo from '@/components/demos/ThemeToggleDemo.astro';
+import ToastDemo from '@/components/demos/ToastDemo.astro';
+import TourDemo from '@/components/demos/TourDemo.astro';
+
+The newest Moul UI on npm is still `1.0.0-alpha.1`. The `v1.0.0-alpha.2` tag made a GitHub release, but publishing to npm was a manual step that never happened, and in the meantime the library went from 79 elements to 196.
+
+That much new surface deserves a release candidate rather than another alpha. `1.0.0-rc.1` is what I intend to ship as `1.0.0` unless testing turns up a problem, so this is the build to try in a real app and report back on. If you are coming from alpha.1, it also includes alpha.2's [collapsed sidebar fixes](/km/changelog/1-0-0-alpha-2).
+
+The whole catalogue is [further down this page](#every-component-live), one live preview per component.
+
+---
+
+## Three Imports Instead of One
+
+Most of the new elements are motion: text effects, backgrounds, pointer and scroll effects, particles, a globe. An admin screen needs none of it, so none of it is in the main import.
+
+| Import | Registers |
+| --- | --- |
+| `@moul-dev/web-component` | 121 app elements: forms, overlays, feedback, data, charts, the AI kit and blocks |
+| `@moul-dev/web-component/effects` | 60 motion and landing-page elements, and the motion controllers they share |
+| `@moul-dev/web-component/canvas` | 15 canvas and WebGL elements, each downloaded the first time its tag appears |
+
+Each import is built in its own pass. Every published file has a byte budget, and the build fails when a file grows past it, so the main import cannot quietly start paying for the effects.
+
+The canvas import registers nothing up front. It is a loader of about 2 KB that watches the page and downloads an element's own file the first time its tag appears, so a page without `<moul-globe>` never loads the globe.
+
+```ts
+import '@moul-dev/web-component/style.css'
+import '@moul-dev/web-component'         // forms, overlays, data, charts, AI kit
+import '@moul-dev/web-component/effects' // only on pages that use effects
+import '@moul-dev/web-component/canvas'  // <moul-globe> downloads when it appears
+```
+
+The loader cannot see inside a shadow root. There, call `watchCanvasElements(shadowRoot)`, or import one element directly with `import '@moul-dev/web-component/canvas/globe'`.
+
+Every element ships with the same five things, and a test fails until it does: a description in the Custom Elements Manifest, keyboard and screen reader behaviour, a reduced-motion path, light and dark themes from tokens alone, and a docs page with a test. The 79 elements that predate the rule meet it too.
+
+---
+
+## Existing Elements, Extended
+
+These are additions. One CSS part on `<moul-button>` was renamed; it is under Upgrading.
+
+- **`<moul-button>`:** `state` (`idle`, `pending`, `success`, `error`) with an icon that morphs between a loader, a check and an alert mark, and a slot per state for its label. `run(task)` drives the states from a promise. For landing pages, `effect` (`shimmer`, `rainbow`, `neon`), `is-pulsing` and a `hover` slot.
+- **`<moul-table>`:** search (`is-searchable`), column filters (`filterOptions`), expandable rows (`renderExpanded`), cards below about 480px wide, a `toolbar` slot, `is-dense`, `skeleton-rows`, and `is-manual`, which leaves search, filters and sorting to your server.
+- **`<moul-drawer>`:** `is-sheet` makes it a bottom sheet you drag down to dismiss.
+- **`<moul-toast>` and `<moul-toast-region>`:** toasts swipe away, `show-countdown` draws the time left (an undo toast, with an Undo button in the action slot), and `is-stacked` collapses the region into a deck.
+- **`<moul-tooltip>`:** `follow="pointer"` and `is-rich` with a `media` slot.
+- **`<moul-badge>`:** `count` rolls to each new value (`99+` past `max`), and `is-live` adds a pulsing dot.
+- **`<moul-spinner>`:** `variant` picks `ring`, `dots`, `shape` or `orbit`.
+- **`<moul-text-field>`:** `placeholders` rotate through hints, and `vanish()` or `vanish-on-submit` scatters the typed text.
+- **`<moul-search-field>`:** `is-expandable` starts as a round search button that opens into the field.
+- **`<moul-card>`:** `effect` takes `spotlight`, `glare` and `glow`.
+- **Charts:** dragging scrubs `<moul-area-chart>` and `<moul-line-chart>` (a `role="slider"` for the keyboard), `<moul-line-chart is-live>` takes readings through `push()`, and `<moul-doughnut-chart>` becomes a gauge when you set `value`.
+
+---
+
+## What It Costs
+
+More elements in the main import make it heavier. Since alpha.2 it went from 112 KB to 236 KB gzipped, and the CDN file from 155 KB to 269 KB.
+
+The bundles would be heavier still. Lit ships its `css` templates as written, comments and indentation included, so the build now minifies them, which takes more than 140 KB off each main bundle before compression.
+
+`effects.js` is about 100 KB gzipped, and only pages that import it pay for it. With the canvas import, a page pays for the elements it actually shows: each one is 2.7 to 6.5 KB gzipped on the CDN, plus an 11 KB chunk they share.
+
+---
+
+## A Smaller, More Accurate Manifest
+
+Agents choose elements from `custom-elements.json`, and it carried noise. Lit fields declared `{ state: true }` showed up as public attributes, 83 of them across 47 elements, such as `hasToolbarSlot` on `<moul-table>`. Nine elements listed a `type` event that never fires, because the analyzer read `new CustomEvent(type, …)` in a shared helper as an event called `type`.
+
+Both are filtered out now, and so are private members. The file is written without indentation, which takes it from 2.6 MB to about 1 MB. `llms-full.txt` has the same fixes, since it is generated from the manifest.
+
+The npm page lists every element, and that list is now generated from the manifest too. Until now it had stopped at 79.
+
+---
+
+## How Releases Ship Now
+
+Pushing a `v*` tag now runs the tests, builds the library, checks the generated docs against the manifest, publishes the tarball to npm, and attaches the same tarball to a GitHub release. Publishing uses npm's trusted publishing: the workflow trades a GitHub token for a short-lived npm token, so the repository stores no npm token.
+
+If a later step fails, re-running the job skips publishing, because npm already has the version.
+
+---
+
+## Upgrading
+
+- **Install:** `bun add @moul-dev/web-component@1.0.0-rc.1`.
+- **From alpha.1:** read the [alpha.2 notes](/km/changelog/1-0-0-alpha-2) too: remove CSS that centered collapsed sidebar rows, and position the collapse toggle through its wrapper.
+- **`<moul-button>` parts:** `::part(spinner)` is gone. The pending loader is now a `<moul-icon-morph>` in `::part(icon)`, which also shows the success and error marks. `is-pending` still means `state="pending"` and still blocks presses.
+- **Effects and canvas:** nothing changes unless you import them.
+- **Tools that read the manifest:** it is compact JSON now. Internal state fields, private members and the phantom `type` events are gone.
+
+---
+
+## Every Component, Live
+
+One live preview for each of the 156 component pages in the docs, grouped as the docs group them. Each is the first preview on its page, so it behaves here as it does there, and each links to that page for the full API. **New** marks the 102 that arrived after alpha.1, the last release on npm.
+
+Effects pause while they are off screen, and with reduced motion turned on in your system, every effect shows its still state.
+
+### Charts & Data Visualization
+
+#### Area Chart
+
+Filled trend lines you can scrub, morphing between ranges. [Docs →](/km/docs/components/charts/areachart/)
+
+<ComponentPreview align="stretch">
+<moul-area-chart x-key="month" height="260" show-grid label="Visits by month" data-chart-tooltip="area-tip" data-props='{"data":[{"month":"Jan","desktop":186,"mobile":80},{"month":"Feb","desktop":305,"mobile":200},{"month":"Mar","desktop":237,"mobile":120},{"month":"Apr","desktop":273,"mobile":190},{"month":"May","desktop":209,"mobile":130},{"month":"Jun","desktop":314,"mobile":240}],"series":[{"key":"desktop","name":"Desktop"},{"key":"mobile","name":"Mobile"}]}'></moul-area-chart>
+<moul-chart-tooltip id="area-tip"></moul-chart-tooltip>
+<ChartsDemo />
+</ComponentPreview>
+
+#### Bar Chart
+
+Compare values across categories. [Docs →](/km/docs/components/charts/barchart/)
+
+<ComponentPreview align="stretch">
+<moul-bar-chart x-key="month" height="260" show-grid data-props='{"data":[{"month":"Jan","desktop":186,"mobile":80,"revenue":4200},{"month":"Feb","desktop":305,"mobile":200,"revenue":5100},{"month":"Mar","desktop":237,"mobile":120,"revenue":4800},{"month":"Apr","desktop":273,"mobile":190,"revenue":6100},{"month":"May","desktop":209,"mobile":130,"revenue":5600},{"month":"Jun","desktop":314,"mobile":240,"revenue":7300}],"series":[{"key":"desktop","name":"Desktop"},{"key":"mobile","name":"Mobile"}]}'></moul-bar-chart>
+</ComponentPreview>
+
+#### Line Chart
+
+Trends you can scrub, or a live feed that scrolls, pauses and scrubs. [Docs →](/km/docs/components/charts/linechart/)
+
+<ComponentPreview align="stretch">
+<moul-line-chart x-key="month" height="260" show-grid label="Visits by month" data-chart-tooltip="line-tip" data-props='{"data":[{"month":"Jan","desktop":186,"mobile":80},{"month":"Feb","desktop":305,"mobile":200},{"month":"Mar","desktop":237,"mobile":120},{"month":"Apr","desktop":273,"mobile":190},{"month":"May","desktop":209,"mobile":130},{"month":"Jun","desktop":314,"mobile":240}],"series":[{"key":"desktop","name":"Desktop"},{"key":"mobile","name":"Mobile"}]}'></moul-line-chart>
+<moul-chart-tooltip id="line-tip"></moul-chart-tooltip>
+<ChartsDemo />
+</ComponentPreview>
+
+#### Doughnut Chart
+
+Part-to-whole breakdown, half circle or gauge, with a live centre value. [Docs →](/km/docs/components/charts/doughnutchart/)
+
+<ComponentPreview>
+<moul-doughnut-chart height="260" center-label="990" center-sublabel="Visitors" label="Visitors by source" style="width: min(100%, 22rem)" data-props='{"data":[{"name":"Organic","value":420},{"name":"Referral","value":260},{"name":"Social","value":190},{"name":"Email","value":120}]}'></moul-doughnut-chart>
+</ComponentPreview>
+
+#### Heatmap Chart
+
+Activity by day, or by hour of the week. [Docs →](/km/docs/components/charts/heatmapchart/)
+
+<ComponentPreview align="stretch" backdrop="page">
+  <ActivityHeatmap />
+</ComponentPreview>
+
+#### Funnel Chart
+
+Conversion through ordered steps. [Docs →](/km/docs/components/charts/funnelchart/)
+
+<ComponentPreview backdrop="page">
+<moul-chart-container title="Signup funnel" description="Visit to paid, last 30 days" style="width: min(100%, 32rem)">
+<moul-funnel-chart data-props='{"data":[{"label":"Visited site","value":48200},{"label":"Signed up","value":15840},{"label":"Created project","value":9120},{"label":"Invited a teammate","value":4210},{"label":"Started paid plan","value":1380}]}'></moul-funnel-chart>
+</moul-chart-container>
+</ComponentPreview>
+
+#### Top List
+
+Ranked list with proportional bars. [Docs →](/km/docs/components/charts/toplist/)
+
+<ComponentPreview align="stretch">
+<moul-top-list show-rank multi-color data-props='{"data":[{"label":"Chrome","value":6420},{"label":"Safari","value":3810},{"label":"Firefox","value":1290},{"label":"Edge","value":980},{"label":"Arc","value":410}]}'></moul-top-list>
+</ComponentPreview>
+
+#### Stat
+
+Key metric with trend and sparkline. [Docs →](/km/docs/components/stat/)
+
+<ComponentPreview align="stretch" backdrop="page">
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem">
+  <moul-stat label="Revenue" value="45896" prefix="$" trend="up" trend-value="8.2%" description="Last 14 days" data-props='{"sparklineData":[38200,36900,37600,36400,39800,41000,42300,41400,41200,43500,43000,41600,44800,45896],"sparklineLabels":["Oct 7","Oct 8","Oct 9","Oct 10","Oct 11","Oct 12","Oct 13","Oct 14","Oct 15","Oct 16","Oct 17","Oct 18","Oct 19","Oct 20"]}'></moul-stat>
+  <moul-stat label="Active users" value="10067" trend="up" trend-value="20%" description="Last 14 days" color="var(--color-chart-5)" data-props='{"sparklineData":[8100,8150,8150,8300,8280,8450,8600,8700,9000,9050,9512,9600,9810,10067],"sparklineLabels":["Oct 7","Oct 8","Oct 9","Oct 10","Oct 11","Oct 12","Oct 13","Oct 14","Oct 15","Oct 16","Oct 17","Oct 18","Oct 19","Oct 20"]}'></moul-stat>
+  <moul-stat label="Conversion" value="3.26" suffix="%" trend="up" trend-value="6.7%" description="Last 14 days" color="var(--color-chart-2)" data-props='{"sparklineData":[2.62,2.66,2.64,2.86,2.98,3.02,3.28,3.22,3.3,3.12,3.24,3.08,3.2,3.26],"sparklineLabels":["Oct 7","Oct 8","Oct 9","Oct 10","Oct 11","Oct 12","Oct 13","Oct 14","Oct 15","Oct 16","Oct 17","Oct 18","Oct 19","Oct 20"]}'></moul-stat>
+  <moul-stat label="Churn" value="1.93" suffix="%" trend="down" trend-value="26%" is-lower-better description="Last 14 days" color="var(--color-chart-3)" data-props='{"sparklineData":[2.62,2.58,2.5,2.42,2.34,2.26,2.16,2.08,2.04,2.04,2.08,2.08,2.1,1.93],"sparklineLabels":["Oct 7","Oct 8","Oct 9","Oct 10","Oct 11","Oct 12","Oct 13","Oct 14","Oct 15","Oct 16","Oct 17","Oct 18","Oct 19","Oct 20"]}'></moul-stat>
+</div>
+</ComponentPreview>
+
+#### Percentage Bar
+
+Single-value bars and rings. [Docs →](/km/docs/components/charts/percentage/)
+
+<ComponentPreview>
+<div class="demo-stack" style="width: min(100%, 24rem)">
+  <moul-percentage-bar label="Memory" value="74" show-label></moul-percentage-bar>
+  <moul-percentage-bar label="Storage" value="89" tone="warning" show-label></moul-percentage-bar>
+  <div class="demo-row">
+    <moul-percentage-circle value="84" tone="success" show-label></moul-percentage-circle>
+    <moul-percentage-circle value="52" tone="accent" show-label size="lg"></moul-percentage-circle>
+  </div>
+</div>
+</ComponentPreview>
+
+### Actions & Toggles
+
+#### Button
+
+Pressable action with variants, sizes, an icon-only mode, and pending, success and error states. [Docs →](/km/docs/components/button/)
+
+<ComponentPreview>
+<div class="demo-row">
+  <moul-button variant="primary">Primary</moul-button>
+  <moul-button variant="secondary">Secondary</moul-button>
+  <moul-button variant="tertiary">Tertiary</moul-button>
+  <moul-button variant="outline">Outline</moul-button>
+  <moul-button variant="ghost">Ghost</moul-button>
+  <moul-button variant="danger">Danger</moul-button>
+  <moul-button variant="danger-soft">Danger soft</moul-button>
+</div>
+</ComponentPreview>
+
+#### Button Group
+
+Visually joins related buttons into one control. [Docs →](/km/docs/components/buttongroup/)
+
+<ComponentPreview>
+<moul-button-group spacing="none">
+  <moul-button variant="secondary">Day</moul-button>
+  <moul-button variant="secondary">Week</moul-button>
+  <moul-button variant="secondary">Month</moul-button>
+  <moul-button variant="secondary">Year</moul-button>
+</moul-button-group>
+</ComponentPreview>
+
+#### Slide to Confirm
+
+**New.** Handle dragged across a track to confirm a risky action. [Docs →](/km/docs/components/slidetoconfirm/)
+
+<ComponentPreview>
+  <div class="demo-stack" style="width: min(100%, 20rem)">
+    <moul-slide-to-confirm label="Slide to send $120" confirmed-label="Sent" data-slide-demo="Payment sent" style="width: 100%"></moul-slide-to-confirm>
+    <moul-slide-to-confirm tone="error" label="Slide to delete project" confirmed-label="Deleting" data-slide-demo="Project deleted" style="width: 100%"></moul-slide-to-confirm>
+  </div>
+  <SlideToConfirmDemo />
+</ComponentPreview>
+
+#### Split Button
+
+**New.** A main action joined to a chevron that opens a menu of related actions. [Docs →](/km/docs/components/splitbutton/)
+
+<ComponentPreview minHeight="300px" align="start">
+<moul-split-button menu-label="More deploy options">
+  <svg slot="prefix" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg>
+  <span>Deploy</span>
+  <moul-menu-item slot="menu" value="staging">Deploy to staging</moul-menu-item>
+  <moul-menu-item slot="menu" value="clear-cache">Deploy and clear cache</moul-menu-item>
+  <moul-menu-separator slot="menu"></moul-menu-separator>
+  <moul-menu-item slot="menu" value="schedule">Schedule deploy…</moul-menu-item>
+</moul-split-button>
+</ComponentPreview>
+
+#### Theme Toggle
+
+**New.** A light and dark switch that reveals the new theme in a circle from the button. [Docs →](/km/docs/components/themetoggle/)
+
+<ComponentPreview>
+  <moul-theme-toggle></moul-theme-toggle>
+</ComponentPreview>
+
+#### Toggle Button
+
+A button that stays on or off. [Docs →](/km/docs/components/togglebutton/)
+
+<ComponentPreview>
+<div class="demo-row">
+  <moul-toggle-button value="pin" is-selected>Pinned</moul-toggle-button>
+  <moul-toggle-button value="star">Star</moul-toggle-button>
+  <moul-toggle-button value="mute" size="sm">Mute</moul-toggle-button>
+  <moul-toggle-button value="off" is-disabled>Disabled</moul-toggle-button>
+</div>
+</ComponentPreview>
+
+#### Toggle Button Group
+
+Segmented control with a single selection. [Docs →](/km/docs/components/togglebuttongroup/)
+
+<ComponentPreview>
+<moul-toggle-button-group selected-key="week" aria-label="Range">
+  <moul-toggle-button value="day">Day</moul-toggle-button>
+  <moul-toggle-button value="week">Week</moul-toggle-button>
+  <moul-toggle-button value="month">Month</moul-toggle-button>
+  <moul-toggle-button value="year">Year</moul-toggle-button>
+</moul-toggle-button-group>
+</ComponentPreview>
+
+### Inputs & Forms
+
+#### Text Field
+
+Single-line text input with label, description and validation. [Docs →](/km/docs/components/textfield/)
+
+<ComponentPreview>
+<div class="demo-stack" style="width: min(100%, 22rem)">
+  <moul-text-field label="Project name" placeholder="moul-portal" description="Lowercase letters, numbers and dashes."></moul-text-field>
+  <moul-text-field label="Email" type="email" value="alex@example" error-message="Enter a complete email address." is-required></moul-text-field>
+  <moul-text-field label="API key" value="sk_live_••••" is-readonly></moul-text-field>
+  <moul-text-field label="Disabled" placeholder="Unavailable" is-disabled></moul-text-field>
+</div>
+</ComponentPreview>
+
+#### Number Field
+
+Numeric input with stepper buttons and bounds. [Docs →](/km/docs/components/numberfield/)
+
+<ComponentPreview>
+<div class="demo-row">
+  <moul-number-field label="Replicas" value="3" min="1" max="10"></moul-number-field>
+  <moul-number-field label="Opacity" value="0.5" min="0" max="1" step="0.1"></moul-number-field>
+</div>
+</ComponentPreview>
+
+#### Search Field
+
+Search input with a clear button and submit on Enter. [Docs →](/km/docs/components/searchfield/)
+
+<ComponentPreview>
+<div style="width: min(100%, 22rem)">
+  <moul-search-field label="Repositories" placeholder="Filter repositories…" value="moul"></moul-search-field>
+</div>
+</ComponentPreview>
+
+#### Text Area
+
+Multi-line text input that can grow with its content. [Docs →](/km/docs/components/textarea/)
+
+<ComponentPreview>
+<div class="demo-stack" style="width: min(100%, 26rem)">
+  <moul-text-area label="Release notes" placeholder="Summarize what changed…" rows="3" auto-resize description="Markdown is supported."></moul-text-area>
+</div>
+</ComponentPreview>
+
+#### Checkbox
+
+Binary choice with an indeterminate state. [Docs →](/km/docs/components/checkbox/)
+
+<ComponentPreview>
+<div class="demo-stack">
+  <moul-checkbox is-checked>Receive release notifications</moul-checkbox>
+  <moul-checkbox>Send weekly digest</moul-checkbox>
+  <moul-checkbox is-indeterminate>Select all regions</moul-checkbox>
+  <moul-checkbox is-disabled>Disabled option</moul-checkbox>
+</div>
+</ComponentPreview>
+
+#### Checkbox Group
+
+A labelled set of checkboxes submitted as one value. [Docs →](/km/docs/components/checkboxgroup/)
+
+<ComponentPreview>
+<moul-checkbox-group label="Email preferences" description="Choose what lands in your inbox.">
+  <moul-checkbox value="security" is-checked>Security alerts</moul-checkbox>
+  <moul-checkbox value="product" is-checked>Product updates</moul-checkbox>
+  <moul-checkbox value="newsletter">Newsletter</moul-checkbox>
+</moul-checkbox-group>
+</ComponentPreview>
+
+#### Radio Group
+
+Single selection among mutually exclusive choices. [Docs →](/km/docs/components/radiogroup/)
+
+<ComponentPreview>
+<moul-radio-group label="Plan" value="pro">
+  <moul-radio value="free">Free</moul-radio>
+  <moul-radio value="pro">Pro — $29/mo</moul-radio>
+  <moul-radio value="enterprise">Enterprise</moul-radio>
+  <moul-radio value="legacy" is-disabled>Legacy (unavailable)</moul-radio>
+</moul-radio-group>
+</ComponentPreview>
+
+#### Switch
+
+On/off toggle for settings that apply immediately. [Docs →](/km/docs/components/switch/)
+
+<ComponentPreview>
+<div class="demo-stack">
+  <moul-switch is-checked>Auto-deploy on push</moul-switch>
+  <moul-switch>Debug logging</moul-switch>
+  <moul-switch size="sm" is-checked>Small</moul-switch>
+  <moul-switch size="lg">Large</moul-switch>
+  <moul-switch is-disabled>Disabled</moul-switch>
+</div>
+</ComponentPreview>
+
+#### Slider
+
+Pick a value from a continuous range. [Docs →](/km/docs/components/slider/)
+
+<ComponentPreview>
+<div class="demo-stack" style="width: min(100%, 22rem)">
+  <moul-slider label="Volume" value="65" min="0" max="100" show-output></moul-slider>
+  <moul-slider label="Disabled" value="30" is-disabled></moul-slider>
+</div>
+</ComponentPreview>
+
+#### Select
+
+Choose one option from a floating list. [Docs →](/km/docs/components/select/)
+
+<ComponentPreview align="start" minHeight="300px">
+<div style="width: min(100%, 18rem)">
+  <moul-select label="Environment" selected-key="staging" placeholder="Choose…">
+    <moul-select-item key="production">Production</moul-select-item>
+    <moul-select-item key="staging">Staging</moul-select-item>
+    <moul-select-item key="preview">Preview</moul-select-item>
+    <moul-select-item key="local" is-disabled>Local (offline)</moul-select-item>
+  </moul-select>
+</div>
+</ComponentPreview>
+
+#### Combo Box
+
+Text input that filters a list of options. [Docs →](/km/docs/components/combobox/)
+
+<ComponentPreview align="start" minHeight="300px">
+<div style="width: min(100%, 18rem)">
+  <moul-combobox label="Framework" placeholder="Search frameworks…">
+    <moul-combobox-item key="astro">Astro</moul-combobox-item>
+    <moul-combobox-item key="lit">Lit</moul-combobox-item>
+    <moul-combobox-item key="svelte">Svelte</moul-combobox-item>
+    <moul-combobox-item key="vue">Vue</moul-combobox-item>
+    <moul-combobox-item key="waku">Waku</moul-combobox-item>
+  </moul-combobox>
+</div>
+</ComponentPreview>
+
+#### Date Picker
+
+Date input with a calendar popover. [Docs →](/km/docs/components/datepicker/)
+
+<ComponentPreview align="start" minHeight="420px">
+<div style="width: min(100%, 18rem)">
+  <moul-date-picker label="Launch date" value="2026-10-24"></moul-date-picker>
+</div>
+</ComponentPreview>
+
+#### File Upload
+
+**New.** Drop zone with a file list and per-file upload progress. [Docs →](/km/docs/components/fileupload/)
+
+<ComponentPreview>
+  <FileUploadDemo />
+</ComponentPreview>
+
+#### Calendar
+
+Month grid for picking a single date. [Docs →](/km/docs/components/calendar/)
+
+<ComponentPreview>
+<moul-calendar value="2026-10-19" min-date="2026-10-05"></moul-calendar>
+</ComponentPreview>
+
+#### Input OTP
+
+Segmented one-time-code input. [Docs →](/km/docs/components/inputotp/)
+
+<ComponentPreview>
+<moul-input-otp label="Verification code" length="6"></moul-input-otp>
+</ComponentPreview>
+
+#### Form
+
+Native form wrapper that validates Moul inputs. [Docs →](/km/docs/components/form/)
+
+<ComponentPreview>
+<moul-form style="width: min(100%, 22rem)">
+  <div class="demo-stack">
+    <moul-text-field name="username" label="Username" placeholder="alice" is-required></moul-text-field>
+    <moul-select name="role" label="Role" selected-key="editor">
+      <moul-select-item key="viewer">Viewer</moul-select-item>
+      <moul-select-item key="editor">Editor</moul-select-item>
+      <moul-select-item key="admin">Admin</moul-select-item>
+    </moul-select>
+    <moul-switch name="notify" is-checked>Email me about activity</moul-switch>
+    <moul-button type="submit">Create account</moul-button>
+  </div>
+</moul-form>
+</ComponentPreview>
+
+### Overlays & Navigation
+
+#### Modal
+
+Dialog with focus containment, Escape and backdrop dismissal. [Docs →](/km/docs/components/modal/)
+
+<ComponentPreview>
+<moul-button data-open="demo-modal">Open modal</moul-button>
+<moul-modal id="demo-modal" aria-label="Invite teammates">
+  <h3 slot="header">Invite teammates</h3>
+  <div class="demo-stack">
+    <p>New members get access to every project in this workspace.</p>
+    <moul-text-field label="Email" type="email" placeholder="name@company.com"></moul-text-field>
+  </div>
+  <div slot="footer" class="demo-row" style="justify-content: flex-end">
+    <moul-button variant="ghost" data-close="demo-modal">Cancel</moul-button>
+    <moul-button data-close="demo-modal">Send invite</moul-button>
+  </div>
+</moul-modal>
+</ComponentPreview>
+
+#### Alert Dialog
+
+Interrupting confirmation for destructive or important actions. [Docs →](/km/docs/components/alertdialog/)
+
+<ComponentPreview>
+<moul-button variant="danger" data-open="demo-alert-dialog">Delete workspace</moul-button>
+<moul-alert-dialog id="demo-alert-dialog" tone="error" aria-label="Delete workspace">
+  <h3 slot="header">Delete this workspace?</h3>
+  <p slot="body">All projects, deployments and logs will be permanently removed. This can’t be undone.</p>
+  <div slot="footer" class="demo-row" style="justify-content: flex-end">
+    <moul-button variant="ghost" data-action="cancel">Cancel</moul-button>
+    <moul-button variant="danger" data-action="confirm">Delete</moul-button>
+  </div>
+</moul-alert-dialog>
+</ComponentPreview>
+
+#### Drawer
+
+Panel that slides in from any edge. [Docs →](/km/docs/components/drawer/)
+
+<ComponentPreview>
+<div class="demo-row">
+  <moul-button variant="secondary" data-open="demo-drawer-right">Right</moul-button>
+  <moul-button variant="secondary" data-open="demo-drawer-left">Left</moul-button>
+  <moul-button variant="secondary" data-open="demo-drawer-bottom">Bottom</moul-button>
+</div>
+<moul-drawer id="demo-drawer-right" placement="right" aria-label="Settings">
+  <h3 slot="header">Settings</h3>
+  <div class="demo-stack">
+    <moul-switch is-checked>Auto-deploy</moul-switch>
+    <moul-switch>Preview comments</moul-switch>
+  </div>
+  <moul-button slot="footer" data-close="demo-drawer-right">Done</moul-button>
+</moul-drawer>
+<moul-drawer id="demo-drawer-left" placement="left" size="sm" aria-label="Navigation">
+  <h3 slot="header">Navigation</h3>
+  <p>Left-edge drawers suit app navigation on narrow screens.</p>
+</moul-drawer>
+<moul-drawer id="demo-drawer-bottom" placement="bottom" aria-label="Share">
+  <h3 slot="header">Share</h3>
+  <p>Bottom sheets work well for quick actions on touch devices.</p>
+</moul-drawer>
+</ComponentPreview>
+
+#### Dropdown Menu
+
+**New.** A menu of actions that grows out of its trigger, with checkbox and radio items, links, groups and a gooey variant. [Docs →](/km/docs/components/dropdownmenu/)
+
+<ComponentPreview minHeight="340px" align="start">
+<moul-dropdown-menu>
+  <moul-button slot="trigger" variant="secondary">Actions</moul-button>
+  <moul-menu-item value="edit" shortcut="⌘E">
+    <svg slot="prefix" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+    <span>Edit</span>
+  </moul-menu-item>
+  <moul-menu-item value="duplicate" shortcut="⌘D">
+    <svg slot="prefix" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+    <span>Duplicate</span>
+  </moul-menu-item>
+  <moul-menu-item value="archive" is-disabled>
+    <svg slot="prefix" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="5" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/><path d="M10 12h4"/></svg>
+    <span>Archive</span>
+  </moul-menu-item>
+  <moul-menu-separator></moul-menu-separator>
+  <moul-menu-item value="delete" variant="danger" shortcut="⌫">
+    <svg slot="prefix" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="m19 6-1 14H6L5 6"/></svg>
+    <span>Delete</span>
+  </moul-menu-item>
+</moul-dropdown-menu>
+</ComponentPreview>
+
+#### Stepper
+
+**New.** Numbered steps with an animated connector and one panel at a time. [Docs →](/km/docs/components/stepper/)
+
+<ComponentPreview align="stretch" stack>
+<moul-stepper id="stepper-checkout">
+  <moul-step label="Cart" description="3 items">
+    <p>Two shirts and a cap, $48.00 in all.</p>
+  </moul-step>
+  <moul-step label="Delivery" description="Address and time">
+    <moul-text-field label="Address" placeholder="Street 240, Phnom Penh"></moul-text-field>
+  </moul-step>
+  <moul-step label="Payment" description="Card or ABA">
+    <p>Pay by card or with ABA Pay when the courier arrives.</p>
+  </moul-step>
+  <moul-step label="Done">
+    <p>Order placed. We sent the receipt to your email.</p>
+  </moul-step>
+</moul-stepper>
+<div class="demo-row" style="justify-content: flex-end">
+  <moul-button variant="secondary" data-stepper-previous="stepper-checkout">Back</moul-button>
+  <moul-button data-stepper-next="stepper-checkout">Next</moul-button>
+</div>
+</ComponentPreview>
+
+#### Tree
+
+**New.** Collapsible tree with guide lines and full keyboard support. [Docs →](/km/docs/components/tree/)
+
+<ComponentPreview>
+<moul-tree label="Project files" style="width: 100%; max-width: 20rem">
+  <moul-tree-item value="src" label="src" is-expanded>
+    <span slot="suffix">3</span>
+    <moul-tree-item value="src/components" label="components" is-expanded>
+      <moul-tree-item value="src/components/button.ts" label="button.ts" is-selected></moul-tree-item>
+      <moul-tree-item value="src/components/tree.ts" label="tree.ts"></moul-tree-item>
+    </moul-tree-item>
+    <moul-tree-item value="src/index.ts" label="index.ts"></moul-tree-item>
+    <moul-tree-item value="src/legacy.ts" label="legacy.ts" is-disabled></moul-tree-item>
+  </moul-tree-item>
+  <moul-tree-item value="docs" label="docs">
+    <moul-tree-item value="docs/intro.md" label="intro.md"></moul-tree-item>
+    <moul-tree-item value="docs/api.md" label="api.md"></moul-tree-item>
+  </moul-tree-item>
+  <moul-tree-item value="package.json" label="package.json"></moul-tree-item>
+</moul-tree>
+</ComponentPreview>
+
+#### Popover
+
+Anchored floating panel for rich, interactive content. [Docs →](/km/docs/components/popover/)
+
+<ComponentPreview minHeight="260px">
+<div class="demo-row">
+  <moul-popover placement="bottom">
+    <moul-button slot="trigger" variant="secondary">Bottom</moul-button>
+    <div class="demo-stack" style="width: 14rem">
+      <strong>Deployment</strong>
+      <p>Built 2 minutes ago from main.</p>
+      <moul-button size="sm">View logs</moul-button>
+    </div>
+  </moul-popover>
+  <moul-popover placement="top">
+    <moul-button slot="trigger" variant="secondary">Top</moul-button>
+    <p>Anchored above the trigger.</p>
+  </moul-popover>
+  <moul-popover placement="right">
+    <moul-button slot="trigger" variant="secondary">Right</moul-button>
+    <p>Anchored to the right.</p>
+  </moul-popover>
+</div>
+</ComponentPreview>
+
+#### Tooltip
+
+Short label shown on hover or focus that slides out of its trigger, can follow the pointer and can hold a small card. [Docs →](/km/docs/components/tooltip/)
+
+<ComponentPreview minHeight="200px">
+<div class="demo-row">
+  <moul-tooltip content="Copy link" placement="top">
+    <moul-button variant="secondary">Top</moul-button>
+  </moul-tooltip>
+  <moul-tooltip content="Opens in a new tab" placement="bottom">
+    <moul-button variant="secondary">Bottom</moul-button>
+  </moul-tooltip>
+  <moul-tooltip content="Previous" placement="left">
+    <moul-button variant="secondary">Left</moul-button>
+  </moul-tooltip>
+  <moul-tooltip content="Next" placement="right">
+    <moul-button variant="secondary">Right</moul-button>
+  </moul-tooltip>
+</div>
+</ComponentPreview>
+
+#### Hover Card
+
+**New.** A preview card that opens beside a link or a name while the pointer rests on it, and can hold links and buttons. [Docs →](/km/docs/components/hovercard/)
+
+<ComponentPreview minHeight="320px">
+  <HoverCardDemo />
+</ComponentPreview>
+
+#### Notification Bell
+
+**New.** A bell button with an unread count that opens a panel listing the notifications. [Docs →](/km/docs/components/notificationbell/)
+
+<ComponentPreview>
+<div class="demo-stack" style="width: min(100%, 30rem)">
+<div class="demo-bell-bar">
+<strong>Moul Console</strong>
+<moul-notification-bell id="inbox" count="2">
+<moul-button slot="header-actions" size="sm" variant="ghost" data-bell-read><span>Mark all read</span></moul-button>
+<div class="demo-bell-item" data-unread><span class="demo-bell-item-text"><strong>Deploy finished</strong><span>moul-api · production</span></span><moul-button size="sm" variant="ghost" is-icon aria-label="Dismiss" data-bell-dismiss><span>✕</span></moul-button></div>
+<div class="demo-bell-item" data-unread><span class="demo-bell-item-text"><strong>New sign-up</strong><span>Dara · Free plan</span></span><moul-button size="sm" variant="ghost" is-icon aria-label="Dismiss" data-bell-dismiss><span>✕</span></moul-button></div>
+<div class="demo-bell-item"><span class="demo-bell-item-text"><strong>Invoice paid</strong><span>Yesterday</span></span><moul-button size="sm" variant="ghost" is-icon aria-label="Dismiss" data-bell-dismiss><span>✕</span></moul-button></div>
+<moul-link slot="footer" href="#inbox"><span>View all notifications</span></moul-link>
+</moul-notification-bell>
+</div>
+<moul-button variant="secondary" data-bell-notify="inbox"><span>Simulate a notification</span></moul-button>
+</div>
+<NotificationBellDemo />
+</ComponentPreview>
+
+#### Tour
+
+**New.** Step-by-step product walkthrough with a spotlight cutout. [Docs →](/km/docs/components/tour/)
+
+<ComponentPreview stack>
+<div class="demo-row">
+  <moul-button id="tour-new"><span>New project</span></moul-button>
+  <moul-button id="tour-invite" variant="secondary"><span>Invite</span></moul-button>
+  <moul-badge id="tour-plan" tone="success"><span>Free plan</span></moul-badge>
+</div>
+<div class="demo-row">
+  <moul-button variant="outline" data-tour-start="tour-demo"><span>Take the tour</span></moul-button>
+  <span data-tour-log="tour-demo" style="font-size: 0.875rem; color: var(--color-muted)"></span>
+</div>
+<moul-tour id="tour-demo">
+  <moul-tour-step heading="Welcome to Moul">
+    <span>Three things you will use every day. It takes less than a minute.</span>
+  </moul-tour-step>
+  <moul-tour-step target="#tour-new" heading="Start a project">
+    <span>Every app, API key and database lives in a project.</span>
+  </moul-tour-step>
+  <moul-tour-step target="#tour-invite" heading="Bring your team" placement="right">
+    <span>Invite people by email. They join with the role you pick.</span>
+  </moul-tour-step>
+  <moul-tour-step target="#tour-plan" heading="Your plan" placement="top">
+    <span>The free plan covers three projects. Upgrade from settings at any time.</span>
+  </moul-tour-step>
+</moul-tour>
+</ComponentPreview>
+
+#### Focus Mode
+
+**New.** Dims the page around one region. [Docs →](/km/docs/components/focusmode/)
+
+<ComponentPreview align="stretch" stack>
+<moul-focus-mode id="focus-draft">
+  <moul-card variant="bordered">
+    <moul-card-body>
+      <div class="demo-stack">
+        <moul-text-area label="Release notes" rows="4" placeholder="What changed in this release?"></moul-text-area>
+        <div class="demo-row" style="justify-content: flex-end">
+          <moul-button variant="secondary" data-focus-toggle="focus-draft"><span>Focus</span></moul-button>
+        </div>
+      </div>
+    </moul-card-body>
+  </moul-card>
+</moul-focus-mode>
+</ComponentPreview>
+
+#### Command Palette
+
+Searchable command menu opened with ⌘K. [Docs →](/km/docs/components/commandpalette/)
+
+<ComponentPreview>
+<moul-button variant="secondary" data-open="demo-palette">Open palette <moul-kbd slot="suffix">⌘K</moul-kbd></moul-button>
+<moul-command-palette id="demo-palette" placeholder="Type a command…" data-props='{"items":[{"id":"new","title":"New project","group":"Create","shortcut":"\u2318N"},{"id":"invite","title":"Invite teammate","group":"Create"},{"id":"deploy","title":"Deploy to production","group":"Actions","description":"Promote the latest preview"},{"id":"logs","title":"Open logs","group":"Actions","shortcut":"\u2318L"},{"id":"theme","title":"Toggle theme","group":"Preferences"}]}'></moul-command-palette>
+</ComponentPreview>
+
+#### Tabs
+
+Switch between related panels. [Docs →](/km/docs/components/tabs/)
+
+<ComponentPreview align="stretch">
+<moul-tabs selected-key="overview">
+  <moul-tab key="overview">Overview</moul-tab>
+  <moul-tab key="analytics">Analytics</moul-tab>
+  <moul-tab key="settings">Settings</moul-tab>
+  <moul-tab key="billing" is-disabled>Billing</moul-tab>
+  <moul-tab-panel key="overview">Workspace summary and recent activity.</moul-tab-panel>
+  <moul-tab-panel key="analytics">Traffic, conversion and retention metrics.</moul-tab-panel>
+  <moul-tab-panel key="settings">Members, domains and integrations.</moul-tab-panel>
+  <moul-tab-panel key="billing">Invoices and payment methods.</moul-tab-panel>
+</moul-tabs>
+</ComponentPreview>
+
+#### Breadcrumbs
+
+Shows where the current page sits in a hierarchy. [Docs →](/km/docs/components/breadcrumbs/)
+
+<ComponentPreview>
+<moul-breadcrumbs>
+  <moul-breadcrumb-item href="#">Home</moul-breadcrumb-item>
+  <moul-breadcrumb-item href="#">Projects</moul-breadcrumb-item>
+  <moul-breadcrumb-item href="#">moul-portal</moul-breadcrumb-item>
+  <moul-breadcrumb-item is-current>Settings</moul-breadcrumb-item>
+</moul-breadcrumbs>
+</ComponentPreview>
+
+#### Pagination
+
+Navigate between pages of results. [Docs →](/km/docs/components/pagination/)
+
+<ComponentPreview>
+<div class="demo-stack" style="align-items: center">
+  <moul-pagination total-pages="12" current-page="4"></moul-pagination>
+  <moul-pagination total-pages="5" current-page="2" shape="pill"></moul-pagination>
+</div>
+</ComponentPreview>
+
+#### Link
+
+Inline navigation with external-link affordance. [Docs →](/km/docs/components/link/)
+
+<ComponentPreview>
+<div class="demo-row">
+  <moul-link href="#">Default link</moul-link>
+  <moul-link href="#" variant="subtle">Subtle link</moul-link>
+  <moul-link href="#" variant="underline">Underlined</moul-link>
+  <moul-link href="https://developer.mozilla.org" is-external>MDN</moul-link>
+  <moul-link href="#" is-disabled>Disabled</moul-link>
+</div>
+</ComponentPreview>
+
+### Surfaces & Feedback
+
+#### Accordion
+
+**New.** Collapsible sections whose panels open with a spring and no layout jump. [Docs →](/km/docs/components/accordion/)
+
+<ComponentPreview align="stretch">
+<moul-accordion>
+  <moul-accordion-item value="shipping" heading="How long does shipping take?" is-open>
+    Orders inside Phnom Penh arrive the next day. Everywhere else in Cambodia takes two to four days.
+  </moul-accordion-item>
+  <moul-accordion-item value="returns" heading="Can I return an item?">
+    Yes, within 30 days, unused and in its box. We collect it from your door.
+  </moul-accordion-item>
+  <moul-accordion-item value="warranty" heading="What does the warranty cover?">
+    One year against manufacturing faults. Accidental damage is not covered.
+  </moul-accordion-item>
+</moul-accordion>
+</ComponentPreview>
+
+#### Alert
+
+Inline status message with semantic tone. [Docs →](/km/docs/components/alert/)
+
+<ComponentPreview align="stretch" backdrop="page">
+<moul-alert tone="primary" title="Heads up" description="A new version is ready to install."></moul-alert>
+<moul-alert tone="success" title="Deployed" description="Release 2026.10 is live on every region."></moul-alert>
+<moul-alert tone="warning" title="Usage at 84%" description="You are close to this month’s build minutes."></moul-alert>
+<moul-alert tone="error" title="Build failed" description="Type check failed in src/index.ts." is-dismissible></moul-alert>
+</ComponentPreview>
+
+#### Animated List
+
+**New.** A list whose new items arrive one at a time, growing into place and pushing the others along. [Docs →](/km/docs/components/animatedlist/)
+
+<ComponentPreview>
+<div class="demo-stack" style="width: min(100%, 22rem)">
+<div class="demo-row">
+<moul-button size="sm" variant="secondary" data-animated-list-add="feed"><span>Add event</span></moul-button>
+<moul-button size="sm" variant="ghost" data-animated-list-remove="feed"><span>Remove oldest</span></moul-button>
+</div>
+<moul-animated-list id="feed" aria-label="Activity" is-live>
+<div class="demo-notice"><span class="demo-notice-icon" data-tone="danger" aria-hidden="true">✕</span><span class="demo-notice-text"><strong>Job failed</strong><span>nightly-backup · exit 1</span></span></div>
+<div class="demo-notice"><span class="demo-notice-icon" data-tone="warning" aria-hidden="true">!</span><span class="demo-notice-text"><strong>Disk 80% full</strong><span>db-primary</span></span></div>
+</moul-animated-list>
+</div>
+<AnimatedListDemo />
+</ComponentPreview>
+
+#### Card
+
+Surface container with header, body and footer. [Docs →](/km/docs/components/card/)
+
+<ComponentPreview backdrop="page">
+<div class="demo-row" style="align-items: stretch">
+  <moul-card style="width: 16rem">
+    <moul-card-header><strong>Default</strong></moul-card-header>
+    <moul-card-body>White surface lifted by a soft shadow.</moul-card-body>
+    <moul-card-footer><moul-button size="sm">Open</moul-button></moul-card-footer>
+  </moul-card>
+  <moul-card variant="bordered" style="width: 16rem">
+    <moul-card-header><strong>Bordered</strong></moul-card-header>
+    <moul-card-body>Quiet outline for dense layouts.</moul-card-body>
+    <moul-card-footer><moul-button size="sm" variant="secondary">Open</moul-button></moul-card-footer>
+  </moul-card>
+  <moul-card variant="shadow" tone="accent" is-interactive style="width: 16rem">
+    <moul-card-header><strong>Interactive</strong></moul-card-header>
+    <moul-card-body>Lifts on hover and fires press.</moul-card-body>
+  </moul-card>
+</div>
+</ComponentPreview>
+
+#### Badge
+
+Compact status label. [Docs →](/km/docs/components/badge/)
+
+<ComponentPreview>
+<div class="demo-row">
+  <moul-badge tone="primary">Primary</moul-badge>
+  <moul-badge tone="accent">Accent</moul-badge>
+  <moul-badge tone="success">Healthy</moul-badge>
+  <moul-badge tone="warning">Pending</moul-badge>
+  <moul-badge tone="error">Failed</moul-badge>
+</div>
+</ComponentPreview>
+
+#### Number Ticker
+
+**New.** Number that rolls or counts to its new value. [Docs →](/km/docs/components/numberticker/)
+
+<ComponentPreview stack>
+  <span style="font-size: 3rem; font-weight: 600; line-height: 1.1">
+    <moul-number-ticker id="ticker-roll" value="1280" locale="en-US"></moul-number-ticker>
+  </span>
+  <div class="demo-row">
+    <moul-button variant="secondary" size="sm" data-number-target="ticker-roll" data-number-by="-1"><span>−1</span></moul-button>
+    <moul-button variant="secondary" size="sm" data-number-target="ticker-roll" data-number-by="1"><span>+1</span></moul-button>
+    <moul-button variant="secondary" size="sm" data-number-target="ticker-roll" data-number-by="250"><span>+250</span></moul-button>
+    <moul-button variant="secondary" size="sm" data-number-target="ticker-roll" data-number-random data-number-max="99999"><span>Random</span></moul-button>
+  </div>
+</ComponentPreview>
+
+#### Avatar
+
+User image with initials fallback and presence status. [Docs →](/km/docs/components/avatar/)
+
+<ComponentPreview>
+<div class="demo-row">
+  <moul-avatar name="Sarah Chen" size="xs"></moul-avatar>
+  <moul-avatar name="Marcus Brody" size="sm" status="online"></moul-avatar>
+  <moul-avatar name="Elena Rostova" size="md" status="away"></moul-avatar>
+  <moul-avatar name="Devon Vance" size="lg" status="busy"></moul-avatar>
+  <moul-avatar name="Kim Ly" size="xl" shape="square"></moul-avatar>
+</div>
+</ComponentPreview>
+
+#### Typography
+
+Type scale bound to design tokens. [Docs →](/km/docs/components/typography/)
+
+<ComponentPreview align="start" stack>
+<moul-typography variant="h1">Display heading</moul-typography>
+<moul-typography variant="h3">Section heading</moul-typography>
+<moul-typography variant="body">Body copy sits comfortably at 16px with a 1.5 line height.</moul-typography>
+<moul-typography variant="caption">Caption — secondary detail</moul-typography>
+<moul-typography variant="code">bun add @moul-dev/web-component</moul-typography>
+<moul-typography variant="body" tone="success">Toned text</moul-typography>
+</ComponentPreview>
+
+#### Kbd
+
+Keyboard key or shortcut. [Docs →](/km/docs/components/kbd/)
+
+<ComponentPreview>
+<div class="demo-row">
+  <moul-kbd>⌘</moul-kbd>
+  <moul-kbd>K</moul-kbd>
+  <moul-kbd keys="Ctrl+Shift+P"></moul-kbd>
+  <span>Press <moul-kbd>Esc</moul-kbd> to close</span>
+</div>
+</ComponentPreview>
+
+#### Separator
+
+Divides content horizontally or vertically. [Docs →](/km/docs/components/separator/)
+
+<ComponentPreview>
+<div class="demo-stack" style="width: min(100%, 20rem)">
+  <span>Account</span>
+  <moul-separator></moul-separator>
+  <div class="demo-row" style="justify-content: flex-start; height: 1.5rem">
+    <span>Profile</span>
+    <moul-separator orientation="vertical"></moul-separator>
+    <span>Billing</span>
+    <moul-separator orientation="vertical"></moul-separator>
+    <span>Security</span>
+  </div>
+</div>
+</ComponentPreview>
+
+#### Icon Morph
+
+**New.** One icon that turns into another, such as menu into close or play into pause. [Docs →](/km/docs/components/iconmorph/)
+
+<ComponentPreview>
+  <IconMorphDemo />
+</ComponentPreview>
+
+#### Spinner
+
+Indeterminate loading indicator. [Docs →](/km/docs/components/spinner/)
+
+<ComponentPreview>
+<div class="demo-row">
+  <moul-spinner size="sm" label="Loading"></moul-spinner>
+  <moul-spinner size="md" label="Loading"></moul-spinner>
+  <moul-spinner size="lg" label="Loading"></moul-spinner>
+</div>
+</ComponentPreview>
+
+#### Step Loader
+
+**New.** Checklist that ticks off steps while the user waits. [Docs →](/km/docs/components/steploader/)
+
+<ComponentPreview stack>
+<moul-step-loader id="publish-loader" label="Publishing site" interval="1400" data-props='{"steps":["Checking files",{"label":"Uploading assets","description":"12 files, 4.2 MB"},"Building pages","Publishing to the edge"]}'></moul-step-loader>
+<div class="demo-row">
+  <moul-button variant="secondary" size="sm" data-step-loader-restart="publish-loader"><span>Start over</span></moul-button>
+  <moul-button variant="danger-soft" size="sm" data-step-loader-fail="publish-loader"><span>Fail this step</span></moul-button>
+</div>
+</ComponentPreview>
+
+#### Skeleton
+
+Placeholder shapes while content loads. [Docs →](/km/docs/components/skeleton/)
+
+<ComponentPreview>
+<div class="demo-row" style="width: min(100%, 22rem); justify-content: flex-start; flex-wrap: nowrap">
+  <moul-skeleton shape="circle" width="3rem" height="3rem"></moul-skeleton>
+  <div class="demo-stack" style="flex: 1; gap: 0.5rem">
+    <moul-skeleton shape="line" width="60%"></moul-skeleton>
+    <moul-skeleton shape="line" width="90%" variant="wave"></moul-skeleton>
+    <moul-skeleton shape="rect" height="4rem" variant="wave"></moul-skeleton>
+  </div>
+</div>
+</ComponentPreview>
+
+#### Progress Bar
+
+Determinate or indeterminate progress. [Docs →](/km/docs/components/progressbar/)
+
+<ComponentPreview>
+<div class="demo-stack" style="width: min(100%, 24rem)">
+  <moul-progress-bar value="65"><span slot="label">Uploading assets</span></moul-progress-bar>
+  <moul-progress-bar value="90" tone="success" size="sm"></moul-progress-bar>
+  <moul-progress-bar value="35" tone="warning" shape="square" size="lg"></moul-progress-bar>
+  <moul-progress-bar is-indeterminate><span slot="label">Preparing build</span></moul-progress-bar>
+</div>
+</ComponentPreview>
+
+#### Result Card
+
+**New.** Success or failure card with a self-drawing status icon. [Docs →](/km/docs/components/resultcard/)
+
+<ComponentPreview stack backdrop="page">
+<moul-result-card id="payment-result" heading="Payment sent" description="$42.00 is on its way to Dara Sok." style="width: min(100%, 22rem); margin-inline: auto">
+  <moul-button slot="actions" variant="secondary" data-result-card="payment-result" data-outcome="success"><span>Pay again</span></moul-button>
+  <moul-button slot="actions" variant="tertiary" data-result-card="payment-result" data-outcome="error"><span>Try a declined card</span></moul-button>
+</moul-result-card>
+</ComponentPreview>
+
+#### Tag Group
+
+Selectable and removable tags. [Docs →](/km/docs/components/taggroup/)
+
+<ComponentPreview>
+<div class="demo-stack">
+  <moul-tag-group label="Stack" selection-mode="multiple">
+    <moul-tag key="astro">Astro</moul-tag>
+    <moul-tag key="lit" is-selected>Lit</moul-tag>
+    <moul-tag key="ts" is-selected>TypeScript</moul-tag>
+    <moul-tag key="bun">Bun</moul-tag>
+  </moul-tag-group>
+  <moul-tag-group label="Filters" is-removable>
+    <moul-tag key="prod" tone="success">production</moul-tag>
+    <moul-tag key="ap" tone="accent">ap-southeast</moul-tag>
+    <moul-tag key="err" tone="error">errors only</moul-tag>
+  </moul-tag-group>
+</div>
+</ComponentPreview>
+
+#### Table
+
+Data table with search, filters, sorting, row selection, expandable rows and a card layout on narrow screens. [Docs →](/km/docs/components/table/)
+
+<ComponentPreview align="stretch">
+<moul-table is-sortable is-selectable aria-label="Services" data-props='{"columns":[{"key":"name","title":"Service"},{"key":"region","title":"Region"},{"key":"status","title":"Status","sortable":false},{"key":"latency","title":"p95 (ms)","align":"right"}],"data":[{"id":"1","name":"api-gateway","region":"us-east","status":"Healthy","latency":42},{"id":"2","name":"auth-worker","region":"ap-southeast","status":"Degraded","latency":188},{"id":"3","name":"billing","region":"eu-west","status":"Healthy","latency":67},{"id":"4","name":"search","region":"us-west","status":"Healthy","latency":95}]}'></moul-table>
+</ComponentPreview>
+
+#### Selection Toolbar
+
+**New.** A floating bar of bulk actions for the selected rows of a table, with a count, a clear button and arrow-key navigation. [Docs →](/km/docs/components/selectiontoolbar/)
+
+<ComponentPreview align="stretch">
+<div style="max-height: 22rem; overflow: auto">
+<moul-table id="bulk-files" is-selectable is-dense aria-label="Files" data-props='{"columns":[{"key":"name","title":"File"},{"key":"owner","title":"Owner"},{"key":"size","title":"Size","align":"right"}],"data":[{"id":"1","name":"q3-report.pdf","owner":"Sokha","size":"2.4 MB"},{"id":"2","name":"brand-guide.fig","owner":"Dara","size":"18.1 MB"},{"id":"3","name":"invoices-2026.xlsx","owner":"Sokha","size":"640 KB"},{"id":"4","name":"team-photo.jpg","owner":"Vanna","size":"5.2 MB"},{"id":"5","name":"contract-draft.docx","owner":"Dara","size":"120 KB"},{"id":"6","name":"roadmap.md","owner":"Vanna","size":"12 KB"},{"id":"7","name":"launch-video.mp4","owner":"Sokha","size":"210 MB"},{"id":"8","name":"logo.svg","owner":"Dara","size":"9 KB"}]}'></moul-table>
+<moul-selection-toolbar for="bulk-files" position="sticky" label="File actions">
+  <moul-button size="sm" variant="secondary" data-bulk-action="archive">Archive</moul-button>
+  <moul-button size="sm" variant="secondary" data-bulk-action="export">Export</moul-button>
+  <moul-button size="sm" variant="danger-soft" data-bulk-action="delete">Delete</moul-button>
+</moul-selection-toolbar>
+</div>
+<SelectionToolbarDemo />
+</ComponentPreview>
+
+#### Toast
+
+Temporary notifications stacked at a screen edge. [Docs →](/km/docs/components/toast/)
+
+<ComponentPreview>
+<div class="demo-row">
+  <moul-button variant="secondary" data-toast='{"title":"Saved","description":"Your settings were updated.","tone":"primary"}'>Primary</moul-button>
+  <moul-button variant="secondary" data-toast='{"title":"Deployed","description":"Release 2026.10 is live.","tone":"success"}'>Success</moul-button>
+  <moul-button variant="secondary" data-toast='{"title":"Quota warning","description":"84% of build minutes used.","tone":"warning"}'>Warning</moul-button>
+  <moul-button variant="secondary" data-toast='{"title":"Build failed","description":"Type check failed.","tone":"error"}'>Error</moul-button>
+</div>
+</ComponentPreview>
+
+#### Empty State
+
+Friendly placeholder when there is nothing to show. [Docs →](/km/docs/components/emptystate/)
+
+<ComponentPreview>
+<moul-empty-state variant="glass" style="width: min(100%, 28rem)">
+  <span slot="icon" style="font-size: 1.75rem">📦</span>
+  <span slot="title">No deployments yet</span>
+  <span slot="description">Push a commit or trigger a build to see it here.</span>
+  <div slot="actions" class="demo-row">
+    <moul-button size="sm">New deployment</moul-button>
+    <moul-button size="sm" variant="ghost">Read the docs</moul-button>
+  </div>
+</moul-empty-state>
+</ComponentPreview>
+
+#### Expandable Card
+
+**New.** A card that grows into a dialog to show its details, and shrinks back into its place. [Docs →](/km/docs/components/expandablecard/)
+
+<ComponentPreview minHeight="320px" backdrop="page">
+  <ExpandableCardDemo />
+</ComponentPreview>
+
+#### Pull to Refresh
+
+**New.** Scroll container that refreshes when pulled down from its top. [Docs →](/km/docs/components/pulltorefresh/)
+
+<ComponentPreview>
+  <moul-pull-to-refresh data-pull-demo class="pull-demo" style="height: 18rem; width: min(100%, 22rem); border: 1px solid var(--color-border); border-radius: var(--radius-xl); background: var(--color-surface)">
+    <ul>
+      <li><strong>Sokha</strong><span>Lunch on Friday?</span></li>
+      <li><strong>Dara</strong><span>The build is green again</span></li>
+      <li><strong>Vanna</strong><span>Invoice #1042 is paid</span></li>
+      <li><strong>Bopha</strong><span>Notes from the design review</span></li>
+      <li><strong>Rithy</strong><span>Welcome to the team</span></li>
+      <li><strong>Chenda</strong><span>Your report is ready</span></li>
+      <li><strong>Sokha</strong><span>Photos from the trip</span></li>
+    </ul>
+  </moul-pull-to-refresh>
+  <PullToRefreshDemo />
+</ComponentPreview>
+
+#### Confetti
+
+**New.** Burst of confetti, or a rocket that bursts, to celebrate a success. [Docs →](/km/docs/components/confetti/)
+
+<ComponentPreview minHeight="200px">
+  <div class="demo-row">
+    <moul-confetti>
+      <moul-button data-confetti="burst"><span>Burst</span></moul-button>
+    </moul-confetti>
+    <moul-confetti variant="rocket">
+      <moul-button variant="secondary" data-confetti="rocket"><span>Rocket</span></moul-button>
+    </moul-confetti>
+  </div>
+  <ConfettiDemo />
+</ComponentPreview>
+
+### Data & Developer
+
+#### Activity Feed
+
+**New.** A live stream of events, newest first, whose payloads expand into highlighted JSON. [Docs →](/km/docs/components/activityfeed/)
+
+<ComponentPreview align="stretch" stack>
+<div class="demo-row">
+<moul-button size="sm" variant="secondary" data-activity-stream="requests"><span>Start stream</span></moul-button>
+<moul-button size="sm" variant="ghost" data-activity-push="requests"><span>Add one</span></moul-button>
+</div>
+<moul-activity-feed id="requests" label="Requests" data-activity-seed style="--activity-feed-max-height: 22rem"></moul-activity-feed>
+<ActivityFeedDemo />
+</ComponentPreview>
+
+#### Code Block
+
+**New.** Highlighted code with a copy button, line highlights and tabs for variants of a snippet. [Docs →](/km/docs/components/codeblock/)
+
+<ComponentPreview align="stretch">
+<moul-code-block language="ts" filename="src/main.ts" highlight-lines="4" show-line-numbers code={`import '@moul-dev/web-component'
+import '@moul-dev/web-component/style.css'
+
+const feed = document.querySelector('moul-activity-feed')
+feed.push({ id: 1, title: 'Deploy finished', tone: 'success' })`}></moul-code-block>
+</ComponentPreview>
+
+#### Code Comparison
+
+**New.** Two versions of a snippet side by side, with removed and added lines marked. [Docs →](/km/docs/components/codecomparison/)
+
+<ComponentPreview align="stretch">
+<moul-code-comparison language="ts" before-label="Before" after-label="After" before-code={`const button = document.querySelector('moul-button')
+button.onPress = () => save()
+button.setAttribute('disabled', '')`} after-code={`const button = document.querySelector('moul-button')
+button.addEventListener('press', () => save())
+button.isDisabled = true`}></moul-code-comparison>
+</ComponentPreview>
+
+#### File Tree
+
+**New.** Folders and files that open and close, built from a list of paths. [Docs →](/km/docs/components/filetree/)
+
+<ComponentPreview>
+<div class="demo-stack" style="width: min(100%, 20rem)">
+<moul-file-tree id="project-files" label="Project files" selected-key="src/components/Button.ts" data-props='{"files":["src/index.ts","src/components/Button.ts","src/components/Button.styles.ts","src/components/button.test.ts","src/styles/tokens.css","public/logo.svg","docs/getting-started.md","docs/","package.json","README.md","tsconfig.json",".env.example"]}'></moul-file-tree>
+<span class="demo-label">Selected</span>
+<code data-file-tree-output="project-files">src/components/Button.ts</code>
+</div>
+<FileTreeDemo />
+</ComponentPreview>
+
+#### History Ledger
+
+**New.** A record's version history with before-and-after changes and one-click restore. [Docs →](/km/docs/components/historyledger/)
+
+<ComponentPreview>
+<moul-history-ledger data-history-ledger-demo style="width: min(100%, 30rem)"></moul-history-ledger>
+<HistoryLedgerDemo />
+</ComponentPreview>
+
+#### Relationship Graph
+
+**New.** Nodes and the links between them, laid out in layers; hovering a node traces everything it depends on and everything that depends on it. [Docs →](/km/docs/components/relationshipgraph/)
+
+<ComponentPreview stack align="stretch">
+<moul-toggle-button-group selected-key="both" aria-label="Trace" data-graph-trace="services-graph" style="align-self: center">
+<moul-toggle-button value="both"><span>Both ways</span></moul-toggle-button>
+<moul-toggle-button value="upstream"><span>Dependencies</span></moul-toggle-button>
+<moul-toggle-button value="downstream"><span>Dependents</span></moul-toggle-button>
+</moul-toggle-button-group>
+<moul-relationship-graph id="services-graph" class="demo-graph" label="Service map" show-legend data-graph-sample="services"></moul-relationship-graph>
+<p class="demo-graph-details" data-graph-details="services-graph" aria-live="polite">Hover, focus or select a node to trace its path.</p>
+<details class="demo-graph-list" data-graph-list="services-graph"><summary>The service map as a list</summary></details>
+<RelationshipGraphDemo />
+</ComponentPreview>
+
+#### Terminal
+
+**New.** A terminal window that types its commands and prints their output, line by line. [Docs →](/km/docs/components/terminal/)
+
+<ComponentPreview align="stretch">
+<moul-terminal label="zsh">
+<moul-terminal-line is-command><span>bun add @moul-dev/web-component</span></moul-terminal-line>
+<moul-terminal-line tone="muted"><span>Resolving dependencies</span></moul-terminal-line>
+<moul-terminal-line tone="success"><span>✓ installed @moul-dev/web-component</span></moul-terminal-line>
+<moul-terminal-line tone="muted"><span>1 package installed [1.21s]</span></moul-terminal-line>
+<moul-terminal-line is-command delay="900"><span>bun run dev</span></moul-terminal-line>
+<moul-terminal-line><span>VITE ready in 312 ms</span></moul-terminal-line>
+<moul-terminal-line tone="success"><span>➜ Local: http://localhost:5173/</span></moul-terminal-line>
+</moul-terminal>
+</ComponentPreview>
+
+#### Timeline
+
+**New.** Vertical milestones on a rail, with sticky headings and a line that fills as you scroll. [Docs →](/km/docs/components/timeline/)
+
+<ComponentPreview align="stretch">
+<moul-timeline label="Roadmap" heading-level="3" style="--moul-timeline-sticky-top: 5rem">
+<moul-timeline-item heading="Shared workspaces" meta="Spring">
+<p>Invite your team to a workspace, give each person a role, and see who changed what in every record's history.</p>
+<p>Workspaces keep their own billing, so a client project can be handed over in one step when it ships.</p>
+</moul-timeline-item>
+<moul-timeline-item heading="Offline drafts" meta="Summer">
+<p>Edits made on a train or a flight are kept on the device and sync when the connection comes back, with a clear note of anything that clashed.</p>
+<p>Drafts are encrypted at rest and removed from the device once they sync.</p>
+</moul-timeline-item>
+<moul-timeline-item heading="Public API" meta="Autumn">
+<p>Everything the app can do, over a documented HTTP API with scoped keys and webhooks for the events you care about.</p>
+</moul-timeline-item>
+</moul-timeline>
+</ComponentPreview>
+
+### AI Kit
+
+#### Agent Activity
+
+**New.** An AI agent's reasoning and tool calls as a live timeline, with each call's input and output. [Docs →](/km/docs/components/agentactivity/)
+
+<ComponentPreview align="stretch" stack>
+<div class="demo-row">
+<moul-button size="sm" variant="secondary" data-ai-run="activity-demo"><span>Run the agent</span></moul-button>
+</div>
+<moul-agent-activity id="activity-demo" data-ai-activity-seed></moul-agent-activity>
+<AiKitDemo />
+</ComponentPreview>
+
+#### Chat
+
+**New.** A complete AI chat screen with a conversation history, tool calls, streaming answers and a composer. [Docs →](/km/docs/components/chat/)
+
+<ComponentPreview align="stretch" minHeight="36rem">
+<moul-chat data-ai-chat style="height: 36rem; border: 1px solid var(--color-border); border-radius: var(--radius-lg); overflow: hidden">
+<span slot="footer">The answers in this demo are scripted.</span>
+</moul-chat>
+<AiKitDemo />
+</ComponentPreview>
+
+#### Prompt Input
+
+**New.** The composer of an AI chat, with a growing text box, model picker, attachments, history and a stop button. [Docs →](/km/docs/components/promptinput/)
+
+<ComponentPreview align="stretch" stack>
+<moul-prompt-input
+  id="composer-demo"
+  data-ai-log="composer-demo"
+  allow-attachments
+  accept="image/*,.pdf,.txt,.csv"
+  max-size="5000000"
+  data-props='{"placeholders": ["Ask about your collections…", "Summarise yesterday’s errors…", "Draft a migration…"], "models": [{"value": "sonnet", "label": "Sonnet", "description": "Fast and capable"}, {"value": "opus", "label": "Opus", "description": "For harder questions"}], "history": ["Which collections are there?"]}'
+></moul-prompt-input>
+<output class="demo-log" data-ai-log-for="composer-demo">Type, attach a file, then press Enter.</output>
+<AiKitDemo />
+</ComponentPreview>
+
+#### Streaming Response
+
+**New.** A model's Markdown answer that streams in smoothly, with code, citations, sources and actions. [Docs →](/km/docs/components/streamingresponse/)
+
+<ComponentPreview align="stretch" stack>
+<div class="demo-row">
+<moul-button size="sm" variant="secondary" data-ai-stream="answer-demo"><span>Stream an answer</span></moul-button>
+</div>
+<moul-streaming-response id="answer-demo" content={'Press **Stream an answer** to watch a reply arrive. It lists posts, shows a code block and cites a source.'}></moul-streaming-response>
+<AiKitDemo />
+</ComponentPreview>
+
+#### Thinking Indicator
+
+**New.** A small orb of particles that turns and breathes beside a shimmering label while a model works. [Docs →](/km/docs/components/thinkingindicator/)
+
+<ComponentPreview stack>
+<div class="demo-row">
+<moul-thinking-indicator id="thinking-demo"></moul-thinking-indicator>
+<moul-button size="sm" variant="secondary" data-ai-labels="thinking-demo"><span>Next step</span></moul-button>
+</div>
+<AiKitDemo />
+</ComponentPreview>
+
+### Landing Kit
+
+#### Reveal
+
+**New.** Content that fades in and sharpens from a soft blur as it scrolls into view. [Docs →](/km/docs/components/reveal/)
+
+<ComponentPreview stack minHeight="240px">
+  <moul-reveal id="reveal-demo">
+    <moul-card style="max-width: 22rem">
+      <moul-card-header>
+        <moul-typography variant="h4">Ship on Friday</moul-typography>
+      </moul-card-header>
+      <moul-card-body>Every deploy is a preview first, so the release is a click, not a ceremony.</moul-card-body>
+    </moul-card>
+  </moul-reveal>
+  <moul-button size="sm" variant="secondary" data-replay="reveal-demo"><span>Replay</span></moul-button>
+  <LandingKitDemo />
+</ComponentPreview>
+
+#### Text Entrance
+
+**New.** Text whose letters, words or lines come in one after another as it scrolls into view. [Docs →](/km/docs/components/textentrance/)
+
+<ComponentPreview stack minHeight="200px">
+  <moul-typography variant="h2"><moul-text-entrance id="entrance-demo">Ship on Friday, sleep on Saturday</moul-text-entrance></moul-typography>
+  <moul-button size="sm" variant="secondary" data-replay="entrance-demo"><span>Replay</span></moul-button>
+  <LandingKitDemo />
+</ComponentPreview>
+
+#### Typewriter
+
+**New.** Text that types itself with a blinking cursor, or a list of words typed and deleted in turn. [Docs →](/km/docs/components/typewriter/)
+
+<ComponentPreview stack minHeight="200px">
+  <moul-typography variant="h2">We build <moul-typewriter id="typewriter-demo" words='["fast","safe","small"]' is-looping>fast</moul-typewriter> apps</moul-typography>
+  <moul-typography variant="body"><moul-typewriter id="typewriter-text">Every deploy is a preview first.</moul-typewriter></moul-typography>
+  <moul-button size="sm" variant="secondary" data-replay="typewriter-demo typewriter-text"><span>Replay</span></moul-button>
+  <LandingKitDemo />
+</ComponentPreview>
+
+#### Word Rotate
+
+**New.** One word in a sentence that cycles through a list. [Docs →](/km/docs/components/wordrotate/)
+
+<ComponentPreview stack minHeight="160px">
+  <moul-typography variant="h2">Build <moul-word-rotate words='["dashboards", "landing pages", "admin tools", "AI chat"]'>dashboards</moul-word-rotate> in plain HTML</moul-typography>
+  <LandingKitDemo />
+</ComponentPreview>
+
+#### Scramble
+
+**New.** Letters scramble through random glyphs, then resolve to the final text from start to end. [Docs →](/km/docs/components/scramble/)
+
+<ComponentPreview stack minHeight="200px">
+  <moul-typography variant="h2"><moul-scramble id="scramble-demo">Decrypting the roadmap</moul-scramble></moul-typography>
+  <moul-button size="sm" variant="secondary" data-replay="scramble-demo"><span>Replay</span></moul-button>
+  <LandingKitDemo />
+</ComponentPreview>
+
+#### Gradient Text
+
+**New.** Text painted with a moving gradient or a passing light. [Docs →](/km/docs/components/gradienttext/)
+
+<ComponentPreview stack minHeight="160px">
+  <moul-typography variant="h2">Components that feel <moul-gradient-text>alive</moul-gradient-text></moul-typography>
+  <LandingKitDemo />
+</ComponentPreview>
+
+#### Highlight
+
+**New.** A marker stroke drawn on words as they scroll into view. [Docs →](/km/docs/components/highlight/)
+
+<ComponentPreview stack minHeight="180px">
+  <moul-typography variant="h3">Plain HTML tags with <moul-highlight id="highlight-demo">motion built in</moul-highlight>.</moul-typography>
+  <moul-button size="sm" variant="secondary" data-replay="highlight-demo"><span>Replay</span></moul-button>
+  <LandingKitDemo />
+</ComponentPreview>
+
+#### Marquee
+
+**New.** An endless row or column of logos, cards or short text that moves at a steady speed. [Docs →](/km/docs/components/marquee/)
+
+<ComponentPreview stack>
+  <moul-marquee fade-edges style="font-size: 1.125rem; font-weight: 600; color: var(--color-muted)">
+    <span style="display: inline-flex; align-items: center; gap: 0.5rem"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor" /></svg>Brightloom</span>
+    <span style="display: inline-flex; align-items: center; gap: 0.5rem"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4" fill="currentColor" /></svg>Tidewell</span>
+    <span style="display: inline-flex; align-items: center; gap: 0.5rem"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M12 2 22 20H2Z" fill="currentColor" /></svg>Cobaltine</span>
+    <span style="display: inline-flex; align-items: center; gap: 0.5rem"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M4 4h16v4H8v4h10v4H8v4H4Z" fill="currentColor" /></svg>Fernforge</span>
+    <span style="display: inline-flex; align-items: center; gap: 0.5rem"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><circle cx="8" cy="12" r="6" fill="currentColor" /><circle cx="16" cy="12" r="6" fill="currentColor" opacity="0.5" /></svg>Quillstone</span>
+    <span style="display: inline-flex; align-items: center; gap: 0.5rem"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20V2Z" fill="currentColor" /></svg>Sundial Works</span>
+  </moul-marquee>
+  <LandingKitDemo />
+</ComponentPreview>
+
+#### Bento Grid
+
+**New.** Feature cards in an uneven grid, with art above or behind the text and an action that slides in on hover. [Docs →](/km/docs/components/bentogrid/)
+
+<ComponentPreview align="stretch">
+  <moul-bento-grid>
+    <moul-bento-card col-span="2">
+      <div slot="background" aria-hidden="true" style="background: radial-gradient(circle at 85% 0%, var(--color-accent-soft), transparent 65%)"></div>
+      <svg slot="icon" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M4 12h16M12 4l8 8-8 8" /></svg>
+      <h3 slot="heading">Previews on every push</h3>
+      <p>Each branch gets its own URL, so a review starts with a link.</p>
+      <moul-link slot="action" href="#">See how previews work</moul-link>
+    </moul-bento-card>
+    <moul-bento-card row-span="2">
+      <div slot="background" aria-hidden="true" style="background: linear-gradient(to bottom, var(--color-surface-secondary), transparent 70%)"></div>
+      <svg slot="icon" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10" /></svg>
+      <h3 slot="heading">Logs you can search</h3>
+      <p>Every request, filterable by route, status and user, kept for thirty days.</p>
+      <moul-link slot="action" href="#">Open the logs guide</moul-link>
+    </moul-bento-card>
+    <moul-bento-card>
+      <svg slot="icon" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M9 14 4 9l5-5M4 9h11a5 5 0 0 1 0 10h-3" /></svg>
+      <h3 slot="heading">Rollbacks in one click</h3>
+      <p>Any earlier deploy is one click away.</p>
+      <moul-link slot="action" href="#">Read about rollbacks</moul-link>
+    </moul-bento-card>
+    <moul-bento-card>
+      <svg slot="icon" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4ZM10 21h4" /></svg>
+      <h3 slot="heading">Alerts that wait for you</h3>
+      <p>Quiet hours hold alerts until the morning.</p>
+      <moul-link slot="action" href="#">Set up alerts</moul-link>
+    </moul-bento-card>
+    <moul-bento-card col-span="3">
+      <div slot="background" aria-hidden="true" style="background: radial-gradient(circle at 0% 100%, var(--color-accent-soft), transparent 55%)"></div>
+      <h3 slot="heading">Built for teams</h3>
+      <p>Roles, reviews and an audit log for every change.</p>
+      <moul-button slot="action" size="sm" variant="secondary"><span>Book a demo</span></moul-button>
+    </moul-bento-card>
+  </moul-bento-grid>
+  <LandingKitDemo />
+</ComponentPreview>
+
+#### Browser Frame
+
+**New.** A browser window drawn around a screenshot, a video or any markup. [Docs →](/km/docs/components/browserframe/)
+
+<ComponentPreview backdrop="page">
+  <moul-browser-frame url="app.example.com/overview" style="width: 100%; max-width: 36rem">
+    <div role="img" aria-label="A dashboard with a sidebar, three figures and a chart" style="display: grid; grid-template-columns: 6rem 1fr; min-height: 15rem; background: var(--color-bg)">
+      <div style="display: grid; align-content: start; gap: 0.75rem; padding: 1rem; border-inline-end: 1px solid var(--color-border); background: var(--color-surface)">
+        <div style="width: 60%; height: 0.625rem; border-radius: 999px; background: var(--color-fg)"></div>
+        <div style="width: 85%; height: 0.5rem; border-radius: 999px; background: var(--color-accent-soft)"></div>
+        <div style="width: 70%; height: 0.5rem; border-radius: 999px; background: var(--color-border)"></div>
+        <div style="width: 78%; height: 0.5rem; border-radius: 999px; background: var(--color-border)"></div>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: 3.5rem 1fr; gap: 0.75rem; padding: 1rem">
+        <div style="border: 1px solid var(--color-border); border-radius: 0.75rem; background: var(--color-surface)"></div>
+        <div style="border: 1px solid var(--color-border); border-radius: 0.75rem; background: var(--color-surface)"></div>
+        <div style="border: 1px solid var(--color-border); border-radius: 0.75rem; background: var(--color-surface)"></div>
+        <div style="grid-column: 1 / -1; border: 1px solid var(--color-border); border-radius: 0.75rem; background: linear-gradient(to top, var(--color-accent-soft), var(--color-surface))"></div>
+      </div>
+    </div>
+  </moul-browser-frame>
+  <LandingKitDemo />
+</ComponentPreview>
+
+#### Phone Frame
+
+**New.** A phone drawn in CSS around a screenshot or a video, in an iphone or an android shape. [Docs →](/km/docs/components/phoneframe/)
+
+<ComponentPreview backdrop="page">
+  <moul-phone-frame>
+    <div role="img" aria-label="A chat with three messages" style="position: absolute; inset: 0; display: flex; flex-direction: column; gap: 3cqi; padding: 16cqi 5cqi 6cqi; background: var(--color-bg)">
+      <div style="width: 40%; height: 4cqi; border-radius: 999px; background: var(--color-fg)"></div>
+      <div style="align-self: flex-start; width: 70%; height: 12cqi; border-radius: 5cqi; background: var(--color-surface-tertiary)"></div>
+      <div style="align-self: flex-end; width: 55%; height: 12cqi; border-radius: 5cqi; background: var(--color-accent)"></div>
+      <div style="align-self: flex-start; width: 62%; height: 18cqi; border-radius: 5cqi; background: var(--color-surface-tertiary)"></div>
+      <div style="margin-top: auto; height: 12cqi; border: 1px solid var(--color-border); border-radius: 999px; background: var(--color-surface)"></div>
+    </div>
+  </moul-phone-frame>
+  <LandingKitDemo />
+</ComponentPreview>
+
+#### Scroll Progress
+
+**New.** A thin bar that fills as the page, or a scroll container, scrolls. [Docs →](/km/docs/components/scrollprogress/)
+
+<ComponentPreview>
+  <div id="scroll-progress-demo" style="width: 100%; max-width: 28rem; height: 14rem; overflow: auto; border: 1px solid var(--color-border); border-radius: var(--radius-xl); background: var(--color-surface)">
+    <moul-scroll-progress for="scroll-progress-demo" placement="inline" style="position: sticky; top: 0"></moul-scroll-progress>
+    <div style="display: grid; gap: 0.75rem; padding: 1rem 1.25rem">
+      <p>Every push builds a preview. The preview gets its own address, so a reviewer can open the change without checking out the branch.</p>
+      <p>Checks run against the preview, not a copy of it. If a check fails, the preview stays up so you can see what broke.</p>
+      <p>Merging promotes the preview. Nothing is rebuilt: the files that passed review are the files that go live.</p>
+      <p>A rollback is the same move in reverse. The previous release is still built, so going back takes as long as changing a pointer.</p>
+      <p>Logs follow the release. Each request is tagged with the release that served it, so a spike in errors points at a commit.</p>
+      <p>That is the whole loop: preview, check, promote, and a way back. Scroll up again and the bar empties as you go.</p>
+    </div>
+  </div>
+  <LandingKitDemo />
+</ComponentPreview>
+
+### Backgrounds & Light
+
+#### Pattern
+
+**New.** Dots, a grid, hexagons, stripes or diagonal lines behind content, with cells that can light up. [Docs →](/km/docs/components/pattern/)
+
+<ComponentPreview align="stretch" minHeight="320px">
+  <moul-pattern variant="grid" fade="radial" is-animated style="display: grid; place-content: center; gap: 0.5rem; min-height: 18rem; padding: 2rem; text-align: center">
+    <moul-typography variant="h2">Ship on every push</moul-typography>
+    <moul-typography variant="body">Previews, rollbacks and logs in one place.</moul-typography>
+  </moul-pattern>
+  <LandingKitDemo />
+</ComponentPreview>
+
+#### Perspective Grid
+
+**New.** A grid floor running back to a horizon, or a tunnel of grid walls, with lines flowing toward the viewer. [Docs →](/km/docs/components/perspectivegrid/)
+
+<ComponentPreview align="stretch" minHeight="320px">
+  <moul-perspective-grid style="display: grid; place-content: center; gap: 0.5rem; min-height: 20rem; padding: 2rem; text-align: center; border-radius: var(--radius-2xl)">
+    <moul-typography variant="h2">Built for what comes next</moul-typography>
+    <moul-typography variant="body">Deploy to every region from one push.</moul-typography>
+  </moul-perspective-grid>
+  <LandingKitDemo />
+</ComponentPreview>
+
+#### Ripple
+
+**New.** Concentric rings that pulse outward behind an icon, an avatar or a button in the middle. [Docs →](/km/docs/components/ripple/)
+
+<ComponentPreview align="stretch" minHeight="320px">
+  <moul-ripple style="min-height: 22rem; gap: 0.75rem; text-align: center">
+    <moul-avatar name="Sophea Chan" size="lg"></moul-avatar>
+    <moul-typography variant="body">Sophea is presenting</moul-typography>
+  </moul-ripple>
+  <LandingKitDemo />
+</ComponentPreview>
+
+#### Aurora
+
+**New.** Slow drifting bands or blobs of soft colour behind a hero or a section. [Docs →](/km/docs/components/aurora/)
+
+<ComponentPreview align="stretch" minHeight="320px">
+  <moul-aurora style="padding: 5rem 1.5rem; border-radius: var(--radius-xl); text-align: center">
+    <moul-typography variant="h2">Ship on every push</moul-typography>
+    <moul-typography variant="body">Previews, logs and rollbacks for every branch.</moul-typography>
+  </moul-aurora>
+  <LandingKitDemo />
+</ComponentPreview>
+
+#### Noise
+
+**New.** A film-grain texture laid over a hero, a card or a gradient. [Docs →](/km/docs/components/noise/)
+
+<ComponentPreview align="stretch" minHeight="320px">
+  <moul-noise style="border-radius: var(--radius-xl)">
+    <moul-aurora variant="blobs" style="padding: 5rem 1.5rem; border-radius: inherit; text-align: center">
+      <moul-typography variant="h2">Made by hand</moul-typography>
+      <moul-typography variant="body">A gradient with grain over it, like film.</moul-typography>
+    </moul-aurora>
+  </moul-noise>
+  <LandingKitDemo />
+</ComponentPreview>
+
+#### Light Rays
+
+**New.** Soft rays of light shining down from the top of a hero or a section. [Docs →](/km/docs/components/lightrays/)
+
+<ComponentPreview align="stretch" minHeight="320px">
+  <moul-light-rays style="padding: 6rem 1.5rem 5rem; border-radius: var(--radius-xl); text-align: center">
+    <moul-typography variant="h2">Light where it matters</moul-typography>
+    <moul-typography variant="body">Rays from above, drawn in CSS.</moul-typography>
+  </moul-light-rays>
+  <LandingKitDemo />
+</ComponentPreview>
+
+#### Spotlight
+
+**New.** A cone or lamp of soft light falling on a hero from above. [Docs →](/km/docs/components/spotlight/)
+
+<ComponentPreview align="stretch" minHeight="320px">
+  <moul-spotlight id="spotlight-demo" style="padding: 5rem 1.5rem; border-radius: var(--radius-xl); text-align: center">
+    <moul-typography variant="h2">Your work, in the spotlight</moul-typography>
+    <moul-typography variant="body">A beam of light that comes on as the page scrolls to it.</moul-typography>
+  </moul-spotlight>
+  <div class="demo-row">
+    <moul-button size="sm" variant="secondary" data-replay="spotlight-demo"><span>Replay</span></moul-button>
+  </div>
+  <LandingKitDemo />
+</ComponentPreview>
+
+#### Border Beam
+
+**New.** A short beam of light that travels round the border of a card or panel. [Docs →](/km/docs/components/borderbeam/)
+
+<ComponentPreview backdrop="page" minHeight="300px">
+  <moul-border-beam style="width: 100%; max-width: 22rem">
+    <moul-card>
+      <moul-card-header><strong>Pro</strong></moul-card-header>
+      <moul-card-body>
+        <p style="font-size: 2rem; font-weight: 700; line-height: 1.2">$24 <span style="font-size: 1rem; font-weight: 400; color: var(--color-muted)">a month</span></p>
+        <p style="color: var(--color-muted)">Unlimited projects, a preview link for every push, and logs kept for 30 days.</p>
+      </moul-card-body>
+      <moul-card-footer><moul-button>Choose Pro</moul-button></moul-card-footer>
+    </moul-card>
+  </moul-border-beam>
+  <LandingKitDemo />
+</ComponentPreview>
+
+#### Shine Border
+
+**New.** A thin border whose colours drift slowly round a card or panel. [Docs →](/km/docs/components/shineborder/)
+
+<ComponentPreview backdrop="page" minHeight="300px">
+  <moul-shine-border style="width: 100%; max-width: 22rem">
+    <moul-card>
+      <moul-card-header><strong>Team</strong></moul-card-header>
+      <moul-card-body>
+        <p style="font-size: 2rem; font-weight: 700; line-height: 1.2">$48 <span style="font-size: 1rem; font-weight: 400; color: var(--color-muted)">a month</span></p>
+        <p style="color: var(--color-muted)">Shared projects, roles for everyone on the account, and an audit log.</p>
+      </moul-card-body>
+      <moul-card-footer><moul-button>Choose Team</moul-button></moul-card-footer>
+    </moul-card>
+  </moul-shine-border>
+  <LandingKitDemo />
+</ComponentPreview>
+
+#### Beams
+
+**New.** A background of faint lines with light travelling along them, for a hero or a feature section. [Docs →](/km/docs/components/beams/)
+
+<ComponentPreview align="stretch" minHeight="320px">
+  <moul-beams style="display: grid; place-items: center; min-height: 320px; padding: 3rem 1.5rem; border: 1px solid var(--color-border); border-radius: var(--radius-surface); text-align: center">
+    <div style="display: grid; justify-items: center; gap: 1rem; max-width: 30rem">
+      <moul-typography variant="h2">Ship on every push</moul-typography>
+      <p style="color: var(--color-muted)">Every branch gets a preview link, every merge goes live, and every deploy can be rolled back in one click.</p>
+      <moul-button>Start a project</moul-button>
+    </div>
+  </moul-beams>
+  <LandingKitDemo />
+</ComponentPreview>
+
+#### Backlight
+
+**New.** A glow behind an image or video in the media's own colours. [Docs →](/km/docs/components/backlight/)
+
+<ComponentPreview stack minHeight="320px">
+  <moul-backlight style="margin-block: 2rem">
+    <div role="img" aria-label="A sun setting over the sea in violet, pink and gold" style="width: min(24rem, 70vw); aspect-ratio: 16 / 9; border-radius: 1rem; background: radial-gradient(circle at 50% 62%, var(--color-chart-2) 0 11%, transparent 12%), linear-gradient(to bottom, var(--color-chart-4), var(--color-chart-3) 62%, var(--color-chart-6) 62.5%, var(--color-chart-5))"></div>
+  </moul-backlight>
+  <LandingKitDemo />
+</ComponentPreview>
+
+#### Focus Group
+
+**New.** Tiles where the one under the pointer or keyboard focus stays sharp and the others blur. [Docs →](/km/docs/components/focusgroup/)
+
+<ComponentPreview align="stretch">
+  <moul-focus-group>
+    <a href="#angkor" style="display: grid; gap: 0.5rem; color: inherit; text-decoration: none">
+      <div aria-hidden="true" style="aspect-ratio: 4 / 3; border-radius: 1rem; background: radial-gradient(circle at 70% 30%, var(--color-chart-2) 0 10%, transparent 11%), linear-gradient(to bottom, var(--color-chart-4), var(--color-chart-3) 70%, var(--color-chart-6))"></div>
+      <strong>Angkor Wat at dawn</strong>
+    </a>
+    <a href="#koh-rong" style="display: grid; gap: 0.5rem; color: inherit; text-decoration: none">
+      <div aria-hidden="true" style="aspect-ratio: 4 / 3; border-radius: 1rem; background: linear-gradient(to bottom, var(--color-chart-5), var(--color-accent) 60%, var(--color-chart-2) 61%)"></div>
+      <strong>Koh Rong</strong>
+    </a>
+    <a href="#mondulkiri" style="display: grid; gap: 0.5rem; color: inherit; text-decoration: none">
+      <div aria-hidden="true" style="aspect-ratio: 4 / 3; border-radius: 1rem; background: linear-gradient(160deg, var(--color-chart-7), var(--color-chart-5) 55%, var(--color-chart-7))"></div>
+      <strong>Mondulkiri hills</strong>
+    </a>
+    <a href="#kampot" style="display: grid; gap: 0.5rem; color: inherit; text-decoration: none">
+      <div aria-hidden="true" style="aspect-ratio: 4 / 3; border-radius: 1rem; background: linear-gradient(to top, var(--color-chart-6), var(--color-chart-2) 45%, var(--color-chart-4))"></div>
+      <strong>Kampot river</strong>
+    </a>
+    <a href="#kep" style="display: grid; gap: 0.5rem; color: inherit; text-decoration: none">
+      <div aria-hidden="true" style="aspect-ratio: 4 / 3; border-radius: 1rem; background: radial-gradient(circle at 30% 80%, var(--color-chart-3) 0 18%, transparent 19%), linear-gradient(to bottom, var(--color-chart-1), var(--color-chart-5))"></div>
+      <strong>Kep crab market</strong>
+    </a>
+    <a href="#battambang" style="display: grid; gap: 0.5rem; color: inherit; text-decoration: none">
+      <div aria-hidden="true" style="aspect-ratio: 4 / 3; border-radius: 1rem; background: linear-gradient(120deg, var(--color-chart-2), var(--color-chart-6) 50%, var(--color-chart-3))"></div>
+      <strong>Battambang bamboo train</strong>
+    </a>
+  </moul-focus-group>
+  <LandingKitDemo />
+</ComponentPreview>
+
+#### Edge Blur
+
+**New.** A scroll container whose content blurs out progressively toward its edges. [Docs →](/km/docs/components/edgeblur/)
+
+<ComponentPreview stack>
+  <moul-edge-blur aria-label="Deploy log" style="height: 18rem; width: 100%; max-width: 26rem; border: 1px solid var(--color-border); border-radius: 0.75rem">
+    <div style="display: grid; gap: 0.5rem; padding: 0.75rem">
+      <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.625rem 0.75rem; border-radius: 0.5rem; background: var(--color-surface-secondary)"><span style="flex: none; width: 2rem; height: 2rem; border-radius: 9999px; background: var(--color-chart-1)"></span><span><strong style="display: block">api-gateway</strong><span style="font-size: 0.875rem; color: var(--color-muted)">Deployed 2 minutes ago</span></span></div>
+      <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.625rem 0.75rem; border-radius: 0.5rem; background: var(--color-surface-secondary)"><span style="flex: none; width: 2rem; height: 2rem; border-radius: 9999px; background: var(--color-chart-2)"></span><span><strong style="display: block">billing-worker</strong><span style="font-size: 0.875rem; color: var(--color-muted)">Build started 5 minutes ago</span></span></div>
+      <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.625rem 0.75rem; border-radius: 0.5rem; background: var(--color-surface-secondary)"><span style="flex: none; width: 2rem; height: 2rem; border-radius: 9999px; background: var(--color-chart-3)"></span><span><strong style="display: block">search-index</strong><span style="font-size: 0.875rem; color: var(--color-muted)">Rolled back 12 minutes ago</span></span></div>
+      <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.625rem 0.75rem; border-radius: 0.5rem; background: var(--color-surface-secondary)"><span style="flex: none; width: 2rem; height: 2rem; border-radius: 9999px; background: var(--color-chart-4)"></span><span><strong style="display: block">web-app</strong><span style="font-size: 0.875rem; color: var(--color-muted)">Preview ready 20 minutes ago</span></span></div>
+      <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.625rem 0.75rem; border-radius: 0.5rem; background: var(--color-surface-secondary)"><span style="flex: none; width: 2rem; height: 2rem; border-radius: 9999px; background: var(--color-chart-5)"></span><span><strong style="display: block">mail-relay</strong><span style="font-size: 0.875rem; color: var(--color-muted)">Deployed 34 minutes ago</span></span></div>
+      <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.625rem 0.75rem; border-radius: 0.5rem; background: var(--color-surface-secondary)"><span style="flex: none; width: 2rem; height: 2rem; border-radius: 9999px; background: var(--color-chart-6)"></span><span><strong style="display: block">image-resizer</strong><span style="font-size: 0.875rem; color: var(--color-muted)">Build failed 1 hour ago</span></span></div>
+      <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.625rem 0.75rem; border-radius: 0.5rem; background: var(--color-surface-secondary)"><span style="flex: none; width: 2rem; height: 2rem; border-radius: 9999px; background: var(--color-chart-7)"></span><span><strong style="display: block">auth-service</strong><span style="font-size: 0.875rem; color: var(--color-muted)">Deployed 2 hours ago</span></span></div>
+      <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.625rem 0.75rem; border-radius: 0.5rem; background: var(--color-surface-secondary)"><span style="flex: none; width: 2rem; height: 2rem; border-radius: 9999px; background: var(--color-chart-8)"></span><span><strong style="display: block">docs-site</strong><span style="font-size: 0.875rem; color: var(--color-muted)">Preview ready 3 hours ago</span></span></div>
+      <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.625rem 0.75rem; border-radius: 0.5rem; background: var(--color-surface-secondary)"><span style="flex: none; width: 2rem; height: 2rem; border-radius: 9999px; background: var(--color-chart-1)"></span><span><strong style="display: block">metrics-collector</strong><span style="font-size: 0.875rem; color: var(--color-muted)">Deployed yesterday</span></span></div>
+      <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.625rem 0.75rem; border-radius: 0.5rem; background: var(--color-surface-secondary)"><span style="flex: none; width: 2rem; height: 2rem; border-radius: 9999px; background: var(--color-chart-2)"></span><span><strong style="display: block">queue-scheduler</strong><span style="font-size: 0.875rem; color: var(--color-muted)">Deployed yesterday</span></span></div>
+    </div>
+  </moul-edge-blur>
+  <LandingKitDemo />
+</ComponentPreview>
+
+#### Orbit
+
+**New.** Icons, logos or avatars that travel round a centre on one or more rings. [Docs →](/km/docs/components/orbit/)
+
+<ComponentPreview stack>
+  <moul-orbit radius="128" show-path>
+    <span role="img" aria-label="Brightloom" style="display: grid; place-items: center; border-radius: 9999px; background: var(--color-surface); border: 1px solid var(--color-border); color: var(--color-chart-1)"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="currentColor" /></svg></span>
+    <span role="img" aria-label="Tidewell" style="display: grid; place-items: center; border-radius: 9999px; background: var(--color-surface); border: 1px solid var(--color-border); color: var(--color-chart-2)"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4" fill="currentColor" /></svg></span>
+    <span role="img" aria-label="Cobaltine" style="display: grid; place-items: center; border-radius: 9999px; background: var(--color-surface); border: 1px solid var(--color-border); color: var(--color-chart-3)"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 3 21 20H3Z" fill="currentColor" /></svg></span>
+    <span role="img" aria-label="Fernforge" style="display: grid; place-items: center; border-radius: 9999px; background: var(--color-surface); border: 1px solid var(--color-border); color: var(--color-chart-4)"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M5 4h14v4H9v3h8v4H9v5H5Z" fill="currentColor" /></svg></span>
+    <span role="img" aria-label="Quillstone" style="display: grid; place-items: center; border-radius: 9999px; background: var(--color-surface); border: 1px solid var(--color-border); color: var(--color-chart-5)"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="9" cy="12" r="6" fill="currentColor" /><circle cx="15" cy="12" r="6" fill="currentColor" opacity="0.5" /></svg></span>
+    <span role="img" aria-label="Sundial Works" style="display: grid; place-items: center; border-radius: 9999px; background: var(--color-surface); border: 1px solid var(--color-border); color: var(--color-chart-7)"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18Z" fill="currentColor" /></svg></span>
+    <moul-orbit slot="center" radius="64" duration="14" is-reverse show-path>
+      <span role="img" aria-label="Ashgrove" style="display: grid; place-items: center; border-radius: 9999px; background: var(--color-surface); border: 1px solid var(--color-border); color: var(--color-chart-6)"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 3 21 12 12 21 3 12Z" fill="currentColor" /></svg></span>
+      <span role="img" aria-label="Marlpeak" style="display: grid; place-items: center; border-radius: 9999px; background: var(--color-surface); border: 1px solid var(--color-border); color: var(--color-chart-8)"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M3 19 9 7l4 7 3-4 5 9Z" fill="currentColor" /></svg></span>
+      <span role="img" aria-label="Pellucid" style="display: grid; place-items: center; border-radius: 9999px; background: var(--color-surface); border: 1px solid var(--color-border); color: var(--color-accent)"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="3" /></svg></span>
+      <span slot="center" role="img" aria-label="Moul" style="display: grid; place-items: center; width: 3.25rem; height: 3.25rem; border-radius: 1rem; background: var(--color-accent); color: var(--color-accent-fg); font-weight: 700; font-size: 1.5rem">M</span>
+    </moul-orbit>
+  </moul-orbit>
+  <LandingKitDemo />
+</ComponentPreview>
+
+### Navigation & Media
+
+#### Navbar
+
+**New.** The top bar of a site, which hides on scroll, shrinks or turns to glass, and folds its links behind a menu button on small screens. [Docs →](/km/docs/components/navbar/)
+
+<ComponentPreview align="stretch">
+  <div id="navbar-demo-main" style="height: 26rem; overflow: auto; border: 1px solid var(--color-border); border-radius: 0.75rem; background: var(--color-background)">
+    <moul-navbar for="navbar-demo-main" variant="floating" effect="glass shrink" hide-on-scroll collapse-below="560">
+      <moul-banner slot="banner" hide-on-scroll is-dismissable>The site kit is here: navbars, menus and media. <a href="/docs/components/banner/">Read more</a></moul-banner>
+      <a slot="brand" href="/docs/components/navbar/"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><rect width="24" height="24" rx="6" style="fill: var(--color-accent)" /><path d="M7 16V8l5 5 5-5v8" style="fill: none; stroke: var(--color-accent-fg); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round" /></svg> Moul</a>
+      <a href="/docs/" aria-current="page">Docs</a>
+      <a href="/docs/components/button/">Components</a>
+      <a href="/examples/landing/">Examples</a>
+      <moul-button slot="actions" size="sm">Get started</moul-button>
+    </moul-navbar>
+    <div style="display: grid; gap: 0.75rem; padding: 3rem 1.5rem 2rem; text-align: center; background: radial-gradient(70% 100% at 50% 0%, var(--color-accent-soft), transparent)">
+      <strong style="font-size: 1.75rem; line-height: 1.2">Web components for every site</strong>
+      <span style="color: var(--color-fg-subtle)">Scroll down: the banner slides away, the bar narrows and turns to glass, then hides until you scroll back up.</span>
+    </div>
+    <div style="display: grid; gap: 0.875rem; padding: 1.5rem; max-width: 36rem; margin: 0 auto">
+      <div style="height: 0.75rem; width: 92%; border-radius: 9999px; background: var(--color-surface-secondary)"></div>
+      <div style="height: 0.75rem; width: 100%; border-radius: 9999px; background: var(--color-surface-secondary)"></div>
+      <div style="height: 0.75rem; width: 78%; border-radius: 9999px; background: var(--color-surface-secondary)"></div>
+      <div style="height: 8rem; border-radius: 0.75rem; background: linear-gradient(135deg, var(--color-chart-1), var(--color-chart-3))"></div>
+      <div style="height: 0.75rem; width: 96%; border-radius: 9999px; background: var(--color-surface-secondary)"></div>
+      <div style="height: 0.75rem; width: 84%; border-radius: 9999px; background: var(--color-surface-secondary)"></div>
+      <div style="height: 0.75rem; width: 100%; border-radius: 9999px; background: var(--color-surface-secondary)"></div>
+      <div style="height: 0.75rem; width: 64%; border-radius: 9999px; background: var(--color-surface-secondary)"></div>
+      <div style="height: 8rem; border-radius: 0.75rem; background: linear-gradient(135deg, var(--color-chart-4), var(--color-chart-2))"></div>
+      <div style="height: 0.75rem; width: 88%; border-radius: 9999px; background: var(--color-surface-secondary)"></div>
+      <div style="height: 0.75rem; width: 100%; border-radius: 9999px; background: var(--color-surface-secondary)"></div>
+      <div style="height: 0.75rem; width: 72%; border-radius: 9999px; background: var(--color-surface-secondary)"></div>
+      <div style="height: 8rem; border-radius: 0.75rem; background: linear-gradient(135deg, var(--color-chart-5), var(--color-chart-7))"></div>
+      <div style="height: 0.75rem; width: 94%; border-radius: 9999px; background: var(--color-surface-secondary)"></div>
+      <div style="height: 0.75rem; width: 58%; border-radius: 9999px; background: var(--color-surface-secondary)"></div>
+    </div>
+  </div>
+  <LandingKitDemo />
+</ComponentPreview>
+
+#### Banner
+
+**New.** A one-line announcement across the top of a page, with an optional action and a close button, that can stay sticky and hide on scroll. [Docs →](/km/docs/components/banner/)
+
+<ComponentPreview align="stretch">
+  <moul-banner is-dismissable>Moul UI 1.0 is out, with a site kit for navbars and media. <a href="/docs/components/navbar/">Read the notes</a></moul-banner>
+  <moul-banner tone="warning" variant="flat" is-dismissable><svg slot="icon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 1.5 15 14H1Z" style="fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linejoin: round" /><path d="M8 6v3.5M8 11.5v.5" style="stroke: currentColor; stroke-width: 1.5; stroke-linecap: round" /></svg>Planned maintenance on Sunday from 02:00 to 03:00, Phnom Penh time.</moul-banner>
+  <LandingKitDemo />
+</ComponentPreview>
+
+#### Navigation Menu
+
+**New.** Site navigation whose panels open on hover and morph from one item to the next, with a stacked layout for narrow screens. [Docs →](/km/docs/components/navigationmenu/)
+
+<ComponentPreview minHeight="420px" align="start">
+  <nav aria-label="Main" style="display: flex; align-items: center; gap: 1.5rem">
+    <strong>Moul</strong>
+    <moul-navigation-menu>
+      <moul-navigation-menu-item label="Products" columns="2">
+        <moul-navigation-menu-link href="/docs/" label="Components" description="Ninety elements for apps and sites."><svg slot="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5" /><rect x="14" y="3" width="7" height="7" rx="1.5" /><rect x="3" y="14" width="7" height="7" rx="1.5" /><rect x="14" y="14" width="7" height="7" rx="1.5" /></svg></moul-navigation-menu-link>
+        <moul-navigation-menu-link href="/docs/landing-kit/" label="Landing kit" description="Text effects, reveals and frames for product pages."><svg slot="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 19 19 5M9 5h10v10" /></svg></moul-navigation-menu-link>
+        <moul-navigation-menu-link href="/docs/backgrounds/" label="Backgrounds" description="Patterns, light and drifting colour."><svg slot="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M3 12h18" /></svg></moul-navigation-menu-link>
+        <moul-navigation-menu-link href="/docs/components/chat/" label="AI kit" description="Chat, prompt input and streaming answers."><svg slot="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 3v4M12 17v4M3 12h4M17 12h4" /><circle cx="12" cy="12" r="3" /></svg></moul-navigation-menu-link>
+      </moul-navigation-menu-item>
+      <moul-navigation-menu-item label="Resources">
+        <moul-navigation-menu-link href="/docs/" label="Guides" description="Setting up Moul in each framework."></moul-navigation-menu-link>
+        <moul-navigation-menu-link href="/docs/llms/" label="Agent guide" description="What coding agents should know about Moul."></moul-navigation-menu-link>
+        <moul-navigation-menu-link href="/changelog/" label="Changelog" description="What changed in every release."></moul-navigation-menu-link>
+      </moul-navigation-menu-item>
+      <moul-navigation-menu-item label="Theme" href="/theme/"></moul-navigation-menu-item>
+    </moul-navigation-menu>
+  </nav>
+  <LandingKitDemo />
+</ComponentPreview>
+
+#### Dock
+
+**New.** A bar of icons that grow under the pointer, as in a desktop dock. [Docs →](/km/docs/components/dock/)
+
+<ComponentPreview backdrop="mesh" minHeight="14rem">
+  <moul-dock label="Quick links" style="margin-top: 3rem">
+    <moul-dock-item label="Home" href="#home" is-active><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1Z" /></svg></moul-dock-item>
+    <moul-dock-item label="Search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg></moul-dock-item>
+    <moul-dock-item label="Messages"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H8l-4 4Z" /></svg></moul-dock-item>
+    <moul-dock-item label="Calendar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M3 10h18M8 3v4M16 3v4" /></svg></moul-dock-item>
+    <moul-dock-item label="Photos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2" /><path d="m3 16 5-5 4 4 3-3 6 6" /></svg></moul-dock-item>
+    <moul-dock-separator></moul-dock-separator>
+    <moul-dock-item label="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="3" /><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1" /></svg></moul-dock-item>
+  </moul-dock>
+  <LandingKitDemo />
+</ComponentPreview>
+
+#### Progress Nav
+
+**New.** A floating pill that shows how far through a page the reader is and which section they are in. [Docs →](/km/docs/components/progressnav/)
+
+<ComponentPreview align="stretch">
+  <div id="progress-nav-demo" style="position: relative; height: 22rem; overflow: auto; padding: 0 1.5rem 12rem; border: 1px solid var(--color-border); border-radius: var(--radius-xl, 1rem); line-height: 1.6">
+    <div style="position: sticky; top: 0.75rem; z-index: 1; display: flex; justify-content: center; margin-bottom: 0.5rem">
+      <moul-progress-nav for="progress-nav-demo" placement="inline" is-always-visible label="In this guide"></moul-progress-nav>
+    </div>
+    <h2 style="margin-top: 1rem">Planning the trip</h2>
+    <p>Kampot sits on a slow river between the Elephant Mountains and the sea. Most visitors arrive by bus from Phnom Penh in the morning and are on the water by the afternoon.</p>
+    <p>The dry season runs from November to April. Rooms by the river fill early around the water festival, so book those weeks ahead.</p>
+    <h3>Getting there</h3>
+    <p>Buses leave the capital every hour from dawn. The trip takes about three hours with one stop for noodles and iced coffee.</p>
+    <h3>Where to stay</h3>
+    <p>Guesthouses line the east bank of the river. The quieter ones upstream have their own jetties and kayaks for the morning.</p>
+    <h2>The pepper farms</h2>
+    <p>Kampot pepper grows on vines trained up wooden posts. The farms welcome visitors most mornings and will walk you through the drying racks.</p>
+    <p>Green pepper is picked young; red pepper ripens on the vine; white pepper is red pepper soaked and peeled.</p>
+    <h2>Bokor Mountain</h2>
+    <p>The road to the plateau climbs through the national park in long, easy bends. Start early, before the cloud settles on the top.</p>
+    <h3>The old hill station</h3>
+    <p>Near the summit stand the shells of a church and a hotel from the last century, often wrapped in fog.</p>
+    <h2>Kep and the crab market</h2>
+    <p>Half an hour along the coast, Kep's market sells crab cooked with fresh green pepper straight from the baskets on the shore.</p>
+  </div>
+  <LandingKitDemo />
+</ComponentPreview>
+
+#### Carousel
+
+**New.** A row of slides the reader swipes, drags or steps through, with arrows, dots and an optional autoplay. [Docs →](/km/docs/components/carousel/)
+
+<ComponentPreview align="stretch" backdrop="page">
+  <moul-carousel label="Customer stories" style="--carousel-slide-size: min(20rem, 80%)">
+    <moul-card>
+      <moul-card-body>“We replaced four hand-rolled widgets with plain tags, and the bundle got smaller.”</moul-card-body>
+      <moul-card-footer>
+        <moul-avatar name="Sophea Lim" size="sm"></moul-avatar>
+        <span><strong>Sophea Lim</strong><br /><small style="color: var(--color-fg-subtle)">Lead engineer, Tidewell</small></span>
+      </moul-card-footer>
+    </moul-card>
+    <moul-card>
+      <moul-card-body>“The reduced-motion paths mean I stopped writing media queries by hand.”</moul-card-body>
+      <moul-card-footer>
+        <moul-avatar name="Dara Sok" size="sm"></moul-avatar>
+        <span><strong>Dara Sok</strong><br /><small style="color: var(--color-fg-subtle)">Designer, Brightloom</small></span>
+      </moul-card-footer>
+    </moul-card>
+    <moul-card>
+      <moul-card-body>“Our docs site and our admin console share one set of elements now.”</moul-card-body>
+      <moul-card-footer>
+        <moul-avatar name="Vannak Chea" size="sm"></moul-avatar>
+        <span><strong>Vannak Chea</strong><br /><small style="color: var(--color-fg-subtle)">Founder, Fernforge</small></span>
+      </moul-card-footer>
+    </moul-card>
+    <moul-card>
+      <moul-card-body>“Keyboard support was already there. That alone saved us a sprint.”</moul-card-body>
+      <moul-card-footer>
+        <moul-avatar name="Bopha Keo" size="sm"></moul-avatar>
+        <span><strong>Bopha Keo</strong><br /><small style="color: var(--color-fg-subtle)">Accessibility lead, Quillstone</small></span>
+      </moul-card-footer>
+    </moul-card>
+    <moul-card>
+      <moul-card-body>“Light and dark both worked on the first try.”</moul-card-body>
+      <moul-card-footer>
+        <moul-avatar name="Rithy Nhem" size="sm"></moul-avatar>
+        <span><strong>Rithy Nhem</strong><br /><small style="color: var(--color-fg-subtle)">Developer, Cobaltine</small></span>
+      </moul-card-footer>
+    </moul-card>
+  </moul-carousel>
+  <LandingKitDemo />
+</ComponentPreview>
+
+#### Image Slider
+
+**New.** A full-width slideshow of images with an overlay, autoplay, swipe and keyboard control. [Docs →](/km/docs/components/imageslider/)
+
+<ComponentPreview align="stretch">
+  <moul-image-slider label="Mondulkiri in four days" style="--image-slider-radius: var(--radius-xl, 1rem)">
+    <img src="/demo/imageslider/mondulkiri-dawn.svg" alt="Hills in layers of mist at dawn" width="1600" height="900" />
+    <img src="/demo/imageslider/tonle-sap-dusk.svg" alt="Stilt houses on a lake at dusk" width="1600" height="900" />
+    <img src="/demo/imageslider/kep-coast.svg" alt="A palm over a sandy shore and a green sea" width="1600" height="900" />
+    <img src="/demo/imageslider/yeak-laom-lake.svg" alt="A round crater lake in the forest" width="1600" height="900" />
+    <div slot="overlay" style="display: grid; gap: 1rem; justify-items: center; max-width: 34rem">
+      <strong style="font-size: clamp(1.75rem, 4vw, 3rem); line-height: 1.1; letter-spacing: -0.02em">Four days in the hills</strong>
+      <span style="font-size: 1.125rem; opacity: 0.9">Waterfalls, coffee farms and a crater lake, an hour past the last paved road.</span>
+      <moul-button>Plan the trip</moul-button>
+    </div>
+  </moul-image-slider>
+  <LandingKitDemo />
+</ComponentPreview>
+
+#### Compare
+
+**New.** Two images in one frame with a divider you drag to compare a before and an after. [Docs →](/km/docs/components/compare/)
+
+<ComponentPreview align="stretch">
+  <moul-compare before-label="Sketch" after-label="Painting" label="Sketch and finished painting" position="45">
+    <img slot="before" src="/demo/compare/sketch.svg" alt="Pencil sketch of rice paddies, two sugar palms and a stilt house" width="1200" height="675" />
+    <img slot="after" src="/demo/compare/painting.svg" alt="The same scene painted at dusk, with a pink sky and green and gold paddies" width="1200" height="675" />
+  </moul-compare>
+  <LandingKitDemo />
+</ComponentPreview>
+
+#### Video Dialog
+
+**New.** A thumbnail with a play button that opens the video in a dialog, loading nothing until it is asked for. [Docs →](/km/docs/components/videodialog/)
+
+<ComponentPreview align="stretch">
+  <moul-video-dialog src="/demo/videodialog/player.html" label="Watch the two-minute tour">
+    <img slot="thumbnail" src="/demo/videodialog/poster.svg" alt="" width="1280" height="720" />
+  </moul-video-dialog>
+  <LandingKitDemo />
+</ComponentPreview>
+
+#### World Map
+
+**New.** A dotted map of the world with pins and curved lines that draw between places. [Docs →](/km/docs/components/worldmap/)
+
+<ComponentPreview stack>
+  <moul-world-map
+    id="world-map-demo"
+    label="Routes from the Phnom Penh office"
+    show-labels
+    style="width: 100%; max-width: 44rem"
+    arcs='[
+      { "from": { "lat": 11.56, "lng": 104.92, "label": "Phnom Penh" }, "to": { "lat": 38.72, "lng": -9.14, "label": "Lisbon" } },
+      { "from": { "lat": 11.56, "lng": 104.92, "label": "Phnom Penh" }, "to": { "lat": 35.68, "lng": 139.69, "label": "Tokyo" } },
+      { "from": { "lat": 11.56, "lng": 104.92, "label": "Phnom Penh" }, "to": { "lat": -33.87, "lng": 151.21, "label": "Sydney" } },
+      { "from": { "lat": 11.56, "lng": 104.92, "label": "Phnom Penh" }, "to": { "lat": 37.77, "lng": -122.42, "label": "San Francisco" } },
+      { "from": { "lat": 11.56, "lng": 104.92, "label": "Phnom Penh" }, "to": { "lat": -23.55, "lng": -46.63, "label": "São Paulo" } }
+    ]'
+  ></moul-world-map>
+  <moul-button size="sm" variant="outline" data-replay="world-map-demo">Draw again</moul-button>
+  <LandingKitDemo />
+</ComponentPreview>
+
+### Pointer & Scroll
+
+#### Tilt
+
+**New.** A card or image that tilts in 3D toward the pointer and springs back flat when it leaves. [Docs →](/km/docs/components/tilt/)
+
+<ComponentPreview backdrop="mesh" minHeight="22rem">
+  <moul-tilt glare style="width: 18rem; border-radius: var(--radius-2xl, 1rem)">
+    <div style="overflow: hidden; border: 1px solid var(--color-border); border-radius: inherit; background: var(--color-surface); box-shadow: var(--shadow-lg)">
+      <img src="/demo/imageslider/kep-coast.svg" alt="Fishing boats off the coast at Kep at sunset" style="display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover" />
+      <div style="padding: 1rem 1.25rem 1.25rem">
+        <strong style="display: block; font-size: 1.0625rem">Kep</strong>
+        <span style="color: var(--color-muted)">Crab market, quiet beaches, and the islands beyond.</span>
+      </div>
+    </div>
+  </moul-tilt>
+  <LandingKitDemo />
+</ComponentPreview>
+
+#### Magnetic
+
+**New.** Wraps a button or link so it drifts toward the pointer and springs back when the pointer moves away. [Docs →](/km/docs/components/magnetic/)
+
+<ComponentPreview backdrop="mesh" minHeight="14rem">
+  <moul-magnetic>
+    <moul-button variant="primary">Book a trip</moul-button>
+  </moul-magnetic>
+  <LandingKitDemo />
+</ComponentPreview>
+
+#### Glow Border
+
+**New.** A border that lights up on the side nearest the pointer. [Docs →](/km/docs/components/glowborder/)
+
+<ComponentPreview backdrop="page" minHeight="320px">
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: 1rem; width: 100%; max-width: 44rem">
+    <moul-glow-border>
+      <moul-card>
+        <moul-card-header><strong>Phnom Penh</strong></moul-card-header>
+        <moul-card-body>Two deploy regions, logs kept for 30 days.</moul-card-body>
+      </moul-card>
+    </moul-glow-border>
+    <moul-glow-border>
+      <moul-card>
+        <moul-card-header><strong>Siem Reap</strong></moul-card-header>
+        <moul-card-body>A preview link for every push.</moul-card-body>
+      </moul-card>
+    </moul-glow-border>
+    <moul-glow-border>
+      <moul-card>
+        <moul-card-header><strong>Kampot</strong></moul-card-header>
+        <moul-card-body>Backups every hour, kept for a week.</moul-card-body>
+      </moul-card>
+    </moul-glow-border>
+  </div>
+  <LandingKitDemo />
+</ComponentPreview>
+
+#### Hover Highlight
+
+**New.** One highlight that slides from item to item as the pointer or keyboard focus moves. [Docs →](/km/docs/components/hoverhighlight/)
+
+<ComponentPreview align="stretch">
+  <moul-hover-highlight style="display: grid; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); gap: 0.25rem; --hover-highlight-radius: 1rem">
+    <a href="#angkor" style="display: grid; gap: 0.25rem; padding: 1.25rem; color: inherit; text-decoration: none">
+      <strong>Angkor</strong>
+      <span style="color: var(--color-muted)">Temples at dawn, by bicycle or tuk-tuk.</span>
+    </a>
+    <a href="#kampot" style="display: grid; gap: 0.25rem; padding: 1.25rem; color: inherit; text-decoration: none">
+      <strong>Kampot</strong>
+      <span style="color: var(--color-muted)">Pepper farms and a slow river.</span>
+    </a>
+    <a href="#kep" style="display: grid; gap: 0.25rem; padding: 1.25rem; color: inherit; text-decoration: none">
+      <strong>Kep</strong>
+      <span style="color: var(--color-muted)">The crab market and the sea at sunset.</span>
+    </a>
+    <a href="#koh-rong" style="display: grid; gap: 0.25rem; padding: 1.25rem; color: inherit; text-decoration: none">
+      <strong>Koh Rong</strong>
+      <span style="color: var(--color-muted)">White sand and glowing plankton.</span>
+    </a>
+    <a href="#mondulkiri" style="display: grid; gap: 0.25rem; padding: 1.25rem; color: inherit; text-decoration: none">
+      <strong>Mondulkiri</strong>
+      <span style="color: var(--color-muted)">Green hills, waterfalls and elephants.</span>
+    </a>
+    <a href="#battambang" style="display: grid; gap: 0.25rem; padding: 1.25rem; color: inherit; text-decoration: none">
+      <strong>Battambang</strong>
+      <span style="color: var(--color-muted)">Colonial streets and the bamboo train.</span>
+    </a>
+  </moul-hover-highlight>
+  <LandingKitDemo />
+</ComponentPreview>
+
+#### Direction Hover
+
+**New.** An overlay that slides in from the side the pointer entered and leaves toward the side it left. [Docs →](/km/docs/components/directionhover/)
+
+<ComponentPreview>
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: 1rem; width: 100%">
+    <moul-direction-hover style="aspect-ratio: 4 / 3">
+      <img src="/demo/imageslider/kep-coast.svg" alt="The coast at Kep, with fishing boats" />
+      <div slot="overlay" style="display: grid; gap: 0.125rem">
+        <strong>Kep</strong>
+        <span>Crab market and sunsets</span>
+      </div>
+    </moul-direction-hover>
+    <moul-direction-hover style="aspect-ratio: 4 / 3">
+      <img src="/demo/imageslider/mondulkiri-dawn.svg" alt="Hills in Mondulkiri at dawn" />
+      <div slot="overlay" style="display: grid; gap: 0.125rem">
+        <strong>Mondulkiri</strong>
+        <span>Waterfalls and green hills</span>
+      </div>
+    </moul-direction-hover>
+    <moul-direction-hover style="aspect-ratio: 4 / 3">
+      <img src="/demo/imageslider/tonle-sap-dusk.svg" alt="Stilt houses on the Tonle Sap at dusk" />
+      <div slot="overlay" style="display: grid; gap: 0.125rem">
+        <strong>Tonle Sap</strong>
+        <span>Floating villages at dusk</span>
+      </div>
+    </moul-direction-hover>
+  </div>
+  <LandingKitDemo />
+</ComponentPreview>
+
+#### Lens
+
+**New.** A round magnifier that follows the pointer over images or any content. [Docs →](/km/docs/components/lens/)
+
+<ComponentPreview backdrop="page" minHeight="320px">
+  <moul-lens style="width: 100%; max-width: 36rem; border-radius: var(--radius-xl); overflow: hidden">
+    <img src="/demo/compare/painting.svg" alt="Rice paddies, two sugar palms and a stilt house, painted at dusk" width="1200" height="675" style="display: block; width: 100%; height: auto" />
+  </moul-lens>
+  <LandingKitDemo />
+</ComponentPreview>
+
+#### Cursor
+
+**New.** Replaces the mouse cursor over an area with a smooth follower, a ring or a label. [Docs →](/km/docs/components/cursor/)
+
+<ComponentPreview backdrop="mesh" minHeight="16rem">
+  <moul-cursor style="display: grid; place-items: center; gap: 1rem; width: 100%; min-height: 14rem; padding: 1.5rem; box-sizing: border-box; border: 1px dashed var(--color-border); border-radius: 1rem">
+    <p style="margin: 0; text-align: center">The dot sits on the pointer; the ring catches up.</p>
+    <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; justify-content: center">
+      <moul-button>Book a boat</moul-button>
+      <moul-button variant="secondary">See the route</moul-button>
+    </div>
+  </moul-cursor>
+  <LandingKitDemo />
+</ComponentPreview>
+
+#### Mask Reveal
+
+**New.** A circle under the pointer that uncovers a hidden layer. [Docs →](/km/docs/components/maskreveal/)
+
+<ComponentPreview backdrop="page" minHeight="320px">
+  <moul-mask-reveal style="width: 100%; max-width: 36rem; border-radius: var(--radius-xl); overflow: hidden">
+    <img src="/demo/compare/sketch.svg" alt="Pencil sketch of rice paddies, two sugar palms and a stilt house" width="1200" height="675" style="display: block; width: 100%; height: auto" />
+    <img slot="revealed" src="/demo/compare/painting.svg" alt="The same scene painted at dusk, with a pink sky and green and gold paddies" width="1200" height="675" style="display: block; width: 100%; height: auto" />
+  </moul-mask-reveal>
+  <LandingKitDemo />
+</ComponentPreview>
+
+#### Pointer Parallax
+
+**New.** Layers that shift by different amounts as the pointer moves, so a flat hero gains depth. [Docs →](/km/docs/components/pointerparallax/)
+
+<ComponentPreview backdrop="plain" align="stretch">
+  <moul-pointer-parallax strength="28" style="height: 18rem; overflow: clip; border-radius: var(--radius-2xl, 1rem); background: linear-gradient(to bottom, var(--color-accent-soft), var(--color-surface))">
+    <div data-depth="0.15" aria-hidden="true" style="position: absolute; top: 2.5rem; right: 18%; width: 4.5rem; aspect-ratio: 1; border-radius: 50%; background: var(--color-chart-2); opacity: 0.9"></div>
+    <svg data-depth="0.45" aria-hidden="true" viewBox="0 0 400 100" preserveAspectRatio="none" style="position: absolute; left: -2rem; bottom: 0; width: calc(100% + 4rem); height: 55%"><path d="M0 70 C40 40 80 35 120 55 S200 20 250 45 S330 30 400 50 V100 H0 Z" style="fill: var(--color-chart-7); opacity: 0.45" /></svg>
+    <svg data-depth="1" aria-hidden="true" viewBox="0 0 400 100" preserveAspectRatio="none" style="position: absolute; left: -2.5rem; bottom: -1.5rem; width: calc(100% + 5rem); height: 45%"><path d="M0 60 C60 30 110 70 170 50 S280 25 330 55 S380 60 400 45 V100 H0 Z" style="fill: var(--color-chart-7)" /></svg>
+    <div data-depth="-0.35" style="position: absolute; inset: 0; display: grid; place-content: center; text-align: center">
+      <strong style="font-size: clamp(1.75rem, 5vw, 2.75rem); letter-spacing: -0.02em">Mondulkiri</strong>
+      <span style="color: var(--color-muted)">Hills, forest and waterfalls in the east.</span>
+    </div>
+  </moul-pointer-parallax>
+  <LandingKitDemo />
+</ComponentPreview>
+
+#### Connector Beam
+
+**New.** A line between two elements with a short light running along it, to show that one thing feeds another. [Docs →](/km/docs/components/connectorbeam/)
+
+<ComponentPreview backdrop="page" minHeight="22rem">
+  <div style="position: relative; isolation: isolate; display: flex; align-items: center; justify-content: space-between; gap: 2rem; width: 100%; max-width: 30rem; padding: 0.5rem">
+    <div style="display: flex; flex-direction: column; gap: 1rem">
+      <div id="cb-docs" style="display: grid; place-items: center; width: 3rem; height: 3rem; border-radius: 9999px; border: 1px solid var(--color-border); background: var(--color-surface); box-shadow: var(--shadow-sm); font-size: 1.25rem">📄</div>
+      <div id="cb-mail" style="display: grid; place-items: center; width: 3rem; height: 3rem; border-radius: 9999px; border: 1px solid var(--color-border); background: var(--color-surface); box-shadow: var(--shadow-sm); font-size: 1.25rem">✉️</div>
+      <div id="cb-chat" style="display: grid; place-items: center; width: 3rem; height: 3rem; border-radius: 9999px; border: 1px solid var(--color-border); background: var(--color-surface); box-shadow: var(--shadow-sm); font-size: 1.25rem">💬</div>
+      <div id="cb-drive" style="display: grid; place-items: center; width: 3rem; height: 3rem; border-radius: 9999px; border: 1px solid var(--color-border); background: var(--color-surface); box-shadow: var(--shadow-sm); font-size: 1.25rem">🗂️</div>
+      <div id="cb-calendar" style="display: grid; place-items: center; width: 3rem; height: 3rem; border-radius: 9999px; border: 1px solid var(--color-border); background: var(--color-surface); box-shadow: var(--shadow-sm); font-size: 1.25rem">📅</div>
+    </div>
+    <div id="cb-hub" style="display: grid; place-items: center; width: 4.5rem; height: 4.5rem; border-radius: 9999px; border: 1px solid var(--color-border); background: var(--color-surface); box-shadow: var(--shadow-md); font-size: 1.5rem; font-weight: 700; color: var(--color-accent)">M</div>
+    <div id="cb-user" style="display: grid; place-items: center; width: 3rem; height: 3rem; border-radius: 9999px; border: 1px solid var(--color-border); background: var(--color-surface); box-shadow: var(--shadow-sm); font-size: 1.25rem">👤</div>
+    <moul-connector-beam from="cb-docs" to="cb-hub" curvature="-40" end-y-offset="-12"></moul-connector-beam>
+    <moul-connector-beam from="cb-mail" to="cb-hub" curvature="-15" end-y-offset="-6" delay="400"></moul-connector-beam>
+    <moul-connector-beam from="cb-chat" to="cb-hub" delay="800"></moul-connector-beam>
+    <moul-connector-beam from="cb-drive" to="cb-hub" curvature="15" end-y-offset="6" delay="1200"></moul-connector-beam>
+    <moul-connector-beam from="cb-calendar" to="cb-hub" curvature="40" end-y-offset="12" delay="1600"></moul-connector-beam>
+    <moul-connector-beam from="cb-hub" to="cb-user" duration="2000"></moul-connector-beam>
+  </div>
+  <LandingKitDemo />
+</ComponentPreview>
+
+#### Scroll Text
+
+**New.** Text whose words light up one after another as the reader scrolls. [Docs →](/km/docs/components/scrolltext/)
+
+<ComponentPreview align="stretch">
+  <moul-scroll-text style="font-size: clamp(1.5rem, 4vw, 2.25rem); font-weight: 650; line-height: 1.25; letter-spacing: -0.01em; max-width: 34rem; margin-inline: auto">
+    Every change to your data is kept, with who made it and when. Look back at any record, see what it was last Tuesday, and put it back in one step.
+  </moul-scroll-text>
+  <LandingKitDemo />
+</ComponentPreview>
+
+#### Sticky Stack
+
+**New.** Cards or whole sections that stack on top of each other as the page scrolls, the covered ones shrinking slightly. [Docs →](/km/docs/components/stickystack/)
+
+<ComponentPreview align="stretch">
+  <div style="height: 28rem; overflow: auto; border: 1px solid var(--color-border); border-radius: 0.75rem; background: var(--color-bg)">
+    <div style="padding: 1.5rem 1.5rem 0; text-align: center; color: var(--color-fg-subtle)">Four days on the south coast</div>
+    <moul-sticky-stack style="--sticky-stack-top: 1.5rem; padding: 1.5rem 1.5rem 10rem; max-width: 30rem; margin: 0 auto">
+      <article style="display: grid; gap: 0.5rem; min-height: 15rem; padding: 1.5rem; border: 1px solid var(--color-border); border-radius: 1rem; background: var(--color-surface); box-shadow: var(--shadow-md)">
+        <span style="color: var(--color-fg-subtle)">Day 1</span>
+        <strong style="font-size: 1.5rem">Phnom Penh to Kampot</strong>
+        <span>Three hours on the new road, then a slow evening by the river.</span>
+        <div style="height: 4rem; border-radius: 0.75rem; background: linear-gradient(135deg, var(--color-chart-1), var(--color-chart-3))"></div>
+      </article>
+      <article style="display: grid; gap: 0.5rem; min-height: 15rem; padding: 1.5rem; border: 1px solid var(--color-border); border-radius: 1rem; background: var(--color-surface); box-shadow: var(--shadow-md)">
+        <span style="color: var(--color-fg-subtle)">Day 2</span>
+        <strong style="font-size: 1.5rem">Bokor mountain</strong>
+        <span>The old hill station in the clouds, and the long road back down.</span>
+        <div style="height: 4rem; border-radius: 0.75rem; background: linear-gradient(135deg, var(--color-chart-4), var(--color-chart-2))"></div>
+      </article>
+      <article style="display: grid; gap: 0.5rem; min-height: 15rem; padding: 1.5rem; border: 1px solid var(--color-border); border-radius: 1rem; background: var(--color-surface); box-shadow: var(--shadow-md)">
+        <span style="color: var(--color-fg-subtle)">Day 3</span>
+        <strong style="font-size: 1.5rem">Crab market in Kep</strong>
+        <span>Crab with green Kampot pepper, fished from the water in front of you.</span>
+        <div style="height: 4rem; border-radius: 0.75rem; background: linear-gradient(135deg, var(--color-chart-5), var(--color-chart-7))"></div>
+      </article>
+      <article style="display: grid; gap: 0.5rem; min-height: 15rem; padding: 1.5rem; border: 1px solid var(--color-border); border-radius: 1rem; background: var(--color-surface); box-shadow: var(--shadow-md)">
+        <span style="color: var(--color-fg-subtle)">Day 4</span>
+        <strong style="font-size: 1.5rem">Koh Tonsay</strong>
+        <span>A boat to Rabbit Island, hammocks and nothing else to do.</span>
+        <div style="height: 4rem; border-radius: 0.75rem; background: linear-gradient(135deg, var(--color-chart-6), var(--color-chart-1))"></div>
+      </article>
+    </moul-sticky-stack>
+  </div>
+  <LandingKitDemo />
+</ComponentPreview>
+
+#### Scroll Parallax
+
+**New.** Rows or columns of cards and images that slide at different speeds as the page scrolls past them. [Docs →](/km/docs/components/scrollparallax/)
+
+<ComponentPreview align="stretch">
+  <div style="height: 26rem; overflow: auto; border: 1px solid var(--color-border); border-radius: 0.75rem; background: var(--color-bg)">
+    <div style="display: grid; place-items: center; height: 14rem; padding: 1.5rem; text-align: center; color: var(--color-fg-subtle)">Scroll down</div>
+    <moul-scroll-parallax speed="360" style="padding-block: 1rem">
+      <div style="display: flex; justify-content: center; gap: 1rem">
+        <div style="flex: none; display: grid; place-items: end start; width: 12rem; height: 8rem; padding: 0.75rem; border-radius: 0.75rem; color: var(--color-fg-on-primary); background: linear-gradient(135deg, var(--color-chart-1), var(--color-chart-3))">Angkor Wat</div>
+        <div style="flex: none; display: grid; place-items: end start; width: 12rem; height: 8rem; padding: 0.75rem; border-radius: 0.75rem; color: var(--color-fg-on-primary); background: linear-gradient(135deg, var(--color-chart-2), var(--color-chart-4))">Bayon</div>
+        <div style="flex: none; display: grid; place-items: end start; width: 12rem; height: 8rem; padding: 0.75rem; border-radius: 0.75rem; color: var(--color-fg-on-primary); background: linear-gradient(135deg, var(--color-chart-5), var(--color-chart-1))">Ta Prohm</div>
+        <div style="flex: none; display: grid; place-items: end start; width: 12rem; height: 8rem; padding: 0.75rem; border-radius: 0.75rem; color: var(--color-fg-on-primary); background: linear-gradient(135deg, var(--color-chart-3), var(--color-chart-6))">Banteay Srei</div>
+        <div style="flex: none; display: grid; place-items: end start; width: 12rem; height: 8rem; padding: 0.75rem; border-radius: 0.75rem; color: var(--color-fg-on-primary); background: linear-gradient(135deg, var(--color-chart-7), var(--color-chart-2))">Preah Khan</div>
+        <div style="flex: none; display: grid; place-items: end start; width: 12rem; height: 8rem; padding: 0.75rem; border-radius: 0.75rem; color: var(--color-fg-on-primary); background: linear-gradient(135deg, var(--color-chart-4), var(--color-chart-5))">Beng Mealea</div>
+      </div>
+      <div style="display: flex; justify-content: center; gap: 1rem">
+        <div style="flex: none; display: grid; place-items: end start; width: 12rem; height: 8rem; padding: 0.75rem; border-radius: 0.75rem; color: var(--color-fg-on-primary); background: linear-gradient(135deg, var(--color-chart-6), var(--color-chart-3))">Kampot</div>
+        <div style="flex: none; display: grid; place-items: end start; width: 12rem; height: 8rem; padding: 0.75rem; border-radius: 0.75rem; color: var(--color-fg-on-primary); background: linear-gradient(135deg, var(--color-chart-1), var(--color-chart-7))">Kep</div>
+        <div style="flex: none; display: grid; place-items: end start; width: 12rem; height: 8rem; padding: 0.75rem; border-radius: 0.75rem; color: var(--color-fg-on-primary); background: linear-gradient(135deg, var(--color-chart-2), var(--color-chart-5))">Koh Rong</div>
+        <div style="flex: none; display: grid; place-items: end start; width: 12rem; height: 8rem; padding: 0.75rem; border-radius: 0.75rem; color: var(--color-fg-on-primary); background: linear-gradient(135deg, var(--color-chart-4), var(--color-chart-1))">Bokor</div>
+        <div style="flex: none; display: grid; place-items: end start; width: 12rem; height: 8rem; padding: 0.75rem; border-radius: 0.75rem; color: var(--color-fg-on-primary); background: linear-gradient(135deg, var(--color-chart-3), var(--color-chart-2))">Koh Tonsay</div>
+        <div style="flex: none; display: grid; place-items: end start; width: 12rem; height: 8rem; padding: 0.75rem; border-radius: 0.75rem; color: var(--color-fg-on-primary); background: linear-gradient(135deg, var(--color-chart-5), var(--color-chart-6))">Sihanoukville</div>
+      </div>
+      <div style="display: flex; justify-content: center; gap: 1rem">
+        <div style="flex: none; display: grid; place-items: end start; width: 12rem; height: 8rem; padding: 0.75rem; border-radius: 0.75rem; color: var(--color-fg-on-primary); background: linear-gradient(135deg, var(--color-chart-7), var(--color-chart-4))">Mondulkiri</div>
+        <div style="flex: none; display: grid; place-items: end start; width: 12rem; height: 8rem; padding: 0.75rem; border-radius: 0.75rem; color: var(--color-fg-on-primary); background: linear-gradient(135deg, var(--color-chart-2), var(--color-chart-6))">Ratanakiri</div>
+        <div style="flex: none; display: grid; place-items: end start; width: 12rem; height: 8rem; padding: 0.75rem; border-radius: 0.75rem; color: var(--color-fg-on-primary); background: linear-gradient(135deg, var(--color-chart-1), var(--color-chart-5))">Kratie</div>
+        <div style="flex: none; display: grid; place-items: end start; width: 12rem; height: 8rem; padding: 0.75rem; border-radius: 0.75rem; color: var(--color-fg-on-primary); background: linear-gradient(135deg, var(--color-chart-6), var(--color-chart-2))">Stung Treng</div>
+        <div style="flex: none; display: grid; place-items: end start; width: 12rem; height: 8rem; padding: 0.75rem; border-radius: 0.75rem; color: var(--color-fg-on-primary); background: linear-gradient(135deg, var(--color-chart-3), var(--color-chart-7))">Preah Vihear</div>
+        <div style="flex: none; display: grid; place-items: end start; width: 12rem; height: 8rem; padding: 0.75rem; border-radius: 0.75rem; color: var(--color-fg-on-primary); background: linear-gradient(135deg, var(--color-chart-4), var(--color-chart-3))">Battambang</div>
+      </div>
+    </moul-scroll-parallax>
+    <div style="height: 16rem"></div>
+  </div>
+  <LandingKitDemo />
+</ComponentPreview>
+
+#### Sticky Scroll
+
+**New.** A walk-through in steps, whose text scrolls past a pinned panel that shows the picture of the step being read. [Docs →](/km/docs/components/stickyscroll/)
+
+<ComponentPreview align="stretch">
+  <div style="height: 28rem; overflow: auto; border: 1px solid var(--color-border); border-radius: 0.75rem; background: var(--color-bg)">
+    <div style="padding: 2rem 1.5rem 0; color: var(--color-fg-subtle)">Sending money home, in four steps</div>
+    <moul-sticky-scroll style="padding: 0 1.5rem; --sticky-scroll-media-height: 14rem; --sticky-scroll-end-space: 14rem">
+      <moul-sticky-scroll-item>
+        <h3 style="margin: 0 0 0.5rem">Open the app</h3>
+        <p style="margin: 0">Sign in with your phone number and the code we send you. No branch visit, no forms on paper.</p>
+        <div slot="media" role="img" aria-label="A phone showing the sign-in screen" style="display: grid; place-items: center; background: linear-gradient(135deg, var(--color-chart-1), var(--color-chart-3)); color: var(--color-fg-on-primary); font-size: 2.5rem">📱</div>
+      </moul-sticky-scroll-item>
+      <moul-sticky-scroll-item>
+        <h3 style="margin: 0 0 0.5rem">Choose who gets it</h3>
+        <p style="margin: 0">Pick a saved contact in Battambang or Siem Reap, or scan the KHQR code they show you.</p>
+        <div slot="media" role="img" aria-label="A list of saved contacts" style="display: grid; place-items: center; background: linear-gradient(135deg, var(--color-chart-4), var(--color-chart-2)); color: var(--color-fg-on-primary); font-size: 2.5rem">👥</div>
+      </moul-sticky-scroll-item>
+      <moul-sticky-scroll-item>
+        <h3 style="margin: 0 0 0.5rem">Enter the amount</h3>
+        <p style="margin: 0">In riel or in dollars. The fee and the rate are shown before you confirm, not after.</p>
+        <div slot="media" role="img" aria-label="The amount screen with the fee shown" style="display: grid; place-items: center; background: linear-gradient(135deg, var(--color-chart-5), var(--color-chart-7)); color: var(--color-fg-on-primary); font-size: 2.5rem">💵</div>
+      </moul-sticky-scroll-item>
+      <moul-sticky-scroll-item>
+        <h3 style="margin: 0 0 0.5rem">Done</h3>
+        <p style="margin: 0">They get a message as soon as the money arrives, and you keep the receipt.</p>
+        <div slot="media" role="img" aria-label="A receipt with a green tick" style="display: grid; place-items: center; background: linear-gradient(135deg, var(--color-chart-6), var(--color-chart-1)); color: var(--color-fg-on-primary); font-size: 2.5rem">✅</div>
+      </moul-sticky-scroll-item>
+    </moul-sticky-scroll>
+  </div>
+  <LandingKitDemo />
+</ComponentPreview>
+
+#### Tracing Beam
+
+**New.** A line beside an article that fills from the top as the reader scrolls through it. [Docs →](/km/docs/components/tracingbeam/)
+
+<ComponentPreview align="stretch">
+  <div style="height: 26rem; overflow: auto; padding: 1.5rem 1.5rem 3rem; border-radius: var(--radius-xl, 1rem); background: var(--color-surface)">
+    <div style="min-height: 15rem; display: grid; align-content: start; gap: 0.5rem">
+      <strong style="font-size: 1.25rem">Three days on the south coast</strong>
+      <span style="color: var(--color-fg-subtle)">Scroll down: the line starts filling when the first day reaches the middle of this box.</span>
+    </div>
+    <moul-tracing-beam>
+      <div style="display: grid; gap: 1rem">
+      <h3 style="margin: 0">Day one: Phnom Penh to Kampot</h3>
+      <p style="margin: 0">The bus leaves the Central Market at seven and takes the national road south. By the time the traffic thins out past Takeo, the paddy fields run flat to the horizon, broken only by sugar palms and the odd pagoda roof.</p>
+      <div style="aspect-ratio: 16 / 7; border-radius: var(--radius-lg, 0.75rem); background: linear-gradient(135deg, var(--color-chart-5), var(--color-chart-7))" role="img" aria-label="Rice fields south of Phnom Penh"></div>
+      <p style="margin: 0">Kampot is slow in the best way. Rent a bicycle, cross the old bridge and follow the river until the town gives way to pepper farms.</p>
+      <h3 style="margin: 0.5rem 0 0">Day two: Bokor</h3>
+      <p style="margin: 0">The road up the mountain climbs through cloud forest to the old hill station. Go early, before the mist rolls in, and bring a jacket: the top is ten degrees cooler than the coast.</p>
+      <p style="margin: 0">On the way down, stop at the waterfall and the Wat Sampov Pram lookout. On a clear day you can see Phu Quoc across the water.</p>
+      <h3 style="margin: 0.5rem 0 0">Day three: Kep</h3>
+      <p style="margin: 0">Kep is half an hour by tuk-tuk. Eat crab at the market, pepper and all, then walk the trail round the national park as the sun goes down over the islands.</p>
+      <div style="aspect-ratio: 16 / 7; border-radius: var(--radius-lg, 0.75rem); background: linear-gradient(135deg, var(--color-chart-2), var(--color-chart-3))" role="img" aria-label="Sunset over the islands off Kep"></div>
+      <p style="margin: 0">Take the morning boat to Koh Tonsay if the sea is calm. The island has no roads, a handful of guesthouses and the best grilled fish on the coast.</p>
+      </div>
+    </moul-tracing-beam>
+  </div>
+  <LandingKitDemo />
+</ComponentPreview>
+
+#### Scroll Frame
+
+**New.** A screen that starts tilted back and lies flat as the reader scrolls it into view, while its heading rises into place. [Docs →](/km/docs/components/scrollframe/)
+
+<ComponentPreview backdrop="plain" align="stretch">
+  <div style="height: 26rem; overflow-y: auto; border: 1px solid var(--color-border); border-radius: var(--radius-xl, 0.75rem); background: var(--color-bg)">
+    <div style="display: grid; place-items: center; height: 22rem; color: var(--color-muted)">Scroll down ↓</div>
+    <moul-scroll-frame style="padding: 0 1.5rem 3rem">
+      <h3 slot="header" style="margin: 0; text-align: center; font-size: 1.75rem">Every booking, one screen</h3>
+      <moul-browser-frame url="trips.example.com/today">
+        <div role="img" aria-label="A dashboard with a sidebar, three figures and a chart" style="display: grid; grid-template-columns: 6rem 1fr; min-height: 15rem; background: var(--color-bg)">
+          <div style="display: grid; align-content: start; gap: 0.75rem; padding: 1rem; border-inline-end: 1px solid var(--color-border); background: var(--color-surface)">
+            <div style="width: 60%; height: 0.625rem; border-radius: 999px; background: var(--color-fg)"></div>
+            <div style="width: 85%; height: 0.5rem; border-radius: 999px; background: var(--color-accent-soft)"></div>
+            <div style="width: 70%; height: 0.5rem; border-radius: 999px; background: var(--color-border)"></div>
+            <div style="width: 78%; height: 0.5rem; border-radius: 999px; background: var(--color-border)"></div>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: 3.5rem 1fr; gap: 0.75rem; padding: 1rem">
+            <div style="border: 1px solid var(--color-border); border-radius: 0.75rem; background: var(--color-surface)"></div>
+            <div style="border: 1px solid var(--color-border); border-radius: 0.75rem; background: var(--color-surface)"></div>
+            <div style="border: 1px solid var(--color-border); border-radius: 0.75rem; background: var(--color-surface)"></div>
+            <div style="grid-column: 1 / -1; border: 1px solid var(--color-border); border-radius: 0.75rem; background: linear-gradient(to top, var(--color-accent-soft), var(--color-surface))"></div>
+          </div>
+        </div>
+      </moul-browser-frame>
+    </moul-scroll-frame>
+    <div style="height: 8rem"></div>
+  </div>
+  <LandingKitDemo />
+</ComponentPreview>
+
+#### Page Transition
+
+**New.** An animated change of page, a wipe, slide, circle or fade, through the browser's view transitions. [Docs →](/km/docs/components/pagetransition/)
+
+<ComponentPreview align="stretch" stack>
+  <moul-page-transition id="page-transition-demo" effect="wipe" duration="700"></moul-page-transition>
+  <div id="page-transition-place" style="display: grid; gap: 0.25rem; padding: 1.5rem; border-radius: var(--radius-xl, 1rem); background: var(--color-surface-secondary); min-height: 7rem; align-content: center">
+    <strong style="font-size: 1.5rem">Kampot</strong>
+    <span style="color: var(--color-fg-subtle)">Pepper farms and a slow river under Bokor.</span>
+  </div>
+  <div style="display: flex; flex-wrap: wrap; gap: 0.5rem">
+    <moul-button data-page-effect="wipe">Wipe</moul-button>
+    <moul-button variant="secondary" data-page-effect="slide">Slide</moul-button>
+    <moul-button variant="secondary" data-page-effect="circle">Circle</moul-button>
+    <moul-button variant="secondary" data-page-effect="fade">Fade</moul-button>
+    <moul-button variant="ghost" data-page-effect="back">Back</moul-button>
+  </div>
+  <LandingKitDemo />
+</ComponentPreview>
+
+### Canvas & WebGL
+
+#### Particles
+
+**New.** Drifting particles, twinkling sparkles or a constellation of linked dots that react to the pointer, behind a hero or a section. [Docs →](/km/docs/components/particles/)
+
+<ComponentPreview align="stretch" minHeight="20rem">
+  <moul-particles style="padding: 5.5rem 1.5rem; border: 1px solid var(--color-border); border-radius: var(--radius-xl); text-align: center">
+    <moul-typography variant="h2">Built in the open</moul-typography>
+    <moul-typography variant="body">Every release, every issue, every decision.</moul-typography>
+  </moul-particles>
+  <CanvasDemo />
+</ComponentPreview>
+
+#### Starfield
+
+**New.** A night sky of twinkling stars at three depths, with shooting stars or a shower of meteors crossing it. [Docs →](/km/docs/components/starfield/)
+
+<ComponentPreview align="stretch" minHeight="20rem">
+  <moul-starfield shooting-stars style="color-scheme: dark; padding: 6rem 1.5rem; border-radius: var(--radius-xl); background: var(--color-background); color: var(--color-foreground); text-align: center">
+    <moul-typography variant="h2">Ship after dark</moul-typography>
+    <moul-typography variant="body">Deploys that run while you sleep.</moul-typography>
+  </moul-starfield>
+  <CanvasDemo />
+</ComponentPreview>
+
+#### Warp
+
+**New.** Light-speed streaks rushing out of the centre, or a tunnel of rings and beams flowing toward a vanishing point, with an optional boost on hover or press. [Docs →](/km/docs/components/warp/)
+
+<ComponentPreview align="stretch" minHeight="20rem">
+  <moul-warp boost="hover" style="padding: 6rem 1.5rem; border: 1px solid var(--color-border); border-radius: var(--radius-xl); text-align: center">
+    <moul-typography variant="h2">Builds in seconds</moul-typography>
+    <moul-typography variant="body">Cached, parallel and close to your users.</moul-typography>
+  </moul-warp>
+  <CanvasDemo />
+</ComponentPreview>
+
+#### Glyph Rain
+
+**New.** Columns of glyphs that fall like rain, or a grid of glyphs that shift in place, drawn on a canvas behind a hero, a terminal-styled section or a loading screen. [Docs →](/km/docs/components/glyphrain/)
+
+<ComponentPreview minHeight="20rem" align="stretch">
+  <moul-glyph-rain pointer-glow style="height: 20rem; display: grid; place-items: center">
+    <div style="display: grid; gap: 0.75rem; justify-items: center; max-width: 26rem; padding: 1.5rem 1.75rem; text-align: center; border: 1px solid var(--color-border); border-radius: var(--radius-2xl, 1rem); background: color-mix(in oklab, var(--color-surface) 82%, transparent); backdrop-filter: blur(6px); box-shadow: var(--shadow-lg)">
+      <strong style="font-size: 1.375rem">Every request, in order</strong>
+      <span style="color: var(--color-muted)">The log streams as your app runs. Search it, pin a line, share a link.</span>
+      <moul-button variant="primary">Open the logs</moul-button>
+    </div>
+  </moul-glyph-rain>
+  <CanvasDemo />
+</ComponentPreview>
+
+#### Flow Field
+
+**New.** Flowing waves of light, or a vortex of particles swirling around the centre, drawn from smooth noise on a canvas behind a hero, a sign-up panel or an empty state. [Docs →](/km/docs/components/flowfield/)
+
+<ComponentPreview minHeight="20rem" align="stretch">
+  <moul-flow-field follow-pointer style="height: 20rem; display: grid; place-items: center">
+    <div style="display: grid; gap: 0.75rem; justify-items: center; max-width: 26rem; padding: 0 1.5rem; text-align: center">
+      <strong style="font-size: 1.75rem; line-height: 1.2">Ship the page today</strong>
+      <span style="color: var(--color-muted)">Content, assets and forms in one place, ready when you are.</span>
+      <moul-button variant="primary">Start a project</moul-button>
+    </div>
+  </moul-flow-field>
+  <CanvasDemo />
+</ComponentPreview>
+
+#### Shader Field
+
+**New.** A field of dithered dots or drifting clouds behind a hero or a section, drawn on the GPU with WebGL, with a CSS gradient where WebGL is unavailable. [Docs →](/km/docs/components/shaderfield/)
+
+<ComponentPreview align="stretch" minHeight="22rem">
+  <moul-shader-field interactive style="display: grid; place-items: center; min-height: 20rem; padding: 3rem 1.5rem; border-radius: var(--radius-xl); text-align: center">
+    <div style="max-width: 30rem; padding: 1.5rem 1.75rem; border-radius: var(--radius-lg); background: color-mix(in oklch, var(--color-surface) 82%, transparent); backdrop-filter: blur(6px)">
+      <moul-typography variant="h2">Builds that explain themselves</moul-typography>
+      <moul-typography variant="body">Every step, every log line, every artefact, kept for ninety days.</moul-typography>
+    </div>
+  </moul-shader-field>
+  <CanvasDemo />
+</ComponentPreview>
+
+#### Interactive Grid
+
+**New.** A grid of cells behind a section that light up, ripple or swell under the pointer and on a press. [Docs →](/km/docs/components/interactivegrid/)
+
+<ComponentPreview minHeight="20rem" align="stretch">
+  <moul-interactive-grid fade="radial" style="border-radius: var(--radius-xl, 0.75rem); border: 1px solid var(--color-border)">
+    <div style="display: grid; place-items: center; gap: 0.75rem; min-height: 18rem; padding: 2rem; text-align: center">
+      <strong style="font-size: 1.5rem">Cells that follow the pointer</strong>
+      <span style="color: var(--color-muted)">The pattern is CSS; only the lit cells are drawn.</span>
+      <moul-button variant="primary">Get started</moul-button>
+    </div>
+  </moul-interactive-grid>
+  <CanvasDemo />
+</ComponentPreview>
+
+#### Press Particles
+
+**New.** Wraps a button or any target and throws a small burst of particles from the point where it is pressed. [Docs →](/km/docs/components/pressparticles/)
+
+<ComponentPreview minHeight="16rem">
+  <div style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center">
+    <moul-press-particles>
+      <moul-button variant="primary">Circles</moul-button>
+    </moul-press-particles>
+    <moul-press-particles shape="star" count="18" colors="var(--color-warning), var(--color-accent)">
+      <moul-button variant="secondary">Stars</moul-button>
+    </moul-press-particles>
+    <moul-press-particles glyphs="💖 ✨ 🎉" count="12" size="18" spread="100">
+      <moul-button variant="outline">Like</moul-button>
+    </moul-press-particles>
+    <moul-press-particles shape="square" gravity="0" spread="360" velocity="260" colors="var(--color-success)">
+      <moul-button variant="ghost">Drift</moul-button>
+    </moul-press-particles>
+  </div>
+  <CanvasDemo />
+</ComponentPreview>
+
+#### Cursor Trail
+
+**New.** Glyphs, a springy chain of dots or images that trail the pointer over an area and fall away. [Docs →](/km/docs/components/cursortrail/)
+
+<ComponentPreview minHeight="18rem" align="stretch">
+  <moul-cursor-trail style="border-radius: var(--radius-xl, 0.75rem); border: 1px solid var(--color-border); background: var(--color-surface)">
+    <div style="display: grid; place-items: center; gap: 0.5rem; min-height: 16rem; padding: 2rem; text-align: center">
+      <strong style="font-size: 1.5rem">Build on the canvas entry</strong>
+      <span style="color: var(--color-muted)">Glyphs drop from the pointer and fall away.</span>
+      <moul-button variant="primary">Still clickable</moul-button>
+    </div>
+  </moul-cursor-trail>
+  <CanvasDemo />
+</ComponentPreview>
+
+#### Dissolve
+
+**New.** Wraps an item and breaks it into dust that drifts away when it is removed. [Docs →](/km/docs/components/dissolve/)
+
+<ComponentPreview minHeight="20rem" align="stretch">
+  <div style="display: grid; gap: 0.5rem; width: min(100%, 26rem); margin-inline: auto">
+    <moul-dissolve id="note-1" collapse>
+      <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 0.75rem 0.75rem 1rem; border: 1px solid var(--color-border); border-radius: var(--radius-lg, 0.5rem); background: var(--color-surface)">
+        <span style="flex: 1">Sokha shared <strong>Kep weekend.pdf</strong></span>
+        <moul-button size="sm" variant="ghost" data-dissolve>Delete</moul-button>
+      </div>
+    </moul-dissolve>
+    <moul-dissolve id="note-2" collapse>
+      <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 0.75rem 0.75rem 1rem; border: 1px solid var(--color-border); border-radius: var(--radius-lg, 0.5rem); background: var(--color-accent-soft); color: var(--color-accent-soft-fg)">
+        <span style="flex: 1">Your invoice for November is ready</span>
+        <moul-button size="sm" variant="ghost" data-dissolve>Delete</moul-button>
+      </div>
+    </moul-dissolve>
+    <moul-dissolve id="note-3" collapse>
+      <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 0.75rem 0.75rem 1rem; border: 1px solid var(--color-border); border-radius: var(--radius-lg, 0.5rem); background: var(--color-warning-soft); color: var(--color-warning-soft-fg)">
+        <span style="flex: 1">Storage is 90% full</span>
+        <moul-button size="sm" variant="ghost" data-dissolve>Delete</moul-button>
+      </div>
+    </moul-dissolve>
+    <moul-button variant="secondary" data-dissolve-reset="note-1 note-2 note-3" style="justify-self: center; margin-top: 0.5rem">Bring them back</moul-button>
+  </div>
+  <CanvasDemo />
+  <script type="module" src="/demo/dissolve/demo.js"></script>
+</ComponentPreview>
+
+#### Image Loader
+
+**New.** An image that appears through a scanning grid of pixels, as if it were being generated, with a shimmering grid while it loads. [Docs →](/km/docs/components/imageloader/)
+
+<ComponentPreview align="stretch">
+  <div style="display: grid; gap: 1rem; justify-items: start">
+    <moul-image-loader
+      id="imageloader-demo"
+      src="/demo/imageslider/mondulkiri-dawn.svg"
+      alt="Hills in layers of mist at dawn in Mondulkiri"
+      width="1600"
+      height="900"
+      style="width: 100%; border-radius: var(--radius-xl, 1rem)"
+    ></moul-image-loader>
+    <moul-button variant="secondary" data-replay="imageloader-demo">Generate again</moul-button>
+  </div>
+  <CanvasDemo />
+  <LandingKitDemo />
+</ComponentPreview>
+
+#### Image Effect
+
+**New.** One image drawn pixelated, dithered, as ASCII, with its colours split, on a wave or as particles, optionally following the pointer. [Docs →](/km/docs/components/imageeffect/)
+
+<ComponentPreview align="stretch">
+  <moul-image-effect
+    src="/demo/imageeffect/temple-sunrise.svg"
+    alt="A temple's towers against the sunrise, reflected in a pool"
+    width="1600"
+    height="1000"
+    effect="pixelate"
+    interactive
+    style="border-radius: var(--radius-xl, 1rem)"
+  ></moul-image-effect>
+  <CanvasDemo />
+</ComponentPreview>
+
+#### Zoom Grid
+
+**New.** An image cut into a grid of boxes that swell and zoom in around the pointer, the rest of the grid giving way. [Docs →](/km/docs/components/zoomgrid/)
+
+<ComponentPreview align="stretch">
+  <moul-zoom-grid
+    src="/demo/imageslider/kep-coast.svg"
+    alt="A palm over a sandy shore and a green sea at Kep"
+    width="1600"
+    height="900"
+    style="border-radius: var(--radius-xl, 1rem)"
+  ></moul-zoom-grid>
+  <CanvasDemo />
+</ComponentPreview>
+
+#### Icon Cloud
+
+**New.** Icons or logos set on a sphere that turns slowly, leans toward the pointer and spins when dragged. [Docs →](/km/docs/components/iconcloud/)
+
+<ComponentPreview minHeight="24rem">
+  <moul-icon-cloud label="Moul components" style="max-width: 24rem">
+    <a href="/docs/components/terminal/" aria-label="Terminal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2" /><path d="m7 9 3 3-3 3M12 15h5" /></svg></a>
+    <a href="/docs/components/charts/barchart/" aria-label="Bar chart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20h18M6 20v-8M11 20V5M16 20v-6M21 20V9" /></svg></a>
+    <a href="/docs/components/calendar/" aria-label="Calendar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M3 10h18M8 3v4M16 3v4" /></svg></a>
+    <a href="/docs/components/codeblock/" aria-label="Code block"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 7-5 5 5 5M15 7l5 5-5 5" /></svg></a>
+    <a href="/docs/components/chat/" aria-label="Chat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H9l-5 4Z" /></svg></a>
+    <a href="/docs/components/notificationbell/" aria-label="Notification bell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16v-5a6 6 0 0 1 12 0v5l2 2H4ZM10 20a2 2 0 0 0 4 0" /></svg></a>
+    <a href="/docs/components/searchfield/" aria-label="Search field"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="6" /><path d="m16 16 4 4" /></svg></a>
+    <a href="/docs/components/filetree/" aria-label="File tree"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z" /></svg></a>
+    <a href="/docs/components/switch/" aria-label="Switch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="8" rx="4" /><circle cx="16" cy="12" r="2" /></svg></a>
+    <a href="/docs/components/slider/" aria-label="Slider"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h3M11 12h9" /><circle cx="9" cy="12" r="2.5" /></svg></a>
+    <a href="/docs/components/table/" aria-label="Table"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="M3 10h18M3 15h18M10 5v14" /></svg></a>
+    <a href="/docs/components/taggroup/" aria-label="Tag group"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12V4h8l10 10-8 8Z" /><circle cx="7.5" cy="7.5" r="1" /></svg></a>
+    <a href="/docs/components/timeline/" aria-label="Timeline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8" /><path d="M12 8v4l3 2" /></svg></a>
+    <a href="/docs/components/globe/" aria-label="Globe"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8" /><path d="M4 12h16M12 4c2.5 2.5 2.5 13.5 0 16M12 4c-2.5 2.5-2.5 13.5 0 16" /></svg></a>
+    <a href="/docs/components/avatar/" aria-label="Avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="9" r="3.5" /><path d="M5 20c1-4 4-6 7-6s6 2 7 6" /></svg></a>
+    <a href="/docs/components/toast/" aria-label="Toast"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="6" width="16" height="9" rx="2" /><path d="M8 19h8" /></svg></a>
+    <a href="/docs/components/imageeffect/" aria-label="Image effect"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" /><circle cx="9" cy="10" r="1.5" /><path d="m21 16-5-5-8 8" /></svg></a>
+    <a href="/docs/components/inputotp/" aria-label="One-time code"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></svg></a>
+  </moul-icon-cloud>
+  <CanvasDemo />
+</ComponentPreview>
+
+#### Globe
+
+**New.** A dotted globe that turns slowly on its axis, with pins on places and arcs that rise between them. [Docs →](/km/docs/components/globe/)
+
+<ComponentPreview minHeight="26rem">
+  <moul-globe
+    label="Routes from the Phnom Penh office"
+    show-labels
+    center="18, 104"
+    style="max-width: 26rem"
+    arcs='[
+      { "from": { "lat": 11.56, "lng": 104.92, "label": "Phnom Penh" }, "to": { "lat": 35.68, "lng": 139.69, "label": "Tokyo" } },
+      { "from": { "lat": 11.56, "lng": 104.92, "label": "Phnom Penh" }, "to": { "lat": 1.35, "lng": 103.82, "label": "Singapore" } },
+      { "from": { "lat": 11.56, "lng": 104.92, "label": "Phnom Penh" }, "to": { "lat": -33.87, "lng": 151.21, "label": "Sydney" } },
+      { "from": { "lat": 11.56, "lng": 104.92, "label": "Phnom Penh" }, "to": { "lat": 28.61, "lng": 77.21, "label": "Delhi" } },
+      { "from": { "lat": 11.56, "lng": 104.92, "label": "Phnom Penh" }, "to": { "lat": 50.11, "lng": 8.68, "label": "Frankfurt" } }
+    ]'
+  ></moul-globe>
+  <CanvasDemo />
+</ComponentPreview>
+
+### Composite Blocks
+
+#### Logs
+
+Parses raw log text into a filterable viewer. [Docs →](/km/docs/blocks/logs/)
+
+<ComponentPreview align="stretch">
+<moul-logs show-toolbar show-timestamps show-levels max-height="320px" data-props='{"raw":"2026/10/19 09:14:02 INFO Starting server addr=\"http://localhost:8090\" env=\"production\"\n2026/10/19 09:14:03 DEBU Loaded 42 routes component=\"router\"\n2026/10/19 09:14:09 INFO HTTP request method=\"GET\" path=\"/api/health\" status=200 latency=\"182\u00b5s\"\n2026/10/19 09:14:12 WARN Slow query detected table=\"orders\" duration=\"1.42s\"\n2026/10/19 09:14:18 INFO HTTP request method=\"POST\" path=\"/api/orders\" status=201 latency=\"12.8ms\"\n2026/10/19 09:14:21 ERRO Webhook delivery failed url=\"https://hooks.example.com\" error=\"context deadline exceeded\"\n2026/10/19 09:14:30 INFO Cleaned up expired sessions count=17"}'></moul-logs>
+</ComponentPreview>
+
+#### Sidebar
+
+Collapsible application sidebar. [Docs →](/km/docs/blocks/sidebar/)
+
+<ComponentPreview align="stretch" backdrop="plain">
+<div style="height: 420px; border-radius: 1rem; overflow: hidden; border: 1px solid var(--color-border-subtle)">
+  <moul-sidebar layout="sidebar-framed" selected-key="overview" style="height: 100%">
+    <moul-sidebar-aside show-collapse-toggle aria-label="Workspace">
+      <moul-sidebar-header>
+        <moul-sidebar-brand title="Moul" subtitle="Workspace"></moul-sidebar-brand>
+      </moul-sidebar-header>
+      <moul-sidebar-group label="Project">
+        <moul-sidebar-item key="overview" label="Overview"><span slot="icon">◎</span></moul-sidebar-item>
+        <moul-sidebar-item key="deployments" label="Deployments" badge="3"><span slot="icon">⇪</span></moul-sidebar-item>
+        <moul-sidebar-item key="logs" label="Logs"><span slot="icon">≡</span></moul-sidebar-item>
+        <moul-sidebar-item key="settings" label="Settings"><span slot="icon">⚙</span></moul-sidebar-item>
+      </moul-sidebar-group>
+      <moul-sidebar-divider></moul-sidebar-divider>
+      <moul-sidebar-footer>
+        <moul-sidebar-user name="Kim Ly" email="kim@example.com" status="online"></moul-sidebar-user>
+      </moul-sidebar-footer>
+    </moul-sidebar-aside>
+    <moul-sidebar-main>
+      <div style="padding: 1.5rem">Main content</div>
+    </moul-sidebar-main>
+  </moul-sidebar>
+</div>
+</ComponentPreview>
+
+---
+
+## On Weight
+
+This release adds a lot of motion, and motion is the easiest thing in a UI library to overdo. That is why each layer has its own import, every file has a budget, and every effect has a still state for people who ask their system for less motion.
+
+The main import still registers every element, so a page with one button carries the chat view as well. Per-element imports come next, using the same build the canvas elements already have.
+
+{/* Wiring for the previews above: each loads its entry or handles its demo buttons. They render no markup. */}
+<ActivityFeedDemo />
+<AiKitDemo />
+<AnimatedListDemo />
+<ButtonDemo />
+<CanvasDemo />
+<ChartsDemo />
+<ConfettiDemo />
+<FileTreeDemo />
+<FocusModeDemo />
+<HistoryLedgerDemo />
+<LandingKitDemo />
+<NotificationBellDemo />
+<NumberTickerDemo />
+<PullToRefreshDemo />
+<RelationshipGraphDemo />
+<ResultCardDemo />
+<SelectionToolbarDemo />
+<SlideToConfirmDemo />
+<StepLoaderDemo />
+<StepperDemo />
+<ThemeToggleDemo />
+<ToastDemo />
+<TourDemo />
+<script type="module" src="/demo/pagetransition/demo.js"></script>
+<script type="module" src="/demo/dissolve/demo.js"></script>

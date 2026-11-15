@@ -79,9 +79,9 @@ jobs:
           fi
           # Trusted publishing needs npm 11.5.1 or later.
           npm install --global npm@^11.5.1
-          # npm refuses a prerelease without an explicit tag. Alphas take latest
-          # on purpose, like the GitHub release below, until 1.0.0. npm adds
-          # provenance by itself when the repository is public.
+          # npm refuses a prerelease without an explicit tag. Alphas and release
+          # candidates take latest on purpose, like the GitHub release below,
+          # until 1.0.0. npm adds provenance by itself when the repository is public.
           npm publish release/*.tgz --access public --tag latest
 
       - name: Create GitHub Release
@@ -89,7 +89,7 @@ jobs:
         with:
           files: release/*.tgz
           draft: false
-          # Alphas stay ordinary releases, like the Moul engine's, so the repository shows the
-          # newest one as Latest; npm's latest dist-tag also follows the alphas until 1.0.0.
+          # Prereleases (alphas, release candidates) stay ordinary releases, like the Moul engine's,
+          # so the repository shows the newest one as Latest; npm's latest dist-tag follows them until 1.0.0.
           prerelease: false
           generate_release_notes: true

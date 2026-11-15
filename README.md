@@ -100,8 +100,8 @@ cd ui && bun pm pack --dry-run
 After committing the bump, tag the commit and push the tag:
 
 ```bash
-git tag -a v1.0.0-alpha.3 -m "Release v1.0.0-alpha.3"
-git push origin v1.0.0-alpha.3
+git tag -a v1.0.0-rc.1 -m "Release v1.0.0-rc.1"
+git push origin v1.0.0-rc.1
 ```
 
 The tag starts `.github/workflows/release.yml`. It refuses a tag that is not SemVer or does not match `ui/package.json`, runs the tests, builds the library, checks the generated docs against the manifest, publishes the tarball to npm, and makes a GitHub release with the same tarball attached.
